@@ -1,0 +1,2797 @@
+/* --- Ultimate Frutiger Aero Ambient Reset --- */
+body {
+    background: linear-gradient(135deg, #0284c7 0%, #06b6d4 35%, #10b981 75%, #eab308 100%);
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box;
+    box-shadow: inset 0 0 200px rgba(255, 255, 255, 0.5); overflow: hidden;
+    position: relative;
+}
+
+/* --- Animated 3D Floating Aqua Droplets Background --- */
+.ambient-droplet {
+    position: absolute; border-radius: 50%; pointer-events: none; z-index: 1;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 40%, rgba(6,182,212,0.2) 75%, transparent 100%);
+    box-shadow: inset -3px -3px 8px rgba(0,0,0,0.15), 0 8px 20px rgba(2,132,199,0.15);
+    animation: drift 20s infinite ease-in-out alternate;
+}
+@keyframes drift {
+    0% { transform: translateY(0px) rotate(0deg) scale(1); }
+    100% { transform: translateY(-50px) rotate(360deg) scale(1.1); }
+}
+
+/* --- High-Gloss Header Navigation bar --- */
+#top-bar {
+    height: 50px; background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.3) 50%, rgba(2,132,199,0.2) 100%);
+    border-bottom: 3px solid rgba(255, 255, 255, 0.7); display: flex; align-items: center; justify-content: space-between; padding: 0 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1), inset 0 1px 1px #fff; position: relative; z-index: 10;
+}
+#top-bar h1 { color: #fff; font-size: 18px; margin: 0; text-shadow: 0 2px 4px rgba(2,44,87,0.65); display: flex; align-items: center; gap: 10px; }
+#top-bar svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Skeuomorphic Resource Tracker Bar */
+.system-meter {
+    display: flex; align-items: center; gap: 8px; font-size: 12px; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.meter-track {
+    width: 100px; height: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid rgba(255,255,255,0.4); overflow: hidden; position: relative;
+}
+.meter-fill {
+    width: 72%; height: 100%; background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #15803d 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 0 8px #22c55e;
+}
+
+/* --- Layout Workspace Split Deck --- */
+#app-deck { display: flex; flex: 1; height: calc(100vh - 50px); position: relative; z-index: 5; }
+
+#sidebar {
+    width: 270px; height: 100%; display: flex; flex-direction: column; gap: 18px; position: relative; box-sizing: border-box;
+    background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.25) 96%, rgba(0,0,0,0.06) 100%);
+    border-right: 2px solid rgba(255, 255, 255, 0.6); padding: 25px; 
+    transition: width 0.3s cubic-bezier(0.1, 0.9, 0.2, 1), padding 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+}
+#sidebar.collapsed { width: 0px; padding: 25px 0px; border-right: none; overflow: hidden; }
+
+/* --- Fixed Edge Seam Toggle Zone Orb Button --- */
+#toggle-zone {
+    position: absolute; top: 22px; left: 255px; width: 30px; height: 30px; border-radius: 50%; z-index: 90;
+    background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 45%, #cbd5e1 100%); border: 2px solid #94a3b8;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.18), inset 0 1px 1px #fff; display: flex; align-items: center; justify-content: center; 
+    cursor: pointer;
+    transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); /* Coordinates with sidebar slide animations */
+}
+
+.sidebar-btn {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 48%, #0369a1 100%);
+    border: 2px solid #bae6fd; border-radius: 10px; padding: 14px 18px; color: white;
+    font-weight: bold; font-size: 14px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.16), inset 0 1px 2px rgba(255,255,255,0.85);
+    display: flex; align-items: center; gap: 12px; transition: transform 0.05s;
+}
+.sidebar-btn svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2.5; fill: none; }
+.sidebar-btn:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 5px rgba(0,0,0,0.4); }
+
+#toggle-zone:hover { background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 45%, #e2e8f0 100%); }
+
+/* Snap button tracking directly to the far left margin frame edge line when collapsed */
+#sidebar.collapsed + #toggle-zone {
+    left: 10px;
+}
+#toggle-zone svg { width: 16px; height: 16px; stroke: #334155; stroke-width: 3; fill: none; transition: transform 0.3s; }
+
+/* --- Embedded Monitor Screen Cavity --- */
+#canvas-deck { flex: 1; padding: 30px; box-sizing: border-box; display: flex; position: relative; }
+
+#wysiwyg-canvas {
+    flex: 1; background: rgba(255, 255, 255, 0.96); border: 3px solid rgba(2, 132, 199, 0.6); border-radius: 18px;
+    padding: 35px; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: #0f172a;
+    line-height: 1.7; outline: none; overflow-y: auto; box-sizing: border-box;
+    box-shadow: inset 8px 8px 18px rgba(0, 0, 0, 0.2), 0 8px 30px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Advanced Inline Element Formatting --- */
+#wysiwyg-canvas h1 { color: #0284c7; font-weight: 800; border-bottom: 3px solid #38bdf8; padding-bottom: 6px; margin: 15px 0; }
+#wysiwyg-canvas h2 { color: #059669; font-weight: 700; margin: 20px 0 8px 0; }
+#wysiwyg-canvas h3 { color: #d97706; font-size: 18px; margin: 15px 0 5px 0; }
+#wysiwyg-canvas blockquote {
+    background: linear-gradient(90deg, rgba(56,189,248,0.15) 0%, rgba(255,255,255,0) 100%);
+    border-left: 5px solid #0284c7; margin: 15px 0; padding: 10px 20px; color: #0369a1; font-style: italic; border-radius: 0 8px 8px 0;
+}
+#wysiwyg-canvas code {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border: 1px solid #cbd5e1;
+    color: #475569; padding: 3px 6px; border-radius: 5px; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+/* --- Massive 12-Color Liquid-Gel Highlighter Spectrum --- */
+.gel-orb {
+    color: white; padding: 2px 7px; border-radius: 6px; font-weight: bold;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3); display: inline-block;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 3px 6px rgba(0,0,0,0.1);
+}
+.gel-y  { background: linear-gradient(180deg, #fde047 0%, #eab308 100%); border: 2px solid #ca8a04; color: #451a03; text-shadow: none; } /* Fun Fact: All of these gel highlights shown here had a 1px border in the legacy version, which has been changed to 2px! */
+.gel-r  { background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%); border: 2px solid #dc2626; }
+.gel-g  { background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%); border: 2px solid #059669; }
+.gel-c  { background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); border: 2px solid #0891b2; }
+.gel-b  { background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%); border: 2px solid #2563eb; }
+.gel-v  { background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%); border: 2px solid #7e22ce; }
+.gel-p  { background: linear-gradient(180deg, #f472b6 0%, #db2777 100%); border: 2px solid #be185d; }
+.gel-o  { background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%); border: 2px solid #c2410c; }
+.gel-mg { background: linear-gradient(180deg, #f472b6 0%, #e11d48 100%); border: 2px solid #be123c; }
+.gel-lm { background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%); border: 2px solid #4d7c0f; color: #1a2e05; text-shadow: none; }
+.gel-aq { background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%); border: 2px solid #0e7490; }
+.gel-sl { background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%); border: 2px solid #475569; color: #1e293b; text-shadow: none; }
+
+/* Modern Kinetic Glitch Spark Accent Wrapper */
+.spark-text {
+    color: #06b6d4; font-weight: 800; text-shadow: 0 0 8px rgba(6,182,212,0.6); position: relative;
+}
+
+/* --- 1. Aero Glass Showcase Module Frame --- */
+.aero-glass-block {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(219, 234, 254, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin: 15px 0;
+    color: #0369a1;
+    font-weight: bold;
+    box-shadow: 
+        0 8px 25px rgba(2, 132, 199, 0.25),
+        inset 0 1px 2px #fff,
+        inset 0 -8px 16px rgba(255,255,255,0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+}
+/* Diagonal ambient high-gloss glass sheen */
+.aero-glass-block::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.4) 50%, transparent 55%);
+    transform: rotate(-15deg); pointer-events: none;
+}
+
+/* --- 2. Liquid Aqua Bubble Text --- */
+.aqua-bubble-text {
+    color: #0284c7;
+    font-weight: 900;
+    text-shadow: 
+        0 1px 0 #fff,
+        0 2px 3px rgba(2, 132, 199, 0.4),
+        inset 1px 1px 2px rgba(255,255,255,0.8);
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    animation: liquid-wobble 4s infinite ease-in-out;
+}
+@keyframes liquid-wobble {
+    0%, 100% { transform: scale(1) translateY(0); }
+    50% { transform: scale(1.04) translateY(-2px); }
+}
+
+/* --- 3. Glossy Caution Alert Bar --- */
+.tactile-alert-plate {
+    background: linear-gradient(180deg, #fef08a 0%, #eab308 45%, #ca8a04 100%);
+    border: 3px solid #fef08a;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin: 15px 0;
+    color: #451a03;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 
+        0 6px 16px rgba(234, 179, 8, 0.35),
+        inset 0 1px 2px rgba(255,255,255,0.8);
+}
+.alert-icon-orb {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+    border: 2px solid #fca5a5; color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 900;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* --- 4. Retro Media Track Deck Container --- */
+.media-track-wrap {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 3px solid #475569;
+    border-radius: 10px;
+    padding: 12px;
+    margin: 15px 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.6), 0 4px 10px rgba(0,0,0,0.15);
+}
+.media-track-text {
+    color: #38bdf8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    text-shadow: 0 0 6px rgba(56,189,248,0.7);
+}
+.media-control-orb {
+    width: 24px; height: 24px; border-radius: 50%;
+    background: linear-gradient(180deg, #64748b 0%, #334155 100%);
+    border: 1px solid #94a3b8; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+}
+.media-control-orb::before {
+    content: ''; width: 0; height: 0;
+    border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid #fff;
+    margin-left: 2px;
+}
+
+/* --- 1. Liquid Text Distortion --- */
+.liquid-text-glow {
+    color: #0ea5e9;
+    font-weight: 900;
+    text-shadow: 0 2px 4px rgba(6, 182, 212, 0.4);
+    background: linear-gradient(180deg, #67e8f9 0%, #0ea5e9 50%, #0369a1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: inline-block;
+    animation: liquid-swell 3s infinite ease-in-out alternate;
+}
+@keyframes liquid-swell {
+    0% { transform: skewX(-4deg) scaleY(1); filter: hue-rotate(0deg); }
+    100% { transform: skewX(4deg) scaleY(1.05); filter: hue-rotate(30deg); }
+}
+
+/* --- 2. Retro-Gloss Mirror Reflection --- */
+.reflected-text-block {
+    display: inline-flex;
+    flex-direction: column;
+    position: relative;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
+.reflected-text-block::after {
+    content: attr(data-text);
+    transform: scaleY(-0.6) translateY(6px);
+    background: linear-gradient(180deg, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0) 80%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    opacity: 0.4;
+    pointer-events: none;
+    line-height: 1;
+}
+
+/* --- 3. 3D Embossed Glass Text Block --- */
+.embossed-glass-text {
+    background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(240,253,250,0.3) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    padding: 2px 8px;
+    color: #0369a1;
+    font-weight: bold;
+    box-shadow: 
+        1px 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 #fff,
+        inset 0 -3px 6px rgba(2,132,199,0.1);
+    display: inline-block;
+}
+
+/* --- 4. Kinetic Horizontal Wave Oscillation --- */
+.kinetic-wave-text {
+    display: inline-flex;
+    gap: 1px;
+    font-weight: bold;
+    color: #10b981;
+}
+.kinetic-wave-char {
+    display: inline-block;
+    animation: wave-bounce 1.2s infinite ease-in-out;
+}
+@keyframes wave-bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px) scale(1.1); color: #34d399; text-shadow: 0 4px 8px rgba(52,211,153,0.5); }
+}
+
+/* --- 3D Edit-Safe Aqua Box Container Frame --- */
+.aqua-aero-box {
+    background: radial-gradient(circle at 50% 30%, #06b6d4 0%, #0284c7 70%, #0369a1 100%);
+    border: 3px solid #67e8f9;
+    border-radius: 16px;
+    padding: 25px;
+    margin: 20px 0;
+    color: #ffffff;
+    font-weight: bold;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 
+        0 10px 30px rgba(6, 182, 212, 0.4),
+        inset 0 1px 2px rgba(255,255,255,0.8),
+        inset 0 -10px 20px rgba(0,0,0,0.2);
+}
+
+/* High-gloss top reflection lens overlay */
+.aqua-aero-box::before {
+    content: ''; position: absolute; top: 2px; left: 2px; right: 2px; height: 45%;
+    background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
+    border-radius: 13px 13px 100% 100% / 13px 13px 30% 30%; pointer-events: none; z-index: 3;
+}
+
+/* --- Inline Floating Aqua Orbs --- */
+.aero-box-orb {
+    position: absolute; border-radius: 50%; pointer-events: none; z-index: 2;
+    background: radial-gradient(circle at 50% 35%, rgba(255,255,255,0.9) 0%, rgba(56,189,248,0.4) 40%, rgba(2,132,199,0.7) 80%, transparent 100%);
+    box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2), 0 4px 10px rgba(6,182,212,0.3);
+    animation: bubble-up 5s infinite linear; opacity: 0.7;
+}
+
+@keyframes bubble-up {
+    0% { transform: translateY(120%) scale(0.7); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { transform: translateY(-120%) scale(1.2); opacity: 0; }
+}
+
+/* --- The Edit-Safe Text Layer Window --- */
+.aqua-box-content {
+    position: relative;
+    z-index: 4; /* Floats safely on top of bubbles */
+    text-shadow: 0 2px 4px rgba(2,44,87,0.8);
+    font-family: 'Segoe UI', sans-serif;
+    line-height: 1.6;
+    outline: none;
+    min-height: 40px;
+}
+
+/* --- MORE FORMATTING SPEC STYLES --- */
+
+/* 1. ~G~ Green Gel Highlight ~G~ */
+.gel-green-flash {
+    background: linear-gradient(180deg, #a7f3d0 0%, #10b981 50%, #047857 100%);
+    color: #fff; padding: 2px 8px; border-radius: 20px; font-weight: bold;
+    box-shadow: 0 4px 10px rgba(16,185,129,0.4), inset 0 1px 1px #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3); display: inline-block;
+}
+
+/* 2. ~U~ Liquid Aurora Underline ~U~ */
+.liquid-underline {
+    position: relative; display: inline-block; font-weight: bold;
+}
+.liquid-underline::after {
+    content: ''; position: absolute; left: 0; bottom: -2px; width: 100%; height: 5px;
+    background: linear-gradient(90deg, #38bdf8, #10b981, #38bdf8);
+    border-radius: 4px; box-shadow: 0 2px 4px rgba(56,189,248,0.5);
+}
+
+/* 3. ~B~ Glossy Border Badge ~B~ */
+.glossy-border-badge {
+    border: 3px solid #38bdf8; background: #f0f9ff; color: #0369a1;
+    padding: 1px 8px; border-radius: 6px; font-weight: 800; font-size: 14px;
+    box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 2px 4px rgba(56,189,248,0.2);
+    display: inline-block;
+}
+
+/* 4. ~S~ Cyber-Glow Spark Modifier ~S~ */
+.cyber-glow-spark {
+    color: #f472b6; font-weight: 900; text-shadow: 0 0 10px #ec4899, 0 0 20px #db2777;
+    animation: text-pulse 1.5s infinite alternate; display: inline-block;
+}
+@keyframes text-pulse { from { filter: brightness(1); } to { filter: brightness(1.3); } }
+
+/* --- Help Button Variant Shading --- */
+.btn-help {
+    background: linear-gradient(180deg, #fb923c 0%, #ea580c 48%, #c2410c 100%) !important;
+    border-color: #ffedd5 !important;
+    margin-top: auto; /* Drops the Help item cleanly to the bottom of your sidebar tray layout */
+}
+.btn-help:hover {
+    background: linear-gradient(180deg, #fdba74 0%, #f97316 48%, #ea580c 100%) !important;
+}
+
+/* --- Glass Morphic System Dialogue Box Overlay --- */
+#aero-modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(2, 132, 199, 0.25);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    z-index: 100; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+#aero-modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* 3D Embossed Dialogue Chassis Window */
+#aero-dialog-box {
+    width: 580px; max-height: 80vh; background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(239,246,255,0.9) 100%);
+    border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 1px 2px #fff;
+    display: flex; flex-direction: column; overflow: hidden;
+    transform: scale(0.85); transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+#aero-modal-overlay.active #aero-dialog-box { transform: scale(1); }
+
+/* Translucent Panel Header */
+.dialog-header {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+    border-bottom: 2px solid rgba(255,255,255,0.4); padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between; position: relative;
+}
+.dialog-header h3 { color: #fff; margin: 0; font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+#dialog-close-btn {
+    width: 22px; height: 22px; background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%);
+    border: 1px solid #f87171; border-radius: 4px; color: white; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+#dialog-close-btn:active { transform: scale(0.9); }
+
+/* --- Scrollable Body Component --- */
+.dialog-body-scroll {
+    padding: 20px; overflow-y: scroll; flex: 1; box-sizing: border-box;
+    background: radial-gradient(circle at 50% 0%, rgba(219,234,254,0.3) 0%, transparent 80%);
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
+}
+.dialog-body-scroll h4 { margin: 15px 0 8px 0; font-size: 13px; color: #0369a1; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; }
+
+/* Skeuomorphic internal information cards */
+.help-card {
+    background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px;
+    padding: 12px; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; line-height: 1.8; color: #334155;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
+}
+.help-card b { color: #0f172a; display: inline-block; min-width: 85px; }
+.text-sky-blue { color: #0284c7 !important; }
+
+/* Dialog Confirmation Gloss Orb Button */
+.dialog-footer { padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; background: #f8fafc; }
+.dialog-confirm-orb {
+    background: linear-gradient(180deg, #34d399 0%, #10b981 48%, #047857 100%);
+    border: 2px solid #a7f3d0; border-radius: 20px; padding: 10px 22px; color: white;
+    font-weight: bold; font-size: 13px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 10px rgba(16,185,129,0.3), inset 0 1px 1px #fff; transition: transform 0.05s;
+}
+.dialog-confirm-orb:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 3px rgba(0,0,0,0.3); }
+
+/* Customize scrollbar layout to stay tactile and clean */
+.dialog-body-scroll::-webkit-scrollbar { width: 10px; }
+.dialog-body-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.03); border-radius: 10px; }
+.dialog-body-scroll::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #94a3b8 0%, #64748b 100%);
+    border: 2px solid #f1f5f9; border-radius: 10px;
+}
+
+/* --- Multi-Line Code Block Container --- */
+.writedown-code-block {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 3px solid #475569;
+    border-radius: 12px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 
+        0 8px 24px rgba(0,0,0,0.3),
+        inset 0 -5px 15px rgba(0,0,0,0.4);
+    overflow: hidden;
+}
+
+/* Glossy Top Header Bar */
+.code-block-header {
+    background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.15) 100%);
+    border-bottom: 2px solid #475569;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.code-block-header span {
+    color: #94a3b8;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* Inset Code Cavity Text Area */
+.code-block-content {
+    padding: 20px;
+    margin: 0;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 14px;
+    color: #38bdf8;
+    text-shadow: 0 0 4px rgba(56,189,248,0.4);
+    outline: none;
+    white-space: pre-wrap;
+    /* Soft internal drop shadow to look embedded */
+    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5);
+}
+
+/* Bottom Toolbar Deck */
+.code-block-footer {
+    background: rgba(15, 23, 42, 0.6);
+    border-top: 1px solid #334155;
+    padding: 8px 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* 3D Tactile Copy Button Component */
+.code-copy-btn {
+    background: linear-gradient(180deg, #64748b 0%, #475569 50%, #334155 100%);
+    border: 2px solid #94a3b8;
+    border-radius: 6px;
+    padding: 5px 14px;
+    color: #ffffff;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 
+        0 3px 6px rgba(0,0,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.4);
+    transition: transform 0.05s;
+}
+.code-copy-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.4), inset 0 2px 4px rgba(0,0,0,0.5);
+}
+
+/* --- Base Theme Colors for 3D Aqua Containers --- */
+.aqua-emerald-box {
+    background: radial-gradient(circle at 50% 30%, #34d399 0%, #10b981 70%, #047857 100%);
+    border: 3px solid #6ee7b7;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+}
+.aqua-emerald-box .aqua-box-content { color: #022c22; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
+.aqua-emerald-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(110,231,183,0.4) 40%, rgba(16,185,129,0.7) 80%, transparent 100%); }
+
+.aqua-amber-box {
+    background: radial-gradient(circle at 50% 30%, #fbbf24 0%, #f59e0b 70%, #b45309 100%);
+    border: 3px solid #fde047;
+    box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+}
+.aqua-amber-box .aqua-box-content { color: #451a03; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
+.aqua-amber-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(253,224,71,0.5) 40%, rgba(245,158,11,0.7) 80%, transparent 100%); }
+
+.aqua-crimson-box {
+    background: radial-gradient(circle at 50% 30%, #f87171 0%, #ef4444 70%, #b91c1c 100%);
+    border: 3px solid #fca5a5;
+    box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+}
+.aqua-crimson-box .aqua-box-content { color: #450a0a; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
+.aqua-crimson-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(252,165,165,0.4) 40%, rgba(239,68,68,0.7) 80%, transparent 100%); }
+
+.aqua-amethyst-box {
+    background: radial-gradient(circle at 50% 30%, #c084fc 0%, #a855f7 70%, #7e22ce 100%);
+    border: 3px solid #e9d5ff;
+    box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+}
+.aqua-amethyst-box .aqua-box-content { color: #2e1065; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
+.aqua-amethyst-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(233,213,255,0.4) 40%, rgba(168,85,247,0.7) 80%, transparent 100%); }
+
+/* --- Core 3D Embossed Glass Panel Chassis --- */
+.aero-glass-panel {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(240, 253, 250, 0.45) 100%);
+    border: 3px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    /* Clean, tactile 3D raised border casting shadow rules */
+    box-shadow: 
+        0 10px 30px rgba(2, 132, 199, 0.15),
+        inset 0 1px 0 #fff,
+        inset 0 -6px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Glass Panel Glossy Top Header */
+.glass-panel-header {
+    background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%);
+    border-bottom: 2px solid rgba(255, 255, 255, 0.6);
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+}
+.glass-panel-header span {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+}
+
+/* Edit-Safe Internal Writing Area */
+.glass-panel-content {
+    padding: 20px 18px;
+    outline: none;
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+/* --- Theme Color Variants --- */
+.panel-sky { border-color: rgba(56, 189, 248, 0.5); background: linear-gradient(180deg, rgba(240, 249, 255, 0.8) 0%, rgba(224, 242, 254, 0.5) 100%); }
+.panel-sky .glass-panel-header { border-bottom-color: rgba(56, 189, 248, 0.4); }
+.panel-sky .glass-panel-header span { color: #0369a1; }
+.panel-sky .glass-panel-content { color: #0c4a6e; }
+
+.panel-emerald { border-color: rgba(52, 211, 153, 0.5); background: linear-gradient(180deg, rgba(240, 253, 250, 0.8) 0%, rgba(204, 251, 241, 0.5) 100%); }
+.panel-emerald .glass-panel-header { border-bottom-color: rgba(52, 211, 153, 0.4); }
+.panel-emerald .glass-panel-header span { color: #059669; }
+.panel-emerald .glass-panel-content { color: #064e3b; }
+
+.panel-amber { border-color: rgba(251, 191, 36, 0.5); background: linear-gradient(180deg, rgba(255, 251, 235, 0.8) 0%, rgba(254, 243, 199, 0.5) 100%); }
+.panel-amber .glass-panel-header { border-bottom-color: rgba(251, 191, 36, 0.4); }
+.panel-amber .glass-panel-header span { color: #d97706; }
+.panel-amber .glass-panel-content { color: #78350f; }
+
+.panel-crimson { border-color: rgba(248, 113, 113, 0.5); background: linear-gradient(180deg, rgba(254, 242, 242, 0.8) 0%, rgba(254, 226, 226, 0.5) 100%); }
+.panel-crimson .glass-panel-header { border-bottom-color: rgba(248, 113, 113, 0.4); }
+.panel-crimson .glass-panel-header span { color: #dc2626; }
+.panel-crimson .glass-panel-content { color: #7f1d1d; }
+
+/* --- Global Line Break Margin Fix --- */
+.glass-panel-content p {
+    margin: 0;
+    padding: 0;
+}
+
+/* --- Inline Gel Highlight Common Chassis --- */
+.gel-bubble-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-weight: 800;
+    white-space: nowrap; /* Prevents text from splitting into multi-line blocks */
+    box-shadow: 
+        0 3px 6px rgba(0,0,0,0.06), 
+        inset 0 1px 1px rgba(255,255,255,0.4);
+    margin: 0 2px;
+    vertical-align: middle;
+}
+
+/* --- 10 Skeuomorphic Color Specifications --- */
+/* Cyan */
+.gel-chip-cyan {
+    background: linear-gradient(180deg, #30d3e5 0%, transparent 100%);
+    border: 2px solid #26a3b1;
+    color: #043e44;
+}
+/* Orange */
+.gel-chip-orange {
+    background: linear-gradient(180deg, #f97316 0%, transparent 100%);
+    border: 2px solid #ea580c;
+    color: #431407;
+}
+/* Green */
+.gel-chip-green {
+    background: linear-gradient(180deg, #10b981 0%, transparent 100%);
+    border: 2px solid #059669;
+    color: #022c22;
+}
+/* Red */
+.gel-chip-red {
+    background: linear-gradient(180deg, #ef4444 0%, transparent 100%);
+    border: 2px solid #dc2626;
+    color: #450a0a;
+}
+/* Purple */
+.gel-chip-purple {
+    background: linear-gradient(180deg, #a855f7 0%, transparent 100%);
+    border: 2px solid #9333ea;
+    color: #2e1065;
+}
+/* Pink */
+.gel-chip-pink {
+    background: linear-gradient(180deg, #ec4899 0%, transparent 100%);
+    border: 2px solid #db2777;
+    color: #4c0519;
+}
+/* Yellow */
+.gel-chip-yellow {
+    background: linear-gradient(180deg, #ead708 0%, transparent 100%);
+    border: 2px solid #caa604;
+    color: #452b03;
+}
+/* Blue */
+.gel-chip-blue {
+    background: linear-gradient(180deg, #3b82f6 0%, transparent 100%);
+    border: 2px solid #2563eb;
+    color: #172554;
+}
+/* Lime */
+.gel-chip-lime {
+    background: linear-gradient(180deg, #84cc16 0%, transparent 100%);
+    border: 2px solid #65a30d;
+    color: #1a2e05;
+}
+/* Teal */
+.gel-chip-teal {
+    background: linear-gradient(180deg, #06b6d4 0%, transparent 100%);
+    border: 2px solid #0891b2;
+    color: #083344;
+}
+
+/* Gold */
+.gel-chip-gold {
+    background: linear-gradient(180deg, #ea9f08 0%, transparent 100%);
+    border: 2px solid #ca8a04;
+    color: #451a03;
+}
+
+/* Slate */
+.gel-chip-slate {
+    background: linear-gradient(180deg, #b4b4b4 0%, transparent 100%);
+    border: 2px solid #6f6f6f;
+    color: #363636;
+}
+
+/* White */
+.gel-chip-white {
+    background: linear-gradient(180deg, #f3f3f3 0%, transparent 100%);
+    border: 2px solid #b3b3b3;
+    color: #7a7a7a;
+}
+
+/* Black */
+.gel-chip-black {
+    background: linear-gradient(180deg, #919191 0%, transparent 100%);
+    border: 2px solid #454545;
+    color: #222222;
+}
+
+/* Fog */
+.gel-chip-fog {
+    background: linear-gradient(180deg, #d9d9d9 0%, transparent 100%);
+    border: 2px solid #808080;
+    color: #404040;
+}
+
+/* Cyan */
+.gel-chip-turquoise {
+    background: linear-gradient(180deg, #30e5cd 0%, transparent 100%);
+    border: 2px solid #26b1a5;
+    color: #044439;
+}
+
+/* --- Polished 3D Water Drop Highlight (~WD~) --- */
+.gel-chip-waterdrop {
+    display: inline-flex;
+    align-items: center;
+    /* Removed the intense white radial gloss overlay to kill the annoying reflection */
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    /* Swapped the ugly border for a clean, deep matching oceanic outline tone */
+    border: 2px solid #0369a1;
+    border-radius: 14px 4px 14px 14px; /* Distinct asymmetrical aero shell corners */
+    padding: 3px 12px;
+    color: #0c4a6e; /* Very dark text contrast floor */
+    font-weight: 800;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+    box-shadow: 
+        0 4px 10px rgba(2, 132, 199, 0.25), 
+        inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+
+/* --- 2. Solar Flare Glow Highlight (~SF~) --- */
+.gel-chip-solarflare {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(180deg, #fef08a 0%, #f97316 60%, #ea580c 100%);
+    border: 2px solid #fef08a;
+    border-radius: 8px;
+    padding: 2px 10px;
+    color: #431407;
+    font-weight: 900;
+    white-space: nowrap;
+    box-shadow: 
+        0 0 12px rgba(249, 115, 22, 0.5),
+        inset 0 1px 1px #fff;
+    position: relative;
+}
+/* Linear horizontal glass glint slash */
+.gel-chip-solarflare::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+    background: rgba(255,255,255,0.4); pointer-events: none;
+}
+
+/* --- 3. Aurora Wave Glass Shard (~AW~) --- */
+.gel-chip-aurorawave {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, rgba(56,189,248,0.7) 0%, rgba(16,185,129,0.7) 100%);
+    border: 2px solid rgba(255,255,255,0.8);
+    border-radius: 4px 12px 4px 12px; /* Angled wave slice look */
+    padding: 2px 12px;
+    color: #022c22;
+    font-weight: 800;
+    white-space: nowrap;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 4px 10px rgba(16,185,129,0.25), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+/* --- Common Chassis for Custom !# # Tags --- */
+.aero-tag-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px;
+    border-radius: 6px; /* Matching your custom edge radius guidelines */
+    font-family: inherit;
+    font-weight: 800;
+    white-space: nowrap;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.06), inset 0 1px 1px rgba(255,255,255,0.4);
+    margin: 0 3px;
+    vertical-align: middle;
+}
+
+/* --- 8 Vibrant Theme Specifications --- */
+/* 1. Aqua Blue (!#AQ#) */
+.tag-chip-a { background: linear-gradient(180deg, #0ea5e9 0%, transparent 100%); border: 2px solid #0284c7; color: #0c4a6e; }
+/* 2. Emerald Green (!#EM#) */
+.tag-chip-g { background: linear-gradient(180deg, #10b981 0%, transparent 100%); border: 2px solid #059669; color: #064e3b; }
+/* 3. Sunset Orange (!#OR#) */
+.tag-chip-o { background: linear-gradient(180deg, #f97316 0%, transparent 100%); border: 2px solid #ea580c; color: #431407; }
+/* 4. Crimson Red (!#CR#) */
+.tag-chip-r { background: linear-gradient(180deg, #ef4444 0%, transparent 100%); border: 2px solid #dc2626; color: #450a0a; }
+/* 5. Royal Purple (!#PR#) */
+.tag-chip-pr { background: linear-gradient(180deg, #a855f7 0%, transparent 100%); border: 2px solid #9333ea; color: #2e1065; }
+/* 6. Fuchsia Pink (!#PK#) */
+.tag-chip-pk { background: linear-gradient(180deg, #ec4899 0%, transparent 100%); border: 2px solid #db2777; color: #4c0519; }
+/* 7. Amber Yellow (!#YL#) */
+.tag-chip-y { background: linear-gradient(180deg, #eab308 0%, transparent 100%); border: 2px solid #ca8a04; color: #451a03; }
+/* 8. Steel Slate (!#SL#) */
+.tag-chip-sl { background: linear-gradient(180deg, #94a3b8 0%, transparent 100%); border: 2px solid #475569; color: #1e293b; }
+
+/* --- 1. Tactile Vista Foldout Note Tab (~FN~) --- */
+.applet-foldout-tab {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
+    border: 2px solid #94a3b8;
+    border-left: 6px solid #0284c7; /* Heavy blue binding edge */
+    border-radius: 4px 12px 12px 4px;
+    padding: 4px 12px;
+    margin: 0 4px;
+    color: #1e3a8a;
+    font-weight: bold;
+    font-size: 13px;
+    box-shadow: 
+        2px 4px 8px rgba(0,0,0,0.1),
+        inset 1px 1px 0 #fff;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+.applet-foldout-tab:hover {
+    transform: translateX(2px);
+    background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+}
+
+/* --- 2. 3D Aqua Toggle Switch (~TS~) --- */
+.applet-aqua-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(226,232,240,0.3) 100%);
+    border: 2px solid rgba(255,255,255,0.8);
+    border-radius: 14px;
+    padding: 2px 10px;
+    margin: 0 4px;
+    font-size: 12px;
+    color: #334155;
+    font-weight: 800;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    user-select: none;
+    cursor: pointer;
+}
+.switch-pill {
+    width: 24px; height: 14px; background: #cbd5e1; border-radius: 7px;
+    border: 1px solid #94a3b8; position: relative; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+}
+.switch-pill::after {
+    content: ''; position: absolute; top: 1px; left: 1px; width: 10px; height: 100%;
+    border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fff 0%, #94a3b8 100%);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 0.15s ease-in-out;
+}
+.applet-aqua-switch.turned-on .switch-pill {
+    background: #10b981; border-color: #059669;
+}
+.applet-aqua-switch.turned-on .switch-pill::after {
+    left: 11px; background: radial-gradient(circle at 35% 35%, #fff 0%, #059669 100%);
+}
+
+/* --- 3. Glossy Glass Stamp Marker (~SM~) --- */
+.applet-glass-stamp {
+    display: inline-flex;
+    transform: rotate(-3deg);
+    background: rgba(239, 68, 68, 0.15);
+    border: 3px double #ef4444;
+    border-radius: 4px;
+    padding: 1px 8px;
+    margin: 0 6px;
+    color: #b91c1c;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    box-shadow: 0 0 4px rgba(239, 68, 68, 0.2);
+}
+
+/* Add these parameters to your existing .applet-foldout-tab, .applet-aqua-switch, and .applet-glass-stamp classes: */
+.applet-foldout-tab, .applet-aqua-switch, .applet-glass-stamp {
+    user-select: none;         /* Stops users from highlighting or editing the text */
+    -webkit-user-select: none; /* Safari compatibility */
+    pointer-events: auto;      /* Ensures mouse clicks still register perfectly */
+}
+
+/* --- 3D Foldout Panel Container Chassis --- */
+.aero-foldout-panel {
+    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
+    border: 3px solid #cbd5e1;
+    border-radius: 8px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 
+        0 6px 18px rgba(0,0,0,0.08),
+        inset 0 1px 0 #fff;
+    overflow: hidden;
+}
+
+/* Light-Gray Structural Header Strip */
+.foldout-panel-header {
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%);
+    border-bottom: 2px solid #cbd5e1;
+    padding: 10px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    user-select: none;
+}
+
+/* Tactile 3D Arrow Action Indicator Orb */
+.foldout-arrow-orb {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #fff 0%, #f1f5f9 100%);
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    font-size: 11px;
+    font-weight: 900;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: transform 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+.aero-foldout-panel.panel-collapsed .foldout-arrow-orb {
+    transform: rotate(180deg); /* Flips the arrow downward when shut */
+}
+
+/* Fully Editable Title Label Strip */
+.foldout-panel-title-input {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    color: #475569;
+    outline: none;
+    flex: 1;
+}
+
+/* Multi-Line Content Cavity Area Layout */
+.foldout-panel-content {
+    padding: 20px 18px;
+    outline: none;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 15px;
+    color: #334155;
+    line-height: 1.6;
+    display: block;
+    background: #ffffff;
+    box-shadow: inset 2px 2px 6px rgba(0,0,0,0.05);
+}
+.aero-foldout-panel.panel-collapsed .foldout-panel-content {
+    display: none; /* Closes down the text block completely */
+}
+
+/* ==========================================
+   NEW SKEUOMORPHIC EFFECT SHADING SPECTER
+   ========================================== */
+
+/* 1. Liquid Mercury Pearl Shell (~MP~) */
+.effect-mercury-pearl {
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 50%, #64748b 100%);
+    border: 2px solid #e2e8f0; border-radius: 6px; padding: 2px 8px;
+    color: #0f172a; font-weight: 900; white-space: nowrap; display: inline-block;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15), inset 0 1px 1px #fff;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+}
+
+/* 2. Frosted Prism Glass Refraction (~PG~) */
+.effect-prism-refract {
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(254,226,226,0.2) 30%, rgba(224,242,254,0.2) 70%, rgba(255,255,255,0.1) 100%);
+    border: 2px solid rgba(255,255,255,0.8); border-radius: 4px; padding: 1px 8px;
+    color: #1e3a8a; font-weight: 800; white-space: nowrap; display: inline-block;
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(2,132,199,0.1), inset 0 1px 0 #fff;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* 3. Deep Inset Screen Cavity Block (~CB~) */
+.effect-screen-cavity {
+    background: #0f172a; border: 2px solid #334155; border-radius: 4px;
+    padding: 1px 6px; color: #4ade80; font-family: 'JetBrains Mono', monospace;
+    font-weight: bold; font-size: 14px; white-space: nowrap; display: inline-block;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.6); text-shadow: 0 0 4px rgba(74,222,128,0.5);
+}
+
+/* 4. Sunlight Ray Glow Ribbon (~SR~) */
+.effect-sunlight-ray {
+    background: linear-gradient(90deg, #fef08a 0%, #fde047 50%, #eab308 100%);
+    border-top: 2px solid #fff; border-bottom: 2px solid #ca8a04;
+    padding: 2px 10px; color: #713f12; font-weight: 900; white-space: nowrap; display: inline-block;
+    box-shadow: 0 0 15px rgba(253,224,71,0.6); position: relative;
+}
+.effect-sunlight-ray::before {
+    content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 35%;
+    background: rgba(255,255,255,0.45); pointer-events: none;
+}
+
+/* 5. Deep Ocean Abyssal Plate (~OA~) */
+.effect-abyssal-plate {
+    background: linear-gradient(180deg, #1e3a8a 0%, #172554 100%);
+    border: 2px solid #3b82f6; border-radius: 8px; padding: 2px 9px;
+    color: #93c5fd; font-weight: bold; white-space: nowrap; display: inline-block;
+    box-shadow: 0 4px 10px rgba(23,37,84,0.3), inset 0 1px 2px rgba(255,255,255,0.3);
+}
+
+/* 6. Mechanical Metallic Grid Mesh (~MM~) */
+.effect-metallic-mesh {
+    background-color: #94a3b8;
+    background-image: radial-gradient(#64748b 1px, transparent 1px); background-size: 4px 4px;
+    border: 2px solid #475569; border-bottom: 4px solid #334155; border-radius: 6px;
+    padding: 2px 10px; color: #0f172a; font-weight: 800; white-space: nowrap; display: inline-block;
+    text-shadow: 0 1px 0 #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* 7. Kinetic Fluid Bubble Expand Ribbon (~FE~) */
+.effect-fluid-expand {
+    background: linear-gradient(180deg, #22d3ee 0%, #06b6d4 100%);
+    border: 2px solid #99f6e4; border-radius: 12px; padding: 2px 12px;
+    color: #042f2e; font-weight: bold; white-space: nowrap; display: inline-block;
+    box-shadow: inset 0 1px 1px #fff, 0 3px 6px rgba(6,182,212,0.2);
+    animation: bubble-swell 2s infinite ease-in-out alternate;
+}
+@keyframes bubble-swell {
+    from { transform: scale(1); filter: brightness(1); }
+    to { transform: scale(1.05); filter: brightness(1.15); box-shadow: inset 0 1px 2px #fff, 0 5px 12px rgba(6,182,212,0.4); }
+}
+
+/* --- 3D State-Flipping Toggle Applet (~TB~) --- */
+.applet-state-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 14px;
+    border-radius: 20px; /* Capsule shape matching your style theme */
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    color: white;
+    cursor: pointer;
+    white-space: nowrap;
+    user-select: none;
+    -webkit-user-select: none;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    margin: 0 4px;
+    vertical-align: middle;
+}
+
+/* Base State: Vibrant Green */
+.applet-state-button.state-green {
+    background: linear-gradient(180deg, #34d399 0%, #10b981 50%, #059669 100%);
+    border: 2px solid #a7f3d0;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+.applet-state-button.state-green:hover {
+    background: linear-gradient(180deg, #6ee7b7 0%, #10b981 50%, #047857 100%);
+}
+
+/* Flipped State: High-Contrast Red */
+.applet-state-button.state-red {
+    background: linear-gradient(180deg, #f87171 0%, #ef4444 50%, #b91c1c 100%);
+    border: 2px solid #fca5a5;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+.applet-state-button.state-red:hover {
+    background: linear-gradient(180deg, #fca5a5 0%, #ef4444 50%, #991b1b 100%);
+}
+
+/* Click Action Depression Physics */
+.applet-state-button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* ==========================================
+   INTERACTIVE SKEUOMORPHIC APPLET DECK
+   ========================================== */
+
+/* --- 1. Circular Media Volume Dial (~VD~) --- */
+.applet-volume-dial {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 2px solid #cbd5e1; border-radius: 20px; padding: 4px 12px; margin: 0 4px;
+    font-size: 12px; color: #475569; font-weight: 800; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff; user-select: none;
+}
+.dial-knob {
+    width: 18px; height: 18px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 70%, #94a3b8 100%);
+    border: 1px solid #94a3b8; position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s ease-out;
+}
+.dial-knob::after {
+    content: ''; position: absolute; top: 3px; left: 8px; width: 2px; height: 4px;
+    background: #475569; border-radius: 1px;
+}
+
+/* --- 2. Liquid Battery/Energy Cell Tracker (~BC~) --- */
+.applet-battery-cell {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #1e293b; border: 2px solid #475569; border-radius: 4px;
+    padding: 3px 8px; margin: 0 4px; font-size: 11px; font-family: monospace;
+    color: #4ade80; vertical-align: middle; user-select: none;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+}
+.battery-juice-grid {
+    display: flex; gap: 2px; width: 30px; height: 12px;
+    background: rgba(0,0,0,0.3); padding: 1px; border-radius: 1px;
+}
+.juice-block {
+    flex: 1; height: 100%; background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
+    box-shadow: 0 0 4px #22c55e;
+}
+.juice-block.drain { background: #334155; box-shadow: none; }
+
+/* --- 3. Compact Windows Calendar Desk Overlay (~CD~) --- */
+.applet-calendar-desk {
+    display: inline-flex; flex-direction: column; align-items: center;
+    width: 42px; border: 2px solid #0284c7; border-radius: 6px;
+    margin: 0 4px; vertical-align: middle; overflow: hidden; user-select: none;
+    box-shadow: 0 4px 10px rgba(2,132,199,0.15);
+}
+.cal-deck-top {
+    width: 100%; background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%);
+    color: #fff; font-size: 9px; font-weight: 900; text-align: center; padding: 2px 0;
+    border-bottom: 1px solid #b91c1c; text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+.cal-deck-body {
+    width: 100%; background: #fff; color: #1e293b; font-size: 14px;
+    font-weight: 800; text-align: center; padding: 3px 0;
+}
+
+/* --- 4. Micro Segmented Star Rating Bar (~SR~) --- */
+.applet-star-rating {
+    display: inline-flex; align-items: center; gap: 2px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(241,245,249,0.3) 100%);
+    border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 8px; margin: 0 4px;
+    cursor: pointer; vertical-align: middle; user-select: none;
+}
+.rating-star-node { color: #cbd5e1; font-size: 13px; transition: color 0.1s; }
+.rating-star-node.star-glow { color: #f59e0b; text-shadow: 0 0 4px #fbbf24; }
+
+/* --- 5. Glass Push-Button Counter Badge (~CC~) --- */
+.applet-counter-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    border: 2px solid #bae6fd; border-radius: 6px; padding: 3px 10px; margin: 0 4px;
+    color: #fff; font-weight: bold; font-size: 12px; cursor: pointer; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(2,132,199,0.2), inset 0 1px 1px rgba(255,255,255,0.4); user-select: none;
+}
+.badge-count-orb {
+    background: #0f172a; padding: 1px 6px; border-radius: 4px;
+    font-family: monospace; font-size: 11px; color: #38bdf8;
+    box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+/* --- Brushed Metal Lock-Latch Security Frame (~LK~) --- */
+.applet-security-latch {
+    display: inline-flex; 
+    align-items: center; 
+    gap: 6px;
+    background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+    border: 2px solid #cbd5e1; 
+    border-radius: 4px; 
+    padding: 3px 10px; 
+    margin: 0 4px;
+    font-weight: 800; 
+    font-size: 12px; 
+    cursor: pointer; 
+    vertical-align: middle; 
+    user-select: none;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    
+    /* --- THE CRITICAL ANTI-OUTLINE OVERRIDE CHASSIS --- */
+    color: #111827 !important;            /* Force an ultra-dark near-black font ink layer */
+    text-shadow: none !important;          /* Strip away all native white drop shadows completely */
+    -webkit-text-stroke: 0px !important;   /* Kill accidental browser duplicate text outline vectors */
+    filter: none !important;               /* Ensure no system blending modes are clipping colors */
+}
+
+.latch-icon-frame { font-size: 11px; display: inline-block; }
+
+/* Also clean up the shadow parameters for the unlocked state directly below it */
+.applet-security-latch.latch-unlocked {
+    background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); 
+    border-color: #e0f2fe; 
+    
+    /* --- CLEAN UNLOCKED CONTRAST --- */
+    color: #042f2e !important;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+    filter: none !important;
+}
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 1
+   ========================================== */
+
+/* 1. Glossy Media Playback Progress Ribbon (~PR~) */
+.applet-playback-ribbon {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 2px solid #cbd5e1; border-radius: 6px; padding: 4px 12px; margin: 0 4px;
+    font-size: 12px; color: #334155; font-weight: bold; vertical-align: middle; user-select: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+}
+.playback-track-bar {
+    width: 60px; height: 8px; background: #cbd5e1; border-radius: 4px;
+    border: 1px solid #94a3b8; overflow: hidden; position: relative; box-shadow: inset 0 1px 2px rgba(0,0,0,0.1);
+}
+.playback-fill-fluid {
+    width: 0%; height: 100%; background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    box-shadow: 0 0 6px #0ea5e9; transition: width 0.1s linear;
+}
+
+/* 2. Iridescent Pearl Warning Orb (~PO~) */
+.effect-pearl-orb {
+    background: radial-gradient(circle at 30% 30%, #ffffff 0%, #fca5a5 40%, #ef4444 85%, #991b1b 100%);
+    border: 2px solid #fee2e2; border-radius: 50%; padding: 2px 10px;
+    color: #fff; font-weight: 900; white-space: nowrap; display: inline-block;
+    box-shadow: 0 4px 12px rgba(239,68,68,0.35), inset -2px -2px 6px rgba(0,0,0,0.3);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5); vertical-align: middle;
+}
+
+/* 3. Inset Glass Metric Readout Cavity (~MR~) */
+.effect-metric-cavity {
+    background: #172554; border: 2px solid #1e3a8a; border-radius: 6px;
+    padding: 2px 8px; color: #38bdf8; font-family: monospace; font-weight: bold;
+    font-size: 13px; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: inset 3px 3px 6px rgba(0,0,0,0.6); text-shadow: 0 0 5px rgba(56,189,248,0.6);
+}
+
+/* 4. Windows Sidebar System CPU Radial Gauge (~CR~) */
+.applet-cpu-gauge {
+    display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
+    border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f8fafc 0%, #cbd5e1 100%);
+    border: 2px solid #94a3b8; margin: 0 4px; vertical-align: middle; position: relative;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1), inset 0 1px 1px #fff; cursor: pointer; user-select: none;
+}
+.gauge-needle-vector {
+    width: 2px; height: 12px; background: #ef4444; position: absolute; bottom: 50%; left: calc(50% - 1px);
+    transform-origin: bottom center; transform: rotate(-90deg); transition: transform 0.4s cubic-bezier(0.1, 0.9, 0.2, 1);
+    border-radius: 1px; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+
+/* 5. Linear Lens-Flare Highlight Strip (~LF~) */
+.effect-lens-flare {
+    background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.6) 50%, transparent 100%), #0ea5e9;
+    background-size: 200% 100%; background-position: -100% 0;
+    border: 2px solid #38bdf8; border-radius: 4px; padding: 2px 10px;
+    color: #fff; font-weight: 800; white-space: nowrap; display: inline-block;
+    box-shadow: 0 4px 12px rgba(14,165,233,0.3); vertical-align: middle;
+    animation: flare-sweep 3s infinite linear;
+}
+@keyframes flare-sweep {
+    0% { background-position: -150% 0; }
+    100% { background-position: 150% 0; }
+}
+
+/* 6. Mechanical Stepper Increment Button (~SI~) */
+.applet-stepper-mesh {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+    border: 2px solid #94a3b8; border-radius: 4px; padding: 2px 8px; margin: 0 4px;
+    color: #334155; font-weight: 800; font-size: 12px; cursor: pointer; vertical-align: middle; user-select: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 #fff;
+}
+.stepper-arrow-box { font-size: 9px; display: flex; flex-direction: column; line-height: 0.7; color: #64748b; }
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 2
+   ========================================== */
+
+/* 1. Liquid Drop Shadow Window (~DS~) */
+.effect-drop-shadow-window {
+    background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(241,245,249,0.5) 100%);
+    border: 1px solid rgba(255,255,255,0.9); border-radius: 8px; padding: 4px 12px; margin: 0 4px;
+    color: #0369a1; font-weight: bold; display: inline-block; vertical-align: middle;
+    /* Extra-deep 3D desktop layer drop shadow */
+    box-shadow: 
+        0 12px 28px rgba(0, 0, 0, 0.22),
+        0 4px 10px rgba(0, 0, 0, 0.1),
+        inset 0 1px 0 #fff;
+    backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+}
+
+/* 2. Glossy Aurora Glow Tube (~GL~) */
+.effect-glow-tube {
+    background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 40%, #0891b2 70%, #015366 100%);
+    border: 2px solid #e0f2fe; border-radius: 12px; padding: 2px 10px; margin: 0 4px;
+    color: #fff; font-weight: 800; font-size: 13px; white-space: nowrap; display: inline-block;
+    box-shadow: 0 0 14px rgba(6,182,212,0.6), inset 0 1px 1px rgba(255,255,255,0.6);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5); vertical-align: middle;
+}
+
+/* 3. Tactile Hardware Bevel Marker (~HB~) */
+.effect-hardware-bevel {
+    background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%);
+    border: 3px solid #94a3b8; border-top-color: #fff; border-left-color: #e2e8f0;
+    border-bottom-color: #475569; border-right-color: #64748b; border-radius: 6px;
+    padding: 3px 10px; color: #334155; font-weight: 800; display: inline-block;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-shadow: 0 1px 0 #fff;
+    vertical-align: middle;
+}
+
+/* 4. Inset Screen Matrix Segment (~IS~) */
+.effect-screen-segment {
+    background: #064e3b; border: 2px solid #047857; border-radius: 4px;
+    padding: 2px 8px; color: #34d399; font-family: monospace; font-weight: bold;
+    font-size: 13px; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: inset 2px 2px 5px rgba(0,0,0,0.4); text-shadow: 0 0 4px rgba(52,211,153,0.6);
+}
+
+/* 5. Glass Gel Capsule Accent (~GC~) */
+.effect-gel-capsule {
+    background: linear-gradient(180deg, #fbcfe8 0%, #f472b6 45%, #ec4899 75%, #9d174d 100%);
+    border: 2px solid #fdf2f8; border-radius: 25px; padding: 2px 12px; margin: 0 4px;
+    color: #fff; font-weight: bold; white-space: nowrap; display: inline-block;
+    box-shadow: 0 4px 10px rgba(236,72,153,0.35), inset 0 1px 1px rgba(255,255,255,0.5);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3); vertical-align: middle;
+}
+
+/* 6. Kinetic Fluid Orbit Animation (~KO~) */
+.effect-fluid-orbit {
+    position: relative; display: inline-block; font-weight: bold; color: #0284c7;
+    margin: 0 15px; padding: 0 4px; vertical-align: middle;
+}
+.effect-fluid-orbit::before, .effect-fluid-orbit::after {
+    content: ''; position: absolute; width: 8px; height: 8px; border-radius: 50%;
+    background: radial-gradient(circle at 30% 30%, #fff 0%, #06b6d4 100%);
+    box-shadow: 0 2px 4px rgba(6,182,212,0.4);
+    animation: orb-rotate 2.5s infinite linear;
+}
+.effect-fluid-orbit::before { top: -6px; left: -10px; }
+.effect-fluid-orbit::after { bottom: -6px; right: -10px; animation-delay: -1.25s; }
+@keyframes orb-rotate {
+    0% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(15px, -4px) scale(0.8); }
+    50% { transform: translate(30px, 0) scale(1.1); }
+    75% { transform: translate(15px, 4px) scale(0.8); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 3
+   ========================================== */
+
+/* 1. X-Ray Iridescent Glass Shard (~XG~) */
+.effect-xray-glass {
+    background: linear-gradient(135deg, rgba(6,182,212,0.6) 0%, rgba(16,185,129,0.4) 50%, rgba(236,72,153,0.4) 100%);
+    border: 2px solid rgba(255,255,255,0.9); border-radius: 4px; padding: 2px 10px;
+    color: #fff; font-weight: 900; display: inline-block; vertical-align: middle;
+    backdrop-filter: hue-rotate(90deg) saturate(1.5); -webkit-backdrop-filter: hue-rotate(90deg) saturate(1.5);
+    box-shadow: 0 6px 15px rgba(6,182,212,0.25), inset 0 1px 1px #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3); animation: xray-sheen 4s infinite linear alternate;
+}
+@keyframes xray-sheen {
+    0% { filter: hue-rotate(0deg); }
+    100% { filter: hue-rotate(180deg); }
+}
+
+/* 2. 3D Hydro-Orb Status Indicator (~ORB~) */
+.applet-hydro-orb {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px; margin: 0 4px;
+    font-size: 13px; font-weight: 800; cursor: pointer; user-select: none; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+}
+.hydro-sphere {
+    width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6);
+    box-shadow: inset -2px -2px 5px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+.applet-hydro-orb.orb-blue .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 50%, #0284c7 100%); box-shadow: 0 0 8px #0ea5e9; }
+.applet-hydro-orb.orb-blue { color: #0c4a6e; }
+.applet-hydro-orb.orb-yellow .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #fbbf24 50%, #d97706 100%); box-shadow: 0 0 8px #eab308; }
+.applet-hydro-orb.orb-yellow { color: #451a03; }
+.applet-hydro-orb.orb-red .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #f87171 50%, #dc2626 100%); box-shadow: 0 0 8px #ef4444; }
+.applet-hydro-orb.orb-red { color: #450a0a; }
+
+/* 3. Wave-Form Audio Line Loop (~WL~) */
+.effect-waveform-line {
+    position: relative; display: inline-block; font-weight: bold; color: #059669; padding-bottom: 6px;
+}
+.effect-waveform-line::after {
+    content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 8px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 20' xmlns='http://w3.org d='M0,10 Q12.5,0 25,10 T50,10 T75,10 T100,10' fill='none' stroke='%2310b981' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 30px 8px; animation: wave-move 0.8s infinite linear;
+}
+@keyframes wave-move { from { background-position-x: 0px; } to { background-position-x: 30px; } }
+
+/* --- Polished 3D Plasma Gel Highlight (~PM~) --- */
+.effect-plasma-gel {
+    /* Removed the intense cloudy radial gloss overlay to kill the annoying reflection */
+    background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+    /* Swapped the light frame for a deep, matching emerald outline tone */
+    border: 2px solid #047857;
+    border-radius: 16px 25px 14px 20px; /* Non-symmetrical organic aero droplet shape */
+    padding: 3px 14px;
+    color: #064e3b; /* Very dark text contrast floor to maximize legibility */
+    font-weight: 800;
+    white-space: nowrap;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.3);
+    box-shadow: 
+        0 4px 10px rgba(16, 185, 129, 0.25), 
+        inset 0 1px 1px rgba(255,255,255,0.5);
+    display: inline-block;
+    vertical-align: middle;
+}
+
+
+/* 5. Skeuomorphic Lock Slider (~SLS~) */
+.applet-lock-slider {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+    border: 2px solid #94a3b8; border-radius: 6px; padding: 3px 8px; margin: 0 4px;
+    color: #334155; font-weight: 800; font-size: 12px; cursor: pointer; user-select: none; vertical-align: middle;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+}
+.slider-chassis {
+    width: 32px; height: 14px; background: #94a3b8; border-radius: 7px;
+    position: relative; box-shadow: inset 0 2px 3px rgba(0,0,0,0.2);
+}
+.slider-handle-metal {
+    width: 16px; height: 100%; border-radius: 6px;
+    background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%); border: 1px solid #64748b;
+    position: absolute; top: 0; left: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    transition: left 0.15s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+.applet-lock-slider.unlocked-state .slider-chassis { background: #38bdf8; }
+.applet-lock-slider.unlocked-state .slider-handle-metal { left: 16px; }
+
+/* 6. Vista Sidebar Gadget Clock (~VM~) */
+.applet-gadget-clock {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 28px; height: 28px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
+    border: 2px solid #64748b; margin: 0 4px; vertical-align: middle; position: relative;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12), inset 0 1px 1px #fff;
+}
+.clock-hand-vector {
+    width: 2px; height: 10px; background: #334155; position: absolute; bottom: 50%; left: calc(50% - 1px);
+    transform-origin: bottom center; transform: rotate(0deg);
+}
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 4
+   ========================================== */
+
+/* 1. 3D Glass Water Bubble Capsule (~WB~) */
+.effect-water-bubble {
+    background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%);
+    border: 2px solid #0891b2;
+    border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #042f2e; font-weight: 800; white-space: nowrap; display: inline-block;
+    box-shadow: 0 4px 10px rgba(6, 182, 212, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    vertical-align: middle;
+}
+
+/* 2. Glow-in-the-Dark Tracer (~GLO~) */
+.effect-glow-tracer {
+    background: #0f172a; border: 2px solid #22c55e; border-radius: 20px;
+    padding: 2px 10px; color: #22c55e; font-family: monospace; font-weight: bold;
+    display: inline-block; vertical-align: middle; white-space: nowrap;
+    box-shadow: 0 0 12px rgba(34,197,94,0.6), inset 0 0 4px rgba(34,197,94,0.4);
+    text-shadow: 0 0 4px rgba(34,197,94,0.8);
+}
+
+/* 3. Metallic Media Playback Trigger (~MT~) */
+.applet-metal-trigger {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
+    border: 2px solid #cbd5e1; border-radius: 6px; padding: 3px 10px; margin: 0 4px;
+    color: #334155; font-weight: 800; font-size: 11px; cursor: pointer; user-select: none; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1), inset 0 1px 0 #fff; text-shadow: 0 1px 0 #fff;
+}
+.applet-metal-trigger.trigger-playing {
+    background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15); color: #0284c7;
+}
+
+/* 4. Glossy Inset Checkbox Utility (~IC~) */
+.applet-inset-check {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 6px; padding: 3px 10px; margin: 0 4px;
+    font-size: 13px; font-weight: 800; color: #334155; cursor: pointer; user-select: none; vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 #fff;
+}
+.check-cavity-box {
+    width: 14px; height: 14px; background: #cbd5e1; border-radius: 3px;
+    border: 1px solid #94a3b8; position: relative; box-shadow: inset 0 2px 3px rgba(0,0,0,0.15);
+}
+.check-cavity-box::after {
+    content: '✓'; position: absolute; top: -2px; left: 2px; color: #10b981;
+    font-size: 12px; font-weight: 900; text-shadow: 0 0 3px #6ee7b7; display: none;
+}
+.applet-inset-check.box-checked .check-cavity-box::after { display: block; }
+
+/* 5. Translucent Aqua Divider Strip (::divider) */
+.aero-liquid-divider {
+    height: 6px; background: linear-gradient(90deg, transparent 0%, #06b6d4 20%, #10b981 50%, #06b6d4 80%, transparent 100%);
+    border-radius: 3px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.2);
+    box-shadow: 0 3px 8px rgba(6,182,212,0.25); contenteditable: false;
+}
+
+/* 6. Kinetic Shimmer Title Overlay (~ST~) */
+.effect-shimmer-title {
+    background: linear-gradient(90deg, #0284c7 0%, #38bdf8 25%, #fff 50%, #38bdf8 75%, #0284c7 100%);
+    background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-weight: 900; display: inline-block; animation: title-shimmer 4s infinite linear;
+}
+@keyframes title-shimmer { to { background-position: 200% center; } }
+
+/* --- Aero Expansion Block 5 Droplet Spectrum --- */
+
+/* 1. Amber/Gold Droplet (~WD-A~) */
+.droplet-amber {
+    background: linear-gradient(180deg, #fbbf24 0%, #f59e0b 100%);
+    border: 2px solid #b45309; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #451a03; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* 2. Crimson Red Droplet (~WD-R~) */
+.droplet-crimson {
+    background: linear-gradient(180deg, #f87171 0%, #ef4444 100%);
+    border: 2px solid #b91c1c; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #450a0a; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* 3. Fuchsia Pink Droplet (~WD-P~) */
+.droplet-fuchsia {
+    background: linear-gradient(180deg, #f472b6 0%, #ec4899 100%);
+    border: 2px solid #be185d; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #4c0519; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(236, 72, 153, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* 4. Amethyst Purple Droplet (~WD-V~) */
+.droplet-amethyst {
+    background: linear-gradient(180deg, #c084fc 0%, #a855f7 100%);
+    border: 2px solid #7e22ce; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #2e1065; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(168, 85, 247, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* 5. Tangerine Orange Droplet (~WD-O~) */
+.droplet-tangerine {
+    background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%);
+    border: 2px solid #c2410c; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #431407; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* 6. Slate Steel Metallic Droplet (~WD-S~) */
+.droplet-slate {
+    background: linear-gradient(180deg, #94a3b8 0%, #64748b 100%);
+    border: 2px solid #334155; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #0f172a; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(100, 116, 139, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 6 (CODE)
+   ========================================== */
+
+/* 1. Function Call Badge (~FN~) */
+.dev-chip-function {
+    background: linear-gradient(180deg, #f3e8ff 0%, #e9d5ff 60%, #c084fc 100%);
+    border: 1px solid #a855f7; border-left: 4px solid #7e22ce; border-radius: 4px;
+    padding: 1px 8px; color: #581c87; font-family: 'JetBrains Mono', monospace;
+    font-weight: bold; font-size: 14px; white-space: nowrap; display: inline-block;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 0 #fff; vertical-align: middle;
+}
+
+/* 2. Glossy Variable Orb Token (~VAR~) */
+.dev-chip-variable {
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 50%, #fde047 100%);
+    border: 2px solid #ca8a04; border-radius: 20px; padding: 2px 10px;
+    color: #713f12; font-family: 'JetBrains Mono', monospace; font-weight: bold;
+    font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(234,179,8,0.2), inset 0 1px 1px #fff;
+}
+
+/* 3. Brushed Hardware Debug Terminal Panel (::console) */
+.writedown-console-block {
+    background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+    border: 3px solid #334155; border-radius: 12px; margin: 20px 0;
+    display: flex; flex-direction: column; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 -5px 15px rgba(0,0,0,0.5);
+}
+.console-block-header {
+    background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.2) 100%);
+    border-bottom: 2px solid #334155; padding: 8px 16px; display: flex; align-items: center;
+}
+.console-block-header span { color: #ef4444; font-family: sans-serif; font-size: 12px; font-weight: bold; text-shadow: 0 0 6px rgba(239,68,68,0.4); }
+.console-block-content {
+    padding: 20px; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #f87171;
+    text-shadow: 0 0 4px rgba(248,113,113,0.3); outline: none; white-space: pre-wrap;
+    box-shadow: inset 4px 4px 10px rgba(0,0,0,0.6);
+}
+
+/* 4. Translucent Revision Compare Block (::diff) */
+.writedown-diff-block {
+    background: rgba(255, 255, 255, 0.9); border: 3px solid #cbd5e1; border-radius: 10px;
+    margin: 20px 0; box-shadow: 0 6px 18px rgba(0,0,0,0.06); overflow: hidden;
+}
+.diff-row-content { padding: 15px; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
+.diff-row-content p { margin: 0; padding: 2px 6px; border-radius: 4px; }
+.diff-add { background: rgba(52,211,153,0.25) !important; color: #064e3b; border-left: 4px solid #10b981; }
+.diff-del { background: rgba(248,113,113,0.25) !important; color: #7f1d1d; border-left: 4px solid #ef4444; }
+
+/* 5. Interactive Color Swatch Hex Tag (~HEX~) */
+.dev-chip-hex {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px;
+    padding: 2px 8px; margin: 0 4px; font-family: 'JetBrains Mono', monospace;
+    font-size: 14px; font-weight: bold; color: #334155; vertical-align: middle; cursor: pointer;
+}
+.hex-color-orb {
+    width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15);
+    box-shadow: inset 1px 1px 2px rgba(255,255,255,0.4); display: none;
+}
+.dev-chip-hex.swatch-active .hex-color-orb { display: block; }
+
+/* 6. Liquid String Literal Ribbon (~STR~) */
+.dev-chip-string {
+    background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 50%, #86efac 100%);
+    border: 2px solid #16a34a; border-radius: 14px 25px 14px 20px; padding: 3px 12px;
+    color: #14532d; font-family: 'JetBrains Mono', monospace; font-weight: bold;
+    font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(22,163,74,0.15), inset 0 1px 1px #fff;
+}
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 7 (AVIONICS)
+   ========================================== */
+
+/* 1. Tactical Radar Sweeper Frame (~RS~) */
+.av-chip-radar-sweep {
+    background: radial-gradient(circle at 50% 50%, rgba(22,101,52,0.15) 0%, #064e3b 100%);
+    border: 2px solid #10b981; border-radius: 4px; padding: 2px 10px; margin: 0 4px;
+    color: #4ade80; font-family: 'JetBrains Mono', monospace; font-weight: bold;
+    font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 0 12px rgba(16,185,129,0.5), inset 0 0 8px rgba(0,0,0,0.6);
+    position: relative; overflow: hidden;
+}
+/* Sweeping radial cockpit lighting effect */
+.av-chip-radar-sweep::before {
+    content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+    background: linear-gradient(45deg, transparent 45%, rgba(74,222,128,0.3) 50%, transparent 55%);
+    animation: radar-sweep-loop 3s infinite linear; pointer-events: none;
+}
+@keyframes radar-sweep-loop { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* 2. Avionics Heading Indicator Card (~HD~) */
+.av-chip-heading {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #64748b; border-bottom: 4px solid #334155; border-radius: 6px;
+    padding: 2px 12px; margin: 0 4px; color: #f8fafc; font-family: monospace;
+    font-weight: 900; font-size: 14px; white-space: nowrap; display: inline-block;
+    vertical-align: middle; box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    text-shadow: 0 0 4px rgba(255,255,255,0.4);
+}
+
+/* 3. Inset Altimeter Ribbon Tracker (~AL~) */
+.av-chip-altimeter {
+    background: #020617; border: 2px solid #1e3a8a; border-radius: 4px;
+    padding: 3px 8px; margin: 0 4px; font-family: monospace; font-weight: bold;
+    font-size: 13px; color: #38bdf8; display: inline-block; vertical-align: middle;
+    box-shadow: inset 3px 3px 6px rgba(0,0,0,0.7); text-shadow: 0 0 6px #0ea5e9;
+}
+
+/* 4. Telemetry Ping Signal Node (~SG~) */
+.av-chip-signal {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px;
+    margin: 0 4px; font-size: 13px; font-weight: 800; color: #1e293b;
+    vertical-align: middle; cursor: pointer; user-select: none;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+}
+.signal-ping-orb {
+    width: 10px; height: 10px; border-radius: 50%; background: #22c55e;
+    box-shadow: 0 0 8px #10b981; transition: background 0.15s;
+}
+.av-chip-signal.sig-disconnect .signal-ping-orb { background: #ef4444; box-shadow: 0 0 8px #dc2626; }
+
+/* 5. Brushed Aluminum Horizon Deck Chassis (::horizon) */
+.writedown-horizon-block {
+    background: linear-gradient(180deg, #0284c7 0%, #0369a1 48%, #15803d 52%, #166534 100%);
+    border: 4px solid #475569; border-radius: 50%; width: 120px; height: 120px; margin: 20px auto;
+    display: flex; align-items: center; justify-content: center; position: relative;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 4px 10px rgba(0,0,0,0.4);
+}
+.horizon-pitch-line {
+    width: 80px; height: 2px; background: #ffffff; position: absolute;
+    box-shadow: 0 0 4px rgba(255,255,255,0.8); transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+/* 6. Glowing Neon-Cyan Waypoint Navigation Plate (::waypoint) */
+.writedown-waypoint-block {
+    background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
+    border: 3px solid #0891b2; border-radius: 12px; margin: 20px 0;
+    box-shadow: 0 8px 24px rgba(6,182,212,0.2), inset 0 2px 8px rgba(0,0,0,0.5); overflow: hidden;
+}
+.waypoint-block-header {
+    background: linear-gradient(180deg, rgba(6,182,212,0.15) 0%, transparent 100%);
+    border-bottom: 2px solid #0891b2; padding: 10px 18px; display: flex; align-items: center;
+}
+.waypoint-block-header span { color: #22d3ee; font-family: sans-serif; font-size: 13px; font-weight: bold; text-shadow: 0 0 6px #06b6d4; }
+.waypoint-block-content { padding: 20px; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #e2e8f0; line-height: 1.6; }
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 8 (MEGAPACK)
+   ========================================== */
+
+/* ------------------------------------------
+   STYLE 1: LIQUID PLASMA PODS (~PP-x~)
+   ------------------------------------------ */
+.megachip-plasma {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 3px 14px; border-radius: 20px 4px 20px 24px; font-weight: 800;
+    white-space: nowrap; margin: 0 4px; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+.plasma-cyan    { background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); border: 2px solid #0891b2; color: #042f2e; }
+.plasma-orange  { background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%); border: 2px solid #c2410c; color: #431407; }
+.plasma-crimson { background: linear-gradient(180deg, #f87171 0%, #ef4444 100%); border: 2px solid #b91c1c; color: #450a0a; }
+.plasma-lime    { background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%); border: 2px solid #4d7c0f; color: #1a2e05; }
+
+/* ------------------------------------------
+   STYLE 2: GLOSSY GLASS BADGE BRACKETS (~GB-x~)
+   ------------------------------------------ */
+.megachip-glass-bracket {
+    display: inline-flex; align-items: center; justify-content: center;
+    padding: 2px 12px; border-radius: 4px; font-weight: 800; font-size: 14px;
+    white-space: nowrap; margin: 0 4px; vertical-align: middle;
+    background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(240,253,250,0.3) 100%);
+    box-shadow: 1px 2px 4px rgba(0,0,0,0.06), inset 0 1px 0 #fff;
+}
+.bracket-blue     { border: 2px solid #38bdf8; border-left-width: 5px; border-right-width: 5px; color: #0369a1; }
+.bracket-amethyst { border: 2px solid #c084fc; border-left-width: 5px; border-right-width: 5px; color: #7e22ce; }
+.bracket-fuchsia  { border: 2px solid #f472b6; border-left-width: 5px; border-right-width: 5px; color: #be185d; }
+.bracket-amber    { border: 2px solid #fbbf24; border-left-width: 5px; border-right-width: 5px; color: #b45309; }
+
+/* ------------------------------------------
+   STYLE 3: TACTILE CIRCUIT NODE STRIPS (~CN-x~)
+   ------------------------------------------ */
+.megachip-circuit-node {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 2px 10px; border-radius: 6px; font-family: monospace; font-weight: bold;
+    font-size: 13px; white-space: nowrap; margin: 0 4px; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.08); text-shadow: 0 1px 0 #fff;
+}
+.node-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); box-shadow: inset 1px 1px 1px #fff; }
+
+.circuit-slate { background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%); border: 2px solid #475569; color: #1e293b; }
+.circuit-slate .node-dot { background: #475569; box-shadow: 0 0 6px #64748b; }
+
+.circuit-teal { background: linear-gradient(180deg, #99f6e4 0%, #2dd4bf 100%); border: 2px solid #0f766e; color: #115e59; }
+.circuit-teal .node-dot { background: #0f766e; box-shadow: 0 0 6px #14b8a6; }
+
+.circuit-gold { background: linear-gradient(180deg, #fde047 0%, #facc15 100%); border: 2px solid #a16207; color: #78350f; }
+.circuit-gold .node-dot { background: #a16207; box-shadow: 0 0 6px #eab308; }
+
+.circuit-ruby { background: linear-gradient(180deg, #fecdd3 0%, #fda4af 100%); border: 2px solid #be123c; color: #9f1239; }
+.circuit-ruby .node-dot { background: #be123c; box-shadow: 0 0 6px #f43f5e; }
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 9 (JOURNAL)
+   ========================================== */
+
+/* 1. Glass Plate Date Ribbon (~DR~) */
+.jr-chip-date-plate {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(219,234,254,0.3) 100%);
+    border: 2px solid rgba(255,255,255,0.8); border-radius: 6px; padding: 3px 12px; margin: 0 4px;
+    color: #1e3a8a; font-family: sans-serif; font-weight: 800; font-size: 13px; white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05), inset 0 1px 0 #fff; vertical-align: middle;
+}
+/* Tiny glowing timeline pinpoint orb */
+.jr-chip-date-plate::before {
+    content: ''; width: 8px; height: 8px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 100%);
+    box-shadow: 0 0 6px #22d3ee;
+}
+
+/* 2. Embossed Spiral Binding Ring (::entry) */
+.writedown-journal-entry {
+    background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
+    border: 3px solid #cbd5e1; border-left: 15px solid #94a3b8; border-radius: 8px;
+    margin: 20px 0; box-shadow: 0 6px 16px rgba(0,0,0,0.06); position: relative;
+}
+/* Physical 3D metallic wire binder rings on the left margin */
+.writedown-journal-entry::before {
+    position: absolute; top: 12px; left: -22px;
+    color: #64748b; font-size: 16px; font-weight: bold; letter-spacing: 24px;
+    text-shadow: 1px 2px 3px rgba(0,0,0,0.15); pointer-events: none;
+}
+.journal-entry-content { padding: 20px 25px; outline: none; font-family: 'Segoe UI', sans-serif; font-size: 15px; color: #334155; line-height: 1.7; }
+
+/* 3. High-Contrast Liquid Mood Capsule (~MD~) */
+.jr-chip-mood {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(180deg, #fef08a 0%, #facc15 100%);
+    border: 2px solid #ca8a04; border-radius: 12px 25px 12px 20px; padding: 2px 12px;
+    margin: 0 4px; color: #451a03; font-weight: bold; font-size: 13px;
+    white-space: nowrap; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(234,179,8,0.2), inset 0 1px 1px #fff;
+}
+
+/* 4. Inset Audio Dictation Voice Memo Tag (~VO~) */
+.jr-chip-voice-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #0f172a; border: 2px solid #0284c7; border-radius: 4px;
+    padding: 3px 10px; margin: 0 4px; font-family: monospace; font-size: 12px;
+    color: #38bdf8; cursor: pointer; user-select: none; vertical-align: middle;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5); text-shadow: 0 0 4px #0ea5e9;
+}
+
+/* 5. Translucent Weather Status Shard (~WX~) */
+.jr-chip-weather {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(135deg, rgba(56,189,248,0.6) 0%, rgba(251,191,36,0.3) 100%);
+    border: 2px solid rgba(255,255,255,0.7); border-radius: 8px; padding: 2px 10px;
+    margin: 0 4px; color: #1e3a8a; font-weight: bold; font-size: 13px;
+    white-space: nowrap; vertical-align: middle; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+    box-shadow: 0 4px 10px rgba(56,189,248,0.15), inset 0 1px 0 #fff;
+}
+
+/* 6. Skeuomorphic Pressed Wax Stamp Overlay (~WS~) */
+.jr-chip-wax-stamp {
+    display: inline-flex; transform: rotate(4deg);
+    background: radial-gradient(circle at 35% 35%, #fca5a5 0%, #dc2626 70%, #991b1b 100%);
+    border: 2px dashed #fee2e2; border-radius: 50%; padding: 4px 12px; margin: 0 8px;
+    color: #fff; font-family: 'Segoe UI', sans-serif; font-size: 11px; font-weight: 900;
+    letter-spacing: 0.5px; text-transform: uppercase; vertical-align: middle; user-select: none;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(0,0,0,0.4);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4); cursor: pointer;
+}
+.jr-chip-wax-stamp:active { transform: rotate(4deg) scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 10 (BADGES)
+   ========================================== */
+
+/* --- Common Base Chassis matching your original .glossy-border-badge recipe --- */
+.aero-glass-badge-chip {
+    display: inline-block;
+    padding: 1px 8px; /* Your exact padding specifications */
+    border-radius: 6px; /* Your exact structural edge boundaries */
+    font-family: inherit;
+    font-weight: 800;
+    white-space: nowrap;
+    margin: 0 4px;
+    vertical-align: middle;
+}
+
+/* --- 6 Precise Theme Specifications --- */
+
+/* 1. Aqua Sky Blue Badge (~B-SB~) */
+.badge-frame-sky {
+    border: 3px solid #38bdf8;
+    background: #f0f9ff;
+    color: #0369a1;
+    box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 2px 4px rgba(56,189,248,0.2);
+}
+
+/* 2. Emerald Green Badge (~B-EG~) */
+.badge-frame-emerald {
+    border: 3px solid #34d399;
+    background: #f0fdf4;
+    color: #047857;
+    box-shadow: 0 3px 6px rgba(16,185,129,0.15), inset 0 2px 4px rgba(52,211,153,0.2);
+}
+
+/* 3. Sunset Orange Badge (~B-SO~) */
+.badge-frame-orange {
+    border: 3px solid #fb923c;
+    background: #fff7ed;
+    color: #c2410c;
+    box-shadow: 0 3px 6px rgba(234,88,12,0.15), inset 0 2px 4px rgba(251,146,60,0.2);
+}
+
+/* 4. Crimson Red Badge (~B-CR~) */
+.badge-frame-crimson {
+    border: 3px solid #f87171;
+    background: #fef2f2;
+    color: #b91c1c;
+    box-shadow: 0 3px 6px rgba(239,68,68,0.15), inset 0 2px 4px rgba(248,113,113,0.2);
+}
+
+/* 5. Amethyst Purple Badge (~B-AM~) */
+.badge-frame-amethyst {
+    border: 3px solid #c084fc;
+    background: #faf5ff;
+    color: #7e22ce;
+    box-shadow: 0 3px 6px rgba(168,85,247,0.15), inset 0 2px 4px rgba(192,132,252,0.2);
+}
+
+/* 6. Gold Amber Badge (~B-GA~) */
+.badge-frame-gold {
+    border: 3px solid #fbbf24;
+    background: #fffbeb;
+    color: #b45309;
+    box-shadow: 0 3px 6px rgba(245,158,11,0.15), inset 0 2px 4px rgba(251,191,36,0.2);
+}
+
+/* ==========================================
+   AERO PLATFORM EXPANSION BLOCK 11
+   ========================================== */
+
+/* 1. Translucent Tinted Lens Overlay (~TL~) */
+.effect-tinted-lens {
+    background: linear-gradient(135deg, rgba(6,182,212,0.5) 0%, rgba(16,185,129,0.3) 50%, rgba(236,72,153,0.3) 100%);
+    border: 2px solid rgba(255,255,255,0.85); border-radius: 4px; padding: 2px 10px;
+    color: #fff; font-weight: 900; display: inline-block; vertical-align: middle;
+    backdrop-filter: hue-rotate(60deg) saturate(1.4); -webkit-backdrop-filter: hue-rotate(60deg) saturate(1.4);
+    box-shadow: 0 5px 12px rgba(6,182,212,0.2), inset 0 1px 1px #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3); animation: lens-rotate-sheen 5s infinite linear alternate;
+}
+@keyframes lens-rotate-sheen { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(120deg); } }
+
+/* 2. 3D Neon Notification Node (~NO~) */
+.applet-neon-node {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px; margin: 0 4px;
+    font-size: 13px; font-weight: 800; cursor: pointer; user-select: none; vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+}
+.neon-node-sphere { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6); box-shadow: inset -1px -1px 4px rgba(0,0,0,0.2); transition: all 0.15s ease; }
+.applet-neon-node.node-cyan .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #22d3ee 50%, #06b6d4 100%); box-shadow: 0 0 8px #06b6d4; }
+.applet-neon-node.node-cyan { color: #0891b2; }
+.applet-neon-node.node-yellow .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #fbbf24 50%, #ca8a04 100%); box-shadow: 0 0 8px #eab308; }
+.applet-neon-node.node-yellow { color: #ca8a04; }
+.applet-neon-node.node-pink .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #f472b6 50%, #db2777 100%); box-shadow: 0 0 8px #ec4899; }
+.applet-neon-node.node-pink { color: #db2777; }
+
+/* 3. Streaming Audio Wave Loop (~SL~) */
+.effect-audio-stream-loop {
+    position: relative; display: inline-block; font-weight: bold; color: #0284c7; padding-bottom: 6px;
+}
+.effect-audio-stream-loop::after {
+    content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 8px;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 100 20' xmlns='http://w3.org d='M0,10 Q12.5,0 25,10 T50,10 T75,10 T100,10' fill='none' stroke='%2338bdf8' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-size: 30px 8px; animation: loop-stream-move 0.8s infinite linear;
+}
+@keyframes loop-stream-move { from { background-position-x: 0px; } to { background-position-x: 30px; } }
+
+/* 4. Glossy Bio-Gel Capsule (~BG~) */
+.effect-biogel-capsule {
+    background: linear-gradient(180deg, #a7f3d0 0%, #10b981 100%);
+    border: 2px solid #047857; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
+    color: #064e3b; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+}
+
+/* 5. Tactile Latch Toggle Switch (~LS~) */
+.applet-latch-toggle {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
+    border: 2px solid #94a3b8; border-radius: 6px; padding: 3px 8px; margin: 0 4px;
+    color: #475569; font-weight: 800; font-size: 12px; cursor: pointer; user-select: none; vertical-align: middle;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+}
+.latch-track-chassis { width: 32px; height: 14px; background: #94a3b8; border-radius: 7px; position: relative; box-shadow: inset 0 2px 3px rgba(0,0,0,0.2); }
+.latch-slider-handle { width: 16px; height: 100%; border-radius: 6px; background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%); border: 1px solid #64748b; position: absolute; top: 0; left: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 0.12s cubic-bezier(0.1, 0.9, 0.2, 1); }
+.applet-latch-toggle.latch-active-state .latch-track-chassis { background: #10b981; }
+.applet-latch-toggle.latch-active-state .latch-slider-handle { left: 16px; }
+
+/* 6. Desktop Gadget System Clock (~GC~) */
+.applet-gadget-system-clock {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
+    border: 2px solid #475569; margin: 0 4px; vertical-align: middle; position: relative;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12), inset 0 1px 1px #fff;
+}
+.gadget-clock-hand { width: 2px; height: 9px; background: #ef4444; position: absolute; bottom: 50%; left: calc(50% - 1px); transform-origin: bottom center; transform: rotate(0deg); }
+
+/* ==========================================
+   AERO MASTERY ENGINE FINAL FINISH
+   ========================================== */
+
+/* 1. 3D Beveled Folder Tab (~FT~) */
+.jr-folder-tab {
+    display: inline-flex; align-items: center;
+    background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+    border: 2px solid #94a3b8; border-bottom: none;
+    border-radius: 8px 8px 0 0; padding: 2px 12px; margin: 0 4px;
+    color: #334155; font-weight: 800; font-size: 13px; white-space: nowrap;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+    vertical-align: bottom; position: relative; top: 2px;
+}
+
+/* 2. Glass Capsule Progress Tracker (~PT~) */
+.jr-progress-capsule {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(241,245,249,0.2) 100%);
+    border: 1px solid rgba(255,255,255,0.6); border-radius: 12px; padding: 3px 12px;
+    margin: 0 4px; color: #475569; font-weight: bold; font-size: 12px; vertical-align: middle;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 #fff; user-select: none;
+}
+.capsule-fluid-bar {
+    width: 40px; height: 8px; background: #e2e8f0; border-radius: 4px;
+    border: 1px solid #cbd5e1; overflow: hidden; position: relative;
+}
+.capsule-fluid-fill {
+    width: 35%; height: 100%; background: linear-gradient(180deg, #34d399 0%, #10b981 100%);
+    box-shadow: 0 0 6px #10b981;
+}
+
+/* 3. Inset Digital Micro Counter (~MC~) */
+.jr-digital-counter {
+    background: #020617; border: 2px solid #1e293b; border-radius: 4px;
+    padding: 2px 6px; color: #f43f5e; font-family: monospace; font-weight: bold;
+    font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8); text-shadow: 0 0 6px rgba(244,63,94,0.6);
+}
+
+/* 4. Windows Vista Rating Dot Matrix (~RD~) */
+.jr-dot-matrix {
+    display: inline-flex; align-items: center; gap: 3px;
+    background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 10px;
+    padding: 2px 8px; margin: 0 4px; vertical-align: middle; cursor: pointer; user-select: none;
+}
+.matrix-bead { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1); }
+.matrix-bead.bead-glow { background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 100%); box-shadow: 0 0 6px #38bdf8; }
+
+/* 5. Brushed Steel Latch Lock Toggle (~ST~) */
+.jr-latch-lock {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
+    border: 2px solid #cbd5e1; border-radius: 4px; padding: 3px 10px; margin: 0 4px;
+    color: #111827 !important; font-weight: 800; font-size: 12px; cursor: pointer;
+    vertical-align: middle; user-select: none; text-shadow: none !important;
+}
+.latch-bolt { width: 12px; height: 12px; background: #ef4444; border-radius: 2px; border: 1px solid #b91c1c; }
+.jr-latch-lock.latch-secure { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); border-color: #bae6fd; }
+.jr-latch-lock.latch-secure .latch-bolt { background: #10b981; border-color: #047857; }
+
+/* 6. Glowing Neon Warning Ribbon (~WR~) */
+.effect-neon-ribbon {
+    background: #0f172a; border-top: 2px solid #fbbf24; border-bottom: 2px solid #fbbf24;
+    padding: 2px 10px; color: #fbbf24; font-family: monospace; font-weight: bold;
+    display: inline-block; vertical-align: middle; white-space: nowrap;
+    box-shadow: 0 0 10px rgba(251,191,36,0.3); text-shadow: 0 0 4px rgba(251,191,36,0.6);
+}
+
+/* 7. Skeuomorphic Circular Hardware Speedo Gauge (::gauge) */
+.writedown-gauge-block {
+    background: radial-gradient(circle at 50% 50%, #f8fafc 0%, #e2e8f0 70%, #cbd5e1 100%);
+    border: 4px solid #64748b; border-radius: 50%; width: 70px; height: 70px; margin: 15px auto;
+    display: flex; align-items: center; justify-content: center; position: relative;
+    box-shadow: 0 6px 14px rgba(0,0,0,0.15), inset 0 2px 5px #fff; cursor: pointer;
+}
+.gauge-pointer-needle {
+    width: 2px; height: 28px; background: #ef4444; position: absolute; bottom: 50%; left: calc(50% - 1px);
+    transform-origin: bottom center; transform: rotate(-90deg); transition: transform 0.3s ease-out;
+}
+
+/* 8. Glossy Glass Audio Spectrum Block (::spectrum) */
+.writedown-spectrum-block {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+    border: 3px solid #475569; border-radius: 8px; padding: 15px; margin: 20px 0;
+    display: flex; align-items: flex-end; justify-content: center; gap: 4px; height: 40px;
+    box-shadow: inset 0 3px 8px rgba(0,0,0,0.4);
+}
+.spectrum-equalizer-bar {
+    width: 6px; height: 100%; background: linear-gradient(0deg, #10b981 0%, #3b82f6 70%, #ef4444 100%);
+    transform-origin: bottom; animation: eq-bounce 0.6s infinite ease-in-out alternate;
+}
+@keyframes eq-bounce { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+
+/* --- 1. Duplex Split-Color Highlight (~DH~) --- */
+.gel-chip-duplex {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(90deg, #38bdf8 0%, #38bdf8 50%, #10b981 50%, #10b981 100%);
+    border: 2px solid #0284c7;
+    border-radius: 6px;
+    padding: 2px 10px;
+    margin: 0 4px;
+    color: #0f172a !important;
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+    vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 1px 1px rgba(255,255,255,0.4);
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+}
+
+/* --- 2. Swayed Rounded Square Highlight (~SH~) --- */
+.gel-chip-swayed {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(180deg, #fbcfe8 0%, #ec4899 100%);
+    border: 2px solid #be185d;
+    /* Distinct asymmetrical corner skewing for a dynamic physical profile */
+    border-radius: 12px 6px 12px 6px;
+    padding: 3px 12px;
+    margin: 0 4px;
+    color: #4c0519 !important;
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+    vertical-align: middle;
+    box-shadow: 0 4px 8px rgba(236,72,153,0.2), inset 0 1px 1px rgba(255,255,255,0.4);
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+}
+
+/* --- 3. Rounded Pill Chip Highlight (~PH~) --- */
+.gel-chip-pill-variant {
+    display: inline-flex;
+    align-items: center;
+    background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
+    border: 2px solid #ca8a04;
+    border-radius: 25px; /* High-round capsule pill look */
+    padding: 2px 14px;
+    margin: 0 4px;
+    color: #451a03 !important;
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+    vertical-align: middle;
+    box-shadow: 0 3px 6px rgba(234,179,8,0.15), inset 0 1px 1px rgba(255,255,255,0.4);
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+}
+
+/* ========================================================
+   FINAL HIGHLIGHT EXTENSION MATRIX WITH COLOR VARIATIONS
+   ======================================================== */
+
+/* --- STYLE 1: SIDE-BY-SIDE SPLIT DUPLEX CHIPS --- */
+.gel-chip-duplex {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+    margin: 0 4px;
+    vertical-align: middle;
+    overflow: hidden; /* Locks the sharp side-by-side backgrounds inside the frame */
+    box-shadow: 0 3px 6px rgba(0,0,0,0.12), inset 0 1px 0 rgba(255,255,255,0.4);
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+    padding: 2px 10px;
+}
+
+/* Linear sharp 50% vertical side-by-side cutoff fills */
+.duplex-sky {
+    background: linear-gradient(90deg, #bae6fd 0%, #bae6fd 50%, #38bdf8 50%, #38bdf8 100%);
+    border: 2px solid #0284c7; color: #0c4a6e !important;
+}
+.duplex-emerald {
+    background: linear-gradient(90deg, #a7f3d0 0%, #a7f3d0 50%, #34d399 50%, #34d399 100%);
+    border: 2px solid #059669; color: #064e3b !important;
+}
+.duplex-orange {
+    background: linear-gradient(90deg, #ffedd5 0%, #ffedd5 50%, #fb923c 50%, #fb923c 100%);
+    border: 2px solid #ea580c; color: #431407 !important;
+}
+.duplex-amethyst {
+    background: linear-gradient(90deg, #f3e8ff 0%, #f3e8ff 50%, #c084fc 50%, #c084fc 100%);
+    border: 2px solid #9333ea; color: #2e1065 !important;
+}
+
+
+/* --- Common Chassis for Multi-Input Duplex Boxes (~DH-x~) --- */
+.aero-duplex-input-chassis {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 6px;
+    margin: 0 4px;
+    vertical-align: middle;
+    overflow: hidden;
+    background: #ffffff;
+    box-shadow: 
+        0 3px 6px rgba(0,0,0,0.1),
+        inset 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Individual left and right input fields */
+.aero-duplex-input-chassis .input-left,
+.aero-duplex-input-chassis .input-right {
+    padding: 2px 10px;
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    outline: none;
+    min-width: 40px;
+    display: inline-block;
+}
+
+/* Central vertical divider boundary line */
+.aero-duplex-input-chassis .input-left {
+    border-right: 2px solid transparent;
+}
+
+/* --- 4 Color Variation Borders & Divider Lines --- */
+
+/* 1. Sky Blue Duplex (~DH-SB~) */
+.duplex-chassis-sky { border: 2px solid #38bdf8; }
+.duplex-chassis-sky .input-left { border-right-color: #38bdf8; }
+.duplex-chassis-sky .input-left, .duplex-chassis-sky .input-right { color: #0369a1; }
+
+/* 2. Emerald Green Duplex (~DH-EG~) */
+.duplex-chassis-emerald { border: 2px solid #34d399; }
+.duplex-chassis-emerald .input-left { border-right-color: #34d399; }
+.duplex-chassis-emerald .input-left, .duplex-chassis-emerald .input-right { color: #047857; }
+
+/* 3. Sunset Orange Duplex (~DH-SO~) */
+.duplex-chassis-orange { border: 2px solid #fb923c; }
+.duplex-chassis-orange .input-left { border-right-color: #fb923c; }
+.duplex-chassis-orange .input-left, .duplex-chassis-orange .input-right { color: #c2410c; }
+
+/* 4. Amethyst Purple Duplex (~DH-AM~) */
+.duplex-chassis-amethyst { border: 2px solid #c084fc; }
+.duplex-chassis-amethyst .input-left { border-right-color: #c084fc; }
+.duplex-chassis-amethyst .input-left, .duplex-chassis-amethyst .input-right { color: #7e22ce; }
+
+/* ========================================================
+   SWAYED ROUNDED SQUARES & ROUNDED PILL PALETTE MATRIX
+   ======================================================== */
+
+/* --- STYLE 1: SWAYED ROUNDED SQUARES --- */
+.gel-chip-swayed {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 12px;
+    border-radius: 12px 6px 12px 6px; /* Your custom skewed-corner profile */
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+    margin: 0 4px;
+    vertical-align: middle;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+}
+.swayed-sky {
+    background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 100%);
+    border: 2px solid #0369a1; color: #0f172a !important;
+    box-shadow: 0 4px 8px rgba(2,132,199,0.25), inset 0 1px 1px #fff;
+}
+.swayed-emerald {
+    background: linear-gradient(180deg, #6ee7b7 0%, #059669 100%);
+    border: 2px solid #046648; color: #022c22 !important;
+    box-shadow: 0 4px 8px rgba(16,185,129,0.25), inset 0 1px 1px #fff;
+}
+/* --- Fix the Orange Swayed Square Border --- */
+.swayed-orange {
+    background: linear-gradient(180deg, #fdba74 0%, #ea580c 100%); 
+    border: 2px solid #ea580c; /* Changed to a true deep orange border */
+    color: #431407 !important; 
+    box-shadow: 0 4px 8px rgba(234,88,12,0.25), inset 0 1px 1px #fff;
+}
+.swayed-amethyst {
+    background: linear-gradient(180deg, #c084fc 0%, #7e22ce 100%);
+    border: 2px solid #6b21a8; color: #2e1065 !important;
+    box-shadow: 0 4px 8px rgba(168,85,247,0.25), inset 0 1px 1px #fff;
+}
+
+/* --- STYLE 2: ROUNDED PILL CHIPS --- */
+.gel-chip-pill-variant {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 14px;
+    border-radius: 25px; /* High-round pill style */
+    font-family: inherit;
+    font-weight: 800;
+    font-size: 13px;
+    white-space: nowrap;
+    margin: 0 4px;
+    vertical-align: middle;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+}
+.pill-sky {
+    background: linear-gradient(180deg, #bae6fd 0%, #0284c7 100%);
+    border: 2px solid #0369a1; color: #0c4a6e !important;
+    box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 1px 1px #fff;
+}
+.pill-emerald {
+    background: linear-gradient(180deg, #a7f3d0 0%, #059669 100%);
+    border: 2px solid #047857; color: #064e3b !important;
+    box-shadow: 0 3px 6px rgba(16,185,129,0.15), inset 0 1px 1px #fff;
+}
+/* --- Fix the Orange Rounded Pill Border --- */
+.pill-orange {
+    background: linear-gradient(180deg, #ffedd5 0%, #ea580c 100%); 
+    border: 2px solid #ea580c; /* Changed from yellow-amber to true sunset orange */
+    color: #451a03 !important; 
+    box-shadow: 0 3px 6px rgba(234,179,8,0.15), inset 0 1px 1px #fff;
+}
+.pill-amethyst {
+    background: linear-gradient(180deg, #f3e8ff 0%, #7e22ce 100%);
+    border: 2px solid #6b21a8; color: #2e1065 !important;
+    box-shadow: 0 3px 6px rgba(168,85,247,0.15), inset 0 1px 1px #fff;
+}
+
+/* ========================================================
+   PASTEL CHIPS SPECTRA (Inspired by ~VAR~)
+   ======================================================== */
+
+/* --- Common Base Chassis --- */
+.gel-chip-pastel {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    margin: 0 4px;
+    vertical-align: middle;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+}
+
+/* 1. Pastel Yellow (~PC-YL~) */
+.pastel-yellow {
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 50%, #fde047 100%);
+    border: 2px solid #ca8a04;
+    color: #713f12 !important;
+    box-shadow: 0 3px 6px rgba(234,179,8,0.2), inset 0 1px 1px #fff;
+}
+
+/* 2. Pastel Blue (~PC-BL~) */
+.pastel-blue {
+    background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #7dd3fc 100%);
+    border: 2px solid #0284c7;
+    color: #0c4a6e !important;
+    box-shadow: 0 3px 6px rgba(2,132,199,0.2), inset 0 1px 1px #fff;
+}
+
+/* 3. Pastel Green (~PC-GR~) */
+.pastel-green {
+    background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 50%, #4ade80 100%);
+    border: 2px solid #16a34a;
+    color: #14532d !important;
+    box-shadow: 0 3px 6px rgba(22,163,74,0.2), inset 0 1px 1px #fff;
+}
+
+/* 4. Pastel Pink (~PC-PK~) */
+.pastel-pink {
+    background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 50%, #f472b6 100%);
+    border: 2px solid #db2777;
+    color: #4c0519 !important;
+    box-shadow: 0 3px 6px rgba(236,72,153,0.2), inset 0 1px 1px #fff;
+}
+
+/* 5. Pastel Purple (~PC-PR~) */
+.pastel-purple {
+    background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 50%, #c084fc 100%);
+    border: 2px solid #9333ea;
+    color: #581c87 !important;
+    box-shadow: 0 3px 6px rgba(168,85,247,0.2), inset 0 1px 1px #fff;
+}
+
+/* 6. Pastel Orange (~PC-OR~) */
+.pastel-orange {
+    background: linear-gradient(180deg, #fff7ed 0%, #ffedd5 50%, #fb923c 100%);
+    border: 2px solid #ea580c;
+    color: #431407 !important;
+    box-shadow: 0 3px 6px rgba(234,88,12,0.2), inset 0 1px 1px #fff;
+}
+
+/* ========================================================
+   LIQUID DROPLET RIBBONS (Inspired by ~STR~)
+   ======================================================== */
+
+/* --- Common Base Chassis --- */
+.gel-chip-droplet-ribbon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 12px;
+    /* Your exact asymmetrical organic edge profile */
+    border-radius: 14px 25px 14px 20px; 
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: bold;
+    font-size: 14px;
+    white-space: nowrap;
+    margin: 0 4px;
+    vertical-align: middle;
+    text-shadow: none !important;
+    -webkit-text-stroke: 0px !important;
+}
+
+/* 1. Tangerine (~DR-TG~) */
+.droplet-ribbon-tangerine {
+    background: linear-gradient(180deg, #ffedd5 0%, #fed7aa 50%, #fb923c 100%);
+    border: 2px solid #ea580c;
+    color: #431407 !important;
+    box-shadow: 0 3px 6px rgba(234, 88, 12, 0.15), inset 0 1px 1px #fff;
+}
+
+/* 2. Citrus Yellow (~DR-CT~) */
+.droplet-ribbon-citrus {
+    background: linear-gradient(180deg, #fffbeb 0%, #fef3c7 50%, #fde047 100%);
+    border: 2px solid #ca8a04;
+    color: #451a03 !important;
+    box-shadow: 0 3px 6px rgba(234, 179, 8, 0.15), inset 0 1px 1px #fff;
+}
+
+/* 3. Emerald Green (~DR-EM~) */
+.droplet-ribbon-emerald {
+    background: linear-gradient(180deg, #dcfce7 0%, #bbf7d0 50%, #86efac 100%);
+    border: 2px solid #16a34a;
+    color: #14532d !important;
+    box-shadow: 0 3px 6px rgba(22, 163, 74, 0.15), inset 0 1px 1px #fff;
+}
+
+/* 4. Sapphire Blue (~DR-SP~) */
+.droplet-ribbon-sapphire {
+    background: linear-gradient(180deg, #f0f9ff 0%, #e0f2fe 50%, #7dd3fc 100%);
+    border: 2px solid #0284c7;
+    color: #0c4a6e !important;
+    box-shadow: 0 3px 6px rgba(2, 132, 199, 0.15), inset 0 1px 1px #fff;
+}
+
+/* 5. Amethyst Purple (~DR-AM~) */
+.droplet-ribbon-amethyst {
+    background: linear-gradient(180deg, #faf5ff 0%, #f3e8ff 50%, #c084fc 100%);
+    border: 2px solid #9333ea;
+    color: #2e1065 !important;
+    box-shadow: 0 3px 6px rgba(168, 85, 247, 0.15), inset 0 1px 1px #fff;
+}
+
+/* 6. Fuchsia Pink (~DR-FC~) */
+.droplet-ribbon-fuchsia {
+    background: linear-gradient(180deg, #fdf2f8 0%, #fce7f3 50%, #f472b6 100%);
+    border: 2px solid #db2777;
+    color: #4c0519 !important;
+    box-shadow: 0 3px 6px rgba(236, 72, 153, 0.15), inset 0 1px 1px #fff;
+}
+
+/* 7. Crimson Red (~DR-CR~) */
+.droplet-ribbon-crimson {
+    background: linear-gradient(180deg, #fef2f2 0%, #fee2e2 50%, #f87171 100%);
+    border: 2px solid #dc2626;
+    color: #450a0a !important;
+    box-shadow: 0 3px 6px rgba(220, 38, 38, 0.15), inset 0 1px 1px #fff;
+}
+
+/* 8. Slate Steel (~DR-SL~) */
+.droplet-ribbon-slate {
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 50%, #94a3b8 100%);
+    border: 2px solid #475569;
+    color: #1e293b !important;
+    box-shadow: 0 3px 6px rgba(71, 85, 105, 0.15), inset 0 1px 1px #fff;
+}
+
+/* --- Active Pad State Shading Highlight --- */
+.sidebar-btn.pad-toggle-btn { opacity: 0.7; transform: scale(0.96); transition: all 0.15s ease; }
+.sidebar-btn.pad-toggle-btn.active { opacity: 1; transform: scale(1.02); border-width: 3px; box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+
+/* --- 3D One-Time Data Table Frame Chassis (::table) --- */
+.writedown-one-time-table {
+    border-collapse: separate; border-spacing: 0; width: 100%; margin: 20px 0;
+    border: 3px solid #0284c7; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(2,132,199,0.15);
+}
+.writedown-one-time-table th {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+    border-bottom: 2px solid #0284c7; padding: 10px 15px; color: #fff;
+    font-family: 'Segoe UI', sans-serif; font-size: 13px; font-weight: 800;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4); text-align: left;
+}
+.writedown-one-time-table td {
+    background: #ffffff; padding: 12px 15px; font-family: 'Segoe UI', sans-serif;
+    font-size: 14px; color: #334155; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;
+    outline: none; min-width: 60px;
+}
+.writedown-one-time-table tr:last-child td { border-bottom: none; }
+.writedown-one-time-table td:last-child { border-right: none; }
+/* Soft inset glare look on row hover triggers */
+.writedown-one-time-table tr:hover td { background: #f0f9ff; }
+
+/* --- Polished Silver Pad Variant Button (Matches Layout Profiles Exactly) --- */
+.btn-silver-table {
+    background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%) !important;
+    border: 2px solid #e2e8f0 !important;
+    color: #334155 !important;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.8) !important;
+}
+.btn-silver-table svg {
+    stroke: #475569 !important;
+    fill: none !important;
+}
+
+
+/* --- Clean Sidebar Pad Toggle Button Highlight Matrix --- */
+.sidebar-btn.pad-toggle-btn { 
+    opacity: 0.7; 
+    transform: scale(0.96); 
+    transition: all 0.15s ease; 
+}
+.sidebar-btn.pad-toggle-btn.active { 
+    opacity: 1; 
+    transform: scale(1.02); 
+    border-width: 3px; 
+    box-shadow: 0 0 15px rgba(255,255,255,0.4); 
+}
+
+/* --- Yellow Settings Button Variant Styling --- */
+.btn-settings {
+    background: linear-gradient(180deg, #fef08a 0%, #eab308 48%, #a16207 100%) !important;
+    border-color: #fef9c3 !important;
+    color: #451a03 !important;
+}
+.btn-settings:hover {
+    background: linear-gradient(180deg, #fef9c3 0%, #facc15 48%, #eab308 100%) !important;
+}
+.btn-settings svg { stroke: #451a03 !important; fill: none !important; }
+
+/* Shared Glass Dialog Modal Core Layouts */
+.aero-modal-overlay-common {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(2, 132, 199, 0.18); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    z-index: 100; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+.aero-modal-overlay-common.active { opacity: 1; pointer-events: auto; }
+
+.aero-dialog-box-common {
+    width: 500px; background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.92) 100%);
+    border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25), inset 0 1px 2px #fff;
+    display: flex; flex-direction: column; overflow: hidden; transform: scale(0.88); transition: transform 0.2s;
+}
+.aero-modal-overlay-common.active .aero-dialog-box-common { transform: scale(1); }
+
+.yellow-header { background: linear-gradient(180deg, #fef08a 0%, #eab308 50%, #ca8a04 100%) !important; }
+.yellow-header h3 { color: #451a03 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important; }
+
+.dialog-body-scroll-common { padding: 25px; box-sizing: border-box; }
+.dialog-body-scroll-common h4 { margin: 0 0 10px 0; font-size: 13px; color: #854d0e; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+
+/* --- 3D Tactile Wipe History Button Component --- */
+.wipe-history-btn {
+    display: inline-flex; align-items: center; justify-content: center; width: 100%;
+    background: linear-gradient(180deg, #fee2e2 0%, #f87171 48%, #ef4444 52%, #b91c1c 100%);
+    border: 2px solid #fca5a5; border-radius: 8px; padding: 12px;
+    color: #ffffff; font-family: 'Segoe UI', sans-serif; font-size: 13px; font-weight: 800;
+    cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 12px rgba(239,68,68,0.25), inset 0 1px 1px rgba(255,255,255,0.3);
+    transition: transform 0.05s;
+}
+.wipe-history-btn:active {
+    transform: translateY(1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2), inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* Control Dialog Confirmation Close Button */
+.btn-yellow-orb {
+    background: linear-gradient(180deg, #fef08a 0%, #eab308 48%, #ca8a04 100%) !important;
+    border-color: #fef9c3 !important; color: #451a03 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important;
+    box-shadow: 0 4px 10px rgba(234,179,8,0.25), inset 0 1px 1px #fff !important;
+}
+
+.dialog-close-btn-common {
+    width: 22px; height: 22px; background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%);
+    border: 1px solid #f87171; border-radius: 4px; color: white; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.dialog-close-btn-common:active { transform: scale(0.9); }
+
+/* ========================================================
+   AERO PLATFORM EXPANSION: 3D SKETCHPAD CONSOLE (::draw)
+   ======================================================== */
+
+/* --- Tightly Padded Sketchpad Console Container Chassis --- */
+.aero-draw-console {
+    background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%);
+    border: 3px solid #94a3b8;
+    border-radius: 12px;
+    margin: 12px 0 !important;
+    display: block !important; /* Locks structural widget containment */
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1), inset 0 1px 0 #ffffff;
+    overflow: hidden;
+}
+
+/* Glass-Trimmed Tool Dashboard Header Strip */
+.draw-console-dashboard {
+    background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%);
+    border-bottom: 2px solid #94a3b8;
+    padding: 6px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    user-select: none;
+    line-height: normal !important;
+}
+
+/* Left & Right Dashboard Tool Clusters */
+.draw-tool-cluster {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Common Text Labels */
+.draw-console-dashboard label {
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 11px;
+    font-weight: 900;
+    color: #475569;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Skeuomorphic Color Picker Box Hook */
+.draw-picker-orb {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: none;
+    border: 2px solid #cbd5e1;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.15), inset 0 1px 1px #fff;
+    padding: 0;
+}
+.draw-picker-orb::-webkit-color-swatch-wrapper { padding: 0; }
+.draw-picker-orb::-webkit-color-swatch { border: none; border-radius: 50%; }
+
+/* Tactile Range Sliders (Brush Size & Opacity) */
+.draw-slider-fluid {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 75px;
+    height: 6px;
+    background: #cbd5e1;
+    border-radius: 3px;
+    outline: none;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+}
+.draw-slider-fluid::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+    border: 1px solid #64748b;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+    cursor: pointer;
+}
+
+/* 3D Glass Clear Canvas Action Orb */
+.draw-clear-orb {
+    background: linear-gradient(180deg, #fee2e2 0%, #f87171 48%, #ef4444 100%);
+    border: 1px solid #fca5a5;
+    border-radius: 4px;
+    padding: 3px 10px;
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    font-size: 10px;
+    font-weight: 900;
+    cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 4px rgba(239,68,68,0.2), inset 0 1px 0 rgba(255,255,255,0.3);
+    transition: transform 0.05s ease;
+}
+.draw-clear-orb:active {
+    transform: scale(0.96);
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1), inset 0 1px 2px rgba(0,0,0,0.3);
+}
+
+/* Inset Drawing Surface Frame Cavity */
+.draw-surface-canvas {
+    background: #ffffff;
+    cursor: crosshair;
+    display: block;
+    box-shadow: inset 3px 3px 8px rgba(0,0,0,0.06);
+    width: 100% !important; /* Forces the smaller resolution grid to fit your canvas track layout bounds perfectly */
+    max-width: 540px;
+    height: 180px !important;
+}
+
+/* --- Global Line Spacing Compression Fix --- */
+#wysiwyg-canvas p, 
+#wysiwyg-canvas div {
+    margin: 0 !important;
+    padding: 0 !important; /* Wipes out the hidden padding gaps to keep rows tight */
+    line-height: 1.4 !important;
+}
+
+/* Ensure list items and macro blocks respect the same compact spacing profiles */
+#wysiwyg-canvas li {
+    margin: 0 !important;
+    padding: 1px 0 !important;
+}
+
+/* Clear default paragraph margins so native lines sit beautifully tight */
+#wysiwyg-canvas {
+    line-height: 1.4 !important;
+}
+
+/* ==========================================
+   AUTOMATED CC BY 4.0 LICENSE FOOTER STYLES
+   ========================================== */
+
+/* Dim text properties to keep the metadata clean and unobtrusive */
+.license-text {
+    font-family: "Arimo", "Liberation Sans", sans-serif;
+    font-size: 11px;
+    color: rgba(27, 117, 188, 0.75) !important; /* Kept highly dim against dark terminal viewports */
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+}
+
+/* Hyperlink design rules for your Creative Commons registry anchor */
+.license-link {
+    color: #1B75BC !important; /* Custom theme accent blue tint */
+    text-decoration: underline !important;
+    transition: color 0.2s ease-in-out;
+}
+
+/* Triggers an even dimmer layout phase once a viewer clicks the link path */
+.license-link:visited {
+    color: rgba(27, 117, 188, 0.5) !important; /* Dimmed, low-saturation blue indicator */
+}
+
+/* Hover style to keep it clean and interactive */
+.license-link:hover {
+    color: #D2E2F0 !important; /* Crisp slate white shine when hovered */
+}
