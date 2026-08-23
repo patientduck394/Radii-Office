@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Waterflow WYSIWYG</title>
+    <!-- Linking the external modular presentation stylesheets -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="top-bar">
+        <h1>
+            <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            Waterflow Note Workspace
+        </h1>
+        <!-- Injected Skeuomorphic Memory Tracker Orbs -->
+        <div class="system-meter">
+            <span>AQUA STORAGE:</span>
+            <div class="meter-track">
+                <div class="meter-fill"></div>
+            </div>
+            <span>72%</span>
+        </div>
+    </div>
+
+    <!-- Locate this block inside your index.html -->
+    <div id="app-deck">
+        <!-- Inside your left side #sidebar panel deck container – update it to look like this: -->
+    <div id="sidebar">
+        <button class="sidebar-btn pad-toggle-btn active" id="btn-pad-1" data-pad="1">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Primary Pad
+        </button>
+        
+        <button class="sidebar-btn pad-toggle-btn" id="btn-pad-2" data-pad="2" style="background: linear-gradient(180deg, #10b981 0%, #059669 48%, #047857 100%); border-color: #a7f3d0;">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            Secondary Pad
+        </button>
+
+        <!-- FIXED: Added pad-toggle-btn class so it aligns identically to the others -->
+        <button class="sidebar-btn pad-toggle-btn btn-silver-table" id="btn-one-time-table" data-pad="3">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            One-Time Table
+        </button>
+        
+        <!-- Inside your left side #sidebar panel – insert this right below your One-Time Table pad button: -->
+        <button class="sidebar-btn btn-settings" id="settings-trigger-btn">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            System Settings
+        </button>
+        
+        <button class="sidebar-btn btn-help" id="help-trigger-btn">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Formatting Help
+        </button>
+    </div>
+
+
+
+        <!-- MOVED HERE: The toggle button now sits right on the edge seam link track -->
+        <div id="toggle-zone" title="Toggle Sidebar">
+            <svg id="toggle-icon" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+
+        <!-- Main Writing Screen Container -->
+        <div id="canvas-deck">
+            <div id="wysiwyg-canvas" contenteditable="true" spellcheck="false">
+                <!-- Canvas text remains here -->
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scroll right down to the bottom of index.html – add this block right above <script src="app.js"></script> -->
+    <div id="aero-modal-overlay">
+        <div id="aero-dialog-box">
+            <div class="dialog-header">
+                <h3>🔹 WRITEDOWN FORMATTING DECK SYSTEM</h3>
+                <div id="dialog-close-btn" title="Close Panel">✖</div>
+            </div>
+            <div class="dialog-body-scroll">
+                <h4>BLOCK SHORTCUTS (Type on blank line + Spacebar)</h4>
+                <div class="help-card">
+                    <b># [Space]</b> ──> Main Sky Blue Header Block<br>
+                    <b>## [Space]</b> ──> Organic Green Header Block<br>
+                    <b>### [Space]</b> ──> Sunset Orange Header Block<br>
+                    <b>&gt; [Space]</b> ──> Inset Golden Blockquote Cavity<br>
+                    <b>* [Space] or - [Space]</b> ──> Unordered Bullet Point Lists<br>
+                    <b>1. [Space]</b> ──> Numeric Ordered Lists Engine Loop<br>
+                    <b>::aqua</b> ──> 3D Aqua Box Container Frame with Floating Bubble Orbs<br>
+                    <b>::glass</b> ──> Translucent Ambient Showcase Panel Block<br>
+                    <b>::alert</b> ──> High-Saturation Caution Warning Plate<br>
+                    <b>::media</b> ──> Brushed Hardware Audio Player Deck Tracker<br>
+                    <br>
+                    <b>::code</b> ──> Code box<br>
+                    <br>
+                    <b>::crimson</b> ──> Red bubblebox<br>
+                    <b>::amber</b> ──> Yellow bubblebox<br>
+                    <b>::emerald</b> ──> Green bubblebox<br>
+                    <b>::aqua</b> ──> Blue bubblebox<br>
+                    <b>::amethyst</b> ──> Purple bubblebox<br>
+                    <b>::gcrimson</b> ──> Red notebox<br>
+                    <b>::gamber</b> ──> Yellow notebox<br>
+                    <b>::gemerald</b> ──> Green notebox<br>
+                    <b>::gaqua</b> ──> Blue notebox<br>
+                    <br>
+                    <b>::foldout</b> ──> Foldout container<br>
+                    <b>::divider</b> ──> Foldout container<br>
+                    <br>
+                    <b>::console</b> ──> Foldout container<br>
+                    <b>::diff</b> ──> Foldout container<br>
+                    <br>
+                    <b>::horizon</b> ──> Foldout container<br>
+                    <b>::waypoint</b> ──> Foldout container<br>
+                </div>
+                <h4>DYNAMIC TEXT EFFECTS (Type word inside wrappers)</h4>
+                <div class="help-card">
+                    <b>~L~ text ~L~</b> ──> Liquid Text Sway effect<br>
+                    <b>~M~ text ~M~</b> ──> Mirror / Reflection effect<br>
+                    <b>~E~ text ~E~</b> ──> Bubble Glossbox effect<br>
+                    <b>~W~ text ~W~</b> ──> Green Kinetic Wave effect<br>
+                    <b>&& text &&</b> ──> Spark Text<br>
+                    <br>
+                    <b>~LF~ text ~LF~</b> ──> Blue Lens Flare effect<br>
+                    <br>
+                    <b>~XG~ text ~XG~</b> ──> X-Ray Glass effect<br>
+                </div>
+                <h4>EFFECT CHIPS</h4>
+                <div class="help-card">
+                    <b>~WD~ text ~WD~</b> ──> <span class="gel-chip-waterdrop">Water Drop tag</span> effect<br>
+                    <b>~SF~ text ~SF~</b> ──> <span class="gel-chip-solarflare">Solar Flare tag</span> effect<br>
+                    <b>~AW~ text ~AW~</b> ──> <span class="gel-chip-aurorawave">Aurora Wave tag</span> effect<br>
+                    <br>
+                    <b>~MP~ text ~MP~</b> ──> Mercury Pearl tag effect<br>
+                    <b>~PG~ text ~PG~</b> ──> Prism Refract tag effect<br>
+                    <b>~CB~ text ~CB~</b> ──> Screen Cavity tag effect<br>
+                    <b>~SR~ text ~SR~</b> ──> Sunlight Ray tag effect<br>
+                    <b>~OA~ text ~OA~</b> ──> Abyssal Plate tag effect<br>
+                    <b>~MM~ text ~MM~</b> ──> Metallic Mesh tag effect<br>
+                    <b>~FE~ text ~FE~</b> ──> Fluid Expand tag effect<br>
+                    <br>
+                    <b>~MR~ text ~MR~</b> ──> Metric Cavity tag effect<br>
+                    <b>~PO~ text ~PO~</b> ──> Pearl Orb tag effect<br>
+                    <br>
+                    <b>~DS~ text ~DS~</b> ──> Shadowed Glossbox tag effect<br>
+                    <b>~GL~ text ~GL~</b> ──> Glow Tube tag effect<br>
+                    <b>~HB~ text ~HB~</b> ──> Hardware Bevel tag effect<br>
+                    <b>~IS~ text ~IS~</b> ──> Screen Segment tag effect<br>
+                    <b>~GC~ text ~GC~</b> ──> Gel Capsule tag effect<br>
+                    <b>~KO~ text ~KO~</b> ──> Fluid Orbit tag effect<br>
+                    <br>
+                    <b>~PM~ text ~PM~</b> ──> <span class="effect-plasma-gel">Plasma Gel tag</span> effect<br>
+                    <br>
+                    <b>~WB~ text ~WB~</b> ──> <span class="effect-water-bubble">Water Bubble tag</span> effect<br>
+                    <b>~GLO~ text ~GLO~</b> ──> <span class="effect-glow-tracer">Glow Tracer tag</span> effect<br>
+                    <b>~ST~ text ~ST~</b> ──> <span class="effect-shimmer-title">Shimmer Title tag</span> effect<br>
+                    <br>
+                    <b>~FUNC~ text ~FUNC~</b> ──> <span class="dev-chip-function">Function tag</span> effect<br>
+                    <b>~VAR~ text ~VAR~</b> ──> <span class="dev-chip-variable">Variable tag</span> effect<br>
+                    <b>~STR~ text ~STR~</b> ──> <span class="dev-chip-string">String tag</span> effect<br>
+                </div>
+                <h4>DROPLET GEL HIGHLIGHTERS</h4>
+                <div class="help-card">
+                    <b>~WD-Y~ text ~</b> ──> <span class="droplet-amber">Amber Plasma Gel</span> Fill<br>
+                    <b>~WD-R~ text ~</b> ──> <span class="droplet-crimson">Crimson Plasma Gel</span> Fill<br>
+                    <b>~WD-PK~ text ~</b> ──> <span class="droplet-fuchsia">Fuchsia Plasma Gel</span> Fill<br>
+                    <b>~WD-PR~ text ~</b> ──> <span class="droplet-amethyst">Amethyst Plasma Gel</span> Fill<br>
+                    <b>~WD-O~ text ~</b> ──> <span class="droplet-tangerine">Tangerine Plasma Gel</span> Fill<br>
+                    <b>~WD-SL~ text ~</b> ──> <span class="droplet-slate">Slate Plasma Gel</span> Fill<br>
+                </div>
+                <h4>LIQUID GEL HIGHLIGHTERS</h4>
+                <div class="help-card">
+                    <b>=R= text =R=</b> ──> <span class="gel-orb gel-r">Crimson Gel Orb</span> Fill<br>
+                    <b>=O= text =O=</b> ──> <span class="gel-orb gel-o">Tangerine Gel Orb</span> Fill<br>
+                    <b>=Y= text =Y=</b> ──> <span class="gel-orb gel-y">Amber Gel Orb</span> Fill<br>
+                    <b>=G= text =G=</b> ──> <span class="gel-orb gel-g">Emerald Gel Orb</span> Fill<br>
+                    <b>=C= text =C=</b> ──> <span class="gel-orb gel-c">Cyan Gel Orb</span> Fill<br>
+                    <b>=B= text =B=</b> ──> <span class="gel-orb gel-b">Cobalt Gel Orb</span> Fill<br>
+                    <b>=V= text =V=</b> ──> <span class="gel-orb gel-v">Amethyst Gel Orb</span> Fill<br>
+                    <b>=P= text =P=</b> ──> <span class="gel-orb gel-p">Fuchsia Gel Orb</span> Fill<br>
+                    <b>=MG= text =MG=</b> ──> <span class="gel-orb gel-mg">Rose Ruby Gel Orb</span> Fill<br>
+                    <b>=LM= text =LM=</b> ──> <span class="gel-orb gel-lm">Lime Burst Gel Orb</span> Fill<br>
+                    <b>=AQ= text =AQ=</b> ──> <span class="gel-orb gel-aq">Deep Teal Aqua Orb</span> Fill<br> <!-- Ik both of these don't have "gel" in their name lol  -->
+                    <b>=SL= text =SL=</b> ──> <span class="gel-orb gel-sl">Slate Steel Orb</span> Fill
+                </div>
+                <h4>LIQUID TAG HIGHLIGHTERS</h4>
+                <div class="help-card">
+                    <b>!#R# text #</b> ──> <span class="aero-tag-chip tag-chip-r">Crimson Tag Chip</span> Fill<br>
+                    <b>!#O# text #</b> ──> <span class="aero-tag-chip tag-chip-o">Tangerine Tag Chip</span> Fill<br>
+                    <b>!#Y# text #</b> ──> <span class="aero-tag-chip tag-chip-y">Amber Tag Chip</span> Fill<br>
+                    <b>!#G# text #</b> ──> <span class="aero-tag-chip tag-chip-g">Emerald Tag Chip</span> Fill<br>
+                    <b>!#A# text #</b> ──> <span class="aero-tag-chip tag-chip-a">Aquamarine Tag Chip</span> Fill<br>
+                    <b>!#PR# text #</b> ──> <span class="aero-tag-chip tag-chip-pr">Amethyst Tag Chip</span> Fill<br>
+                    <b>!#PK# text #</b> ──> <span class="aero-tag-chip tag-chip-pk">Fuchsia Tag Chip</span> Fill<br>
+                    <b>!#SL# text #</b> ──> <span class="aero-tag-chip tag-chip-sl">Slate Tag Chip</span> Fill
+                </div>
+                <h4>LIQUID PLASMA POD HIGHLIGHTERS</h4>
+                <div class="help-card">
+                    <b>~PP-C~ text ~</b> ──> <span class="megachip-plasma plasma-cyan">Aquamarine Plasma Pod Chip</span> Fill<br>
+                    <b>~PP-O~ text ~</b> ──> <span class="megachip-plasma plasma-orange">Tangerine Plasma Pod Chip</span> Fill<br>
+                    <b>~PP-R~ text ~</b> ──> <span class="megachip-plasma plasma-crimson">Crimson Plasma Pod Chip</span> Fill<br>
+                    <b>~PP-L~ text ~</b> ──> <span class="megachip-plasma plasma-lime">Lime Plasma Pod Chip</span> Fill<br>
+                </div>
+                <h4>GLASS BADGE BRACKET HIGHLIGHTERS</h4>
+                <div class="help-card">
+                    <b>~GB-B~ text ~</b> ──> <span class="megachip-glass-bracket bracket-blue">Sapphire Glass Badge Bracket Chip</span> Fill<br>
+                    <b>~GB-PR~ text ~</b> ──> <span class="megachip-glass-bracket bracket-amethyst">Amethyst Glass Badge Bracket Chip</span> Fill<br>
+                    <b>~GB-PK~ text ~</b> ──> <span class="megachip-glass-bracket bracket-fuchsia">Fuchsia Glass Badge Bracket Chip</span> Fill<br>
+                    <b>~GB-Y~ text ~</b> ──> <span class="megachip-glass-bracket bracket-amber">Amber Glass Badge Bracket Chip</span> Fill<br>
+                </div>
+                <h4>CIRCUIT NODE HIGHLIGHTERS</h4>
+                <div class="help-card">
+                    <b>~CN-SL~ text ~</b> ──> <span class="megachip-circuit-node circuit-slate">● Slate Circuit Node Chip</span> Fill<br>
+                    <b>~CN-T~ text ~</b> ──> <span class="megachip-circuit-node circuit-teal">● Teal Circuit Node Chip</span> Fill<br>
+                    <b>~CN-GL~ text ~</b> ──> <span class="megachip-circuit-node circuit-gold">● Gold Circuit Node Chip</span> Fill<br>
+                    <b>~CN-R~ text ~</b> ──> <span class="megachip-circuit-node circuit-ruby">● Ruby Circuit Node Chip</span> Fill<br>
+                </div>
+                <h4>JOURNALING FEATURES</h4>
+                <div class="help-card">
+                    <b>~DR~ text ~DR~</b> ──> <span class="jr-chip-date-plate">Date Plate</span> Journal Chip<br>
+                    <b>~MD~ text ~MD~</b> ──> <span class="jr-chip-mood">Mood</span> Journal Chip<br>
+                    <b>~VO~ text ~VO~</b> ──> <span class="jr-chip-voice-tag">Voice Tag</span> Journal Chip<br>
+                    <b>~WS~ text ~WX~</b> ──> <span class="jr-chip-weather">Weather</span> Journal Chip<br>
+                    <b>~WS~ text ~WX~</b> ──> <span class="jr-chip-wax-stamp">Wax Stamp</span> Journal Chip<br>
+                </div>
+                <h4>ADVANCED EFFECTS AND MARKDOWN</h4>
+                <div class="help-card">
+                    <b>~G~ text ~G~</b> ──> Capsule Green Flash Button<br>
+                    <b>~U~ text ~U~</b> ──> Aurora Wave Underline Accent Vector<br>
+                    <b>~B~ text ~B~</b> ──> Inset System Information Border Badge<br>
+                    <b>~S~ text ~S~</b> ──> Pulsing Cyber Pink Neon Glow<br>
+                    <b>** text **</b> ──> Core Thick Heavy Bold Node Text Line<br>
+                    <b>* text *</b> ──> Standard Slanted Italic Emphasis Node String<br>
+                    <b>` text `</b> ──> Code Block Gray Technical Node Matrix
+                </div>
+                <h4>AV AND COCKPIT EFFECTS</h4>
+                <div class="help-card">
+                    <b>~RS~ text ~RS~</b> ──> <span class="av-chip-radar-sweep">Radar Sweep</span> effect<br>
+                    <b>~HD~ text ~HD~</b> ──> <span class="av-chip-heading">Heading</span> effect<br>
+                    <b>~AL~ text ~AL~</b> ──> <span class="av-chip-altimeter">Altimeter</span> effect<br>
+                </div>
+                <h4>APPLETS</h4>
+                <div class="help-card">
+                    <b>~FN~ text ~FN~</b> ──> Foldout Note applet<br>
+                    <b>~TS~ text ~TS~</b> ──> Toggle Switch applet<br>
+                    <b>~SM~ text ~SM~</b> ──> Stamp Text applet<br>
+                    <b>~TB~ text ~TB~</b> ──> Toggle Button applet<br>
+                    <b>~VD~ text ~VD~</b> ──> Volume Dial applet<br>
+                    <b>~BC~ text ~BC~</b> ──> Battery Cell applet<br>
+                    <b>~CD~ text ~CD~</b> ──> Calendar Desk applet<br>
+                    <b>~SR~ text ~SR~</b> ──> Star Rating applet<br>
+                    <b>~CC~ text ~CC~</b> ──> Counter Badge applet<br>
+                    <b>~LK~ text ~LK~</b> ──> Security Latch applet<br>
+                    <b>~PR~ text ~PR~</b> ──> Playback Ribbon applet<br>
+                    <b>~CR~ text ~CR~</b> ──> Gauge applet<br>
+                    <b>~SI~ text ~SI~</b> ──> Stepper Mesh applet<br>
+                    <br>
+                    <b>~ORB~ text ~ORB~</b> ──> Hydro Orb applet<br>
+                    <b>~SLS~ text ~SLS~</b> ──> Lock Slider applet<br>
+                    <b>~VM~ text ~VM~</b> ──> Gadget Clock applet<br>
+                    <br>
+                    <b>~MT~ text ~MT~</b> ──> Play / Pause Button applet<br>
+                    <b>~IC~ text ~IC~</b> ──> Inset Checkbox applet<br>
+                    <br>
+                    <b>~HEX~ #[hex code] ~HEX~</b> ──> Hexcode applet<br> 
+                    <br>
+                    <b>~SG~ text ~SG~</b> ──> Signal Node applet<br>
+                </div>
+                <h4>LIQUID BUBBLE HIGHLIGHTERS</h4>
+                <div class="help-card">
+                    <b>#R# text #</b> ──> <span class="gel-bubble-chip gel-chip-red">Crimson Gel Chip</span> Fill<br>
+                    <b>#O# text #</b> ──> <span class="gel-bubble-chip gel-chip-orange">Tangerine Gel Chip</span> Fill<br>
+                    <b>#GL# text #</b> ──> <span class="gel-bubble-chip gel-chip-gold">Gold Gel Chip</span> Fill<br>
+                    <b>#Y# text #</b> ──> <span class="gel-bubble-chip gel-chip-yellow">Amber Gel Chip</span> Fill<br>
+                    <b>#L# text #</b> ──> <span class="gel-bubble-chip gel-chip-lime">Lime Burst Gel Chip</span> Fill<br>
+                    <b>#G# text #</b> ──> <span class="gel-bubble-chip gel-chip-green">Emerald Gel Chip</span> Fill<br>
+                    <b>#TU# text #</b> ──> <span class="gel-bubble-chip gel-chip-turquoise">Turquoise Gel Chip</span> Fill<br>
+                    <b>#C# text #</b> ──> <span class="gel-bubble-chip gel-chip-cyan">Aquamarine Gel Chip</span> Fill<br>
+                    <b>#T# text #</b> ──> <span class="gel-bubble-chip gel-chip-teal">Deep Teal Gel Chip</span> Fill<br>
+                    <b>#B# text #</b> ──> <span class="gel-bubble-chip gel-chip-blue">Cobalt Gel Chip</span> Fill<br>
+                    <b>#PR# text #</b> ──> <span class="gel-bubble-chip gel-chip-purple">Amethyst Gel Chip</span> Fill<br>
+                    <b>#PK# text #</b> ──> <span class="gel-bubble-chip gel-chip-pink">Fuchsia Gel Chip</span> Fill<br>
+                    <b>#W# text #</b> ──> <span class="gel-bubble-chip gel-chip-white">Quartz Gel Chip</span> Fill<br>
+                    <b>#FG# text #</b> ──> <span class="gel-bubble-chip gel-chip-fog">Foggy Gel Chip</span> Fill<br>
+                    <b>#SL# text #</b> ──> <span class="gel-bubble-chip gel-chip-slate">Slate Gel Chip</span> Fill<br>
+                    <b>#BK# text #</b> ──> <span class="gel-bubble-chip gel-chip-black">Void Gel Chip</span> Fill 
+                </div>
+                <p class="license-text">All creative work, parsed strings, and custom presentation elements on this site are licensed under a 
+    <a href="https://creativecommons.org" target="_blank" rel="noopener noreferrer" class="license-link">
+    Creative Commons Attribution 4.0 International License</a>.
+                </p>
+                <p class="license-text">
+                    All source code, parsing algorithms, and WYSIWIG canvas code on this site are licensed under the 
+    <a href="https://opensource.org/license/mit" target="_blank" rel="noopener noreferrer" class="license-link">
+    MIT License</a>.
+                </p>
+            </div>
+            <div class="dialog-footer">
+                <button class="dialog-confirm-orb" id="dialog-confirm-btn">ACKNOWLEDGE</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scroll right down to the absolute bottom of index.html – add this new dialog box wrapper right behind your formatting help block: -->
+    <div id="settings-modal-overlay" class="aero-modal-overlay-common">
+        <div class="aero-dialog-box-common">
+            <div class="dialog-header yellow-header">
+                <h3>⚙️ WRITEDOWN CONTROL CENTER</h3>
+                <div id="settings-close-btn" class="dialog-close-btn-common" title="Close Panel">✖</div>
+            </div>
+            <div class="dialog-body-scroll-common">
+                <h4>📦 LOCAL REGISTRY MAINTENANCE</h4>
+                <p style="font-size: 13px; color: #475569; margin-bottom: 15px;">Wiping your history will clear your storage slots and local scratchpads. This process cannot be undone.</p>
+                
+                <button class="wipe-history-btn" id="btn-wipe-history">
+                    <svg viewBox="0 0 24 24" style="width:16px; height:16px; margin-right:8px; stroke:currentColor; stroke-width:2.5; fill:none;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>
+                    WIPE ALL PAD HISTORY
+                </button>
+            </div>
+            <div class="dialog-footer">
+                <button class="dialog-confirm-orb btn-yellow-orb" id="settings-confirm-btn">CLOSE CONTROL CENTER</button>
+            </div>
+        </div>
+    </div>
+    <!-- Linking the behavior automation loop script -->
+    <script src="app.js"></script>
+</body>
+</html>
