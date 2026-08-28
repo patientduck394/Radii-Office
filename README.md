@@ -1,2 +1,2 @@
-# Waterflow
-An advanced note taking app with Keydown (a heavy inspiration from Markdown)!
+# Radii Office
+An advanced office suite with Keydown (custom formatting syntax that has heavy inspiration from Markdown)!
