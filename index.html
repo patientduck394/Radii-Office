@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radii Office - Modern Web Productivity Suite</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', 'JetBrains Mono', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 50% 30%, #021f2b 0%, #000a12 100%);
+            color: #ffffff;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navigation Bar */
+        .top-navbar {
+            width: 100%;
+            height: 64px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(5, 147, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(5, 143, 255, 0.9);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover {
+            color: #0582ff;
+            text-shadow: 0 0 8px rgba(5, 168, 255, 0.6);
+        }
+
+        /* Hero Section Container */
+        .hero-container {
+            max-width: 1280px;
+            margin: 140px auto 60px auto;
+            padding: 0 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 40px;
+            flex: 1;
+        }
+
+        /* Left Side Hero Text */
+        .hero-text-block {
+            flex: 1;
+            max-width: 580px;
+        }
+
+        .hero-title {
+            font-size: 3.6rem;
+            font-weight: 900;
+            line-height: 1.1;
+            margin: 0 0 20px 0;
+            background: linear-gradient(135deg, #ffffff 0%, #9eddff 50%, #0582ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(5, 138, 255, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: #b5d9fd;
+            margin-bottom: 30px;
+        }
+
+        /* Right Side App Launcher Buttons Grid */
+        .app-launcher-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            width: 480px;
+            flex-shrink: 0;
+        }
+
+        .app-card-btn {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
+            border: 2px solid rgba(5, 118, 255, 0.35);
+            border-radius: 16px;
+            padding: 20px;
+            text-decoration: none;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            backdrop-filter: blur(16px);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+        }
+
+        .app-card-btn:hover {
+            background: linear-gradient(180deg, rgba(94, 156, 255, 0.25) 0%, rgba(5, 97, 255, 0.2) 100%);
+            border-color: #0582ff;
+            box-shadow: 0 12px 30px rgba(5, 118, 255, 0.45), inset 0 1px 2px #ffffff;
+            transform: translateY(-4px);
+        }
+
+        .app-icon {
+            font-size: 1.8rem;
+        }
+
+        .app-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #ffffff;
+        }
+
+        .app-desc {
+            font-size: 0.8rem;
+            color: #9edfff;
+            line-height: 1.4;
+        }
+
+        /* Footer Style */
+        .site-footer {
+            width: 100%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.08) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 2px solid rgba(5, 147, 255, 0.3);
+            padding: 24px 40px;
+            box-sizing: border-box;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #b5d9fd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .site-footer a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            text-shadow: 0 0 8px rgba(5, 143, 255, 0.6);
+            transition: color 0.2s ease;
+        }
+
+        .site-footer a:hover {
+            color: #0582ff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="top-navbar">
+        <a href="/" class="brand-logo">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="/logo.png" width="120" height="45">
+            <span style="white-space: pre-wrap; font-size: 1.5em;"> Office</span>
+          </div>
+        </a>
+        <nav class="nav-links">
+            <a href="products">Products</a>
+            <a href="#about">About Studio</a>
+            <a href="#docs">Documentation</a>
+            <a href="mailto:patientduck0394@gmail.com">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Main Hero Section -->
+    <main class="hero-container">
+        
+        <!-- Left Banner Text -->
+        <section class="hero-text-block">
+            <h1 class="hero-title">Work at the speed of creation.</h1>
+            <p class="hero-subtitle">
+                Welcome to Radii Office—a suite of web tools built for creative workflows, asset management, data structuring, and design.
+            </p>
+        </section>
+
+        <!-- Right Quick-Launch App Grid -->
+        <section class="app-launcher-grid" id="suite">
+            <a href="/inkpath/" class="app-card-btn">
+                <img src="/Inkpath%20App.png" width="50" height="50" alt="Inkpath Logo" />
+                <span class="app-name">Inkpath</span>
+                <span class="app-desc">Vector graphics editor with custom .KV support.</span>
+            </a>
+
+            <a href="/mainkey/" class="app-card-btn">
+                <img src="/Mainkey%20App.png" width="50" height="50" alt="Mainkey Logo" />
+                <span class="app-name">Mainkey</span>
+                <span class="app-desc">Relational database & record manager.</span>
+            </a>
+
+            <a href="/imbuer/" class="app-card-btn">
+                <img src="/Imbuer%20App.png" width="50" height="50" alt="Imbuer Logo" />
+                <span class="app-name">Imbuer</span>
+                <span class="app-desc">Data grid spreadsheet processor.</span>
+            </a>
+
+            <a href="/writeout/" class="app-card-btn">
+                <img src="/Writeout%20App.png" width="50" height="50" alt="Writeout Logo" />
+                <span class="app-name">Writeout</span>
+                <span class="app-desc">Rich-text document writer.</span>
+            </a>
+
+            <a href="/amber/" class="app-card-btn">
+                <img src="/Amber%20App.png" width="50" height="50" alt="Amber Logo" />
+                <span class="app-name">Amber</span>
+                <span class="app-desc">Slide deck presentation maker.</span>
+            </a>
+
+            <a href="/omicron/" class="app-card-btn">
+                <img src="/Omicron%20App.png" width="50" height="50" alt="Omicron Logo" />
+                <span class="app-name">Omicron</span>
+                <span class="app-desc">Visual web page layout builder.</span>
+            </a>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <span>Licensed under</span>
+        <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">CC BY 4.0</a>
+        <span>and the</span>
+        <a href="https://opensource.org/licenses/MIT" target="_blank" rel="noopener noreferrer">MIT License</a>
+    </footer>
+
+</body>
+</html>
