@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formly - Frutiger Aero Forms</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="keydown.css">
+    <link rel="icon" type="image/svg+xml" href="/formly/favicon.svg">
+</head>
+<body>
+
+    <!-- 3D Glass Side Navigation Panel -->
+    <nav class="aero-sidebar" id="sidebar">
+        <div class="sidebar-brand">
+            <h2>Formly</h2>
+        </div>
+        
+        <div class="pad-selection-stack">
+            <button class="pad-toggle-btn" id="btn-create-form">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+                Create Form
+            </button>
+            <button class="pad-toggle-btn" id="btn-download-kfe">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Editable
+            </button>
+            <button class="pad-toggle-btn" id="btn-download-kfv">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                <span id="btn-download-kfv-text">Download Viewable</span>
+            </button>
+            <button class="pad-toggle-btn" id="btn-upload-file">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Load
+            </button>
+            <input type="file" id="hidden-file-input" accept=".kfe,.kfv,.kfa" style="display: none;">
+        </div>
+
+        <div class="sidebar-footer-controls">
+            <button class="sidebar-action-btn" id="btn-clear-form">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                Reset Workspace
+            </button>
+        </div>
+
+        <!-- Latch Toggle Strip -->
+        <div class="latch-toggle-strip" id="sidebar-latch">
+            <svg id="toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"/></svg>
+        </div>
+    </nav>
+
+    <!-- Main Workspace Viewport -->
+    <main class="workspace-viewport-wrapper">
+        <!-- Top Toolbar Row -->
+        <div class="sheets-toolbar">
+            <div class="formula-bar-wrapper">
+                <span class="formula-badge" id="mode-badge">BUILDER</span>
+                <input type="text" id="formula-input" readonly value="Formly Form Builder - Add fields below to structure your form." />
+            </div>
+            
+            <div class="toolbar-tools-dock">
+                <!-- Color Picker Tool Button -->
+                <div class="color-picker-container">
+                    <button class="style-tool-btn" id="palette-toggle-btn" title="Customize Theme">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="13.5" cy="6.5" r=".5"/><circle cx="17.5" cy="10.5" r=".5"/><circle cx="8.5" cy="7.5" r=".5"/><circle cx="6.5" cy="12.5" r=".5"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c0.926 0 1.648-0.746 1.648-1.688 0-0.437-0.18-0.835-0.437-1.125-0.29-0.289-0.438-0.652-0.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.963c3.049 0 5.5-2.451 5.5-5.5 0-4.97-4.03-9-9-9z"/></svg>
+                    </button>
+                    <!-- Floating Palette Popup Menu -->
+                    <div class="aero-palette-menu" id="aero-palette-menu">
+                        <div class="palette-header">Theme Accents</div>
+                        <div class="palette-section">
+                            <label>Presets</label>
+                            <div class="preset-row">
+                                <div class="color-swatch" style="background: #9D84FF;" data-color="#9D84FF" title="Formly Purple"></div>
+                                <div class="color-swatch" style="background: #6bc702;" data-color="#6bc702" title="Classic Aero Green"></div>
+                                <div class="color-swatch" style="background: #0284c7;" data-color="#0284c7" title="Ocean Blue"></div>
+                                <div class="color-swatch" style="background: #ec4899;" data-color="#ec4899" title="Bubblegum Pink"></div>
+                                <div class="color-swatch" style="background: #f59e0b;" data-color="#f59e0b" title="Amber Glow"></div>
+                                <div class="custom-picker-wrapper" title="Custom Color">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M12 5v14M5 12h14"/></svg>
+                                    <input type="color" id="custom-color-picker" value="#9D84FF">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="palette-footer">
+                            <button class="reset-style-btn" id="reset-theme-btn">Reset Default</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Form Workspace Container -->
+        <div id="spreadsheet-container">
+            <div id="form-builder-root" style="padding: 24px; max-width: 750px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px;">
+                <!-- Form Header Card -->
+                <div class="form-meta-card" style="background: rgba(255,255,255,0.8); border: 1px solid rgba(255,255,255,0.9); border-radius: 12px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                    <input type="text" id="form-title-input" placeholder="Untitled Form" value="My Awesome Frutiger Aero Form" style="font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 800; border: none; background: transparent; outline: none; width: 100%; color: #1e293b; margin-bottom: 8px;">
+                    <textarea id="form-desc-input" placeholder="Form description or instructions..." style="font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; border: none; background: rgba(0,0,0,0.03); border-radius: 6px; padding: 10px; outline: none; width: 100%; resize: vertical; color: #475569; box-sizing: border-box;">Please fill out the fields below and export your answers when finished!</textarea>
+                </div>
+
+                <!-- Dynamic Fields Container -->
+                <div id="form-fields-list" style="display: flex; flex-direction: column; gap: 15px;"></div>
+
+                <!-- Add Field Controls Bar -->
+                <div id="builder-controls" style="display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap;">
+                    <button class="pad-toggle-btn add-field-btn" data-type="text" style="color: #334155; background: rgba(255,255,255,0.6); flex: 1; justify-content: center;">+ Text Field</button>
+                    <button class="pad-toggle-btn add-field-btn" data-type="textarea" style="color: #334155; background: rgba(255,255,255,0.6); flex: 1; justify-content: center;">+ Paragraph</button>
+                    <button class="pad-toggle-btn add-field-btn" data-type="select" style="color: #334155; background: rgba(255,255,255,0.6); flex: 1; justify-content: center;">+ Dropdown</button>
+                    <button class="pad-toggle-btn add-field-btn" data-type="chip" style="color: #334155; background: rgba(255,255,255,0.6); flex: 1; justify-content: center;">+ Chip Select</button>
+                    <button class="pad-toggle-btn add-field-btn" data-type="rating" style="color: #334155; background: rgba(255,255,255,0.6); flex: 1; justify-content: center;">+ Rating Star</button>
+                    <button class="pad-toggle-btn add-field-btn" data-type="checkbox" style="color: #334155; background: rgba(255,255,255,0.6); flex: 1; justify-content: center;">+ Checkbox</button>
+                </div>
+
+                <!-- View Mode Answer Export Button (Bottom of form) -->
+                <div id="view-mode-footer" style="display: none; justify-content: center; margin-top: 20px; padding-bottom: 20px;">
+                    <button class="pad-toggle-btn" id="btn-export-kfa" style="background: linear-gradient(180deg, var(--aero-primary, #9D84FF) 0%, #7b5ce6 100%); color: #fff; border-color: #bfaeff; padding: 14px 28px; font-size: 1rem;">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        Download answers
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
