@@ -1,0 +1,962 @@
+/* ========================================================
+   SOVEREIGN FRUTIGER AERO CORE INTERFACE STYLESHEET
+   ======================================================== */
+:root {
+    --sky-glow: #0284c7;
+    --emerald-glow: #10b981;
+    --neon-volt: #F0FF00;
+    --dark-void: #0d0e12;
+    --glass-background: linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(240, 253, 250, 0.45) 100%);
+    --glass-border: rgba(255, 255, 255, 0.9);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+    background: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    color: #334155;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+}
+
+h3 {
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-shadow: 0 0 10px rgba(56,189,248,0.6);
+    padding-left: 10px;
+    font-family: 'Jetbrains Mono', 'Courier New', Courier, monospace;
+    white-space: pre-wrap
+}
+
+.pad-selection-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ========================================================
+   FIXED SIDEBAR BUTTON MECHANICS (HOVER-ONLY GLOW STYLES)
+   ======================================================== */
+.pad-toggle-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    padding: 12px 16px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    font-family: 'Jetbrains Mono', 'Courier New', Courier, monospace
+}
+
+.pad-toggle-btn iconify-icon { 
+    font-size: 1.2rem; 
+    color: #38bdf8; 
+    transition: color 0.2s ease;
+}
+
+/* Stripped legacy fixed state rule. Active glow is now strictly tied to cursor pointer actions */
+.pad-toggle-btn:hover {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    border-color: #7dd3fc;
+    box-shadow: 0 4px 12px rgba(2, 132, 199, 0.35), inset 0 1px 2px #fff;
+    transform: translateY(-1px);
+    color: #ffffff;
+}
+
+.pad-toggle-btn:hover iconify-icon { 
+    color: #ffffff; 
+}
+
+.pad-toggle-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.2);
+}
+
+.sidebar-footer-controls {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+#last.sidebar-action-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 50px;
+    transition: all 0.2s;
+    font-family: 'Jetbrains Mono', 'Courier New', Courier, monospace
+}
+.sidebar-action-btn {
+    background: transparent;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #cbd5e1;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 50px;
+    transition: all 0.2s;
+    font-family: 'Jetbrains Mono', 'Courier New', Courier, monospace
+}
+.sidebar-action-btn:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border-color: rgba(255,255,255,0.4);
+}
+
+/* Collapse Bouncer Toggle Latch Handle */
+.latch-toggle-strip {
+    position: absolute;
+    top: 50%;
+    right: -24px;
+    width: 24px;
+    height: 60px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.05) 100%);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    backdrop-filter: blur(10px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #fff;
+    box-shadow: 4px 0 10px rgba(0,0,0,0.1);
+}
+#toggle-icon { transition: transform 0.25s ease; }
+
+/* --- Ensure the workspace wrapper stacks everything without overflowing --- */
+.workspace-viewport-wrapper {
+    flex: 1;
+    height: 100vh;
+    padding: 20px 30px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 12px; /* Adds clean breathing room between the top bar and the canvas */
+    overflow: hidden; 
+}
+
+/* --- Shorten the canvas height so it fits the viewport perfectly --- */
+#wysiwyg-canvas {
+    width: 100%;
+    flex: 1; /* Tells the canvas to take up only the remaining available space */
+    height: auto !important; /* Overrides fixed 100% height so it shrinks to fit */
+    max-width: 900px;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid rgba(255,255,255,0.8);
+    border-radius: 16px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.2);
+    padding: 30px; /* Slightly tightened padding to keep content roomy */
+    outline: none;
+    overflow-y: auto; /* Scrollbars stay neatly inside the canvas if text gets long */
+    line-height: 1.7;
+    color: #334155;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
+    font-size: 1.02rem;
+}
+
+/* Custom Watermark Placeholder mechanics */
+#wysiwyg-canvas:empty::before {
+    content: attr(placeholder);
+    color: #94a3b8;
+    pointer-events: none;
+    display: block;
+}
+
+/* ========================================================
+   SKEUOMORPHIC ELEMENT STYLES (FROM KEYDOWN.CSS REGISTRY)
+   ======================================================== */
+#wysiwyg-canvas h1 { color: #0284c7; font-weight: 800; border-bottom: 3px solid #38bdf8; padding-bottom: 6px; margin: 15px 0; }
+#wysiwyg-canvas h2 { color: #059669; font-weight: 700; margin: 20px 0 8px 0; }
+#wysiwyg-canvas h3 { color: #d97706; font-size: 18px; margin: 15px 0 5px 0; }
+#wysiwyg-canvas blockquote { background: linear-gradient(90deg, rgba(56,189,248,0.15) 0%, rgba(255,255,255,0) 100%); border-left: 5px solid #0284c7; margin: 15px 0; padding: 10px 20px; color: #0369a1; font-style: italic; border-radius: 0 8px 8px 0; }
+#wysiwyg-canvas code { background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border: 1px solid #cbd5e1; color: #475569; padding: 3px 6px; border-radius: 5px; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-family: monospace; }
+
+/* 12-Color Liquid Gel Highlighter spectrum */
+.gel-orb { color: white; padding: 2px 7px; border-radius: 6px; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3); display: inline-block; box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 3px 6px rgba(0,0,0,0.1); margin: 0 2px; vertical-align: middle; }
+.gel-y  { background: linear-gradient(180deg, #fde047 0%, #eab308 100%); border: 2px solid #ca8a04; color: #451a03; text-shadow: none; } /* Changed to 2px borders per legacy specs */
+.gel-r  { background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%); border: 2px solid #dc2626; }
+.gel-g  { background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%); border: 2px solid #059669; }
+.gel-c  { background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); border: 2px solid #0891b2; }
+.gel-b  { background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%); border: 2px solid #2563eb; }
+.gel-v  { background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%); border: 2px solid #7e22ce; }
+.gel-p  { background: linear-gradient(180deg, #f472b6 0%, #db2777 100%); border: 2px solid #be185d; }
+.gel-o  { background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%); border: 2px solid #c2410c; }
+.gel-mg { background: linear-gradient(180deg, #f472b6 0%, #e11d48 100%); border: 2px solid #be123c; }
+.gel-lm { background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%); border: 2px solid #4d7c0f; color: #1a2e05; text-shadow: none; }
+.gel-aq { background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%); border: 2px solid #0e7490; }
+.gel-sl { background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%); border: 2px solid #475569; color: #1e293b; text-shadow: none; }
+
+.spark-text { color: #06b6d4; font-weight: 800; text-shadow: 0 0 8px rgba(6,182,212,0.6); position: relative; }
+
+/* 3D Glass Containers & Content Windows */
+.aero-glass-block { background: linear-gradient(135deg, rgba(255, 255, 255, 0.6) 0%, rgba(219, 234, 254, 0.3) 50%, rgba(255, 255, 255, 0.1) 100%); border: 2px solid rgba(255, 255, 255, 0.8); border-radius: 12px; padding: 15px 20px; margin: 15px 0; color: #0369a1; font-weight: bold; box-shadow: 0 8px 25px rgba(2, 132, 199, 0.25), inset 0 1px 2px #fff; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); position: relative; overflow: hidden; }
+.aero-glass-block::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.4) 50%, transparent 55%); transform: rotate(-15deg); pointer-events: none; }
+
+.aqua-bubble-text { color: #0284c7; font-weight: 900; text-shadow: 0 1px 0 #fff, 0 2px 3px rgba(2, 132, 199, 0.4); background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block; animation: liquid-wobble 4s infinite ease-in-out; }
+@keyframes liquid-wobble { 0%, 100% { transform: scale(1) translateY(0); } 50% { transform: scale(1.04) translateY(-2px); } }
+
+.tactile-alert-plate { background: linear-gradient(180deg, #fef08a 0%, #eab308 45%, #ca8a04 100%); border: 3px solid #fef08a; border-radius: 8px; padding: 10px 15px; margin: 15px 0; color: #451a03; font-weight: 800; display: flex; align-items: center; gap: 12px; box-shadow: 0 6px 16px rgba(234, 179, 8, 0.35), inset 0 1px 2px rgba(255,255,255,0.8); }
+.alert-icon-orb { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%); border: 2px solid #fca5a5; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 900; }
+
+.media-track-wrap { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border: 3px solid #475569; border-radius: 10px; padding: 12px; margin: 15px 0; display: flex; align-items: center; justify-content: space-between; box-shadow: inset 0 3px 8px rgba(0,0,0,0.6), 0 4px 10px rgba(0,0,0,0.15); }
+.media-track-text { color: #38bdf8; font-family: monospace; font-size: 14px; text-shadow: 0 0 6px rgba(56,189,248,0.7); }
+.media-control-orb { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(180deg, #64748b 0%, #334155 100%); border: 1px solid #94a3b8; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.media-control-orb::before { content: ''; width: 0; height: 0; border-top: 5px solid transparent; border-bottom: 5px solid transparent; border-left: 8px solid #fff; margin-left: 2px; }
+
+/* 3D Dynamic Upward-Floating Aqua Boxes */
+.aqua-aero-box { background: radial-gradient(circle at 50% 30%, #06b6d4 0%, #0284c7 70%, #0369a1 100%); border: 3px solid #67e8f9; border-radius: 16px; padding: 25px; margin: 20px 0; color: #ffffff; font-weight: bold; position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(6, 182, 212, 0.4), inset 0 1px 2px rgba(255,255,255,0.8), inset 0 -10px 20px rgba(0,0,0,0.2); }.aqua-aero-box::before { content: ''; position: absolute; top: 2px; left: 2px; right: 2px; height: 45%; background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%); border-radius: 13px 13px 100% 100% / 13px 13px 30% 30%; pointer-events: none; z-index: 3; }.aero-box-orb { position: absolute; border-radius: 50%; pointer-events: none; z-index: 2; background: radial-gradient(circle at 50% 35%, rgba(255,255,255,0.9) 0%, rgba(56,189,248,0.4) 40%, rgba(2,132,199,0.7) 80%, transparent 100%); box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2), 0 4px 10px rgba(6,182,212,0.3); animation: bubble-up 5s infinite linear; opacity: 0.7; }@keyframes bubble-up { 0% { transform: translateY(120%) scale(0.7); opacity: 0; } 10% { opacity: 0.7; } 100% { transform: translateY(-120%) scale(1.2); opacity: 0; } }.aqua-box-content { position: relative; z-index: 4; text-shadow: 0 2px 4px rgba(2,44,87,0.8); font-family: sans-serif; line-height: 1.6; outline: none; min-height: 40px; }
+/* Multi-Color Aqua Box Variations */.aqua-emerald-box { background: radial-gradient(circle at 50% 30%, #34d399 0%, #10b981 70%, #047857 100%); border: 3px solid #6ee7b7; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4), inset 0 1px 2px #fff; }.aqua-emerald-box .aqua-box-content { color: #022c22; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }.aqua-amber-box { background: radial-gradient(circle at 50% 30%, #fbbf24 0%, #f59e0b 70%, #b45309 100%); border: 3px solid #fde047; box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4), inset 0 1px 2px #fff; }.aqua-amber-box .aqua-box-content { color: #451a03; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }.aqua-crimson-box { background: radial-gradient(circle at 50% 30%, #f87171 0%, #ef4444 70%, #b91c1c 100%); border: 3px solid #fca5a5; box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4), inset 0 1px 2px #fff; }.aqua-crimson-box .aqua-box-content { color: #450a0a; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }.aqua-amethyst-box { background: radial-gradient(circle at 50% 30%, #c084fc 0%, #a855f7 70%, #7e22ce 100%); border: 3px solid #e9d5ff; box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4), inset 0 1px 2px #fff; }
+.aqua-amethyst-box .aqua-box-content { color: #2e1065; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }/* Inset Code Cavity Modules */.writedown-code-block { background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%); border: 3px solid #475569; border-radius: 12px; margin: 20px 0; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(0,0,0,0.3), inset 0 -5px 15px rgba(0,0,0,0.4); overflow: hidden; }.code-block-header { background: linear-gradient(180deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 50%, rgba(0,0,0,0.15) 100%); border-bottom: 2px solid #475569; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }.code-block-header span { color: #94a3b8; font-size: 12px; font-weight: bold; letter-spacing: 0.5px; }.code-block-content { padding: 20px; margin: 0; font-family: monospace; font-size: 14px; color: #38bdf8; text-shadow: 0 0 4px rgba(56,189,248,0.4); box-shadow: inset 4px 4px 10px rgba(0,0,0,0.5); white-space: pre-wrap; outline: none; }.code-block-footer { background: rgba(15, 23, 42, 0.6); border-top: 1px solid #334155; padding: 8px 16px; display: flex; justify-content: flex-end; }.code-copy-btn { background: linear-gradient(180deg, #64748b 0%, #475569 50%, #334155 100%); border: 2px solid #94a3b8; border-radius: 6px; padding: 5px 14px; color: #ffffff; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 3px 6px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4); }/* 3D Glass Header Panels */.aero-glass-panel { background: var(--glass-background); border: 3px solid var(--glass-border); border-radius: 12px; margin: 20px 0; display: flex; flex-direction: column; box-shadow: 0 10px 30px rgba(2, 132, 199, 0.15), inset 0 1px 0 #fff; overflow: hidden; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }.glass-panel-header { background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 100%); border-bottom: 2px solid rgba(255, 255, 255, 0.6); padding: 10px 18px; display: flex; align-items: center; }.glass-panel-header span { font-size: 12px; font-weight: 800; letter-spacing: 0.5px; }.glass-panel-content { padding: 20px 18px; outline: none; font-size: 15px; line-height: 1.6; }.panel-sky { border-color: rgba(56, 189, 248, 0.5); background: linear-gradient(180deg, rgba(240, 249, 255, 0.8) 0%, rgba(224, 242, 254, 0.5) 100%); }.panel-sky .glass-panel-header span { color: #0369a1; }
+.panel-emerald { border-color: rgba(52, 211, 153, 0.5); background: linear-gradient(180deg, rgba(240, 253, 250, 0.8) 0%, rgba(204, 251, 241, 0.5) 100%); }.panel-emerald .glass-panel-header span { color: #059669; }.panel-amber { border-color: rgba(251, 191, 36, 0.5); background: linear-gradient(180deg, rgba(255, 251, 235, 0.8) 0%, rgba(254, 243, 199, 0.5) 100%); }.panel-amber .glass-panel-header span { color: #d97706; }.panel-crimson { border-color: rgba(248, 113, 113, 0.5); background: linear-gradient(180deg, rgba(254, 242, 242, 0.8) 0%, rgba(254, 226, 226, 0.5) 100%); }.panel-crimson .glass-panel-header span { color: #dc2626; }/* 3D Foldout Toggles */.aero-foldout-panel { background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border: 3px solid #cbd5e1; border-radius: 8px; margin: 20px 0; display: flex; flex-direction: column; box-shadow: 0 6px 18px rgba(0,0,0,0.08), inset 0 1px 0 #fff; overflow: hidden; }.foldout-panel-header { background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 100%); border-bottom: 2px solid #cbd5e1; padding: 10px 18px; display: flex; align-items: center; gap: 12px; user-select: none; }
+.foldout-arrow-orb { width: 20px; height: 20px; border-radius: 4px; background: linear-gradient(180deg, #fff 0%, #f1f5f9 100%); border: 1px solid #cbd5e1; color: #475569; font-size: 11px; font-weight: 900; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }.aero-foldout-panel.panel-collapsed .foldout-arrow-orb { transform: rotate(180deg); }.foldout-panel-title-input { font-size: 13px; font-weight: 800; color: #475569; outline: none; flex: 1; }.foldout-panel-content { padding: 20px 18px; outline: none; font-size: 15px; color: #334155; line-height: 1.6; background: #ffffff; box-shadow: inset 2px 2px 6px rgba(0,0,0,0.05); }.aero-foldout-panel.panel-collapsed .foldout-panel-content { display: none; }.aero-liquid-divider { height: 6px; background: linear-gradient(90deg, transparent 0%, #06b6d4 20%, #10b981 50%, #06b6d4 80%, transparent 100%); border-radius: 3px; margin: 20px 0; border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 3px 8px rgba(6,182,212,0.25); }
+/* --- 3D Interactive Canvas Sketchpad (::draw) --- */.aero-draw-console { background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%); border: 3px solid #94a3b8; border-radius: 12px; margin: 12px 0 !important; display: block !important; box-shadow: 0 6px 18px rgba(0,0,0,0.1), inset 0 1px 0 #ffffff; overflow: hidden; }.draw-console-dashboard { background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.1) 100%); border-bottom: 2px solid #94a3b8; padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; gap: 15px; user-select: none; }.draw-tool-cluster { display: flex; align-items: center; gap: 12px; }.draw-console-dashboard label { font-size: 11px; font-weight: 900; color: #475569; text-transform: uppercase; }.draw-picker-orb { appearance: none; width: 24px; height: 24px; background: none; border: 2px solid #cbd5e1; border-radius: 50%; cursor: pointer; padding: 0; }.draw-picker-orb::-webkit-color-swatch-wrapper { padding: 0; }.draw-picker-orb::-webkit-color-swatch { border: none; border-radius: 50%; }.draw-slider-fluid { appearance: none; width: 75px; height: 6px; background: #cbd5e1; border-radius: 3px; outline: none; }
+.draw-slider-fluid::-webkit-slider-thumb { appearance: none; width: 14px; height: 14px; border-radius: 50%; background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%); border: 1px solid #64748b; cursor: pointer; }.draw-clear-orb { background: linear-gradient(180deg, #fee2e2 0%, #f87171 48%, #ef4444 100%); border: 1px solid #fca5a5; border-radius: 4px; padding: 3px 10px; color: white; font-size: 10px; font-weight: 900; cursor: pointer; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }.draw-surface-canvas { background: #ffffff; cursor: crosshair; display: block; box-shadow: inset 3px 3px 8px rgba(0,0,0,0.06); width: 100% !important; max-width: 540px; height: 180px !important; margin: 0 auto; }
+/* ========================================================MODAL WINDOW & SYSTEM DIALOGUE SCREEN OVERLAYS======================================================== /* --- Mobile Blur Shield --- */
+.modal-blur-gate {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(2, 132, 199, 0.25);
+    backdrop-filter: blur(4px);
+    z-index: 1500; /* Sits below the sidebar, but above the canvas */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.25s ease;
+}
+
+/* Fades the shield in and captures taps when the menu is open */
+.modal-blur-gate.active {
+    opacity: 1;
+    pointer-events: auto; 
+}
+.embossed-dialogue-chassis { width: 580px; max-height: 80vh; background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(239,246,255,0.9) 100%); border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.3), inset 0 1px 2px #fff; display: flex; flex-direction: column; overflow: hidden; transform: scale(0.85); transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); }.modal-blur-gate.active .embossed-dialogue-chassis { transform: scale(1); }.dialog-header { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%); border-bottom: 2px solid rgba(255,255,255,0.4); padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; font-family: 'Jetbrains Mono', 'Courier New', Courier, monospace; }.dialog-header h3 { color: #fff; margin: 0; font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+#dialog-close-btn, #settings-close-btn { width: 22px; height: 22px; background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%); border: 1px solid #f87171; border-radius: 4px; color: white; font-size: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; }.dialog-body-scroll { padding: 20px; overflow-y: auto; flex: 1; background: radial-gradient(circle at 50% 0%, rgba(219,234,254,0.3) 0%, transparent 80%); }.dialog-body-scroll h4 { margin: 15px 0 8px 0; font-size: 13px; color: #0369a1; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; }.help-card { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; line-height: 1.8; color: #334155; }.help-card b { color: #0f172a; display: inline-block; min-width: 85px; }.text-sky-blue { color: #0284c7 !important; }.dialog-footer { padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; background: #f8fafc; }.dialog-confirm-orb { background: linear-gradient(180deg, #34d399 0%, #10b981 48%, #047857 100%); border: 2px solid #a7f3d0; border-radius: 20px; padding: 10px 22px; color: white; font-weight: bold; font-size: 13px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.4); box-shadow: 0 4px 10px rgba(16,185,129,0.3), inset 0 1px 1px #fff; font-family: 'Jetbrains Mono', 'Courier New', Courier, monospace; }
+.tactile-alert-plate-btn { width: 100%; text-align: center; background: linear-gradient(180deg, #fef08a 0%, #eab308 45%, #ca8a04 100%); border: 3px solid #fef08a; border-radius: 8px; padding: 12px; color: #451a03; font-weight: 800; cursor: pointer; box-shadow: 0 6px 16px rgba(234, 179, 8, 0.25); }/* Floating Background Water Crystals */.ambient-droplet { position: fixed; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.4) 0%, rgba(56,189,248,0.15) 50%, transparent 100%); border-radius: 50%; pointer-events: none; z-index: 1; animation: drift linear infinite; }@keyframes drift { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-80px) rotate(360deg); } }/* Scrollbar layout overrides */::-webkit-scrollbar { width: 10px; }::-webkit-scrollbar-track { background: rgba(0,0,0,0.02); }::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #94a3b8 0%, #64748b 100%); border: 2px solid #fff; border-radius: 10px; }
+
+/* ========================================================
+   SOVEREIGN TEXT SELECTION INTERCEPT (GLOBAL EXPOSURE)
+   ======================================================== */
+
+/* Target rule maps standard modern web trio viewports */
+::selection {
+    background-color: rgba(20, 149, 255, 0.35) !important; /* Your high-visibility neon volt glare! */
+    color: #ffffff !important; /* Forces high-contrast typography readability */
+}
+
+/* Target rule maps old WebKit compilation branches (Electron rendering lanes) */
+::-webkit-selection {
+    background-color: rgba(20, 149, 255, 0.35) !important;
+    color: #ffffff !important;
+}
+/* --- Floating Aero Style Toolbar --- */
+.aero-style-bar {
+    position: absolute;
+    display: none; /* Hidden by default until text is highlighted */
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(240, 249, 255, 0.7) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 4px 8px;
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.25), inset 0 1px 0 #fff;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    z-index: 1000;
+    pointer-events: auto;
+    transition: opacity 0.15s ease;
+}
+
+.style-bar-btn {
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #334155;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+    transition: transform 0.05s, background 0.15s;
+}
+
+.style-bar-btn:hover {
+    background: linear-gradient(180deg, #e2e8f0 100%, #cbd5e1 0%);
+    border-color: #94a3b8;
+    color: #0284c7;
+}
+
+.style-bar-btn:active {
+    transform: translateY(1px);
+}
+
+.style-bar-divider {
+    width: 1px;
+    height: 18px;
+    background: #cbd5e1;
+    margin: 0 4px;
+}
+/* --- Floating Aero Style Bar & Dropdowns --- */
+.aero-style-bar {
+    position: absolute;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 249, 255, 0.8) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 4px 8px;
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.25), inset 0 1px 0 #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1000;
+}
+
+.style-bar-btn {
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #334155;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+}
+.style-bar-btn:hover { background: #e2e8f0; color: #0284c7; }
+
+/* Dropdown Container Structure */
+.aero-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+    border: 2px solid #bae6fd;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    min-width: 140px;
+    z-index: 1005;
+    flex-direction: column;
+    padding: 4px;
+}
+
+.aero-dropdown.active .dropdown-menu {
+    display: flex;
+}
+
+.dropdown-item {
+    background: transparent;
+    border: none;
+    padding: 6px 10px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    color: #334155;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+.dropdown-item:hover {
+    background: #e0f2fe;
+    color: #0284c7;
+}
+
+.style-bar-divider {
+    width: 1px;
+    height: 18px;
+    background: #cbd5e1;
+    margin: 0 4px;
+}
+
+/* --- Strict Inline Highlighting Rules (No line return forcing) --- */
+.gel-orb, .gel-bubble-chip, .gel-chip-solarflare, .gel-chip-waterdrop, .liquid-underline, .glossy-border-badge, .liquid-text-glow {
+    display: inline-flex !important;
+    align-items: center;
+    vertical-align: middle;
+    white-space: nowrap;
+    margin: 0 2px;
+}
+.aero-floating-bar {
+    position: absolute;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 249, 255, 0.8) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 4px 8px;
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.25), inset 0 1px 0 #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1000;
+}
+ul, .bulleted-list {
+    list-style-position: inside; /* Pulls the bullet inside the text boundary */
+    margin: 15px 0;
+    padding-left: 0;
+}
+/* --- Frutiger Aero Color Tray Grid Layout --- */
+.highlight-grid-menu {
+    display: none;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px;
+    padding: 8px !important;
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%) !important;
+    border: 2px solid #94a3b8 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2), inset 0 1px 0 #fff !important;
+    min-width: 150px !important;
+}
+
+.aero-dropdown.active .highlight-grid-menu {
+    display: grid !important;
+}
+
+/* Expanded Grid Tray Layouts */
+.chip-grid-menu {
+    grid-template-columns: repeat(4, 1fr) !important;
+    min-width: 180px !important;
+}
+
+.effect-grid-menu {
+    grid-template-columns: repeat(3, 1fr) !important;
+    min-width: 160px !important;
+}
+
+.aero-dropdown.active .chip-grid-menu,
+.aero-dropdown.active .effect-grid-menu {
+    display: grid !important;
+}
+
+/* Color & Effect Swatch Boxes */
+.color-swatch-item, .chip-swatch-item, .effect-swatch-item {
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease, filter 0.1s ease;
+    box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 2px 4px rgba(0,0,0,0.15);
+    text-shadow: 0 1px 1px rgba(255,255,255,0.4);
+    padding: 0 2px;
+    overflow: hidden;
+}
+
+.chip-swatch-item { font-size: 9px; border: 1px solid rgba(0,0,0,0.2); }
+.effect-swatch-item { border: 1px solid rgba(255,255,255,0.6); color: #1e293b; }
+
+.color-swatch-item:hover, .chip-swatch-item:hover, .effect-swatch-item:hover {
+    transform: scale(1.12);
+    filter: brightness(1.1);
+}
+
+.color-swatch-item:active, .chip-swatch-item:active, .effect-swatch-item:active {
+    transform: scale(0.95);
+}
+
+/* --- Cube-ify Effect Swatches to Match Color Swatches --- */
+.effect-swatch-item {
+    height: 28px !important;       /* Matches height of color swatches */
+    padding: 0 4px !important;     /* Shrinks horizontal margins/padding */
+    font-size: 11px !important;    /* Boosts text size to fill the box */
+    font-weight: 900 !important;
+    text-align: center;
+}
+
+/* Center and animate the Frutiger Aero Help Dialog */
+dialog.aero-dialog-box {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0;
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.25s ease;
+}
+
+dialog.aero-dialog-box[open] {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+}
+
+/* Optional backdrop dimming for that polished glass look */
+dialog.aero-dialog-box::backdrop {
+    background: rgba(10, 25, 45, 0.4);
+    backdrop-filter: blur(4px);
+    animation: fadeInBackdrop 0.25s ease forwards;
+}
+
+@keyframes fadeInBackdrop {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+.aero-format-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0.85), rgba(220, 235, 250, 0.75));
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.aero-format-ribbon .format-control {
+  padding: 3px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  cursor: pointer;
+}
+
+.aero-format-ribbon .ribbon-separator {
+  width: 1px;
+  height: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  margin: 0 4px;
+}
+
+.aero-format-ribbon .color-picker-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.aero-format-ribbon input[type="color"] {
+  border: none;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  background: none;
+}
+/* --- Top Toolbar Tool Buttons --- */
+.style-tool-btn {
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(224,242,254,0.7) 100%);
+    border: 2px solid rgba(255,255,255,0.9);
+    border-radius: 10px;
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0369a1;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(14, 165, 233, 0.15), inset 0 1px 2px #fff;
+    transition: all 0.2s ease;
+}
+
+.style-tool-btn svg {
+    display: block;
+    margin: auto;
+}
+
+.style-tool-btn:hover {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    color: #ffffff;
+}
+
+/* --- Chart Navigation Buttons (Top Ribbon) --- */
+.chart-nav-btn {
+    background: linear-gradient(180deg, #ffffff 0%, #e0f2fe 100%);
+    border: 1px solid #7dd3fc;
+    border-radius: 6px;
+    width: 24px;
+    height: 22px;
+    color: #0284c7;
+    font-size: 14px;
+    font-weight: 900;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), inset 0 1px 0 #fff;
+    transition: transform 0.05s ease;
+}
+
+.chart-nav-btn:active {
+    transform: scale(0.92);
+}
+
+/* --- Custom Color Picker Wrapper Button --- */
+.custom-picker-wrapper {
+    position: relative;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #f0f9ff 0%, #bae6fd 100%);
+    border: 1px solid #7dd3fc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #0284c7;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.1s ease;
+}
+
+.custom-picker-wrapper:hover {
+    transform: scale(1.15);
+}
+
+/* --- Frutiger Aero Toolbar Ribbon Makeover --- */
+.sheets-toolbar, .aero-format-ribbon {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(200, 230, 255, 0.65) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    border-radius: 12px;
+    padding: 10px 16px;
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2), inset 0 1px 2px #fff;
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- Glossy Aero Dropdowns --- */
+.sheets-toolbar select, .aero-format-ribbon select {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(224, 242, 254, 0.8) 100%);
+    border: 1px solid rgba(125, 211, 252, 0.8);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #0369a1;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05), inset 0 1px 1px #fff;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.sheets-toolbar select:hover, .aero-format-ribbon select:hover {
+    background: linear-gradient(180deg, #ffffff 0%, #bae6fd 100%);
+    border-color: #38bdf8;
+}
+/* --- Force Toolbar Buttons to Light Blue Glass --- */
+.sheets-toolbar .style-tool-btn,
+.sheets-toolbar .custom-picker-wrapper,
+.sheets-toolbar button {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(224, 242, 254, 0.85) 100%) !important;
+    border: 1px solid #7dd3fc !important;
+    border-radius: 8px !important;
+    color: #0369a1 !important;
+    box-shadow: 0 2px 5px rgba(14, 165, 233, 0.15), inset 0 1px 1px #fff !important;
+}
+
+.sheets-toolbar .style-tool-btn:hover,
+.sheets-toolbar button:hover {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%) !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+}
+
+/* --- Perfect Spacing & Canvas Margin Fix --- */
+.sheets-toolbar {
+    margin: 0 auto 15px auto !important;
+    flex-shrink: 0 !important;
+}
+
+#spreadsheet-container {
+    margin-top: 5px !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+}
+
+/* --- Frutiger Aero Formatting Ribbon & Controls --- */
+#top-format-bar.aero-format-ribbon {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 230, 255, 0.7) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 8px 14px;
+    margin: 0 auto 15px auto;
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2), inset 0 1px 2px #fff;
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    max-width: 900px; /* Aligns nicely with your canvas width */
+}
+
+/* --- Style the Dropdowns and Pickers Inside the Bar --- */
+#top-format-bar .format-control,
+#top-format-bar .color-picker-label {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(224, 242, 254, 0.85) 100%) !important;
+    border: 1px solid #7dd3fc !important;
+    border-radius: 8px !important;
+    color: #0369a1 !important;
+    padding: 6px 10px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+    box-shadow: 0 2px 5px rgba(14, 165, 233, 0.15), inset 0 1px 1px #fff !important;
+    cursor: pointer;
+}
+
+#top-format-bar .format-control:hover,
+#top-format-bar .color-picker-label:hover {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%) !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+}
+
+/* --- Canvas Top Margin and Scaling Fix --- */
+#wysiwyg-canvas {
+    margin-top: 0 !important; /* Prevents pushing the canvas down too far */
+    flex: 1 !important;
+    min-height: 0 !important;
+}
+
+/* Ensure the workspace viewport wrapper serves as the exact reference box for absolute positioning */
+.workspace-viewport-wrapper {
+    position: relative !important;
+}
+
+/* Give the floating Aero bars a clean positioning reset */
+.aero-floating-bar {
+    position: absolute !important;
+    z-index: 1000;
+    /* Prevents unwanted CSS transitions from lagging the pop-up location */
+    transition: opacity 0.15s ease !important; 
+}
+
+#aero-selection-toolbar {
+    position: absolute !important;
+    display: none; /* Controlled dynamically by JS */
+    z-index: 1000;
+}
+
+#aero-block-toolbar {
+    position: absolute !important;
+    display: none; /* Controlled dynamically by JS */
+    z-index: 1000;
+}
+
+/* ========================================================
+   PRINT & PAGE-SIZE EXPORT STYLESHEET OVERRIDES
+   ======================================================== */
+@media print {
+    /* CRITICAL FIX: Zeroing page margins forces the browser to hide auto-generated corner stamps */
+    @page {
+        size: letter;
+        margin: 0; 
+    }
+
+    /* Force browsers to print all gradients and colors exactly */
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    /* Hide all app chrome, sidebars, floating toolbars, and ribbons */
+    #sidebar, 
+    #aero-selection-toolbar, 
+    #aero-block-toolbar, 
+    #top-format-bar,
+    .latch-toggle-strip,
+    .ambient-droplet {
+        display: none !important;
+    }
+
+    /* Strip background wrappers and force pure print canvas surface */
+    body, html {
+        background: #ffffff !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+    /* Handle safe inner margins here since @page margin is zeroed out */
+    .workspace-viewport-wrapper {
+        padding: 0.5in !important; 
+        margin: 0 !important;
+        display: block !important;
+        width: 100% !important;
+        height: auto !important;
+        background: #ffffff !important;
+        overflow: visible !important;
+    }
+
+    /* Format the canvas to look like a crisp physical page */
+    #wysiwyg-canvas {
+        border: none !important;
+        box-shadow: none !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 auto !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        overflow: visible !important;
+        font-size: 11pt !important;
+        color: #000000 !important;
+    }
+
+    /* Strip floating bubble animations or container backgrounds inside print view */
+    .aqua-aero-box {
+        background: #0284c7 !important;
+        box-shadow: none !important;
+    }
+    
+    .aero-box-orb {
+        display: none !important;
+    }
+}
+
+/* ========================================================
+   MOBILE VIEWPORT INJECTIONS (393x852)
+   ======================================================== */
+@media screen and (max-width: 450px) {
+    body {
+        flex-direction: column;
+    }
+
+    /* Glossy Mobile Header */
+    .aero-mobile-header {
+        display: flex;
+        align-items: center;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(220, 235, 250, 0.75) 100%);
+        border-bottom: 2px solid rgba(255, 255, 255, 0.9);
+        padding: 10px 15px;
+        box-shadow: 0 4px 15px rgba(2, 132, 199, 0.2);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: 60;
+    }
+
+    .mobile-brand {
+        margin-left: 15px;
+        color: #0369a1;
+        font-family: 'Jetbrains Mono', monospace;
+        font-size: 1.2rem;
+        font-weight: 900;
+        text-shadow: 0 1px 1px #fff;
+    }
+
+    /* 1. Forces the sidebar completely off-screen when closed */
+    #sidebar.aero-sidebar.collapsed {
+        transform: translateX(-110%) !important;
+    }
+
+    /* 2. Restores the dark glass background so white buttons become visible! */
+    #sidebar.aero-sidebar {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        height: 100vh;
+        width: 85% !important;
+        max-width: 320px;
+        z-index: 2000 !important; /* Must be higher than the shield */
+        transform: translateX(0) !important;
+        background: linear-gradient(90deg, rgba(15, 23, 42, 0.95) 0%, rgba(30, 41, 59, 0.95) 100%) !important; 
+        border-right: 1px solid rgba(255, 255, 255, 0.15) !important;
+        display: flex !important;
+        flex-direction: column !important; /* CRITICAL FIX: Stacks your buttons vertically! */
+        padding: 20px !important; /* Adds breathing room so buttons aren't crammed against the edge */
+    }
+
+    /* 3. Ensures the blur shield sits strictly beneath the sidebar */
+    #mobile-sidebar-shield {
+        z-index: 1500 !important;
+    }
+
+    /* Latch adjustment for mobile overlay */
+    .mobile-latch {
+        right: 10px;
+        background: linear-gradient(90deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0.1) 100%);
+        border-radius: 8px;
+        border-left: 2px solid rgba(255,255,255,0.2);
+    }
+
+    /* Canvas formatting */
+    .workspace-viewport-wrapper {
+        padding: 10px;
+        gap: 8px;
+    }
+
+    #wysiwyg-canvas {
+        padding: 15px;
+        border-radius: 12px;
+        font-size: 1rem;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    /* Horizontal scrolling for the formatting ribbon */
+    .mobile-scroll-ribbon {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        flex-wrap: nowrap;
+        padding: 8px;
+        justify-content: flex-start;
+        scrollbar-width: none; /* Hide scrollbar Firefox */
+    }
+    .mobile-scroll-ribbon::-webkit-scrollbar {
+        display: none; /* Hide scrollbar Safari/Chrome */
+    }
+
+    /* Keep floating toolbars inside the tiny screen bounds */
+    .mobile-floating-bar {
+        max-width: 95vw;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    /* Modals need to fit 393px width */
+    .embossed-dialogue-chassis {
+        width: 95vw;
+        max-width: 370px;
+    }
+
+    /* Touch-friendly Drawing Canvas */
+    .draw-surface-canvas {
+        max-width: 100% !important;
+        height: 150px !important;
+    }
+}
+
+#sidebar.aero-sidebar {
+    transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1) !important;
+}
+
+.whitespace {
+    white-space: pre-wrap;
+}

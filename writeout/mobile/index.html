@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <title>Writeout Mobile - Radii Office</title>
+    <script src="https://iconify.design"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="keydown.css">
+    <link rel="icon" type="image/svg+xml" href="/writeout/favicon.svg">
+    <link rel="apple-touch-icon" href="/writeout/apple-touch-icon.png">
+</head>
+<body>
+
+    <!-- Mobile Top Navigation Bar -->
+    <div id="mobile-header" class="aero-mobile-header" style="display: flex; align-items: center; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(220, 235, 250, 0.75) 100%); border-bottom: 2px solid rgba(255, 255, 255, 0.9); padding: 10px 15px;">
+        <button id="mobile-menu-btn" class="style-tool-btn" onclick="openMobileMenu()" style="display: flex; align-items: center; background: rgba(255,255,255,0.9); border: 1px solid #7dd3fc; border-radius: 8px; padding: 6px 10px; cursor: pointer; color: #0369a1; font-weight: bold;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.5 6.5h15M4.5 12h15m-15 5.5h15" />
+            </svg>
+        </button>
+        <h3> Writeout</h3>
+    </div>
+
+    <!-- 3D Liquid-Gel Sidebar Navigation Dock Frame -->
+    <nav id="sidebar" class="aero-sidebar collapsed">
+        <div class="pad-selection-stack">
+            <input type="file" id="file-loader-gate" style="display: none;" onchange="importKeydownFile(event)">
+            
+            <button class="pad-toggle-btn active" onclick="exportKeydownFile()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+	                <path d="M0 0h24v24H0z" fill="none" />
+	                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v16m8-7.5a15.46 15.46 0 0 0-6.493 5.334L12 18l-1.507-2.166A15.46 15.46 0 0 0 4 10.5M17 22H7" />
+                </svg>
+                Export .kd
+            </button>
+            <button class="pad-toggle-btn" onclick="document.getElementById('file-loader-gate').click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+	                <path d="M0 0h24v24H0z" fill="none" />
+	                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18V2m8 7.5a15.46 15.46 0 0 1-6.493-5.334L12 2l-1.507 2.166A15.46 15.46 0 0 1 4 9.5M17 22H7" />
+                </svg>
+                Import .kd
+            </button>
+        </div>
+
+        <div class="sidebar-footer-controls">
+            <button id="help-deck-btn last" class="sidebar-action-btn">Help Deck</button>
+        </div>
+        <!-- Close Sidebar Area -->
+        <div id="toggle-zone" class="latch-toggle-strip mobile-latch" onclick="closeMobileMenu()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 19a18 18 0 0 0-7-7a18 18 0 0 0 7-7" />
+            </svg>
+        </div>
+    </nav>
+
+    <!-- Main Viewport Workspace -->
+    <main class="workspace-viewport-wrapper">
+        <div id="top-format-bar" class="aero-format-ribbon mobile-scroll-ribbon">
+            <select class="format-control" data-edit-action="fontName">
+                <option value="JetBrains Mono">JetBrains Mono</option>
+                <option value="Roboto">Roboto</option>
+            </select>
+            <select class="format-control" data-edit-action="fontSize">
+                <option value="3" selected>Norm</option>
+                <option value="5">Lrg</option>
+            </select>
+            <p class="whitespace">                                 </p>
+        </div>
+
+        <div id="wysiwyg-canvas" contenteditable="true" placeholder="Start typing..."></div>
+    </main>
+
+    <!-- Floating Mobile Toolbars -->
+    <div id="aero-selection-toolbar" class="aero-floating-bar mobile-floating-bar">
+        <!-- Re-use your existing toolbar buttons here[cite: 1] -->
+        <button class="style-bar-btn" data-style="bold"><b>B</b></button>
+        <button class="style-bar-btn" data-style="italic"><i>I</i></button>
+        <button class="style-bar-btn" data-style="underline"><u>U</u></button>
+    </div>
+
+    <!-- Mobile Overlay Shield -->
+    <div id="mobile-sidebar-shield" class="modal-blur-gate" onclick="closeMobileMenu()"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
