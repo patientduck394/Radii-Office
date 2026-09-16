@@ -1,0 +1,35 @@
+================================================================================
+PENGUINMOD PUBLIC LICENSE (PMPL) Trademark Use Allowed - Attribution
+Version 1.0, September 2026
+================================================================================
+
+1. GRANT OF PERMISSION
+Subject to the terms and conditions set forth in this License, the author 
+hereby grants any person obtaining a copy of this software and associated 
+documentation files (the "Software") permission to deal in the 
+Software, including without limitation the rights to use, copy, modify, 
+merge, publish, distribute, sublicense, and/or sell copies of the 
+Software, subject to the restrictions in Section 2 and Section 3.
+
+2. ATTRIBUTION REQUIREMENT
+A. Attribution: Copies, distributions, or derivative works of the Software
+must retain prominent and proper attribution to the original author, including
+the preservation of copyright notices, author credits, and license references.
+
+3. TRADEMARK AND MASCOT OPEN-SOURCE REQUIREMENT
+Notwithstanding the broad permissions granted in Section 1, any and all mascots, 
+logos, branding elements, characters, and associated trademarks utilized, 
+displayed, or integrated in conjunction with the distribution or derivative 
+works of this Software must themselves be fully open-source and subject to free 
+public use, modification, and distribution terms. Proprietary, closed-source, 
+or restricted trademarks and mascots are strictly prohibited from being 
+associated with this work.
+
+4. DISCLAIMER OF WARRANTY
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE 
+SOFTWARE.
