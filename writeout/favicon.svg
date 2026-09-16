@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="512"
+   height="512"
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg2"
+   sodipodi:docname="favicon.svg"
+   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
+   inkscape:export-filename="apple-touch-icon.png"
+   inkscape:export-xdpi="33.75"
+   inkscape:export-ydpi="33.75"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2" />
+  <sodipodi:namedview
+     id="namedview2"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.79001975"
+     inkscape:cx="241.76611"
+     inkscape:cy="279.10695"
+     inkscape:window-width="1384"
+     inkscape:window-height="732"
+     inkscape:window-x="0"
+     inkscape:window-y="30"
+     inkscape:window-maximized="0"
+     inkscape:current-layer="svg2" />
+  <path
+     d="M0 0h24v24H0z"
+     fill="none"
+     id="path1" />
+  <path
+     fill="none"
+     stroke="currentColor"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="2"
+     d="M9.476 2H7.5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-7M9.476 2C10.856 2 12 3.119 12 4.5V7a2.5 2.5 0 0 0 2.5 2.5H17a2.5 2.5 0 0 1 2.5 2.5M9.476 2C13.576 2 19.5 7.956 19.5 12M8.833 17.5H15.5M8.833 14h4.445"
+     id="path2"
+     style="stroke:#38bdf8;stroke-opacity:1" />
+</svg>

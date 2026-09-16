@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <title>Writeout - Radii Office</title>
+    <!-- Universal Open-Source Vector Glyphs -->
+    <script src="https://iconify.design"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="keydown.css">
+    <link rel="icon" type="image/svg+xml" href="/writeout/favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+
+    <!-- 3D Liquid-Gel Sidebar Navigation Dock Frame -->
+    <nav id="sidebar" class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Writeout</h2>
+        </div>
+        
+        <!-- Filesystem Action Stack -->
+        <div class="pad-selection-stack">
+            <input type="file" id="file-loader-gate" style="display: none;" onchange="importKeydownFile(event)">
+            
+            <button class="pad-toggle-btn active" onclick="exportKeydownFile()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+	                <path d="M0 0h24v24H0z" fill="none" />
+	                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v16m8-7.5a15.46 15.46 0 0 0-6.493 5.334L12 18l-1.507-2.166A15.46 15.46 0 0 0 4 10.5M17 22H7" />
+                </svg>
+                Export .kd
+            </button>
+            <button class="pad-toggle-btn" onclick="document.getElementById('file-loader-gate').click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+	                <path d="M0 0h24v24H0z" fill="none" />
+	                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18V2m8 7.5a15.46 15.46 0 0 1-6.493-5.334L12 2l-1.507 2.166A15.46 15.46 0 0 1 4 9.5M17 22H7" />
+                </svg>
+                Import .kd
+            </button>
+            <button class="pad-toggle-btn" onclick="printWriteoutPage()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                    <path d="M0 0h16v16H0z" fill="none" />
+                    <path fill="currentColor" fill-rule="evenodd" d="M10.75 2.5h-5.5a.75.75 0 0 0-.75.75V4h7v-.75a.75.75 0 0 0-.75-.75M13 4v-.75A2.25 2.25 0 0 0 10.75 1h-5.5A2.25 2.25 0 0 0 3 3.25V4a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1v1a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-1h1a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m-9 6v.5H3A1.5 1.5 0 0 1 1.5 9V7A1.5 1.5 0 0 1 3 5.5h10A1.5 1.5 0 0 1 14.5 7v2a1.5 1.5 0 0 1-1.5 1.5h-1V10a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2m6-.5H6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5m2.5-1a1 1 0 1 0 0-2a1 1 0 0 0 0 2" clip-rule="evenodd" />
+                </svg>
+                Print as Page
+            </button>
+        </div>
+
+        <div class="sidebar-footer-controls">
+            <button id="help-deck-btn" class="sidebar-action-btn">Help Deck</button>
+            <button id="settings-trigger-btn" class="sidebar-action-btn">Settings</button>
+        </div>
+
+        <div id="toggle-zone" class="latch-toggle-strip">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 19a18 18 0 0 0-7-7a18 18 0 0 0 7-7" />
+            </svg>
+        </div>
+    </nav>
+
+    <!-- Main Viewport Workspace -->
+    <main class="workspace-viewport-wrapper">
+        <!-- 1. Selection Toolbar (Appears when highlighting text) -->
+        <!-- 1. Selection Toolbar (Appears when highlighting text) -->
+        <div id="aero-selection-toolbar" class="aero-floating-bar">
+            <button class="style-bar-btn" data-style="bold" title="Bold"><b>B</b></button>
+            <button class="style-bar-btn" data-style="italic" title="Italic"><i>I</i></button>
+            <button class="style-bar-btn" data-style="underline" title="Underline"><u>U</u></button>
+            <button class="style-bar-btn" data-style="strike" title="Strikethrough"><s>S</s></button>
+            <button class="style-bar-btn" data-style="code" title="Inline Code">&lt;/&gt;</button>
+            <div class="style-bar-divider"></div>
+
+            <!-- Dropdown 1: Highlighting Grid Palette (Logically Sorted Gel Orbs) -->
+            <div class="aero-dropdown">
+                <button class="style-bar-btn dropdown-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.929 4.929A10 10 0 0 0 2 12a10.1 10.1 0 0 0 2.929 7.071A10.1 10.1 0 0 0 12 22c2.626 0 5.214-1.072 7.071-2.929A10.1 10.1 0 0 0 22 12A10 10 0 0 0 4.929 4.929"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
+                    </button>
+                <div class="dropdown-menu highlight-grid-menu">
+                    <button class="color-swatch-item gel-y" data-class="gel-orb gel-y" title="Yellow"></button>
+                    <button class="color-swatch-item gel-o" data-class="gel-orb gel-o" title="Orange"></button>
+                    <button class="color-swatch-item gel-r" data-class="gel-orb gel-r" title="Red"></button>
+                    <button class="color-swatch-item gel-mg" data-class="gel-orb gel-mg" title="Magenta"></button>
+                    <button class="color-swatch-item gel-p" data-class="gel-orb gel-p" title="Pink"></button>
+                    <button class="color-swatch-item gel-v" data-class="gel-orb gel-v" title="Purple"></button>
+                    <button class="color-swatch-item gel-b" data-class="gel-orb gel-b" title="Blue"></button>
+                    <button class="color-swatch-item gel-c" data-class="gel-orb gel-c" title="Cyan"></button>
+                    <button class="color-swatch-item gel-aq" data-class="gel-orb gel-aq" title="Aqua"></button>
+                    <button class="color-swatch-item gel-g" data-class="gel-orb gel-g" title="Green"></button>
+                    <button class="color-swatch-item gel-lm" data-class="gel-orb gel-lm" title="Lime"></button>
+                    <button class="color-swatch-item gel-sl" data-class="gel-orb gel-sl" title="Slate"></button>
+                </div>
+            </div>
+
+            <!-- Dropdown 2: # Highlighters Grid Palette (Logically Sorted Chips) -->
+            <div class="aero-dropdown">
+                <button class="style-bar-btn dropdown-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="11" fill="currentColor"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
+                    </button>
+                <div class="dropdown-menu highlight-grid-menu chip-grid-menu">
+                    <button class="chip-swatch-item gel-chip-yellow" data-class="gel-bubble-chip gel-chip-yellow" title="Yellow"></button>
+                    <button class="chip-swatch-item gel-chip-orange" data-class="gel-bubble-chip gel-chip-orange" title="Orange"></button>
+                    <button class="chip-swatch-item gel-chip-red" data-class="gel-bubble-chip gel-chip-red" title="Red"></button>
+                    <button class="chip-swatch-item gel-chip-pink" data-class="gel-bubble-chip gel-chip-pink" title="Pink"></button>
+                    <button class="chip-swatch-item gel-chip-purple" data-class="gel-bubble-chip gel-chip-purple" title="Purple"></button>
+                    <button class="chip-swatch-item gel-chip-blue" data-class="gel-bubble-chip gel-chip-blue" title="Blue"></button>
+                    <button class="chip-swatch-item gel-chip-cyan" data-class="gel-bubble-chip gel-chip-cyan" title="Cyan"></button>
+                    <button class="chip-swatch-item gel-chip-turquoise" data-class="gel-bubble-chip gel-chip-turquoise" title="Turquoise"></button>
+                    <button class="chip-swatch-item gel-chip-teal" data-class="gel-bubble-chip gel-chip-teal" title="Teal"></button>
+                    <button class="chip-swatch-item gel-chip-green" data-class="gel-bubble-chip gel-chip-green" title="Green"></button>
+                    <button class="chip-swatch-item gel-chip-lime" data-class="gel-bubble-chip gel-chip-lime" title="Lime"></button>
+                    <button class="chip-swatch-item gel-chip-gold" data-class="gel-bubble-chip gel-chip-gold" title="Gold"></button>
+                    <button class="chip-swatch-item gel-chip-slate" data-class="gel-bubble-chip gel-chip-slate" title="Slate"></button>
+                    <button class="chip-swatch-item gel-chip-fog" data-class="gel-bubble-chip gel-chip-fog" title="Fog"></button>
+                    <button class="chip-swatch-item gel-chip-white" data-class="gel-bubble-chip gel-chip-white" title="White"></button>
+                    <button class="chip-swatch-item gel-chip-black" data-class="gel-bubble-chip gel-chip-black" title="Black"></button>
+                </div>
+            </div>
+
+            <!-- Dropdown 3: Other Styles Grid Palette -->
+            <div class="aero-dropdown">
+                <button class="style-bar-btn dropdown-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.078 22c1.248-5.166 2.762-6.777 6.922-8.182c-4.371-1.476-5.733-3.267-6.922-8.181c-1.25 5.165-2.765 6.775-6.925 8.18c4.367 1.475 5.737 3.279 6.924 8.183M5.846 11.091C6.414 8.402 7.514 7.19 9.69 6.546C7.514 5.902 6.414 4.689 5.847 2C5.302 4.572 4.274 5.872 2 6.544c2.177.645 3.277 1.858 3.846 4.547"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
+                    </button>
+                <div class="dropdown-menu highlight-grid-menu effect-grid-menu">
+                    <button class="effect-swatch-item gel-chip-waterdrop" data-class="gel-chip-waterdrop">WD</button>
+                    <button class="effect-swatch-item gel-chip-solarflare" data-class="gel-chip-solarflare">SF</button>
+                    <button class="effect-swatch-item gel-chip-aurorawave" data-class="gel-chip-aurorawave">AW</button>
+                    <button class="effect-swatch-item effect-mercury-pearl" data-class="effect-mercury-pearl">MP</button>
+                    <button class="effect-swatch-item effect-prism-refract" data-class="effect-prism-refract">PG</button>
+                    <button class="effect-swatch-item effect-screen-cavity" data-class="effect-screen-cavity">CB</button>
+                    <button class="effect-swatch-item effect-sunlight-ray" data-class="effect-sunlight-ray">SR</button>
+                    <button class="effect-swatch-item effect-abyssal-plate" data-class="effect-abyssal-plate">OA</button>
+                    <button class="effect-swatch-item effect-metallic-mesh" data-class="effect-metallic-mesh">MM</button>
+                    <button class="effect-swatch-item effect-fluid-expand" data-class="effect-fluid-expand">FE</button>
+                    <button class="effect-swatch-item effect-pearl-orb" data-class="effect-pearl-orb">PO</button>
+                    <button class="effect-swatch-item effect-lens-flare" data-class="effect-lens-flare">LF</button>
+                </div>
+            </div>
+
+            <!-- Dropdown 4: Megachips, Badges & Custom Tags Tray -->
+            <div class="aero-dropdown">
+                <button class="style-bar-btn dropdown-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22V11.93M2 7.036C5.643 5.944 8.843 4.07 12 2c0 0 3.555 1.7 5 2.447l5 2.59c0 3.062-.06 9.467-.06 9.467C18.886 18.807 15.625 20.726 12 22l-9.94-5.497S2 10.1 2 7.036m10 4.894L7 9.483m5 2.447c3.62-1.047 6.91-2.764 10-4.894M7 9.484c3.625-1.101 6.914-2.865 10-5.037M2 7.037l5 2.447m0 0v2.446"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
+                    </button>
+                <div class="dropdown-menu highlight-grid-menu effect-grid-menu" style="grid-template-columns: repeat(4, 1fr) !important; min-width: 200px !important;">
+                    <!-- Glass Badge Frames -->
+                    <button class="effect-swatch-item badge-frame-sky" data-class="aero-glass-badge-chip badge-frame-sky" title="Sky Badge"></button>
+                    <button class="effect-swatch-item badge-frame-emerald" data-class="aero-glass-badge-chip badge-frame-emerald" title="Emerald Badge"></button>
+                    <button class="effect-swatch-item badge-frame-orange" data-class="aero-glass-badge-chip badge-frame-orange" title="Orange Badge"></button>
+                    <button class="effect-swatch-item badge-frame-crimson" data-class="aero-glass-badge-chip badge-frame-crimson" title="Crimson Badge"></button>
+                    <button class="effect-swatch-item badge-frame-amethyst" data-class="aero-glass-badge-chip badge-frame-amethyst" title="Amethyst Badge"></button>
+                    <button class="effect-swatch-item badge-frame-gold" data-class="aero-glass-badge-chip badge-frame-gold" title="Gold Badge"></button>
+
+                    <!-- Liquid Plasma Pods -->
+                    <button class="effect-swatch-item plasma-cyan" data-class="megachip-plasma plasma-cyan" title="Cyan Plasma"></button>
+                    <button class="effect-swatch-item plasma-orange" data-class="megachip-plasma plasma-orange" title="Orange Plasma"></button>
+                    <button class="effect-swatch-item plasma-crimson" data-class="megachip-plasma plasma-crimson" title="Crimson Plasma"></button>
+                    <button class="effect-swatch-item plasma-lime" data-class="megachip-plasma plasma-lime" title="Lime Plasma"></button>
+
+                    <!-- Glossy Glass Badge Brackets -->
+                    <button class="effect-swatch-item bracket-blue" data-class="megachip-glass-bracket bracket-blue" title="Blue Bracket"></button>
+                    <button class="effect-swatch-item bracket-amethyst" data-class="megachip-glass-bracket bracket-amethyst" title="Amethyst Bracket"></button>
+                    <button class="effect-swatch-item bracket-fuchsia" data-class="megachip-glass-bracket bracket-fuchsia" title="Fuchsia Bracket"></button>
+                    <button class="effect-swatch-item bracket-amber" data-class="megachip-glass-bracket bracket-amber" title="Amber Bracket"></button>
+
+                    <!-- Tactile Circuit Node Strips -->
+                    <button class="effect-swatch-item circuit-slate" data-class="megachip-circuit-node circuit-slate" title="Slate Circuit"></button>
+                    <button class="effect-swatch-item circuit-teal" data-class="megachip-circuit-node circuit-teal" title="Teal Circuit"></button>
+                    <button class="effect-swatch-item circuit-gold" data-class="megachip-circuit-node circuit-gold" title="Gold Circuit"></button>
+                    <button class="effect-swatch-item circuit-ruby" data-class="megachip-circuit-node circuit-ruby" title="Ruby Circuit"></button>
+
+                    <!-- Droplets -->
+                    <button class="effect-swatch-item droplet-amber" data-class="droplet-amber" title="Amber Droplet"></button>
+                    <button class="effect-swatch-item droplet-crimson" data-class="droplet-crimson" title="Crimson Droplet"></button>
+                    <button class="effect-swatch-item droplet-fuchsia" data-class="droplet-fuchsia" title="Fuchsia Droplet"></button>
+                    <button class="effect-swatch-item droplet-amethyst" data-class="droplet-amethyst" title="Amethyst Droplet"></button>
+                    <button class="effect-swatch-item droplet-tangerine" data-class="droplet-tangerine" title="Tangerine Droplet"></button>
+                    <button class="effect-swatch-item droplet-slate" data-class="droplet-slate" title="Slate Droplet"></button>
+
+                    <!-- Custom Prefix Tags -->
+                    <button class="effect-swatch-item tag-chip-a" data-class="aero-tag-chip tag-chip-a" title="Tag A"></button>
+                    <button class="effect-swatch-item tag-chip-g" data-class="aero-tag-chip tag-chip-g" title="Tag G"></button>
+                    <button class="effect-swatch-item tag-chip-o" data-class="aero-tag-chip tag-chip-o" title="Tag O"></button>
+                    <button class="effect-swatch-item tag-chip-r" data-class="aero-tag-chip tag-chip-r" title="Tag R"></button>
+                    <button class="effect-swatch-item tag-chip-pr" data-class="aero-tag-chip tag-chip-pr" title="Tag PR"></button>
+                    <button class="effect-swatch-item tag-chip-pk" data-class="aero-tag-chip tag-chip-pk" title="Tag PK"></button>
+                    <button class="effect-swatch-item tag-chip-y" data-class="aero-tag-chip tag-chip-y" title="Tag Y"></button>
+                    <button class="effect-swatch-item tag-chip-sl" data-class="aero-tag-chip tag-chip-sl" title="Tag SL"></button>
+                </div>
+            </div>
+        </div>
+
+       <!-- 2. New Line Block Toolbar (Appears on an empty new line) -->
+        <div id="aero-block-toolbar" class="aero-floating-bar">
+            <button class="style-bar-btn" data-tag="~H1~">H1</button>
+            <button class="style-bar-btn" data-tag="~H2~">H2</button>
+            <button class="style-bar-btn" data-tag="~H3~">H3</button>
+            <div class="style-bar-divider"></div>
+            <button class="style-bar-btn" data-tag="~BUL~">• List</button>
+            <button class="style-bar-btn" data-tag="~BQ~">❞ Quote</button>
+            <!-- 
+            <div class="aero-dropdown" style="position: relative; display: inline-block;">
+                <button class="style-bar-btn dropdown-toggle">🧩 ▾</button>
+                <div class="dropdown-menu highlight-grid-menu" style="display: none; position: absolute; top: 100%; left: 0; flex-direction: column; gap: 4px; min-width: 140px; padding: 6px; background: rgba(240,248,255,0.95); border: 1px solid #7baed3; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                    <button class="style-bar-btn" data-tag="~FN~">Foldout Tab</button>
+                    <button class="style-bar-btn" data-tag="~TS~">Toggle Switch</button>
+                    <button class="style-bar-btn" data-tag="~SM~">Glass Stamp</button>
+                    <button class="style-bar-btn" data-tag="~TB~">State Button</button>
+                    <button class="style-bar-btn" data-tag="~VD~">Volume Dial</button>
+                    <button class="style-bar-btn" data-tag="~BC~">Battery Cell</button>
+                    <button class="style-bar-btn" data-tag="~CD~">Calendar Desk</button>
+                    <button class="style-bar-btn" data-tag="~SR~">Star Rating</button>
+                    <button class="style-bar-btn" data-tag="~CC~">Counter Badge</button>
+                    <button class="style-bar-btn" data-tag="~LK~">Security Latch</button>
+                </div>
+            </div>
+            <div class="style-bar-divider"></div>
+            
+            <div class="aero-dropdown" style="position: relative; display: inline-block;">
+                <button class="style-bar-btn dropdown-toggle">✨ Aero FX ▾</button>
+                <div class="dropdown-menu highlight-grid-menu" style="display: none; position: absolute; top: 100%; left: 0; flex-direction: column; gap: 4px; min-width: 140px; padding: 6px; background: rgba(240,248,255,0.95); border: 1px solid #7baed3; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 100;">
+                    <button class="style-bar-btn" data-tag="::glass">::glass</button>
+                    <button class="style-bar-btn" data-tag="::gsky">::gsky</button>
+                    <button class="style-bar-btn" data-tag="::foldout">::foldout</button>
+                </div>
+            </div>
+        -->
+        </div>
+        
+        <div id="top-format-bar" class="aero-format-ribbon">
+            <!-- Font Family Dropdown -->
+            <select class="format-control" data-edit-action="fontName">
+                <option value="JetBrains Mono">JetBrains Mono</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Space Grotesk">Space Grotesk</option>
+                <option value="Comic Neue">Comic Neue</option>
+                <option value="Fairfax HD">Fairfax HD</option>
+                <option value="Iosevka">Iosevka</option>
+                <option value="Unifont">Unifont</option>
+                <option value="OpenDyslexic">OpenDyslexic</option>
+            </select>
+
+            <!-- Font Size Dropdown -->
+            <select class="format-control" data-edit-action="fontSize">
+                <option value="1">Small</option>
+                <option value="3" selected>Normal</option>
+                <option value="5">Large</option>
+                <option value="7">Huge</option>
+            </select>
+
+            <span class="ribbon-separator"></span>
+
+            <!-- Text Color Picker -->
+            <label class="color-picker-label" title="Text Color">
+                🎨 <input type="color" data-edit-action="foreColor" value="#000000">
+            </label>
+
+            <!-- Highlight / Background Color Picker -->
+            <label class="color-picker-label" title="Highlight Color">
+                🖌️ <input type="color" data-edit-action="hiliteColor" value="#ffffff">
+            </label>
+        </div>
+
+        <div id="wysiwyg-canvas" contenteditable="true" placeholder="Start typing your rich document text here..."></div>
+    </main>
+    
+    <!-- Help Deck Dialog Box -->
+    <dialog id="help-deck-dialog" class="aero-dialog-box" style="padding: 24px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.6); background: linear-gradient(135deg, rgba(240,248,255,0.95), rgba(210,230,250,0.95)); box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 500px; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 16px;">
+            <h3 style="margin: 0; color: #1a4a75; font-family: inherit; font-size: 18px;">Help Deck</h3>
+            <button onclick="document.getElementById('help-deck-dialog').close()" class="style-bar-btn" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">✕</button>
+        </div>
+        <div style="color: #2c4c6d; font-size: 14px; line-height: 1.6; display: flex; flex-direction: column; gap: 12px;">
+            <p style="margin: 0;"><b>🟡 Gel Orbs & Highlighters:</b> Select any text and pick a color tile from the dropdowns to apply custom styles.</p>
+            <p style="margin: 0;"><b>📦 Megachips & Badges:</b> Use advanced tags like plasma pods, glass brackets, and circuit nodes.</p>
+            <p style="margin: 0;"><b>\ Escape Mechanic:</b> Type <code>\\</code> and hit space to cleanly exit a formatting tag and type unformatted text on the right.</p>
+            <p style="margin: 0;"><b>💾 YAML Export:</b> Save your workspace anytime into a clean <code>.kd</code> snapshot file.</p>
+        </div>
+        <div style="margin-top: 24px; text-align: right;">
+            <button onclick="document.getElementById('help-deck-dialog').close()" class="style-bar-btn" style="padding: 6px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">Got It!</button>
+        </div>
+    </dialog>
+
+    <script src="app.js"></script>
+</body>
+</html>
