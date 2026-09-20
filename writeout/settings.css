@@ -1,0 +1,92 @@
+/* ========================================================
+   WRITEOUT SETTINGS MENU STYLES
+   ======================================================== */
+
+#settings-theme-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 260px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.settings-theme-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 8px 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.settings-theme-row.active {
+  border-color: #34d399;
+  box-shadow: 0 0 0 2px rgba(16,185,129,0.25), inset 0 1px 0 #fff;
+}
+
+.settings-theme-swatch {
+  width: 38px;
+  height: 38px;
+}
+
+.settings-theme-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.settings-theme-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.settings-theme-desc {
+  font-size: 11px;
+  color: #64748b;
+  font-family: 'Segoe UI', sans-serif;
+  line-height: 1.4;
+}
+
+.settings-theme-btn {
+  background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+  border: 1px solid #0284c7;
+  border-radius: 8px;
+  padding: 6px 14px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  box-shadow: 0 3px 8px rgba(2,132,199,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+  white-space: nowrap;
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+.settings-theme-btn:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.settings-theme-btn:disabled {
+  background: linear-gradient(180deg, #6ee7b7 0%, #10b981 50%, #047857 100%);
+  border-color: #059669;
+  cursor: default;
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+
+/* Soft cross-fade on the canvas — every other background carries its own
+   explicit transition alongside its background rule! */
+#wysiwyg-canvas {
+  transition: background-color 0.35s ease, color 0.35s ease, border-color 0.35s ease, max-width 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+@media print {
+  #settings-modal-overlay {
+    display: none !important;
+  }
+}
