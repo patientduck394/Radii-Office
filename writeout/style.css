@@ -369,7 +369,7 @@ body {
 }
 #toggle-icon { transition: transform 0.25s ease; }
 
-/* --- Ensure the workspace wrapper stacks everything without overflowing --- */
+/* --- The wrapper never scrolls: chips + toolbars stay pinned while the page scrolls inside --- */
 .workspace-viewport-wrapper {
     flex: 1;
     height: 100vh;
@@ -378,7 +378,17 @@ body {
     display: flex;
     flex-direction: column;
     gap: 12px; /* Adds clean breathing room between the top bar and the canvas */
-    overflow: hidden; 
+    overflow: hidden;
+}
+
+/* --- Inner page scroller: the document grows here, chrome stays put --- */
+.canvas-scrollbox {
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* --- Shorten the canvas height so it fits the viewport perfectly --- */
@@ -399,6 +409,8 @@ body {
     color: #334155;
     font-family: 'JetBrains Mono', 'Courier New', Courier, monospace !important;
     font-size: 1.02rem;
+    white-space: pre-wrap; /* Tabs + spacing stay visible! */
+    tab-size: 4; /* Tab stops read as four spaces! */
     transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
@@ -535,7 +547,8 @@ body {
 }.help-card b { color: #0f172a; display: inline-block; min-width: 85px; }.text-sky-blue { color: #0284c7 !important; }.dialog-footer { padding: 15px 20px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; background: #f8fafc; }.dialog-confirm-orb { background: linear-gradient(180deg, #34d399 0%, #10b981 48%, #047857 100%); border: 2px solid #a7f3d0; border-radius: 20px; padding: 10px 22px; color: white; font-weight: bold; font-size: 13px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.4); box-shadow: 0 4px 10px rgba(16,185,129,0.3), inset 0 1px 1px #fff; font-family: 'Jetbrains Mono', 'Courier New', Courier, monospace;
  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
-.tactile-alert-plate-btn { width: 100%; text-align: center; background: linear-gradient(180deg, #fef08a 0%, #eab308 45%, #ca8a04 100%); border: 3px solid #fef08a; border-radius: 8px; padding: 12px; color: #451a03; font-weight: 800; cursor: pointer; box-shadow: 0 6px 16px rgba(234, 179, 8, 0.25); }/* Floating Background Water Crystals */.ambient-droplet { position: fixed; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.4) 0%, rgba(56,189,248,0.15) 50%, transparent 100%); border-radius: 50%; pointer-events: none; z-index: 1; animation: drift linear infinite; }@keyframes drift { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-80px) rotate(360deg); } }/* Scrollbar layout overrides */::-webkit-scrollbar { width: 10px; }::-webkit-scrollbar-track { background: rgba(0,0,0,0.02);
+.tactile-alert-plate-btn { width: 100%; text-align: center; background: linear-gradient(180deg, #fef08a 0%, #eab308 45%, #ca8a04 100%); border: 3px solid #fef08a; border-radius: 8px; padding: 12px; color: #451a03; font-weight: 800; cursor: pointer; box-shadow: 0 6px 16px rgba(234, 179, 8, 0.25); }/* Floating Background Water Crystals */.ambient-droplet { position: fixed; background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.4) 0%, rgba(56,189,248,0.15) 50%, transparent 100%); border-radius: 50%; pointer-events: none; z-index: 1; animation: drift linear infinite; }
+body.hide-ambient .ambient-droplet { display: none !important; }@keyframes drift { 0% { transform: translateY(0) rotate(0deg); } 100% { transform: translateY(-80px) rotate(360deg); } }/* Scrollbar layout overrides */::-webkit-scrollbar { width: 10px; }::-webkit-scrollbar-track { background: rgba(0,0,0,0.02);
  transition: background-color 0.35s ease, border-color 0.35s ease;
 }::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #94a3b8 0%, #64748b 100%); border: 2px solid #fff; border-radius: 10px;
  transition: background-color 0.35s ease, border-color 0.35s ease;
@@ -1052,8 +1065,7 @@ dialog.aero-dialog-box::backdrop {
 /* --- Canvas Top Margin and Scaling Fix --- */
 #wysiwyg-canvas {
     margin-top: 0 !important; /* Prevents pushing the canvas down too far */
-    flex: 1 !important;
-    min-height: 0 !important;
+    flex: 1 0 auto !important; /* Fills short pages, extends with long ones, never squishes! */
 }
 
 /* Ensure the workspace viewport wrapper serves as the exact reference box for absolute positioning */
@@ -1137,9 +1149,17 @@ dialog.aero-dialog-box::backdrop {
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
+        min-height: 0 !important;
         overflow: visible !important;
         font-size: 11pt !important;
         color: #000000 !important;
+    }
+
+    /* The inner scroller must never clip paper output! */
+    .canvas-scrollbox {
+        overflow: visible !important;
+        height: auto !important;
+        display: block !important;
     }
 
     /* Let gradients and transparency print faithfully — never flatten!
@@ -1337,12 +1357,13 @@ body.format-collapsed #format-toggle-zone svg {
 
 #format-text-controls input[type="color"] {
     border: none;
-    width: 28px;
-    height: 28px;
+    width: 20px;
+    height: 20px;
     border-radius: 50%;
     background: none;
     cursor: pointer;
     padding: 0;
+    flex: none;
 }
 
 #format-text-controls input[type="color"]::-webkit-color-swatch-wrapper {
@@ -1359,9 +1380,155 @@ body.format-collapsed #format-toggle-zone svg {
     border-radius: 50%;
 }
 
+#format-text-controls .font-size-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    padding: 8px 10px;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+    font-size: 12px;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+#format-text-controls .font-size-caption,
+#format-text-controls .font-size-unit {
+    flex: none;
+    opacity: 0.85;
+}
+
+#format-text-controls .font-size-number {
+    flex: 1;
+    min-width: 0;
+    width: auto;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 6px;
+    cursor: text;
+}
+
 .fmt-align-row {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+}
+
+.format-segmented {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 4px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.format-segment-btn {
+    background: transparent;
+    border: none;
+    border-radius: 7px;
+    color: #e0f2fe;
+    padding: 7px 0;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+    cursor: pointer;
+}
+
+.format-segment-btn:hover {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+}
+
+.format-segment-btn.active {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(2,132,199,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.format-segmented.small {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+#format-group-main[hidden],
+#format-group-style[hidden],
+#format-group-document[hidden] {
+    display: none !important;
+}
+
+#format-group-main,
+#format-group-style,
+#format-group-document {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+#format-page-sizes {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.format-page-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #e0f2fe;
+    padding: 8px 10px;
+    font-size: 12px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+    cursor: pointer;
+    box-sizing: border-box;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.format-page-row:hover {
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+}
+
+.format-page-row.active {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    border-color: #7dd3fc;
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(2,132,199,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+
+.format-page-dims {
+    font-weight: 400;
+    font-size: 11px;
+    opacity: 0.85;
+    white-space: nowrap;
+}
+
+.format-doc-note {
+    margin: 4px 0 0;
+    font-size: 11px;
+    color: #bae6fd;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+}
+
+.format-doc-note code {
+    background: rgba(255,255,255,0.15);
+    border-radius: 4px;
+    padding: 0 4px;
+}
+
+.fmt-indent-row {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
     gap: 6px;
 }
 

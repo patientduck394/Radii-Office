@@ -79,6 +79,30 @@
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 10px 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+  font-size: 13px;
+  font-weight: 800;
+  color: #0f172a;
+  font-family: 'JetBrains Mono', monospace;
+  cursor: pointer;
+}
+
+.settings-toggle-row input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #0284c7;
+  cursor: pointer;
+  flex: none;
+}
+
 /* Soft cross-fade on the canvas — every other background carries its own
    explicit transition alongside its background rule! */
 #wysiwyg-canvas {

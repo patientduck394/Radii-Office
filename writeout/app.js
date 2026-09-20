@@ -120,7 +120,15 @@ function initializeAmbientDroplets() {
         document.body.appendChild(drop);
     }
 }
-initializeAmbientDroplets();
+
+// Floating spheres on/off (Settings persists writeout_hide_ambient = '1')!
+function kdAmbientHidden() {
+    try { return localStorage.getItem('writeout_hide_ambient') === '1'; } catch (e) { return false; }
+}
+try {
+    if (kdAmbientHidden() && document.body) document.body.classList.add('hide-ambient');
+} catch (e) {}
+if (!kdAmbientHidden()) initializeAmbientDroplets();
 
 // Launch on application boot directly to Slot 1
 
@@ -1618,6 +1626,8 @@ function kdKeydownPayload(html) {
     yamlConfigBlock += "app: \"Writedown WYSIWYG Suite\"\n";
     yamlConfigBlock += "format: \"keydown-yaml-canvas\"\n";
     yamlConfigBlock += `exported_at: \"${currentTimestampString}\"\n`;
+    yamlConfigBlock += `page_size: \"${kdPageSizeId}\"\n`;
+    yamlConfigBlock += `page_orientation: \"${kdPageOrient}\"\n`;
     yamlConfigBlock += "---\n\n";
     return yamlConfigBlock + html;
 }
@@ -2081,157 +2091,22 @@ function kdCornerRadius(cs) {
     return 0;
 }
 
-var kdShadowSeq = 0;
-var kdClipSeq = 0;
-
-// Split on spaces outside parens (keeps rgb()/hsl() whole)!
-function kdSplitSpace(s) {
-    const parts = [];
-    let depth = 0;
-    let cur = '';
-    for (let i = 0; i < s.length; i++) {
-        const ch = s[i];
-        if (ch === '(') depth++;
-        else if (ch === ')') depth = Math.max(0, depth - 1);
-        if ((ch === ' ' || ch === '\t' || ch === '\n') && depth === 0) {
-            if (cur) { parts.push(cur); cur = ''; }
-        } else {
-            cur += ch;
-        }
-    }
-    if (cur) parts.push(cur);
-    return parts;
-}
-
-// Parse computed box-shadow into shadow list!
-function kdParseBoxShadow(str) {
-    const s = String(str || '').trim();
-    if (!s || s.toLowerCase() === 'none') return [];
-    const out = [];
-    kdSplitTop(s).forEach(function (layer) {
-        const t = String(layer || '').trim();
-        if (!t || t.toLowerCase() === 'none') return;
-        const toks = kdSplitSpace(t);
-        if (!toks.length) return;
-        let inset = false;
-        const rest = [];
-        toks.forEach(function (tok) {
-            if (tok.toLowerCase() === 'inset') inset = true;
-            else rest.push(tok);
-        });
-        let color = null;
-        const lens = [];
-        rest.forEach(function (tok) {
-            if (!color) {
-                const c = kdParseColor(tok);
-                if (c) {
-                    color = c.hex === 'transparent' ? { hex: '#000000', opacity: 0 } : c;
-                    return;
-                }
-            }
-            lens.push(tok);
-        });
-        if (!color) color = { hex: '#000000', opacity: 1 };
-        if (lens.length < 2 || lens.length > 4) return;
-        const nums = lens.map(function (v) { return parseFloat(v); });
-        if (nums.some(function (n) { return isNaN(n); })) return;
-        if (nums.length >= 3 && nums[2] < 0) return;
-        out.push({
-            inset: inset,
-            dx: nums[0], dy: nums[1],
-            blur: nums.length >= 3 ? nums[2] : 0,
-            spread: nums.length >= 4 ? nums[3] : 0,
-            color: color.hex, opacity: color.opacity
-        });
-    });
-    return out;
-}
-
-function kdBlurFilter(defs, blur) {
-    if (!blur || blur <= 0) return '';
-    kdShadowSeq++;
-    const id = 'kdblur' + kdShadowSeq;
-    defs.push('<filter id="' + id + '" x="-60%" y="-60%" width="220%" height="220%">' +
-        '<feGaussianBlur stdDeviation="' + (+((blur / 2).toFixed(2))) + '"/></filter>');
-    return ' filter="url(#' + id + ')"';
-}
-
-// Outset shadows: blurred, spread, offset rects BEHIND the fills!
-function kdPaintOutsetShadows(out, defs, box, rx, shadows) {
-    for (let i = shadows.length - 1; i >= 0; i--) {
-        const sh = shadows[i];
-        if (sh.inset) continue;
-        const sx = box.x - sh.spread;
-        const sy = box.y - sh.spread;
-        const sw = box.w + sh.spread * 2;
-        const st = box.h + sh.spread * 2;
-        if (sw <= 0 || st <= 0) continue;
-        const srx = Math.max(0, rx + sh.spread);
-        let attrs = 'x="' + sx.toFixed(1) + '" y="' + sy.toFixed(1) +
-            '" width="' + sw.toFixed(1) + '" height="' + st.toFixed(1) + '"';
-        if (srx) attrs += ' rx="' + srx.toFixed(1) + '"';
-        attrs += ' fill="' + sh.color + '"';
-        if (sh.opacity < 1) attrs += ' fill-opacity="' + (+sh.opacity.toFixed(4)) + '"';
-        if (sh.dx || sh.dy) attrs += ' transform="translate(' + sh.dx + ' ' + sh.dy + ')"';
-        attrs += kdBlurFilter(defs, sh.blur);
-        out.push('<rect ' + attrs + '/>');
-    }
-}
-
-// Inset shadows: same rects but clipped INSIDE the box, painted OVER fills!
-function kdPaintInsetShadows(out, defs, box, rx, shadows) {
-    const ins = shadows.filter(function (s) { return s.inset; });
-    if (!ins.length) return;
-    kdClipSeq++;
-    const cid = 'kdclip' + kdClipSeq;
-    let clip = '<clipPath id="' + cid + '"><rect x="' + box.x.toFixed(1) + '" y="' + box.y.toFixed(1) +
-        '" width="' + Math.max(0, box.w).toFixed(1) + '" height="' + Math.max(0, box.h).toFixed(1) + '"';
-    if (rx) clip += ' rx="' + rx.toFixed(1) + '"';
-    clip += '/></clipPath>';
-    defs.push(clip);
-    const inner = [];
-    for (let i = ins.length - 1; i >= 0; i--) {
-        const sh = ins[i];
-        const sx = box.x - sh.spread;
-        const sy = box.y - sh.spread;
-        const sw = box.w + sh.spread * 2;
-        const st = box.h + sh.spread * 2;
-        if (sw <= 0 || st <= 0) continue;
-        const srx = Math.max(0, rx + sh.spread);
-        let attrs = 'x="' + sx.toFixed(1) + '" y="' + sy.toFixed(1) +
-            '" width="' + sw.toFixed(1) + '" height="' + st.toFixed(1) + '"';
-        if (srx) attrs += ' rx="' + srx.toFixed(1) + '"';
-        attrs += ' fill="' + sh.color + '"';
-        if (sh.opacity < 1) attrs += ' fill-opacity="' + (+sh.opacity.toFixed(4)) + '"';
-        if (sh.dx || sh.dy) attrs += ' transform="translate(' + sh.dx + ' ' + sh.dy + ')"';
-        // blur defs must live in <defs>: build tag then re-route into defs!
-        const tmp = [];
-        const fAttr = kdBlurFilter(tmp, sh.blur);
-        tmp.forEach(function (d) { defs.push(d); });
-        attrs += fAttr;
-        inner.push('<rect ' + attrs + '/>');
-    }
-    out.push('<g clip-path="url(#' + cid + ')">' + inner.join('') + '</g>');
-}
-
-// Paint one element's box: shadows, stacked fills, stroke on top, rounded corners!
+// Paint one element's box: stacked fills, stroke on top, rounded corners!
+// (Box-shadows stay out: shadow rects only washed the chips out!)
 function kdPaintBox(out, defs, el, box, forceBase) {
     let fills = [];
     let border = null;
     let rx = 0;
-    let shadows = [];
     try {
         const cs = window.getComputedStyle(el);
         fills = kdBackgroundFills(cs);
         border = kdBorderOf(cs);
         rx = kdCornerRadius(cs);
-        shadows = kdParseBoxShadow(cs.boxShadow);
     } catch (e) {}
-    if (!fills.length && !border && !shadows.length) {
+    if (!fills.length && !border) {
         if (!forceBase) return;
         fills = [{ kind: 'solid', color: '#ffffff', opacity: 1 }];
     }
-    kdPaintOutsetShadows(out, defs, box, rx, shadows);
     const geom = 'x="' + box.x.toFixed(1) + '" y="' + box.y.toFixed(1) +
         '" width="' + Math.max(0, box.w).toFixed(1) + '" height="' + Math.max(0, box.h).toFixed(1) + '"';
     const rxAttr = rx ? ' rx="' + rx.toFixed(1) + '"' : '';
@@ -2253,7 +2128,6 @@ function kdPaintBox(out, defs, el, box, forceBase) {
             out.push('<rect ' + geom + rxAttr + fill + stroke + '/>');
         }
     });
-    kdPaintInsetShadows(out, defs, box, rx, shadows);
 }
 
 function kdBuildVectorSVG() {
@@ -2624,6 +2498,7 @@ function importKeydownFile(inputEvent) {
             const closingGateIndexValue = fullFileStringContent.indexOf("---", 3);
             if (closingGateIndexValue !== -1) {
                 const pureContentTextOffset = closingGateIndexValue + 3;
+                kdApplyDocSettings(fullFileStringContent.substring(3, closingGateIndexValue));
                 // Hydrate the editable layout arena with the stripped code layers directly
                 const kdParsedFile = kdParseTabsFence(fullFileStringContent.substring(pureContentTextOffset).trim());
                 canvasViewport.innerHTML = kdParsedFile.tabs ? kdRestoreTabs(kdParsedFile.tabs) : kdRestoreTabs([{ name: 'Main', html: kdParsedFile.html }]);
@@ -2633,6 +2508,7 @@ function importKeydownFile(inputEvent) {
                 return;
             }
         }
+        kdApplyDocSettings('');
         const kdParsedRaw = kdParseTabsFence(fullFileStringContent);
         canvasViewport.innerHTML = kdParsedRaw.tabs ? kdRestoreTabs(kdParsedRaw.tabs) : kdRestoreTabs([{ name: 'Main', html: kdParsedRaw.html }]);
         kdHydrateInteractions();
@@ -2734,6 +2610,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!canvas || !selToolbar || !blockToolbar) return;
 
+    const pageScroller = canvas.parentElement;
+    if (pageScroller && pageScroller.addEventListener) {
+        pageScroller.addEventListener('scroll', function () {
+            selToolbar.style.display = 'none';
+            blockToolbar.style.display = 'none';
+        });
+    }
+
     function updateToolbars() {
         const selection = window.getSelection();
         if (!selection.rangeCount || !canvas.contains(selection.anchorNode)) {
@@ -2761,24 +2645,36 @@ document.addEventListener('DOMContentLoaded', function() {
             selToolbar.style.left = `${Math.max(10, leftPos)}px`;
             selToolbar.style.display = 'flex';
         } 
-        // 2. Cursor is on an empty new line -> Snap cleanly to cursor coordinates
+        // 2. Cursor is on an empty new line -> hover right above the cursor!
         else if (isEmptyLine) {
             selToolbar.style.display = 'none';
             document.querySelectorAll('.aero-dropdown').forEach(d => d.classList.remove('active'));
-            
-            // Calculate precise offset relative to your workspace wrapper container
+
+            // Zeroed range rect? Measure the caret's own block instead!
+            let caretRect = rect;
+            if (!caretRect || (caretRect.top === 0 && caretRect.left === 0 && !caretRect.width && !caretRect.height)) {
+                try {
+                    const aNode = selection.anchorNode;
+                    const aEl = aNode && aNode.nodeType === Node.TEXT_NODE ? aNode.parentElement : aNode;
+                    const blk = aEl && aEl.closest ? aEl.closest('div, p, li, h1, h2, h3, blockquote, ul') : null;
+                    if (blk && typeof blk.getBoundingClientRect === 'function') caretRect = blk.getBoundingClientRect();
+                } catch (e) {}
+            }
+            const tbH = (typeof blockToolbar.offsetHeight === 'number' && blockToolbar.offsetHeight) || 40;
+            const tbW = (typeof blockToolbar.offsetWidth === 'number' && blockToolbar.offsetWidth) || 120;
             let topPos, leftPos;
-            if (rect && rect.top !== 0) {
-                topPos = rect.top - wrapperRect.top - 40;
-                leftPos = rect.left - wrapperRect.left;
+            if (caretRect && (caretRect.top !== 0 || caretRect.left !== 0 || caretRect.width !== 0 || caretRect.height !== 0)) {
+                topPos = caretRect.top - wrapperRect.top - tbH - 12;
+                if (topPos < 10) topPos = caretRect.bottom - wrapperRect.top + 12; // Cramped: dock below!
+                leftPos = caretRect.left - wrapperRect.left;
             } else {
-                // Fallback if rect is zeroed on an empty line
-                topPos = 30;
-                leftPos = 30;
+                // Last resort: the canvas head -- never the dead corner!
+                topPos = canvasRect.top - wrapperRect.top + 10;
+                leftPos = canvasRect.left - wrapperRect.left + 10;
             }
 
             blockToolbar.style.top = `${Math.max(10, topPos)}px`;
-            blockToolbar.style.left = `${Math.max(10, leftPos)}px`;
+            blockToolbar.style.left = `${Math.max(10, Math.min(leftPos, Math.max(10, wrapperRect.width - tbW - 10)))}px`;
             blockToolbar.style.display = 'flex';
         }
         // 3. Actively typing inside text -> Hide both completely
@@ -3308,7 +3204,7 @@ function fmtAlignBlocks(align) {
     if (!blocks.length) {
         const node = sel.anchorNode;
         const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
-        const block = el && el.closest ? el.closest('div, p, li, h1, h2, h3, blockquote') : null;
+        const block = (el && el.closest) ? fmtAlignScope(el) : null;
         if (block && canvas.contains(block)) blocks.push(block);
     }
     blocks.forEach(function (b) { b.style.textAlign = align; });
@@ -3316,24 +3212,127 @@ function fmtAlignBlocks(align) {
     fmtSyncAlignButtons();
 }
 
+// Indent = tab char at each line start; outdent strips ONE leading tab (only if there)!
+function fmtIndentBlocks(dir) {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return;
+    const range = sel.getRangeAt(0);
+    const blocks = [];
+    Array.from(canvas.children).forEach(function (kid) {
+        try {
+            if (range.intersectsNode(kid)) blocks.push(kid);
+        } catch (e) {}
+    });
+    if (!blocks.length) {
+        const node = sel.anchorNode;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        const block = el && el.closest ? el.closest('div, p, li, h1, h2, h3, blockquote') : null;
+        if (block && canvas.contains(block)) blocks.push(block);
+    }
+    // Remember a collapsed caret so it lands after its fresh tab (never at line start)!
+    const wasCollapsed = sel.isCollapsed;
+    let caretAnchor = null;
+    let caretOffset = 0;
+    let caretBlock = null;
+    try {
+        caretAnchor = sel.anchorNode;
+        caretOffset = sel.anchorOffset;
+        const ael = caretAnchor && caretAnchor.nodeType === 3 ? caretAnchor.parentElement : caretAnchor;
+        caretBlock = (ael && ael.closest) ? ael.closest('div, p, li, h1, h2, h3, blockquote') : null;
+        if (caretBlock && !canvas.contains(caretBlock)) caretBlock = null;
+    } catch (e) {}
+    let caretTab = null;
+    let strippedNode = null;
+    let strippedGoneBlock = null;
+    blocks.forEach(function (b) {
+        if (dir > 0) {
+            const first = b.firstChild;
+            let tabNode = null;
+            if (first && first.nodeType === 3) { first.nodeValue = '\t' + first.nodeValue; tabNode = first; }
+            else { tabNode = document.createTextNode('\t'); b.insertBefore(tabNode, first); }
+            if (b === caretBlock) caretTab = tabNode;
+        } else {
+            let node = b.firstChild;
+            while (node && node.nodeType === 3 && node.nodeValue === '') {
+                const husk = node;
+                node = node.nextSibling;
+                husk.remove();
+            }
+            while (node && node.nodeType === 1 && node.tagName !== 'BR' && node.firstChild) node = node.firstChild;
+            if (node && node.nodeType === 3 && node.nodeValue.charAt(0) === '\t') {
+                const heldCaret = (node === caretAnchor);
+                node.nodeValue = node.nodeValue.substring(1);
+                if (!node.nodeValue.length) {
+                    node.remove();
+                    if (b === caretBlock && heldCaret) strippedGoneBlock = b;
+                } else if (b === caretBlock) {
+                    strippedNode = node;
+                }
+            }
+        }
+    });
+    try {
+        if (wasCollapsed && dir > 0 && caretTab) {
+            const caret = document.createRange();
+            caret.setStart(caretTab, 1);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        } else if (wasCollapsed && dir < 0 && caretBlock && (strippedNode || strippedGoneBlock)) {
+            const caret = document.createRange();
+            if (strippedNode) {
+                const at = (caretAnchor === strippedNode) ? Math.max(0, caretOffset - 1) : 0;
+                caret.setStart(strippedNode, at);
+            } else {
+                caret.setStart(strippedGoneBlock, 0);
+            }
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        }
+    } catch (e) {}
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+}
+
+// Nearest block-level box owns the line's alignment! Never guess tag names
+// (closest('div,p,...') is blind to <center>, <section>, table cells, pasted
+// markup!) -- ask layout: first non-inline ancestor-or-self wins!
+function fmtAlignScope(el) {
+    let node = el;
+    while (node && typeof canvas !== 'undefined' && canvas && canvas.contains(node)) {
+        if (node === canvas) return canvas;
+        let disp = '';
+        try { disp = String((window.getComputedStyle(node) || {}).display || '').toLowerCase(); } catch (e) {}
+        if (disp !== 'inline') return node;
+        node = node.parentElement;
+    }
+    return (typeof canvas !== 'undefined' && canvas) ? canvas : null;
+}
+
 function fmtSyncAlignButtons() {
     const bar = document.getElementById('format-text-controls');
     if (!bar) return;
-    let align = 'left';
+    // Null = cursor is NOT in text: leave the last highlight alone (never lie)!
+    // NOTE: the blinking cursor lives at the FOCUS end (anchor == focus collapsed)!
+    let align = null;
     try {
         const sel = window.getSelection();
         if (sel.rangeCount) {
-            let node = sel.anchorNode;
-            if (node && canvas.contains(node)) {
+            let node = sel.focusNode || sel.anchorNode;
+            if (node && typeof canvas !== 'undefined' && canvas && canvas.contains(node)) {
+                align = 'left';
                 const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
-                const block = el && el.closest ? el.closest('div, p, li, h1, h2, h3, blockquote') : null;
-                const scope = (block && canvas.contains(block)) ? block : canvas;
+                const scope = (el && el.closest) ? (fmtAlignScope(el) || canvas) : canvas;
                 const computed = window.getComputedStyle(scope);
                 const t = ((computed && computed.textAlign) || scope.style.textAlign || '').toLowerCase();
-                if (t === 'center' || t === 'right' || t === 'justify' || t === 'end') align = (t === 'end' ? 'right' : t);
+                if (t === 'center' || t === '-webkit-center') align = 'center';
+                else if (t === 'right' || t === 'end' || t === '-webkit-right') align = 'right';
+                else if (t === 'justify') align = 'justify';
             }
         }
-    } catch (e) {}
+    } catch (e) { align = null; }
+    if (!align) return;
     bar.querySelectorAll('[data-align]').forEach(function (btn) {
         if (btn.getAttribute('data-align') === align) btn.classList.add('active');
         else btn.classList.remove('active');
@@ -3346,12 +3345,86 @@ function fmtSyncAlignButtons() {
 // ==========================================
 const topFormatBar = document.getElementById('format-text-controls') || document.getElementById('top-format-bar');
 
+var FMT_WEIGHT_STEPS = ['300', '400', '500', '600', '700', '800', '900'];
+
+// Wrap the selection (or park a collapsed caret) in a styled span!
+function fmtWrapInline(prop, value) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    const range = sel.getRangeAt(0);
+    try {
+        const span = document.createElement('span');
+        span.style.setProperty(prop, value);
+        if (range.collapsed) {
+            span.appendChild(document.createTextNode(''));
+            range.insertNode(span);
+            const caret = document.createRange();
+            caret.setStart(span.firstChild, 0);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        } else {
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            const reselected = document.createRange();
+            reselected.selectNodeContents(span);
+            sel.removeAllRanges();
+            sel.addRange(reselected);
+        }
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+        return true;
+    } catch (e) { return false; }
+}
+
+function fmtApplyWeight(value) {
+    let v = String(value || '').trim().toLowerCase();
+    if (v === 'normal') v = '400';
+    else if (v === 'bold') v = '700';
+    if (FMT_WEIGHT_STEPS.indexOf(v) === -1) {
+        const n = parseInt(v, 10);
+        v = isNaN(n) ? '400' : String(Math.min(900, Math.max(100, Math.round(n / 100) * 100)));
+    }
+    playAeroClickSound(600, 0.08);
+    return fmtWrapInline('font-weight', v);
+}
+
+function fmtApplySizePx(value) {
+    let px = Math.round(parseFloat(value));
+    if (isNaN(px)) return false;
+    px = Math.min(200, Math.max(6, px));
+    playAeroClickSound(600, 0.08);
+    return fmtWrapInline('font-size', px + 'px');
+}
+
 if (topFormatBar) {
     // 1. Handle changes from top toolbar dropdowns & pickers using data-edit-action
     topFormatBar.addEventListener('change', (e) => {
         const action = e.target.getAttribute('data-edit-action');
         if (!action) return;
-        
+
+        if (action === 'fontWeight' || action === 'fontSizePx') {
+            // Snapshot the range: focusing the canvas may nudge the caret!
+            let saved = null;
+            try {
+                const sel = window.getSelection();
+                if (sel.rangeCount && canvas.contains(sel.anchorNode)) saved = sel.getRangeAt(0).cloneRange();
+            } catch (e) {}
+            canvas.focus();
+            try {
+                if (saved) {
+                    const sel = window.getSelection();
+                    sel.removeAllRanges();
+                    sel.addRange(saved);
+                }
+            } catch (e) {}
+            if (action === 'fontWeight') fmtApplyWeight(e.target.value);
+            else fmtApplySizePx(e.target.value);
+            autoSaveCanvasContent();
+            return;
+        }
+
         canvas.focus();
         const value = e.target.value;
         document.execCommand(action, false, value);
@@ -3362,7 +3435,9 @@ if (topFormatBar) {
         // Handles live color picker updates if using 'input' events
         const action = e.target.getAttribute('data-edit-action');
         if (!action) return;
-        
+        // Weight + size apply on commit (change) only -- never mid-keystroke!
+        if (action === 'fontWeight' || action === 'fontSizePx') return;
+
         canvas.focus();
         const value = e.target.value;
         document.execCommand(action, false, value);
@@ -3390,6 +3465,204 @@ if (topFormatBar) {
         if (!alignBtn) return;
         playAeroClickSound(600, 0.08);
         fmtAlignBlocks(alignBtn.getAttribute('data-align'));
+    });
+
+// ==========================================
+// FORMAT SIDEBAR GROUPS + DOCUMENT PAGE SIZE
+// (Page size rides along inside every .KD snapshot!)
+// ==========================================
+var FMT_GROUP_KEY = 'writeout_format_group';
+var KD_PAGE_SIZE_KEY = 'writeout_page_size';
+var KD_PAGE_ORIENT_KEY = 'writeout_page_orientation';
+var KD_PAGE_SIZES = [
+    { id: 'kd', name: 'KD Document', hint: 'current canvas size' },
+    { id: 'a4', name: 'A4', w: 794, h: 1123 },
+    { id: 'a5', name: 'A5', w: 559, h: 794 },
+    { id: 'a3', name: 'A3', w: 1123, h: 1587 },
+    { id: 'letter', name: 'Letter', w: 816, h: 1056 },
+    { id: 'legal', name: 'Legal', w: 816, h: 1344 }
+];
+var kdPageSizeId = 'kd';
+var kdPageOrient = 'portrait';
+try {
+    const sid = localStorage.getItem(KD_PAGE_SIZE_KEY);
+    if (sid && KD_PAGE_SIZES.some(function (s) { return s.id === sid; })) kdPageSizeId = sid;
+    const so = localStorage.getItem(KD_PAGE_ORIENT_KEY);
+    if (so === 'landscape' || so === 'portrait') kdPageOrient = so;
+} catch (e) {}
+
+function kdPageSizeDef(id) {
+    for (let i = 0; i < KD_PAGE_SIZES.length; i++) {
+        if (KD_PAGE_SIZES[i].id === id) return KD_PAGE_SIZES[i];
+    }
+    return KD_PAGE_SIZES[0];
+}
+
+// Effective canvas width (null = KD Document = no override)!
+function kdPageWidth() {
+    const def = kdPageSizeDef(kdPageSizeId);
+    if (!def.w) return null;
+    return kdPageOrient === 'landscape' ? Math.max(def.w, def.h) : Math.min(def.w, def.h);
+}
+
+function kdCurrentCanvasWidth() {
+    try {
+        if (typeof canvasViewport !== 'undefined' && canvasViewport) {
+            return canvasViewport.offsetWidth || canvasViewport.scrollWidth || 900;
+        }
+    } catch (e) {}
+    return 900;
+}
+
+// Effective canvas height: fixed sizes use their page height, KD starts extended!
+function kdPageHeight() {
+    const def = kdPageSizeDef(kdPageSizeId);
+    if (!def.h) return 1123;
+    return kdPageOrient === 'landscape' ? Math.min(def.w, def.h) : Math.max(def.w, def.h);
+}
+
+function kdApplyPageSize() {
+    try {
+        if (typeof canvasViewport !== 'undefined' && canvasViewport) {
+            const w = kdPageWidth();
+            if (w) canvasViewport.style.maxWidth = w + 'px';
+            else canvasViewport.style.removeProperty('max-width');
+            canvasViewport.style.minHeight = kdPageHeight() + 'px';
+        }
+    } catch (e) {}
+    kdRenderDocSettings();
+}
+
+function kdSetPageSize(id) {
+    kdPageSizeId = kdPageSizeDef(id).id;
+    try { localStorage.setItem(KD_PAGE_SIZE_KEY, kdPageSizeId); } catch (e) {}
+    playAeroClickSound(600, 0.08);
+    kdApplyPageSize();
+}
+
+function kdSetOrient(o) {
+    kdPageOrient = (o === 'landscape') ? 'landscape' : 'portrait';
+    try { localStorage.setItem(KD_PAGE_ORIENT_KEY, kdPageOrient); } catch (e) {}
+    playAeroClickSound(600, 0.08);
+    kdApplyPageSize();
+}
+
+function kdPageDimsLabel(def) {
+    if (!def.w) return kdCurrentCanvasWidth() + 'px now';
+    const w = kdPageOrient === 'landscape' ? Math.max(def.w, def.h) : Math.min(def.w, def.h);
+    const h = kdPageOrient === 'landscape' ? Math.min(def.w, def.h) : Math.max(def.w, def.h);
+    return w + ' x ' + h;
+}
+
+function kdRenderDocSettings() {
+    const box = document.getElementById('format-page-sizes');
+    if (box) {
+        box.innerHTML = '';
+        KD_PAGE_SIZES.forEach(function (def) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'format-page-row' + (def.id === kdPageSizeId ? ' active' : '');
+            btn.setAttribute('data-page-size', def.id);
+            const nm = document.createElement('span');
+            nm.textContent = def.name;
+            const dm = document.createElement('span');
+            dm.className = 'format-page-dims';
+            dm.textContent = kdPageDimsLabel(def);
+            btn.appendChild(nm);
+            btn.appendChild(dm);
+            box.appendChild(btn);
+        });
+    }
+    const orow = document.getElementById('format-orient-row');
+    if (orow) {
+        orow.querySelectorAll('[data-orient]').forEach(function (btn) {
+            if (btn.getAttribute('data-orient') === kdPageOrient) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+}
+
+var FMT_GROUPS = ['main', 'style', 'doc'];
+
+function fmtStoredGroup() {
+    try {
+        const g = localStorage.getItem(FMT_GROUP_KEY);
+        if (FMT_GROUPS.indexOf(g) !== -1) return g;
+    } catch (e) {}
+    return 'main';
+}
+
+function fmtSetGroup(g, silent) {
+    if (FMT_GROUPS.indexOf(g) === -1) g = 'main';
+    try { localStorage.setItem(FMT_GROUP_KEY, g); } catch (e) {}
+    if (!silent) playAeroClickSound(600, 0.08);
+    document.querySelectorAll('[data-fmt-group]').forEach(function (btn) {
+        if (btn.getAttribute('data-fmt-group') === g) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+    const panes = [['format-group-main', 'main'], ['format-group-style', 'style'], ['format-group-document', 'doc']];
+    panes.forEach(function (pair) {
+        const el = document.getElementById(pair[0]);
+        if (!el) return;
+        if (g === pair[1]) {
+            el.removeAttribute('hidden');
+            if (pair[1] === 'doc') kdRenderDocSettings();
+        } else {
+            el.setAttribute('hidden', '');
+        }
+    });
+}
+
+function fmtWireDocSettings() {
+    const seg = document.querySelector('.format-segmented');
+    if (seg && !seg._fmtGroupWired) {
+        seg._fmtGroupWired = true;
+        seg.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-fmt-group]') : null;
+            if (!btn) return;
+            fmtSetGroup(btn.getAttribute('data-fmt-group'));
+        });
+    }
+    const box = document.getElementById('format-page-sizes');
+    if (box && !box._fmtSizeWired) {
+        box._fmtSizeWired = true;
+        box.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-page-size]') : null;
+            if (!btn) return;
+            kdSetPageSize(btn.getAttribute('data-page-size'));
+        });
+    }
+    const orow = document.getElementById('format-orient-row');
+    if (orow && !orow._fmtOrientWired) {
+        orow._fmtOrientWired = true;
+        orow.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-orient]') : null;
+            if (!btn) return;
+            kdSetOrient(btn.getAttribute('data-orient'));
+        });
+    }
+}
+
+// Front-matter document settings ride inside every .KD file!
+function kdApplyDocSettings(frontMatter) {
+    const m = String(frontMatter || '');
+    const size = (m.match(/page_size:\s*"([^"]+)"/) || [])[1];
+    const orient = (m.match(/page_orientation:\s*"([^"]+)"/) || [])[1];
+    kdPageSizeId = kdPageSizeDef(size).id;
+    kdPageOrient = (orient === 'landscape' || orient === 'portrait') ? orient : 'portrait';
+    try {
+        localStorage.setItem(KD_PAGE_SIZE_KEY, kdPageSizeId);
+        localStorage.setItem(KD_PAGE_ORIENT_KEY, kdPageOrient);
+    } catch (e) {}
+    kdApplyPageSize();
+}
+
+    topFormatBar.addEventListener('click', (e) => {
+        // Paragraph indent/outdent buttons!
+        const indBtn = e.target.closest ? e.target.closest('[data-indent]') : null;
+        if (!indBtn) return;
+        playAeroClickSound(600, 0.08);
+        fmtIndentBlocks(indBtn.getAttribute('data-indent') === 'out' ? -1 : 1);
     });
 }
 
@@ -3419,23 +3692,29 @@ function syncTopBarWithSelection() {
         }
     }
 
-    // Sync Font Size Dropdown
-    const sizeSelect = topFormatBar.querySelector('[data-edit-action="fontSize"]');
-    if (sizeSelect && computed.fontSize) {
-        // execCommand sizes map roughly to pixels: 1~10, 3~16, 5~24, 7~48.
-        // Snap the caret's computed size to the nearest available step!
-        const px = parseFloat(computed.fontSize);
-        if (!isNaN(px)) {
-            const steps = [[1, 10], [3, 16], [5, 24], [7, 48]];
-            let best = steps[0][0];
-            let bestDist = Math.abs(px - steps[0][1]);
+    // Sync Font Weight Dropdown (snap the caret's computed weight to the nearest step!)
+    const weightSelect = topFormatBar.querySelector('[data-edit-action="fontWeight"]');
+    if (weightSelect && computed.fontWeight) {
+        const w = String(computed.fontWeight).toLowerCase();
+        const num = w === 'normal' ? 400 : (w === 'bold' ? 700 : parseInt(w, 10));
+        if (!isNaN(num)) {
+            const steps = [300, 400, 500, 600, 700, 800, 900];
+            let best = steps[0];
+            let bestDist = Math.abs(num - steps[0]);
             steps.forEach(function (s) {
-                const dist = Math.abs(px - s[1]);
-                if (dist < bestDist) { bestDist = dist; best = s[0]; }
+                const dist = Math.abs(num - s);
+                if (dist < bestDist) { bestDist = dist; best = s; }
             });
-            const match = Array.from(sizeSelect.options).some(function (o) { return o.value === String(best); });
-            if (match) sizeSelect.value = String(best);
+            const match = Array.from(weightSelect.options).some(function (o) { return o.value === String(best); });
+            if (match) weightSelect.value = String(best);
         }
+    }
+
+    // Sync Text Size Number (raw pixels -- never clobber while the user types!)
+    const sizeNumber = topFormatBar.querySelector('[data-edit-action="fontSizePx"]');
+    if (sizeNumber && computed.fontSize && document.activeElement !== sizeNumber) {
+        const px = Math.round(parseFloat(computed.fontSize));
+        if (!isNaN(px)) sizeNumber.value = String(px);
     }
 
     // Sync Text Color Picker
@@ -4157,6 +4436,7 @@ var FMT_STYLE_SPAN_SEL = FMT_HIGHLIGHT_SEL + ', ' + FMT_EFFECT_SEL + ', span[cla
 var FMT_INLINE_PROPS = [
     { prop: 'fontWeight', cssProp: 'font-weight', css: 'bold', label: 'Bold', test: function (v) { return v === 'bold' || v === 'bolder' || parseInt(v, 10) >= 600; } },
     { prop: 'fontStyle', cssProp: 'font-style', css: 'italic', label: 'Italic', test: function (v) { return v === 'italic' || v === 'oblique'; } },
+    { prop: 'fontSize', cssProp: 'font-size', css: '18px', label: 'Size', test: function (v) { return !!(v || '').trim(); } },
     { prop: 'textDecoration', cssProp: 'text-decoration', css: 'underline', label: 'Underline', test: function (v) { return (v || '').indexOf('underline') !== -1; } },
     { prop: 'textDecoration', cssProp: 'text-decoration', css: 'line-through', label: 'Strikethrough', test: function (v) { return (v || '').indexOf('line-through') !== -1; } }
 ];
@@ -4388,8 +4668,11 @@ function fmtRenderStyleList() {
 }
 
 function fmtWireSidebar() {
+    fmtSetGroup(fmtStoredGroup(), true);
+    kdApplyPageSize();
     if (fmtWired) return;
     fmtWired = true;
+    fmtWireDocSettings();
     fmtRenderStyleList();
     const toggle = document.getElementById('format-toggle-zone');
     if (toggle) toggle.addEventListener('click', function () {
@@ -4404,7 +4687,7 @@ function fmtWireSidebar() {
 
 if (typeof canvas !== 'undefined' && canvas) {
     fmtWireSidebar();
-    const fmtRefresh = function () { fmtUpdateScopeHint(); fmtRenderStyleList(); };
+    const fmtRefresh = function () { fmtUpdateScopeHint(); fmtRenderStyleList(); fmtSyncAlignButtons(); };
     canvas.addEventListener('keyup', fmtRefresh);
     canvas.addEventListener('mouseup', fmtRefresh);
     document.addEventListener('selectionchange', fmtRefresh);

@@ -6,10 +6,12 @@
 #wysiwyg-canvas blockquote {
     background: linear-gradient(90deg, rgba(56,189,248,0.15) 0%, rgba(255,255,255,0) 100%);
     border-left: 5px solid #0284c7; margin: 15px 0; padding: 10px 20px; color: #0369a1; font-style: italic; border-radius: 0 8px 8px 0;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 #wysiwyg-canvas code {
     background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border: 1px solid #cbd5e1;
     color: #475569; padding: 3px 6px; border-radius: 5px; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Massive 12-Color Liquid-Gel Highlighter Spectrum --- */
@@ -18,18 +20,42 @@
     text-shadow: 0 1px 2px rgba(0,0,0,0.3); display: inline-block;
     box-shadow: inset 0 1px 1px rgba(255,255,255,0.6), 0 3px 6px rgba(0,0,0,0.1);
 }
-.gel-y  { background: linear-gradient(180deg, #fde047 0%, #eab308 100%); border: 2px solid #ca8a04; color: #451a03; text-shadow: none; } /* Fun Fact: All of these gel highlights shown here had a 1px border in the legacy version, which has been changed to 2px! */
-.gel-r  { background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%); border: 2px solid #dc2626; }
-.gel-g  { background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%); border: 2px solid #059669; }
-.gel-c  { background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); border: 2px solid #0891b2; }
-.gel-b  { background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%); border: 2px solid #2563eb; }
-.gel-v  { background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%); border: 2px solid #7e22ce; }
-.gel-p  { background: linear-gradient(180deg, #f472b6 0%, #db2777 100%); border: 2px solid #be185d; }
-.gel-o  { background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%); border: 2px solid #c2410c; }
-.gel-mg { background: linear-gradient(180deg, #f472b6 0%, #e11d48 100%); border: 2px solid #be123c; }
-.gel-lm { background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%); border: 2px solid #4d7c0f; color: #1a2e05; text-shadow: none; }
-.gel-aq { background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%); border: 2px solid #0e7490; }
-.gel-sl { background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%); border: 2px solid #475569; color: #1e293b; text-shadow: none; }
+.gel-y  { background: linear-gradient(180deg, #fde047 0%, #eab308 100%); border: 2px solid #ca8a04; color: #451a03; text-shadow: none;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+} /* Fun Fact: All of these gel highlights shown here had a 1px border in the legacy version, which has been changed to 2px! */
+.gel-r  { background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%); border: 2px solid #dc2626;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-g  { background: linear-gradient(180deg, #6ee7b7 0%, #10b981 100%); border: 2px solid #059669;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-c  { background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); border: 2px solid #0891b2;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-b  { background: linear-gradient(180deg, #93c5fd 0%, #3b82f6 100%); border: 2px solid #2563eb;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-v  { background: linear-gradient(180deg, #c084fc 0%, #9333ea 100%); border: 2px solid #7e22ce;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-p  { background: linear-gradient(180deg, #f472b6 0%, #db2777 100%); border: 2px solid #be185d;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-o  { background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%); border: 2px solid #c2410c;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-mg { background: linear-gradient(180deg, #f472b6 0%, #e11d48 100%); border: 2px solid #be123c;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-lm { background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%); border: 2px solid #4d7c0f; color: #1a2e05; text-shadow: none;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-aq { background: linear-gradient(180deg, #22d3ee 0%, #0891b2 100%); border: 2px solid #0e7490;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-sl { background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%); border: 2px solid #475569; color: #1e293b; text-shadow: none;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* Modern Kinetic Glitch Spark Accent Wrapper */
 .spark-text {
@@ -53,12 +79,14 @@
     -webkit-backdrop-filter: blur(12px);
     position: relative;
     overflow: hidden;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Diagonal ambient high-gloss glass sheen */
 .aero-glass-block::before {
     content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
     background: linear-gradient(45deg, transparent 45%, rgba(255,255,255,0.4) 50%, transparent 55%);
     transform: rotate(-15deg); pointer-events: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 2. Liquid Aqua Bubble Text --- */
@@ -74,6 +102,7 @@
     -webkit-text-fill-color: transparent;
     display: inline-block;
     animation: liquid-wobble 4s infinite ease-in-out;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes liquid-wobble {
     0%, 100% { transform: scale(1) translateY(0); }
@@ -95,6 +124,7 @@
     box-shadow: 
         0 6px 16px rgba(234, 179, 8, 0.35),
         inset 0 1px 2px rgba(255,255,255,0.8);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .alert-icon-orb {
     width: 24px; height: 24px; border-radius: 50%;
@@ -103,6 +133,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 12px; font-weight: 900;
     box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 4. Retro Media Track Deck Container --- */
@@ -116,6 +147,7 @@
     align-items: center;
     justify-content: space-between;
     box-shadow: inset 0 3px 8px rgba(0,0,0,0.6), 0 4px 10px rgba(0,0,0,0.15);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .media-track-text {
     color: #38bdf8;
@@ -128,6 +160,7 @@
     background: linear-gradient(180deg, #64748b 0%, #334155 100%);
     border: 1px solid #94a3b8; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .media-control-orb::before {
     content: ''; width: 0; height: 0;
@@ -145,6 +178,7 @@
     -webkit-text-fill-color: transparent;
     display: inline-block;
     animation: liquid-swell 3s infinite ease-in-out alternate;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes liquid-swell {
     0% { transform: skewX(-4deg) scaleY(1); filter: hue-rotate(0deg); }
@@ -169,6 +203,7 @@
     opacity: 0.4;
     pointer-events: none;
     line-height: 1;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 3. 3D Embossed Glass Text Block --- */
@@ -184,6 +219,7 @@
         inset 0 1px 0 #fff,
         inset 0 -3px 6px rgba(2,132,199,0.1);
     display: inline-block;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 4. Kinetic Horizontal Wave Oscillation --- */
@@ -217,6 +253,7 @@
         0 10px 30px rgba(6, 182, 212, 0.4),
         inset 0 1px 2px rgba(255,255,255,0.8),
         inset 0 -10px 20px rgba(0,0,0,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* High-gloss top reflection lens overlay */
@@ -224,6 +261,7 @@
     content: ''; position: absolute; top: 2px; left: 2px; right: 2px; height: 45%;
     background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0) 100%);
     border-radius: 13px 13px 100% 100% / 13px 13px 30% 30%; pointer-events: none; z-index: 3;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Inline Floating Aqua Orbs --- */
@@ -232,6 +270,7 @@
     background: radial-gradient(circle at 50% 35%, rgba(255,255,255,0.9) 0%, rgba(56,189,248,0.4) 40%, rgba(2,132,199,0.7) 80%, transparent 100%);
     box-shadow: inset -2px -2px 6px rgba(0,0,0,0.2), 0 4px 10px rgba(6,182,212,0.3);
     animation: bubble-up 5s infinite linear; opacity: 0.7;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 @keyframes bubble-up {
@@ -260,6 +299,7 @@
     color: #fff; padding: 2px 8px; border-radius: 20px; font-weight: bold;
     box-shadow: 0 4px 10px rgba(16,185,129,0.4), inset 0 1px 1px #fff;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3); display: inline-block;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. ~U~ Liquid Aurora Underline ~U~ */
@@ -270,6 +310,7 @@
     content: ''; position: absolute; left: 0; bottom: -2px; width: 100%; height: 5px;
     background: linear-gradient(90deg, #38bdf8, #10b981, #38bdf8);
     border-radius: 4px; box-shadow: 0 2px 4px rgba(56,189,248,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. ~B~ Glossy Border Badge ~B~ */
@@ -292,9 +333,11 @@
     background: linear-gradient(180deg, #fb923c 0%, #ea580c 48%, #c2410c 100%) !important;
     border-color: #ffedd5 !important;
     margin-top: auto; /* Drops the Help item cleanly to the bottom of your sidebar tray layout */
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .btn-help:hover {
     background: linear-gradient(180deg, #fdba74 0%, #f97316 48%, #ea580c 100%) !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Glass Morphic System Dialogue Box Overlay --- */
@@ -304,6 +347,7 @@
     backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
     z-index: 100; display: flex; align-items: center; justify-content: center;
     opacity: 0; pointer-events: none; transition: opacity 0.25s cubic-bezier(0.1, 0.9, 0.2, 1);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 #aero-modal-overlay.active { opacity: 1; pointer-events: auto; }
 
@@ -322,6 +366,7 @@
     background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
     border-bottom: 2px solid rgba(255,255,255,0.4); padding: 12px 20px;
     display: flex; align-items: center; justify-content: space-between; position: relative;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .dialog-header h3 { color: #fff; margin: 0; font-size: 14px; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
 
@@ -338,6 +383,7 @@
     padding: 20px; overflow-y: scroll; flex: 1; box-sizing: border-box;
     background: radial-gradient(circle at 50% 0%, rgba(219,234,254,0.3) 0%, transparent 80%);
     box-shadow: inset 0 4px 10px rgba(0,0,0,0.05);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .dialog-body-scroll h4 { margin: 15px 0 8px 0; font-size: 13px; color: #0369a1; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px; }
 
@@ -347,6 +393,7 @@
     padding: 12px; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace;
     font-size: 12px; line-height: 1.8; color: #334155;
     box-shadow: inset 1px 1px 3px rgba(0,0,0,0.05), 0 2px 4px rgba(0,0,0,0.02);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .help-card b { color: #0f172a; display: inline-block; min-width: 85px; }
 .text-sky-blue { color: #0284c7 !important; }
@@ -358,15 +405,19 @@
     border: 2px solid #a7f3d0; border-radius: 20px; padding: 10px 22px; color: white;
     font-weight: bold; font-size: 13px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.4);
     box-shadow: 0 4px 10px rgba(16,185,129,0.3), inset 0 1px 1px #fff; transition: transform 0.05s;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .dialog-confirm-orb:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 1px 3px rgba(0,0,0,0.3); }
 
 /* Customize scrollbar layout to stay tactile and clean */
 .dialog-body-scroll::-webkit-scrollbar { width: 10px; }
-.dialog-body-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.03); border-radius: 10px; }
+.dialog-body-scroll::-webkit-scrollbar-track { background: rgba(0,0,0,0.03); border-radius: 10px;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .dialog-body-scroll::-webkit-scrollbar-thumb {
     background: linear-gradient(90deg, #94a3b8 0%, #64748b 100%);
     border: 2px solid #f1f5f9; border-radius: 10px;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Multi-Line Code Block Container --- */
@@ -381,6 +432,7 @@
         0 8px 24px rgba(0,0,0,0.3),
         inset 0 -5px 15px rgba(0,0,0,0.4);
     overflow: hidden;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Glossy Top Header Bar */
@@ -391,6 +443,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .code-block-header span {
     color: #94a3b8;
@@ -421,6 +474,7 @@
     padding: 8px 16px;
     display: flex;
     justify-content: flex-end;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3D Tactile Copy Button Component */
@@ -449,33 +503,45 @@
     background: radial-gradient(circle at 50% 30%, #34d399 0%, #10b981 70%, #047857 100%);
     border: 3px solid #6ee7b7;
     box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .aqua-emerald-box .aqua-box-content { color: #022c22; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
-.aqua-emerald-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(110,231,183,0.4) 40%, rgba(16,185,129,0.7) 80%, transparent 100%); }
+.aqua-emerald-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(110,231,183,0.4) 40%, rgba(16,185,129,0.7) 80%, transparent 100%);
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 .aqua-amber-box {
     background: radial-gradient(circle at 50% 30%, #fbbf24 0%, #f59e0b 70%, #b45309 100%);
     border: 3px solid #fde047;
     box-shadow: 0 10px 30px rgba(245, 158, 11, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .aqua-amber-box .aqua-box-content { color: #451a03; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
-.aqua-amber-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(253,224,71,0.5) 40%, rgba(245,158,11,0.7) 80%, transparent 100%); }
+.aqua-amber-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(253,224,71,0.5) 40%, rgba(245,158,11,0.7) 80%, transparent 100%);
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 .aqua-crimson-box {
     background: radial-gradient(circle at 50% 30%, #f87171 0%, #ef4444 70%, #b91c1c 100%);
     border: 3px solid #fca5a5;
     box-shadow: 0 10px 30px rgba(239, 68, 68, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .aqua-crimson-box .aqua-box-content { color: #450a0a; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
-.aqua-crimson-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(252,165,165,0.4) 40%, rgba(239,68,68,0.7) 80%, transparent 100%); }
+.aqua-crimson-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(252,165,165,0.4) 40%, rgba(239,68,68,0.7) 80%, transparent 100%);
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 .aqua-amethyst-box {
     background: radial-gradient(circle at 50% 30%, #c084fc 0%, #a855f7 70%, #7e22ce 100%);
     border: 3px solid #e9d5ff;
     box-shadow: 0 10px 30px rgba(168, 85, 247, 0.4), inset 0 1px 2px #fff, inset 0 -10px 20px rgba(0,0,0,0.15);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .aqua-amethyst-box .aqua-box-content { color: #2e1065; text-shadow: 0 1px 1px rgba(255,255,255,0.2); }
-.aqua-amethyst-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(233,213,255,0.4) 40%, rgba(168,85,247,0.7) 80%, transparent 100%); }
+.aqua-amethyst-box .aero-box-orb { background: radial-gradient(circle at 50% 35%, #fff 0%, rgba(233,213,255,0.4) 40%, rgba(168,85,247,0.7) 80%, transparent 100%);
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* --- Core 3D Embossed Glass Panel Chassis --- */
 .aero-glass-panel {
@@ -493,6 +559,7 @@
     overflow: hidden;
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Glass Panel Glossy Top Header */
@@ -502,6 +569,7 @@
     padding: 10px 18px;
     display: flex;
     align-items: center;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .glass-panel-header span {
     font-family: 'Segoe UI', sans-serif;
@@ -569,60 +637,70 @@
     background: linear-gradient(180deg, #30d3e5 0%, transparent 100%);
     border: 2px solid #26a3b1;
     color: #043e44;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Orange */
 .gel-chip-orange {
     background: linear-gradient(180deg, #f97316 0%, transparent 100%);
     border: 2px solid #ea580c;
     color: #431407;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Green */
 .gel-chip-green {
     background: linear-gradient(180deg, #10b981 0%, transparent 100%);
     border: 2px solid #059669;
     color: #022c22;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Red */
 .gel-chip-red {
     background: linear-gradient(180deg, #ef4444 0%, transparent 100%);
     border: 2px solid #dc2626;
     color: #450a0a;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Purple */
 .gel-chip-purple {
     background: linear-gradient(180deg, #a855f7 0%, transparent 100%);
     border: 2px solid #9333ea;
     color: #2e1065;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Pink */
 .gel-chip-pink {
     background: linear-gradient(180deg, #ec4899 0%, transparent 100%);
     border: 2px solid #db2777;
     color: #4c0519;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Yellow */
 .gel-chip-yellow {
     background: linear-gradient(180deg, #ead708 0%, transparent 100%);
     border: 2px solid #caa604;
     color: #452b03;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Blue */
 .gel-chip-blue {
     background: linear-gradient(180deg, #3b82f6 0%, transparent 100%);
     border: 2px solid #2563eb;
     color: #172554;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Lime */
 .gel-chip-lime {
     background: linear-gradient(180deg, #84cc16 0%, transparent 100%);
     border: 2px solid #65a30d;
     color: #1a2e05;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Teal */
 .gel-chip-teal {
     background: linear-gradient(180deg, #06b6d4 0%, transparent 100%);
     border: 2px solid #0891b2;
     color: #083344;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Gold */
@@ -630,6 +708,7 @@
     background: linear-gradient(180deg, #ea9f08 0%, transparent 100%);
     border: 2px solid #ca8a04;
     color: #451a03;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Slate */
@@ -637,6 +716,7 @@
     background: linear-gradient(180deg, #b4b4b4 0%, transparent 100%);
     border: 2px solid #6f6f6f;
     color: #363636;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* White */
@@ -644,6 +724,7 @@
     background: linear-gradient(180deg, #f3f3f3 0%, transparent 100%);
     border: 2px solid #b3b3b3;
     color: #7a7a7a;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Black */
@@ -651,6 +732,7 @@
     background: linear-gradient(180deg, #919191 0%, transparent 100%);
     border: 2px solid #454545;
     color: #222222;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Fog */
@@ -658,6 +740,7 @@
     background: linear-gradient(180deg, #d9d9d9 0%, transparent 100%);
     border: 2px solid #808080;
     color: #404040;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Cyan */
@@ -665,6 +748,7 @@
     background: linear-gradient(180deg, #30e5cd 0%, transparent 100%);
     border: 2px solid #26b1a5;
     color: #044439;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Polished 3D Water Drop Highlight (~WD~) --- */
@@ -684,6 +768,7 @@
     box-shadow: 
         0 4px 10px rgba(2, 132, 199, 0.25), 
         inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 
@@ -702,11 +787,13 @@
         0 0 12px rgba(249, 115, 22, 0.5),
         inset 0 1px 1px #fff;
     position: relative;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Linear horizontal glass glint slash */
 .gel-chip-solarflare::before {
     content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
     background: rgba(255,255,255,0.4); pointer-events: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 3. Aurora Wave Glass Shard (~AW~) --- */
@@ -723,6 +810,7 @@
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     box-shadow: 0 4px 10px rgba(16,185,129,0.25), inset 0 1px 0 rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Common Chassis for Custom !# # Tags --- */
@@ -742,21 +830,37 @@
 
 /* --- 8 Vibrant Theme Specifications --- */
 /* 1. Aqua Blue (!#AQ#) */
-.tag-chip-a { background: linear-gradient(180deg, #0ea5e9 0%, transparent 100%); border: 2px solid #0284c7; color: #0c4a6e; }
+.tag-chip-a { background: linear-gradient(180deg, #0ea5e9 0%, transparent 100%); border: 2px solid #0284c7; color: #0c4a6e;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 /* 2. Emerald Green (!#EM#) */
-.tag-chip-g { background: linear-gradient(180deg, #10b981 0%, transparent 100%); border: 2px solid #059669; color: #064e3b; }
+.tag-chip-g { background: linear-gradient(180deg, #10b981 0%, transparent 100%); border: 2px solid #059669; color: #064e3b;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 /* 3. Sunset Orange (!#OR#) */
-.tag-chip-o { background: linear-gradient(180deg, #f97316 0%, transparent 100%); border: 2px solid #ea580c; color: #431407; }
+.tag-chip-o { background: linear-gradient(180deg, #f97316 0%, transparent 100%); border: 2px solid #ea580c; color: #431407;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 /* 4. Crimson Red (!#CR#) */
-.tag-chip-r { background: linear-gradient(180deg, #ef4444 0%, transparent 100%); border: 2px solid #dc2626; color: #450a0a; }
+.tag-chip-r { background: linear-gradient(180deg, #ef4444 0%, transparent 100%); border: 2px solid #dc2626; color: #450a0a;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 /* 5. Royal Purple (!#PR#) */
-.tag-chip-pr { background: linear-gradient(180deg, #a855f7 0%, transparent 100%); border: 2px solid #9333ea; color: #2e1065; }
+.tag-chip-pr { background: linear-gradient(180deg, #a855f7 0%, transparent 100%); border: 2px solid #9333ea; color: #2e1065;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 /* 6. Fuchsia Pink (!#PK#) */
-.tag-chip-pk { background: linear-gradient(180deg, #ec4899 0%, transparent 100%); border: 2px solid #db2777; color: #4c0519; }
+.tag-chip-pk { background: linear-gradient(180deg, #ec4899 0%, transparent 100%); border: 2px solid #db2777; color: #4c0519;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 /* 7. Amber Yellow (!#YL#) */
-.tag-chip-y { background: linear-gradient(180deg, #eab308 0%, transparent 100%); border: 2px solid #ca8a04; color: #451a03; }
+.tag-chip-y { background: linear-gradient(180deg, #eab308 0%, transparent 100%); border: 2px solid #ca8a04; color: #451a03;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 /* 8. Steel Slate (!#SL#) */
-.tag-chip-sl { background: linear-gradient(180deg, #94a3b8 0%, transparent 100%); border: 2px solid #475569; color: #1e293b; }
+.tag-chip-sl { background: linear-gradient(180deg, #94a3b8 0%, transparent 100%); border: 2px solid #475569; color: #1e293b;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* --- 1. Tactile Vista Foldout Note Tab (~FN~) --- */
 .applet-foldout-tab {
@@ -780,6 +884,7 @@
 .applet-foldout-tab:hover {
     transform: translateX(2px);
     background: linear-gradient(135deg, #ffffff 0%, #e2e8f0 100%);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 2. 3D Aqua Toggle Switch (~TS~) --- */
@@ -798,6 +903,7 @@
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     user-select: none;
     cursor: pointer;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .switch-pill {
     width: 24px; height: 14px; background: #cbd5e1; border-radius: 7px;
@@ -810,6 +916,7 @@
 }
 .applet-aqua-switch.turned-on .switch-pill {
     background: #10b981; border-color: #059669;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .applet-aqua-switch.turned-on .switch-pill::after {
     left: 11px; background: radial-gradient(circle at 35% 35%, #fff 0%, #059669 100%);
@@ -831,6 +938,7 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     box-shadow: 0 0 4px rgba(239, 68, 68, 0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Add these parameters to your existing .applet-foldout-tab, .applet-aqua-switch, and .applet-glass-stamp classes: */
@@ -852,6 +960,7 @@
         0 6px 18px rgba(0,0,0,0.08),
         inset 0 1px 0 #fff;
     overflow: hidden;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Light-Gray Structural Header Strip */
@@ -863,6 +972,7 @@
     align-items: center;
     gap: 12px;
     user-select: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Tactile 3D Arrow Action Indicator Orb */
@@ -907,6 +1017,7 @@
     display: block;
     background: #ffffff;
     box-shadow: inset 2px 2px 6px rgba(0,0,0,0.05);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .aero-foldout-panel.panel-collapsed .foldout-panel-content {
     display: none; /* Closes down the text block completely */
@@ -923,6 +1034,7 @@
     color: #0f172a; font-weight: 900; white-space: nowrap; display: inline-block;
     box-shadow: 0 4px 10px rgba(0,0,0,0.15), inset 0 1px 1px #fff;
     text-shadow: 0 1px 0 rgba(255,255,255,0.6);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Frosted Prism Glass Refraction (~PG~) */
@@ -933,6 +1045,7 @@
     backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
     box-shadow: 0 4px 12px rgba(2,132,199,0.1), inset 0 1px 0 #fff;
     text-shadow: 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Deep Inset Screen Cavity Block (~CB~) */
@@ -941,6 +1054,7 @@
     padding: 1px 6px; color: #4ade80; font-family: 'JetBrains Mono', monospace;
     font-weight: bold; font-size: 14px; white-space: nowrap; display: inline-block;
     box-shadow: inset 2px 2px 5px rgba(0,0,0,0.6); text-shadow: 0 0 4px rgba(74,222,128,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Sunlight Ray Glow Ribbon (~SR~) */
@@ -949,10 +1063,12 @@
     border-top: 2px solid #fff; border-bottom: 2px solid #ca8a04;
     padding: 2px 10px; color: #713f12; font-weight: 900; white-space: nowrap; display: inline-block;
     box-shadow: 0 0 15px rgba(253,224,71,0.6); position: relative;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .effect-sunlight-ray::before {
     content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 35%;
     background: rgba(255,255,255,0.45); pointer-events: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Deep Ocean Abyssal Plate (~OA~) */
@@ -961,6 +1077,7 @@
     border: 2px solid #3b82f6; border-radius: 8px; padding: 2px 9px;
     color: #93c5fd; font-weight: bold; white-space: nowrap; display: inline-block;
     box-shadow: 0 4px 10px rgba(23,37,84,0.3), inset 0 1px 2px rgba(255,255,255,0.3);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 6. Mechanical Metallic Grid Mesh (~MM~) */
@@ -970,6 +1087,7 @@
     border: 2px solid #475569; border-bottom: 4px solid #334155; border-radius: 6px;
     padding: 2px 10px; color: #0f172a; font-weight: 800; white-space: nowrap; display: inline-block;
     text-shadow: 0 1px 0 #fff; box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 7. Kinetic Fluid Bubble Expand Ribbon (~FE~) */
@@ -979,6 +1097,7 @@
     color: #042f2e; font-weight: bold; white-space: nowrap; display: inline-block;
     box-shadow: inset 0 1px 1px #fff, 0 3px 6px rgba(6,182,212,0.2);
     animation: bubble-swell 2s infinite ease-in-out alternate;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes bubble-swell {
     from { transform: scale(1); filter: brightness(1); }
@@ -1011,9 +1130,11 @@
     background: linear-gradient(180deg, #34d399 0%, #10b981 50%, #059669 100%);
     border: 2px solid #a7f3d0;
     box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .applet-state-button.state-green:hover {
     background: linear-gradient(180deg, #6ee7b7 0%, #10b981 50%, #047857 100%);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Flipped State: High-Contrast Red */
@@ -1021,9 +1142,11 @@
     background: linear-gradient(180deg, #f87171 0%, #ef4444 50%, #b91c1c 100%);
     border: 2px solid #fca5a5;
     box-shadow: 0 4px 10px rgba(239, 68, 68, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .applet-state-button.state-red:hover {
     background: linear-gradient(180deg, #fca5a5 0%, #ef4444 50%, #991b1b 100%);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Click Action Depression Physics */
@@ -1043,16 +1166,19 @@
     border: 2px solid #cbd5e1; border-radius: 20px; padding: 4px 12px; margin: 0 4px;
     font-size: 12px; color: #475569; font-weight: 800; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff; user-select: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .dial-knob {
     width: 18px; height: 18px; border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #ffffff 0%, #cbd5e1 70%, #94a3b8 100%);
     border: 1px solid #94a3b8; position: relative;
     box-shadow: 0 2px 4px rgba(0,0,0,0.15); transition: transform 0.2s ease-out;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .dial-knob::after {
     content: ''; position: absolute; top: 3px; left: 8px; width: 2px; height: 4px;
     background: #475569; border-radius: 1px;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 2. Liquid Battery/Energy Cell Tracker (~BC~) --- */
@@ -1062,16 +1188,20 @@
     padding: 3px 8px; margin: 0 4px; font-size: 11px; font-family: monospace;
     color: #4ade80; vertical-align: middle; user-select: none;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .battery-juice-grid {
     display: flex; gap: 2px; width: 30px; height: 12px;
     background: rgba(0,0,0,0.3); padding: 1px; border-radius: 1px;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .juice-block {
     flex: 1; height: 100%; background: linear-gradient(180deg, #4ade80 0%, #22c55e 100%);
     box-shadow: 0 0 4px #22c55e;
 }
-.juice-block.drain { background: #334155; box-shadow: none; }
+.juice-block.drain { background: #334155; box-shadow: none;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* --- 3. Compact Windows Calendar Desk Overlay (~CD~) --- */
 .applet-calendar-desk {
@@ -1096,6 +1226,7 @@
     background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(241,245,249,0.3) 100%);
     border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 8px; margin: 0 4px;
     cursor: pointer; vertical-align: middle; user-select: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .rating-star-node { color: #cbd5e1; font-size: 13px; transition: color 0.1s; }
 .rating-star-node.star-glow { color: #f59e0b; text-shadow: 0 0 4px #fbbf24; }
@@ -1107,11 +1238,13 @@
     border: 2px solid #bae6fd; border-radius: 6px; padding: 3px 10px; margin: 0 4px;
     color: #fff; font-weight: bold; font-size: 12px; cursor: pointer; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(2,132,199,0.2), inset 0 1px 1px rgba(255,255,255,0.4); user-select: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .badge-count-orb {
     background: #0f172a; padding: 1px 6px; border-radius: 4px;
     font-family: monospace; font-size: 11px; color: #38bdf8;
     box-shadow: inset 1px 1px 3px rgba(0,0,0,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Brushed Metal Lock-Latch Security Frame (~LK~) --- */
@@ -1136,6 +1269,7 @@
     text-shadow: none !important;          /* Strip away all native white drop shadows completely */
     -webkit-text-stroke: 0px !important;   /* Kill accidental browser duplicate text outline vectors */
     filter: none !important;               /* Ensure no system blending modes are clipping colors */
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 .latch-icon-frame { font-size: 11px; display: inline-block; }
@@ -1150,6 +1284,7 @@
     text-shadow: none !important;
     -webkit-text-stroke: 0px !important;
     filter: none !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ==========================================
@@ -1163,6 +1298,7 @@
     border: 2px solid #cbd5e1; border-radius: 6px; padding: 4px 12px; margin: 0 4px;
     font-size: 12px; color: #334155; font-weight: bold; vertical-align: middle; user-select: none;
     box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .playback-track-bar {
     width: 60px; height: 8px; background: #cbd5e1; border-radius: 4px;
@@ -1180,6 +1316,7 @@
     color: #fff; font-weight: 900; white-space: nowrap; display: inline-block;
     box-shadow: 0 4px 12px rgba(239,68,68,0.35), inset -2px -2px 6px rgba(0,0,0,0.3);
     text-shadow: 0 1px 2px rgba(0,0,0,0.5); vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Inset Glass Metric Readout Cavity (~MR~) */
@@ -1188,6 +1325,7 @@
     padding: 2px 8px; color: #38bdf8; font-family: monospace; font-weight: bold;
     font-size: 13px; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: inset 3px 3px 6px rgba(0,0,0,0.6); text-shadow: 0 0 5px rgba(56,189,248,0.6);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Windows Sidebar System CPU Radial Gauge (~CR~) */
@@ -1211,6 +1349,7 @@
     color: #fff; font-weight: 800; white-space: nowrap; display: inline-block;
     box-shadow: 0 4px 12px rgba(14,165,233,0.3); vertical-align: middle;
     animation: flare-sweep 3s infinite linear;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes flare-sweep {
     0% { background-position: -150% 0; }
@@ -1224,6 +1363,7 @@
     border: 2px solid #94a3b8; border-radius: 4px; padding: 2px 8px; margin: 0 4px;
     color: #334155; font-weight: 800; font-size: 12px; cursor: pointer; vertical-align: middle; user-select: none;
     box-shadow: 0 2px 4px rgba(0,0,0,0.08), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .stepper-arrow-box { font-size: 9px; display: flex; flex-direction: column; line-height: 0.7; color: #64748b; }
 
@@ -1242,6 +1382,7 @@
         0 4px 10px rgba(0, 0, 0, 0.1),
         inset 0 1px 0 #fff;
     backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Glossy Aurora Glow Tube (~GL~) */
@@ -1251,6 +1392,7 @@
     color: #fff; font-weight: 800; font-size: 13px; white-space: nowrap; display: inline-block;
     box-shadow: 0 0 14px rgba(6,182,212,0.6), inset 0 1px 1px rgba(255,255,255,0.6);
     text-shadow: 0 1px 2px rgba(0,0,0,0.5); vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Tactile Hardware Bevel Marker (~HB~) */
@@ -1261,6 +1403,7 @@
     padding: 3px 10px; color: #334155; font-weight: 800; display: inline-block;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-shadow: 0 1px 0 #fff;
     vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Inset Screen Matrix Segment (~IS~) */
@@ -1269,6 +1412,7 @@
     padding: 2px 8px; color: #34d399; font-family: monospace; font-weight: bold;
     font-size: 13px; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: inset 2px 2px 5px rgba(0,0,0,0.4); text-shadow: 0 0 4px rgba(52,211,153,0.6);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Glass Gel Capsule Accent (~GC~) */
@@ -1278,6 +1422,7 @@
     color: #fff; font-weight: bold; white-space: nowrap; display: inline-block;
     box-shadow: 0 4px 10px rgba(236,72,153,0.35), inset 0 1px 1px rgba(255,255,255,0.5);
     text-shadow: 0 1px 2px rgba(0,0,0,0.3); vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 6. Kinetic Fluid Orbit Animation (~KO~) */
@@ -1290,6 +1435,7 @@
     background: radial-gradient(circle at 30% 30%, #fff 0%, #06b6d4 100%);
     box-shadow: 0 2px 4px rgba(6,182,212,0.4);
     animation: orb-rotate 2.5s infinite linear;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .effect-fluid-orbit::before { top: -6px; left: -10px; }
 .effect-fluid-orbit::after { bottom: -6px; right: -10px; animation-delay: -1.25s; }
@@ -1313,6 +1459,7 @@
     backdrop-filter: hue-rotate(90deg) saturate(1.5); -webkit-backdrop-filter: hue-rotate(90deg) saturate(1.5);
     box-shadow: 0 6px 15px rgba(6,182,212,0.25), inset 0 1px 1px #fff;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3); animation: xray-sheen 4s infinite linear alternate;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes xray-sheen {
     0% { filter: hue-rotate(0deg); }
@@ -1326,16 +1473,23 @@
     border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px; margin: 0 4px;
     font-size: 13px; font-weight: 800; cursor: pointer; user-select: none; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .hydro-sphere {
     width: 16px; height: 16px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6);
     box-shadow: inset -2px -2px 5px rgba(0,0,0,0.2); transition: all 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
 }
-.applet-hydro-orb.orb-blue .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 50%, #0284c7 100%); box-shadow: 0 0 8px #0ea5e9; }
+.applet-hydro-orb.orb-blue .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 50%, #0284c7 100%); box-shadow: 0 0 8px #0ea5e9;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-hydro-orb.orb-blue { color: #0c4a6e; }
-.applet-hydro-orb.orb-yellow .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #fbbf24 50%, #d97706 100%); box-shadow: 0 0 8px #eab308; }
+.applet-hydro-orb.orb-yellow .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #fbbf24 50%, #d97706 100%); box-shadow: 0 0 8px #eab308;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-hydro-orb.orb-yellow { color: #451a03; }
-.applet-hydro-orb.orb-red .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #f87171 50%, #dc2626 100%); box-shadow: 0 0 8px #ef4444; }
+.applet-hydro-orb.orb-red .hydro-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #f87171 50%, #dc2626 100%); box-shadow: 0 0 8px #ef4444;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-hydro-orb.orb-red { color: #450a0a; }
 
 /* 3. Wave-Form Audio Line Loop (~WL~) */
@@ -1366,6 +1520,7 @@
         inset 0 1px 1px rgba(255,255,255,0.5);
     display: inline-block;
     vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 
@@ -1376,6 +1531,7 @@
     border: 2px solid #94a3b8; border-radius: 6px; padding: 3px 8px; margin: 0 4px;
     color: #334155; font-weight: 800; font-size: 12px; cursor: pointer; user-select: none; vertical-align: middle;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .slider-chassis {
     width: 32px; height: 14px; background: #94a3b8; border-radius: 7px;
@@ -1387,7 +1543,9 @@
     position: absolute; top: 0; left: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
     transition: left 0.15s cubic-bezier(0.1, 0.9, 0.2, 1);
 }
-.applet-lock-slider.unlocked-state .slider-chassis { background: #38bdf8; }
+.applet-lock-slider.unlocked-state .slider-chassis { background: #38bdf8;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-lock-slider.unlocked-state .slider-handle-metal { left: 16px; }
 
 /* 6. Vista Sidebar Gadget Clock (~VM~) */
@@ -1397,6 +1555,7 @@
     background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
     border: 2px solid #64748b; margin: 0 4px; vertical-align: middle; position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.12), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .clock-hand-vector {
     width: 2px; height: 10px; background: #334155; position: absolute; bottom: 50%; left: calc(50% - 1px);
@@ -1415,6 +1574,7 @@
     color: #042f2e; font-weight: 800; white-space: nowrap; display: inline-block;
     box-shadow: 0 4px 10px rgba(6, 182, 212, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
     vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Glow-in-the-Dark Tracer (~GLO~) */
@@ -1424,6 +1584,7 @@
     display: inline-block; vertical-align: middle; white-space: nowrap;
     box-shadow: 0 0 12px rgba(34,197,94,0.6), inset 0 0 4px rgba(34,197,94,0.4);
     text-shadow: 0 0 4px rgba(34,197,94,0.8);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Metallic Media Playback Trigger (~MT~) */
@@ -1433,10 +1594,12 @@
     border: 2px solid #cbd5e1; border-radius: 6px; padding: 3px 10px; margin: 0 4px;
     color: #334155; font-weight: 800; font-size: 11px; cursor: pointer; user-select: none; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1), inset 0 1px 0 #fff; text-shadow: 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .applet-metal-trigger.trigger-playing {
     background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.15); color: #0284c7;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Glossy Inset Checkbox Utility (~IC~) */
@@ -1446,6 +1609,7 @@
     border: 1px solid rgba(255,255,255,0.6); border-radius: 6px; padding: 3px 10px; margin: 0 4px;
     font-size: 13px; font-weight: 800; color: #334155; cursor: pointer; user-select: none; vertical-align: middle;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .check-cavity-box {
     width: 14px; height: 14px; background: #cbd5e1; border-radius: 3px;
@@ -1469,6 +1633,7 @@
     background: linear-gradient(90deg, #0284c7 0%, #38bdf8 25%, #fff 50%, #38bdf8 75%, #0284c7 100%);
     background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     font-weight: 900; display: inline-block; animation: title-shimmer 4s infinite linear;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes title-shimmer { to { background-position: 200% center; } }
 
@@ -1480,6 +1645,7 @@
     border: 2px solid #b45309; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
     color: #451a03; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Crimson Red Droplet (~WD-R~) */
@@ -1488,6 +1654,7 @@
     border: 2px solid #b91c1c; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
     color: #450a0a; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(239, 68, 68, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Fuchsia Pink Droplet (~WD-P~) */
@@ -1496,6 +1663,7 @@
     border: 2px solid #be185d; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
     color: #4c0519; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(236, 72, 153, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Amethyst Purple Droplet (~WD-V~) */
@@ -1504,6 +1672,7 @@
     border: 2px solid #7e22ce; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
     color: #2e1065; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(168, 85, 247, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Tangerine Orange Droplet (~WD-O~) */
@@ -1512,6 +1681,7 @@
     border: 2px solid #c2410c; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
     color: #431407; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(234, 88, 12, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 6. Slate Steel Metallic Droplet (~WD-S~) */
@@ -1520,6 +1690,7 @@
     border: 2px solid #334155; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
     color: #0f172a; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(100, 116, 139, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ==========================================
@@ -1533,6 +1704,7 @@
     padding: 1px 8px; color: #581c87; font-family: 'JetBrains Mono', monospace;
     font-weight: bold; font-size: 14px; white-space: nowrap; display: inline-block;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 0 #fff; vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Glossy Variable Orb Token (~VAR~) */
@@ -1542,6 +1714,7 @@
     color: #713f12; font-family: 'JetBrains Mono', monospace; font-weight: bold;
     font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(234,179,8,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Brushed Hardware Debug Terminal Panel (::console) */
@@ -1550,10 +1723,12 @@
     border: 3px solid #334155; border-radius: 12px; margin: 20px 0;
     display: flex; flex-direction: column; overflow: hidden;
     box-shadow: 0 8px 24px rgba(0,0,0,0.4), inset 0 -5px 15px rgba(0,0,0,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .console-block-header {
     background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, rgba(0,0,0,0.2) 100%);
     border-bottom: 2px solid #334155; padding: 8px 16px; display: flex; align-items: center;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .console-block-header span { color: #ef4444; font-family: sans-serif; font-size: 12px; font-weight: bold; text-shadow: 0 0 6px rgba(239,68,68,0.4); }
 .console-block-content {
@@ -1566,11 +1741,16 @@
 .writedown-diff-block {
     background: rgba(255, 255, 255, 0.9); border: 3px solid #cbd5e1; border-radius: 10px;
     margin: 20px 0; box-shadow: 0 6px 18px rgba(0,0,0,0.06); overflow: hidden;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .diff-row-content { padding: 15px; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; line-height: 1.6; }
 .diff-row-content p { margin: 0; padding: 2px 6px; border-radius: 4px; }
-.diff-add { background: rgba(52,211,153,0.25) !important; color: #064e3b; border-left: 4px solid #10b981; }
-.diff-del { background: rgba(248,113,113,0.25) !important; color: #7f1d1d; border-left: 4px solid #ef4444; }
+.diff-add { background: rgba(52,211,153,0.25) !important; color: #064e3b; border-left: 4px solid #10b981;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.diff-del { background: rgba(248,113,113,0.25) !important; color: #7f1d1d; border-left: 4px solid #ef4444;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* 5. Interactive Color Swatch Hex Tag (~HEX~) */
 .dev-chip-hex {
@@ -1578,6 +1758,7 @@
     background: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px;
     padding: 2px 8px; margin: 0 4px; font-family: 'JetBrains Mono', monospace;
     font-size: 14px; font-weight: bold; color: #334155; vertical-align: middle; cursor: pointer;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .hex-color-orb {
     width: 12px; height: 12px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15);
@@ -1592,6 +1773,7 @@
     color: #14532d; font-family: 'JetBrains Mono', monospace; font-weight: bold;
     font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(22,163,74,0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ==========================================
@@ -1606,12 +1788,14 @@
     font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 0 12px rgba(16,185,129,0.5), inset 0 0 8px rgba(0,0,0,0.6);
     position: relative; overflow: hidden;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Sweeping radial cockpit lighting effect */
 .av-chip-radar-sweep::before {
     content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
     background: linear-gradient(45deg, transparent 45%, rgba(74,222,128,0.3) 50%, transparent 55%);
     animation: radar-sweep-loop 3s infinite linear; pointer-events: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes radar-sweep-loop { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -1623,6 +1807,7 @@
     font-weight: 900; font-size: 14px; white-space: nowrap; display: inline-block;
     vertical-align: middle; box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     text-shadow: 0 0 4px rgba(255,255,255,0.4);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Inset Altimeter Ribbon Tracker (~AL~) */
@@ -1631,6 +1816,7 @@
     padding: 3px 8px; margin: 0 4px; font-family: monospace; font-weight: bold;
     font-size: 13px; color: #38bdf8; display: inline-block; vertical-align: middle;
     box-shadow: inset 3px 3px 6px rgba(0,0,0,0.7); text-shadow: 0 0 6px #0ea5e9;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Telemetry Ping Signal Node (~SG~) */
@@ -1641,12 +1827,15 @@
     margin: 0 4px; font-size: 13px; font-weight: 800; color: #1e293b;
     vertical-align: middle; cursor: pointer; user-select: none;
     box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .signal-ping-orb {
     width: 10px; height: 10px; border-radius: 50%; background: #22c55e;
     box-shadow: 0 0 8px #10b981; transition: background 0.15s;
 }
-.av-chip-signal.sig-disconnect .signal-ping-orb { background: #ef4444; box-shadow: 0 0 8px #dc2626; }
+.av-chip-signal.sig-disconnect .signal-ping-orb { background: #ef4444; box-shadow: 0 0 8px #dc2626;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* 5. Brushed Aluminum Horizon Deck Chassis (::horizon) */
 .writedown-horizon-block {
@@ -1654,6 +1843,7 @@
     border: 4px solid #475569; border-radius: 50%; width: 120px; height: 120px; margin: 20px auto;
     display: flex; align-items: center; justify-content: center; position: relative;
     box-shadow: 0 8px 20px rgba(0,0,0,0.3), inset 0 4px 10px rgba(0,0,0,0.4);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .horizon-pitch-line {
     width: 80px; height: 2px; background: #ffffff; position: absolute;
@@ -1665,10 +1855,12 @@
     background: linear-gradient(180deg, #0f172a 0%, #020617 100%);
     border: 3px solid #0891b2; border-radius: 12px; margin: 20px 0;
     box-shadow: 0 8px 24px rgba(6,182,212,0.2), inset 0 2px 8px rgba(0,0,0,0.5); overflow: hidden;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .waypoint-block-header {
     background: linear-gradient(180deg, rgba(6,182,212,0.15) 0%, transparent 100%);
     border-bottom: 2px solid #0891b2; padding: 10px 18px; display: flex; align-items: center;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .waypoint-block-header span { color: #22d3ee; font-family: sans-serif; font-size: 13px; font-weight: bold; text-shadow: 0 0 6px #06b6d4; }
 .waypoint-block-content { padding: 20px; outline: none; font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #e2e8f0; line-height: 1.6; }
@@ -1686,10 +1878,18 @@
     white-space: nowrap; margin: 0 4px; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.5);
 }
-.plasma-cyan    { background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); border: 2px solid #0891b2; color: #042f2e; }
-.plasma-orange  { background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%); border: 2px solid #c2410c; color: #431407; }
-.plasma-crimson { background: linear-gradient(180deg, #f87171 0%, #ef4444 100%); border: 2px solid #b91c1c; color: #450a0a; }
-.plasma-lime    { background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%); border: 2px solid #4d7c0f; color: #1a2e05; }
+.plasma-cyan    { background: linear-gradient(180deg, #67e8f9 0%, #06b6d4 100%); border: 2px solid #0891b2; color: #042f2e;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.plasma-orange  { background: linear-gradient(180deg, #fb923c 0%, #ea580c 100%); border: 2px solid #c2410c; color: #431407;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.plasma-crimson { background: linear-gradient(180deg, #f87171 0%, #ef4444 100%); border: 2px solid #b91c1c; color: #450a0a;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.plasma-lime    { background: linear-gradient(180deg, #a3e635 0%, #65a30d 100%); border: 2px solid #4d7c0f; color: #1a2e05;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* ------------------------------------------
    STYLE 2: GLOSSY GLASS BADGE BRACKETS (~GB-x~)
@@ -1700,6 +1900,7 @@
     white-space: nowrap; margin: 0 4px; vertical-align: middle;
     background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(240,253,250,0.3) 100%);
     box-shadow: 1px 2px 4px rgba(0,0,0,0.06), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .bracket-blue     { border: 2px solid #38bdf8; border-left-width: 5px; border-right-width: 5px; color: #0369a1; }
 .bracket-amethyst { border: 2px solid #c084fc; border-left-width: 5px; border-right-width: 5px; color: #7e22ce; }
@@ -1717,17 +1918,33 @@
 }
 .node-dot { width: 8px; height: 8px; border-radius: 50%; border: 1px solid rgba(0,0,0,0.15); box-shadow: inset 1px 1px 1px #fff; }
 
-.circuit-slate { background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%); border: 2px solid #475569; color: #1e293b; }
-.circuit-slate .node-dot { background: #475569; box-shadow: 0 0 6px #64748b; }
+.circuit-slate { background: linear-gradient(180deg, #cbd5e1 0%, #94a3b8 100%); border: 2px solid #475569; color: #1e293b;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.circuit-slate .node-dot { background: #475569; box-shadow: 0 0 6px #64748b;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
-.circuit-teal { background: linear-gradient(180deg, #99f6e4 0%, #2dd4bf 100%); border: 2px solid #0f766e; color: #115e59; }
-.circuit-teal .node-dot { background: #0f766e; box-shadow: 0 0 6px #14b8a6; }
+.circuit-teal { background: linear-gradient(180deg, #99f6e4 0%, #2dd4bf 100%); border: 2px solid #0f766e; color: #115e59;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.circuit-teal .node-dot { background: #0f766e; box-shadow: 0 0 6px #14b8a6;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
-.circuit-gold { background: linear-gradient(180deg, #fde047 0%, #facc15 100%); border: 2px solid #a16207; color: #78350f; }
-.circuit-gold .node-dot { background: #a16207; box-shadow: 0 0 6px #eab308; }
+.circuit-gold { background: linear-gradient(180deg, #fde047 0%, #facc15 100%); border: 2px solid #a16207; color: #78350f;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.circuit-gold .node-dot { background: #a16207; box-shadow: 0 0 6px #eab308;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
-.circuit-ruby { background: linear-gradient(180deg, #fecdd3 0%, #fda4af 100%); border: 2px solid #be123c; color: #9f1239; }
-.circuit-ruby .node-dot { background: #be123c; box-shadow: 0 0 6px #f43f5e; }
+.circuit-ruby { background: linear-gradient(180deg, #fecdd3 0%, #fda4af 100%); border: 2px solid #be123c; color: #9f1239;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.circuit-ruby .node-dot { background: #be123c; box-shadow: 0 0 6px #f43f5e;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* ==========================================
    AERO PLATFORM EXPANSION BLOCK 9 (JOURNAL)
@@ -1740,12 +1957,14 @@
     border: 2px solid rgba(255,255,255,0.8); border-radius: 6px; padding: 3px 12px; margin: 0 4px;
     color: #1e3a8a; font-family: sans-serif; font-weight: 800; font-size: 13px; white-space: nowrap;
     box-shadow: 0 4px 10px rgba(0,0,0,0.05), inset 0 1px 0 #fff; vertical-align: middle;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Tiny glowing timeline pinpoint orb */
 .jr-chip-date-plate::before {
     content: ''; width: 8px; height: 8px; border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 100%);
     box-shadow: 0 0 6px #22d3ee;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Embossed Spiral Binding Ring (::entry) */
@@ -1753,6 +1972,7 @@
     background: linear-gradient(90deg, #f8fafc 0%, #ffffff 100%);
     border: 3px solid #cbd5e1; border-left: 15px solid #94a3b8; border-radius: 8px;
     margin: 20px 0; box-shadow: 0 6px 16px rgba(0,0,0,0.06); position: relative;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* Physical 3D metallic wire binder rings on the left margin */
 .writedown-journal-entry::before {
@@ -1770,6 +1990,7 @@
     margin: 0 4px; color: #451a03; font-weight: bold; font-size: 13px;
     white-space: nowrap; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(234,179,8,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Inset Audio Dictation Voice Memo Tag (~VO~) */
@@ -1779,6 +2000,7 @@
     padding: 3px 10px; margin: 0 4px; font-family: monospace; font-size: 12px;
     color: #38bdf8; cursor: pointer; user-select: none; vertical-align: middle;
     box-shadow: inset 2px 2px 4px rgba(0,0,0,0.5); text-shadow: 0 0 4px #0ea5e9;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Translucent Weather Status Shard (~WX~) */
@@ -1789,6 +2011,7 @@
     margin: 0 4px; color: #1e3a8a; font-weight: bold; font-size: 13px;
     white-space: nowrap; vertical-align: middle; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
     box-shadow: 0 4px 10px rgba(56,189,248,0.15), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 6. Skeuomorphic Pressed Wax Stamp Overlay (~WS~) */
@@ -1800,6 +2023,7 @@
     letter-spacing: 0.5px; text-transform: uppercase; vertical-align: middle; user-select: none;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2), inset -2px -2px 5px rgba(0,0,0,0.4);
     text-shadow: 0 1px 2px rgba(0,0,0,0.4); cursor: pointer;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .jr-chip-wax-stamp:active { transform: rotate(4deg) scale(0.96); box-shadow: 0 2px 5px rgba(0,0,0,0.3); }
 
@@ -1827,6 +2051,7 @@
     background: #f0f9ff;
     color: #0369a1;
     box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 2px 4px rgba(56,189,248,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Emerald Green Badge (~B-EG~) */
@@ -1835,6 +2060,7 @@
     background: #f0fdf4;
     color: #047857;
     box-shadow: 0 3px 6px rgba(16,185,129,0.15), inset 0 2px 4px rgba(52,211,153,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Sunset Orange Badge (~B-SO~) */
@@ -1843,6 +2069,7 @@
     background: #fff7ed;
     color: #c2410c;
     box-shadow: 0 3px 6px rgba(234,88,12,0.15), inset 0 2px 4px rgba(251,146,60,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Crimson Red Badge (~B-CR~) */
@@ -1851,6 +2078,7 @@
     background: #fef2f2;
     color: #b91c1c;
     box-shadow: 0 3px 6px rgba(239,68,68,0.15), inset 0 2px 4px rgba(248,113,113,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Amethyst Purple Badge (~B-AM~) */
@@ -1859,6 +2087,7 @@
     background: #faf5ff;
     color: #7e22ce;
     box-shadow: 0 3px 6px rgba(168,85,247,0.15), inset 0 2px 4px rgba(192,132,252,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 6. Gold Amber Badge (~B-GA~) */
@@ -1867,6 +2096,7 @@
     background: #fffbeb;
     color: #b45309;
     box-shadow: 0 3px 6px rgba(245,158,11,0.15), inset 0 2px 4px rgba(251,191,36,0.2);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ==========================================
@@ -1881,6 +2111,7 @@
     backdrop-filter: hue-rotate(60deg) saturate(1.4); -webkit-backdrop-filter: hue-rotate(60deg) saturate(1.4);
     box-shadow: 0 5px 12px rgba(6,182,212,0.2), inset 0 1px 1px #fff;
     text-shadow: 0 1px 2px rgba(0,0,0,0.3); animation: lens-rotate-sheen 5s infinite linear alternate;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 @keyframes lens-rotate-sheen { 0% { filter: hue-rotate(0deg); } 100% { filter: hue-rotate(120deg); } }
 
@@ -1891,13 +2122,20 @@
     border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px; margin: 0 4px;
     font-size: 13px; font-weight: 800; cursor: pointer; user-select: none; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .neon-node-sphere { width: 14px; height: 14px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.6); box-shadow: inset -1px -1px 4px rgba(0,0,0,0.2); transition: all 0.15s ease; }
-.applet-neon-node.node-cyan .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #22d3ee 50%, #06b6d4 100%); box-shadow: 0 0 8px #06b6d4; }
+.applet-neon-node.node-cyan .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #22d3ee 50%, #06b6d4 100%); box-shadow: 0 0 8px #06b6d4;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-neon-node.node-cyan { color: #0891b2; }
-.applet-neon-node.node-yellow .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #fbbf24 50%, #ca8a04 100%); box-shadow: 0 0 8px #eab308; }
+.applet-neon-node.node-yellow .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #fbbf24 50%, #ca8a04 100%); box-shadow: 0 0 8px #eab308;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-neon-node.node-yellow { color: #ca8a04; }
-.applet-neon-node.node-pink .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #f472b6 50%, #db2777 100%); box-shadow: 0 0 8px #ec4899; }
+.applet-neon-node.node-pink .neon-node-sphere { background: radial-gradient(circle at 35% 35%, #fff 0%, #f472b6 50%, #db2777 100%); box-shadow: 0 0 8px #ec4899;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-neon-node.node-pink { color: #db2777; }
 
 /* 3. Streaming Audio Wave Loop (~SL~) */
@@ -1917,6 +2155,7 @@
     border: 2px solid #047857; border-radius: 14px 25px 14px 20px; padding: 3px 14px;
     color: #064e3b; font-weight: 800; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(16, 185, 129, 0.25), inset 0 1px 1px rgba(255,255,255,0.5);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Tactile Latch Toggle Switch (~LS~) */
@@ -1926,10 +2165,13 @@
     border: 2px solid #94a3b8; border-radius: 6px; padding: 3px 8px; margin: 0 4px;
     color: #475569; font-weight: 800; font-size: 12px; cursor: pointer; user-select: none; vertical-align: middle;
     box-shadow: inset 0 2px 4px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .latch-track-chassis { width: 32px; height: 14px; background: #94a3b8; border-radius: 7px; position: relative; box-shadow: inset 0 2px 3px rgba(0,0,0,0.2); }
 .latch-slider-handle { width: 16px; height: 100%; border-radius: 6px; background: linear-gradient(180deg, #fff 0%, #cbd5e1 100%); border: 1px solid #64748b; position: absolute; top: 0; left: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: left 0.12s cubic-bezier(0.1, 0.9, 0.2, 1); }
-.applet-latch-toggle.latch-active-state .latch-track-chassis { background: #10b981; }
+.applet-latch-toggle.latch-active-state .latch-track-chassis { background: #10b981;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 .applet-latch-toggle.latch-active-state .latch-slider-handle { left: 16px; }
 
 /* 6. Desktop Gadget System Clock (~GC~) */
@@ -1939,6 +2181,7 @@
     background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
     border: 2px solid #475569; margin: 0 4px; vertical-align: middle; position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.12), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .gadget-clock-hand { width: 2px; height: 9px; background: #ef4444; position: absolute; bottom: 50%; left: calc(50% - 1px); transform-origin: bottom center; transform: rotate(0deg); }
 
@@ -1955,6 +2198,7 @@
     color: #334155; font-weight: 800; font-size: 13px; white-space: nowrap;
     box-shadow: 0 -2px 5px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
     vertical-align: bottom; position: relative; top: 2px;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Glass Capsule Progress Tracker (~PT~) */
@@ -1964,6 +2208,7 @@
     border: 1px solid rgba(255,255,255,0.6); border-radius: 12px; padding: 3px 12px;
     margin: 0 4px; color: #475569; font-weight: bold; font-size: 12px; vertical-align: middle;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02), inset 0 1px 0 #fff; user-select: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .capsule-fluid-bar {
     width: 40px; height: 8px; background: #e2e8f0; border-radius: 4px;
@@ -1980,6 +2225,7 @@
     padding: 2px 6px; color: #f43f5e; font-family: monospace; font-weight: bold;
     font-size: 14px; white-space: nowrap; display: inline-block; vertical-align: middle;
     box-shadow: inset 2px 2px 4px rgba(0,0,0,0.8); text-shadow: 0 0 6px rgba(244,63,94,0.6);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Windows Vista Rating Dot Matrix (~RD~) */
@@ -1987,9 +2233,12 @@
     display: inline-flex !important; align-items: center; gap: 3px;
     background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 10px;
     padding: 2px 8px; margin: 0 4px; vertical-align: middle; cursor: pointer; user-select: none;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .matrix-bead { width: 8px; height: 8px; border-radius: 50%; background: #cbd5e1; box-shadow: inset 1px 1px 2px rgba(0,0,0,0.1); }
-.matrix-bead.bead-glow { background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 100%); box-shadow: 0 0 6px #38bdf8; }
+.matrix-bead.bead-glow { background: radial-gradient(circle at 35% 35%, #fff 0%, #06b6d4 100%); box-shadow: 0 0 6px #38bdf8;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* 5. Brushed Steel Latch Lock Toggle (~ST~) */
 .jr-latch-lock {
@@ -1998,10 +2247,15 @@
     border: 2px solid #cbd5e1; border-radius: 4px; padding: 3px 10px; margin: 0 4px;
     color: #111827 !important; font-weight: 800; font-size: 12px; cursor: pointer;
     vertical-align: middle; user-select: none; text-shadow: none !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .latch-bolt { width: 12px; height: 12px; background: #ef4444; border-radius: 2px; border: 1px solid #b91c1c; }
-.jr-latch-lock.latch-secure { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); border-color: #bae6fd; }
-.jr-latch-lock.latch-secure .latch-bolt { background: #10b981; border-color: #047857; }
+.jr-latch-lock.latch-secure { background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%); border-color: #bae6fd;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.jr-latch-lock.latch-secure .latch-bolt { background: #10b981; border-color: #047857;
+ transition: background-color 0.35s ease, border-color 0.35s ease;
+}
 
 /* 6. Glowing Neon Warning Ribbon (~WR~) */
 .effect-neon-ribbon {
@@ -2009,6 +2263,7 @@
     padding: 2px 10px; color: #fbbf24; font-family: monospace; font-weight: bold;
     display: inline-block; vertical-align: middle; white-space: nowrap;
     box-shadow: 0 0 10px rgba(251,191,36,0.3); text-shadow: 0 0 4px rgba(251,191,36,0.6);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 7. Skeuomorphic Circular Hardware Speedo Gauge (::gauge) */
@@ -2017,6 +2272,7 @@
     border: 4px solid #64748b; border-radius: 50%; width: 70px; height: 70px; margin: 15px auto;
     display: flex; align-items: center; justify-content: center; position: relative;
     box-shadow: 0 6px 14px rgba(0,0,0,0.15), inset 0 2px 5px #fff; cursor: pointer;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .gauge-pointer-needle {
     width: 2px; height: 28px; background: #ef4444; position: absolute; bottom: 50%; left: calc(50% - 1px);
@@ -2029,6 +2285,7 @@
     border: 3px solid #475569; border-radius: 8px; padding: 15px; margin: 20px 0;
     display: flex; align-items: flex-end; justify-content: center; gap: 4px; height: 40px;
     box-shadow: inset 0 3px 8px rgba(0,0,0,0.4);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .spectrum-equalizer-bar {
     width: 6px; height: 100%; background: linear-gradient(0deg, #10b981 0%, #3b82f6 70%, #ef4444 100%);
@@ -2053,6 +2310,7 @@
     box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 1px 1px rgba(255,255,255,0.4);
     text-shadow: none !important;
     -webkit-text-stroke: 0px !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 2. Swayed Rounded Square Highlight (~SH~) --- */
@@ -2073,6 +2331,7 @@
     box-shadow: 0 4px 8px rgba(236,72,153,0.2), inset 0 1px 1px rgba(255,255,255,0.4);
     text-shadow: none !important;
     -webkit-text-stroke: 0px !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- 3. Rounded Pill Chip Highlight (~PH~) --- */
@@ -2092,6 +2351,7 @@
     box-shadow: 0 3px 6px rgba(234,179,8,0.15), inset 0 1px 1px rgba(255,255,255,0.4);
     text-shadow: none !important;
     -webkit-text-stroke: 0px !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ========================================================
@@ -2121,18 +2381,22 @@
 .duplex-sky {
     background: linear-gradient(90deg, #bae6fd 0%, #bae6fd 50%, #38bdf8 50%, #38bdf8 100%);
     border: 2px solid #0284c7; color: #0c4a6e !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .duplex-emerald {
     background: linear-gradient(90deg, #a7f3d0 0%, #a7f3d0 50%, #34d399 50%, #34d399 100%);
     border: 2px solid #059669; color: #064e3b !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .duplex-orange {
     background: linear-gradient(90deg, #ffedd5 0%, #ffedd5 50%, #fb923c 50%, #fb923c 100%);
     border: 2px solid #ea580c; color: #431407 !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .duplex-amethyst {
     background: linear-gradient(90deg, #f3e8ff 0%, #f3e8ff 50%, #c084fc 50%, #c084fc 100%);
     border: 2px solid #9333ea; color: #2e1065 !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 
@@ -2148,6 +2412,7 @@
     box-shadow: 
         0 3px 6px rgba(0,0,0,0.1),
         inset 0 1px 2px rgba(0,0,0,0.1);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Individual left and right input fields */
@@ -2213,11 +2478,13 @@
     background: linear-gradient(180deg, #7dd3fc 0%, #0284c7 100%);
     border: 2px solid #0369a1; color: #0f172a !important;
     box-shadow: 0 4px 8px rgba(2,132,199,0.25), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .swayed-emerald {
     background: linear-gradient(180deg, #6ee7b7 0%, #059669 100%);
     border: 2px solid #046648; color: #022c22 !important;
     box-shadow: 0 4px 8px rgba(16,185,129,0.25), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* --- Fix the Orange Swayed Square Border --- */
 .swayed-orange {
@@ -2225,11 +2492,13 @@
     border: 2px solid #ea580c; /* Changed to a true deep orange border */
     color: #431407 !important; 
     box-shadow: 0 4px 8px rgba(234,88,12,0.25), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .swayed-amethyst {
     background: linear-gradient(180deg, #c084fc 0%, #7e22ce 100%);
     border: 2px solid #6b21a8; color: #2e1065 !important;
     box-shadow: 0 4px 8px rgba(168,85,247,0.25), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- STYLE 2: ROUNDED PILL CHIPS --- */
@@ -2252,11 +2521,13 @@
     background: linear-gradient(180deg, #bae6fd 0%, #0284c7 100%);
     border: 2px solid #0369a1; color: #0c4a6e !important;
     box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .pill-emerald {
     background: linear-gradient(180deg, #a7f3d0 0%, #059669 100%);
     border: 2px solid #047857; color: #064e3b !important;
     box-shadow: 0 3px 6px rgba(16,185,129,0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 /* --- Fix the Orange Rounded Pill Border --- */
 .pill-orange {
@@ -2264,11 +2535,13 @@
     border: 2px solid #ea580c; /* Changed from yellow-amber to true sunset orange */
     color: #451a03 !important; 
     box-shadow: 0 3px 6px rgba(234,179,8,0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .pill-amethyst {
     background: linear-gradient(180deg, #f3e8ff 0%, #7e22ce 100%);
     border: 2px solid #6b21a8; color: #2e1065 !important;
     box-shadow: 0 3px 6px rgba(168,85,247,0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ========================================================
@@ -2298,6 +2571,7 @@
     border: 2px solid #ca8a04;
     color: #713f12 !important;
     box-shadow: 0 3px 6px rgba(234,179,8,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Pastel Blue (~PC-BL~) */
@@ -2306,6 +2580,7 @@
     border: 2px solid #0284c7;
     color: #0c4a6e !important;
     box-shadow: 0 3px 6px rgba(2,132,199,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Pastel Green (~PC-GR~) */
@@ -2314,6 +2589,7 @@
     border: 2px solid #16a34a;
     color: #14532d !important;
     box-shadow: 0 3px 6px rgba(22,163,74,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Pastel Pink (~PC-PK~) */
@@ -2322,6 +2598,7 @@
     border: 2px solid #db2777;
     color: #4c0519 !important;
     box-shadow: 0 3px 6px rgba(236,72,153,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Pastel Purple (~PC-PR~) */
@@ -2330,6 +2607,7 @@
     border: 2px solid #9333ea;
     color: #581c87 !important;
     box-shadow: 0 3px 6px rgba(168,85,247,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 6. Pastel Orange (~PC-OR~) */
@@ -2338,6 +2616,7 @@
     border: 2px solid #ea580c;
     color: #431407 !important;
     box-shadow: 0 3px 6px rgba(234,88,12,0.2), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ========================================================
@@ -2368,6 +2647,7 @@
     border: 2px solid #ea580c;
     color: #431407 !important;
     box-shadow: 0 3px 6px rgba(234, 88, 12, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 2. Citrus Yellow (~DR-CT~) */
@@ -2376,6 +2656,7 @@
     border: 2px solid #ca8a04;
     color: #451a03 !important;
     box-shadow: 0 3px 6px rgba(234, 179, 8, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3. Emerald Green (~DR-EM~) */
@@ -2384,6 +2665,7 @@
     border: 2px solid #16a34a;
     color: #14532d !important;
     box-shadow: 0 3px 6px rgba(22, 163, 74, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 4. Sapphire Blue (~DR-SP~) */
@@ -2392,6 +2674,7 @@
     border: 2px solid #0284c7;
     color: #0c4a6e !important;
     box-shadow: 0 3px 6px rgba(2, 132, 199, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 5. Amethyst Purple (~DR-AM~) */
@@ -2400,6 +2683,7 @@
     border: 2px solid #9333ea;
     color: #2e1065 !important;
     box-shadow: 0 3px 6px rgba(168, 85, 247, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 6. Fuchsia Pink (~DR-FC~) */
@@ -2408,6 +2692,7 @@
     border: 2px solid #db2777;
     color: #4c0519 !important;
     box-shadow: 0 3px 6px rgba(236, 72, 153, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 7. Crimson Red (~DR-CR~) */
@@ -2416,6 +2701,7 @@
     border: 2px solid #dc2626;
     color: #450a0a !important;
     box-shadow: 0 3px 6px rgba(220, 38, 38, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 8. Slate Steel (~DR-SL~) */
@@ -2424,6 +2710,7 @@
     border: 2px solid #475569;
     color: #1e293b !important;
     box-shadow: 0 3px 6px rgba(71, 85, 105, 0.15), inset 0 1px 1px #fff;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* ========================================================
@@ -2439,6 +2726,7 @@
     display: block !important; /* Locks structural widget containment */
     box-shadow: 0 6px 18px rgba(0,0,0,0.1), inset 0 1px 0 #ffffff;
     overflow: hidden;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Glass-Trimmed Tool Dashboard Header Strip */
@@ -2452,6 +2740,7 @@
     gap: 15px;
     user-select: none;
     line-height: normal !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* Left & Right Dashboard Tool Clusters */
@@ -2484,6 +2773,7 @@
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0,0,0,0.15), inset 0 1px 1px #fff;
     padding: 0;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .draw-picker-orb::-webkit-color-swatch-wrapper { padding: 0; }
 .draw-picker-orb::-webkit-color-swatch { border: none; border-radius: 50%; }
@@ -2498,6 +2788,7 @@
     border-radius: 3px;
     outline: none;
     box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .draw-slider-fluid::-webkit-slider-thumb {
     -webkit-appearance: none;
@@ -2509,6 +2800,7 @@
     border: 1px solid #64748b;
     box-shadow: 0 1px 3px rgba(0,0,0,0.25);
     cursor: pointer;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* 3D Glass Clear Canvas Action Orb */
@@ -2540,6 +2832,7 @@
     width: 100% !important; /* Forces the smaller resolution grid to fit your canvas track layout bounds perfectly */
     max-width: 540px;
     height: 180px !important;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
 /* --- Advanced Inline Element Formatting --- */
@@ -2550,4 +2843,5 @@
 .blockquote-list {
     background: linear-gradient(90deg, rgba(56,189,248,0.15) 0%, rgba(255,255,255,0) 100%);
     border-left: 5px solid #0284c7; margin: 15px 0; padding: 10px 20px; color: #0369a1; font-style: italic; border-radius: 0 8px 8px 0;
+    transition: background-color 0.35s ease, border-color 0.35s ease;
 }

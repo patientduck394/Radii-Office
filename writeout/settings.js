@@ -25,6 +25,31 @@
     return null;
   }
 
+  /* Floating background spheres on/off (persists writeout_hide_ambient)! */
+  var AMBIENT_HIDE_KEY = 'writeout_hide_ambient';
+
+  function ambientHidden() {
+    try { return localStorage.getItem(AMBIENT_HIDE_KEY) === '1'; } catch (e) { return false; }
+  }
+
+  function setAmbientHidden(on) {
+    try { localStorage.setItem(AMBIENT_HIDE_KEY, on ? '1' : '0'); } catch (e) {}
+    try { if (document.body) document.body.classList.toggle('hide-ambient', !!on); } catch (e) {}
+    if (!on) {
+      // Re-showing with zero spheres left: ask the app to respawn them!
+      try {
+        var dots = (document.querySelectorAll) ? document.querySelectorAll('.ambient-droplet') : [];
+        if (!dots.length && window.initializeAmbientDroplets) window.initializeAmbientDroplets();
+      } catch (e) {}
+    }
+  }
+
+  function renderAmbientToggle() {
+    var box = document.getElementById('settings-hide-ambient');
+    if (!box) return;
+    box.checked = ambientHidden();
+  }
+
   function renderThemeList() {
     var list = document.getElementById('settings-theme-list');
     if (!list) return;
@@ -83,10 +108,19 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     renderThemeList();
+    renderAmbientToggle();
+    var box = document.getElementById('settings-hide-ambient');
+    if (box && !box._writeoutAmbientWired) {
+      box._writeoutAmbientWired = true;
+      box.addEventListener('change', function (e) {
+        var on = !!(e && e.target ? e.target.checked : box.checked);
+        setAmbientHidden(on);
+      });
+    }
     // Re-render every open so installs from the Marketplace show up instantly!
     var sBtn = document.getElementById('settings-trigger-btn');
-    if (sBtn) sBtn.addEventListener('click', renderThemeList);
+    if (sBtn) sBtn.addEventListener('click', function () { renderThemeList(); renderAmbientToggle(); });
   });
 
-  window.WriteoutSettings = { refresh: renderThemeList };
+  window.WriteoutSettings = { refresh: renderThemeList, ambientHidden: ambientHidden, setAmbientHidden: setAmbientHidden };
 })();

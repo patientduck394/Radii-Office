@@ -315,7 +315,8 @@
         </div>
         <div class="format-segmented" role="tablist" aria-label="Format groups">
             <button type="button" class="format-segment-btn active" data-fmt-group="main">Main</button>
-            <button type="button" class="format-segment-btn" data-fmt-group="document">Document</button>
+            <button type="button" class="format-segment-btn" data-fmt-group="style">Style</button>
+            <button type="button" class="format-segment-btn" data-fmt-group="doc">Doc</button>
         </div>
         <div id="format-group-main">
         <div id="format-text-controls" class="format-text-controls">
@@ -380,6 +381,8 @@
                 </button>
             </div>
         </div>
+        </div>
+        <div id="format-group-style" hidden>
         <div id="format-scope-hint" class="format-scope">Scope: Document</div>
         <div id="format-style-list" class="format-style-list"></div>
         </div>
@@ -435,4 +438,45 @@
                 <span>New only</span>
             </label>
         </div>
-       
+        <div class="mkt-tabs">
+            <button class="mkt-tab active" data-cat="all">All</button>
+            <button class="mkt-tab" data-cat="styles">Keydown Styles</button>
+            <button class="mkt-tab" data-cat="utilities">Utilities</button>
+            <button class="mkt-tab" data-cat="themes">Themes</button>
+        </div>
+        <div id="marketplace-grid" class="mkt-grid"></div>
+        <div class="mkt-footer">
+            <p class="mkt-footer-note">Extensions persist in localStorage across sessions.</p>
+            <button id="marketplace-reset-btn" class="mkt-reset-btn">Remove all</button>
+        </div>
+    </dialog>
+
+    <!-- Settings Modal Overlay -->
+    <div id="settings-modal-overlay" class="modal-blur-gate">
+        <div class="embossed-dialogue-chassis">
+            <div class="dialog-header">
+                <h3>⚙️ Settings</h3>
+                <button id="settings-close-btn">✕</button>
+            </div>
+            <div class="dialog-body-scroll">
+                <h4>Appearance — Canvas Theme</h4>
+                <div id="settings-theme-list"></div>
+                <h4>Effects</h4>
+                <label class="settings-toggle-row">
+                    <input type="checkbox" id="settings-hide-ambient">
+                    <span>Hide floating background spheres</span>
+                </label>
+                <h4>Danger Zone</h4>
+                <button id="btn-wipe-history" class="tactile-alert-plate-btn">WIPE ALL PAD HISTORY</button>
+            </div>
+            <div class="dialog-footer">
+                <button id="settings-confirm-btn" class="dialog-confirm-orb">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="marketplace.js"></script>
+    <script src="settings.js"></script>
+</body>
+</html>
