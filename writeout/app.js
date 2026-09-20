@@ -81,10 +81,11 @@ if (toggleZone) {
     toggleZone.addEventListener('click', function() {
         playAeroClickSound(450, 0.12);
         sidebar.classList.toggle('collapsed');
-        if (sidebar.classList.contains('collapsed')) {
-            toggleIcon.style.transform = 'rotate(180deg)';
-        } else {
-            toggleIcon.style.transform = 'rotate(0deg)';
+        const sidebarCollapsed = sidebar.classList.contains('collapsed');
+        if (toggleIcon) toggleIcon.style.transform = sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)';
+        // Opening the sidebar moves keyboard focus straight into it!
+        if (!sidebarCollapsed && typeof sidebar.focus === 'function') {
+            try { sidebar.focus(); } catch (e) {}
         }
     });
 }
@@ -94,13 +95,14 @@ document.querySelectorAll('.pad-toggle-btn, #btn-one-time-table').forEach(btn =>
     btn.addEventListener('click', function() {
         // Play the responsive audio blip on every button hover click state
         playAeroClickSound(550, 0.1);
-        
-        // Use short checks to handle your export/import actions cleanly based on button text
+
+        // The Download button toggles its own popup via inline onclick — skip it here!
+        if (btn.id === 'download-menu-btn') return;
+
+        // Use short checks to handle your import actions cleanly based on button text
         const actionLabelText = btn.innerText.trim().toLowerCase();
-        
-        if (actionLabelText.includes('export')) {
-            exportKeydownFile();
-        } else if (actionLabelText.includes('import')) {
+
+        if (actionLabelText.includes('import')) {
             document.getElementById('file-loader-gate').click();
         }
     });
@@ -938,7 +940,6 @@ if (canvas) {
             { open: '~BUL~', close: '~BUL~', className: 'bulleted-list'},
             { open: '~MH~',  close: '~MH~',  className: 'mega-header'},
         ];
-
         for (let def of definitions) {
             let openIdx = currentLineText.indexOf(def.open);
             if (openIdx === -1) continue;
@@ -969,6 +970,8 @@ if (canvas) {
                 newNode.innerText = targetText;
                 playAeroClickSound(500, 0.05);
             }
+
+
 
             // 3. CORRECT MATCH: Insert only the singular newly validated element node
             range.insertNode(newNode);
@@ -1434,8 +1437,190 @@ function playAeroClickSound(frequency = 600, duration = 0.08) {
         oscillator.start(); oscillator.stop(context.currentTime + duration);
     } catch (e) {}
 }
-// Action: Package view content and generate a .kd text document blob download
+// ========================================================
+// DOWNLOAD CENTER: multi-format export engine (KD/PDF/DOCX/ODT/TXT/EPUB/Web)
+// ========================================================
 let isExporting = false; // Add this global flag variable near the top of your script if not already present
+
+// --- Minimal CRC32 (for hand-rolled stored ZIP archives) ---
+var kdCrcTable = null;
+function kdCrc32(bytes) {
+    if (!kdCrcTable) {
+        kdCrcTable = new Uint32Array(256);
+        for (let n = 0; n < 256; n++) {
+            let c = n;
+            for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+            kdCrcTable[n] = c >>> 0;
+        }
+    }
+    let crc = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) crc = kdCrcTable[(crc ^ bytes[i]) & 0xFF] ^ (crc >>> 8);
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+}
+
+function kdUtf8(str) {
+    if (typeof TextEncoder !== 'undefined') return new TextEncoder().encode(str);
+    const out = [];
+    for (let i = 0; i < str.length; i++) {
+        let c = str.charCodeAt(i);
+        if (c < 0x80) out.push(c);
+        else if (c < 0x800) out.push(0xC0 | (c >> 6), 0x80 | (c & 0x3F));
+        else if (c >= 0xD800 && c <= 0xDBFF && i + 1 < str.length) {
+            const hi = c, lo = str.charCodeAt(++i);
+            const cp = 0x10000 + ((hi - 0xD800) << 10) + (lo - 0xDC00);
+            out.push(0xF0 | (cp >> 18), 0x80 | ((cp >> 12) & 0x3F), 0x80 | ((cp >> 6) & 0x3F), 0x80 | (cp & 0x3F));
+        } else out.push(0xE0 | (c >> 12), 0x80 | ((c >> 6) & 0x3F), 0x80 | (c & 0x3F));
+    }
+    return new Uint8Array(out);
+}
+
+// --- Stored (uncompressed) ZIP builder: [{ name, data }] -> Uint8Array ---
+function kdBuildZip(files) {
+    const enc = function (s) { return kdUtf8(s); };
+    const chunks = [];
+    const central = [];
+    let offset = 0;
+    const pushU16 = function (arr, v) { arr.push(v & 0xFF, (v >> 8) & 0xFF); };
+    const pushU32 = function (arr, v) { arr.push(v & 0xFF, (v >> 8) & 0xFF, (v >> 16) & 0xFF, (v >> 24) & 0xFF); };
+    files.forEach(function (f) {
+        const nameBytes = enc(f.name);
+        const dataBytes = (typeof f.data === 'string') ? enc(f.data) : f.data;
+        const crc = kdCrc32(dataBytes);
+        const local = [0x50, 0x4B, 0x03, 0x04];
+        pushU16(local, 20);
+        pushU16(local, 0x0800);
+        pushU16(local, 0);
+        pushU16(local, 0); pushU16(local, 0);
+        pushU32(local, crc);
+        pushU32(local, dataBytes.length);
+        pushU32(local, dataBytes.length);
+        pushU16(local, nameBytes.length);
+        pushU16(local, 0);
+        const localBytes = new Uint8Array([...local, ...nameBytes, ...dataBytes]);
+        chunks.push({ bytes: localBytes, offset: offset });
+        offset += localBytes.length;
+        const cen = [0x50, 0x4B, 0x01, 0x02];
+        pushU16(cen, 20); pushU16(cen, 20);
+        pushU16(cen, 0x0800); pushU16(cen, 0);
+        pushU16(cen, 0); pushU16(cen, 0);
+        pushU32(cen, crc);
+        pushU32(cen, dataBytes.length);
+        pushU32(cen, dataBytes.length);
+        pushU16(cen, nameBytes.length);
+        pushU16(cen, 0); pushU16(cen, 0); pushU16(cen, 0); pushU16(cen, 0);
+        pushU32(cen, 0);
+        pushU32(cen, chunks[chunks.length - 1].offset);
+        central.push({ bytes: new Uint8Array([...cen, ...nameBytes]) });
+    });
+    let centralSize = 0;
+    central.forEach(function (c) { centralSize += c.bytes.length; });
+    const centralOffset = offset;
+    const end = [0x50, 0x4B, 0x05, 0x06];
+    pushU16(end, 0); pushU16(end, 0);
+    pushU16(end, files.length); pushU16(end, files.length);
+    pushU32(end, centralSize);
+    pushU32(end, centralOffset);
+    pushU16(end, 0);
+    const total = offset + centralSize + end.length;
+    const out = new Uint8Array(total);
+    let p = 0;
+    chunks.forEach(function (c) { out.set(c.bytes, p); p += c.bytes.length; });
+    central.forEach(function (c) { out.set(c.bytes, p); p += c.bytes.length; });
+    out.set(end, p);
+    return out;
+}
+
+function kdEscapeXml(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+// Download helper (records the payload for automated checks)!
+function kdDownloadBlob(blob, filename) {
+    try { window.__lastDownload = { blob: blob, filename: filename }; } catch (e) {}
+    try {
+        const blobUrl = URL.createObjectURL(blob);
+        const phantomAnchorLink = document.createElement('a');
+        phantomAnchorLink.href = blobUrl;
+        phantomAnchorLink.download = filename;
+        phantomAnchorLink.style.display = 'none';
+        document.body.appendChild(phantomAnchorLink);
+        phantomAnchorLink.click();
+        setTimeout(() => {
+            document.body.removeChild(phantomAnchorLink);
+            URL.revokeObjectURL(blobUrl);
+        }, 100);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+function kdExportBaseName() {
+    try {
+        const head = canvasViewport.querySelector('h1, h2, h3');
+        const raw = head ? head.textContent.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') : '';
+        if (raw) return raw.substring(0, 40);
+    } catch (e) {}
+    return 'writeout';
+}
+
+// Structured blocks: [{ style, runs: [{ text, bold, italic, underline }] }]
+function kdCanvasBlocks(html) {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html || '';
+    const blocks = [];
+    const walkRuns = function (node, fmt, runs) {
+        if (node.nodeType === 3) {
+            if (node.nodeValue) runs.push({ text: node.nodeValue, bold: fmt.bold, italic: fmt.italic, underline: fmt.underline });
+            return;
+        }
+        if (node.nodeType !== 1) return;
+        const tag = node.tagName;
+        const f2 = {
+            bold: fmt.bold || tag === 'B' || tag === 'STRONG',
+            italic: fmt.italic || tag === 'I' || tag === 'EM',
+            underline: fmt.underline || tag === 'U'
+        };
+        if (tag === 'BR') { runs.push({ text: '\n', bold: f2.bold, italic: f2.italic, underline: f2.underline }); return; }
+        Array.from(node.childNodes).forEach(function (c) { walkRuns(c, f2, runs); });
+    };
+    Array.from(tmp.childNodes).forEach(function (kid) {
+        if (kid.nodeType === 3) {
+            if (kid.nodeValue.trim()) blocks.push({ style: 'p', runs: [{ text: kid.nodeValue, bold: false, italic: false, underline: false }] });
+            return;
+        }
+        if (kid.nodeType !== 1) return;
+        const tag = kid.tagName;
+        if (tag === 'UL' || tag === 'OL') {
+            Array.from(kid.children).forEach(function (li) {
+                const runs = [];
+                walkRuns(li, { bold: false, italic: false, underline: false }, runs);
+                blocks.push({ style: 'li', runs: runs });
+            });
+            return;
+        }
+        let style = 'p';
+        if (tag === 'H1') style = 'h1';
+        else if (tag === 'H2') style = 'h2';
+        else if (tag === 'H3') style = 'h3';
+        else if (tag === 'BLOCKQUOTE') style = 'quote';
+        else if (tag === 'LI') style = 'li';
+        const runs = [];
+        walkRuns(kid, { bold: false, italic: false, underline: false }, runs);
+        blocks.push({ style: style, runs: runs });
+    });
+    return blocks;
+}
+
+function kdKeydownPayload(html) {
+    const currentTimestampString = new Date().toISOString();
+    let yamlConfigBlock = "---\n";
+    yamlConfigBlock += "app: \"Writedown WYSIWYG Suite\"\n";
+    yamlConfigBlock += "format: \"keydown-yaml-canvas\"\n";
+    yamlConfigBlock += `exported_at: \"${currentTimestampString}\"\n`;
+    yamlConfigBlock += "---\n\n";
+    return yamlConfigBlock + html;
+}
 
 function exportKeydownFile() {
     if (isExporting) return; // Prevent double firing completely!
@@ -1443,33 +1628,987 @@ function exportKeydownFile() {
     setTimeout(() => { isExporting = false; }, 500);
 
     playAeroClickSound(750, 0.12);
-    const canvasInnerContentHTML = canvasViewport.innerHTML;
-    const currentTimestampString = new Date().toISOString();
-
-    // Compile un-bloated, human-scannable YAML parameters
-    let yamlConfigBlock = "---\n";
-    yamlConfigBlock += "app: \"Writedown WYSIWYG Suite\"\n";
-    yamlConfigBlock += "format: \"keydown-yaml-canvas\"\n";
-    yamlConfigBlock += `exported_at: \"${currentTimestampString}\"\n`;
-    yamlConfigBlock += "---\n\n";
-
-    const completePayloadContent = yamlConfigBlock + canvasInnerContentHTML;
+    try {
+        const curTab = (typeof kdActiveTab === 'function') ? kdActiveTab() : null;
+        if (curTab) curTab.html = canvasViewport.innerHTML;
+        if (typeof kdSaveTabs === 'function') kdSaveTabs();
+    } catch (e) {}
+    const completePayloadContent = kdKeydownPayload(canvasViewport.innerHTML) + kdTabsFence();
     const dataBlobPayload = new Blob([completePayloadContent], { type: 'text/yaml;charset=utf-8' });
-    const blobUrl = URL.createObjectURL(dataBlobPayload);
-    
-    const phantomAnchorLink = document.createElement('a');
-    phantomAnchorLink.href = blobUrl;
-    phantomAnchorLink.download = 'canvas_snapshot.kd';
-    phantomAnchorLink.style.display = 'none';
-    
-    document.body.appendChild(phantomAnchorLink);
-    phantomAnchorLink.click();
-    
-    setTimeout(() => {
-        document.body.removeChild(phantomAnchorLink);
-        URL.revokeObjectURL(blobUrl);
-    }, 100);
+    kdDownloadBlob(dataBlobPayload, 'canvas_snapshot.kd');
 }
+
+function exportTXTFile() {
+    playAeroClickSound(750, 0.12);
+    autoSaveCanvasContent();
+    const text = canvasViewport.innerText || canvasViewport.textContent || '';
+    kdDownloadBlob(new Blob([text], { type: 'text/plain;charset=utf-8' }), kdExportBaseName() + '.txt');
+}
+
+function exportPDFFile() {
+    closeDownloadMenu();
+    printWriteoutPage();
+}
+
+function exportDOCXFile() {
+    playAeroClickSound(750, 0.12);
+    autoSaveCanvasContent();
+    const bytes = kdBuildDOCX(canvasViewport.innerHTML);
+    kdDownloadBlob(new Blob([bytes], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' }), kdExportBaseName() + '.docx');
+}
+
+function exportODTFile() {
+    playAeroClickSound(750, 0.12);
+    autoSaveCanvasContent();
+    const bytes = kdBuildODT(canvasViewport.innerHTML);
+    kdDownloadBlob(new Blob([bytes], { type: 'application/vnd.oasis.opendocument.text' }), kdExportBaseName() + '.odt');
+}
+
+function exportEPUBFile() {
+    playAeroClickSound(750, 0.12);
+    autoSaveCanvasContent();
+    const bytes = kdBuildEPUB(kdExportBaseName(), canvasViewport.innerHTML);
+    kdDownloadBlob(new Blob([bytes], { type: 'application/epub+zip' }), kdExportBaseName() + '.epub');
+}
+
+function kdImageSVG(html, cssText, w, h) {
+    const safeHtml = String(html)
+        .replace(/<(br|hr|input|img|link|meta|source|wbr)([^>]*?)>/gi, '<$1$2/>');
+    return '<svg xmlns="http://www.w3.org/2000/svg" width="' + w + '" height="' + h + '">' +
+        '<foreignObject x="0" y="0" width="100%" height="100%">' +
+        '<div xmlns="http://www.w3.org/1999/xhtml" style="width:' + w + 'px;background:#ffffff;">' +
+        '<style>' + (cssText || '') + '</style>' +
+        safeHtml +
+        '</div></foreignObject></svg>';
+}
+
+function kdCollectPageCSS() {
+    let css = '';
+    try {
+        Array.from(document.styleSheets || []).forEach(function (sheet) {
+            let rules = null;
+            try { rules = sheet.cssRules; } catch (e) { rules = null; }
+            if (!rules) return;
+            Array.from(rules).forEach(function (rule) {
+                try { css += rule.cssText + '\n'; } catch (e) {}
+            });
+        });
+    } catch (e) {}
+    return css;
+}
+
+function kdB64Decode(b64) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+    const clean = String(b64).replace(/[^A-Za-z0-9+/=]/g, '');
+    const bytes = [];
+    for (let i = 0; i < clean.length; i += 4) {
+        const a = chars.indexOf(clean[i]);
+        const b = chars.indexOf(clean[i + 1]);
+        const c = clean[i + 2] === '=' ? 0 : chars.indexOf(clean[i + 2]);
+        const d = clean[i + 3] === '=' ? 0 : chars.indexOf(clean[i + 3]);
+        const n = (a << 18) | (b << 12) | (c << 6) | d;
+        bytes.push((n >> 16) & 0xFF);
+        if (clean[i + 2] !== '=') bytes.push((n >> 8) & 0xFF);
+        if (clean[i + 3] !== '=') bytes.push(n & 0xFF);
+    }
+    return new Uint8Array(bytes);
+}
+
+function kdDataURLToBlob(dataUrl) {
+    const parts = String(dataUrl).split(',');
+    return new Blob([kdB64Decode(parts[1] || '')], { type: 'image/jpeg' });
+}
+
+// --- True vector SVG export: rect/text/fill tags any vector editor parses!
+// (JPEG keeps the foreignObject raster path; SVG gets real geometry!) ---
+function kdFlattenColor(css) {
+    const s = String(css || '').trim();
+    const hexed = s.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (hexed) {
+        let h = hexed[1].toLowerCase();
+        if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+        return '#' + h;
+    }
+    const m = s.match(/^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/);
+    if (!m) return '#ffffff';
+    const a = m[4] === undefined ? 1 : parseFloat(m[4]);
+    const mix = function (c) { return Math.round(parseInt(c, 10) * a + 255 * (1 - a)); };
+    return '#' + ((1 << 24) + (mix(m[1]) << 16) + (mix(m[2]) << 8) + mix(m[3])).toString(16).slice(1);
+}
+
+function kdVectorFont(el) {
+    const f = { family: 'sans-serif', size: 16, weight: 'normal', style: 'normal', deco: '', fill: '#000000' };
+    try {
+        const cs = window.getComputedStyle(el);
+        if (cs.fontFamily) f.family = cs.fontFamily.split(',')[0].replace(/['"]/g, '').trim() || f.family;
+        if (cs.fontSize) {
+            const px = parseFloat(cs.fontSize);
+            if (!isNaN(px) && px > 0) f.size = px;
+        }
+        const wNum = parseInt(cs.fontWeight, 10);
+        f.weight = !isNaN(wNum) ? (wNum >= 600 ? 'bold' : 'normal') : (cs.fontWeight || 'normal');
+        if (cs.fontStyle && cs.fontStyle !== 'normal') f.style = cs.fontStyle;
+        const td = ((cs.textDecorationLine || cs.textDecoration) || '').toLowerCase();
+        if (td.indexOf('underline') !== -1 && td.indexOf('line-through') !== -1) f.deco = 'underline line-through';
+        else if (td.indexOf('underline') !== -1) f.deco = 'underline';
+        else if (td.indexOf('line-through') !== -1) f.deco = 'line-through';
+        if (cs.color) f.fill = kdFlattenColor(cs.color);
+    } catch (e) {}
+    return f;
+}
+
+function kdVectorMeasure(measCtx, text, f) {
+    if (measCtx) {
+        try {
+            measCtx.font = f.style + ' ' + f.weight + ' ' + f.size + 'px ' + f.family;
+            return measCtx.measureText(text).width;
+        } catch (e) {}
+    }
+    return text.length * f.size * 0.6;
+}
+
+function kdVectorText(text, f, x, y) {
+    let attrs = 'x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" fill="' + f.fill + '"';
+    attrs += ' font-family="' + kdEscapeXml(f.family) + '" font-size="' + f.size + '"';
+    attrs += ' font-weight="' + f.weight + '" font-style="' + f.style + '"';
+    if (f.deco) attrs += ' text-decoration="' + f.deco + '"';
+    return '<text ' + attrs + '>' + kdEscapeXml(text) + '</text>';
+}
+
+var kdGradSeq = 0;
+function kdNextGradId() {
+    kdGradSeq++;
+    return 'kdgrad' + kdGradSeq;
+}
+
+// Split on top-level commas (never inside parens)!
+function kdSplitTop(s) {
+    const parts = [];
+    let depth = 0;
+    let cur = '';
+    for (let i = 0; i < s.length; i++) {
+        const ch = s[i];
+        if (ch === '(') depth++;
+        else if (ch === ')') depth = Math.max(0, depth - 1);
+        if (ch === ',' && depth === 0) {
+            parts.push(cur);
+            cur = '';
+        } else {
+            cur += ch;
+        }
+    }
+    parts.push(cur);
+    return parts;
+}
+
+var kdNamedColors = {aliceblue:'#f0f8ff',antiquewhite:'#faebd7',aqua:'#00ffff',aquamarine:'#7fffd4',azure:'#f0ffff',beige:'#f5f5dc',bisque:'#ffe4c4',black:'#000000',blanchedalmond:'#ffebcd',blue:'#0000ff',blueviolet:'#8a2be2',brown:'#a52a2a',burlywood:'#deb887',cadetblue:'#5f9ea0',chartreuse:'#7fff00',chocolate:'#d2691e',coral:'#ff7f50',cornflowerblue:'#6495ed',cornsilk:'#fff8dc',crimson:'#dc143c',cyan:'#00ffff',darkblue:'#00008b',darkcyan:'#008b8b',darkgoldenrod:'#b8860b',darkgray:'#a9a9a9',darkgrey:'#a9a9a9',darkgreen:'#006400',darkkhaki:'#bdb76b',darkmagenta:'#8b008b',darkolivegreen:'#556b2f',darkorange:'#ff8c00',darkorchid:'#9932cc',darkred:'#8b0000',darksalmon:'#e9967a',darkseagreen:'#8fbc8f',darkslateblue:'#483d8b',darkslategray:'#2f4f4f',darkslategrey:'#2f4f4f',darkturquoise:'#00ced1',darkviolet:'#9400d3',deeppink:'#ff1493',deepskyblue:'#00bfff',dimgray:'#696969',dimgrey:'#696969',dodgerblue:'#1e90ff',firebrick:'#b22222',floralwhite:'#fffaf0',forestgreen:'#228b22',fuchsia:'#ff00ff',gainsboro:'#dcdcdc',ghostwhite:'#f8f8ff',gold:'#ffd700',goldenrod:'#daa520',gray:'#808080',grey:'#808080',green:'#008000',greenyellow:'#adff2f',honeydew:'#f0fff0',hotpink:'#ff69b4',indianred:'#cd5c5c',indigo:'#4b0082',ivory:'#fffff0',khaki:'#f0e68c',lavender:'#e6e6fa',lavenderblush:'#fff0f5',lawngreen:'#7cfc00',lemonchiffon:'#fffacd',lightblue:'#add8e6',lightcoral:'#f08080',lightcyan:'#e0ffff',lightgoldenrodyellow:'#fafad2',lightgray:'#d3d3d3',lightgrey:'#d3d3d3',lightgreen:'#90ee90',lightpink:'#ffb6c1',lightsalmon:'#ffa07a',lightseagreen:'#20b2aa',lightskyblue:'#87cefa',lightslategray:'#778899',lightslategrey:'#778899',lightsteelblue:'#b0c4de',lightyellow:'#ffffe0',lime:'#00ff00',limegreen:'#32cd32',linen:'#faf0e6',magenta:'#ff00ff',maroon:'#800000',mediumaquamarine:'#66cdaa',mediumblue:'#0000cd',mediumorchid:'#ba55d3',mediumpurple:'#9370db',mediumseagreen:'#3cb371',mediumslateblue:'#7b68ee',mediumspringgreen:'#00fa9a',mediumturquoise:'#48d1cc',mediumvioletred:'#c71585',midnightblue:'#191970',mintcream:'#f5fffa',mistyrose:'#ffe4e1',moccasin:'#ffe4b5',navajowhite:'#ffdead',navy:'#000080',oldlace:'#fdf5e6',olive:'#808000',olivedrab:'#6b8e23',orange:'#ffa500',orangered:'#ff4500',orchid:'#da70d6',palegoldenrod:'#eee8aa',palegreen:'#98fb98',paleturquoise:'#afeeee',palevioletred:'#db7093',papayawhip:'#ffefd5',peachpuff:'#ffdab9',peru:'#cd853f',pink:'#ffc0cb',plum:'#dda0dd',powderblue:'#b0e0e6',purple:'#800080',rebeccapurple:'#663399',red:'#ff0000',rosybrown:'#bc8f8f',royalblue:'#4169e1',saddlebrown:'#8b4513',salmon:'#fa8072',sandybrown:'#f4a460',seagreen:'#2e8b57',seashell:'#fff5ee',sienna:'#a0522d',silver:'#c0c0c0',skyblue:'#87ceeb',slateblue:'#6a5acd',slategray:'#708090',slategrey:'#708090',snow:'#fffafa',springgreen:'#00ff7f',steelblue:'#4682b4',tan:'#d2b48c',teal:'#008080',thistle:'#d8bfd8',tomato:'#ff6347',turquoise:'#40e0d0',violet:'#ee82ee',wheat:'#f5deb3',white:'#ffffff',whitesmoke:'#f5f5f5',yellow:'#ffff00',yellowgreen:'#9acd32'};
+
+function kdHslToRgb(h, s, l) {
+    h = ((parseFloat(h) % 360) + 360) % 360;
+    s = Math.min(1, Math.max(0, parseFloat(s) / 100));
+    l = Math.min(1, Math.max(0, parseFloat(l) / 100));
+    const c = (1 - Math.abs(2 * l - 1)) * s;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = l - c / 2;
+    let r = 0; let gg = 0; let b = 0;
+    if (h < 60) { r = c; gg = x; b = 0; }
+    else if (h < 120) { r = x; gg = c; b = 0; }
+    else if (h < 180) { r = 0; gg = c; b = x; }
+    else if (h < 240) { r = 0; gg = x; b = c; }
+    else if (h < 300) { r = x; gg = 0; b = c; }
+    else { r = c; gg = 0; b = x; }
+    return [Math.round((r + m) * 255), Math.round((gg + m) * 255), Math.round((b + m) * 255)];
+}
+
+function kdParseColor(token) {
+    const s = String(token || '').trim().toLowerCase();
+    if (s === 'transparent') return { hex: 'transparent', opacity: 0 };
+    if (kdNamedColors[s]) return { hex: kdNamedColors[s], opacity: 1 };
+    let m = s.match(/^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/);
+    if (m) {
+        let h = m[1];
+        if (h.length === 3) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2];
+        else if (h.length === 4) h = h[0] + h[0] + h[1] + h[1] + h[2] + h[2] + h[3] + h[3];
+        if (h.length === 8) {
+            return { hex: '#' + h.substring(0, 6), opacity: Math.round((parseInt(h.substring(6, 8), 16) / 255) * 10000) / 10000 };
+        }
+        return { hex: '#' + h, opacity: 1 };
+    }
+    m = s.match(/^hsla?\(\s*(-?[\d.]+)(deg|turn|rad|grad)?\s*[,\s]+\s*(\d+(?:\.\d+)?)%\s*[,\s]+\s*(\d+(?:\.\d+)?)%\s*(?:[,\/\s]+\s*([\d.]+%|[\d.]+)\s*)?\)$/);
+    if (m) {
+        let hue = parseFloat(m[1]);
+        const u = m[2] || 'deg';
+        if (u === 'turn') hue = hue * 360;
+        else if (u === 'rad') hue = hue * 180 / Math.PI;
+        else if (u === 'grad') hue = hue * 0.9;
+        const rgb = kdHslToRgb(hue, m[3], m[4]);
+        let a = 1;
+        if (m[5] !== undefined) a = m[5].indexOf('%') !== -1 ? parseFloat(m[5]) / 100 : parseFloat(m[5]);
+        return {
+            hex: '#' + ((1 << 24) + (rgb[0] << 16) + (rgb[1] << 8) + rgb[2]).toString(16).slice(1),
+            opacity: isNaN(a) ? 1 : a
+        };
+    }
+    m = s.match(/^rgba?\(\s*(\d+(?:\.\d+)?%|[\d.]+)\s*[,\s]+\s*(\d+(?:\.\d+)?%|[\d.]+)\s*[,\s]+\s*(\d+(?:\.\d+)?%|[\d.]+)\s*(?:[,\/\s]+\s*([\d.]+%|[\d.]+)\s*)?\)$/);
+    if (!m) return null;
+    const chan = function (v) {
+        v = String(v);
+        if (v.indexOf('%') !== -1) return Math.round(parseFloat(v) * 255 / 100);
+        return parseInt(v, 10);
+    };
+    let a = 1;
+    if (m[4] !== undefined) a = String(m[4]).indexOf('%') !== -1 ? parseFloat(m[4]) / 100 : parseFloat(m[4]);
+    return {
+        hex: '#' + ((1 << 24) + (chan(m[1]) << 16) + (chan(m[2]) << 8) + chan(m[3])).toString(16).slice(1),
+        opacity: isNaN(a) ? 1 : a
+    };
+}
+
+function kdAngleVector(deg) {
+    const rad = (parseFloat(deg) * Math.PI) / 180;
+    const dx = Math.sin(rad);
+    const dy = -Math.cos(rad);
+    const r2 = function (v) { return Math.round((v + Number.EPSILON) * 10000) / 10000; };
+    return { x1: r2(0.5 - dx / 2), y1: r2(0.5 - dy / 2), x2: r2(0.5 + dx / 2), y2: r2(0.5 + dy / 2) };
+}
+
+function kdDirectionVector(dir) {
+    const d = String(dir || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const map = {
+        'to top': [0.5, 1, 0.5, 0],
+        'to bottom': [0.5, 0, 0.5, 1],
+        'to left': [1, 0.5, 0, 0.5],
+        'to right': [0, 0.5, 1, 0.5],
+        'to top left': [1, 1, 0, 0],
+        'to top right': [0, 1, 1, 0],
+        'to bottom left': [1, 0, 0, 1],
+        'to bottom right': [0, 0, 1, 1]
+    };
+    const v = map[d] || map['to bottom'];
+    return { x1: v[0], y1: v[1], x2: v[2], y2: v[3] };
+}
+
+function kdNormalizeStops(stops) {
+    const out = stops.map(function (s) { return { color: s.color, opacity: s.opacity, offset: s.offset }; });
+    if (!out.length) return out;
+    if (out[0].offset === null || out[0].offset === undefined) out[0].offset = 0;
+    if (out[out.length - 1].offset === null || out[out.length - 1].offset === undefined) {
+        out[out.length - 1].offset = 1;
+    }
+    let runStart = 0;
+    for (let i = 1; i < out.length; i++) {
+        if (out[i].offset === null || out[i].offset === undefined) continue;
+        const from = out[runStart].offset;
+        const to = out[i].offset;
+        const gap = i - runStart;
+        for (let j = 1; j < gap; j++) {
+            out[runStart + j].offset = from + ((to - from) * j) / gap;
+        }
+        runStart = i;
+    }
+    return out;
+}
+
+function kdPosToOffset(pos) {
+    pos = String(pos).trim();
+    if (pos.indexOf('%') !== -1) return parseFloat(pos) / 100;
+    return parseFloat(pos);
+}
+
+function kdParseStop(raw) {
+    const s = String(raw || '').trim();
+    if (!s) return null;
+    // Double position: "color 0% 50%" -> hard stop pair!
+    let m2 = s.match(/^(.*\S)\s+(-?[\d.]+%|-?[\d.]+)\s+(-?[\d.]+%|-?[\d.]+)$/);
+    if (m2 && kdParseColor(m2[1])) {
+        const c = kdParseColor(m2[1]);
+        return [
+            { color: c.hex, opacity: c.opacity, offset: kdPosToOffset(m2[2]) },
+            { color: c.hex, opacity: c.opacity, offset: kdPosToOffset(m2[3]) }
+        ];
+    }
+    let colorPart = s;
+    let offset = null;
+    const m = s.match(/^(.*\S)\s+(-?[\d.]+%|-?[\d.]+)$/);
+    if (m && kdParseColor(m[1])) {
+        colorPart = m[1];
+        offset = kdPosToOffset(m[2]);
+    }
+    const c = kdParseColor(colorPart);
+    if (!c) return null;
+    return { color: c.hex, opacity: c.opacity, offset: offset };
+}
+
+function kdParseGradient(layer) {
+    const s = String(layer || '').trim();
+    const m = s.match(/^(?:-webkit-|-moz-)?(repeating-)?(linear|radial)-gradient\s*\((.*)\)$/i);
+    if (!m) return null;
+    const repeating = !!m[1];
+    const kind = m[2].toLowerCase();
+    const args = kdSplitTop(m[3]);
+    if (!args.length) return null;
+    const g = { kind: kind, repeating: repeating, stops: [] };
+    let stopArgs = args;
+    if (kind === 'linear') {
+        const first = (args[0] || '').trim();
+        const ang = first.match(/^(-?[\d.]+)(deg|turn|rad|grad)$/i);
+        const toDir = first.match(/^to\s+[a-z ]+$/i);
+        if (ang || toDir) {
+            let degVal = '180';
+            if (ang) {
+                const n = parseFloat(ang[1]);
+                const u = ang[2].toLowerCase();
+                degVal = u === 'turn' ? n * 360 : (u === 'rad' ? n * 180 / Math.PI : (u === 'grad' ? n * 0.9 : n));
+            }
+            const v = ang ? kdAngleVector(degVal) : kdDirectionVector(first);
+            g.x1 = v.x1; g.y1 = v.y1; g.x2 = v.x2; g.y2 = v.y2;
+            stopArgs = args.slice(1);
+        } else {
+            g.x1 = 0.5; g.y1 = 0; g.x2 = 0.5; g.y2 = 1;
+        }
+    } else {
+        g.cx = 0.5; g.cy = 0.5; g.r = 0.75;
+        const first = (args[0] || '').trim();
+        const at = first.match(/^(?:circle|ellipse)?\s*at\s+([^\s,]+)\s+([^\s,]+)/i);
+        if (at) {
+            const px = function (v, fb) {
+                const pm = String(v).match(/^(-?[\d.]+)%$/);
+                return pm ? parseFloat(pm[1]) / 100 : fb;
+            };
+            g.cx = px(at[1], 0.5);
+            g.cy = px(at[2], 0.5);
+            stopArgs = args.slice(1);
+        } else if (/^(circle|ellipse|closest-side|closest-corner|farthest-side|farthest-corner|contain|cover)/i.test(first) && !kdParseColor(first)) {
+            stopArgs = args.slice(1);
+        }
+    }
+    stopArgs.forEach(function (raw) {
+        const st = kdParseStop(raw);
+        if (!st) return;
+        if (Array.isArray(st)) st.forEach(function (one) { g.stops.push(one); });
+        else g.stops.push(st);
+    });
+    if (!g.stops.length) return null;
+    g.stops = kdNormalizeStops(g.stops);
+    g.stops = kdResolveTransparentStops(g.stops);
+    return g;
+}
+
+// A bare `transparent` keyword carries NO hue! Worse: real browsers hand us the
+// COMPUTED value -- `rgba(0, 0, 0, 0)`, transparent BLACK -- so the keyword never
+// even reaches us in production! Either form drags the fade through muddy gray,
+// so any fully-transparent stop WITHOUT its own hue inherits the nearest
+// hue-carrying stop instead! (Explicit hues like rgba(255,0,0,0) keep theirs!)
+function kdHueLess(st) {
+    if (!st || st.opacity !== 0) return false;
+    return st.color === 'transparent' || st.color === '#000000';
+}
+function kdResolveTransparentStops(stops) {
+    return stops.map(function (st, i) {
+        if (!kdHueLess(st)) return st;
+        let hue = null;
+        for (let d = 1; d < stops.length && !hue; d++) {
+            const left = stops[i - d];
+            if (left && left.color && !kdHueLess(left)) hue = left.color === 'transparent' ? null : left.color;
+            if (hue) break;
+            const right = stops[i + d];
+            if (right && right.color && !kdHueLess(right)) hue = right.color === 'transparent' ? null : right.color;
+        }
+        return { color: hue || '#000000', opacity: 0, offset: st.offset };
+    });
+}
+
+function kdGradientDef(g, id) {
+    const parts = [];
+    if (g.kind === 'radial') {
+        parts.push('<radialGradient id="' + id + '" gradientUnits="objectBoundingBox" cx="' + g.cx +
+            '" cy="' + g.cy + '" r="' + g.r + '"' + (g.repeating ? ' spreadMethod="repeat"' : '') + '>');
+    } else {
+        parts.push('<linearGradient id="' + id + '" gradientUnits="objectBoundingBox" x1="' + g.x1 +
+            '" y1="' + g.y1 + '" x2="' + g.x2 + '" y2="' + g.y2 + '"' + (g.repeating ? ' spreadMethod="repeat"' : '') + '>');
+    }
+    g.stops.forEach(function (st) {
+        parts.push('<stop offset="' + (+st.offset.toFixed(4)) + '" stop-color="' + st.color + '"' +
+            (st.opacity < 1 ? ' stop-opacity="' + (+st.opacity.toFixed(4)) + '"' : '') + '/>');
+    });
+    parts.push(g.kind === 'radial' ? '</radialGradient>' : '</linearGradient>');
+    return parts.join('');
+}
+
+// Element background as paint layers, back-to-front (base color last)!
+function kdBackgroundFills(cs) {
+    const fills = [];
+    let layers = [];
+    try { layers = kdSplitTop(cs.backgroundImage || ''); } catch (e) { layers = []; }
+    for (let i = layers.length - 1; i >= 0; i--) {
+        const layer = layers[i].trim();
+        if (!layer || layer.toLowerCase() === 'none') continue;
+        const g = kdParseGradient(layer);
+        if (g) fills.push({ kind: 'gradient', g: g });
+    }
+    let base = null;
+    try { base = kdParseColor(cs.backgroundColor); } catch (e) {}
+    if (base && base.hex !== 'transparent' && !(base.opacity === 1 && base.hex === '#ffffff')) {
+        fills.push({ kind: 'solid', color: base.hex, opacity: base.opacity });
+    }
+    return fills;
+}
+
+function kdBorderOf(cs) {
+    try {
+        const w = parseFloat(cs.borderTopWidth);
+        const style = (cs.borderTopStyle || '').toLowerCase();
+        if (!w || isNaN(w) || style === 'none' || style === 'hidden' || !style) return null;
+        let c = kdParseColor(cs.borderTopColor) || { hex: '#000000', opacity: 1 };
+        if (c.hex === 'transparent') c = { hex: '#000000', opacity: 0 };
+        let dash = '';
+        if (style === 'dotted') dash = '2,3';
+        else if (style === 'dashed') dash = '8,5';
+        return { width: w, color: c.hex, opacity: c.opacity, dash: dash };
+    } catch (e) { return null; }
+}
+
+function kdCornerRadius(cs) {
+    try {
+        const direct = parseFloat(cs.borderTopLeftRadius);
+        if (!isNaN(direct) && direct > 0) return direct;
+        const m = String(cs.borderRadius || '').match(/(-?[\d.]+)px/);
+        if (m) {
+            const v = parseFloat(m[1]);
+            if (!isNaN(v) && v > 0) return v;
+        }
+    } catch (e) {}
+    return 0;
+}
+
+var kdShadowSeq = 0;
+var kdClipSeq = 0;
+
+// Split on spaces outside parens (keeps rgb()/hsl() whole)!
+function kdSplitSpace(s) {
+    const parts = [];
+    let depth = 0;
+    let cur = '';
+    for (let i = 0; i < s.length; i++) {
+        const ch = s[i];
+        if (ch === '(') depth++;
+        else if (ch === ')') depth = Math.max(0, depth - 1);
+        if ((ch === ' ' || ch === '\t' || ch === '\n') && depth === 0) {
+            if (cur) { parts.push(cur); cur = ''; }
+        } else {
+            cur += ch;
+        }
+    }
+    if (cur) parts.push(cur);
+    return parts;
+}
+
+// Parse computed box-shadow into shadow list!
+function kdParseBoxShadow(str) {
+    const s = String(str || '').trim();
+    if (!s || s.toLowerCase() === 'none') return [];
+    const out = [];
+    kdSplitTop(s).forEach(function (layer) {
+        const t = String(layer || '').trim();
+        if (!t || t.toLowerCase() === 'none') return;
+        const toks = kdSplitSpace(t);
+        if (!toks.length) return;
+        let inset = false;
+        const rest = [];
+        toks.forEach(function (tok) {
+            if (tok.toLowerCase() === 'inset') inset = true;
+            else rest.push(tok);
+        });
+        let color = null;
+        const lens = [];
+        rest.forEach(function (tok) {
+            if (!color) {
+                const c = kdParseColor(tok);
+                if (c) {
+                    color = c.hex === 'transparent' ? { hex: '#000000', opacity: 0 } : c;
+                    return;
+                }
+            }
+            lens.push(tok);
+        });
+        if (!color) color = { hex: '#000000', opacity: 1 };
+        if (lens.length < 2 || lens.length > 4) return;
+        const nums = lens.map(function (v) { return parseFloat(v); });
+        if (nums.some(function (n) { return isNaN(n); })) return;
+        if (nums.length >= 3 && nums[2] < 0) return;
+        out.push({
+            inset: inset,
+            dx: nums[0], dy: nums[1],
+            blur: nums.length >= 3 ? nums[2] : 0,
+            spread: nums.length >= 4 ? nums[3] : 0,
+            color: color.hex, opacity: color.opacity
+        });
+    });
+    return out;
+}
+
+function kdBlurFilter(defs, blur) {
+    if (!blur || blur <= 0) return '';
+    kdShadowSeq++;
+    const id = 'kdblur' + kdShadowSeq;
+    defs.push('<filter id="' + id + '" x="-60%" y="-60%" width="220%" height="220%">' +
+        '<feGaussianBlur stdDeviation="' + (+((blur / 2).toFixed(2))) + '"/></filter>');
+    return ' filter="url(#' + id + ')"';
+}
+
+// Outset shadows: blurred, spread, offset rects BEHIND the fills!
+function kdPaintOutsetShadows(out, defs, box, rx, shadows) {
+    for (let i = shadows.length - 1; i >= 0; i--) {
+        const sh = shadows[i];
+        if (sh.inset) continue;
+        const sx = box.x - sh.spread;
+        const sy = box.y - sh.spread;
+        const sw = box.w + sh.spread * 2;
+        const st = box.h + sh.spread * 2;
+        if (sw <= 0 || st <= 0) continue;
+        const srx = Math.max(0, rx + sh.spread);
+        let attrs = 'x="' + sx.toFixed(1) + '" y="' + sy.toFixed(1) +
+            '" width="' + sw.toFixed(1) + '" height="' + st.toFixed(1) + '"';
+        if (srx) attrs += ' rx="' + srx.toFixed(1) + '"';
+        attrs += ' fill="' + sh.color + '"';
+        if (sh.opacity < 1) attrs += ' fill-opacity="' + (+sh.opacity.toFixed(4)) + '"';
+        if (sh.dx || sh.dy) attrs += ' transform="translate(' + sh.dx + ' ' + sh.dy + ')"';
+        attrs += kdBlurFilter(defs, sh.blur);
+        out.push('<rect ' + attrs + '/>');
+    }
+}
+
+// Inset shadows: same rects but clipped INSIDE the box, painted OVER fills!
+function kdPaintInsetShadows(out, defs, box, rx, shadows) {
+    const ins = shadows.filter(function (s) { return s.inset; });
+    if (!ins.length) return;
+    kdClipSeq++;
+    const cid = 'kdclip' + kdClipSeq;
+    let clip = '<clipPath id="' + cid + '"><rect x="' + box.x.toFixed(1) + '" y="' + box.y.toFixed(1) +
+        '" width="' + Math.max(0, box.w).toFixed(1) + '" height="' + Math.max(0, box.h).toFixed(1) + '"';
+    if (rx) clip += ' rx="' + rx.toFixed(1) + '"';
+    clip += '/></clipPath>';
+    defs.push(clip);
+    const inner = [];
+    for (let i = ins.length - 1; i >= 0; i--) {
+        const sh = ins[i];
+        const sx = box.x - sh.spread;
+        const sy = box.y - sh.spread;
+        const sw = box.w + sh.spread * 2;
+        const st = box.h + sh.spread * 2;
+        if (sw <= 0 || st <= 0) continue;
+        const srx = Math.max(0, rx + sh.spread);
+        let attrs = 'x="' + sx.toFixed(1) + '" y="' + sy.toFixed(1) +
+            '" width="' + sw.toFixed(1) + '" height="' + st.toFixed(1) + '"';
+        if (srx) attrs += ' rx="' + srx.toFixed(1) + '"';
+        attrs += ' fill="' + sh.color + '"';
+        if (sh.opacity < 1) attrs += ' fill-opacity="' + (+sh.opacity.toFixed(4)) + '"';
+        if (sh.dx || sh.dy) attrs += ' transform="translate(' + sh.dx + ' ' + sh.dy + ')"';
+        // blur defs must live in <defs>: build tag then re-route into defs!
+        const tmp = [];
+        const fAttr = kdBlurFilter(tmp, sh.blur);
+        tmp.forEach(function (d) { defs.push(d); });
+        attrs += fAttr;
+        inner.push('<rect ' + attrs + '/>');
+    }
+    out.push('<g clip-path="url(#' + cid + ')">' + inner.join('') + '</g>');
+}
+
+// Paint one element's box: shadows, stacked fills, stroke on top, rounded corners!
+function kdPaintBox(out, defs, el, box, forceBase) {
+    let fills = [];
+    let border = null;
+    let rx = 0;
+    let shadows = [];
+    try {
+        const cs = window.getComputedStyle(el);
+        fills = kdBackgroundFills(cs);
+        border = kdBorderOf(cs);
+        rx = kdCornerRadius(cs);
+        shadows = kdParseBoxShadow(cs.boxShadow);
+    } catch (e) {}
+    if (!fills.length && !border && !shadows.length) {
+        if (!forceBase) return;
+        fills = [{ kind: 'solid', color: '#ffffff', opacity: 1 }];
+    }
+    kdPaintOutsetShadows(out, defs, box, rx, shadows);
+    const geom = 'x="' + box.x.toFixed(1) + '" y="' + box.y.toFixed(1) +
+        '" width="' + Math.max(0, box.w).toFixed(1) + '" height="' + Math.max(0, box.h).toFixed(1) + '"';
+    const rxAttr = rx ? ' rx="' + rx.toFixed(1) + '"' : '';
+    fills.forEach(function (f, idx) {
+        const top = idx === fills.length - 1;
+        let stroke = '';
+        if (top && border) {
+            stroke = ' stroke="' + border.color + '" stroke-width="' + border.width + '"';
+            if (border.opacity < 1) stroke += ' stroke-opacity="' + (+border.opacity.toFixed(4)) + '"';
+            if (border.dash) stroke += ' stroke-dasharray="' + border.dash + '"';
+        }
+        if (f.kind === 'gradient') {
+            const id = kdNextGradId();
+            defs.push(kdGradientDef(f.g, id));
+            out.push('<rect ' + geom + rxAttr + ' fill="url(#' + id + ')"' + stroke + '/>');
+        } else {
+            let fill = ' fill="' + f.color + '"';
+            if (f.opacity < 1) fill += ' fill-opacity="' + (+f.opacity.toFixed(4)) + '"';
+            out.push('<rect ' + geom + rxAttr + fill + stroke + '/>');
+        }
+    });
+    kdPaintInsetShadows(out, defs, box, rx, shadows);
+}
+
+function kdBuildVectorSVG() {
+    const W = canvasViewport.scrollWidth || canvasViewport.offsetWidth || 900;
+    const H = canvasViewport.scrollHeight || canvasViewport.offsetHeight || 600;
+    let measCtx = null;
+    try {
+        const mc = document.createElement('canvas');
+        measCtx = mc.getContext('2d');
+    } catch (e) { measCtx = null; }
+    const defs = [];
+    const body = ['<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#ffffff"/>'];
+    let crect = null;
+    try { crect = canvasViewport.getBoundingClientRect(); } catch (e) {}
+    const rel = function (r) {
+        if (!crect) return { x: r.left, y: r.top, w: r.width, h: r.height };
+        return { x: r.left - crect.left, y: r.top - crect.top, w: r.width, h: r.height };
+    };
+    const boxOf = function (el) {
+        try {
+            if (typeof el.getBoundingClientRect !== 'function') return null;
+            return rel(el.getBoundingClientRect());
+        } catch (e) { return null; }
+    };
+    Array.from(canvasViewport.children).forEach(function (block) {
+        if (!block || block.nodeType !== 1) return;
+        const bb = boxOf(block);
+        if (bb) kdPaintBox(body, defs, block, bb, true);
+        // Inline highlights + nested boxes: paint every descendant with its own fill/border!
+        let kids = [];
+        try { kids = Array.from(block.querySelectorAll('*')); } catch (e) { kids = []; }
+        kids.forEach(function (el) {
+            const b = boxOf(el);
+            if (!b || b.w <= 0 || b.h <= 0) return;
+            kdPaintBox(body, defs, el, b, false);
+        });
+        let estX = bb ? bb.x : 0;
+        const estY = bb ? bb.y : 0;
+        const texts = [];
+        (function walk(node) {
+            if (node.nodeType === 3) {
+                if (node.nodeValue) texts.push(node);
+                return;
+            }
+            if (node.nodeType !== 1) return;
+            Array.from(node.childNodes).forEach(walk);
+        })(block);
+        texts.forEach(function (tn) {
+            const parent = tn.parentElement || block;
+            const f = kdVectorFont(parent);
+            let boxes = [];
+            try {
+                const rr = document.createRange();
+                rr.selectNode(tn);
+                boxes = Array.from(rr.getClientRects());
+            } catch (e) { boxes = []; }
+            if (boxes.length) {
+                boxes.forEach(function (b) {
+                    const lb = rel(b);
+                    body.push(kdVectorText(tn.nodeValue, f, lb.x, lb.y + lb.h - f.size * 0.2));
+                });
+            } else {
+                const wdt = kdVectorMeasure(measCtx, tn.nodeValue, f);
+                body.push(kdVectorText(tn.nodeValue, f, estX, estY + f.size * 0.8));
+                estX += wdt;
+            }
+        });
+    });
+    const head = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '">';
+    const defStr = defs.length ? '<defs>' + defs.join('') + '</defs>' : '';
+    return head + defStr + body.join('') + '</svg>';
+}
+
+function kdRenderImage(svgText, w, h, onDone) {
+    let img = null;
+    try { img = new window.Image(); } catch (e) { onDone(null); return; }
+    img.onload = function () {
+        try {
+            const c = document.createElement('canvas');
+            c.width = w;
+            c.height = h;
+            const ctx = c.getContext('2d');
+            if (!ctx) { onDone(null); return; }
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+            ctx.drawImage(img, 0, 0, w, h);
+            onDone(c.toDataURL('image/jpeg', 0.92));
+        } catch (e) { onDone(null); }
+    };
+    img.onerror = function () { onDone(null); };
+    try {
+        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgText);
+    } catch (e) { onDone(null); }
+}
+
+function exportJPEGFile() {
+    playAeroClickSound(750, 0.12);
+    autoSaveCanvasContent();
+    const w = canvasViewport.scrollWidth || canvasViewport.offsetWidth || 900;
+    const h = canvasViewport.scrollHeight || canvasViewport.offsetHeight || 600;
+    const svg = kdImageSVG(canvasViewport.innerHTML, kdCollectPageCSS(), w, h);
+    const name = kdExportBaseName() + '.jpg';
+    kdRenderImage(svg, w, h, function (dataUrl) {
+        if (!dataUrl) {
+            try { alert('JPEG export needs a browser with image rendering!'); } catch (e) {}
+            return;
+        }
+        kdDownloadBlob(kdDataURLToBlob(dataUrl), name);
+    });
+}
+
+function exportSVGFile() {
+    playAeroClickSound(750, 0.12);
+    autoSaveCanvasContent();
+    const svg = kdBuildVectorSVG();
+    kdDownloadBlob(new Blob([svg], { type: 'image/svg+xml;charset=utf-8' }), kdExportBaseName() + '.svg');
+}
+
+function exportWebFile() {
+    playAeroClickSound(750, 0.12);
+    autoSaveCanvasContent();
+    const title = kdExportBaseName();
+    const html = canvasViewport.innerHTML;
+    const finish = function (cssText) {
+        const bytes = kdBuildWeb(title, html, cssText);
+        kdDownloadBlob(new Blob([bytes], { type: 'application/zip' }), title + '-web.zip');
+    };
+    try {
+        if (typeof fetch === 'function') {
+            Promise.all([
+                fetch('keydown.css').then(r => r.ok ? r.text() : '').catch(() => ''),
+                fetch('style.css').then(r => r.ok ? r.text() : '').catch(() => '')
+            ]).then(parts => finish('/* keydown.css */\n' + parts[0] + '\n/* style.css */\n' + parts[1]))
+              .catch(() => finish('/* styles unavailable offline */\n'));
+        } else {
+            finish('/* styles unavailable offline */\n');
+        }
+    } catch (e) {
+        finish('/* styles unavailable offline */\n');
+    }
+}
+
+function kdBuildDOCX(html) {
+    const blocks = kdCanvasBlocks(html);
+    const styleFor = function (s) {
+        if (s === 'h1') return 'Heading1';
+        if (s === 'h2') return 'Heading2';
+        if (s === 'h3') return 'Heading3';
+        if (s === 'li') return 'ListParagraph';
+        return 'Normal';
+    };
+    let paras = '';
+    blocks.forEach(function (b) {
+        let runs = '';
+        b.runs.forEach(function (r) {
+            let rPr = '';
+            if (r.bold || r.italic || r.underline) {
+                rPr = '<w:rPr>' + (r.bold ? '<w:b/>' : '') + (r.italic ? '<w:i/>' : '') + (r.underline ? '<w:u w:val="single"/>' : '') + '</w:rPr>';
+            }
+            runs += '<w:r>' + rPr + '<w:t xml:space="preserve">' + kdEscapeXml(r.text) + '</w:t></w:r>';
+        });
+        if (!runs) runs = '<w:r><w:t xml:space="preserve"></w:t></w:r>';
+        paras += '<w:p><w:pPr><w:pStyle w:val="' + styleFor(b.style) + '"/></w:pPr>' + runs + '</w:p>';
+    });
+    if (!paras) paras = '<w:p><w:pPr><w:pStyle w:val="Normal"/></w:pPr><w:r><w:t xml:space="preserve"></w:t></w:r></w:p>';
+    const contentTypes = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">' +
+        '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>' +
+        '<Default Extension="xml" ContentType="application/xml"/>' +
+        '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>' +
+        '</Types>';
+    const rels = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">' +
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>' +
+        '</Relationships>';
+    const doc = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
+        '<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:body>' +
+        paras +
+        '<w:sectPr><w:pgSz w:w="12240" w:h="15840"/></w:sectPr></w:body></w:document>';
+    return kdBuildZip([
+        { name: '[Content_Types].xml', data: contentTypes },
+        { name: '_rels/.rels', data: rels },
+        { name: 'word/document.xml', data: doc }
+    ]);
+}
+
+function kdBuildODT(html) {
+    const blocks = kdCanvasBlocks(html);
+    const paraFor = function (b) {
+        let inner = '';
+        const emitRun = function (r) {
+            let t = kdEscapeXml(r.text);
+            if (r.italic) t = '<text:span text:style-name="I">' + t + '</text:span>';
+            if (r.bold) t = '<text:span text:style-name="B">' + t + '</text:span>';
+            if (r.underline) t = '<text:span text:style-name="U">' + t + '</text:span>';
+            return t;
+        };
+        b.runs.forEach(function (r) { inner += emitRun(r); });
+        if (!inner) inner = '';
+        if (b.style === 'h1') return '<text:h text:outline-level="1">' + inner + '</text:h>';
+        if (b.style === 'h2') return '<text:h text:outline-level="2">' + inner + '</text:h>';
+        if (b.style === 'h3') return '<text:h text:outline-level="3">' + inner + '</text:h>';
+        if (b.style === 'li') return '<text:list><text:list-item><text:p>' + inner + '</text:p></text:list-item></text:list>';
+        return '<text:p>' + inner + '</text:p>';
+    };
+    let body = '';
+    blocks.forEach(function (b) { body += paraFor(b); });
+    if (!body) body = '<text:p/>';
+    const content = '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<office:document-content xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" ' +
+        'xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0" ' +
+        'xmlns:fo="urn:oasis:names:tc:opendocument:xmlns:xsl-fo-compatible:1.0" ' +
+        'xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0" office:version="1.2">' +
+        '<office:automatic-styles>' +
+        '<style:style style:name="B" style:family="text"><style:text-properties fo:font-weight="bold"/></style:style>' +
+        '<style:style style:name="I" style:family="text"><style:text-properties fo:font-style="italic"/></style:style>' +
+        '<style:style style:name="U" style:family="text"><style:text-properties style:text-underline-style="solid"/></style:style>' +
+        '</office:automatic-styles>' +
+        '<office:body><office:text>' + body + '</office:text></office:body></office:document-content>';
+    const styles = '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<office:document-styles xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0" office:version="1.2">' +
+        '<office:styles></office:styles></office:document-styles>';
+    const manifest = '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<manifest:manifest xmlns:manifest="urn:oasis:names:tc:opendocument:xmlns:manifest:1.0">' +
+        '<manifest:file-entry manifest:full-path="/" manifest:media-type="application/vnd.oasis.opendocument.text"/>' +
+        '<manifest:file-entry manifest:full-path="content.xml" manifest:media-type="text/xml"/>' +
+        '<manifest:file-entry manifest:full-path="styles.xml" manifest:media-type="text/xml"/>' +
+        '</manifest:manifest>';
+    return kdBuildZip([
+        { name: 'mimetype', data: 'application/vnd.oasis.opendocument.text' },
+        { name: 'content.xml', data: content },
+        { name: 'styles.xml', data: styles },
+        { name: 'META-INF/manifest.xml', data: manifest }
+    ]);
+}
+
+function kdBuildEPUB(title, html) {
+    const blocks = kdCanvasBlocks(html);
+    const tagFor = function (s) {
+        if (s === 'h1') return 'h1';
+        if (s === 'h2') return 'h2';
+        if (s === 'h3') return 'h3';
+        if (s === 'quote') return 'blockquote';
+        if (s === 'li') return 'li';
+        return 'p';
+    };
+    let body = '';
+    let openList = false;
+    blocks.forEach(function (b) {
+        const tag = tagFor(b.style);
+        if (tag === 'li' && !openList) { body += '<ul>'; openList = true; }
+        if (tag !== 'li' && openList) { body += '</ul>'; openList = false; }
+        let inner = '';
+        b.runs.forEach(function (r) {
+            let t = kdEscapeXml(r.text);
+            if (r.underline) t = '<u>' + t + '</u>';
+            if (r.italic) t = '<em>' + t + '</em>';
+            if (r.bold) t = '<strong>' + t + '</strong>';
+            inner += t;
+        });
+        body += '<' + tag + '>' + inner + '</' + tag + '>';
+    });
+    if (openList) body += '</ul>';
+    if (!body) body = '<p></p>';
+    const safeTitle = kdEscapeXml(title || 'writeout');
+    const chapter = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml"><head><title>' + safeTitle + '</title>' +
+        '<style>body{font-family:sans-serif;line-height:1.6;}blockquote{border-left:3px solid #888;margin:1em 0;padding:.5em 1em;color:#555;}</style>' +
+        '</head><body>' + body + '</body></html>';
+    const container = '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<container version="1.0" xmlns="urn:oasis:names:tc:opendocument:xmlns:container">' +
+        '<rootfiles><rootfile full-path="OEBPS/content.opf" media-type="application/oebps-package+xml"/></rootfiles></container>';
+    const opf = '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<package version="3.0" unique-identifier="wid" xmlns="http://www.idpf.org/2007/opf">' +
+        '<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">' +
+        '<dc:title>' + safeTitle + '</dc:title><dc:language>en</dc:language>' +
+        '<dc:identifier id="wid">writeout-export</dc:identifier>' +
+        '<meta property="dcterms:modified">2024-01-01T00:00:00Z</meta></metadata>' +
+        '<manifest><item id="chapter" href="chapter.xhtml" media-type="application/xhtml+xml"/>' +
+        '<item id="nav" href="nav.xhtml" media-type="application/xhtml+xml" properties="nav"/></manifest>' +
+        '<spine><itemref idref="chapter"/></spine></package>';
+    const nav = '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<!DOCTYPE html>\n<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">' +
+        '<head><title>Contents</title></head><body><nav epub:type="toc"><ol>' +
+        '<li><a href="chapter.xhtml">' + safeTitle + '</a></li></ol></nav></body></html>';
+    return kdBuildZip([
+        { name: 'mimetype', data: 'application/epub+zip' },
+        { name: 'META-INF/container.xml', data: container },
+        { name: 'OEBPS/content.opf', data: opf },
+        { name: 'OEBPS/nav.xhtml', data: nav },
+        { name: 'OEBPS/chapter.xhtml', data: chapter }
+    ]);
+}
+
+function kdBuildWeb(title, html, cssText) {
+    const safeTitle = kdEscapeXml(title || 'writeout');
+    const page = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8" />\n' +
+        '<meta name="viewport" content="width=device-width, initial-scale=1.0" />\n' +
+        '<title>' + safeTitle + '</title>\n<link rel="stylesheet" href="styles.css" />\n</head>\n' +
+        '<body>\n<main class="writeout-export">\n<h1>' + safeTitle + '</h1>\n' +
+        '<div id="wysiwyg-canvas">\n' + html + '\n</div>\n</main>\n</body>\n</html>';
+    return kdBuildZip([
+        { name: 'index.html', data: page },
+        { name: 'styles.css', data: cssText || '/* styles unavailable */\n' }
+    ]);
+}
+
+// --- Download popup menu wiring ---
+let downloadMenuWired = false;
+function toggleDownloadMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('download-menu');
+    if (!menu) return;
+    const isOpen = menu.style.display !== 'none';
+    menu.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen && !downloadMenuWired) {
+        downloadMenuWired = true;
+        document.addEventListener('click', function (ev) {
+            const m = document.getElementById('download-menu');
+            const b = document.getElementById('download-menu-btn');
+            if (!m || m.style.display === 'none') return;
+            if (m.contains(ev.target) || (b && b.contains(ev.target))) return;
+            m.style.display = 'none';
+        });
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') closeDownloadMenu();
+        });
+    }
+}
+
+function closeDownloadMenu() {
+    const menu = document.getElementById('download-menu');
+    if (menu) menu.style.display = 'none';
+}
+
+function runDownloadFormat(fmt) {
+    closeDownloadMenu();
+    if (fmt === 'kd') exportKeydownFile();
+    else if (fmt === 'pdf') exportPDFFile();
+    else if (fmt === 'docx') exportDOCXFile();
+    else if (fmt === 'odt') exportODTFile();
+    else if (fmt === 'txt') exportTXTFile();
+    else if (fmt === 'epub') exportEPUBFile();
+    else if (fmt === 'jpeg') exportJPEGFile();
+    else if (fmt === 'svg') exportSVGFile();
+    else if (fmt === 'web') exportWebFile();
+}
+
+document.querySelectorAll('#download-menu .download-item').forEach(function (item) {
+    item.addEventListener('click', function (e) {
+        e.stopPropagation();
+        playAeroClickSound(600, 0.08);
+        runDownloadFormat(item.getAttribute('data-fmt'));
+    });
+});
 
 // Action: Read .kd files, strip out the YAML configurations, and render HTML variables
 function importKeydownFile(inputEvent) {
@@ -1486,23 +2625,24 @@ function importKeydownFile(inputEvent) {
             if (closingGateIndexValue !== -1) {
                 const pureContentTextOffset = closingGateIndexValue + 3;
                 // Hydrate the editable layout arena with the stripped code layers directly
-                canvasViewport.innerHTML = fullFileStringContent.substring(pureContentTextOffset).trim();
+                const kdParsedFile = kdParseTabsFence(fullFileStringContent.substring(pureContentTextOffset).trim());
+                canvasViewport.innerHTML = kdParsedFile.tabs ? kdRestoreTabs(kdParsedFile.tabs) : kdRestoreTabs([{ name: 'Main', html: kdParsedFile.html }]);
+                kdHydrateInteractions();
+                kdRenderTabs();
+                kdRenderOutline();
                 return;
             }
         }
-        canvasViewport.innerHTML = fullFileStringContent;
+        const kdParsedRaw = kdParseTabsFence(fullFileStringContent);
+        canvasViewport.innerHTML = kdParsedRaw.tabs ? kdRestoreTabs(kdParsedRaw.tabs) : kdRestoreTabs([{ name: 'Main', html: kdParsedRaw.html }]);
+        kdHydrateInteractions();
+        kdRenderTabs();
+        kdRenderOutline();
     };
     fileReaderInstance.readAsText(fileTarget);
 }
 
-// Collapsible sidebar drawer movement triggers
-if (toggleZoneContainer) {
-    toggleZoneContainer.addEventListener('click', function() {
-        playAeroClickSound(450, 0.12);
-        sidebarPanel.classList.toggle('collapsed');
-        toggleIconGlyph.style.transform = sidebarPanel.classList.contains('collapsed') ? 'rotate(180deg)' : 'rotate(0deg)';
-    });
-}
+// Sidebar toggle lives in PART 3 above — single owner, no double-toggle!
 
 // ========================================================
 // RE-ENGINEERED SOVEREIGN MARKDOWN INGESTION (.md IMPORT)
@@ -1542,6 +2682,15 @@ function importMarkdownFile(inputEvent) {
         
         // Hydrate your JetBrains Mono canvas cleanly with the converted HTML blocks
         canvasViewport.innerHTML = parsedHTMLOutput;
+        kdHydrateInteractions();
+        try {
+            let mdName = 'Main';
+            const mdTitle = rawMarkdownText.split('\n').find(function (l) { return l.trim().startsWith('# '); });
+            if (mdTitle) mdName = mdTitle.replace(/^#+\s*/, '').trim().substring(0, 60) || 'Main';
+            kdRestoreTabs([{ name: mdName, html: parsedHTMLOutput }]);
+        } catch (e) {}
+        kdRenderTabs();
+        kdRenderOutline();
     };
     fileReader.readAsText(fileTarget);
 }
@@ -1816,9 +2965,14 @@ function insertApplet(appletType) {
 }
 // Wire up the floating selection toolbar buttons
 document.querySelectorAll('#aero-selection-toolbar .style-bar-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        playAeroClickSound(600, 0.08);
+    button.addEventListener('click', (e) => {
         const styleType = button.getAttribute('data-style');
+        // Only own data-style buttons here; dropdown toggles & swatches are handled elsewhere.
+        if (!styleType) return;
+        // Stop the click from bubbling to the delegated selectionToolbar handler below,
+        // which would fire the same execCommand a second time and toggle the style back off.
+        e.stopPropagation();
+        playAeroClickSound(600, 0.08);
         
         if (styleType === 'bold') {
             document.execCommand('bold', false, null);
@@ -1930,12 +3084,10 @@ selectionToolbar.addEventListener('click', (e) => {
     const styleAction = btn.getAttribute('data-style');
     const classAction = btn.getAttribute('data-class');
 
+    // data-style buttons (B/I/U/S/code) are already handled by their direct
+    // per-button listener above — skip them here to avoid double-toggling.
     if (styleAction) {
-        if (styleAction === 'code') {
-            document.execCommand('insertHTML', false, `<code>${window.getSelection().toString()}</code>`);
-        } else {
-            document.execCommand(styleAction, false, null);
-        }
+        return;
     } else if (classAction) {
         const selection = window.getSelection();
         if (!selection.isCollapsed) {
@@ -1995,8 +3147,9 @@ if (highlighterPicker) {
 
 function rgbToHex(rgb) {
     if (!rgb || rgb === 'transparent') return null;
-    const match = rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+    const match = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
     if (!match) return null;
+    if (match[4] !== undefined && parseFloat(match[4]) === 0) return null;
     return "#" + match.slice(1, 4).map(x => {
         const hex = parseInt(x).toString(16);
         return hex.length === 1 ? "0" + hex : hex;
@@ -2058,10 +3211,140 @@ function syncToolbarWithSelection() {
     }
 }
 
+// Strip an explicit color so the text inherits its ancestor rule (or theme default)!
+function fmtResetColor(prop) {
+    if (typeof canvas === 'undefined' || !canvas) return 0;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return 0;
+    const range = sel.getRangeAt(0);
+    if (!canvas.contains(range.commonAncestorContainer)) return 0;
+    const container = range.commonAncestorContainer;
+    const root = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+    const scopeEl = (root && canvas.contains(root)) ? root : canvas;
+    const isText = prop === 'foreColor';
+    const cssProp = isText ? 'color' : 'background-color';
+    const cands = [];
+    if (scopeEl.querySelectorAll) Array.from(scopeEl.querySelectorAll('font, span')).reverse().forEach(function (el) { cands.push(el); });
+    fmtScopeChain(scopeEl).forEach(function (el) {
+        if (el.tagName === 'FONT' || el.tagName === 'SPAN') cands.push(el);
+    });
+    return fmtEachTouching(scopeEl, range, function () { return cands; }, function (el) {
+        let touched = false;
+        if (isText && el.tagName === 'FONT' && el.hasAttribute && el.hasAttribute('color')) {
+            try { el.removeAttribute('color'); } catch (e) {}
+            touched = true;
+        }
+        if (el.style) {
+            let v = '';
+            try { v = el.style.getPropertyValue(cssProp) || ''; } catch (e) {}
+            if (v) {
+                try { el.style.removeProperty(cssProp); } catch (e) {}
+                touched = true;
+            }
+        }
+        if (touched) {
+            fmtStripBare(el);
+            return true;
+        }
+        return false;
+    }, true);
+}
+
+// Show each reset button only while the caret sits under an explicit color!
+// (Class-ruled chip colors and plain theme text have nothing to reset!)
+function fmtUpdateResetButtons() {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const textBtn = document.querySelector('#format-text-controls [data-reset-action="foreColor"]');
+    const hlBtn = document.querySelector('#format-text-controls [data-reset-action="hiliteColor"]');
+    if (!textBtn && !hlBtn) return;
+    const sel = window.getSelection();
+    let anchorEl = null;
+    if (sel.rangeCount) {
+        const a = sel.anchorNode;
+        if (a && canvas.contains(a)) anchorEl = a.nodeType === Node.TEXT_NODE ? a.parentElement : a;
+    }
+    const hasExplicit = function (prop, isText) {
+        let el = anchorEl;
+        while (el && el !== canvas && canvas.contains(el)) {
+            if (isText && el.tagName === 'FONT') {
+                try { if (el.hasAttribute && el.hasAttribute('color')) return true; } catch (e) {}
+            }
+            try {
+                if (el.style && el.style.getPropertyValue(prop)) return true;
+            } catch (e) {}
+            el = el.parentElement;
+        }
+        return false;
+    };
+    if (textBtn) textBtn.style.display = (anchorEl && hasExplicit('color', true)) ? '' : 'none';
+    if (hlBtn) hlBtn.style.display = (anchorEl && hasExplicit('background-color', false)) ? '' : 'none';
+}
+
+// Align one selection's blocks (execCommand first, inline style fallback)!
+var FMT_ALIGN_CMDS = { left: 'justifyLeft', center: 'justifyCenter', right: 'justifyRight', justify: 'justifyFull' };
+
+function fmtAlignBlocks(align) {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const cmd = FMT_ALIGN_CMDS[align];
+    if (!cmd) return;
+    if (typeof document.execCommand === 'function') {
+        try {
+            canvas.focus();
+            document.execCommand(cmd, false, null);
+            if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            fmtSyncAlignButtons();
+            return;
+        } catch (e) {}
+    }
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return;
+    const range = sel.getRangeAt(0);
+    const blocks = [];
+    Array.from(canvas.children).forEach(function (kid) {
+        try {
+            if (range.intersectsNode(kid)) blocks.push(kid);
+        } catch (e) {}
+    });
+    if (!blocks.length) {
+        const node = sel.anchorNode;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        const block = el && el.closest ? el.closest('div, p, li, h1, h2, h3, blockquote') : null;
+        if (block && canvas.contains(block)) blocks.push(block);
+    }
+    blocks.forEach(function (b) { b.style.textAlign = align; });
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+    fmtSyncAlignButtons();
+}
+
+function fmtSyncAlignButtons() {
+    const bar = document.getElementById('format-text-controls');
+    if (!bar) return;
+    let align = 'left';
+    try {
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            let node = sel.anchorNode;
+            if (node && canvas.contains(node)) {
+                const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+                const block = el && el.closest ? el.closest('div, p, li, h1, h2, h3, blockquote') : null;
+                const scope = (block && canvas.contains(block)) ? block : canvas;
+                const computed = window.getComputedStyle(scope);
+                const t = ((computed && computed.textAlign) || scope.style.textAlign || '').toLowerCase();
+                if (t === 'center' || t === 'right' || t === 'justify' || t === 'end') align = (t === 'end' ? 'right' : t);
+            }
+        }
+    } catch (e) {}
+    bar.querySelectorAll('[data-align]').forEach(function (btn) {
+        if (btn.getAttribute('data-align') === align) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+}
+
 // ==========================================
 // TOP FORMAT BAR & SELECTION SYNC ENGINE
+// (Controls live in the Format sidebar now; the bar docks utility buttons!)
 // ==========================================
-const topFormatBar = document.getElementById('top-format-bar');
+const topFormatBar = document.getElementById('format-text-controls') || document.getElementById('top-format-bar');
 
 if (topFormatBar) {
     // 1. Handle changes from top toolbar dropdowns & pickers using data-edit-action
@@ -2084,6 +3367,29 @@ if (topFormatBar) {
         const value = e.target.value;
         document.execCommand(action, false, value);
         autoSaveCanvasContent();
+    });
+
+    topFormatBar.addEventListener('click', (e) => {
+        // Reset buttons strip back to the inherited color!
+        const reset = e.target.closest ? e.target.closest('[data-reset-action]') : null;
+        if (!reset) return;
+        playAeroClickSound(600, 0.08);
+        fmtResetColor(reset.getAttribute('data-reset-action'));
+        autoSaveCanvasContent();
+        fmtUpdateResetButtons();
+    });
+
+    // Mousedown on sidebar buttons must not steal the text selection!
+    topFormatBar.addEventListener('mousedown', (e) => {
+        if (e.target.closest && e.target.closest('button')) e.preventDefault();
+    });
+
+    topFormatBar.addEventListener('click', (e) => {
+        // Paragraph alignment buttons!
+        const alignBtn = e.target.closest ? e.target.closest('[data-align]') : null;
+        if (!alignBtn) return;
+        playAeroClickSound(600, 0.08);
+        fmtAlignBlocks(alignBtn.getAttribute('data-align'));
     });
 }
 
@@ -2116,9 +3422,38 @@ function syncTopBarWithSelection() {
     // Sync Font Size Dropdown
     const sizeSelect = topFormatBar.querySelector('[data-edit-action="fontSize"]');
     if (sizeSelect && computed.fontSize) {
-        // Map computed pixel size roughly to execCommand font sizes (1-7) if needed, 
-        // or match value if your options use pt/px
+        // execCommand sizes map roughly to pixels: 1~10, 3~16, 5~24, 7~48.
+        // Snap the caret's computed size to the nearest available step!
+        const px = parseFloat(computed.fontSize);
+        if (!isNaN(px)) {
+            const steps = [[1, 10], [3, 16], [5, 24], [7, 48]];
+            let best = steps[0][0];
+            let bestDist = Math.abs(px - steps[0][1]);
+            steps.forEach(function (s) {
+                const dist = Math.abs(px - s[1]);
+                if (dist < bestDist) { bestDist = dist; best = s[0]; }
+            });
+            const match = Array.from(sizeSelect.options).some(function (o) { return o.value === String(best); });
+            if (match) sizeSelect.value = String(best);
+        }
     }
+
+    // Sync Text Color Picker
+    const forePicker = topFormatBar.querySelector('[data-edit-action="foreColor"]');
+    if (forePicker && computed.color) {
+        const hexColor = rgbToHex(computed.color);
+        if (hexColor) forePicker.value = hexColor;
+    }
+
+    // Sync Highlight Color Picker (transparent stays untouched!)
+    const hilitePicker = topFormatBar.querySelector('[data-edit-action="hiliteColor"]');
+    if (hilitePicker && computed.backgroundColor) {
+        const hexBg = rgbToHex(computed.backgroundColor);
+        if (hexBg) hilitePicker.value = hexBg;
+    }
+
+    fmtUpdateResetButtons();
+    fmtSyncAlignButtons();
 }
 
 // Hook synchronization into your existing canvas mouse/key events
@@ -2159,3 +3494,1260 @@ function checkAndRedirectMobile() {
 
 // Run automatically the exact moment the DOM loads on start
 window.addEventListener('DOMContentLoaded', checkAndRedirectMobile);
+
+// ==========================================
+// PART 13: IMPORT HYDRATION (REVIVE IMPORTED CONTROLS)
+// innerHTML hydration drops all listeners — this pass re-attaches every
+// interactive behavior (state seeded from the surviving markup!), so an
+// opened file works exactly like freshly typed formatting!
+// ==========================================
+var kdWiredSet = new WeakSet();
+
+function kdWireOnce(el, fn) {
+    if (!el || kdWiredSet.has(el)) return false;
+    try { fn(el); } catch (e) {}
+    kdWiredSet.add(el);
+    return true;
+}
+
+function kdNum(text, fallback) {
+    const m = String(text || '').match(/(-?\d+(?:\.\d+)?)/);
+    return m ? parseFloat(m[1]) : fallback;
+}
+
+function kdBaseLabel(text) {
+    const t = String(text || '');
+    const i = t.lastIndexOf(':');
+    return (i > 0 ? t.substring(0, i) : t).trim();
+}
+
+function kdHydrateInteractions(root) {
+    const scope = root || ((typeof canvas !== 'undefined') ? canvas : null);
+    if (!scope || !scope.querySelectorAll) return 0;
+    let wired = 0;
+    const each = function (sel, fn) {
+        scope.querySelectorAll(sel).forEach(function (el) {
+            if (kdWireOnce(el, fn)) wired++;
+        });
+    };
+
+    // --- Foldout panels (::foldout): arrow orb toggles collapse! ---
+    each('.aero-foldout-panel .foldout-arrow-orb', function (orb) {
+        const panel = orb.closest('.aero-foldout-panel');
+        orb.addEventListener('click', function () {
+            playAeroClickSound(450, 0.1);
+            if (panel) panel.classList.toggle('panel-collapsed');
+        });
+    });
+
+    // --- Foldout tab applet (~FN~): responsive blip! ---
+    each('.applet-foldout-tab', function (el) {
+        el.addEventListener('click', function () {
+            playAeroClickSound(500, 0.15);
+        });
+    });
+
+    // --- Aqua switch applet (~TS~): on/off toggle! ---
+    each('.applet-aqua-switch', function (el) {
+        el.addEventListener('click', function () {
+            playAeroClickSound(650, 0.08);
+            el.classList.toggle('turned-on');
+        });
+    });
+
+    // --- State button applet (~TB~): green/red toggle! ---
+    each('.applet-state-button', function (el) {
+        el.addEventListener('click', function () {
+            if (el.classList.contains('state-green')) {
+                playAeroClickSound(400, 0.12);
+                el.classList.remove('state-green');
+                el.classList.add('state-red');
+            } else {
+                playAeroClickSound(650, 0.08);
+                el.classList.remove('state-red');
+                el.classList.add('state-green');
+            }
+        });
+    });
+
+    // --- Volume dial applet (~VD~): level seeded from its own label! ---
+    each('.applet-volume-dial', function (el) {
+        const label = el.querySelector('span');
+        const knob = el.querySelector('.dial-knob');
+        let level = label ? kdNum(label.textContent.split(':').pop(), 0) : 0;
+        el.addEventListener('click', function () {
+            level = (level + 25) % 125;
+            if (label) label.textContent = kdBaseLabel(label.textContent) + ': ' + level + '%';
+            if (knob) knob.style.transform = `rotate(${(level / 100) * 270}deg)`;
+            playAeroClickSound(400 + (level * 2), 0.08);
+        });
+    });
+
+    // --- Battery cell applet (~BC~): capacity seeded from lit blocks! ---
+    each('.applet-battery-cell', function (el) {
+        const blocks = el.querySelectorAll('.juice-block');
+        let capacity = 0;
+        blocks.forEach(function (b) { if (!b.classList.contains('drain')) capacity++; });
+        if (!blocks.length) capacity = 3;
+        el.addEventListener('click', function () {
+            capacity = capacity === 0 ? 3 : capacity - 1;
+            playAeroClickSound(300 + (capacity * 100), 0.1);
+            blocks.forEach(function (block, idx) {
+                if (idx < capacity) block.classList.remove('drain');
+                else block.classList.add('drain');
+            });
+        });
+    });
+
+    // --- Calendar desk applet (~CD~): responsive blip! ---
+    each('.applet-calendar-desk', function (el) {
+        el.addEventListener('click', function () { playAeroClickSound(700, 0.05); });
+    });
+
+    // --- Star rating applet (~SR~): rating seeded from glowing stars! ---
+    each('.applet-star-rating', function (el) {
+        let rating = el.querySelectorAll('.rating-star-node.star-glow').length;
+        el.addEventListener('click', function () {
+            rating = (rating + 1) % 4;
+            playAeroClickSound(600 + (rating * 50), 0.06);
+            el.querySelectorAll('.rating-star-node').forEach(function (star, idx) {
+                if (idx < rating) star.classList.add('star-glow');
+                else star.classList.remove('star-glow');
+            });
+        });
+    });
+
+    // --- Counter badge applet (~CC~): count seeded from its own orb! ---
+    each('.applet-counter-badge', function (el) {
+        const orb = el.querySelector('.badge-count-orb');
+        let count = orb ? kdNum(orb.textContent, 0) : 0;
+        el.addEventListener('click', function () {
+            count++;
+            playAeroClickSound(800, 0.05);
+            if (orb) orb.textContent = count;
+        });
+    });
+
+    // --- Security latch applet (~LK~): lock state seeded from its label! ---
+    each('.applet-security-latch', function (el) {
+        const icon = el.querySelector('.latch-icon-frame');
+        const label = el.querySelector('span:not(.latch-icon-frame)');
+        const baseName = label ? kdBaseLabel(label.textContent) : '';
+        let locked = !(label && /OPEN/.test(label.textContent));
+        el.addEventListener('click', function () {
+            locked = !locked;
+            if (!locked) {
+                playAeroClickSound(900, 0.15);
+                el.classList.add('latch-unlocked');
+                if (icon) icon.textContent = '🔓';
+                if (label) label.textContent = baseName + ': OPEN';
+            } else {
+                playAeroClickSound(350, 0.12);
+                el.classList.remove('latch-unlocked');
+                if (icon) icon.textContent = '🔒';
+                if (label) label.textContent = baseName + ': LOCKED';
+            }
+        });
+    });
+
+    // --- Playback ribbon applet (~PR~): play/pause progress! ---
+    each('.applet-playback-ribbon', function (el) {
+        const fill = el.querySelector('.playback-fill-fluid');
+        let activeInterval = null;
+        let percent = fill ? kdNum(fill.style.width, 0) : 0;
+        el.addEventListener('click', function () {
+            if (activeInterval) {
+                clearInterval(activeInterval);
+                activeInterval = null;
+                playAeroClickSound(400, 0.05);
+            } else {
+                playAeroClickSound(600, 0.05);
+                activeInterval = setInterval(() => {
+                    percent = percent >= 100 ? 0 : percent + 2;
+                    const bar = el.querySelector('.playback-fill-fluid');
+                    if (bar) bar.style.width = percent + '%';
+                }, 100);
+            }
+        });
+    });
+
+    // --- CPU gauge applet (~CR~): needle step seeded from its angle! ---
+    each('.applet-cpu-gauge', function (el) {
+        const angles = [-90, -45, 0, 45, 90];
+        const needle = el.querySelector('.gauge-needle-vector');
+        let step = 0;
+        if (needle) {
+            const found = angles.indexOf(kdNum(needle.style.transform, 0));
+            if (found !== -1) step = found;
+        }
+        el.addEventListener('click', function () {
+            step = (step + 1) % angles.length;
+            playAeroClickSound(500 + (step * 80), 0.06);
+            const pin = el.querySelector('.gauge-needle-vector');
+            if (pin) pin.style.transform = `rotate(${angles[step]}deg)`;
+        });
+    });
+
+    // --- Stepper mesh applet (~SI~): value seeded from its label! ---
+    each('.applet-stepper-mesh', function (el) {
+        const label = el.querySelector('span');
+        let val = label ? kdNum(label.textContent, 1) : 1;
+        if (!val) val = 1;
+        el.addEventListener('click', function () {
+            val++;
+            playAeroClickSound(750, 0.04);
+            if (label) label.textContent = kdBaseLabel(label.textContent) + ': ' + val;
+        });
+    });
+
+    // --- Hydro orb applet (~ORB~): alert state seeded from its orb class! ---
+    each('.applet-hydro-orb', function (el) {
+        const label = el.querySelector('span');
+        const baseName = label ? kdBaseLabel(label.textContent) : '';
+        let state = 0;
+        if (el.classList.contains('orb-yellow')) state = 1;
+        else if (el.classList.contains('orb-red')) state = 2;
+        el.addEventListener('click', function () {
+            state = (state + 1) % 3;
+            el.className = 'applet-hydro-orb';
+            const tag = el.querySelector('span');
+            if (state === 0) {
+                playAeroClickSound(700, 0.06);
+                el.classList.add('orb-blue');
+                if (tag) tag.textContent = baseName + ': SAFE';
+            } else if (state === 1) {
+                playAeroClickSound(550, 0.08);
+                el.classList.add('orb-yellow');
+                if (tag) tag.textContent = baseName + ': WARN';
+            } else {
+                playAeroClickSound(350, 0.12);
+                el.classList.add('orb-red');
+                if (tag) tag.textContent = baseName + ': CRIT';
+            }
+        });
+    });
+
+    // --- Lock slider applet (~SLS~): seeded from its unlocked class! ---
+    each('.applet-lock-slider', function (el) {
+        let open = el.classList.contains('unlocked-state');
+        el.addEventListener('click', function () {
+            open = !open;
+            if (open) {
+                playAeroClickSound(850, 0.1);
+                el.classList.add('unlocked-state');
+            } else {
+                playAeroClickSound(400, 0.08);
+                el.classList.remove('unlocked-state');
+            }
+        });
+    });
+
+    // --- Gadget clocks (~VM~ / ~TIM~): restart the second hand! ---
+    each('.applet-gadget-clock', function (el) {
+        setInterval(() => {
+            const now = new Date();
+            const hand = el.querySelector('.clock-hand-vector');
+            if (hand) hand.style.transform = `rotate(${now.getSeconds() * 6}deg)`;
+        }, 1000);
+    });
+    each('.applet-gadget-system-clock', function (el) {
+        setInterval(() => {
+            const now = new Date();
+            const pointer = el.querySelector('.gadget-clock-hand');
+            if (pointer) pointer.style.transform = `rotate(${now.getSeconds() * 6}deg)`;
+        }, 1000);
+    });
+
+    // --- Metal trigger applet (~MT~): play state seeded from its class! ---
+    each('.applet-metal-trigger', function (el) {
+        const label = el.querySelector('span');
+        const baseName = label ? label.textContent.replace(/^[▶■]\s*/, '') : '';
+        let playing = el.classList.contains('trigger-playing');
+        el.addEventListener('click', function () {
+            playing = !playing;
+            playAeroClickSound(playing ? 650 : 450, 0.08);
+            el.className = 'applet-metal-trigger';
+            const tag = el.querySelector('span');
+            if (playing) {
+                el.classList.add('trigger-playing');
+                if (tag) tag.textContent = `■ ${baseName}`;
+            } else {
+                if (tag) tag.textContent = `▶ ${baseName}`;
+            }
+        });
+    });
+
+    // --- Inset check applet (~IC~): stateless check toggle! ---
+    each('.applet-inset-check', function (el) {
+        el.addEventListener('click', function () {
+            playAeroClickSound(600, 0.05);
+            el.classList.toggle('box-checked');
+        });
+    });
+
+    // --- Hex swatch applet (~HEX~): stateless active toggle! ---
+    each('.dev-chip-hex', function (el) {
+        el.addEventListener('click', function () {
+            playAeroClickSound(750, 0.05);
+            el.classList.toggle('swatch-active');
+        });
+    });
+
+    // --- Signal node applet (~SG~): link state seeded from its class! ---
+    each('.av-chip-signal', function (el) {
+        const label = el.querySelector('span');
+        const baseName = label ? kdBaseLabel(label.textContent) : '';
+        let connected = !el.classList.contains('sig-disconnect');
+        el.addEventListener('click', function () {
+            connected = !connected;
+            if (connected) {
+                playAeroClickSound(800, 0.05);
+                el.classList.remove('sig-disconnect');
+                if (label) label.textContent = baseName + ': CONNECTED';
+            } else {
+                playAeroClickSound(300, 0.12);
+                el.classList.add('sig-disconnect');
+                if (label) label.textContent = baseName + ': DISCONNECT';
+            }
+        });
+    });
+
+    // --- Circuit node strips (~CN-*~): responsive blip! ---
+    each('.megachip-circuit-node', function (el) {
+        el.addEventListener('click', function () { playAeroClickSound(750, 0.05); });
+    });
+
+    // --- Voice tag applet (~VO~): playback flag seeded from its label! ---
+    each('.jr-chip-voice-tag', function (el) {
+        const label = el.querySelector('span');
+        const baseName = label ? label.textContent.replace(/^[🔊⏳]\s*(PLAYING|PLAY DICTATION):\s*/, '') : '';
+        let playing = !!(label && label.textContent.includes('PLAYING'));
+        el.addEventListener('click', function () {
+            playing = !playing;
+            playAeroClickSound(playing ? 500 : 350, 0.2);
+            if (label) label.textContent = playing ? `⏳ PLAYING: ${baseName}` : `🔊 PLAY DICTATION: ${baseName}`;
+        });
+    });
+
+    // --- Wax stamp applet (~WS~): deep seal thud! ---
+    each('.jr-chip-wax-stamp', function (el) {
+        el.addEventListener('click', function () { playAeroClickSound(250, 0.15); });
+    });
+
+    // --- Neon node applet (~NO~): alert state seeded from its node class! ---
+    each('.applet-neon-node', function (el) {
+        const label = el.querySelector('span');
+        const baseName = label ? kdBaseLabel(label.textContent) : '';
+        let cycleState = 0;
+        if (el.classList.contains('node-yellow')) cycleState = 1;
+        else if (el.classList.contains('node-pink')) cycleState = 2;
+        el.addEventListener('click', function () {
+            cycleState = (cycleState + 1) % 3;
+            el.className = 'applet-neon-node';
+            const tag = el.querySelector('span');
+            if (cycleState === 0) {
+                playAeroClickSound(750, 0.05);
+                el.classList.add('node-cyan');
+                if (tag) tag.textContent = baseName + ': INFO';
+            } else if (cycleState === 1) {
+                playAeroClickSound(550, 0.08);
+                el.classList.add('node-yellow');
+                if (tag) tag.textContent = baseName + ': WARN';
+            } else {
+                playAeroClickSound(350, 0.12);
+                el.classList.add('node-pink');
+                if (tag) tag.textContent = baseName + ': ALERT';
+            }
+        });
+    });
+
+    // --- Latch toggle applet (~LS~): seeded from its active class! ---
+    each('.applet-latch-toggle', function (el) {
+        let active = el.classList.contains('latch-active-state');
+        el.addEventListener('click', function () {
+            active = !active;
+            playAeroClickSound(active ? 800 : 400, 0.08);
+            if (active) el.classList.add('latch-active-state');
+            else el.classList.remove('latch-active-state');
+        });
+    });
+
+    // --- Progress capsule applet (~PT~): fill seeded from its own bar! ---
+    each('.jr-progress-capsule', function (el) {
+        const fill = el.querySelector('.capsule-fluid-fill');
+        let fillWidth = fill ? kdNum(fill.style.width, 35) : 35;
+        el.addEventListener('click', function () {
+            fillWidth = fillWidth >= 95 ? 15 : fillWidth + 20;
+            playAeroClickSound(550 + fillWidth, 0.05);
+            const bar = el.querySelector('.capsule-fluid-fill');
+            if (bar) bar.style.width = fillWidth + '%';
+        });
+    });
+
+    // --- Dot matrix applet (~RD~): rating seeded from glowing beads! ---
+    each('.jr-dot-matrix', function (el) {
+        let rating = el.querySelectorAll('.matrix-bead.bead-glow').length;
+        el.addEventListener('click', function () {
+            rating = (rating + 1) % 4;
+            playAeroClickSound(600, 0.05);
+            el.querySelectorAll('.matrix-bead').forEach(function (bead, idx) {
+                if (idx < rating) bead.classList.add('bead-glow');
+                else bead.classList.remove('bead-glow');
+            });
+        });
+    });
+
+    // --- Latch lock applet (~LL~): seeded from its secure class! ---
+    each('.jr-latch-lock', function (el) {
+        let secure = el.classList.contains('latch-secure');
+        el.addEventListener('click', function () {
+            secure = !secure;
+            playAeroClickSound(secure ? 850 : 350, 0.1);
+            if (secure) el.classList.add('latch-secure');
+            else el.classList.remove('latch-secure');
+        });
+    });
+
+    // --- Cockpit horizon block (::horizon): pitch step seeded from its line! ---
+    each('.writedown-horizon-block', function (el) {
+        const angles = [-15, 0, 15, 30, 0];
+        const pitch = el.querySelector('.horizon-pitch-line');
+        let currentStep = 0;
+        if (pitch) {
+            const found = angles.indexOf(kdNum(pitch.style.transform, 0));
+            if (found !== -1) currentStep = found;
+        }
+        el.addEventListener('click', function () {
+            currentStep = (currentStep + 1) % angles.length;
+            playAeroClickSound(550, 0.06);
+            const line = el.querySelector('.horizon-pitch-line');
+            if (line) line.style.transform = `rotate(${angles[currentStep]}deg) translateY(${angles[currentStep] * -0.5}px)`;
+        });
+    });
+
+    // --- Sketchpad console (::draw): rewire the paint engine (fresh strokes)! ---
+    each('.aero-draw-console', function (box) {
+        const paintCanvas = box.querySelector('canvas.draw-surface-canvas');
+        if (!paintCanvas) return;
+        let ctx = null;
+        try { ctx = paintCanvas.getContext('2d'); } catch (e) {}
+        if (!ctx) return;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        const colorPicker = box.querySelector('.draw-picker-orb');
+        const sizeSlider = box.querySelector('.brush-size-slider');
+        const opacitySlider = box.querySelector('.brush-opacity-slider');
+        const clearBtn = box.querySelector('.draw-clear-orb');
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+        function coords(evt) {
+            const rect = paintCanvas.getBoundingClientRect();
+            return {
+                x: (evt.clientX - rect.left) * (paintCanvas.width / rect.width),
+                y: (evt.clientY - rect.top) * (paintCanvas.height / rect.height)
+            };
+        }
+        paintCanvas.addEventListener('mousedown', function (evt) {
+            isDrawing = true;
+            const c = coords(evt);
+            lastX = c.x;
+            lastY = c.y;
+        });
+        paintCanvas.addEventListener('mousemove', function (evt) {
+            if (!isDrawing) return;
+            const c = coords(evt);
+            const baseHex = colorPicker ? colorPicker.value : '#0369a1';
+            const alpha = opacitySlider ? (opacitySlider.value / 100) : 1;
+            const r = parseInt(baseHex.slice(1, 3), 16);
+            const g = parseInt(baseHex.slice(3, 5), 16);
+            const b = parseInt(baseHex.slice(5, 7), 16);
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(c.x, c.y);
+            ctx.strokeStyle = `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            ctx.lineWidth = sizeSlider ? sizeSlider.value : 4;
+            ctx.stroke();
+            lastX = c.x;
+            lastY = c.y;
+        });
+        paintCanvas.addEventListener('mouseup', function () { isDrawing = false; });
+        paintCanvas.addEventListener('mouseleave', function () { isDrawing = false; });
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                playAeroClickSound(350, 0.1);
+                ctx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+            });
+        }
+    });
+
+    return wired;
+}
+
+// ==========================================
+// PART 14: RIGHT FORMAT SIDEBAR (REMOVE FORMATTING)
+// Buttons act on the text selection when one exists inside the canvas,
+// otherwise they act on the whole document. The scope hint says which!
+// ==========================================
+var fmtWired = false;
+var FMT_HIGHLIGHT_SEL = '.gel-orb, .gel-bubble-chip, .aero-tag-chip, .aero-glass-badge-chip, ' +
+    'span[class*="gel-chip-"], span[class*="megachip-"], span[class*="droplet-"]';
+var FMT_EFFECT_SEL = '.spark-text, .liquid-underline, .glossy-border-badge, .cyber-glow-spark, ' +
+    '.liquid-text-glow, .aqua-bubble-text, .reflected-text-block, .embossed-glass-text, ' +
+    '.kinetic-wave-text, span[class*="effect-"], span[class*="mkt-"], span[class*="orange-hl-"], ' +
+    'span[class*="dev-chip-"], span[class*="av-chip-"], span[class*="jr-chip-"]';
+var FMT_INLINE_TAGS = 'b, strong, i, em, u, strike, s, font';
+
+// The live range when text is selected, else a range over the whole canvas!
+function fmtScopeRange() {
+    const sel = window.getSelection();
+    if (sel.rangeCount) {
+        const r = sel.getRangeAt(0);
+        if (!sel.isCollapsed && canvas.contains(r.commonAncestorContainer)) return { range: r, whole: false };
+    }
+    const full = document.createRange();
+    full.selectNodeContents(canvas);
+    return { range: full, whole: true };
+}
+
+function fmtScopeEl(scope) {
+    const container = scope.range.commonAncestorContainer;
+    const root = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+    return (root && canvas.contains(root)) ? root : canvas;
+}
+
+function fmtUpdateScopeHint() {
+    const hint = document.getElementById('format-scope-hint');
+    if (!hint || typeof canvas === 'undefined' || !canvas) return;
+    hint.textContent = fmtScopeRange().whole ? 'Scope: Document' : 'Scope: Selection';
+}
+
+function fmtUnwrap(el) {
+    // Lift real child nodes (never flatten!) so nested styles survive!
+    const parent = el.parentNode;
+    const moved = [];
+    while (el.firstChild) {
+        const kid = el.firstChild;
+        parent.insertBefore(kid, el);
+        moved.push(kid);
+    }
+    parent.removeChild(el);
+    return moved.length ? moved[moved.length - 1] : null;
+}
+
+// Unwrap only when truly bare (an emptied style="" still counts as an attribute)!
+function fmtStripBare(el) {
+    try {
+        if (el.hasAttribute && el.hasAttribute('style') && !(el.getAttribute('style') || '').trim()) {
+            el.removeAttribute('style');
+        }
+    } catch (e) {}
+    if (!el.attributes.length) fmtUnwrap(el);
+}
+
+// Self + every ancestor up to the canvas — nested styles hide up there!
+function fmtScopeChain(scopeEl) {
+    const chain = [scopeEl];
+    let p = scopeEl.parentElement;
+    while (p && (typeof canvas === 'undefined' || !canvas || canvas.contains(p))) {
+        chain.push(p);
+        p = p.parentElement;
+    }
+    return chain;
+}
+
+// One shared, mutation-proof sweep: snapshot candidates + the original range
+// ONCE, then test each candidate against the snapshot (never live nodes)!
+function fmtEachTouching(scopeEl, range, collect, fn, strict) {
+    const cac = range.commonAncestorContainer;
+    const cacPar = (cac.nodeType === Node.TEXT_NODE && cac.parentElement) ? cac.parentElement : null;
+    let root = null;
+    let snap = null;
+    try {
+        const node = cac;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        if (el && el.closest) {
+            const block = el.closest('div, p, li, h1, h2, h3, blockquote');
+            if (block && canvas.contains(block)) root = block;
+        }
+        if (!root) root = canvas;
+        const preS = range.cloneRange();
+        preS.selectNodeContents(root);
+        preS.setEnd(range.startContainer, range.startOffset);
+        const preE = range.cloneRange();
+        preE.selectNodeContents(root);
+        preE.setEnd(range.endContainer, range.endOffset);
+        snap = { s: preS.toString().length, e: preE.toString().length };
+    } catch (e) { snap = null; }
+    const owned = function (el) {
+        if (!el || el === cac) return true;
+        if (cacPar) {
+            if (el === cacPar) return true;
+            try { return cacPar.contains(el) && el !== cacPar; } catch (e) { return false; }
+        }
+        try { return !!(cac.contains && cac.contains(el)); } catch (e) { return false; }
+    };
+    const touches = function (el) {
+        // Strict mode (property stripping) skips ancestor context; unwrap
+        // mode keeps it — matching wrappers ARE the style being removed!
+        if (strict && !owned(el)) return false;
+        if (snap && root) {
+            try {
+                const r = document.createRange();
+                r.selectNodeContents(root);
+                r.setEnd(el, 0);
+                const s = r.toString().length;
+                const e = s + (el.textContent || '').length;
+                return s < snap.e && e > snap.s;
+            } catch (err) { return false; }
+        }
+        try { return range.intersectsNode(el); } catch (err) { return false; }
+    };
+    const cands = collect();
+    let count = 0;
+    cands.forEach(function (el) {
+        if (!el || el.isConnected === false) return;
+        if (touches(el) && fn(el)) count++;
+    });
+    return count;
+}
+
+// Unwrap every matching element touched by the scope (self included)!
+function fmtStripInScope(selector) {
+    if (typeof canvas === 'undefined' || !canvas) return 0;
+    const scope = fmtScopeRange();
+    const scopeEl = fmtScopeEl(scope);
+    const descs = scopeEl.querySelectorAll ? Array.from(scopeEl.querySelectorAll(selector)).reverse() : [];
+    const chain = fmtScopeChain(scopeEl).filter(function (el) {
+        if (!el.matches) return false;
+        try { return el.matches(selector); } catch (e) { return false; }
+    });
+    return fmtEachTouching(scopeEl, scope.range, function () { return descs.concat(chain); }, function (el) {
+        fmtUnwrap(el);
+        return true;
+    }, false);
+}
+
+// Run an execCommand across the scope, restoring the caret afterwards!
+// Manual fallback when execCommand is missing: unwrap the tag itself!
+function fmtUnwrapTagsInScope(tagList) {
+    if (typeof canvas === 'undefined' || !canvas) return 0;
+    const scope = fmtScopeRange();
+    const scopeEl = fmtScopeEl(scope);
+    let count = 0;
+    const tags = tagList.split(',').map(function (s) { return s.trim().toUpperCase(); });
+    const walker = document.createTreeWalker(scopeEl, NodeFilter.SHOW_ELEMENT);
+    const found = [];
+    let n;
+    while ((n = walker.nextNode())) {
+        if (tags.indexOf(n.tagName) !== -1) found.push(n);
+    }
+    found.reverse();
+    fmtScopeChain(scopeEl).forEach(function (el) {
+        if (tags.indexOf(el.tagName) !== -1 && found.indexOf(el) === -1) found.push(el);
+    });
+    return fmtEachTouching(scopeEl, scope.range, function () { return found; }, function (el) {
+        fmtUnwrap(el);
+        return true;
+    }, false);
+}
+
+var FMT_STYLE_TAGS = ['B', 'STRONG', 'I', 'EM', 'U', 'STRIKE', 'S', 'A', 'CODE'];
+var FMT_STYLE_SPAN_SEL = FMT_HIGHLIGHT_SEL + ', ' + FMT_EFFECT_SEL + ', span[class*="orange-hl-"], span[class*="green-hl-"], span[class*="blue-hl-"], span[class*="mkt-cp-"], span[class*="bcp-"], span[class*="pill-hl-"]';
+var FMT_INLINE_PROPS = [
+    { prop: 'fontWeight', cssProp: 'font-weight', css: 'bold', label: 'Bold', test: function (v) { return v === 'bold' || v === 'bolder' || parseInt(v, 10) >= 600; } },
+    { prop: 'fontStyle', cssProp: 'font-style', css: 'italic', label: 'Italic', test: function (v) { return v === 'italic' || v === 'oblique'; } },
+    { prop: 'textDecoration', cssProp: 'text-decoration', css: 'underline', label: 'Underline', test: function (v) { return (v || '').indexOf('underline') !== -1; } },
+    { prop: 'textDecoration', cssProp: 'text-decoration', css: 'line-through', label: 'Strikethrough', test: function (v) { return (v || '').indexOf('line-through') !== -1; } }
+];
+
+function fmtCheckInline(el, consider) {
+    if (!el || !el.style) return;
+    FMT_INLINE_PROPS.forEach(function (rule) {
+        let v = '';
+        try { v = el.style[rule.prop] || ''; } catch (e) {}
+        if (rule.test(v)) consider('inline:' + rule.prop + ':' + rule.css, { kind: 'inline', prop: rule.prop, cssProp: rule.cssProp, css: rule.css, label: rule.label, el: el });
+    });
+}
+
+function fmtTagLabel(tag) {
+    switch (tag) {
+        case 'B': case 'STRONG': return 'Bold';
+        case 'I': case 'EM': return 'Italic';
+        case 'U': return 'Underline';
+        case 'STRIKE': case 'S': return 'Strikethrough';
+        case 'FONT': return 'Font';
+        case 'A': return 'Link';
+        case 'CODE': return 'Code';
+        default: return tag;
+    }
+}
+
+// Extra selector covering INSTALLED Marketplace styles (future packs included)!
+function fmtMarketplaceSuffix() {
+    const sels = [];
+    try {
+        const M = window.WriteoutMarketplace;
+        if (!M || !M.catalog || typeof M.installed !== 'function') return '';
+        const installed = M.installed();
+        M.catalog.forEach(function (ext) {
+            if (installed.indexOf(ext.id) === -1) return;
+            let variants = [];
+            if (ext.kind === 'style-pack' && Array.isArray(ext.styles)) variants = ext.styles;
+            else if (ext.kind === 'toolbar-style' && ext.toolbarClass) variants = [{ className: ext.toolbarClass }];
+            variants.forEach(function (v) {
+                if (v.className) sels.push('span.' + String(v.className).trim().split(/\s+/).join('.'));
+            });
+        });
+    } catch (e) {}
+    return sels.length ? ', ' + sels.join(', ') : '';
+}
+
+// Every removable style touching the current selection!
+function fmtDetectStyles() {
+    const found = [];
+    if (typeof canvas === 'undefined' || !canvas) return found;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return found;
+    const range = sel.getRangeAt(0);
+    if (!canvas.contains(range.commonAncestorContainer)) return found;
+    const seen = {};
+    const consider = function (key, style) {
+        try {
+            if (!range.intersectsNode(style.el)) return;
+        } catch (e) { return; }
+        if (seen[key]) return;
+        seen[key] = true;
+        found.push(style);
+    };
+    const checkEl = function (el) {
+        if (!el || !el.tagName) return;
+        const tag = el.tagName;
+        if (FMT_STYLE_TAGS.indexOf(tag) !== -1) {
+            consider('tag:' + tag, { kind: 'tag', tag: tag, label: fmtTagLabel(tag), el: el });
+        } else if (tag === 'SPAN') {
+            if (el.className && typeof el.matches === 'function') {
+                try {
+                    if (el.matches(FMT_STYLE_SPAN_SEL + fmtMarketplaceSuffix())) {
+                        consider('cls:' + el.className, { kind: 'cls', cls: el.className, label: el.className, el: el });
+                    }
+                } catch (e) {}
+            }
+            fmtCheckInline(el, consider);
+        }
+    };
+    const container = range.commonAncestorContainer;
+    const root = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+    const scopeEl = (root && canvas.contains(root)) ? root : canvas;
+    checkEl(scopeEl);
+    if (scopeEl.querySelectorAll) {
+        scopeEl.querySelectorAll('b, strong, i, em, u, strike, s, a, code, span').forEach(checkEl);
+    }
+    // Walk UP too: nested styles live on ancestors above the common ancestor!
+    let ancestor = scopeEl.parentElement;
+    while (ancestor && canvas.contains(ancestor)) {
+        checkEl(ancestor);
+        ancestor = ancestor.parentElement;
+    }
+    return found;
+}
+
+// Run fn while keeping the user's selection anchored by block offsets!
+function fmtRescueSelection(fn) {
+    const sel = window.getSelection();
+    let saved = null;
+    if (sel.rangeCount) {
+        const r = sel.getRangeAt(0);
+        let node = r.commonAncestorContainer;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        const block = (el && el.closest) ? (el.closest('div, p, li, h1, h2, h3, blockquote') || canvas) : canvas;
+        if (canvas.contains(block)) {
+            try {
+                const preS = r.cloneRange();
+                preS.selectNodeContents(block);
+                preS.setEnd(r.startContainer, r.startOffset);
+                const preE = r.cloneRange();
+                preE.selectNodeContents(block);
+                preE.setEnd(r.endContainer, r.endOffset);
+                saved = { block: block, s: preS.toString().length, e: preE.toString().length };
+            } catch (err) { saved = null; }
+        }
+    }
+    const out = fn();
+    if (saved && canvas.contains(saved.block)) {
+        try {
+            const walker = document.createTreeWalker(saved.block, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            let n;
+            while ((n = walker.nextNode())) nodes.push(n);
+            if (nodes.length) {
+                const total = nodes.reduce(function (a, t) { return a + t.nodeValue.length; }, 0);
+                const point = function (abs) {
+                    abs = Math.max(0, Math.min(abs, total));
+                    let acc = 0;
+                    for (const t of nodes) {
+                        if (acc + t.nodeValue.length >= abs) return { node: t, off: abs - acc };
+                        acc += t.nodeValue.length;
+                    }
+                    const last = nodes[nodes.length - 1];
+                    return { node: last, off: last.nodeValue.length };
+                };
+                const a = point(saved.s);
+                const b = point(saved.e);
+                const nr = document.createRange();
+                nr.setStart(a.node, a.off);
+                nr.setEnd(b.node, b.off);
+                sel.removeAllRanges();
+                sel.addRange(nr);
+            }
+        } catch (err) {}
+    }
+    return out;
+}
+
+function fmtRemoveStyle(style) {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return 0;
+    if (style.kind === 'tag') return fmtUnwrapTagsInScope(style.tag);
+    if (style.kind === 'inline') {
+        const range = sel.getRangeAt(0);
+        if (!canvas.contains(range.commonAncestorContainer)) return 0;
+        const scope = { range: range };
+        const scopeEl = fmtScopeEl(scope);
+        const cands = [];
+        if (scopeEl.querySelectorAll) Array.from(scopeEl.querySelectorAll('span')).reverse().forEach(function (el) { cands.push(el); });
+        fmtScopeChain(scopeEl).forEach(function (el) { if (el.tagName === 'SPAN') cands.push(el); });
+        return fmtEachTouching(scopeEl, range, function () { return cands; }, function (el) {
+            let v = '';
+            try { v = el.style ? (el.style[style.prop] || '') : ''; } catch (e) {}
+            if (!v) return false;
+            try { el.style.removeProperty(style.cssProp); } catch (e) {}
+            fmtStripBare(el);
+            return true;
+        }, true);
+    }
+    return fmtStripInScope('[class="' + style.cls + '"]');
+}
+
+function fmtRenderStyleList() {
+    const list = document.getElementById('format-style-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const sel = window.getSelection();
+    const hasSel = sel.rangeCount && !sel.isCollapsed &&
+        typeof canvas !== 'undefined' && canvas && canvas.contains(sel.getRangeAt(0).commonAncestorContainer);
+    if (!hasSel) {
+        const p = document.createElement('p');
+        p.className = 'format-empty';
+        p.textContent = 'Select text to see its styles.';
+        list.appendChild(p);
+        return;
+    }
+    const styles = fmtDetectStyles();
+    if (!styles.length) {
+        const p = document.createElement('p');
+        p.className = 'format-empty';
+        p.textContent = 'No removable styles here.';
+        list.appendChild(p);
+        return;
+    }
+    styles.forEach(function (style) {
+        const row = document.createElement('div');
+        row.className = 'fmt-style-row';
+        const preview = document.createElement('span');
+        preview.className = 'fmt-style-preview';
+        const sample = document.createElement(style.kind === 'tag' ? style.tag.toLowerCase() : 'span');
+        if (style.kind === 'cls') sample.className = style.cls;
+        if (style.kind === 'inline') { try { sample.style[style.prop] = style.css; } catch (e) {} }
+        sample.textContent = 'Ab';
+        preview.appendChild(sample);
+        const name = document.createElement('span');
+        name.className = 'fmt-style-name';
+        name.textContent = style.label;
+        name.title = style.label;
+        const x = document.createElement('button');
+        x.type = 'button';
+        x.className = 'fmt-style-x';
+        x.textContent = '✕';
+        x.title = 'Remove ' + style.label;
+        x.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        x.addEventListener('click', function (e) {
+            e.stopPropagation();
+            playAeroClickSound(350, 0.1);
+            fmtRescueSelection(function () { return fmtRemoveStyle(style); });
+            if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            fmtRenderStyleList();
+            fmtUpdateScopeHint();
+            fmtUpdateResetButtons();
+        });
+        row.appendChild(preview);
+        row.appendChild(name);
+        row.appendChild(x);
+        list.appendChild(row);
+    });
+}
+
+function fmtWireSidebar() {
+    if (fmtWired) return;
+    fmtWired = true;
+    fmtRenderStyleList();
+    const toggle = document.getElementById('format-toggle-zone');
+    if (toggle) toggle.addEventListener('click', function () {
+        playAeroClickSound(450, 0.12);
+        const collapsed = document.body.classList.toggle('format-collapsed');
+        const panel = document.getElementById('format-sidebar');
+        if (!collapsed && panel && typeof panel.focus === 'function') {
+            try { panel.focus(); } catch (e) {}
+        }
+    });
+}
+
+if (typeof canvas !== 'undefined' && canvas) {
+    fmtWireSidebar();
+    const fmtRefresh = function () { fmtUpdateScopeHint(); fmtRenderStyleList(); };
+    canvas.addEventListener('keyup', fmtRefresh);
+    canvas.addEventListener('mouseup', fmtRefresh);
+    document.addEventListener('selectionchange', fmtRefresh);
+    document.addEventListener('DOMContentLoaded', function () {
+        fmtWireSidebar();
+        fmtRefresh();
+        fmtUpdateResetButtons();
+    });
+}
+
+// ==========================================
+// PART 15: DOCUMENT OUTLINE NAVIGATOR
+// Live heading index in the left sidebar: click to jump,
+// active row follows your caret!
+// ==========================================
+function kdOutlineJump(el) {
+    if (!el || typeof canvas === 'undefined' || !canvas) return;
+    try {
+        canvas.focus();
+        const r = document.createRange();
+        r.selectNodeContents(el);
+        r.collapse(true);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(r);
+        if (typeof el.scrollIntoView === 'function') {
+            try { el.scrollIntoView({ block: 'start' }); } catch (e) { el.scrollIntoView(); }
+        }
+    } catch (e) {}
+}
+
+function kdActiveHeading() {
+    if (typeof canvas === 'undefined' || !canvas) return null;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return null;
+    const heads = Array.from(canvas.querySelectorAll('h1, h2, h3'));
+    if (!heads.length) return null;
+    const caret = sel.getRangeAt(0);
+    let current = null;
+    heads.forEach(function (h) {
+        try {
+            const hr = document.createRange();
+            hr.selectNodeContents(h);
+            hr.collapse(true);
+            if (caret.compareBoundaryPoints(window.Range.START_TO_START, hr) >= 0) current = h;
+        } catch (e) {}
+    });
+    return current;
+}
+
+function kdRenderOutline() {
+    const list = document.getElementById('doc-outline-list');
+    if (!list || typeof canvas === 'undefined' || !canvas) return;
+    list.innerHTML = '';
+    const heads = Array.from(canvas.querySelectorAll('h1, h2, h3'));
+    if (!heads.length) {
+        const p = document.createElement('p');
+        p.className = 'outline-empty';
+        p.textContent = 'No headings yet.';
+        list.appendChild(p);
+        return;
+    }
+    const active = kdActiveHeading();
+    heads.forEach(function (h) {
+        const level = h.tagName === 'H1' ? 1 : (h.tagName === 'H2' ? 2 : 3);
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'outline-item outline-item-l' + level + (h === active ? ' active' : '');
+        btn.textContent = h.textContent.trim().substring(0, 60) || ('Heading ' + level);
+        btn.title = h.textContent.trim();
+        btn.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            kdOutlineJump(h);
+            kdRenderOutline();
+        });
+        list.appendChild(btn);
+    });
+}
+
+if (typeof canvas !== 'undefined' && canvas) {
+    const kdOutlineRefresh = function () { kdRenderOutline(); };
+    canvas.addEventListener('input', kdOutlineRefresh);
+    canvas.addEventListener('keyup', kdOutlineRefresh);
+    canvas.addEventListener('mouseup', kdOutlineRefresh);
+    document.addEventListener('selectionchange', kdOutlineRefresh);
+    document.addEventListener('DOMContentLoaded', function () {
+        kdRenderOutline();
+    });
+    const outlineToggle = document.getElementById('outline-toggle-btn');
+    if (outlineToggle) outlineToggle.addEventListener('click', function () {
+        playAeroClickSound(450, 0.1);
+        const section = document.querySelector('.outline-section');
+        if (section) section.classList.toggle('collapsed');
+    });
+}
+
+// ==========================================
+// PART 16: DOCUMENT TABS (PAGES IN ONE DOCUMENT)
+// Each tab is its own document; outlines nest inside tabs;
+// everything persists to localStorage AND inside .kd files!
+// ==========================================
+var kdTabs = [];
+var kdActiveTabId = null;
+var kdExpandedTabs = {};
+var KD_TABS_KEY = 'writeout_tabs_v1';
+var KD_TAB_ACTIVE_KEY = 'writeout_tabs_active';
+
+function kdTabId() {
+    return 'tab-' + Date.now().toString(36) + '-' + Math.floor(Math.random() * 1e6).toString(36);
+}
+
+function kdActiveTab() {
+    for (let i = 0; i < kdTabs.length; i++) {
+        if (kdTabs[i].id === kdActiveTabId) return kdTabs[i];
+    }
+    return kdTabs[0] || null;
+}
+
+function kdSaveTabs() {
+    try {
+        localStorage.setItem(KD_TABS_KEY, JSON.stringify(kdTabs));
+        localStorage.setItem(KD_TAB_ACTIVE_KEY, kdActiveTabId || '');
+    } catch (e) {}
+}
+
+function kdLoadTabs() {
+    // Fresh start, every start: wipe all pages + outlines, then seed one empty Main!
+    try {
+        localStorage.removeItem(KD_TABS_KEY);
+        localStorage.removeItem(KD_TAB_ACTIVE_KEY);
+        localStorage.removeItem('writedown_save_slot_1');
+        localStorage.removeItem('writedown_save_slot_2');
+    } catch (e) {}
+    kdTabs = [{ id: kdTabId(), name: 'Main', html: '' }];
+    kdActiveTabId = kdTabs[0].id;
+    kdExpandedTabs = {};
+    kdSaveTabs();
+}
+
+function kdTabHeadings(tab) {
+    try {
+        const tmp = document.createElement('div');
+        tmp.innerHTML = tab.html || '';
+        return Array.from(tmp.querySelectorAll('h1, h2, h3')).map(function (h) {
+            return { level: h.tagName === 'H1' ? 1 : (h.tagName === 'H2' ? 2 : 3), text: (h.textContent || '').trim().substring(0, 60) || ('Heading') };
+        });
+    } catch (e) { return []; }
+}
+
+function kdActivateTab(id, headIdx) {
+    const tab = kdTabs.find(function (t) { return t.id === id; });
+    if (!tab || typeof canvas === 'undefined' || !canvas) return;
+    const cur = kdActiveTab();
+    if (cur) cur.html = canvas.innerHTML;
+    kdActiveTabId = id;
+    canvas.innerHTML = tab.html || '';
+    kdSaveTabs();
+    kdHydrateInteractions();
+    kdRenderTabs();
+    kdRenderOutline();
+    if (typeof headIdx === 'number') {
+        const heads = canvas.querySelectorAll('h1, h2, h3');
+        if (heads[headIdx]) kdOutlineJump(heads[headIdx]);
+    } else {
+        try {
+            const r = document.createRange();
+            r.selectNodeContents(canvas);
+            r.collapse(true);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(r);
+            canvas.focus();
+        } catch (e) {}
+    }
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+}
+
+function kdRenderTabs() {
+    const list = document.getElementById('doc-tabs-list');
+    if (!list) return;
+    list.innerHTML = '';
+    kdTabs.forEach(function (tab) {
+        const row = document.createElement('div');
+        row.className = 'tab-row';
+        const heads = kdTabHeadings(tab);
+        if (heads.length) {
+            const exp = document.createElement('button');
+            exp.type = 'button';
+            exp.className = 'outline-toggle';
+            exp.title = kdExpandedTabs[tab.id] ? 'Hide outline' : 'Show outline';
+            exp.textContent = kdExpandedTabs[tab.id] ? '▾' : '▸';
+            exp.addEventListener('click', function (e) {
+                e.stopPropagation();
+                playAeroClickSound(500, 0.06);
+                if (kdExpandedTabs[tab.id]) delete kdExpandedTabs[tab.id];
+                else kdExpandedTabs[tab.id] = true;
+                kdRenderTabs();
+            });
+            row.appendChild(exp);
+        }
+        const name = document.createElement('button');
+        name.type = 'button';
+        name.className = 'outline-item' + (tab.id === kdActiveTabId ? ' active' : '');
+        name.textContent = tab.name;
+        name.title = tab.name;
+        name.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            kdActivateTab(tab.id);
+        });
+        name.addEventListener('dblclick', function () {
+            if (typeof window.prompt !== 'function') return;
+            let next = null;
+            try { next = window.prompt('Rename page', tab.name); } catch (e) { return; }
+            if (next && next.trim()) {
+                tab.name = next.trim().substring(0, 60);
+                kdSaveTabs();
+                kdRenderTabs();
+            }
+        });
+        row.appendChild(name);
+        if (kdTabs.length > 1) {
+            const close = document.createElement('button');
+            close.type = 'button';
+            close.className = 'outline-toggle';
+            close.textContent = '✕';
+            close.title = 'Close page';
+            close.addEventListener('click', function (e) {
+                e.stopPropagation();
+                let ok = true;
+                if (tab.html && tab.html.trim()) {
+                    try { ok = !window.confirm || window.confirm('Delete page "' + tab.name + '"?') !== false; }
+                    catch (err) { ok = true; }
+                }
+                if (!ok) return;
+                playAeroClickSound(350, 0.1);
+                kdTabs = kdTabs.filter(function (t) { return t.id !== tab.id; });
+                delete kdExpandedTabs[tab.id];
+                if (kdActiveTabId === tab.id) {
+                    kdActiveTabId = kdTabs[0].id;
+                    canvas.innerHTML = kdTabs[0].html || '';
+                    kdHydrateInteractions();
+                    kdRenderOutline();
+                }
+                kdSaveTabs();
+                kdRenderTabs();
+            });
+            row.appendChild(close);
+        }
+        list.appendChild(row);
+        if (kdExpandedTabs[tab.id]) {
+            heads.forEach(function (h, idx) {
+                const hb = document.createElement('button');
+                hb.type = 'button';
+                hb.className = 'outline-item tab-head outline-item-l' + h.level;
+                hb.textContent = h.text;
+                hb.title = h.text;
+                hb.addEventListener('click', function () {
+                    playAeroClickSound(600, 0.08);
+                    kdActivateTab(tab.id, idx);
+                });
+                list.appendChild(hb);
+            });
+        }
+    });
+}
+
+// --- Tabs fence inside .kd files (appended after the canvas HTML!) ---
+function kdTabsFence() {
+    let out = '\n---tabs---\n';
+    kdTabs.forEach(function (t) {
+        const html = (t.id === kdActiveTabId && typeof canvasViewport !== 'undefined' && canvasViewport)
+            ? canvasViewport.innerHTML : t.html;
+        out += '- name: ' + JSON.stringify(t.name) + '\n';
+        out += '  html: ' + JSON.stringify(html || '') + '\n';
+    });
+    return out;
+}
+
+function kdParseTabsFence(text) {
+    const marker = '\n---tabs---\n';
+    const idx = text.indexOf(marker);
+    if (idx === -1) return { html: text, tabs: null };
+    const tabs = [];
+    let cur = null;
+    text.substring(idx + marker.length).split('\n').forEach(function (ln) {
+        let m = ln.match(/^\s*-\s*name:\s*(.*)\s*$/);
+        if (m) {
+            cur = { name: '', html: '' };
+            tabs.push(cur);
+            try { cur.name = JSON.parse(m[1]); } catch (e) { cur.name = m[1]; }
+            return;
+        }
+        m = ln.match(/^\s*html:\s*(.*)\s*$/);
+        if (m && cur) {
+            try { cur.html = JSON.parse(m[1]); } catch (e) { cur.html = m[1]; }
+        }
+    });
+    return { html: text.substring(0, idx), tabs: tabs.length ? tabs : null };
+}
+
+function kdRestoreTabs(tabs) {
+    kdTabs = tabs.map(function (t) {
+        return { id: kdTabId(), name: String(t.name || 'Untitled').substring(0, 60), html: typeof t.html === 'string' ? t.html : '' };
+    });
+    if (!kdTabs.length) kdTabs = [{ id: kdTabId(), name: 'Main', html: '' }];
+    kdActiveTabId = kdTabs[0].id;
+    kdExpandedTabs = {};
+    kdSaveTabs();
+    return kdTabs[0].html || '';
+}
+
+if (typeof canvas !== 'undefined' && canvas) {
+    kdLoadTabs();
+    try { canvas.innerHTML = (kdActiveTab() || {}).html || ''; } catch (e) {}
+    kdRenderTabs();
+    kdRenderOutline();
+    kdHydrateInteractions();
+    canvas.addEventListener('input', function () {
+        const t = kdActiveTab();
+        if (t) {
+            t.html = canvas.innerHTML;
+            kdSaveTabs();
+        }
+        kdRenderTabs();
+        kdRenderOutline();
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        kdRenderTabs();
+        kdRenderOutline();
+    });
+    const tabsAddBtn = document.getElementById('tabs-add-btn');
+    if (tabsAddBtn) tabsAddBtn.addEventListener('click', function () {
+        playAeroClickSound(700, 0.1);
+        let n = kdTabs.length + 1;
+        while (kdTabs.some(function (t) { return t.name === 'Page ' + n; })) n++;
+        kdTabs.push({ id: kdTabId(), name: 'Page ' + n, html: '' });
+        kdSaveTabs();
+        kdActivateTab(kdTabs[kdTabs.length - 1].id);
+    });
+    const tabsToggleBtn = document.getElementById('tabs-toggle-btn');
+    if (tabsToggleBtn) tabsToggleBtn.addEventListener('click', function () {
+        playAeroClickSound(450, 0.1);
+        const section = document.querySelector('.tabs-section');
+        if (section) section.classList.toggle('collapsed');
+    });
+}
