@@ -14,13 +14,15 @@
     <script src="https://iconify.design"></script>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="keydown.css">
+    <link rel="stylesheet" href="marketplace.css">
+    <link rel="stylesheet" href="settings.css">
     <link rel="icon" type="image/svg+xml" href="/writeout/favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body>
 
     <!-- 3D Liquid-Gel Sidebar Navigation Dock Frame -->
-    <nav id="sidebar" class="aero-sidebar">
+    <nav id="sidebar" class="aero-sidebar" tabindex="-1">
         <div class="sidebar-brand">
             <h2>Writeout</h2>
         </div>
@@ -29,13 +31,26 @@
         <div class="pad-selection-stack">
             <input type="file" id="file-loader-gate" style="display: none;" onchange="importKeydownFile(event)">
             
-            <button class="pad-toggle-btn active" onclick="exportKeydownFile()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-	                <path d="M0 0h24v24H0z" fill="none" />
-	                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v16m8-7.5a15.46 15.46 0 0 0-6.493 5.334L12 18l-1.507-2.166A15.46 15.46 0 0 0 4 10.5M17 22H7" />
-                </svg>
-                Export .kd
-            </button>
+            <div class="download-wrap" style="position: relative;">
+                <button id="download-menu-btn" class="pad-toggle-btn" onclick="toggleDownloadMenu(event)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v16m8-7.5a15.46 15.46 0 0 0-6.493 5.334L12 18l-1.507-2.166A15.46 15.46 0 0 0 4 10.5M17 22H7" />
+                    </svg>
+                    Download...
+                </button>
+                <div id="download-menu" class="download-popup" style="display: none;">
+                    <button class="download-item" data-fmt="kd"><b>.KD</b><span>Keydown document</span></button>
+                    <button class="download-item" data-fmt="pdf"><b>PDF</b><span>Via print dialog</span></button>
+                    <button class="download-item" data-fmt="docx"><b>DOCX</b><span>Word document</span></button>
+                    <button class="download-item" data-fmt="odt"><b>ODT</b><span>LibreOffice</span></button>
+                    <button class="download-item" data-fmt="txt"><b>TXT</b><span>Plain text</span></button>
+                    <button class="download-item" data-fmt="epub"><b>EPUB</b><span>E-book file</span></button>
+                    <button class="download-item" data-fmt="jpeg"><b>JPEG</b><span>Image snapshot</span></button>
+                    <button class="download-item" data-fmt="svg"><b>SVG</b><span>Vector snapshot</span></button>
+                    <button class="download-item" data-fmt="web"><b>Web</b><span>HTML + CSS zip</span></button>
+                </div>
+            </div>
             <button class="pad-toggle-btn" onclick="document.getElementById('file-loader-gate').click()">
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
 	                <path d="M0 0h24v24H0z" fill="none" />
@@ -50,6 +65,44 @@
                 </svg>
                 Print as Page
             </button>
+            <button id="marketplace-trigger-btn" class="pad-toggle-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22V11.93M2 7.036C5.643 5.944 8.843 4.07 12 2c0 0 3.555 1.7 5 2.447l5 2.59c0 3.062-.06 9.467-.06 9.467C18.886 18.807 15.625 20.726 12 22l-9.94-5.497S2 10.1 2 7.036m10 4.894L7 9.483m5 2.447c3.62-1.047 6.91-2.764 10-4.894M7 9.484c3.625-1.101 6.914-2.865 10-5.037M2 7.037l5 2.447m0 0v2.446" />
+                </svg>
+                Marketplace
+            </button>
+        </div>
+
+        <!-- Pages + Outline scroll box (one tidy scroller!) -->
+        <div class="side-scroll-box">
+        <!-- Document Tabs (pages inside one document!) -->
+        <div class="tabs-section side-section">
+            <div class="outline-head-row">
+                <h3 class="outline-heading">Pages</h3>
+                <button id="tabs-add-btn" class="outline-toggle" title="Add page">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                </button>
+                <button id="tabs-toggle-btn" class="outline-toggle" title="Collapse pages">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/></svg>
+                </button>
+            </div>
+            <div id="doc-tabs-list" class="tabs-list"></div>
+        </div>
+
+        <!-- Document Outline Navigator -->
+        <div class="outline-section side-section">
+            <div class="outline-head-row">
+                <h3 class="outline-heading">Outline</h3>
+                <button id="outline-toggle-btn" class="outline-toggle" title="Collapse outline">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7" />
+                    </svg>
+                </button>
+            </div>
+            <div id="doc-outline-list" class="outline-list"></div>
+        </div>
         </div>
 
         <div class="sidebar-footer-controls">
@@ -58,7 +111,7 @@
         </div>
 
         <div id="toggle-zone" class="latch-toggle-strip">
-            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+            <svg id="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
                 <path d="M0 0h24v24H0z" fill="none" />
                 <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 19a18 18 0 0 0-7-7a18 18 0 0 0 7-7" />
             </svg>
@@ -199,6 +252,16 @@
                     <button class="effect-swatch-item tag-chip-sl" data-class="aero-tag-chip tag-chip-sl" title="Tag SL"></button>
                 </div>
             </div>
+
+            <!-- Dropdown 5: Marketplace Downloads Inbox (only visible with installed extensions) -->
+            <div class="aero-dropdown" id="mkt-inbox-dropdown" style="display: none;">
+                <button class="style-bar-btn dropdown-toggle" title="Marketplace downloads">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.278 13h4.089c2.203 0 2.353 3.445 4.6 3.444h2.066c2.255 0 2.378-3.444 4.6-3.444h4.09m-17-9.767l-2.403 8.72a9 9 0 0 0-.32 2.36v5.465A2.244 2.244 0 0 0 4.222 22h15.556A2.244 2.244 0 0 0 22 19.778v-5.465a9 9 0 0 0-.32-2.36l-2.402-8.72A2.26 2.26 0 0 0 17.288 2A25.7 25.7 0 0 1 6.711 2a2.26 2.26 0 0 0-1.989 1.233" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
+                    </button>
+                <div id="mkt-styles-tray" class="dropdown-menu highlight-grid-menu effect-grid-menu">
+                </div>
+            </div>
         </div>
 
        <!-- 2. New Line Block Toolbar (Appears on an empty new line) -->
@@ -238,7 +301,18 @@
         -->
         </div>
         
-        <div id="top-format-bar" class="aero-format-ribbon">
+        <div id="top-format-bar" class="aero-format-ribbon"></div>
+
+        <div id="wysiwyg-canvas" contenteditable="true" placeholder="Start typing your rich document text here..."></div>
+    </main>
+
+    <!-- Right Format Controls Sidebar (remove formatting from text!) -->
+    <aside id="format-sidebar" class="format-sidebar" aria-label="Format controls" tabindex="-1">
+        <div class="format-brand">
+            <h2>Format</h2>
+        </div>
+        <div id="format-text-controls" class="format-text-controls">
+            <h3 class="format-sub">Text</h3>
             <!-- Font Family Dropdown -->
             <select class="format-control" data-edit-action="fontName">
                 <option value="JetBrains Mono">JetBrains Mono</option>
@@ -259,21 +333,39 @@
                 <option value="7">Huge</option>
             </select>
 
-            <span class="ribbon-separator"></span>
-
             <!-- Text Color Picker -->
             <label class="color-picker-label" title="Text Color">
                 🎨 <input type="color" data-edit-action="foreColor" value="#000000">
+                <button type="button" class="color-reset-btn" data-reset-action="foreColor" title="Reset to inherited color">↺</button>
             </label>
 
-            <!-- Highlight / Background Color Picker -->
-            <label class="color-picker-label" title="Highlight Color">
-                🖌️ <input type="color" data-edit-action="hiliteColor" value="#ffffff">
-            </label>
+            <!-- Paragraph Alignment -->
+            <div class="fmt-align-row" role="group" aria-label="Paragraph alignment">
+                <button type="button" class="fmt-align-btn" data-align="left" title="Align left">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M1 3h10M1 6h14M1 9h10M1 12h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" data-align="center" title="Align center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M3 3h10M1 6h14M3 9h10M1 12h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" data-align="right" title="Align right">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M5 3h10M1 6h14M5 9h10M1 12h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" data-align="justify" title="Justify">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M1 3h14M1 6h14M1 9h14M1 12h14" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"/></svg>
+                </button>
+            </div>
         </div>
+        <div id="format-scope-hint" class="format-scope">Scope: Document</div>
+        <div id="format-style-list" class="format-style-list"></div>
+    </aside>
 
-        <div id="wysiwyg-canvas" contenteditable="true" placeholder="Start typing your rich document text here..."></div>
-    </main>
+    <!-- Format sidebar collapse latch (stays visible when collapsed!) -->
+    <div id="format-toggle-zone" class="format-latch-toggle-strip" title="Toggle format sidebar">
+        <svg id="format-toggle-icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.5 19a18 18 0 0 1 7-7a18 18 0 0 1-7-7" />
+        </svg>
+    </div>
     
     <!-- Help Deck Dialog Box -->
     <dialog id="help-deck-dialog" class="aero-dialog-box" style="padding: 24px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.6); background: linear-gradient(135deg, rgba(240,248,255,0.95), rgba(210,230,250,0.95)); box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 500px; width: 100%;">
@@ -286,12 +378,61 @@
             <p style="margin: 0;"><b>📦 Megachips & Badges:</b> Use advanced tags like plasma pods, glass brackets, and circuit nodes.</p>
             <p style="margin: 0;"><b>\ Escape Mechanic:</b> Type <code>\\</code> and hit space to cleanly exit a formatting tag and type unformatted text on the right.</p>
             <p style="margin: 0;"><b>💾 YAML Export:</b> Save your workspace anytime into a clean <code>.kd</code> snapshot file.</p>
+            <p style="margin: 0;"><b>⬇️ Download...:</b> Export your page as <code>.kd</code>, <code>.pdf</code>, <code>.docx</code>, <code>.odt</code>, <code>.txt</code>, <code>.epub</code>, <code>.jpg</code>, <code>.svg</code>, or a web <code>.zip</code>!</p>
+            <p style="margin: 0;"><b>📄 Pages:</b> Add tabs for separate documents — each keeps its own outline, and all travel inside one <code>.kd</code> file!</p>
         </div>
         <div style="margin-top: 24px; text-align: right;">
             <button onclick="document.getElementById('help-deck-dialog').close()" class="style-bar-btn" style="padding: 6px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">Got It!</button>
         </div>
     </dialog>
 
+    <!-- Marketplace Dialog Box -->
+    <dialog id="marketplace-dialog" class="aero-dialog-box marketplace-dialog">
+        <div class="mkt-header">
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" /><path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" /></g></svg> Marketplace <span id="mkt-installed-count" class="mkt-installed-pill">0 installed</span></h3>
+            <button id="marketplace-close-btn" class="mkt-close-btn" title="Close">✕</button>
+        </div>
+        <div class="mkt-toolbar-row">
+            <input id="marketplace-search" class="mkt-search" type="text" placeholder="Search extensions..." />
+            <label class="mkt-toggle" title="Show only extensions you haven't installed yet">
+                <input type="checkbox" id="marketplace-hide-installed" />
+                <span>New only</span>
+            </label>
+        </div>
+        <div class="mkt-tabs">
+            <button class="mkt-tab active" data-cat="all">All</button>
+            <button class="mkt-tab" data-cat="styles">Keydown Styles</button>
+            <button class="mkt-tab" data-cat="utilities">Utilities</button>
+            <button class="mkt-tab" data-cat="themes">Themes</button>
+        </div>
+        <div id="marketplace-grid" class="mkt-grid"></div>
+        <div class="mkt-footer">
+            <p class="mkt-footer-note">Extensions persist in localStorage across sessions.</p>
+            <button id="marketplace-reset-btn" class="mkt-reset-btn">Remove all</button>
+        </div>
+    </dialog>
+
+    <!-- Settings Modal Overlay -->
+    <div id="settings-modal-overlay" class="modal-blur-gate">
+        <div class="embossed-dialogue-chassis">
+            <div class="dialog-header">
+                <h3>⚙️ Settings</h3>
+                <button id="settings-close-btn">✕</button>
+            </div>
+            <div class="dialog-body-scroll">
+                <h4>Appearance — Canvas Theme</h4>
+                <div id="settings-theme-list"></div>
+                <h4>Danger Zone</h4>
+                <button id="btn-wipe-history" class="tactile-alert-plate-btn">WIPE ALL PAD HISTORY</button>
+            </div>
+            <div class="dialog-footer">
+                <button id="settings-confirm-btn" class="dialog-confirm-orb">Done</button>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
+    <script src="marketplace.js"></script>
+    <script src="settings.js"></script>
 </body>
 </html>
