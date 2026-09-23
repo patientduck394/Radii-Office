@@ -12,10 +12,10 @@
     <title>Writeout - Radii Office</title>
     <!-- Universal Open-Source Vector Glyphs -->
     <script src="https://iconify.design"></script>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="keydown.css">
-    <link rel="stylesheet" href="marketplace.css">
-    <link rel="stylesheet" href="settings.css">
+    <link rel="stylesheet" href="style.css?v=20260923">
+    <link rel="stylesheet" href="keydown.css?v=20260923">
+    <link rel="stylesheet" href="marketplace.css?v=20260923">
+    <link rel="stylesheet" href="settings.css?v=20260923">
     <link rel="icon" type="image/svg+xml" href="/writeout/favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
@@ -301,7 +301,21 @@
         -->
         </div>
         
-        <div id="top-format-bar" class="aero-format-ribbon"></div>
+        <div id="top-format-bar" class="aero-format-ribbon">
+            <div class="insert-menu-wrap">
+                <button type="button" id="insert-menu-btn" class="style-tool-btn" title="Insert...">+ Insert</button>
+                <div id="insert-menu-popup" class="aero-palette-menu" style="display: none;">
+                    <button type="button" class="insert-item" data-insert="timestamp"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2" /><path d="M12 7v5l3 2" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>Timestamp</button>
+                    <button type="button" class="insert-item" data-insert="date"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><rect x="3" y="5" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2" /><path d="M3 10h18M8 3v4M16 3v4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" /></svg>Date</button>
+                    <button type="button" class="insert-item" data-insert="divider"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M4 12h16" fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" /></svg>Divider</button>
+                    <button type="button" class="insert-item" data-insert="image"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><rect x="3" y="4" width="18" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2" /><circle cx="9" cy="10" r="2" fill="none" stroke="currentColor" stroke-width="2" /><path d="M3 18l6-6 4 4 4-4 4 4" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>Image...</button>
+                    <button type="button" class="insert-item" data-insert="file"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>File...</button>
+                    <button type="button" class="insert-item" data-insert="link"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>Link...</button>
+                </div>
+            </div>
+        </div>
+        <input type="file" id="insert-image-input" accept="image/*" hidden>
+        <input type="file" id="insert-file-input" hidden>
 
         <div class="canvas-scrollbox">
         <div id="wysiwyg-canvas" contenteditable="true" placeholder="Start typing your rich document text here..."></div>
@@ -383,6 +397,25 @@
         </div>
         </div>
         <div id="format-group-style" hidden>
+        <div class="style-picker-row">
+            <button type="button" class="fmt-align-btn style-picker-btn" id="style-add-btn" title="Add a style">+ Add Style</button>
+        </div>
+        <div id="style-picker-popup" hidden>
+            <div class="style-picker-head">
+                <div class="format-segmented tiny" id="style-picker-tabs" role="tablist" aria-label="Style source">
+                    <button type="button" class="format-segment-btn active" data-picker-tab="default">Default</button>
+                    <button type="button" class="format-segment-btn" data-picker-tab="ext" title="Extensions" aria-label="Extensions"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.278 13h4.089c2.203 0 2.353 3.445 4.6 3.444h2.066c2.255 0 2.378-3.444 4.6-3.444h4.09m-17-9.767l-2.403 8.72a9 9 0 0 0-.32 2.36v5.465A2.244 2.244 0 0 0 4.222 22h15.556A2.244 2.244 0 0 0 22 19.778v-5.465a9 9 0 0 0-.32-2.36l-2.402-8.72A2.26 2.26 0 0 0 17.288 2A25.7 25.7 0 0 1 6.711 2a2.26 2.26 0 0 0-1.989 1.233" /></svg></button>
+                </div>
+                <button type="button" id="style-picker-x" title="Close">✕</button>
+            </div>
+            <div id="style-picker-list"></div>
+            <div class="style-picker-foot">
+                <div class="style-picker-views" role="group" aria-label="Picker view">
+                    <button type="button" class="style-picker-view active" data-picker-view="list" title="List view" aria-label="List view"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6h12M9 12h12M9 18h12M3 6h2m-2 6h2m-2 6h2" /></svg></button>
+                    <button type="button" class="style-picker-view" data-picker-view="mini" title="Mini view" aria-label="Mini view"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 4.4A2.4 2.4 0 0 1 4.4 2h3.2A2.4 2.4 0 0 1 10 4.4v3.2A2.4 2.4 0 0 1 7.6 10H4.4A2.4 2.4 0 0 1 2 7.6zm0 12A2.4 2.4 0 0 1 4.4 14h3.2a2.4 2.4 0 0 1 2.4 2.4v3.2A2.4 2.4 0 0 1 7.6 22H4.4A2.4 2.4 0 0 1 2 19.6zm12-12A2.4 2.4 0 0 1 16.4 2h3.2A2.4 2.4 0 0 1 22 4.4v3.2a2.4 2.4 0 0 1-2.4 2.4h-3.2A2.4 2.4 0 0 1 14 7.6zm0 12a2.4 2.4 0 0 1 2.4-2.4h3.2a2.4 2.4 0 0 1 2.4 2.4v3.2a2.4 2.4 0 0 1-2.4 2.4h-3.2a2.4 2.4 0 0 1-2.4-2.4z" /></svg></button>
+                </div>
+            </div>
+        </div>
         <div id="format-scope-hint" class="format-scope">Scope: Document</div>
         <div id="format-style-list" class="format-style-list"></div>
         </div>
@@ -394,6 +427,9 @@
                 <button type="button" class="format-segment-btn active" data-orient="portrait">Portrait</button>
                 <button type="button" class="format-segment-btn" data-orient="landscape">Landscape</button>
             </div>
+            <h3 class="format-sub">Protected</h3>
+            <input type="password" id="format-doc-password" class="format-control" placeholder="Set a password..." autocomplete="off">
+            <p class="format-doc-note">Locks this doc on next open!</p>
             <p class="format-doc-note">Stored in <code>.KD</code> on export!</p>
         </div>
     </aside>
@@ -466,6 +502,11 @@
                     <input type="checkbox" id="settings-hide-ambient">
                     <span>Hide floating background spheres</span>
                 </label>
+                <h4>Documents</h4>
+                <label class="settings-toggle-row">
+                    <input type="checkbox" id="settings-restore-docs" checked>
+                    <span>Restore documents on start</span>
+                </label>
                 <h4>Danger Zone</h4>
                 <button id="btn-wipe-history" class="tactile-alert-plate-btn">WIPE ALL PAD HISTORY</button>
             </div>
@@ -475,8 +516,47 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
-    <script src="marketplace.js"></script>
-    <script src="settings.js"></script>
+    <!-- File Chip Mini Popup -->
+    <div id="file-chip-popup" class="file-chip-popup" hidden>
+        <div class="file-chip-top">
+            <div class="file-chip-prev" id="file-chip-prev"></div>
+            <div class="file-chip-info">
+                <div class="file-chip-title" id="file-chip-name">file</div>
+                <div class="file-chip-sub" id="file-chip-meta">format</div>
+            </div>
+            <div class="file-chip-actions">
+                <button type="button" id="file-chip-rename-btn" title="Rename file">Rename</button>
+                <button type="button" id="file-chip-download-btn" title="Download file">Download</button>
+                <button type="button" id="file-chip-x" title="Close">✕</button>
+            </div>
+        </div>
+        <div class="file-chip-rename" id="file-chip-rename" hidden>
+            <input type="text" id="file-chip-rename-input" maxlength="80" placeholder="New name...">
+            <button type="button" id="file-chip-rename-ok" title="Rename">OK</button>
+        </div>
+    </div>
+
+    <!-- Document Lock Dialog -->
+    <div id="doc-lock-overlay" class="modal-blur-gate">
+        <div class="embossed-dialogue-chassis">
+            <div class="dialog-header">
+                <h3>🔒 Protected Document</h3>
+                <button id="doc-lock-close-btn">✕</button>
+            </div>
+            <div class="dialog-body-scroll">
+                <p class="doc-lock-text">This document is password-protected! Type the correct password to open it below.</p>
+                <input type="password" id="doc-lock-input" placeholder="Password..." autocomplete="off">
+                <p class="doc-lock-error" id="doc-lock-error" hidden>Wrong password — try again!</p>
+            </div>
+            <div class="dialog-footer">
+                <button id="doc-lock-cancel-btn" class="settings-theme-btn">Cancel</button>
+                <button id="doc-lock-unlock-btn" class="dialog-confirm-orb">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=20260923"></script>
+    <script src="marketplace.js?v=20260923"></script>
+    <script src="settings.js?v=20260923"></script>
 </body>
 </html>

@@ -50,6 +50,23 @@
     box.checked = ambientHidden();
   }
 
+  /* Restore-on-start is ON by default (only '0' opts out)! */
+  var RESTORE_KEY = 'writeout_restore_docs';
+
+  function restoreDocs() {
+    try { return localStorage.getItem(RESTORE_KEY) !== '0'; } catch (e) { return true; }
+  }
+
+  function setRestoreDocs(on) {
+    try { localStorage.setItem(RESTORE_KEY, on ? '1' : '0'); } catch (e) {}
+  }
+
+  function renderRestoreToggle() {
+    var box = document.getElementById('settings-restore-docs');
+    if (!box) return;
+    box.checked = restoreDocs();
+  }
+
   function renderThemeList() {
     var list = document.getElementById('settings-theme-list');
     if (!list) return;
@@ -109,6 +126,15 @@
   document.addEventListener('DOMContentLoaded', function () {
     renderThemeList();
     renderAmbientToggle();
+    renderRestoreToggle();
+    var rBox = document.getElementById('settings-restore-docs');
+    if (rBox && !rBox._writeoutRestoreWired) {
+      rBox._writeoutRestoreWired = true;
+      rBox.addEventListener('change', function (e) {
+        var on = !!(e && e.target ? e.target.checked : rBox.checked);
+        setRestoreDocs(on);
+      });
+    }
     var box = document.getElementById('settings-hide-ambient');
     if (box && !box._writeoutAmbientWired) {
       box._writeoutAmbientWired = true;
@@ -119,8 +145,8 @@
     }
     // Re-render every open so installs from the Marketplace show up instantly!
     var sBtn = document.getElementById('settings-trigger-btn');
-    if (sBtn) sBtn.addEventListener('click', function () { renderThemeList(); renderAmbientToggle(); });
+    if (sBtn) sBtn.addEventListener('click', function () { renderThemeList(); renderAmbientToggle(); renderRestoreToggle(); });
   });
 
-  window.WriteoutSettings = { refresh: renderThemeList, ambientHidden: ambientHidden, setAmbientHidden: setAmbientHidden };
+  window.WriteoutSettings = { refresh: renderThemeList, ambientHidden: ambientHidden, setAmbientHidden: setAmbientHidden, restoreDocs: restoreDocs, setRestoreDocs: setRestoreDocs };
 })();

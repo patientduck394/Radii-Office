@@ -349,6 +349,69 @@
       ]
     },
     {
+      id: 'poolside-ultrapack',
+      name: 'Poolside Ultrapack',
+      category: 'styles',
+      kind: 'style-pack',
+      version: '1.2.0',
+      image: 'PoolsideUltrapack.png',
+      description: 'Fifty one-of-a-kind pool chips! Rings, scales, sails, stripes, seals and splashes — no two alike!',
+      previewHTML: '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:10px;"><span class="pool-hl-1">1</span><span class="pool-hl-2">2</span><span class="pool-hl-3">3</span><span class="pool-hl-4">4</span><span class="pool-hl-5">5</span><span class="pool-hl-6">6</span><span class="pool-hl-7">7</span><span class="pool-hl-8">8</span><span class="pool-hl-9">9</span><span class="pool-hl-10">10</span><span class="pool-hl-11">11</span><span class="pool-hl-12">12</span><span class="pool-hl-13">13</span><span class="pool-hl-14">14</span><span class="pool-hl-15">15</span><span class="pool-hl-16">16</span><span class="pool-hl-17">17</span><span class="pool-hl-18">18</span><span class="pool-hl-19">19</span><span class="pool-hl-20">20</span><span class="pool-hl-21">21</span><span class="pool-hl-22">22</span><span class="pool-hl-23">23</span><span class="pool-hl-24">24</span><span class="pool-hl-25">25</span><span class="pool-hl-26">26</span><span class="pool-hl-27">27</span><span class="pool-hl-28">28</span><span class="pool-hl-29">29</span><span class="pool-hl-30">30</span><span class="pool-hl-31">31</span><span class="pool-hl-32">32</span><span class="pool-hl-33">33</span><span class="pool-hl-34">34</span><span class="pool-hl-35">35</span><span class="pool-hl-36">36</span><span class="pool-hl-37">37</span><span class="pool-hl-38">38</span><span class="pool-hl-39">39</span><span class="pool-hl-40">40</span><span class="pool-hl-41">41</span><span class="pool-hl-42">42</span><span class="pool-hl-43">43</span><span class="pool-hl-44">44</span><span class="pool-hl-45">45</span><span class="pool-hl-46">46</span><span class="pool-hl-47">47</span><span class="pool-hl-48">48</span><span class="pool-hl-49">49</span><span class="pool-hl-50">50</span></div>',
+      css: `.pool-hl-1,.pool-hl-2,.pool-hl-3,.pool-hl-4,.pool-hl-5,.pool-hl-6,.pool-hl-7,.pool-hl-8,.pool-hl-9,.pool-hl-10,.pool-hl-11,.pool-hl-12,.pool-hl-13,.pool-hl-14,.pool-hl-15,.pool-hl-16,.pool-hl-17,.pool-hl-18,.pool-hl-19,.pool-hl-20,.pool-hl-21,.pool-hl-22,.pool-hl-23,.pool-hl-24,.pool-hl-25,.pool-hl-26,.pool-hl-27,.pool-hl-28,.pool-hl-29,.pool-hl-30,.pool-hl-31,.pool-hl-32,.pool-hl-33,.pool-hl-34,.pool-hl-35,.pool-hl-36,.pool-hl-37,.pool-hl-38,.pool-hl-39,.pool-hl-40,.pool-hl-41,.pool-hl-42,.pool-hl-43,.pool-hl-44,.pool-hl-45,.pool-hl-46,.pool-hl-47,.pool-hl-48,.pool-hl-49,.pool-hl-50{display:inline-flex!important;align-items:center;padding:2px 10px;border-radius:12px;font-weight:800;white-space:nowrap;margin:0 2px;vertical-align:middle;}.pool-hl-1{background:rgba(255,237,213,0.45);border:2px solid #fb923c;outline:1px solid #fdba74;outline-offset:2px;color:#9a3412;border-radius:6px;}.pool-hl-2{background:linear-gradient(180deg,rgba(255,255,255,0.65) 0%,rgba(255,255,255,0.15) 50%,rgba(0,0,0,0.12) 51%,rgba(0,0,0,0) 100%),linear-gradient(180deg,#fdba74 0%,#ea580c 100%);border:2px solid #9a3412;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.4);border-radius:10px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.7);}.pool-hl-3{background:rgba(236,254,255,0.5);border:2px solid #22d3ee;color:#0e7490;border-radius:12px;box-shadow:0 0 10px rgba(34,211,238,0.55),inset 0 0 8px rgba(34,211,238,0.2);}.pool-hl-4{background:linear-gradient(90deg,#fb923c 0%,#fb923c 33%,#fff7ed 33%,#fff7ed 66%,#22d3ee 66%,#22d3ee 100%);border:2px solid #0e7490;color:#7c2d12;border-radius:20px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.7);}.pool-hl-5{background:linear-gradient(180deg,rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 40%),linear-gradient(180deg,#7dd3fc 0%,#0284c7 60%,#0c4a6e 100%);border:2px solid #082f49;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.45);border-radius:12px;}.pool-hl-6{background:linear-gradient(180deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.15) 50%,rgba(0,0,0,0.12) 51%,rgba(0,0,0,0) 100%),linear-gradient(180deg,#fde047 0%,#f59e0b 100%);border:2px solid #a16207;color:#713f12;border-radius:999px;box-shadow:inset 0 1px 2px rgba(255,255,255,0.8);}.pool-hl-7{background:radial-gradient(circle at 78% 30%,#f8fafc 0%,#f8fafc 4%,rgba(248,250,252,0) 5%),radial-gradient(circle at 20% 60%,#ffffff 0%,#ffffff 1.2%,rgba(255,255,255,0) 2%),radial-gradient(circle at 55% 75%,#ffffff 0%,#ffffff 1.2%,rgba(255,255,255,0) 2%),linear-gradient(180deg,#0c2a4a 0%,#020617 100%);border:2px solid #38bdf8;color:#e0f2ff;border-radius:16px;box-shadow:0 0 12px rgba(56,189,248,0.4);}.pool-hl-8{background:radial-gradient(circle at 30% 25%,#ffffff 0%,#f0fdfa 45%,#5eead4 100%);border:2px solid #0f766e;color:#134e4a;border-radius:20px;box-shadow:inset 0 1px 2px #fff;}.pool-hl-9{background:repeating-linear-gradient(45deg,#14b8a6 0px,#14b8a6 10px,#f0fdfa 10px,#f0fdfa 20px);border:2px solid #0f766e;color:#042f2e;border-radius:8px;text-shadow:0 1px 0 rgba(255,255,255,0.6);}.pool-hl-10{background:linear-gradient(100deg,#fb923c 0%,#fcd34d 45%,#22d3ee 100%);border:2px solid #0e7490;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.4);border-radius:14px;}.pool-hl-11{background:radial-gradient(circle at 50% 50%,#fff7ed 0%,#fff7ed 26%,#ea580c 26%,#ea580c 40%,#fff7ed 40%);border:2px solid #9a3412;color:#7c2d12;border-radius:999px;}.pool-hl-12{background:radial-gradient(circle at 8px 8px,rgba(120,53,15,0.5) 1.5px,rgba(120,53,15,0) 2px) 0 0/16px 16px,radial-gradient(circle at 50% 40%,#fef3c7 0%,#e7c084 70%,#b45309 100%);border:2px solid #92400e;color:#451a03;border-radius:999px;}.pool-hl-13{background:radial-gradient(circle at 70% 70%,rgba(255,255,255,0.6) 0%,rgba(255,255,255,0) 35%),linear-gradient(180deg,#fb7185 0%,#e11d48 100%);border:2px solid #881337;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.4);border-radius:30px 30px 30px 6px;}.pool-hl-14{background:repeating-radial-gradient(circle at 50% 120%,#ffe4e6 0px,#ffe4e6 5px,#fda4af 5px,#fda4af 7px);border:2px solid #be123c;color:#881337;border-radius:18px;}.pool-hl-15{background:repeating-linear-gradient(90deg,#f0f9ff 0px,#f0f9ff 8px,rgba(240,249,255,0) 8px,rgba(240,249,255,0) 16px) 0 50%/100% 4px no-repeat,linear-gradient(180deg,#38bdf8 0%,#075985 100%);border:2px solid #082f49;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.45);border-radius:8px;}.pool-hl-16{background:radial-gradient(circle at 18% 80%,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0.9) 3px,rgba(255,255,255,0) 4px),radial-gradient(circle at 14% 55%,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0.9) 2px,rgba(255,255,255,0) 3px),radial-gradient(circle at 20% 30%,rgba(255,255,255,0.9) 0%,rgba(255,255,255,0.9) 2px,rgba(255,255,255,0) 3px),linear-gradient(180deg,#075985 0%,#082f49 100%);border:2px solid #38bdf8;color:#e0f2ff;border-radius:14px;}.pool-hl-17{background:radial-gradient(circle at 50% 60%,rgba(255,255,255,0.95) 0%,rgba(255,255,255,0.95) 18%,rgba(255,255,255,0) 32%),linear-gradient(180deg,#0ea5e9 0%,#0c4a6e 100%);border:2px solid #082f49;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,0.45);border-radius:999px;}.pool-hl-18{background:#0891b2;border:2px solid #164e63;color:#ecfeff;border-radius:10px;text-shadow:2px 0 0 rgba(165,243,252,0.7),4px 0 0 rgba(165,243,252,0.35);}.pool-hl-19{background:radial-gradient(circle at 115% 50%,rgba(12,74,110,0.55) 0%,rgba(12,74,110,0.55) 22%,rgba(12,74,110,0) 30%),linear-gradient(180deg,#fde047 0%,#eab308 100%);border:2px solid #854d0e;color:#451a03;border-radius:999px;}.pool-hl-20{background:linear-gradient(180deg,#ffffff 0px,#ffffff 5px,rgba(255,255,255,0) 5px),linear-gradient(180deg,#67e8f9 0%,#0284c7 100%);border:2px solid #0c4a6e;color:#f0f9ff;border-radius:8px 8px 12px 12px;}.pool-hl-21{background:repeating-linear-gradient(45deg,rgba(255,255,255,0.5) 0px,rgba(255,255,255,0.5) 1px,rgba(255,255,255,0) 1px,rgba(255,255,255,0) 7px),repeating-linear-gradient(-45deg,rgba(255,255,255,0.5) 0px,rgba(255,255,255,0.5) 1px,rgba(255,255,255,0) 1px,rgba(255,255,255,0) 7px),linear-gradient(180deg,#cffafe 0%,#22d3ee 100%);border:2px solid #0e7490;color:#164e63;border-radius:10px;}.pool-hl-22{background:linear-gradient(90deg,#ea580c 0px,#ea580c 14px,rgba(234,88,12,0) 14px),linear-gradient(180deg,#ffffff 0%,#f1f5f9 100%);border:2px solid #c2410c;color:#7c2d12;border-radius:12px;}.pool-hl-23{background:linear-gradient(90deg,#14b8a6 0px,#14b8a6 22px,#f0fdfa 22px,#f0fdfa 44px);border:2px solid #0f766e;color:#042f2e;border-radius:6px;text-shadow:0 1px 0 rgba(255,255,255,0.6);}.pool-hl-24{background:linear-gradient(180deg,#0284c7 0px,#0284c7 9px,rgba(2,132,199,0) 9px),linear-gradient(180deg,#f0f9ff 0%,#bae6fd 100%);border:2px solid #075985;color:#0c4a6e;border-radius:12px;}.pool-hl-25{background:linear-gradient(180deg,#fb923c 0px,#fb923c 50%,#fff7ed 50%,#fff7ed 100%);border:2px solid #9a3412;color:#7c2d12;border-radius:16px 16px 20px 20px;}.pool-hl-26{background:repeating-linear-gradient(0deg,rgba(69,26,3,0.45) 0px,rgba(69,26,3,0.45) 2px,rgba(69,26,3,0) 2px,rgba(69,26,3,0) 9px),linear-gradient(180deg,#e7c084 0%,#b45309 100%);border:2px solid #451a03;color:#fffbeb;text-shadow:0 1px 2px rgba(0,0,0,0.4);border-radius:6px;}.pool-hl-27{background:repeating-linear-gradient(90deg,rgba(28,10,0,0.75) 0px,rgba(28,10,0,0.75) 10px,rgba(28,10,0,0) 10px,rgba(28,10,0,0) 34px),linear-gradient(180deg,#fdba74 0%,#c2410c 70%,#7c2d12 100%);border:2px solid #451a03;color:#fff7ed;text-shadow:0 1px 2px rgba(0,0,0,0.5);border-radius:8px;}.pool-hl-28{background:linear-gradient(135deg,#ffffff 0%,#ffffff 52%,#0891b2 52%,#0891b2 100%);border:2px solid #164e63;color:#0c4a6e;border-radius:4px;}.pool-hl-29{background:radial-gradient(circle at 12px 7px,#fbbf24 0%,#fbbf24 3px,rgba(251,191,36,0) 4px) 0 0/26px 12px repeat-x,linear-gradient(180deg,#14324a 0%,#0a1c30 100%);border:2px solid #fbbf24;color:#fef3c7;border-radius:10px;}.pool-hl-30{background:#0f2c4d;border:3px dashed #d9a441;color:#fde68a;border-radius:14px;}.pool-hl-31{background:linear-gradient(90deg,#f0f9ff 0px,#f0f9ff 16px,#1e3a8a 16px,#1e3a8a 32px);border:2px solid #172554;color:#dbeafe;border-radius:6px;text-shadow:0 1px 2px rgba(0,0,0,0.5);}.pool-hl-32{background:repeating-linear-gradient(0deg,rgba(146,64,14,0.4) 0px,rgba(146,64,14,0.4) 1px,rgba(146,64,14,0) 1px,rgba(146,64,14,0) 6px),linear-gradient(180deg,#fde68a 0%,#d9a441 100%);border:2px solid #92400e;color:#451a03;border-radius:18px;}.pool-hl-33{background:repeating-linear-gradient(30deg,rgba(69,26,3,0.3) 0px,rgba(69,26,3,0.3) 1px,rgba(69,26,3,0) 1px,rgba(69,26,3,0) 8px),repeating-linear-gradient(-30deg,rgba(69,26,3,0.3) 0px,rgba(69,26,3,0.3) 1px,rgba(69,26,3,0) 1px,rgba(69,26,3,0) 8px),linear-gradient(180deg,#fef3c7 0%,#e7c084 100%);border:2px solid #92400e;color:#451a03;border-radius:12px;}.pool-hl-34{background:#cffafe;border:5px solid #fb923c;color:#9a3412;border-radius:999px;}.pool-hl-35{background:linear-gradient(180deg,#f0fdfa 0%,#5eead4 45%,#0f766e 100%);border:2px solid #134e4a;color:#042f2e;border-radius:999px;}.pool-hl-36{background:linear-gradient(90deg,#14b8a6 0px,#14b8a6 18%,#062a33 18%,#062a33 82%,#14b8a6 82%);border:2px solid #042f2e;color:#f0fdfa;border-radius:999px;text-shadow:0 1px 2px rgba(0,0,0,0.5);}.pool-hl-37{background:linear-gradient(115deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,0.85) 46%,rgba(255,255,255,0.85) 54%,rgba(255,255,255,0) 62%),linear-gradient(180deg,#5eead4 0%,#0f766e 100%);border:2px solid #134e4a;color:#042f2e;border-radius:12px;}.pool-hl-38{background:radial-gradient(circle at 10px 10px,rgba(8,47,73,0.55) 2px,rgba(8,47,73,0) 2.6px) 0 0/20px 20px,linear-gradient(180deg,#7dd3fc 0%,#0284c7 100%);border:2px solid #0c4a6e;color:#f0f9ff;border-radius:16px;}.pool-hl-39{background:linear-gradient(180deg,rgba(255,255,255,0.5) 0%,rgba(255,255,255,0) 45%),linear-gradient(180deg,#2dd4bf 0%,#115e59 100%);border:2px solid #042f2e;color:#f0fdfa;border-radius:4px 20px 20px 20px;}.pool-hl-40{background:linear-gradient(135deg,#fde68a 0%,#fde68a 55%,#0891b2 55%,#0891b2 100%);border:2px solid #92400e;color:#451a03;border-radius:10px;}.pool-hl-41{background:repeating-linear-gradient(60deg,rgba(255,255,255,0.55) 0px,rgba(255,255,255,0.55) 2px,rgba(255,255,255,0) 2px,rgba(255,255,255,0) 9px),linear-gradient(180deg,#fda4af 0%,#e11d48 100%);border:2px solid #881337;color:#fff1f2;border-radius:18px 18px 18px 4px;}.pool-hl-42{background:linear-gradient(115deg,#fecdd3 0%,#fff7ed 35%,#a5f3fc 70%,#fbcfe8 100%);border:2px solid #9d6b7a;color:#581c3a;border-radius:20px;}.pool-hl-43{background:radial-gradient(circle at 35% 30%,#ffffff 0%,#e2e8f0 55%,#94a3b8 100%);border:2px solid #cbd5e1;color:#334155;border-radius:999px;box-shadow:inset 0 1px 2px #fff,0 2px 5px rgba(100,116,139,0.4);}.pool-hl-44{background:repeating-linear-gradient(0deg,rgba(87,83,78,0.5) 0px,rgba(87,83,78,0.5) 1px,rgba(87,83,78,0) 1px,rgba(87,83,78,0) 5px),linear-gradient(180deg,#d6c9b4 0%,#a89a83 100%);border:2px solid #57534e;color:#292524;border-radius:8px;}.pool-hl-45{background:linear-gradient(160deg,rgba(240,253,250,0.75) 0%,rgba(153,246,228,0.65) 100%);border:1px solid rgba(255,255,255,0.9);color:#0f766e;border-radius:14px;box-shadow:0 0 10px rgba(153,246,228,0.5),inset 0 1px 0 rgba(255,255,255,0.8);}.pool-hl-46{background:linear-gradient(90deg,#92400e 0px,#92400e 12px,rgba(146,64,14,0) 12px),linear-gradient(180deg,#fef3c7 0%,#e7c084 100%);border:2px solid #451a03;color:#451a03;border-radius:10px;}.pool-hl-47{background:linear-gradient(90deg,rgba(255,255,255,0) 0%,rgba(255,255,255,0) 38%,rgba(255,255,255,0.9) 46%,rgba(255,255,255,0.9) 54%,rgba(255,255,255,0) 62%),linear-gradient(180deg,#fde047 0%,#a16207 100%);border:2px solid #451a03;color:#451a03;border-radius:10px;text-shadow:0 1px 0 rgba(255,255,255,0.6);}.pool-hl-48{background:radial-gradient(circle at 12px 100%,rgba(6,42,51,0.6) 9px,rgba(6,42,51,0) 10px) 0 0/24px 14px repeat-x,radial-gradient(circle at 24px 100%,rgba(6,42,51,0.6) 9px,rgba(6,42,51,0) 10px) 0 0/24px 14px repeat-x,linear-gradient(180deg,#5eead4 0%,#0e7490 100%);border:2px solid #164e63;color:#ecfeff;border-radius:12px;}.pool-hl-49{background:linear-gradient(180deg,#94a3b8 0%,#94a3b8 62%,#f1f5f9 62%,#f1f5f9 100%);border:2px solid #334155;color:#0f172a;border-radius:16px 16px 20px 20px;}.pool-hl-50{background:linear-gradient(90deg,#fb923c 0px,#fb923c 18px,#fff7ed 18px,#fff7ed 36px);border:2px solid #172554;color:#7c2d12;border-radius:6px;}`,
+      styles: [
+        { name: 'Sunrise Frame', label: 'U1', className: 'pool-hl-1', trigger: { open: '~PU1~', close: '~PU1~' } },
+        { name: 'Sunset Gel', label: 'U2', className: 'pool-hl-2', trigger: { open: '~PU2~', close: '~PU2~' } },
+        { name: 'Chlorine Neon', label: 'U3', className: 'pool-hl-3', trigger: { open: '~PU3~', close: '~PU3~' } },
+        { name: 'Beach Bands', label: 'U4', className: 'pool-hl-4', trigger: { open: '~PU4~', close: '~PU4~' } },
+        { name: 'Breaker Wave', label: 'U5', className: 'pool-hl-5', trigger: { open: '~PU5~', close: '~PU5~' } },
+        { name: 'Sun Pill', label: 'U6', className: 'pool-hl-6', trigger: { open: '~PU6~', close: '~PU6~' } },
+        { name: 'Moonlit Abyss', label: 'U7', className: 'pool-hl-7', trigger: { open: '~PU7~', close: '~PU7~' } },
+        { name: 'Sea Foam', label: 'U8', className: 'pool-hl-8', trigger: { open: '~PU8~', close: '~PU8~' } },
+        { name: 'Cabana Stripes', label: 'U9', className: 'pool-hl-9', trigger: { open: '~PU9~', close: '~PU9~' } },
+        { name: 'Tideline Fusion', label: 'U10', className: 'pool-hl-10', trigger: { open: '~PU10~', close: '~PU10~' } },
+        { name: 'Lifebuoy Ring', label: 'U11', className: 'pool-hl-11', trigger: { open: '~PU11~', close: '~PU11~' } },
+        { name: 'Sand Dollar', label: 'U12', className: 'pool-hl-12', trigger: { open: '~PU12~', close: '~PU12~' } },
+        { name: 'Starfish Point', label: 'U13', className: 'pool-hl-13', trigger: { open: '~PU13~', close: '~PU13~' } },
+        { name: 'Shell Rings', label: 'U14', className: 'pool-hl-14', trigger: { open: '~PU14~', close: '~PU14~' } },
+        { name: 'Lap Lane', label: 'U15', className: 'pool-hl-15', trigger: { open: '~PU15~', close: '~PU15~' } },
+        { name: 'Dive Bubbles', label: 'U16', className: 'pool-hl-16', trigger: { open: '~PU16~', close: '~PU16~' } },
+        { name: 'Cannonball Splash', label: 'U17', className: 'pool-hl-17', trigger: { open: '~PU17~', close: '~PU17~' } },
+        { name: 'Marco Echo', label: 'U18', className: 'pool-hl-18', trigger: { open: '~PU18~', close: '~PU18~' } },
+        { name: 'Polo Seam', label: 'U19', className: 'pool-hl-19', trigger: { open: '~PU19~', close: '~PU19~' } },
+        { name: 'Gutter Lip', label: 'U20', className: 'pool-hl-20', trigger: { open: '~PU20~', close: '~PU20~' } },
+        { name: 'Skimmer Mesh', label: 'U21', className: 'pool-hl-21', trigger: { open: '~PU21~', close: '~PU21~' } },
+        { name: 'Sunscreen Squeeze', label: 'U22', className: 'pool-hl-22', trigger: { open: '~PU22~', close: '~PU22~' } },
+        { name: 'Towel Cabana', label: 'U23', className: 'pool-hl-23', trigger: { open: '~PU23~', close: '~PU23~' } },
+        { name: 'Cooler Lid', label: 'U24', className: 'pool-hl-24', trigger: { open: '~PU24~', close: '~PU24~' } },
+        { name: 'Ice Pop Split', label: 'U25', className: 'pool-hl-25', trigger: { open: '~PU25~', close: '~PU25~' } },
+        { name: 'Boardwalk Planks', label: 'U26', className: 'pool-hl-26', trigger: { open: '~PU26~', close: '~PU26~' } },
+        { name: 'Pier Silhouette', label: 'U27', className: 'pool-hl-27', trigger: { open: '~PU27~', close: '~PU27~' } },
+        { name: 'Sailcloth', label: 'U28', className: 'pool-hl-28', trigger: { open: '~PU28~', close: '~PU28~' } },
+        { name: 'Regatta Dots', label: 'U29', className: 'pool-hl-29', trigger: { open: '~PU29~', close: '~PU29~' } },
+        { name: 'Harbor Rope', label: 'U30', className: 'pool-hl-30', trigger: { open: '~PU30~', close: '~PU30~' } },
+        { name: 'Beacon Stripes', label: 'U31', className: 'pool-hl-31', trigger: { open: '~PU31~', close: '~PU31~' } },
+        { name: 'Sandbar Ripple', label: 'U32', className: 'pool-hl-32', trigger: { open: '~PU32~', close: '~PU32~' } },
+        { name: 'Dune Cross', label: 'U33', className: 'pool-hl-33', trigger: { open: '~PU33~', close: '~PU33~' } },
+        { name: 'Floatie Ring', label: 'U34', className: 'pool-hl-34', trigger: { open: '~PU34~', close: '~PU34~' } },
+        { name: 'Noodle Roll', label: 'U35', className: 'pool-hl-35', trigger: { open: '~PU35~', close: '~PU35~' } },
+        { name: 'Goggle Lens', label: 'U36', className: 'pool-hl-36', trigger: { open: '~PU36~', close: '~PU36~' } },
+        { name: 'Swim Sheen', label: 'U37', className: 'pool-hl-37', trigger: { open: '~PU37~', close: '~PU37~' } },
+        { name: 'Kickboard Grip', label: 'U38', className: 'pool-hl-38', trigger: { open: '~PU38~', close: '~PU38~' } },
+        { name: 'Fin Kick', label: 'U39', className: 'pool-hl-39', trigger: { open: '~PU39~', close: '~PU39~' } },
+        { name: 'Shoreline', label: 'U40', className: 'pool-hl-40', trigger: { open: '~PU40~', close: '~PU40~' } },
+        { name: 'Seashell Rays', label: 'U41', className: 'pool-hl-41', trigger: { open: '~PU41~', close: '~PU41~' } },
+        { name: 'Conch Lustre', label: 'U42', className: 'pool-hl-42', trigger: { open: '~PU42~', close: '~PU42~' } },
+        { name: 'Pearl Drop', label: 'U43', className: 'pool-hl-43', trigger: { open: '~PU43~', close: '~PU43~' } },
+        { name: 'Driftwood Grain', label: 'U44', className: 'pool-hl-44', trigger: { open: '~PU44~', close: '~PU44~' } },
+        { name: 'Sea Glass', label: 'U45', className: 'pool-hl-45', trigger: { open: '~PU45~', close: '~PU45~' } },
+        { name: 'Message Bottle', label: 'U46', className: 'pool-hl-46', trigger: { open: '~PU46~', close: '~PU46~' } },
+        { name: 'Treasure Gold', label: 'U47', className: 'pool-hl-47', trigger: { open: '~PU47~', close: '~PU47~' } },
+        { name: 'Mermaid Scales', label: 'U48', className: 'pool-hl-48', trigger: { open: '~PU48~', close: '~PU48~' } },
+        { name: 'Grayfin', label: 'U49', className: 'pool-hl-49', trigger: { open: '~PU49~', close: '~PU49~' } },
+        { name: 'Tower Stripes', label: 'U50', className: 'pool-hl-50', trigger: { open: '~PU50~', close: '~PU50~' } },
+      ]
+    },
+    {
       id: 'chip-pack',
       name: 'Dark Gel Chip Pack',
       category: 'styles',
@@ -676,6 +739,21 @@
       ]
     },
     {
+      id: 'icon-picker',
+      name: 'Icon Picker',
+      category: 'utilities',
+      kind: 'utility',
+      version: '1.0.0',
+      image: 'IconPicker.png',
+      description: 'Icon button on the top format bar! Opens a popup of insertable glyphs — click one to drop it at your caret.',
+      previewHTML: '<div style="display:flex;gap:6px;justify-content:center;font-size:14px;color:#0369a1;"><span>\u2605</span><span>\u2665</span><span>\u2713</span><span>\u2715</span></div>',
+      css: `.mkt-icon-wrap{position:relative;display:inline-flex;}.mkt-icon-wrap #mkt-icon-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid #7dd3fc;background:linear-gradient(180deg,#ffffff 0%,#e0f2fe 100%);color:#0369a1;cursor:pointer;box-shadow:0 2px 6px rgba(2,132,199,0.2),inset 0 1px 0 #fff;}#mkt-icon-btn svg{width:18px;height:18px;}#mkt-icon-btn:hover{filter:brightness(1.05);}#mkt-icon-popup{position:absolute;top:calc(100% + 8px);left:0;z-index:200;background:linear-gradient(180deg,rgba(255,255,255,0.97) 0%,rgba(240,249,255,0.95) 100%);border:1px solid #7dd3fc;border-radius:12px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:0 8px 24px rgba(2,132,199,0.25),inset 0 1px 0 #fff;max-height:240px;overflow-y:auto;}.mkt-icon-head{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;color:#0369a1;font-family:'JetBrains Mono',monospace;}.mkt-icon-x{background:rgba(2,132,199,0.1);border:1px solid #7dd3fc;border-radius:6px;color:#0369a1;font-size:10px;font-weight:800;cursor:pointer;padding:1px 7px;}.mkt-icon-item{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:8px;border:1px solid #bae6fd;background:rgba(255,255,255,0.7);color:#0369a1;cursor:pointer;}.mkt-icon-item:hover{background:#e0f2fe;border-color:#38bdf8;}.mkt-icon-item svg{width:22px;height:22px;}.mkt-icon-glyph{display:inline-flex;width:1.1em;height:1.1em;vertical-align:-0.15em;line-height:1;}.mkt-icon-glyph svg{width:100%;height:100%;}`,
+      init: function () { mktIconInit(); },
+      teardown: function () { mktIconTeardown(); },
+      action: function () { mktIconToggle(); },
+      actionLabel: 'Open'
+    },
+    {
       id: 'word-counter',
       name: 'Word Counter',
       category: 'utilities',
@@ -842,6 +920,134 @@
   ];
 
   /* ---------------- localStorage helpers ---------------- */
+  /* ---------------- Icon Picker engine ---------------- */
+  const MKT_ICONS = [
+    { name: 'Star', body: '<path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.2 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/>' },
+    { name: 'Heart', body: '<path d="M12 21C7 16.5 3 13 3 8.8 3 6 5.2 4 7.8 4c1.7 0 3.2.9 4.2 2.3C13 4.9 14.5 4 16.2 4 18.8 4 21 6 21 8.8c0 4.2-4 7.7-9 12.2z"/>' },
+    { name: 'Check', body: '<path d="M4 12.5l5 5L20 6.5"/>' },
+    { name: 'Cross', body: '<path d="M6 6l12 12M18 6L6 18"/>' },
+    { name: 'Plus', body: '<path d="M12 5v14M5 12h14"/>' },
+    { name: 'Minus', body: '<path d="M5 12h14"/>' },
+    { name: 'Arrow Right', body: '<path d="M4 12h16m-6-6l6 6-6 6"/>' },
+    { name: 'Arrow Left', body: '<path d="M20 12H4m6-6l-6 6 6 6"/>' },
+    { name: 'Home', body: '<path d="M3 11l9-8 9 8M5 10v10h5v-6h4v6h5V10"/>' },
+    { name: 'Gear', body: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>' },
+    { name: 'Bell', body: '<path d="M6 9a6 6 0 0 1 12 0c0 5 2 6 2 6H4s2-1 2-6M10 20a2 2 0 0 0 4 0"/>' },
+    { name: 'Search', body: '<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>' },
+    { name: 'Info', body: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8v.1"/>' },
+    { name: 'Warning', body: '<path d="M12 3L2 21h20zM12 10v5M12 18v.1"/>' },
+    { name: 'Lock', body: '<rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>' },
+    { name: 'Flag', body: '<path d="M5 21V4m0 1h13l-3 4 3 4H5"/>' }
+  ];
+
+  function mktIconSVG(body) {
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + body + '</svg>';
+  }
+
+  function mktIconToggle() {
+    const pop = document.getElementById('mkt-icon-popup');
+    if (!pop) return;
+    pop.style.display = (pop.style.display === 'none') ? '' : 'none';
+  }
+
+  function mktIconInsert(name) {
+    const canvas = document.getElementById('wysiwyg-canvas');
+    let selection = null;
+    try { selection = window.getSelection(); } catch (e) { return; }
+    if (!canvas || !selection || !selection.rangeCount) return;
+    try { if (!canvas.contains(selection.anchorNode)) return; } catch (e) { return; }
+    const icon = MKT_ICONS.find(function (ic) { return ic.name === name; });
+    if (!icon) return;
+    if (typeof playAeroClickSound === 'function') playAeroClickSound(700, 0.08);
+    const range = selection.getRangeAt(0);
+    const span = document.createElement('span');
+    span.className = 'mkt-icon-glyph';
+    span.setAttribute('data-icon', name);
+    span.innerHTML = mktIconSVG(icon.body);
+    try {
+      if (!selection.isCollapsed && typeof range.collapse === 'function') range.collapse(true);
+      range.insertNode(span);
+    } catch (e) { return; }
+    try {
+      const nr = document.createRange();
+      if (typeof nr.setStartAfter === 'function') {
+        nr.setStartAfter(span);
+        nr.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(nr);
+      }
+    } catch (e) {}
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+  }
+
+  function mktIconInit() {
+    const bar = document.getElementById('top-format-bar');
+    if (!bar || document.getElementById('mkt-icon-btn')) return;
+    const wrap = document.createElement('span');
+    wrap.className = 'mkt-icon-wrap';
+    wrap.id = 'mkt-icon-wrap';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'mkt-icon-btn';
+    btn.title = 'Insert icon';
+    btn.innerHTML = mktIconSVG('<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>');
+    const pop = document.createElement('div');
+    pop.id = 'mkt-icon-popup';
+    pop.style.display = 'none';
+    const head = document.createElement('div');
+    head.className = 'mkt-icon-head';
+    const cap = document.createElement('span');
+    cap.textContent = 'Icons';
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'mkt-icon-x';
+    x.textContent = 'X';
+    head.appendChild(cap);
+    head.appendChild(x);
+    pop.appendChild(head);
+    MKT_ICONS.forEach(function (ic) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mkt-icon-item';
+      b.title = ic.name;
+      b.setAttribute('data-icon', ic.name);
+      b.innerHTML = mktIconSVG(ic.body);
+      pop.appendChild(b);
+    });
+    btn.addEventListener('click', function () {
+      if (typeof playAeroClickSound === 'function') playAeroClickSound(600, 0.08);
+      mktIconToggle();
+    });
+    x.addEventListener('click', function () { pop.style.display = 'none'; });
+    wrap.addEventListener('mousedown', function (e) {
+      if (e.target && e.target.closest && e.target.closest('button')) e.preventDefault();
+    });
+    pop.addEventListener('click', function (e) {
+      const t = e.target;
+      const item = (t && t.closest) ? t.closest('[data-icon]') : ((t && t.getAttribute && t.getAttribute('data-icon')) ? t : null);
+      if (!item) return;
+      mktIconInsert(item.getAttribute('data-icon'));
+    });
+    const outside = function (e) {
+      if (!wrap.contains(e.target)) pop.style.display = 'none';
+    };
+    wrap._mktOutside = outside;
+    document.addEventListener('mousedown', outside);
+    wrap.appendChild(btn);
+    wrap.appendChild(pop);
+    bar.appendChild(wrap);
+  }
+
+  function mktIconTeardown() {
+    const wrap = document.getElementById('mkt-icon-wrap');
+    if (wrap) {
+      if (wrap._mktOutside && document.removeEventListener) {
+        try { document.removeEventListener('mousedown', wrap._mktOutside); } catch (e) {}
+      }
+      wrap.remove();
+    }
+  }
+
   function mktGetInstalled() {
     try {
       const raw = localStorage.getItem(MKT_STORAGE_KEY);
@@ -999,6 +1205,7 @@
     if (ext.kind === 'theme') applyThemeClass(ext, true);
     if (typeof playAeroClickSound === 'function') playAeroClickSound(750, 0.12);
     renderMarketplace();
+    renderUtilDock();
     mktMissingRender();
     notifySettings();
   }
@@ -1010,6 +1217,7 @@
     removeExtension(ext);
     if (typeof playAeroClickSound === 'function') playAeroClickSound(350, 0.1);
     renderMarketplace();
+    renderUtilDock();
     mktMissingRender();
     notifySettings();
   }
@@ -1125,6 +1333,7 @@
     if (selection.isCollapsed || !canvas.contains(range.commonAncestorContainer)) return;
     const span = document.createElement('span');
     span.className = className;
+    span.setAttribute('spellcheck', 'false');
     try {
       span.appendChild(range.extractContents());
     } catch (e) { span.textContent = selection.toString(); }
@@ -1134,6 +1343,30 @@
     if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
     const toolbar = document.getElementById('aero-selection-toolbar');
     if (toolbar) toolbar.style.display = 'none';
+  }
+
+  /* Extension utilities docked in the small bottom sidebar! */
+  function renderUtilDock() {
+    const dock = document.getElementById('sidebar-util-dock');
+    if (!dock) return;
+    dock.innerHTML = '';
+    const installed = mktGetInstalled();
+    MARKETPLACE_CATALOG.forEach(function (ext) {
+      if (ext.category !== 'utilities' || installed.indexOf(ext.id) === -1) return;
+      if (typeof ext.action !== 'function') return;
+      if (ext.id === 'timestamp-inserter') return; // Inserting lives in the Insert menu now!
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'sidebar-util-btn';
+      btn.textContent = ext.actionLabel || ext.name;
+      btn.title = ext.name;
+      btn.setAttribute('data-util', ext.id);
+      btn.addEventListener('click', function () {
+        if (typeof playAeroClickSound === 'function') playAeroClickSound(600, 0.08);
+        try { ext.action(); } catch (e) {}
+      });
+      dock.appendChild(btn);
+    });
   }
 
   function mktDocStats() {
@@ -1339,6 +1572,7 @@
       textNode.nodeValue = before;
       const span = document.createElement('span');
       span.className = v.className;
+      span.setAttribute('spellcheck', 'false');
       span.textContent = inner || 'Styled';
       range.insertNode(span);
       const tail = document.createTextNode(after + (e.key === ' ' ? ' ' : '\n'));
@@ -1631,6 +1865,7 @@
     });
     // Show the inbox button only when downloads actually exist!
     updateInboxVisibility();
+    renderUtilDock();
 
     // Missing-styles watchdog: rescan on every canvas mutation!
     mktMissingRender();
@@ -1725,6 +1960,7 @@
         mktSaveInstalled([]);
         mktSetActiveTheme('');
         renderMarketplace();
+        renderUtilDock();
       });
     }
 
@@ -1740,6 +1976,7 @@
     install: mktInstall,
     uninstall: mktUninstall,
     installed: mktGetInstalled,
+    apply: applyClassToSelection,
     open: openMarketplace,
     close: closeMarketplace,
     view: openExtensionPage,

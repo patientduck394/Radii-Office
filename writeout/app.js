@@ -47,6 +47,14 @@ function autoSaveCanvasContent() {
         const saveKeyId = `writedown_save_slot_${currentActivePadId}`;
         localStorage.setItem(saveKeyId, canvas.innerHTML);
     }
+    // Keep the tab snapshot in lockstep (programmatic edits fire no input event)!
+    try {
+        if (typeof kdActiveTab === 'function' && typeof kdSaveTabs === 'function') {
+            const t = kdActiveTab();
+            if (t) t.html = canvas.innerHTML;
+            kdSaveTabs();
+        }
+    } catch (e) {}
 }
 
 // Intercept characters and input modifications to process notes
@@ -138,6 +146,34 @@ if (!kdAmbientHidden()) initializeAmbientDroplets();
 // ==========================================
 if (canvas) {
     canvas.addEventListener('keydown', function(e) {
+        // --- DENT SHORTCUTS: Ctrl/Cmd+[ outdents, Ctrl/Cmd+] indents! ---
+        if ((e.ctrlKey || e.metaKey) && (e.key === '[' || e.key === ']')) {
+            e.preventDefault();
+            if (typeof fmtIndentBlocks === 'function') fmtIndentBlocks(e.key === ']' ? 1 : -1);
+            return;
+        }
+        // --- STYLE SHORTCUTS: Ctrl/Cmd+B/I/U on selections, Ctrl/Cmd+S exports! ---
+        if ((e.ctrlKey || e.metaKey) && e.target && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            const k = String(e.key || '').toLowerCase();
+            if (k === 'b' || k === 'i' || k === 'u') {
+                const sel = window.getSelection();
+                if (sel.rangeCount && !sel.isCollapsed && canvas.contains(sel.anchorNode)) {
+                    e.preventDefault();
+                    try {
+                        if (typeof document.execCommand === 'function') {
+                            document.execCommand(k === 'b' ? 'bold' : (k === 'i' ? 'italic' : 'underline'), false, null);
+                        }
+                    } catch (err) {}
+                    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                }
+                return;
+            }
+            if (k === 's') {
+                e.preventDefault();
+                if (typeof exportKeydownFile === 'function') exportKeydownFile();
+                return;
+            }
+        }
         const selection = window.getSelection();
         if (!selection.rangeCount) return;
 
@@ -971,6 +1007,7 @@ if (canvas) {
             if (def.className) {
                 newNode = document.createElement('span');
                 newNode.className = def.className;
+                newNode.setAttribute('spellcheck', 'false');
                 newNode.innerText = targetText;
                 playAeroClickSound(850, 0.12);
             } else {
@@ -1628,6 +1665,7 @@ function kdKeydownPayload(html) {
     yamlConfigBlock += `exported_at: \"${currentTimestampString}\"\n`;
     yamlConfigBlock += `page_size: \"${kdPageSizeId}\"\n`;
     yamlConfigBlock += `page_orientation: \"${kdPageOrient}\"\n`;
+    if (kdDocPasswordHash) yamlConfigBlock += `doc_password: \"${kdDocPasswordHash}\"\n`;
     yamlConfigBlock += "---\n\n";
     return yamlConfigBlock + html;
 }
@@ -2463,6 +2501,366 @@ function closeDownloadMenu() {
     if (menu) menu.style.display = 'none';
 }
 
+// ==========================================
+// INSERT MENU (top format bar!)
+// ==========================================
+var insertMenuWired = false;
+
+function toggleInsertMenu(e) {
+    if (e) e.stopPropagation();
+    const menu = document.getElementById('insert-menu-popup');
+    if (!menu) return;
+    const isOpen = menu.style.display !== 'none';
+    menu.style.display = isOpen ? 'none' : 'block';
+    if (!isOpen && !insertMenuWired) {
+        insertMenuWired = true;
+        document.addEventListener('click', function (ev) {
+            const m = document.getElementById('insert-menu-popup');
+            const b = document.getElementById('insert-menu-btn');
+            if (!m || m.style.display === 'none') return;
+            if (m.contains(ev.target) || (b && b.contains(ev.target))) return;
+            m.style.display = 'none';
+        });
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') closeInsertMenu();
+        });
+    }
+}
+
+function closeInsertMenu() {
+    const menu = document.getElementById('insert-menu-popup');
+    if (menu) menu.style.display = 'none';
+}
+
+// Drop one node at the caret (ranged selections collapse to the end first)!
+// One divider design everywhere (menu + typed share it)!
+function kdBuildDivider() {
+    const div = document.createElement('div');
+    div.className = 'aero-liquid-divider';
+    div.setAttribute('contenteditable', 'false');
+    return div;
+}
+
+function fmtInsertNodeAtCaret(node) {
+    if (typeof canvas === 'undefined' || !canvas || !node) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    try {
+        const range = sel.getRangeAt(0);
+        if (!sel.isCollapsed) range.collapse(false);
+        range.insertNode(node);
+        // Splitting leaves empty husks around the insert -- sweep them!
+        try {
+            const prev = node.previousSibling;
+            if (prev && prev.nodeType === 3 && prev.nodeValue === '') prev.remove();
+            const next = node.nextSibling;
+            if (next && next.nodeType === 3 && next.nodeValue === '') next.remove();
+        } catch (e) {}
+        const caret = document.createRange();
+        caret.setStartAfter(node);
+        caret.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(caret);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        return true;
+    } catch (e) { return false; }
+}
+
+function fmtInsertTextAtCaret(text) {
+    return fmtInsertNodeAtCaret(document.createTextNode(String(text)));
+}
+
+function runInsertKind(kind) {
+    closeInsertMenu();
+    if (typeof canvas === 'undefined' || !canvas) return;
+    playAeroClickSound(700, 0.08);
+    // Snapshot the range: focusing the canvas may nudge the caret!
+    let saved = null;
+    try {
+        const sel = window.getSelection();
+        if (sel.rangeCount && canvas.contains(sel.anchorNode)) saved = sel.getRangeAt(0).cloneRange();
+    } catch (e) {}
+    try { canvas.focus(); } catch (e) {}
+    try {
+        if (saved) {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(saved);
+        }
+    } catch (e) {}
+    if (kind === 'timestamp') {
+        fmtInsertTextAtCaret(new Date().toLocaleString());
+    } else if (kind === 'date') {
+        fmtInsertTextAtCaret(new Date().toLocaleDateString());
+    } else if (kind === 'divider') {
+        // Dividers render at the caret -- or the very end with no selection!
+        if (!fmtInsertNodeAtCaret(kdBuildDivider())) {
+            const node = kdBuildDivider();
+            canvas.appendChild(node);
+            try {
+                const caret = document.createRange();
+                caret.setStartAfter(node);
+                caret.collapse(true);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(caret);
+            } catch (e) {}
+            if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        }
+    } else if (kind === 'image') {
+        const picker = document.getElementById('insert-image-input');
+        if (picker) picker.click();
+    } else if (kind === 'file') {
+        const picker = document.getElementById('insert-file-input');
+        if (picker) picker.click();
+    } else if (kind === 'link') {
+        let url = null;
+        try { url = (typeof window.prompt === 'function') ? window.prompt('Link URL:', 'https://') : null; } catch (e) { url = null; }
+        if (!url) return;
+        if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+        const a = document.createElement('a');
+        a.href = url;
+        a.textContent = url;
+        a.target = '_blank';
+        fmtInsertNodeAtCaret(a);
+    }
+}
+
+function fmtFileSize(bytes) {
+    const n = Number(bytes) || 0;
+    if (n < 1024) return n + ' B';
+    if (n < 1024 * 1024) return (Math.round(n / 102.4) / 10) + ' KB';
+    return (Math.round(n / 104857.6) / 10) + ' MB';
+}
+
+function fmtFileStem(name) {
+    const s = String(name || 'file');
+    const m = s.match(/^(.*)(\.[a-z0-9]{1,8})$/i);
+    return { stem: m ? (m[1] || s) : s, ext: m ? m[2] : '' };
+}
+
+function fmtFileExt(name, type) {
+    const m = String(name || '').match(/\.([a-z0-9]{1,8})$/i);
+    const ext = m ? m[1].toUpperCase() : '';
+    if (ext && type) return ext + ' · ' + type;
+    return ext || type || 'file';
+}
+
+// Uploaded-file pill (bytes ride along in attributes so reloads keep working)!
+function fmtInsertFileChip(name, type, size, dataUrl) {
+    if (!dataUrl) return false;
+    const chip = document.createElement('span');
+    chip.className = 'file-chip';
+    chip.setAttribute('spellcheck', 'false');
+    chip.setAttribute('contenteditable', 'false');
+    chip.setAttribute('data-filename', name || 'file');
+    chip.setAttribute('data-filetype', type || '');
+    chip.setAttribute('data-filesize', String(size || 0));
+    chip.setAttribute('data-filedata', dataUrl);
+    const ico = document.createElement('span');
+    ico.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>';
+    const nm = document.createElement('span');
+    nm.className = 'file-chip-name';
+    nm.textContent = fmtFileStem(name || 'file').stem;
+    chip.appendChild(ico);
+    chip.appendChild(nm);
+    return fmtInsertNodeAtCaret(chip);
+}
+
+var fmtFileChipData = null;
+
+function fmtOpenFileChip(chip, x, y) {
+    if (!chip) return false;
+    fmtFileChipNode = chip;
+    fmtFileChipData = {
+        name: chip.getAttribute('data-filename') || 'file',
+        type: chip.getAttribute('data-filetype') || '',
+        size: parseInt(chip.getAttribute('data-filesize') || '0', 10) || 0,
+        dataUrl: chip.getAttribute('data-filedata') || ''
+    };
+    const popup = document.getElementById('file-chip-popup');
+    const nm = document.getElementById('file-chip-name');
+    const meta = document.getElementById('file-chip-meta');
+    const prev = document.getElementById('file-chip-prev');
+    if (!popup || !nm || !meta || !prev) return false;
+    nm.textContent = fmtFileStem(fmtFileChipData.name).stem;
+    meta.textContent = fmtFileExt(fmtFileChipData.name, fmtFileChipData.type) + ' · ' + fmtFileSize(fmtFileChipData.size);
+    prev.innerHTML = '';
+    if (/^image\//.test(fmtFileChipData.type) && fmtFileChipData.dataUrl) {
+        const thumb = document.createElement('img');
+        thumb.src = fmtFileChipData.dataUrl;
+        thumb.alt = fmtFileChipData.name;
+        prev.appendChild(thumb);
+    } else {
+        prev.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>';
+    }
+    popup.hidden = false;
+    try {
+        const vw = window.innerWidth || 1024;
+        const vh = window.innerHeight || 768;
+        popup.style.left = Math.max(8, Math.min(typeof x === 'number' ? x : 100, vw - 250)) + 'px';
+        popup.style.top = Math.max(8, Math.min(typeof y === 'number' ? y : 100, vh - 160)) + 'px';
+    } catch (e) {}
+    return true;
+}
+
+var fmtFileChipNode = null;
+
+function fmtShowFileRename() {
+    const row = document.getElementById('file-chip-rename');
+    const input = document.getElementById('file-chip-rename-input');
+    if (!row || !input || !fmtFileChipData) return false;
+    input.value = fmtFileStem(fmtFileChipData.name).stem;
+    row.hidden = false;
+    try { input.focus(); input.select(); } catch (e) {}
+    return true;
+}
+
+function fmtApplyFileRename() {
+    const row = document.getElementById('file-chip-rename');
+    const input = document.getElementById('file-chip-rename-input');
+    if (!row || !input || !fmtFileChipData) return false;
+    const typed = String(input.value || '').trim();
+    if (!typed) return false;
+    const own = fmtFileStem(typed);
+    const keep = fmtFileStem(fmtFileChipData.name);
+    const next = own.ext ? typed : typed + keep.ext;
+    fmtFileChipData.name = next;
+    try {
+        if (fmtFileChipNode && fmtFileChipNode.setAttribute) {
+            fmtFileChipNode.setAttribute('data-filename', next);
+            const label = fmtFileChipNode.querySelector('.file-chip-name');
+            if (label) label.textContent = fmtFileStem(next).stem;
+        }
+    } catch (e) {}
+    const title = document.getElementById('file-chip-name');
+    if (title) title.textContent = fmtFileStem(next).stem;
+    row.hidden = true;
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+    return true;
+}
+
+function fmtHideFileChip() {
+    fmtFileChipData = null;
+    fmtFileChipNode = null;
+    const row = document.getElementById('file-chip-rename');
+    if (row) row.hidden = true;
+    const popup = document.getElementById('file-chip-popup');
+    if (popup) popup.hidden = true;
+}
+
+function fmtFileChipDownload() {
+    const d = fmtFileChipData;
+    if (!d || !d.dataUrl) return false;
+    try {
+        const parts = String(d.dataUrl).split(',');
+        const mime = (parts[0].match(/data:([^;]+)/) || [])[1] || 'application/octet-stream';
+        const bin = atob(parts[1] || '');
+        const bytes = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+        const blob = new Blob([bytes], { type: mime });
+        if (!window.URL || typeof window.URL.createObjectURL !== 'function') return false;
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = d.name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function () {
+            try { a.remove(); } catch (e) {}
+            try { window.URL.revokeObjectURL(url); } catch (e) {}
+        }, 100);
+        return true;
+    } catch (e) { return false; }
+}
+
+function fmtWireFileChip() {
+    if (fmtWireFileChip._done) return;
+    fmtWireFileChip._done = true;
+    if (typeof canvas !== 'undefined' && canvas) {
+        canvas.addEventListener('click', function (e) {
+            const chip = e.target.closest ? e.target.closest('.file-chip') : null;
+            if (!chip || !canvas.contains(chip)) return;
+            playAeroClickSound(700, 0.1);
+            fmtOpenFileChip(chip, e.clientX, e.clientY);
+        });
+        canvas.addEventListener('mousedown', function (e) {
+            const popup = document.getElementById('file-chip-popup');
+            if (popup && !popup.hidden && !(e.target.closest && e.target.closest('.file-chip'))) fmtHideFileChip();
+        });
+    }
+    const popup = document.getElementById('file-chip-popup');
+    const x = document.getElementById('file-chip-x');
+    const rn = document.getElementById('file-chip-rename-btn');
+    const ok = document.getElementById('file-chip-rename-ok');
+    const ri = document.getElementById('file-chip-rename-input');
+    if (rn) rn.addEventListener('click', function () { playAeroClickSound(600, 0.08); fmtShowFileRename(); });
+    if (ok) ok.addEventListener('click', function () { playAeroClickSound(600, 0.08); fmtApplyFileRename(); });
+    if (ri) ri.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); fmtApplyFileRename(); }
+    });
+    const dl = document.getElementById('file-chip-download-btn');
+    if (x) x.addEventListener('click', function () { playAeroClickSound(450, 0.08); fmtHideFileChip(); });
+    if (dl) dl.addEventListener('click', function () { playAeroClickSound(700, 0.08); fmtFileChipDownload(); });
+    document.addEventListener('mousedown', function (e) {
+        const pop = document.getElementById('file-chip-popup');
+        if (pop && !pop.hidden && !(e.target.closest && e.target.closest('#file-chip-popup')) &&
+            !(e.target.closest && e.target.closest('.file-chip'))) fmtHideFileChip();
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') fmtHideFileChip();
+    });
+}
+
+function fmtInsertImageDataURL(dataUrl, name) {
+    if (!dataUrl) return false;
+    const holder = document.createElement('span');
+    holder.className = 'img-resize';
+    const img = document.createElement('img');
+    img.src = dataUrl;
+    img.alt = name || 'image';
+    holder.appendChild(img);
+    return fmtInsertNodeAtCaret(holder);
+}
+
+function fmtWireInsertMenu() {
+    if (fmtWireInsertMenu._done) return;
+    fmtWireInsertMenu._done = true;
+    const btn = document.getElementById('insert-menu-btn');
+    if (btn) btn.addEventListener('click', toggleInsertMenu);
+    document.querySelectorAll('#insert-menu-popup .insert-item').forEach(function (item) {
+        item.addEventListener('click', function () {
+            runInsertKind(item.getAttribute('data-insert'));
+        });
+    });
+    const filePicker = document.getElementById('insert-file-input');
+    if (filePicker) filePicker.addEventListener('change', function () {
+        if (!filePicker.files || !filePicker.files[0]) return;
+        const file = filePicker.files[0];
+        try {
+            const reader = new FileReader();
+            reader.onload = function () {
+                fmtInsertFileChip(file.name, file.type, file.size, String(reader.result || ''));
+            };
+            reader.readAsDataURL(file);
+        } catch (e) {}
+        try { filePicker.value = ''; } catch (err) {}
+    });
+    const picker = document.getElementById('insert-image-input');
+    if (picker) picker.addEventListener('change', function () {
+        if (!picker.files || !picker.files[0]) return;
+        const file = picker.files[0];
+        try {
+            const reader = new FileReader();
+            reader.onload = function () {
+                fmtInsertImageDataURL(String(reader.result || ''), file.name);
+            };
+            reader.readAsDataURL(file);
+        } catch (e) {}
+        try { picker.value = ''; } catch (err) {}
+    });
+}
+
 function runDownloadFormat(fmt) {
     closeDownloadMenu();
     if (fmt === 'kd') exportKeydownFile();
@@ -2498,13 +2896,16 @@ function importKeydownFile(inputEvent) {
             const closingGateIndexValue = fullFileStringContent.indexOf("---", 3);
             if (closingGateIndexValue !== -1) {
                 const pureContentTextOffset = closingGateIndexValue + 3;
-                kdApplyDocSettings(fullFileStringContent.substring(3, closingGateIndexValue));
-                // Hydrate the editable layout arena with the stripped code layers directly
-                const kdParsedFile = kdParseTabsFence(fullFileStringContent.substring(pureContentTextOffset).trim());
-                canvasViewport.innerHTML = kdParsedFile.tabs ? kdRestoreTabs(kdParsedFile.tabs) : kdRestoreTabs([{ name: 'Main', html: kdParsedFile.html }]);
-                kdHydrateInteractions();
-                kdRenderTabs();
-                kdRenderOutline();
+                const frontGate = fullFileStringContent.substring(3, closingGateIndexValue);
+                const lockMatch = frontGate.match(/doc_password:\s*"([^"]+)"/);
+                const afterText = fullFileStringContent.substring(pureContentTextOffset).trim();
+                if (lockMatch && lockMatch[1]) {
+                    kdPendingLock = { hash: lockMatch[1], frontGate: frontGate, afterText: afterText };
+                    kdShowLockDialog();
+                    return;
+                }
+                kdApplyDocSettings(frontGate);
+                kdLoadDocContent(afterText);
                 return;
             }
         }
@@ -2989,6 +3390,7 @@ selectionToolbar.addEventListener('click', (e) => {
         if (!selection.isCollapsed) {
             const span = document.createElement('span');
             span.className = classAction;
+            span.setAttribute('spellcheck', 'false');
             span.textContent = selection.toString();
             
             const range = selection.getRangeAt(0);
@@ -3398,6 +3800,350 @@ function fmtApplySizePx(value) {
     return fmtWrapInline('font-size', px + 'px');
 }
 
+// ==========================================
+// STYLE PICKER (Add Style + Extension, inside the Style group!)
+// ==========================================
+var FMT_DEFAULT_STYLES = [
+    { label: 'Orb Yellow', cls: 'gel-orb gel-y' },
+    { label: 'Orb Red', cls: 'gel-orb gel-r' },
+    { label: 'Orb Green', cls: 'gel-orb gel-g' },
+    { label: 'Orb Cyan', cls: 'gel-orb gel-c' },
+    { label: 'Orb Blue', cls: 'gel-orb gel-b' },
+    { label: 'Orb Violet', cls: 'gel-orb gel-v' },
+    { label: 'Orb Pink', cls: 'gel-orb gel-p' },
+    { label: 'Orb Orange', cls: 'gel-orb gel-o' },
+    { label: 'Orb Magenta', cls: 'gel-orb gel-mg' },
+    { label: 'Orb Lime', cls: 'gel-orb gel-lm' },
+    { label: 'Orb Aqua', cls: 'gel-orb gel-aq' },
+    { label: 'Orb Slate', cls: 'gel-orb gel-sl' },
+    { label: 'Spark Text', cls: 'spark-text' },
+    { label: 'Green Flash', cls: 'gel-green-flash' },
+    { label: 'Liquid Underline', cls: 'liquid-underline' },
+    { label: 'Glossy Border', cls: 'glossy-border-badge' },
+    { label: 'Cyber Spark', cls: 'cyber-glow-spark' },
+    { label: 'Liquid Glow', cls: 'liquid-text-glow' },
+    { label: 'Mirror Block', cls: 'reflected-text-block' },
+    { label: 'Embossed Glass', cls: 'embossed-glass-text' },
+    { label: 'Wave Text', cls: 'kinetic-wave-text' },
+    { label: 'Tag Amber', cls: 'aero-tag-chip tag-chip-a' },
+    { label: 'Tag Green', cls: 'aero-tag-chip tag-chip-g' },
+    { label: 'Tag Orange', cls: 'aero-tag-chip tag-chip-o' },
+    { label: 'Tag Red', cls: 'aero-tag-chip tag-chip-r' },
+    { label: 'Tag Purple', cls: 'aero-tag-chip tag-chip-pr' },
+    { label: 'Tag Pink', cls: 'aero-tag-chip tag-chip-pk' },
+    { label: 'Tag Yellow', cls: 'aero-tag-chip tag-chip-y' },
+    { label: 'Tag Slate', cls: 'aero-tag-chip tag-chip-sl' },
+    { label: 'Bubble Cyan', cls: 'gel-bubble-chip gel-chip-cyan' },
+    { label: 'Bubble Orange', cls: 'gel-bubble-chip gel-chip-orange' },
+    { label: 'Bubble Green', cls: 'gel-bubble-chip gel-chip-green' },
+    { label: 'Bubble Red', cls: 'gel-bubble-chip gel-chip-red' },
+    { label: 'Bubble Purple', cls: 'gel-bubble-chip gel-chip-purple' },
+    { label: 'Bubble Pink', cls: 'gel-bubble-chip gel-chip-pink' },
+    { label: 'Bubble Yellow', cls: 'gel-bubble-chip gel-chip-yellow' },
+    { label: 'Bubble Blue', cls: 'gel-bubble-chip gel-chip-blue' },
+    { label: 'Bubble Lime', cls: 'gel-bubble-chip gel-chip-lime' },
+    { label: 'Bubble Teal', cls: 'gel-bubble-chip gel-chip-teal' },
+    { label: 'Bubble Gold', cls: 'gel-bubble-chip gel-chip-gold' },
+    { label: 'Bubble Slate', cls: 'gel-bubble-chip gel-chip-slate' },
+    { label: 'Bubble White', cls: 'gel-bubble-chip gel-chip-white' },
+    { label: 'Bubble Black', cls: 'gel-bubble-chip gel-chip-black' },
+    { label: 'Bubble Fog', cls: 'gel-bubble-chip gel-chip-fog' },
+    { label: 'Bubble Turquoise', cls: 'gel-bubble-chip gel-chip-turquoise' },
+    { label: 'Mercury Pearl', cls: 'effect-mercury-pearl' },
+    { label: 'Prism Refract', cls: 'effect-prism-refract' },
+    { label: 'Screen Cavity', cls: 'effect-screen-cavity' },
+    { label: 'Sunlight Ray', cls: 'effect-sunlight-ray' },
+    { label: 'Abyssal Plate', cls: 'effect-abyssal-plate' },
+    { label: 'Metallic Mesh', cls: 'effect-metallic-mesh' },
+    { label: 'Fluid Expand', cls: 'effect-fluid-expand' },
+    { label: 'Metric Cavity', cls: 'effect-metric-cavity' },
+    { label: 'Pearl Orb', cls: 'effect-pearl-orb' },
+    { label: 'Lens Flare', cls: 'effect-lens-flare' },
+    { label: 'Waterdrop Chip', cls: 'gel-chip-waterdrop' },
+    { label: 'Solarflare Chip', cls: 'gel-chip-solarflare' },
+    { label: 'Aurorawave Chip', cls: 'gel-chip-aurorawave' },
+    { label: 'Glass Stamp', cls: 'applet-glass-stamp' },
+    { label: 'Drop Shadow', cls: 'effect-drop-shadow-window' },
+    { label: 'Glow Tube', cls: 'effect-glow-tube' },
+    { label: 'Hardware Bevel', cls: 'effect-hardware-bevel' },
+    { label: 'Screen Segment', cls: 'effect-screen-segment' },
+    { label: 'Gel Capsule', cls: 'effect-gel-capsule' },
+    { label: 'Fluid Orbit', cls: 'effect-fluid-orbit' },
+    { label: 'X-Ray Glass', cls: 'effect-xray-glass' },
+    { label: 'Waveform Line', cls: 'effect-waveform-line' },
+    { label: 'Plasma Gel', cls: 'effect-plasma-gel' },
+    { label: 'Water Bubble', cls: 'effect-water-bubble' },
+    { label: 'Glow Tracer', cls: 'effect-glow-tracer' },
+    { label: 'Shimmer Title', cls: 'effect-shimmer-title' },
+    { label: 'Tinted Lens', cls: 'effect-tinted-lens' },
+    { label: 'Audio Loop', cls: 'effect-audio-stream-loop' },
+    { label: 'Biogel Capsule', cls: 'effect-biogel-capsule' },
+    { label: 'Neon Ribbon', cls: 'effect-neon-ribbon' },
+    { label: 'Droplet Amber', cls: 'droplet-amber' },
+    { label: 'Droplet Crimson', cls: 'droplet-crimson' },
+    { label: 'Droplet Fuchsia', cls: 'droplet-fuchsia' },
+    { label: 'Droplet Amethyst', cls: 'droplet-amethyst' },
+    { label: 'Droplet Tangerine', cls: 'droplet-tangerine' },
+    { label: 'Droplet Slate', cls: 'droplet-slate' },
+    { label: 'Plasma Cyan', cls: 'megachip-plasma plasma-cyan' },
+    { label: 'Plasma Orange', cls: 'megachip-plasma plasma-orange' },
+    { label: 'Plasma Crimson', cls: 'megachip-plasma plasma-crimson' },
+    { label: 'Plasma Lime', cls: 'megachip-plasma plasma-lime' },
+    { label: 'Bracket Blue', cls: 'megachip-glass-bracket bracket-blue' },
+    { label: 'Bracket Amethyst', cls: 'megachip-glass-bracket bracket-amethyst' },
+    { label: 'Bracket Fuchsia', cls: 'megachip-glass-bracket bracket-fuchsia' },
+    { label: 'Bracket Amber', cls: 'megachip-glass-bracket bracket-amber' },
+    { label: 'Badge Sky', cls: 'aero-glass-badge-chip badge-frame-sky' },
+    { label: 'Badge Emerald', cls: 'aero-glass-badge-chip badge-frame-emerald' },
+    { label: 'Badge Orange', cls: 'aero-glass-badge-chip badge-frame-orange' },
+    { label: 'Badge Crimson', cls: 'aero-glass-badge-chip badge-frame-crimson' },
+    { label: 'Badge Amethyst', cls: 'aero-glass-badge-chip badge-frame-amethyst' },
+    { label: 'Badge Gold', cls: 'aero-glass-badge-chip badge-frame-gold' },
+    { label: 'Swayed Sky', cls: 'gel-chip-swayed swayed-sky' },
+    { label: 'Swayed Emerald', cls: 'gel-chip-swayed swayed-emerald' },
+    { label: 'Swayed Orange', cls: 'gel-chip-swayed swayed-orange' },
+    { label: 'Swayed Amethyst', cls: 'gel-chip-swayed swayed-amethyst' },
+    { label: 'Pill Sky', cls: 'gel-chip-pill-variant pill-sky' },
+    { label: 'Pill Emerald', cls: 'gel-chip-pill-variant pill-emerald' },
+    { label: 'Pill Orange', cls: 'gel-chip-pill-variant pill-orange' },
+    { label: 'Pill Amethyst', cls: 'gel-chip-pill-variant pill-amethyst' },
+    { label: 'Pastel Yellow', cls: 'gel-chip-pastel pastel-yellow' },
+    { label: 'Pastel Blue', cls: 'gel-chip-pastel pastel-blue' },
+    { label: 'Pastel Green', cls: 'gel-chip-pastel pastel-green' },
+    { label: 'Pastel Pink', cls: 'gel-chip-pastel pastel-pink' },
+    { label: 'Pastel Purple', cls: 'gel-chip-pastel pastel-purple' },
+    { label: 'Pastel Orange', cls: 'gel-chip-pastel pastel-orange' },
+    { label: 'Ribbon Tangerine', cls: 'gel-chip-droplet-ribbon droplet-ribbon-tangerine' },
+    { label: 'Ribbon Citrus', cls: 'gel-chip-droplet-ribbon droplet-ribbon-citrus' },
+    { label: 'Ribbon Emerald', cls: 'gel-chip-droplet-ribbon droplet-ribbon-emerald' },
+    { label: 'Ribbon Sapphire', cls: 'gel-chip-droplet-ribbon droplet-ribbon-sapphire' },
+    { label: 'Ribbon Amethyst', cls: 'gel-chip-droplet-ribbon droplet-ribbon-amethyst' },
+    { label: 'Ribbon Fuchsia', cls: 'gel-chip-droplet-ribbon droplet-ribbon-fuchsia' },
+    { label: 'Ribbon Crimson', cls: 'gel-chip-droplet-ribbon droplet-ribbon-crimson' },
+    { label: 'Ribbon Slate', cls: 'gel-chip-droplet-ribbon droplet-ribbon-slate' },
+    { label: 'Heading 1', cls: 'header-1' },
+    { label: 'Heading 2', cls: 'header-2' },
+    { label: 'Heading 3', cls: 'header-3' },
+    { label: 'Blockquote', cls: 'blockquote-list' },
+    { label: 'Bullet List', cls: 'bulleted-list' },
+    { label: 'Mega Header', cls: 'mega-header' },
+    { label: 'Code Function', cls: 'dev-chip-function' },
+    { label: 'Code Variable', cls: 'dev-chip-variable' },
+    { label: 'Code String', cls: 'dev-chip-string' },
+    { label: 'Radar Sweep', cls: 'av-chip-radar-sweep' },
+    { label: 'AV Heading', cls: 'av-chip-heading' },
+    { label: 'Altimeter', cls: 'av-chip-altimeter' },
+    { label: 'Folder Tab', cls: 'jr-folder-tab' }
+];
+
+// Every extension style that EXISTS, live from the Marketplace (nothing hardcoded)!
+function fmtExtensionVariants() {
+    const out = [];
+    try {
+        const M = window.WriteoutMarketplace;
+        if (!M || !M.catalog || typeof M.installed !== 'function') return out;
+        const installed = M.installed();
+        M.catalog.forEach(function (ext) {
+            if (ext.category !== 'styles') return;
+            const isIn = installed.indexOf(ext.id) !== -1;
+            let variants = [];
+            if (ext.kind === 'style-pack' && Array.isArray(ext.styles)) variants = ext.styles;
+            else if (ext.kind === 'toolbar-style' && ext.toolbarClass) {
+                variants = [{ name: ext.name, className: ext.toolbarClass }];
+            }
+            variants.forEach(function (v) {
+                if (v && v.className) {
+                    out.push({ label: (v.name || v.className) + ' \u00B7 ' + ext.name, cls: v.className, extId: ext.id, installed: isIn });
+                }
+            });
+        });
+    } catch (e) {}
+    return out;
+}
+
+// One shared apply path (Marketplace owns it; local fallback if missing)!
+function fmtApplyPickerClass(cls) {
+    try {
+        const M = window.WriteoutMarketplace;
+        if (M && typeof M.apply === 'function') { M.apply(cls); return true; }
+    } catch (e) {}
+    try {
+        if (typeof canvas === 'undefined' || !canvas) return false;
+        const sel = window.getSelection();
+        if (!sel.rangeCount || sel.isCollapsed || !canvas.contains(sel.anchorNode)) return false;
+        const range = sel.getRangeAt(0);
+        const span = document.createElement('span');
+        span.className = cls;
+        span.setAttribute('spellcheck', 'false');
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        return true;
+    } catch (e) { return false; }
+}
+
+var FMT_PICKER_VIEW_KEY = 'writeout_picker_view';
+var fmtPickerTab = 'default';
+var fmtPickerView = 'list';
+try {
+    const pv = localStorage.getItem(FMT_PICKER_VIEW_KEY);
+    if (pv === 'mini' || pv === 'list') fmtPickerView = pv;
+} catch (e) {}
+
+function fmtRenderStylePicker() {
+    const popup = document.getElementById('style-picker-popup');
+    const list = document.getElementById('style-picker-list');
+    if (!popup || !list) return;
+    const tabs = document.getElementById('style-picker-tabs');
+    if (tabs) {
+        tabs.querySelectorAll('[data-picker-tab]').forEach(function (btn) {
+            if (btn.getAttribute('data-picker-tab') === fmtPickerTab) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+    const views = popup.querySelectorAll ? popup.querySelectorAll('[data-picker-view]') : [];
+    Array.from(views).forEach(function (btn) {
+        if (btn.getAttribute('data-picker-view') === fmtPickerView) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+    const isExt = fmtPickerTab === 'ext';
+    const mini = fmtPickerView === 'mini';
+    const items = isExt ? fmtExtensionVariants() : FMT_DEFAULT_STYLES;
+    if (mini) list.classList.add('mini');
+    else list.classList.remove('mini');
+    list.innerHTML = '';
+    if (!items.length) {
+        const p = document.createElement('p');
+        p.className = 'style-picker-empty';
+        p.textContent = isExt ? 'No extension styles installed yet.' : 'No default styles found.';
+        list.appendChild(p);
+        return;
+    }
+    items.forEach(function (item) {
+        if (mini) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'style-picker-mini';
+            btn.title = item.label;
+            btn.setAttribute('data-picker-class', item.cls);
+            if (item.extId) btn.setAttribute('data-picker-ext', item.extId);
+            const sw = document.createElement('span');
+            sw.className = item.cls;
+            sw.textContent = 'Aa';
+            btn.appendChild(sw);
+            list.appendChild(btn);
+        } else {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'style-picker-item';
+            btn.setAttribute('data-picker-class', item.cls);
+            if (item.extId) btn.setAttribute('data-picker-ext', item.extId);
+            const sw = document.createElement('span');
+            sw.className = 'picker-preview ' + item.cls;
+            sw.textContent = 'Ab';
+            const nm = document.createElement('span');
+            nm.className = 'picker-name';
+            nm.textContent = item.label + (item.extId && !item.installed ? ' (Get)' : '');
+            btn.appendChild(sw);
+            btn.appendChild(nm);
+            list.appendChild(btn);
+        }
+    });
+}
+
+function fmtOpenStylePicker(kind) {
+    fmtPickerTab = (kind === 'ext') ? 'ext' : 'default';
+    const popup = document.getElementById('style-picker-popup');
+    if (!popup) return;
+    popup.removeAttribute('hidden');
+    fmtRenderStylePicker();
+}
+
+function fmtToggleStylePicker(kind) {
+    const popup = document.getElementById('style-picker-popup');
+    if (!popup) return;
+    const want = (kind === 'ext') ? 'ext' : 'default';
+    if (!popup.hasAttribute('hidden') && fmtPickerTab === want) {
+        popup.setAttribute('hidden', '');
+        return;
+    }
+    fmtOpenStylePicker(want);
+}
+
+function fmtWireStylePicker() {
+    const group = document.getElementById('format-group-style');
+    if (group && !group._fmtMouseWired) {
+        group._fmtMouseWired = true;
+        group.addEventListener('mousedown', function (e) {
+            if (e.target.closest && e.target.closest('button')) e.preventDefault();
+        });
+    }
+    const add = document.getElementById('style-add-btn');
+    if (add && !add._fmtPickerWired) {
+        add._fmtPickerWired = true;
+        add.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleStylePicker('default');
+        });
+    }
+    const x = document.getElementById('style-picker-x');
+    if (x && !x._fmtPickerWired) {
+        x._fmtPickerWired = true;
+        x.addEventListener('click', function () {
+            const popup = document.getElementById('style-picker-popup');
+            if (popup) popup.setAttribute('hidden', '');
+        });
+    }
+    const list = document.getElementById('style-picker-list');
+    if (list && !list._fmtPickerWired) {
+        list._fmtPickerWired = true;
+        list.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-picker-class]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            const cls = btn.getAttribute('data-picker-class');
+            const extId = btn.getAttribute('data-picker-ext');
+            try {
+                const M = window.WriteoutMarketplace;
+                if (extId && M && typeof M.installed === 'function' && typeof M.install === 'function') {
+                    if (M.installed().indexOf(extId) === -1) {
+                        M.install(extId);
+                        fmtRenderStylePicker();
+                    }
+                }
+            } catch (err) {}
+            if (typeof fmtRescueSelection === 'function') {
+                fmtRescueSelection(function () { fmtApplyPickerClass(cls); });
+            } else {
+                fmtApplyPickerClass(cls);
+            }
+        });
+    }
+    const tabs = document.getElementById('style-picker-tabs');
+    if (tabs && !tabs._fmtPickerWired) {
+        tabs._fmtPickerWired = true;
+        tabs.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-picker-tab]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            fmtPickerTab = btn.getAttribute('data-picker-tab') === 'ext' ? 'ext' : 'default';
+            fmtRenderStylePicker();
+        });
+    }
+    const popup = document.getElementById('style-picker-popup');
+    if (popup && !popup._fmtViewWired) {
+        popup._fmtViewWired = true;
+        popup.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-picker-view]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            fmtPickerView = btn.getAttribute('data-picker-view') === 'mini' ? 'mini' : 'list';
+            try { localStorage.setItem(FMT_PICKER_VIEW_KEY, fmtPickerView); } catch (err) {}
+            fmtRenderStylePicker();
+        });
+    }
+}
+
 if (topFormatBar) {
     // 1. Handle changes from top toolbar dropdowns & pickers using data-edit-action
     topFormatBar.addEventListener('change', (e) => {
@@ -3484,6 +4230,113 @@ var KD_PAGE_SIZES = [
 ];
 var kdPageSizeId = 'kd';
 var kdPageOrient = 'portrait';
+var KD_DOC_PASSWORD_KEY = 'writeout_doc_password';
+var kdDocPasswordHash = '';
+try {
+    const ph = localStorage.getItem(KD_DOC_PASSWORD_KEY);
+    if (ph) kdDocPasswordHash = ph;
+} catch (e) {}
+
+// Salted sync hash (lock-screen deterrent, not encryption)!
+function kdHashPassword(pw) {
+    const s = 'writeout-doc-lock:' + String(pw);
+    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (let i = 0; i < s.length; i++) {
+        const ch = s.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return ('00000000' + (h2 >>> 0).toString(16)).slice(-8) + ('00000000' + (h1 >>> 0).toString(16)).slice(-8);
+}
+
+function kdSetDocPassword(value) {
+    kdDocPasswordHash = value ? kdHashPassword(value) : '';
+    try {
+        if (kdDocPasswordHash) localStorage.setItem(KD_DOC_PASSWORD_KEY, kdDocPasswordHash);
+        else localStorage.removeItem(KD_DOC_PASSWORD_KEY);
+    } catch (e) {}
+    kdRenderDocSettings();
+}
+
+var kdPendingLock = null;
+
+function kdLockDialogEls() {
+    return {
+        overlay: document.getElementById('doc-lock-overlay'),
+        input: document.getElementById('doc-lock-input'),
+        error: document.getElementById('doc-lock-error')
+    };
+}
+
+function kdShowLockDialog() {
+    const els = kdLockDialogEls();
+    if (!els.overlay) return;
+    if (els.input) els.input.value = '';
+    if (els.error) els.error.setAttribute('hidden', '');
+    els.overlay.classList.add('active');
+    if (els.input && typeof els.input.focus === 'function') {
+        try { els.input.focus(); } catch (e) {}
+    }
+}
+
+function kdHideLockDialog() {
+    const els = kdLockDialogEls();
+    if (els.overlay) els.overlay.classList.remove('active');
+    if (els.input) els.input.value = '';
+    kdPendingLock = null;
+}
+
+function kdUnlockAttempt() {
+    if (!kdPendingLock) return;
+    const els = kdLockDialogEls();
+    const attempt = els.input ? els.input.value : '';
+    if (attempt && kdHashPassword(attempt) === kdPendingLock.hash) {
+        const pending = kdPendingLock;
+        kdHideLockDialog();
+        kdApplyDocSettings(pending.frontGate);
+        kdLoadDocContent(pending.afterText);
+    } else {
+        if (els.error) els.error.removeAttribute('hidden');
+        if (els.input) {
+            els.input.value = '';
+            try { els.input.focus(); } catch (e) {}
+        }
+    }
+}
+
+function kdWireLockDialog() {
+    if (kdWireLockDialog._done) return;
+    kdWireLockDialog._done = true;
+    const overlay = document.getElementById('doc-lock-overlay');
+    const unlock = document.getElementById('doc-lock-unlock-btn');
+    const cancel = document.getElementById('doc-lock-cancel-btn');
+    const close = document.getElementById('doc-lock-close-btn');
+    const input = document.getElementById('doc-lock-input');
+    if (unlock) unlock.addEventListener('click', function () { playAeroClickSound(700, 0.1); kdUnlockAttempt(); });
+    if (cancel) cancel.addEventListener('click', function () { playAeroClickSound(450, 0.08); kdHideLockDialog(); });
+    if (close) close.addEventListener('click', function () { playAeroClickSound(450, 0.08); kdHideLockDialog(); });
+    if (overlay) {
+        overlay.addEventListener('click', function (e) {
+            if (e.target === overlay) kdHideLockDialog();
+        });
+    }
+    if (input) {
+        input.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter') { e.preventDefault(); kdUnlockAttempt(); }
+        });
+    }
+}
+
+// Shared .KD content loader (locked imports resume here after unlock)!
+function kdLoadDocContent(afterText) {
+    const kdParsedFile = kdParseTabsFence(String(afterText || '').trim());
+    canvasViewport.innerHTML = kdParsedFile.tabs ? kdRestoreTabs(kdParsedFile.tabs) : kdRestoreTabs([{ name: 'Main', html: kdParsedFile.html }]);
+    kdHydrateInteractions();
+    kdRenderTabs();
+    kdRenderOutline();
+}
 try {
     const sid = localStorage.getItem(KD_PAGE_SIZE_KEY);
     if (sid && KD_PAGE_SIZES.some(function (s) { return s.id === sid; })) kdPageSizeId = sid;
@@ -3503,15 +4356,6 @@ function kdPageWidth() {
     const def = kdPageSizeDef(kdPageSizeId);
     if (!def.w) return null;
     return kdPageOrient === 'landscape' ? Math.max(def.w, def.h) : Math.min(def.w, def.h);
-}
-
-function kdCurrentCanvasWidth() {
-    try {
-        if (typeof canvasViewport !== 'undefined' && canvasViewport) {
-            return canvasViewport.offsetWidth || canvasViewport.scrollWidth || 900;
-        }
-    } catch (e) {}
-    return 900;
 }
 
 // Effective canvas height: fixed sizes use their page height, KD starts extended!
@@ -3547,13 +4391,6 @@ function kdSetOrient(o) {
     kdApplyPageSize();
 }
 
-function kdPageDimsLabel(def) {
-    if (!def.w) return kdCurrentCanvasWidth() + 'px now';
-    const w = kdPageOrient === 'landscape' ? Math.max(def.w, def.h) : Math.min(def.w, def.h);
-    const h = kdPageOrient === 'landscape' ? Math.min(def.w, def.h) : Math.max(def.w, def.h);
-    return w + ' x ' + h;
-}
-
 function kdRenderDocSettings() {
     const box = document.getElementById('format-page-sizes');
     if (box) {
@@ -3563,15 +4400,13 @@ function kdRenderDocSettings() {
             btn.type = 'button';
             btn.className = 'format-page-row' + (def.id === kdPageSizeId ? ' active' : '');
             btn.setAttribute('data-page-size', def.id);
-            const nm = document.createElement('span');
-            nm.textContent = def.name;
-            const dm = document.createElement('span');
-            dm.className = 'format-page-dims';
-            dm.textContent = kdPageDimsLabel(def);
-            btn.appendChild(nm);
-            btn.appendChild(dm);
+            btn.textContent = def.name;
             box.appendChild(btn);
         });
+    }
+    const pwBox = document.getElementById('format-doc-password');
+    if (pwBox && document.activeElement !== pwBox) {
+        pwBox.placeholder = kdDocPasswordHash ? 'Protected - clear to unlock' : 'Set a password...';
     }
     const orow = document.getElementById('format-orient-row');
     if (orow) {
@@ -3632,6 +4467,13 @@ function fmtWireDocSettings() {
             kdSetPageSize(btn.getAttribute('data-page-size'));
         });
     }
+    const pwBox = document.getElementById('format-doc-password');
+    if (pwBox && !pwBox._fmtPasswordWired) {
+        pwBox._fmtPasswordWired = true;
+        pwBox.addEventListener('input', function () {
+            kdSetDocPassword(pwBox.value);
+        });
+    }
     const orow = document.getElementById('format-orient-row');
     if (orow && !orow._fmtOrientWired) {
         orow._fmtOrientWired = true;
@@ -3648,6 +4490,12 @@ function kdApplyDocSettings(frontMatter) {
     const m = String(frontMatter || '');
     const size = (m.match(/page_size:\s*"([^"]+)"/) || [])[1];
     const orient = (m.match(/page_orientation:\s*"([^"]+)"/) || [])[1];
+    const lock = (m.match(/doc_password:\s*"([^"]+)"/) || [])[1];
+    kdDocPasswordHash = lock || '';
+    try {
+        if (kdDocPasswordHash) localStorage.setItem(KD_DOC_PASSWORD_KEY, kdDocPasswordHash);
+        else localStorage.removeItem(KD_DOC_PASSWORD_KEY);
+    } catch (e) {}
     kdPageSizeId = kdPageSizeDef(size).id;
     kdPageOrient = (orient === 'landscape' || orient === 'portrait') ? orient : 'portrait';
     try {
@@ -4432,7 +5280,7 @@ function fmtUnwrapTagsInScope(tagList) {
 }
 
 var FMT_STYLE_TAGS = ['B', 'STRONG', 'I', 'EM', 'U', 'STRIKE', 'S', 'A', 'CODE'];
-var FMT_STYLE_SPAN_SEL = FMT_HIGHLIGHT_SEL + ', ' + FMT_EFFECT_SEL + ', span[class*="orange-hl-"], span[class*="green-hl-"], span[class*="blue-hl-"], span[class*="mkt-cp-"], span[class*="bcp-"], span[class*="pill-hl-"]';
+var FMT_STYLE_SPAN_SEL = FMT_HIGHLIGHT_SEL + ', ' + FMT_EFFECT_SEL + ', span[class*="orange-hl-"], span[class*="green-hl-"], span[class*="blue-hl-"], span[class*="pool-hl-"], span[class*="mkt-cp-"], span[class*="bcp-"], span[class*="pill-hl-"]';
 var FMT_INLINE_PROPS = [
     { prop: 'fontWeight', cssProp: 'font-weight', css: 'bold', label: 'Bold', test: function (v) { return v === 'bold' || v === 'bolder' || parseInt(v, 10) >= 600; } },
     { prop: 'fontStyle', cssProp: 'font-style', css: 'italic', label: 'Italic', test: function (v) { return v === 'italic' || v === 'oblique'; } },
@@ -4673,6 +5521,7 @@ function fmtWireSidebar() {
     if (fmtWired) return;
     fmtWired = true;
     fmtWireDocSettings();
+    fmtWireStylePicker();
     fmtRenderStyleList();
     const toggle = document.getElementById('format-toggle-zone');
     if (toggle) toggle.addEventListener('click', function () {
@@ -4687,6 +5536,9 @@ function fmtWireSidebar() {
 
 if (typeof canvas !== 'undefined' && canvas) {
     fmtWireSidebar();
+    kdWireLockDialog();
+    fmtWireInsertMenu();
+    fmtWireFileChip();
     const fmtRefresh = function () { fmtUpdateScopeHint(); fmtRenderStyleList(); fmtSyncAlignButtons(); };
     canvas.addEventListener('keyup', fmtRefresh);
     canvas.addEventListener('mouseup', fmtRefresh);
@@ -4813,8 +5665,15 @@ function kdSaveTabs() {
     } catch (e) {}
 }
 
-function kdLoadTabs() {
-    // Fresh start, every start: wipe all pages + outlines, then seed one empty Main!
+var KD_RESTORE_KEY = 'writeout_restore_docs';
+
+// Restoring is ON by default (only an explicit '0' wipes on boot)!
+function kdRestoreEnabled() {
+    try { return localStorage.getItem(KD_RESTORE_KEY) !== '0'; } catch (e) { return true; }
+}
+
+function kdFreshTabs() {
+    // Fresh start: wipe all pages + outlines, then seed one empty Main!
     try {
         localStorage.removeItem(KD_TABS_KEY);
         localStorage.removeItem(KD_TAB_ACTIVE_KEY);
@@ -4824,6 +5683,37 @@ function kdLoadTabs() {
     kdTabs = [{ id: kdTabId(), name: 'Main', html: '' }];
     kdActiveTabId = kdTabs[0].id;
     kdExpandedTabs = {};
+    kdSaveTabs();
+}
+
+function kdLoadTabs() {
+    if (!kdRestoreEnabled()) { kdFreshTabs(); return; }
+    // Restore the saved document: pages, outlines, and active tab survive reloads!
+    kdTabs = [];
+    kdActiveTabId = null;
+    try {
+        const raw = localStorage.getItem(KD_TABS_KEY);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            if (Array.isArray(parsed)) {
+                parsed.forEach(function (t) {
+                    if (t && typeof t.id === 'string') {
+                        kdTabs.push({ id: t.id, name: String(t.name || 'Untitled').substring(0, 60), html: typeof t.html === 'string' ? t.html : '' });
+                    }
+                });
+            }
+        }
+    } catch (e) { kdTabs = []; }
+    if (!kdTabs.length) {
+        let legacy = '';
+        try { legacy = localStorage.getItem('writedown_save_slot_1') || ''; } catch (e) {}
+        kdTabs = [{ id: kdTabId(), name: 'Main', html: legacy }];
+    }
+    try {
+        const aid = localStorage.getItem(KD_TAB_ACTIVE_KEY);
+        if (aid && kdTabs.some(function (t) { return t.id === aid; })) kdActiveTabId = aid;
+    } catch (e) {}
+    if (!kdActiveTabId || !kdTabs.some(function (t) { return t.id === kdActiveTabId; })) kdActiveTabId = kdTabs[0].id;
     kdSaveTabs();
 }
 
@@ -5005,6 +5895,7 @@ if (typeof canvas !== 'undefined' && canvas) {
     kdRenderTabs();
     kdRenderOutline();
     kdHydrateInteractions();
+    isInitialBootSync = false;
     canvas.addEventListener('input', function () {
         const t = kdActiveTab();
         if (t) {

@@ -2836,6 +2836,11 @@
 }
 
 /* --- Advanced Inline Element Formatting --- */
+.kd-divider-line { border: none; border-top: 3px solid #7dd3fc; background: linear-gradient(90deg, rgba(56,189,248,0.35) 0%, rgba(56,189,248,0) 100%); height: 0; margin: 14px 4px; }
+/* --- File Chip (uploaded file pill, click to inspect!) --- */
+.file-chip{display:inline-flex!important;align-items:center;gap:6px;padding:2px 10px;border-radius:999px;font-weight:800;white-space:nowrap;margin:0 2px;vertical-align:middle;cursor:pointer;background:linear-gradient(180deg,#e0f2ff 0%,#bae6fd 100%);border:2px solid #0284c7;color:#0c4a6e;box-shadow:inset 0 1px 1px #fff,0 2px 5px rgba(2,132,199,0.3);max-width:220px;}
+.file-chip svg{width:14px;height:14px;flex:none;}
+.file-chip .file-chip-name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;}
 .mega-header { color: #BD499D; font-weight: 900; border-bottom: 5px solid #DA6CBE; padding-bottom: 6px; margin: 15px 0; font-size: 3.0em; }
 .header-1 { color: #0284c7; font-weight: 800; border-bottom: 3px solid #38bdf8; padding-bottom: 6px; margin: 15px 0; font-size: 2.0em; }
 .header-2 { color: #059669; font-weight: 700; margin: 20px 0 8px 0; font-size: 1.5em; }
