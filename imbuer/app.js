@@ -30,7 +30,6 @@ function playAeroClickSound(frequency = 600, duration = 0.08) {
     } catch (e) {}
 }
 
-// The inline Keydown formatting tags mapped to their Aero CSS classes
 const keydownDefinitions = [
     { open: '=Y=',  close: '=Y=',  className: 'gel-orb gel-y' },
     { open: '=R=',  close: '=R=',  className: 'gel-orb gel-r' },
@@ -66,10 +65,108 @@ const keydownDefinitions = [
 document.addEventListener("DOMContentLoaded", () => {
     initGrid();
     
-    // Attach audio clicks to all standard sidebar pad buttons
     document.querySelectorAll('.pad-toggle-btn, .sidebar-action-btn').forEach(btn => {
         btn.addEventListener('click', () => playAeroClickSound(550, 0.1));
     });
+
+    // ==========================================
+    // FLOATING SELECTION TOOLBAR LOGIC
+    // ==========================================
+    // Inside DOMContentLoaded in app.js:
+    const selToolbar = document.getElementById('aero-selection-toolbar');
+    const wrapper = document.querySelector('.workspace-viewport-wrapper');
+
+    if (selToolbar && wrapper) {
+        // Prevent clicking the toolbar from clearing selection focus
+        selToolbar.addEventListener('mousedown', (e) => e.preventDefault());
+
+        function checkAndShowToolbar() {
+            const selection = window.getSelection();
+
+            if (!selection || selection.isCollapsed || selection.toString().trim().length === 0) {
+                selToolbar.style.display = 'none';
+                document.querySelectorAll('.aero-dropdown').forEach(d => d.classList.remove('active'));
+                return;
+            }
+
+            const anchorCell = selection.anchorNode.parentElement.closest('.sheet-cell');
+            if (!anchorCell) {
+                selToolbar.style.display = 'none';
+                return;
+            }
+
+            const range = selection.getRangeAt(0);
+            const rangeRect = range.getBoundingClientRect();
+            const wrapperRect = wrapper.getBoundingClientRect();
+
+            selToolbar.style.visibility = 'hidden';
+            selToolbar.style.display = 'flex';
+            const toolbarHeight = selToolbar.offsetHeight || 38;
+            const toolbarWidth = selToolbar.offsetWidth || 200;
+
+            const top = rangeRect.top - wrapperRect.top - toolbarHeight - 10;
+            const left = rangeRect.left - wrapperRect.left + (rangeRect.width / 2) - (toolbarWidth / 2);
+
+            selToolbar.style.top = `${Math.max(10, top)}px`;
+            selToolbar.style.left = `${Math.max(10, left)}px`;
+            selToolbar.style.visibility = 'visible';
+        }
+
+        document.addEventListener('selectionchange', checkAndShowToolbar);
+        document.addEventListener('mouseup', checkAndShowToolbar);
+        document.addEventListener('keyup', checkAndShowToolbar);
+
+        selToolbar.addEventListener('click', (e) => {
+            const btn = e.target.closest('button, .color-swatch-item, .chip-swatch-item, .effect-swatch-item');
+            if (!btn) return;
+
+            // Toggle Dropdown Trays
+            if (btn.classList.contains('dropdown-toggle')) {
+                e.stopPropagation();
+                playAeroClickSound(500, 0.05);
+                const parentDropdown = btn.parentElement;
+                selToolbar.querySelectorAll('.aero-dropdown').forEach(d => {
+                    if (d !== parentDropdown) d.classList.remove('active');
+                });
+                parentDropdown.classList.toggle('active');
+                return;
+            }
+
+            playAeroClickSound(600, 0.08);
+
+            const styleAction = btn.getAttribute('data-style');
+            const classAction = btn.getAttribute('data-class');
+            const selection = window.getSelection();
+
+            // 1. Handle Standard Text Toggles (Bold, Italic, Strike, etc.)
+            if (styleAction) {
+                applyTextFormat(styleAction);
+            } 
+            // Inside DOMContentLoaded -> selToolbar.addEventListener('click', ...):
+            else if (classAction && selection && !selection.isCollapsed) {
+                const range = selection.getRangeAt(0);
+                const span = document.createElement('span');
+                span.className = classAction;
+                span.textContent = selection.toString();
+
+                range.deleteContents();
+                range.insertNode(span);
+
+                // Save live inner HTML directly so custom elements don't vanish on focus
+                if (activeCellId) {
+                    const activeCell = document.getElementById(activeCellId);
+                    if (activeCell) {
+                        cellData[activeCellId] = activeCell.innerHTML;
+                        const formulaInput = document.getElementById("formula-input");
+                        if (formulaInput) formulaInput.value = activeCell.innerText;
+                    }
+                }
+            }
+
+            // Close open dropdowns
+            selToolbar.querySelectorAll('.aero-dropdown').forEach(d => d.classList.remove('active'));
+        });
+    }
 });
 
 function getColumnName(colIndex) {
@@ -157,51 +254,113 @@ function initGrid() {
         rowHeader.innerText = r;
         tr.appendChild(rowHeader);
 
+        // Replace cell creation loop inside initGrid():
         for (let c = 0; c < numCols; c++) {
             let td = document.createElement("td");
             let cellId = `${getColumnName(c)}${r}`;
             td.className = "sheet-cell";
             td.contentEditable = "true";
             td.id = cellId;
-            
-            td.addEventListener("focus", () => {
-                playAeroClickSound(500, 0.04);
-                activeCellId = cellId;
-                document.getElementById("selected-cell-label").innerText = cellId;
-                const formulaInput = document.getElementById("formula-input");
-                formulaInput.value = cellData[cellId] || "";
-                td.innerText = cellData[cellId] || "";
-            });
-            
-            td.addEventListener("blur", () => {
-                evaluateFormulas(); 
+
+            // --- Shift-Click & Drag Selection Handlers ---
+            td.addEventListener("mousedown", (e) => {
+                isMouseDown = true;
+                dragStartCellId = cellId;
+
+                if (e.shiftKey && lastSelectedCellId) {
+                    selectCellRange(lastSelectedCellId, cellId);
+                } else {
+                    selectCellRange(cellId, cellId);
+                    lastSelectedCellId = cellId;
+                }
             });
 
-            td.addEventListener("input", (e) => handleCellInput(cellId, e.target.innerText));
-            
-            if (cellStyles[cellId]) {
-                if (cellStyles[cellId].bg) td.style.backgroundColor = cellStyles[cellId].bg;
-                if (cellStyles[cellId].border) {
-                    td.style.borderColor = cellStyles[cellId].border;
-                    td.style.borderWidth = "2px";
+            td.addEventListener("mouseenter", () => {
+                if (isMouseDown && dragStartCellId) {
+                    selectCellRange(dragStartCellId, cellId);
                 }
-            }
+            });
+
+            td.addEventListener("focus", () => {
+                activeCellId = cellId;
+                document.getElementById("selected-cell-label").innerText = cellId;
+            });
+
+            // --- Live Type-Into-All-Selected Tiles Handler ---
+            td.addEventListener("input", (e) => {
+                const typedValue = td.innerText;
+
+                // Apply input live to EVERY tile currently highlighted in the selection
+                selectedCellIds.forEach(id => {
+                    cellData[id] = typedValue;
+                    const targetCell = document.getElementById(id);
+                    if (targetCell && id !== cellId) {
+                        targetCell.innerText = typedValue;
+                    }
+                });
+
+                if (isChartOpen) renderChartForColumn(currentChartColIndex);
+            });
 
             tr.appendChild(td);
         }
+
+        // Clear drag state when releasing mouse outside
+        document.addEventListener("mouseup", () => {
+            isMouseDown = false;
+        });
         tBody.appendChild(tr);
     }
     evaluateFormulas();
 }
 
+// Live-update cell data instantly without needing blur or tile switching
 function handleCellInput(cellId, value) {
     cellData[cellId] = value;
+    
+    // Synchronize formula input bar in real time
     if (activeCellId === cellId) {
-        document.getElementById("formula-input").value = value;
+        const formulaInput = document.getElementById("formula-input");
+        if (formulaInput) formulaInput.value = value;
     }
+    
+    // Live update charts if open
     if (isChartOpen) {
         renderChartForColumn(currentChartColIndex);
     }
+}
+
+// Update applyTextFormat to push changes live instantly
+function applyTextFormat(type) {
+    playAeroClickSound(650, 0.08);
+    if (!activeCellId) return;
+
+    let cell = document.getElementById(activeCellId);
+    if (!cell) return;
+
+    let wrapper = "";
+    switch (type) {
+        case 'bold': wrapper = "**"; break;
+        case 'italic': wrapper = "*"; break;
+        case 'underline': wrapper = "~U~"; break;
+        case 'code': wrapper = "`"; break;
+        case 'strike': wrapper = "~S~"; break;
+    }
+
+    let currentVal = cellData[activeCellId] || cell.innerText || "";
+
+    if (currentVal.startsWith(wrapper) && currentVal.endsWith(wrapper) && currentVal.length >= wrapper.length * 2) {
+        currentVal = currentVal.substring(wrapper.length, currentVal.length - wrapper.length);
+    } else {
+        currentVal = `${wrapper}${currentVal}${wrapper}`;
+    }
+
+    // Instantly save to memory AND update the live tile DOM
+    cellData[activeCellId] = currentVal;
+    cell.innerHTML = applyKeydownFormatting(currentVal);
+
+    const formulaInput = document.getElementById("formula-input");
+    if (formulaInput) formulaInput.value = currentVal;
 }
 
 function updateCellFromFormula(value) {
@@ -271,7 +430,6 @@ function getRangeValues(startCell, endCell) {
     return values;
 }
 
-// Cycle chart columns via < and > buttons
 function cycleChartColumn(direction) {
     playAeroClickSound(600, 0.06);
     currentChartColIndex += direction;
@@ -424,4 +582,110 @@ function importSheetsFile(event) {
         }
     };
     reader.readAsText(file);
+}
+
+function applyTextFormat(type) {
+    playAeroClickSound(650, 0.08);
+    if (!activeCellId) return;
+
+    let currentVal = cellData[activeCellId] || "";
+    let wrapper = "";
+
+    switch (type) {
+        case 'bold':
+            wrapper = "**";
+            break;
+        case 'italic':
+            wrapper = "*";
+            break;
+        case 'underline':
+            wrapper = "~U~";
+            break;
+        case 'code':
+            wrapper = "`";
+            break;
+        case 'strike':
+            wrapper = "~S~";
+            break;
+    }
+
+    if (currentVal.startsWith(wrapper) && currentVal.endsWith(wrapper) && currentVal.length >= wrapper.length * 2) {
+        currentVal = currentVal.substring(wrapper.length, currentVal.length - wrapper.length);
+    } else {
+        currentVal = `${wrapper}${currentVal}${wrapper}`;
+    }
+
+    handleCellInput(activeCellId, currentVal);
+    evaluateFormulas();
+}
+
+function applyCellFontFamily(fontFamily) {
+    playAeroClickSound(650, 0.08);
+    if (!activeCellId) return;
+    const cell = document.getElementById(activeCellId);
+    if (cell) {
+        cell.style.fontFamily = fontFamily;
+    }
+}
+
+function applyCellFontSize(fontSize) {
+    playAeroClickSound(650, 0.08);
+    if (!activeCellId) return;
+    const cell = document.getElementById(activeCellId);
+    if (cell) {
+        cell.style.fontSize = fontSize;
+    }
+}
+
+function applyCellTextColor(color) {
+    playAeroClickSound(650, 0.08);
+    if (!activeCellId) return;
+    const cell = document.getElementById(activeCellId);
+    if (cell) {
+        cell.style.color = color;
+    }
+}
+
+// --- MULTI-SELECT STATE REGISTRY ---
+let selectedCellIds = ["A1"];
+let lastSelectedCellId = "A1";
+let isMouseDown = false;
+let dragStartCellId = null;
+
+// Parse "A1" into { col: 0, row: 1 }
+function parseCellId(cellId) {
+    const colMatch = cellId.match(/[A-Z]+/)[0];
+    const rowMatch = parseInt(cellId.match(/\d+/)[0]);
+    let colIdx = 0;
+    for (let i = 0; i < colMatch.length; i++) {
+        colIdx = colIdx * 26 + (colMatch.charCodeAt(i) - 64);
+    }
+    return { col: colIdx - 1, row: rowMatch };
+}
+
+// Highlight a rectangular area of cells between two corners
+function selectCellRange(startId, endId) {
+    const start = parseCellId(startId);
+    const end = parseCellId(endId);
+
+    const minCol = Math.min(start.col, end.col);
+    const maxCol = Math.max(start.col, end.col);
+    const minRow = Math.min(start.row, end.row);
+    const maxRow = Math.max(start.row, end.row);
+
+    // Clear previous multi-selection styling
+    document.querySelectorAll('.sheet-cell.selected-tile').forEach(cell => {
+        cell.classList.remove('selected-tile');
+    });
+
+    selectedCellIds = [];
+
+    for (let r = minRow; r <= maxRow; r++) {
+        for (let c = minCol; c <= maxCol; c++) {
+            const cid = `${getColumnName(c)}${r}`;
+            selectedCellIds.push(cid);
+            const cell = document.getElementById(cid);
+            if (cell) cell.classList.add('selected-tile');
+        }
+    }
 }

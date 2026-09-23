@@ -534,3 +534,161 @@ html, body {
     gap: 8px;
     flex-shrink: 0;
 }
+
+/* --- Writeout Format Ribbon Integration --- */
+.aero-format-ribbon {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(200, 230, 255, 0.7) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 12px;
+    padding: 8px 14px;
+    box-shadow: 0 8px 25px rgba(14, 165, 233, 0.2), inset 0 1px 2px #fff;
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.aero-format-ribbon .format-control,
+.aero-format-ribbon .color-picker-label {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(224, 242, 254, 0.85) 100%) !important;
+    border: 1px solid #7dd3fc !important;
+    border-radius: 8px !important;
+    color: #0369a1 !important;
+    padding: 6px 10px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+    box-shadow: 0 2px 5px rgba(14, 165, 233, 0.15), inset 0 1px 1px #fff !important;
+    cursor: pointer;
+}
+
+.aero-format-ribbon .format-control:hover,
+.aero-format-ribbon .color-picker-label:hover {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%) !important;
+    color: #ffffff !important;
+    border-color: #0284c7 !important;
+}
+
+.aero-format-ribbon .ribbon-separator {
+    width: 1px;
+    height: 22px;
+    background: rgba(0, 0, 0, 0.15);
+    margin: 0 2px;
+}
+
+.aero-format-ribbon input[type="color"] {
+    border: none;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    background: none;
+}
+
+/* Container Reference for Positioning */
+.workspace-viewport-wrapper, #spreadsheet-container {
+    position: relative !important;
+}
+
+/* Floating Glass Bar Styling */
+#aero-selection-toolbar.aero-floating-bar {
+    position: absolute !important;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 249, 255, 0.8) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.95);
+    border-radius: 10px;
+    padding: 4px 8px;
+    box-shadow: 0 10px 25px rgba(2, 132, 199, 0.25), inset 0 1px 0 #fff;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 1000;
+}
+
+.style-bar-btn {
+    background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #334155;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05), inset 0 1px 0 #fff;
+}
+
+.style-bar-btn:hover {
+    background: #e2e8f0;
+    color: #0284c7;
+}
+
+.style-bar-divider {
+    width: 1px;
+    height: 18px;
+    background: #cbd5e1;
+    margin: 0 4px;
+}
+
+/* Grid Menu Trays */
+.aero-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.highlight-grid-menu {
+    display: none;
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 6px;
+    padding: 8px !important;
+    background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%) !important;
+    border: 2px solid #94a3b8 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2), inset 0 1px 0 #fff !important;
+    min-width: 150px !important;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1005;
+}
+
+.aero-dropdown.active .highlight-grid-menu {
+    display: grid !important;
+}
+
+.chip-grid-menu {
+    grid-template-columns: repeat(4, 1fr) !important;
+    min-width: 180px !important;
+}
+
+.color-swatch-item, .chip-swatch-item {
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.1s ease;
+}
+
+.color-swatch-item:hover, .chip-swatch-item:hover {
+    transform: scale(1.12);
+}
+
+/* Ensure the wrapper serves as the relative positioning boundary */
+.workspace-viewport-wrapper {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+/* Force high z-index and absolute positioning for the selection bar */
+#aero-selection-toolbar.aero-floating-bar {
+    position: absolute !important;
+    z-index: 9999 !important;
+    pointer-events: auto !important;
+}
+
+/* Glass selection highlight for multi-tile selection */
+.sheet-cell.selected-tile {
+    background: rgba(120, 248, 56, 0.2) !important;
+    outline-offset: -2px;
+    box-shadow: inset 0 0 0 2px #68c702 !important;
+}
