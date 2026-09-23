@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imbuer - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    <script src="https://iconify.design"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="keydown.css">
+    <link rel="icon" type="image/svg+xml" href="/imbuer/favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+
+    <!-- 3D Liquid-Gel Sidebar Navigation Dock Frame -->
+    <nav id="sidebar" class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Imbuer</h2>
+        </div>
+        
+        <div class="pad-selection-stack">
+            <input type="file" id="file-loader-gate" style="display: none;" onchange="importSheetsFile(event)">
+            
+            <button class="pad-toggle-btn active" onclick="exportSheetsFile()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v16m8-7.5a15.46 15.46 0 0 0-6.493 5.334L12 18l-1.507-2.166A15.46 15.46 0 0 0 4 10.5M17 22H7" />
+                </svg>
+                Export .ks
+            </button>
+            <button class="pad-toggle-btn" onclick="document.getElementById('file-loader-gate').click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18V2m8 7.5a15.46 15.46 0 0 1-6.493-5.334L12 2l-1.507 2.166A15.46 15.46 0 0 1 4 9.5M17 22H7" />
+                </svg>
+                Import .ks
+            </button>
+            <button class="pad-toggle-btn" onclick="addNewRow()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14" />
+                </svg>
+                Add Row
+            </button>
+            <button class="pad-toggle-btn" onclick="addNewColumn()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14" />
+                </svg>
+                Add Column
+            </button>
+        </div>
+
+        <div class="sidebar-footer-controls">
+            <button id="help-trigger-btn" class="sidebar-action-btn" onclick="toggleModal(true)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                        <path d="M4.929 4.929A10 10 0 0 0 2 12a10.1 10.1 0 0 0 2.929 7.071A10.1 10.1 0 0 0 12 22c2.626 0 5.214-1.072 7.071-2.929A10.1 10.1 0 0 0 22 12A10 10 0 0 0 4.929 4.929" />
+                        <path d="M12 13.833c0-2.503 2.75-2.337 2.75-4.84c0-3.324-5.5-3.324-5.5 0M12 17.5v-.625" />
+                    </g>
+                </svg>
+                Help Deck
+            </button>
+            <button id="settings-trigger-btn" class="sidebar-action-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none"></path>
+                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                        <path d="M13.945 10.056a2.75 2.75 0 1 1-3.889 3.888a2.75 2.75 0 0 1 3.889-3.889"></path>
+                        <path d="M9.75 4.1c0 1.595-2.027 2.816-3.458 1.991c-2.555-1.359-4.496 2.384-2.239 3.885c1.377.793 1.378 3.2 0 3.994c-2.433 1.457-.212 5.178 2.239 3.873c1.551-.893 3.46.57 3.46 2.174c0 2.678 4.477 2.61 4.477 0c0-1.635 1.879-3.084 3.458-2.174c2.52 1.341 4.69-2.569 2.239-3.873c-1.38-.794-1.378-3.211 0-4.004c2.433-1.457.214-5.178-2.239-3.875c-1.398.807-3.457-.403-3.458-1.99c0-2.845-4.478-2.756-4.478 0"></path>
+                    </g>
+                </svg>
+                Settings
+            </button>
+        </div>
+        <div id="toggle-zone" class="latch-toggle-strip" onclick="toggleSidebar()">
+            <svg id="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 19a18 18 0 0 0-7-7a18 18 0 0 0 7-7" />
+            </svg>
+        </div>
+    </nav>
+
+    <!-- Main Viewport Area -->
+    <main class="workspace-viewport-wrapper">
+        <div class="sheets-toolbar">
+            <!-- Cell Color & Outline Picker Button + Popup -->
+            <div class="color-picker-container">
+                <button id="color-picker-btn" class="style-tool-btn" onclick="toggleColorPopup(event)" title="Cell Colors & Borders">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22C6.553 22 2 17.447 2 12S6.553 2 12 2c5.006 0 10 3.695 10 9c0 4.15-4.035 4.01-7.25 5c-3.25 1-1.57 2.686-.757 4.093C14.805 21.5 13.076 22 12 22"/><path d="M6 14c0 .5.5 1.5 1 1.802M12.783 6s-1.283 0-2.033.345M7.06 8C6.5 8.5 6 9.768 6 9.768m11.6-.143S17 8.5 16.167 8.143"/></g></svg>
+                </button>
+
+                <!-- Floating Glass Palette Menu Popup -->
+                <div id="aero-color-popup" class="aero-palette-menu">
+                    <div class="palette-header">Cell Fill & Outline</div>
+                    
+                    <div class="palette-section">
+                        <label>Fill Color:</label>
+                        <div class="preset-row">
+                            <span class="color-swatch" style="background:#ffffff;" onclick="applyCellStyles('#ffffff', null)"></span>
+                            <span class="color-swatch" style="background:#bae6fd;" onclick="applyCellStyles('#bae6fd', null)"></span>
+                            <span class="color-swatch" style="background:#a7f3d0;" onclick="applyCellStyles('#a7f3d0', null)"></span>
+                            <span class="color-swatch" style="background:#fef08a;" onclick="applyCellStyles('#fef08a', null)"></span>
+                            <span class="color-swatch" style="background:#fca5a5;" onclick="applyCellStyles('#fca5a5', null)"></span>
+                            <span class="color-swatch" style="background:#e9d5ff;" onclick="applyCellStyles('#e9d5ff', null)"></span>
+                            
+                            <!-- Styled Custom Color Picker Button -->
+                            <label class="custom-picker-wrapper" title="Custom Fill Color">
+                                <input type="color" onchange="applyCellStyles(this.value, null)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11A7 7 0 0 1 5 11c0-4.5 7-9 7-9s7 4.5 7 9Z"/></svg>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="palette-section">
+                        <label>Outline Color:</label>
+                        <div class="preset-row">
+                            <span class="color-swatch" style="background:#cbd5e1;" onclick="applyCellStyles(null, '#cbd5e1')"></span>
+                            <span class="color-swatch" style="background:#0284c7;" onclick="applyCellStyles(null, '#0284c7')"></span>
+                            <span class="color-swatch" style="background:#059669;" onclick="applyCellStyles(null, '#059669')"></span>
+                            <span class="color-swatch" style="background:#ca8a04;" onclick="applyCellStyles(null, '#ca8a04')"></span>
+                            <span class="color-swatch" style="background:#dc2626;" onclick="applyCellStyles(null, '#dc2626')"></span>
+                            <span class="color-swatch" style="background:#7e22ce;" onclick="applyCellStyles(null, '#7e22ce')"></span>
+                            
+                            <!-- Styled Custom Color Picker Button -->
+                            <label class="custom-picker-wrapper" title="Custom Border Color">
+                                <input type="color" onchange="applyCellStyles(null, this.value)">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11A7 7 0 0 1 5 11c0-4.5 7-9 7-9s7 4.5 7 9Z"/></svg>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="palette-footer">
+                        <button class="reset-style-btn" onclick="applyCellStyles('#ffffff', '#cbd5e1')">Reset Style</button>
+                    </div>
+                </div>
+            </div>
+            <!-- 2. Chart Generator Button (Now right next to Palette!) -->
+            <button class="style-tool-btn" onclick="generateAeroChart()" title="Generate Aero Chart from Selected Column">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24">
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M18 17V9m-5 8v-5m-5 5v-3"/>
+                </svg>
+            </button>
+
+            <div class="formula-bar-wrapper">
+                <span class="formula-badge" id="selected-cell-label">A1</span>
+                <input type="text" id="formula-input" placeholder="Enter value or formula (e.g., =SUM(A1:A3))" oninput="updateCellFromFormula(this.value)">
+            </div>
+        </div>
+        <!-- Dynamic Glass Chart Container -->
+        <div id="chart-viewport" class="aero-chart-card" style="display: none;">
+            <div class="chart-header">
+                <div class="chart-nav-cluster">
+                    <button class="chart-nav-btn" onclick="cycleChartColumn(-1)" title="Previous Column">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" d="M15.5 19a18 18 0 0 0-7-7a18 18 0 0 0 7-7"/></svg>
+                    </button>
+                    <button class="chart-nav-btn" onclick="cycleChartColumn(1)" title="Next Column">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" d="M8.5 19a18 18 0 0 1 7-7a18 18 0 0 1-7-7"/></svg>
+                    </button>
+                    <span id="chart-title-text">COLUMN A DATA</span>
+                </div>
+                <button class="chart-close-orb" onclick="closeChart()">✕</button>
+            </div>
+            <div id="chart-bar-container" class="chart-bars-wrapper">
+                <!-- Dynamic 3D bars rendered via JS -->
+            </div>
+        </div>
+        <div id="spreadsheet-container">
+            <table id="aero-grid-table">
+                <thead>
+                    <tr id="table-header-row">
+                        <th class="corner-header"></th>
+                    </tr>
+                </thead>
+                <tbody id="table-body">
+                    <!-- Dynamically generated rows -->
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <!-- Modal Help Container -->
+    <div id="aero-modal-overlay" class="modal-blur-gate">
+        <div id="aero-dialog-box" class="embossed-dialogue-chassis">
+            <div class="dialog-header">
+                <h3>AERO SHEETS REFERENCE SPECS</h3>
+                <div id="dialog-close-btn" onclick="toggleModal(false)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M18.5 5.5L12 12m0 0l-6.5 6.5M12 12L5.5 5.5M12 12l6.5 6.5" />
+                    </svg>
+                </div>
+            </div>
+            <div class="dialog-body-scroll">
+                <div class="help-card">
+                    <b>=SUM(range)</b> <span>Calculates total sum of cell ranges (e.g., A1:A5)</span><br>
+                    <b>=AVG(range)</b> Calculates arithmetic mean of cell ranges<br>
+                    <b>Cell Styling</b> Click the drop icon in the top toolbar to style cell background and borders!
+                </div>
+            </div>
+            <div class="dialog-footer">
+                <button id="dialog-confirm-btn" class="dialog-confirm-orb" onclick="toggleModal(false)">DISMISS DECK</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
