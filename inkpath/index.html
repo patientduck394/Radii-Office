@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inkpath - Vector Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="/inkpath/favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+
+    <nav class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Inkpath</h2>
+        </div>
+
+        <div class="pad-selection-stack">
+            <span class="section-label">Toolbox</span>
+            <div class="tools-grid">
+                <button class="pad-toggle-btn active" id="btn-select" onclick="setTool('select')" title="Select / Move / Transform">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m20.447 11.032l-6.766 2.648l-2.647 6.766c-.288.739-1.33.739-1.618 0L3.061 4.183a.86.86 0 0 1 .192-.927a.88.88 0 0 1 .935-.198l16.259 6.355a.88.88 0 0 1 .553.81a.87.87 0 0 1-.553.81"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-node" onclick="setTool('node')" title="Edit Nodes">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M20.205 8.337L4.975 2.772a1.7 1.7 0 0 0-1.804.4a1.7 1.7 0 0 0-.398 1.803l5.566 15.23c.25.69.88 1.128 1.61 1.128h.036a1.69 1.69 0 0 0 1.6-1.193l2.075-6.48l6.479-2.073a1.7 1.7 0 0 0 1.194-1.602a1.7 1.7 0 0 0-1.128-1.648"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-bezier" onclick="setTool('bezier')" title="Bezier Pen">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m3.929 20.071l-.964-.268a1 1 0 0 0 1.232 1.232zm6.364-1.414l.12.993zm-4.95-4.95l.993.12zm14.143-4.95A1 1 0 1 0 20.9 7.343l-.707.707zm-2.829-5.656a1 1 0 1 0-1.414 1.414l.707-.707zM6.597 7.83l-.372-.928zm6.99-2.143l.708-.707zm4.946 5.803l.929.372zm-.221-1.078l.707-.708zm-2.144 6.99l-.928-.37zm-.801.621l-.126-.992zm.801-.62l.929.371l2.365-5.912l-.929-.372l-.928-.371l-2.365 5.912zm2.144-6.991l.707-.708l-4.724-4.724l-.707.707l-.707.707l4.724 4.725zm-5.803-4.946l-.371-.929l-5.913 2.365l.372.929l.37.928l5.914-2.365zM3.93 20.07l.268.964l.002-.001l.008-.002l.034-.01l.131-.035a79 79 0 0 1 2.128-.549c1.308-.319 2.848-.66 3.913-.788l-.12-.993l-.12-.993c-1.195.145-2.838.512-4.147.831a90 90 0 0 0-2.179.562l-.137.037l-.036.01l-.01.003h-.002zm6.364-1.414l.12.993c1.644-.2 3.999-.497 5.08-.634l-.127-.992l-.125-.992c-1.081.137-3.43.434-5.068.632zM5.976 8.634l-.992-.126c-.137 1.08-.434 3.435-.634 5.079l.993.12l.993.12c.198-1.637.495-3.987.632-5.068zm-.633 5.073l-.993-.12c-.129 1.065-.47 2.605-.788 3.913a89 89 0 0 1-.584 2.26l-.01.033l-.002.008v.002l1.926.536v-.001l.001-.003l.003-.01l.01-.035a49 49 0 0 0 .172-.64a90 90 0 0 0 .427-1.676c.32-1.31.686-2.951.83-4.146zm-.707 5.657l.707.707L11 14.414l-.707-.707L9.586 13l-5.657 5.657zm5.657-7.07L11 13l.707-.707l.707-.707a2 2 0 0 0-2.828 0zm1.414 0L11 13l.707.707l.707.707a2 2 0 0 0 0-2.828zm0 1.413L11 13l-.707.707l-.707.707a2 2 0 0 0 2.828 0zm-1.414 0L11 13l-.707-.707l-.707-.707a2 2 0 0 0 0 2.829zm9.9-5.657l.707-.707l-4.243-4.242l-.707.707l-.707.707l4.243 4.242zM6.597 7.832l-.372-.929c-.674.27-1.15.884-1.24 1.605l.991.126l.992.125v.001zm6.99-2.144l.708-.707a2 2 0 0 0-2.157-.443l.371.929l.371.928zm4.946 5.803l.929.372a2 2 0 0 0-.443-2.158l-.707.708l-.707.707zm-2.365 5.913l-.928-.372l.127.992l.125.992a2 2 0 0 0 1.605-1.241z"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-rect" onclick="setTool('rect')" title="Rectangle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 8a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z"/></svg>
+                </button>
+
+                <button class="pad-toggle-btn" id="btn-circle" onclick="setTool('circle')" title="Circle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.929 4.929A10 10 0 0 0 2 12a10.1 10.1 0 0 0 2.929 7.071A10.1 10.1 0 0 0 12 22c2.626 0 5.214-1.072 7.071-2.929A10.1 10.1 0 0 0 22 12A10 10 0 0 0 4.929 4.929"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-ellipse" onclick="setTool('ellipse')" title="Ellipse">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M12 4C6.49 4 2 7.59 2 12s4.49 8 10 8s10-3.59 10-8s-4.49-8-10-8m0 14c-4.41 0-8-2.69-8-6s3.59-6 8-6s8 2.69 8 6s-3.59 6-8 6"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-line" onclick="setTool('line')" title="Line">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M22 2L2 22"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-polygon" onclick="setTool('polygon')" title="Star / Polygon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.629 8.662a1.22 1.22 0 0 0 1.136-.826a30.3 30.3 0 0 1 2.286-5.295c.409-.73 1.499-.712 1.898 0a30 30 0 0 1 2.285 5.295c.164.476.634.818 1.137.826a32 32 0 0 1 4.741.473c.861.15 1.184 1.132.572 1.73a35 35 0 0 1-3.789 3.216a1.14 1.14 0 0 0-.42 1.28a30.3 30.3 0 0 1 1.267 5.48c.111.839-.788 1.431-1.567 1.031a31.7 31.7 0 0 1-4.422-2.749a1.3 1.3 0 0 0-1.507 0a32 32 0 0 1-4.422 2.749c-.78.4-1.678-.192-1.566-1.032c.25-1.862.674-3.696 1.266-5.478a1.14 1.14 0 0 0-.42-1.281a34.5 34.5 0 0 1-3.789-3.216c-.61-.598-.287-1.58.573-1.73a33 33 0 0 1 4.74-.473"/></svg>
+                </button>
+
+                <button class="pad-toggle-btn" id="btn-triangle" onclick="setTool('triangle')" title="Triangle">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.73 4a2 2 0 0 0-3.46 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-polygon" onclick="setTool('polygon')" title="Polygon / Star">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.629 8.662a1.22 1.22 0 0 0 1.136-.826a30.3 30.3 0 0 1 2.286-5.295c.409-.73 1.499-.712 1.898 0a30 30 0 0 1 2.285 5.295c.164.476.634.818 1.137.826a32 32 0 0 1 4.741.473c.861.15 1.184 1.132.572 1.73a35 35 0 0 1-3.789 3.216a1.14 1.14 0 0 0-.42 1.28a30.3 30.3 0 0 1 1.267 5.48c.111.839-.788 1.431-1.567 1.031a31.7 31.7 0 0 1-4.422-2.749a1.3 1.3 0 0 0-1.507 0a32 32 0 0 1-4.422 2.749c-.78.4-1.678-.192-1.566-1.032c.25-1.862.674-3.696 1.266-5.478a1.14 1.14 0 0 0-.42-1.281a34.5 34.5 0 0 1-3.789-3.216c-.61-.598-.287-1.58.573-1.73a33 33 0 0 1 4.74-.473"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-line" onclick="setTool('line')" title="Line Segment">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 256 256"><path d="M0 0h256v256H0z" fill="none"/><path fill="currentColor" d="M214.64 41.36a32 32 0 0 0-50.2 38.89l-84.19 84.19a32.06 32.06 0 0 0-38.89 4.94a32 32 0 1 0 50.2 6.37l84.19-84.19a32 32 0 0 0 38.89-50.2m-139.33 162a16 16 0 0 1-22.64-22.64a16 16 0 0 1 22.63 0a16 16 0 0 1 .01 22.61Zm128-128a16 16 0 1 1 0-22.63a16 16 0 0 1 .02 22.57Z"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-text" onclick="setTool('text')" title="Text Tool">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="M19 7V4h-6v16h3a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h3V4H5v3a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1h16a1 1 0 0 1 1 1v4a1 1 0 1 1-2 0"/></svg>
+                </button>
+                
+                <button class="pad-toggle-btn" id="btn-eyedropper" onclick="setTool('eyedropper')" title="Color Eyedropper">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="-2 -2 24 24"><path d="M-2 -2h24v24H-2z" fill="none"/><path fill="currentColor" d="M6.502 12.348h2.829l2.707-2.578l-1.414-1.347zm-1.987 1.905a4.7 4.7 0 0 0-1.002 1.653l-.334.954l1.002-.318a5.05 5.05 0 0 0 1.954-1.15l1.196-1.14H4.515zM14.866 9.77a.92.92 0 0 1 0 1.347a1.036 1.036 0 0 1-1.414 0L7.55 16.738a7.1 7.1 0 0 1-2.737 1.61l-2.899.921c-.523.166-1.09-.103-1.264-.602a.9.9 0 0 1 0-.603l.966-2.76a6.6 6.6 0 0 1 1.69-2.606L9.21 7.076a.92.92 0 0 1 0-1.347a1.036 1.036 0 0 1 1.414 0l4.242-4.04c1.172-1.116 3.071-1.116 4.243 0a2.76 2.76 0 0 1 0 4.04l-4.243 4.04zm-2.828-2.694l1.414 1.347l4.243-4.04a.92.92 0 0 0 0-1.347a1.036 1.036 0 0 0-1.414 0z"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-eraser" onclick="setTool('eraser')" title="Eraser Tool">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.84 12.7c1.347-1.423 3.882-3.45 1.973-5.517l-3.557-3.85c-1.98-2.144-3.981.362-5.322 1.795l-7.5 8.226c-.843.926-2.064 1.978-1.923 3.36c.151 1.482 2.25 3.585 3.454 4.326c.784.482 1.655.46 2.549.46c1.775 0 2.712-.45 3.923-1.778zm-6.906-7.572L18.84 12.7m-11.1 8.8h13.683"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-zoom" onclick="setTool('zoom')" title="Zoom / Focus">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 10a7 7 0 1 0 14 0a7 7 0 1 0-14 0m18 11l-6-6"/></svg>
+                </button>
+                <button class="pad-toggle-btn" id="btn-clear" onclick="clearCanvas()" title="Clear Canvas">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9.662C5 12 5 14 3 16c3 .5 4.5 1 5 4c2-3 6-4 9 0c0-3 1-4 4-4.004Q18 13.001 21 10c-3 0-5-2-5-5c-2 4-5 3-7.5-1C8 7 6 9 3 9.662"/></svg>
+                </button>
+            </div>
+
+            <span class="section-label">File Options</span>
+            <button class="action-btn" onclick="exportKV()">💾 Export .KV</button>
+            <button class="action-btn" onclick="document.getElementById('file-kv').click()">📂 Import .KV</button>
+            <button class="action-btn" onclick="exportSVG()">🖼️ Export SVG</button>
+            <button class="action-btn" onclick="exportPNG()">📸 Export PNG</button>
+            
+            <input type="file" id="file-kv" style="display:none" accept=".kv,.yaml,.yml" onchange="importKV(event)">
+        </div>
+    </nav>
+
+    <main class="workspace-viewport-wrapper">
+        <div class="canvas-area-container">
+            <div class="sheets-toolbar">
+                <span class="toolbar-label">MODE:</span>
+                <span id="current-tool-text" class="tool-status">SELECT / EDIT</span>
+                <div class="ops-wrap">
+                    <button id="edit-btn" class="action-btn" onclick="toggleEditPopup(event)">Edit ▾</button>
+                    <div id="edit-popup" class="ops-popup" style="display:none;">
+                        <button class="action-btn ops-item" onclick="duplicateSelected(); closeEditPopup();" data-tooltip="Duplicate selection in place">Duplicate <span class="ops-kbd">⌘D</span></button>
+                        <button class="action-btn ops-item" onclick="deleteSelectedObject(); closeEditPopup();" data-tooltip="Delete selection">Delete <span class="ops-kbd">⌫</span></button>
+                    </div>
+                </div>
+                <div class="ops-wrap">
+                    <button id="ops-btn" class="action-btn" onclick="toggleOpsPopup(event)">Operations ▾</button>
+                    <div id="ops-popup" class="ops-popup" style="display:none;">
+                        <div class="ops-title">BOOLEAN</div>
+                        <button class="action-btn ops-item" onclick="doBooleanOp('union')" data-tooltip="Merge selected shapes">Union <span class="ops-kbd">⌘+</span></button>
+                        <button class="action-btn ops-item" onclick="doBooleanOp('subtract')" data-tooltip="Cut front shape from back shape">Subtract <span class="ops-kbd">⌘−</span></button>
+                        <button class="action-btn ops-item" onclick="doBooleanOp('intersect')" data-tooltip="Keep only the overlap">Intersect <span class="ops-kbd">⇧⌘I</span></button>
+                        <button class="action-btn ops-item" onclick="doBooleanOp('exclude')" data-tooltip="Keep both, cut the overlap">Exclude <span class="ops-kbd">⇧⌘X</span></button>
+                        <div class="ops-title">CLIP &amp; MASK</div>
+                        <button class="action-btn ops-item" onclick="doClip()" data-tooltip="Front shape clips the rest">Clip <span class="ops-kbd">⇧⌘M</span></button>
+                        <button class="action-btn ops-item" onclick="doMask()" data-tooltip="Front shape masks the rest">Mask <span class="ops-kbd">⇧⌘C</span></button>
+                        <button class="action-btn ops-item" onclick="releaseOp()" data-tooltip="Restore clipped, masked, or combined shapes">Release <span class="ops-kbd">⇧⌘G</span></button>
+                        <div class="ops-title">PATH</div>
+                        <button class="action-btn ops-item" onclick="convertToPathMenu()" data-tooltip="Turn shapes into editable paths">Convert to Path <span class="ops-kbd">⇧⌘P</span></button>
+                    </div>
+                </div>
+                <span class="toolbar-hint">Full 16-Tool Vector Suite Active!</span>
+            </div>
+
+            <div class="canvas-frame">
+                <svg id="viewport" onmousedown="handleCanvasMouseDown(event)" onmousemove="handleCanvasMouseMove(event)" onmouseup="handleCanvasMouseUp(event)">
+                    <defs id="svg-defs"></defs>
+                    <g id="drawing-layer"></g>
+                    <g id="preview-layer"></g>
+                    <g id="ui-layer"></g>
+                </svg>
+            </div>
+        </div>
+
+        <aside class="aero-inspector">
+            <div class="inspector-title">Object Inspector</div>
+
+            <div id="inspector-content" class="inspector-stack" style="display:none;">
+                <div class="insp-tabs" role="tablist" aria-label="Inspector panels">
+                    <button id="seg-design" class="insp-tab-btn active" onclick="switchInspectorTab('design')" data-tooltip="Design" aria-label="Design">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5.684 21.38c-.833.83-2.238.822-3.063 0c-.832-.829-.824-2.229 0-3.05l4.1-4.085s-2.033-4.077 0-6.102c.19-.19.53-.19.72 0l8.466 8.434c.191.19.033.44 0 .719c-.28 2.366-6.123 0-6.123 0zM8 7.99a13.43 13.43 0 0 0 5.988-5.976a.025.025 0 0 1 .039-.007l3.089 3.091c1.044 1.046-.648 4.55-.947 5.734c-.05.194.186.332.331.195c.732-.693 2.861-3.681 4.049-2.493l1.443 1.445q.013.013.005.031c-1.48 2.633-3.768 4.706-6.493 5.99"/></svg>
+                    </button>
+                    <button id="seg-style" class="insp-tab-btn" onclick="switchInspectorTab('style')" data-tooltip="Stroke and Fill" aria-label="Stroke and Fill">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 8a6 6 0 0 1 6-6h8a6 6 0 0 1 6 6v8a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6z"/></svg>
+                    </button>
+                    <button id="seg-layers" class="insp-tab-btn" onclick="switchInspectorTab('layers')" data-tooltip="Layers" aria-label="Layers">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 11v1c3.601.9 6.9 2.485 10 4.5c3.1-2.015 6.399-3.6 10-4.5v-1M2 15.5v1c3.601.9 6.9 2.485 10 4.5c3.1-2.015 6.399-3.6 10-4.5v-1M12 12C8.9 9.985 5.601 8.4 2 7.5C5.1 5.485 8.399 3.9 12 3c3.601.9 6.9 2.485 10 4.5c-3.601.9-6.9 2.485-10 4.5"/></svg>
+                    </button>
+                </div>
+
+                <div id="panel-design" class="inspector-panel">
+                    <span class="section-label">Layer Stacking</span>
+                    <div class="layer-buttons">
+                        <button class="action-btn" onclick="moveLayer('top')">🔝 Front</button>
+                        <button class="action-btn" onclick="moveLayer('up')">⬆️ Up</button>
+                        <button class="action-btn" onclick="moveLayer('down')">⬇️ Down</button>
+                        <button class="action-btn" onclick="moveLayer('bottom')">🔝 Back</button>
+                    </div>
+
+                    <span class="section-label" id="lbl-text-section">Typography / Text</span>
+                    <div class="control-group" id="grp-text-content">
+                        <label>Text Label</label>
+                        <input type="text" id="insp-text-val" value="Inkpath" oninput="updateSelectedObject()">
+                    </div>
+                    <div class="control-group" id="grp-font-size">
+                        <label>Font Size (px)</label>
+                        <input type="number" id="insp-font-size" value="28" min="8" max="200" onchange="updateSelectedObject()">
+                    </div>
+
+                    <span class="section-label">Shape</span>
+                    <div class="control-group" id="grp-corner-radius">
+                        <label>Corner Radius (px)</label>
+                        <input type="number" id="insp-corner-radius" value="6" min="0" max="100" onchange="updateSelectedObject()">
+                    </div>
+
+                    <span class="section-label">Effects &amp; Transforms</span>
+                    <div class="control-group">
+                        <label>Opacity (<span id="val-opacity">100</span>%)</label>
+                        <input type="range" id="insp-opacity" min="0" max="1" step="0.05" value="1" oninput="updateSelectedObject()">
+                    </div>
+                    <div class="control-group">
+                        <label>Blur (<span id="val-blur">0</span>px)</label>
+                        <input type="range" id="insp-blur" min="0" max="20" step="1" value="0" oninput="updateSelectedObject()">
+                    </div>
+                    <div class="control-group">
+                        <label>Rotation (<span id="val-rotation">0</span>°)</label>
+                        <input type="range" id="insp-rotation" min="0" max="360" step="1" value="0" oninput="updateSelectedObject()">
+                    </div>
+                </div>
+
+                <div id="panel-style" class="inspector-panel" style="display:none;">
+                    <div class="segmented-control" role="tablist" aria-label="Fill or Stroke">
+                        <button id="seg-fill" class="seg-btn active" onclick="switchStyleTab('fill')">Fill</button>
+                        <button id="seg-stroke" class="seg-btn" onclick="switchStyleTab('stroke')">Stroke</button>
+                    </div>
+
+                    <div id="subpanel-fill" class="inspector-panel">
+                    <span class="section-label">Fill</span>
+                    <div class="control-group" id="grp-fill-type">
+                        <label>Fill Style</label>
+                        <div class="fill-style-seg" role="group" aria-label="Fill style">
+                            <button id="filltype-color" class="fill-seg-btn" onclick="setFillType('color')" data-tooltip="Solid Color" aria-label="Solid Color">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><rect x="2" y="2" width="12" height="12" rx="3" fill="currentColor" /></svg>
+                            </button>
+                            <button id="filltype-linear" class="fill-seg-btn" onclick="setFillType('linear')" data-tooltip="Linear Gradient" aria-label="Linear Gradient">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><defs><linearGradient id="ft-linear" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF60C5" /><stop offset="1" stop-color="#38bdf8" /></linearGradient></defs><rect x="2" y="2" width="12" height="12" rx="3" fill="url(#ft-linear)" /></svg>
+                            </button>
+                            <button id="filltype-radial" class="fill-seg-btn" onclick="setFillType('radial')" data-tooltip="Radial Gradient" aria-label="Radial Gradient">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><defs><radialGradient id="ft-radial"><stop offset="0" stop-color="#FF60C5" /><stop offset="1" stop-color="#38bdf8" /></radialGradient></defs><circle cx="8" cy="8" r="6" fill="url(#ft-radial)" /></svg>
+                            </button>
+                            <button id="filltype-none" class="fill-seg-btn" onclick="setFillType('none')" data-tooltip="No Fill" aria-label="No Fill">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><rect x="2" y="2" width="12" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" /><line x1="4" y1="12" x2="12" y2="4" stroke="#ef4444" stroke-width="1.8" /></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="grp-fill-color">
+                        <label id="fill-color-label">Fill Color 1</label>
+                        <button id="fill-swatch" class="color-swatch" onclick="toggleFillPopup(event)" title="Pick fill color">--</button>
+                        <div id="fill-popup" class="color-popup" style="display:none;">
+                            <div class="popup-row">
+                                <label>H <span id="val-fill-h">0</span>°</label>
+                                <input type="range" id="insp-fill-h" min="0" max="360" step="1" value="0" oninput="updateFillFromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>S <span id="val-fill-s">0</span>%</label>
+                                <input type="range" id="insp-fill-s" min="0" max="100" step="1" value="0" oninput="updateFillFromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>V <span id="val-fill-v">100</span>%</label>
+                                <input type="range" id="insp-fill-v" min="0" max="100" step="1" value="100" oninput="updateFillFromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>A <span id="val-fill-a">100</span>%</label>
+                                <input type="range" id="insp-fill-a" min="0" max="100" step="1" value="100" oninput="updateFillFromHSVA()">
+                            </div>
+                            <div class="popup-preview-row">
+                                <span id="fill-preview" class="popup-preview"></span>
+                                <input id="fill-hex" class="popup-hex-input" value="#a305ffff" spellcheck="false" autocomplete="off" maxlength="9" onchange="setColorFromHex('fill', 'fill')">
+                            </div>
+                            <button class="popup-pick-btn" onclick="pickFromCanvas('fill', 'fill', event)">Pick from canvas</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="grp-fill-color2">
+                        <label>Gradient Stop 2</label>
+                        <button id="fill2-swatch" class="color-swatch" onclick="toggleFill2Popup(event)" title="Pick gradient stop 2">--</button>
+                        <div id="fill2-popup" class="color-popup" style="display:none;">
+                            <div class="popup-row">
+                                <label>H <span id="val-fill2-h">0</span>°</label>
+                                <input type="range" id="insp-fill2-h" min="0" max="360" step="1" value="0" oninput="updateFill2FromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>S <span id="val-fill2-s">0</span>%</label>
+                                <input type="range" id="insp-fill2-s" min="0" max="100" step="1" value="0" oninput="updateFill2FromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>V <span id="val-fill2-v">100</span>%</label>
+                                <input type="range" id="insp-fill2-v" min="0" max="100" step="1" value="100" oninput="updateFill2FromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>A <span id="val-fill2-a">100</span>%</label>
+                                <input type="range" id="insp-fill2-a" min="0" max="100" step="1" value="100" oninput="updateFill2FromHSVA()">
+                            </div>
+                            <div class="popup-preview-row">
+                                <span id="fill2-preview" class="popup-preview"></span>
+                                <input id="fill2-hex" class="popup-hex-input" value="#38bdf8ff" spellcheck="false" autocomplete="off" maxlength="9" onchange="setColorFromHex('fill2', 'fill2')">
+                            </div>
+                            <button class="popup-pick-btn" onclick="pickFromCanvas('fill2', 'fill2', event)">Pick from canvas</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="grp-fill-stops" style="display:none;">
+                        <label>Gradient Stops</label>
+                        <div id="fill-stop-track" class="stop-track" onclick="fillTrackClick(event)"></div>
+                        <div class="stop-actions">
+                            <button class="popup-pick-btn" onclick="deleteFillStop(event)">Delete stop</button>
+                            <span class="stop-hint">Click track to add! Drag to move!</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="grp-fill-angle" style="display:none;">
+                        <label>Angle (<span id="val-fill-angle">0</span>°)</label>
+                        <input type="range" id="insp-fill-angle" min="0" max="360" step="1" value="0" oninput="updateGradientAngle('fill')">
+                    </div>
+                    </div>
+
+                    <div id="subpanel-stroke" class="inspector-panel" style="display:none;">
+                    <span class="section-label">Stroke</span>
+                    <div class="control-group" id="grp-stroke-type">
+                        <label>Stroke Style</label>
+                        <div class="stroke-style-seg" role="group" aria-label="Stroke style">
+                            <button id="stroketype-color" class="stroke-seg-btn" onclick="setStrokeType('color')" data-tooltip="Solid Color" aria-label="Solid Color">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><rect x="2" y="2" width="12" height="12" rx="3" fill="currentColor" /></svg>
+                            </button>
+                            <button id="stroketype-linear" class="stroke-seg-btn" onclick="setStrokeType('linear')" data-tooltip="Linear Gradient" aria-label="Linear Gradient">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><defs><linearGradient id="st-linear" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF60C5" /><stop offset="1" stop-color="#38bdf8" /></linearGradient></defs><rect x="2" y="2" width="12" height="12" rx="3" fill="url(#st-linear)" /></svg>
+                            </button>
+                            <button id="stroketype-radial" class="stroke-seg-btn" onclick="setStrokeType('radial')" data-tooltip="Radial Gradient" aria-label="Radial Gradient">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><defs><radialGradient id="st-radial"><stop offset="0" stop-color="#FF60C5" /><stop offset="1" stop-color="#38bdf8" /></radialGradient></defs><circle cx="8" cy="8" r="6" fill="url(#st-radial)" /></svg>
+                            </button>
+                            <button id="stroketype-none" class="stroke-seg-btn" onclick="setStrokeType('none')" data-tooltip="No Stroke" aria-label="No Stroke">
+                                <svg viewBox="0 0 16 16" width="26" height="26"><rect x="2" y="2" width="12" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" /><line x1="4" y1="12" x2="12" y2="4" stroke="#ef4444" stroke-width="1.8" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="control-group" id="grp-stroke-color">
+                        <label id="stroke-color-label">Stroke Color 1</label>
+                        <button id="stroke-swatch" class="color-swatch" onclick="toggleStrokePopup(event)" title="Pick stroke color">--</button>
+                        <div id="stroke-popup" class="color-popup" style="display:none;">
+                            <div class="popup-row">
+                                <label>H <span id="val-stroke-h">0</span>°</label>
+                                <input type="range" id="insp-stroke-h" min="0" max="360" step="1" value="0" oninput="updateStrokeFromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>S <span id="val-stroke-s">0</span>%</label>
+                                <input type="range" id="insp-stroke-s" min="0" max="100" step="1" value="0" oninput="updateStrokeFromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>V <span id="val-stroke-v">100</span>%</label>
+                                <input type="range" id="insp-stroke-v" min="0" max="100" step="1" value="100" oninput="updateStrokeFromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>A <span id="val-stroke-a">100</span>%</label>
+                                <input type="range" id="insp-stroke-a" min="0" max="100" step="1" value="100" oninput="updateStrokeFromHSVA()">
+                            </div>
+                            <div class="popup-preview-row">
+                                <span id="stroke-preview" class="popup-preview"></span>
+                                <input id="stroke-hex" class="popup-hex-input" value="#ffffffff" spellcheck="false" autocomplete="off" maxlength="9" onchange="setColorFromHex('stroke', 'stroke')">
+                            </div>
+                            <button class="popup-pick-btn" onclick="pickFromCanvas('stroke', 'stroke', event)">Pick from canvas</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="grp-stroke-color2">
+                        <label>Gradient Stop 2</label>
+                        <button id="stroke2-swatch" class="color-swatch" onclick="toggleStroke2Popup(event)" title="Pick stroke gradient stop 2">--</button>
+                        <div id="stroke2-popup" class="color-popup" style="display:none;">
+                            <div class="popup-row">
+                                <label>H <span id="val-stroke2-h">0</span>°</label>
+                                <input type="range" id="insp-stroke2-h" min="0" max="360" step="1" value="0" oninput="updateStroke2FromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>S <span id="val-stroke2-s">0</span>%</label>
+                                <input type="range" id="insp-stroke2-s" min="0" max="100" step="1" value="0" oninput="updateStroke2FromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>V <span id="val-stroke2-v">100</span>%</label>
+                                <input type="range" id="insp-stroke2-v" min="0" max="100" step="1" value="100" oninput="updateStroke2FromHSVA()">
+                            </div>
+                            <div class="popup-row">
+                                <label>A <span id="val-stroke2-a">100</span>%</label>
+                                <input type="range" id="insp-stroke2-a" min="0" max="100" step="1" value="100" oninput="updateStroke2FromHSVA()">
+                            </div>
+                            <div class="popup-preview-row">
+                                <span id="stroke2-preview" class="popup-preview"></span>
+                                <input id="stroke2-hex" class="popup-hex-input" value="#38bdf8ff" spellcheck="false" autocomplete="off" maxlength="9" onchange="setColorFromHex('stroke2', 'stroke2')">
+                            </div>
+                            <button class="popup-pick-btn" onclick="pickFromCanvas('stroke2', 'stroke2', event)">Pick from canvas</button>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="grp-stroke-stops" style="display:none;">
+                        <label>Gradient Stops</label>
+                        <div id="stroke-stop-track" class="stop-track" onclick="strokeTrackClick(event)"></div>
+                        <div class="stop-actions">
+                            <button class="popup-pick-btn" onclick="deleteStrokeStop(event)">Delete stop</button>
+                            <span class="stop-hint">Click track to add! Drag to move!</span>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="grp-stroke-angle" style="display:none;">
+                        <label>Angle (<span id="val-stroke-angle">0</span>°)</label>
+                        <input type="range" id="insp-stroke-angle" min="0" max="360" step="1" value="0" oninput="updateGradientAngle('stroke')">
+                    </div>
+
+                    <div class="control-group" id="grp-stroke-width">
+                        <label>Stroke Width (px)</label>
+                        <input type="number" id="insp-stroke-width" value="3" min="0" max="50" step="0.5" onchange="updateSelectedObject()" oninput="updateSelectedObject()">
+                    </div>
+                    </div>
+                </div>
+
+                <div id="panel-layers" class="inspector-panel" style="display:none;">
+                    <span class="section-label">Layers</span>
+                    <div id="layer-list"></div>
+                </div>
+            </div>
+
+            <div id="inspector-empty" class="inspector-empty-text">
+                Select or draw a shape to inspect properties.
+            </div>
+        </aside>
+    </main>
+
+    <div id="aero-tooltip" class="aero-glass-tooltip" role="tooltip"></div>
+    <script src="app.js"></script>
+</body>
+</html>
