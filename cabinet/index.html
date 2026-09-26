@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cabinet - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="cabinet.css?v=20260926x">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+<body>
+    <nav id="sidebar" class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Cabinet</h2>
+        </div>
+        <div class="pad-selection-stack">
+            <button class="pad-toggle-btn" id="drawer-new-btn" title="Start a fresh empty drawer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14" /></svg>
+                New Drawer
+            </button>
+            <button class="pad-toggle-btn" id="drawer-upload-btn" title="Add files to this drawer">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V4m0 0L7 9m5-5l5 5M4 20h16" /></svg>
+                Upload Files
+            </button>
+            <div class="folder-new-wrap" id="folder-new-wrap">
+                <button class="pad-toggle-btn" id="folder-new-btn" title="Create a new folder or node" aria-haspopup="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM11 10v4m0-4h4" /></svg>
+                    New Folder...
+                </button>
+                <div class="folder-type-menu" id="folder-type-menu" role="menu">
+                    <button type="button" class="folder-type-option" data-folder-kind="folder" role="menuitem">
+                        <span class="folder-type-title">Standard Folder</span>
+                        <span class="folder-type-desc">Lightweight storage for files!</span>
+                    </button>
+                    <button type="button" class="folder-type-option node-option" data-folder-kind="node" role="menuitem">
+                        <span class="folder-type-title">Node Folder</span>
+                        <span class="folder-type-desc">Notes, clone, export, power!</span>
+                    </button>
+                    <button type="button" class="folder-type-option connector-option" data-folder-kind="connector" role="menuitem">
+                        <span class="folder-type-title">Connector Folder</span>
+                        <span class="folder-type-desc">Hold files + connect them!</span>
+                    </button>
+                    <button type="button" class="folder-type-option linker-option" data-folder-kind="linker" role="menuitem">
+                        <span class="folder-type-title">Linker Folder</span>
+                        <span class="folder-type-desc">Only links, never holds!</span>
+                    </button>
+                    <button type="button" class="folder-type-option log-option" data-folder-kind="log" role="menuitem">
+                        <span class="folder-type-title">Log Folder</span>
+                        <span class="folder-type-desc">Timestamped entries + files!</span>
+                    </button>
+                    <button type="button" class="folder-type-option branch-option" data-folder-kind="branch" role="menuitem">
+                        <span class="folder-type-title">Branch Folder</span>
+                        <span class="folder-type-desc">Cloneable, recolorable!</span>
+                    </button>
+                    <button type="button" class="folder-type-option merge-option" data-folder-kind="merge" role="menuitem">
+                        <span class="folder-type-title">Merge Folder</span>
+                        <span class="folder-type-desc">Absorbs Branches + Nodes!</span>
+                    </button>
+                </div>
+            </div>
+            <div class="folder-new-wrap" id="share-wrap">
+                <button class="pad-toggle-btn" id="drawer-share-btn" title="Save this drawer as a shareable file" aria-haspopup="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-5-5m5 5l5-5M4 20h16" /></svg>
+                    Share Drawer...
+                </button>
+                <div class="folder-type-menu" id="share-type-menu" role="menu">
+                    <button type="button" class="folder-type-option" data-share-format="kc" role="menuitem">
+                        <span class="folder-type-title">.kc file</span>
+                        <span class="folder-type-desc">Readable YAML bundle, re-importable!</span>
+                    </button>
+                    <button type="button" class="folder-type-option" data-share-format="zip" role="menuitem">
+                        <span class="folder-type-title">.zip file</span>
+                        <span class="folder-type-desc">Plain files + folders archive!</span>
+                    </button>
+                </div>
+            </div>
+            <button class="pad-toggle-btn" id="drawer-import-btn" title="Open a shared drawer file">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+                Open Drawer
+            </button>
+        </div>
+        <div class="drawer-menu-box">
+            <div class="drawer-menu-label">Drawers</div>
+            <div id="drawer-list" class="drawer-list"></div>
+        </div>
+        <div class="filter-menu-box">
+            <div class="drawer-menu-label">Filter by Tag</div>
+            <select id="tag-filter" class="tag-filter-select">
+                <option value="">All Files</option>
+            </select>
+        </div>
+        <div class="drawer-name-box">
+            <label for="drawer-name-input">Drawer name</label>
+            <input type="text" id="drawer-name-input" maxlength="60" placeholder="My Drawer" autocomplete="off">
+        </div>
+        <div class="sidebar-footer-controls">
+            <span id="drawer-foot-count">0 files</span>
+        </div>
+        <div id="toggle-zone" class="latch-toggle-strip" title="Toggle sidebar">
+            <svg id="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 6l-6 6 6 6" /></svg>
+        </div>
+    </nav>
+
+    <main class="workspace-viewport-wrapper" id="drop-zone">
+        <div class="drawer-menu-head">
+            <div>
+                <div class="view-segmented" role="group" aria-label="Card view mode">
+                    <button type="button" class="view-seg-btn" id="view-list-btn" title="List view">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 6h12M9 12h12M9 18h12M3 6h2m-2 6h2m-2 6h2" /></svg>
+                        List
+                    </button>
+                    <button type="button" class="view-seg-btn" id="view-cards-btn" title="Card view">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 4.4A2.4 2.4 0 0 1 4.4 2h3.2A2.4 2.4 0 0 1 10 4.4v3.2A2.4 2.4 0 0 1 7.6 10H4.4A2.4 2.4 0 0 1 2 7.6zm0 12A2.4 2.4 0 0 1 4.4 14h3.2a2.4 2.4 0 0 1 2.4 2.4v3.2A2.4 2.4 0 0 1 7.6 22H4.4A2.4 2.4 0 0 1 2 19.6zm12-12A2.4 2.4 0 0 1 16.4 2h3.2A2.4 2.4 0 0 1 22 4.4v3.2a2.4 2.4 0 0 1-2.4 2.4h-3.2A2.4 2.4 0 0 1 14 7.6zm0 12a2.4 2.4 0 0 1 2.4-2.4h3.2a2.4 2.4 0 0 1 2.4 2.4v3.2a2.4 2.4 0 0 1-2.4 2.4h-3.2a2.4 2.4 0 0 1-2.4-2.4z" /></svg>
+                        Cards
+                    </button>
+                </div>
+                <h1 id="drawer-title">My Drawer</h1>
+                <p id="drawer-sub">Drop files here or press Upload Files!</p>
+            </div>
+            <span id="drawer-total">0 B</span>
+        </div>
+        <div id="folder-breadcrumb" class="folder-breadcrumb"></div>
+        <div id="pick-hint" class="pick-hint"><span id="pick-hint-text"></span><button type="button" id="pick-cancel">Cancel</button></div>
+        <div id="file-grid" class="file-grid"></div>
+        <p id="drawer-empty" class="drawer-empty">This drawer is empty! Upload something shiny!</p>
+        <input type="file" id="file-input" multiple hidden>
+        <input type="file" id="drawer-file-input" accept=".kc,.drawer,.yaml,.yml,application/json,text/yaml,text/plain" hidden>
+    </main>
+
+    <div id="lightbox-overlay" class="modal-blur-gate">
+        <div class="embossed-dialogue-chassis lightbox-chassis">
+            <div class="dialog-header">
+                <h3 id="lightbox-title">Preview</h3>
+                <button id="lightbox-close-btn">✕</button>
+            </div>
+            <div class="dialog-body-scroll lightbox-body">
+                <img id="lightbox-img" alt="File preview">
+            </div>
+            <div class="dialog-footer">
+                <button id="lightbox-download-btn" class="dialog-confirm-orb">Download</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="cabinet.js?v=20260926q"></script>
+</body>
+</html>
