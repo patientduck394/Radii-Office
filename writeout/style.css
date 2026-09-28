@@ -313,6 +313,20 @@ body {
     min-width: 0;
 }
 
+.tab-rename-input {
+    width: 100%;
+    box-sizing: border-box;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid #7dd3fc;
+    border-radius: 6px;
+    color: #fff;
+    padding: 3px 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+    outline: none;
+}
+
 .tab-head {
     margin-left: 26px;
     font-weight: 500;
@@ -1941,6 +1955,125 @@ body.format-collapsed #format-toggle-zone svg {
     border-color: #0284c7;
 }
 
+/* --- Highlighter split button + wash popup --- */
+.hl-split-row { display: flex; gap: 6px; }
+.fmt-hl-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #e0f2fe;
+    padding: 7px 0;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.fmt-hl-btn:hover {
+    background: rgba(255,255,255,0.16);
+    color: #fff;
+}
+.fmt-hl-btn.hl-chevron { flex: none; width: 34px; font-size: 12px; }
+/* --- Highlight + Chips buttons ride side-by-side, popups span below! --- */
+.hl-chip-duo {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+}
+.hl-chip-duo .hl-split-row { min-width: 0; }
+.fmt-basic-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+#hl-popup {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    padding: 8px;
+}
+#hl-popup[hidden] { display: none !important; }
+#hl-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+.hl-swatch {
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 6px;
+    min-height: 32px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 800;
+    color: #0f172a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    overflow: hidden;
+}
+
+/* --- Rainbow chip popup + swatches (same architecture as highlights!) --- */
+#cp-popup {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    padding: 8px;
+}
+#cp-popup[hidden] { display: none !important; }
+#cp-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+.cp-swatch {
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 12px;
+    min-height: 32px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    overflow: hidden;
+}
+.aq-swatch {
+    border: 1px solid rgba(255,255,255,0.35);
+    border-radius: 999px;
+    min-height: 32px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2px;
+    overflow: hidden;
+}
+/* --- Aqua chip popup mirrors the highlight/chip popups! --- */
+#aq-popup {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+    padding: 8px;
+}
+#aq-popup[hidden] { display: none !important; }
+#aq-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+}
+
 #top-format-bar:empty {
     display: none;
 }
@@ -2030,4 +2163,13 @@ body.format-collapsed #format-toggle-zone svg {
     #format-toggle-zone {
         display: none;
     }
+}
+
+/* --- Highlight dropdown buttons run slightly narrower! --- */
+.hl-chip-duo .fmt-hl-btn {
+    padding: 6px 0;
+    font-size: 14px;
+}
+.hl-chip-duo .fmt-hl-btn.hl-chevron {
+    width: 28px;
 }

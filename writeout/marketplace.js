@@ -754,6 +754,21 @@
       actionLabel: 'Open'
     },
     {
+      id: 'quick-accents',
+      name: 'Quick Accents',
+      category: 'utilities',
+      kind: 'utility',
+      version: '1.0.0',
+      image: 'QuickAccents.png',
+      description: 'Accent button on the top format bar! Opens a popup of diacritics — press one to dress your selected letters.',
+      previewHTML: '<div style="display:flex;gap:6px;justify-content:center;font-size:16px;font-weight:800;color:#0369a1;"><span>\u00E9</span><span>\u00E8</span><span>\u00EA</span><span>\u00EB</span></div>',
+      css: `.mkt-accent-wrap{position:relative;display:inline-flex;}#mkt-accent-btn{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;border:1px solid #7dd3fc;background:linear-gradient(180deg,#ffffff 0%,#e0f2fe 100%);color:#0369a1;cursor:pointer;font-size:16px;font-weight:800;font-family:'JetBrains Mono',monospace;box-shadow:0 2px 6px rgba(2,132,199,0.2),inset 0 1px 0 #fff;}#mkt-accent-btn:hover{filter:brightness(1.05);}#mkt-accent-popup{position:absolute;top:calc(100% + 8px);left:0;z-index:200;background:linear-gradient(180deg,rgba(255,255,255,0.97) 0%,rgba(240,249,255,0.95) 100%);border:1px solid #7dd3fc;border-radius:12px;padding:10px;display:grid;grid-template-columns:repeat(4,1fr);gap:6px;box-shadow:0 8px 24px rgba(2,132,199,0.25),inset 0 1px 0 #fff;max-height:240px;overflow-y:auto;}.mkt-accent-head{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;font-size:11px;font-weight:800;color:#0369a1;font-family:'JetBrains Mono',monospace;}.mkt-accent-x{background:rgba(2,132,199,0.1);border:1px solid #7dd3fc;border-radius:6px;color:#0369a1;font-size:10px;font-weight:800;cursor:pointer;padding:1px 7px;}.mkt-accent-item{display:flex;align-items:center;justify-content:center;min-width:40px;height:40px;border-radius:8px;border:1px solid #bae6fd;background:rgba(255,255,255,0.7);color:#0c4a6e;cursor:pointer;font-size:18px;font-weight:700;}.mkt-accent-item:hover{background:#e0f2fe;border-color:#38bdf8;}`,
+      init: function () { mktAccentInit(); },
+      teardown: function () { mktAccentTeardown(); },
+      action: function () { mktAccentToggle(); },
+      actionLabel: 'Open'
+    },
+    {
       id: 'word-counter',
       name: 'Word Counter',
       category: 'utilities',
@@ -1040,6 +1055,129 @@
 
   function mktIconTeardown() {
     const wrap = document.getElementById('mkt-icon-wrap');
+    if (wrap) {
+      if (wrap._mktOutside && document.removeEventListener) {
+        try { document.removeEventListener('mousedown', wrap._mktOutside); } catch (e) {}
+      }
+      wrap.remove();
+    }
+  }
+
+  /* ---------------- Quick Accents engine ---------------- */
+  const MKT_ACCENTS = [
+    { name: 'Acute', mark: '\u0301' },
+    { name: 'Grave', mark: '\u0300' },
+    { name: 'Circumflex', mark: '\u0302' },
+    { name: 'Tilde', mark: '\u0303' },
+    { name: 'Diaeresis', mark: '\u0308' },
+    { name: 'Ring', mark: '\u030A' },
+    { name: 'Cedilla', mark: '\u0327' },
+    { name: 'Breve', mark: '\u0306' },
+    { name: 'Macron', mark: '\u0304' },
+    { name: 'Dot', mark: '\u0307' },
+    { name: 'Ogonek', mark: '\u0328' },
+    { name: 'Caron', mark: '\u030C' }
+  ];
+
+  function mktAccentToggle() {
+    const pop = document.getElementById('mkt-accent-popup');
+    if (!pop) return;
+    pop.style.display = (pop.style.display === 'none') ? '' : 'none';
+  }
+
+  function mktAccentInsert(mark) {
+    const canvas = document.getElementById('wysiwyg-canvas');
+    let selection = null;
+    try { selection = window.getSelection(); } catch (e) { return; }
+    if (!canvas || !selection || !selection.rangeCount) return;
+    try { if (!canvas.contains(selection.anchorNode)) return; } catch (e) { return; }
+    if (typeof playAeroClickSound === 'function') playAeroClickSound(700, 0.08);
+    const range = selection.getRangeAt(0);
+    let node = null;
+    try {
+      if (selection.isCollapsed) {
+        node = document.createTextNode(mark);
+      } else {
+        const marked = Array.from(selection.toString()).map(function (ch) {
+          return /\p{L}/u.test(ch) ? ch + mark : ch;
+        }).join('');
+        node = document.createTextNode(marked);
+        try { range.deleteContents(); } catch (e) {}
+      }
+      range.insertNode(node);
+    } catch (e) { return; }
+    try {
+      const nr = document.createRange();
+      if (typeof nr.setStartAfter === 'function') {
+        nr.setStartAfter(node);
+        nr.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(nr);
+      }
+    } catch (e) {}
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+  }
+
+  function mktAccentInit() {
+    const bar = document.getElementById('top-format-bar');
+    if (!bar || document.getElementById('mkt-accent-btn')) return;
+    const wrap = document.createElement('span');
+    wrap.className = 'mkt-accent-wrap';
+    wrap.id = 'mkt-accent-wrap';
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = 'mkt-accent-btn';
+    btn.title = 'Insert accent';
+    btn.textContent = '\u00E9';
+    const pop = document.createElement('div');
+    pop.id = 'mkt-accent-popup';
+    pop.style.display = 'none';
+    const head = document.createElement('div');
+    head.className = 'mkt-accent-head';
+    const cap = document.createElement('span');
+    cap.textContent = 'Accents';
+    const x = document.createElement('button');
+    x.type = 'button';
+    x.className = 'mkt-accent-x';
+    x.textContent = 'X';
+    head.appendChild(cap);
+    head.appendChild(x);
+    pop.appendChild(head);
+    MKT_ACCENTS.forEach(function (ac) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'mkt-accent-item';
+      b.title = ac.name;
+      b.setAttribute('data-accent', ac.mark);
+      b.textContent = 'e' + ac.mark;
+      pop.appendChild(b);
+    });
+    btn.addEventListener('click', function () {
+      if (typeof playAeroClickSound === 'function') playAeroClickSound(600, 0.08);
+      mktAccentToggle();
+    });
+    x.addEventListener('click', function () { pop.style.display = 'none'; });
+    wrap.addEventListener('mousedown', function (e) {
+      if (e.target && e.target.closest && e.target.closest('button')) e.preventDefault();
+    });
+    pop.addEventListener('click', function (e) {
+      const t = e.target;
+      const item = (t && t.closest) ? t.closest('[data-accent]') : ((t && t.getAttribute && t.getAttribute('data-accent')) ? t : null);
+      if (!item) return;
+      mktAccentInsert(item.getAttribute('data-accent'));
+    });
+    const outside = function (e) {
+      if (!wrap.contains(e.target)) pop.style.display = 'none';
+    };
+    wrap._mktOutside = outside;
+    document.addEventListener('mousedown', outside);
+    wrap.appendChild(btn);
+    wrap.appendChild(pop);
+    bar.appendChild(wrap);
+  }
+
+  function mktAccentTeardown() {
+    const wrap = document.getElementById('mkt-accent-wrap');
     if (wrap) {
       if (wrap._mktOutside && document.removeEventListener) {
         try { document.removeEventListener('mousedown', wrap._mktOutside); } catch (e) {}
