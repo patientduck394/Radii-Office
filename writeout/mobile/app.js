@@ -1902,10 +1902,11 @@ window.addEventListener('click', () => {
         menu.style.display = 'none';
     });
 });
-document.getElementById('top-format-bar').addEventListener('change', (e) => {
+const topBarLegacy = document.getElementById('top-format-bar');
+if (topBarLegacy) topBarLegacy.addEventListener('change', (e) => {
   const action = e.target.getAttribute('data-edit-action');
   if (!action) return;
-  
+
   const value = e.target.value;
   document.execCommand(action, false, value);
 });
