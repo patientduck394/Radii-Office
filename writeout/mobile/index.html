@@ -11,12 +11,13 @@
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
     <title>Writeout Mobile - Radii Office</title>
     <script src="https://iconify.design"></script>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="keydown.css">
+    <link rel="stylesheet" href="style.css?v=20260928">
+    <link rel="stylesheet" href="keydown.css?v=20260928">
+    <link rel="stylesheet" href="marketplace.css?v=20260928">
     <link rel="icon" type="image/svg+xml" href="/writeout/favicon.svg">
     <link rel="apple-touch-icon" href="/writeout/apple-touch-icon.png">
 </head>
-<body>
+<body class="format-collapsed">
 
     <!-- Mobile Top Navigation Bar -->
     <div id="mobile-header" class="aero-mobile-header" style="display: flex; align-items: center; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(220, 235, 250, 0.75) 100%); border-bottom: 2px solid rgba(255, 255, 255, 0.9); padding: 10px 15px;">
@@ -48,6 +49,11 @@
                 </svg>
                 Import .kd
             </button>
+            <button id="marketplace-trigger-btn" class="pad-toggle-btn" onclick="window.WriteoutMarketplace && window.WriteoutMarketplace.open()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" /><path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" /></g></svg>
+                Marketplace
+            </button>
+            <div id="sidebar-util-dock"></div>
         </div>
 
         <div class="sidebar-footer-controls">
@@ -74,10 +80,168 @@
                 <option value="5">Lrg</option>
             </select>
             <p class="whitespace">                                 </p>
+            <!-- Marketplace Downloads Inbox (only visible with installed extensions!) -->
+            <div class="aero-dropdown" id="mkt-inbox-dropdown" style="display: none;">
+                <button class="style-bar-btn dropdown-toggle" title="Marketplace downloads">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.278 13h4.089c2.203 0 2.353 3.445 4.6 3.444h2.066c2.255 0 2.378-3.444 4.6-3.444h4.09m-17-9.767l-2.403 8.72a9 9 0 0 0-.32 2.36v5.465A2.244 2.244 0 0 0 4.222 22h15.556A2.244 2.244 0 0 0 22 19.778v-5.465a9 9 0 0 0-.32-2.36l-2.402-8.72A2.26 2.26 0 0 0 17.288 2A25.7 25.7 0 0 1 6.711 2a2.26 2.26 0 0 0-1.989 1.233" /></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
+                    </button>
+                <div id="mkt-styles-tray" class="dropdown-menu highlight-grid-menu effect-grid-menu">
+                </div>
+            </div>
         </div>
 
         <div id="wysiwyg-canvas" contenteditable="true" placeholder="Start typing..."></div>
     </main>
+
+    <!-- Format Sidebar (Main/Style/Doc, ported from desktop!) -->
+    <aside id="format-sidebar" class="format-sidebar" aria-label="Format controls" tabindex="-1">
+        <div class="format-brand">
+            <h2>Format</h2>
+        </div>
+        <div class="format-segmented" role="tablist" aria-label="Format groups">
+            <button type="button" class="format-segment-btn active" data-fmt-group="main">Main</button>
+            <button type="button" class="format-segment-btn" data-fmt-group="style">Style</button>
+            <button type="button" class="format-segment-btn" data-fmt-group="doc">Doc</button>
+        </div>
+        <div id="format-group-main">
+        <div id="format-text-controls" class="format-text-controls">
+            <h3 class="format-sub">Text</h3>
+            <select class="format-control" data-edit-action="fontName">
+                <option value="JetBrains Mono">JetBrains Mono</option>
+                <option value="Roboto">Roboto</option>
+                <option value="Space Grotesk">Space Grotesk</option>
+                <option value="Comic Neue">Comic Neue</option>
+            </select>
+            <select class="format-control" data-edit-action="fontWeight" title="Font weight">
+                <option value="300">Light</option>
+                <option value="400" selected>Normal</option>
+                <option value="500">Medium</option>
+                <option value="600">Semi Bold</option>
+                <option value="700">Bold</option>
+                <option value="800">Extra Bold</option>
+                <option value="900">Black</option>
+            </select>
+            <label class="font-size-label" title="Text size in pixels">
+                <span class="font-size-caption">Size</span>
+                <input type="number" class="format-control font-size-number" data-edit-action="fontSizePx" value="16" min="6" max="200" step="1">
+                <span class="font-size-unit">px</span>
+            </label>
+            <label class="color-picker-label" title="Text Color">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" style="flex:none"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22C6.553 22 2 17.447 2 12S6.553 2 12 2c5.006 0 10 3.695 10 9c0 4.15-4.035 4.01-7.25 5c-3.25 1-1.57 2.686-.757 4.093C14.805 21.5 13.076 22 12 22" /><path d="M6 14c0 .5.5 1.5 1 1.802M12.783 6s-1.283 0-2.033.345M7.06 8C6.5 8.5 6 9.768 6 9.768m11.6-.143S17 8.5 16.167 8.143" /></g></svg> <input type="color" data-edit-action="foreColor" value="#000000">
+                <button type="button" class="color-reset-btn" data-reset-action="foreColor" title="Reset to inherited color">↺</button>
+            </label>
+            <!-- Highlighter (25 Aero washes, in the bottom bar!) -->
+            <div class="hl-chip-duo">
+<div class="hl-split-row">
+                <button type="button" class="fmt-hl-btn" id="hl-main-btn" title="Highlight">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="m9 11l-6 6v3h9l3-3"/><path d="m22 12l-4.6 4.6a2 2 0 0 1-2.8 0l-5.2-5.2a2 2 0 0 1 0-2.8L14 4"/></g></svg>
+                </button>
+            </div>
+<div class="hl-split-row">
+                <button type="button" class="fmt-hl-btn" id="cp-main-btn" title="Gel Orbs">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="currentColor" d="M12 4C6.49 4 2 7.59 2 12s4.49 8 10 8s10-3.59 10-8s-4.49-8-10-8m0 14c-4.41 0-8-2.69-8-6s3.59-6 8-6s8 2.69 8 6s-3.59 6-8 6" /></svg>
+                </button>
+            </div>
+<div class="hl-split-row">
+                <button type="button" class="fmt-hl-btn" id="aq-main-btn" title="Gel Bubbles">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="currentColor" d="M12 4a10 8 0 1 0 0 16a10 8 0 1 0 0-16" /></svg>
+                </button>
+            </div>
+</div>
+<div id="hl-popup" hidden>
+                <div id="hl-grid"></div>
+            </div>
+<div id="cp-popup" hidden>
+                <div id="cp-grid"></div>
+            </div>
+<div id="aq-popup" hidden>
+                <div id="aq-grid"></div>
+            </div>
+            <!-- Basic B/I/U/S + exit (lives in the bottom bar!) -->
+            <div class="fmt-basic-row" role="group" aria-label="Basic styles">
+                <button type="button" class="fmt-align-btn" id="fmt-bold-btn" title="Bold (toggle)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 12h8.828c2.637 0 4.413-2.537 4.413-5s-1.776-5-4.413-5H4zm0 0h11.078c2.711.002 4.924 2.311 4.922 5c.002 2.69-2.241 4.999-4.924 5H4z" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" id="fmt-italic-btn" title="Italic (toggle)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 2h-5.143m0 0H8.571m6.286 0c-1.071 6.82-2.822 13.501-5.143 20m5.715 0H9.714m0 0H4" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" id="fmt-underline-btn" title="Underline (toggle)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 2v8.616C5 14.448 8.004 18 12 18s7-3.553 7-7.385V2M4 22h16" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" id="fmt-strike-btn" title="Strikethrough (toggle)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 6.286C17 .57 7 .57 7 6.286c0 6.088 10 5.106 10 11.428c0 5.715-10 5.715-10 0M3 12h18" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn fmt-exit-btn" id="fmt-exit-btn" title="Exit formatting (Cmd/Ctrl+Shift+E)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7V4h16v3M5 20h6m2-16L8 20m7-5l5 5m0-5l-5 5" /></svg>
+                </button>
+            </div>
+            <div class="fmt-align-row" role="group" aria-label="Paragraph alignment">
+                <button type="button" class="fmt-align-btn" data-align="left" title="Align left">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none" /><path fill="currentColor" fill-rule="evenodd" d="M2.75 2a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm0 7a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm0 3.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5zM2 6.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 2 6.25" clip-rule="evenodd" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" data-align="center" title="Align center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none" /><path fill="currentColor" fill-rule="evenodd" d="M2.75 2a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm0 7a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm2 3.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5zM4 6.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 4 6.25" clip-rule="evenodd" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" data-align="right" title="Align right">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none" /><path fill="currentColor" fill-rule="evenodd" d="M2.75 2a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zM6 6.25a.75.75 0 0 1 .75-.75h6.5a.75.75 0 0 1 0 1.5h-6.5A.75.75 0 0 1 6 6.25M2.75 9a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm4 3.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5z" clip-rule="evenodd" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" data-align="justify" title="Justify">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none" /><path fill="currentColor" fill-rule="evenodd" d="M2.75 2a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zM2 6.25a.75.75 0 0 1 .75-.75h10.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 6.25M2.75 9a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5zm0 3.5a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5z" clip-rule="evenodd" /></svg>
+                </button>
+            </div>
+            <div class="fmt-indent-row" role="group" aria-label="Paragraph indent">
+                <button type="button" class="fmt-align-btn" data-indent="out" title="Outdent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none" /><path fill="currentColor" fill-rule="evenodd" d="M13.25 2H2.75a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5m0 3.5h-5.5a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5m0 3.5h-5.5a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5m-10.5 3.5h10.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5m2.01-7a.74.74 0 0 0-.463.162L2.39 7.188a1.04 1.04 0 0 0 0 1.624l1.907 1.526A.74.74 0 0 0 5.5 9.76V6.24a.74.74 0 0 0-.74-.74" clip-rule="evenodd" /></svg>
+                </button>
+                <button type="button" class="fmt-align-btn" data-indent="in" title="Indent">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none" /><path fill="currentColor" fill-rule="evenodd" d="M13.25 2H2.75a.75.75 0 0 0 0 1.5h10.5a.75.75 0 0 0 0-1.5m0 3.5h-5.5a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5m0 3.5h-5.5a.75.75 0 0 0 0 1.5h5.5a.75.75 0 0 0 0-1.5m-10.5 3.5h10.5a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5m.49-7a.74.74 0 0 1 .463.162l1.906 1.526a1.04 1.04 0 0 1 0 1.624l-1.906 1.526A.74.74 0 0 1 2.5 9.76V6.24a.74.74 0 0 1 .74-.74" clip-rule="evenodd" /></svg>
+                </button>
+            </div>
+        </div>
+        </div>
+        <div id="format-group-style" hidden>
+        <div class="style-picker-row">
+            <button type="button" class="fmt-align-btn style-picker-btn" id="style-add-btn" title="Add a style">+ Add Style</button>
+        </div>
+        <div id="style-picker-popup" hidden>
+            <div class="style-picker-head">
+                <div class="format-segmented tiny" id="style-picker-tabs" role="tablist" aria-label="Style source">
+                    <button type="button" class="format-segment-btn active" data-picker-tab="default">Default</button>
+                    <button type="button" class="format-segment-btn" data-picker-tab="ext" title="Extensions" aria-label="Extensions">Ext</button>
+                </div>
+                <button type="button" id="style-picker-x" title="Close">✕</button>
+            </div>
+            <div id="style-picker-list"></div>
+            <div class="style-picker-foot">
+                <div class="style-picker-views" role="group" aria-label="Picker view">
+                    <button type="button" class="style-picker-view active" data-picker-view="list" title="List view" aria-label="List view">List</button>
+                    <button type="button" class="style-picker-view" data-picker-view="mini" title="Mini view" aria-label="Mini view">Mini</button>
+                </div>
+            </div>
+        </div>
+        <div id="format-scope-hint" class="format-scope">Scope: Document</div>
+        <div id="format-style-list" class="format-style-list"></div>
+        </div>
+        <div id="format-group-document" hidden>
+            <h3 class="format-sub">Page Size</h3>
+            <div id="format-page-sizes"></div>
+            <h3 class="format-sub">Orientation</h3>
+            <div class="format-segmented small" id="format-orient-row" role="group" aria-label="Page orientation">
+                <button type="button" class="format-segment-btn active" data-orient="portrait">Portrait</button>
+                <button type="button" class="format-segment-btn" data-orient="landscape">Landscape</button>
+            </div>
+            <h3 class="format-sub">Protected</h3>
+            <input type="password" id="format-doc-password" class="format-control" placeholder="Set a password..." autocomplete="off">
+            <p class="format-doc-note">Locks this doc on next open!</p>
+        </div>
+    </aside>
+    <div id="format-toggle-zone" class="format-latch-toggle-strip" title="Toggle format sidebar">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+            <path d="M0 0h24v24H0z" fill="none" />
+            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7" />
+        </svg>
+    </div>
 
     <!-- Floating Mobile Toolbars -->
     <div id="aero-selection-toolbar" class="aero-floating-bar mobile-floating-bar">
@@ -90,6 +254,45 @@
     <!-- Mobile Overlay Shield -->
     <div id="mobile-sidebar-shield" class="modal-blur-gate" onclick="closeMobileMenu()"></div>
 
-    <script src="app.js"></script>
+    <!-- Help Deck (exit-formatting shortcut, ported from desktop!) -->
+    <dialog id="help-deck-dialog" class="aero-dialog-box" style="padding: 24px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.6); background: linear-gradient(135deg, rgba(240,248,255,0.95), rgba(210,230,250,0.95)); box-shadow: 0 10px 25px rgba(0,0,0,0.2); max-width: 500px; width: 100%;">
+        <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 16px;">
+            <h3 style="margin: 0; color: #1a4a75; font-family: inherit; font-size: 18px;">Help Deck</h3>
+            <button onclick="document.getElementById('help-deck-dialog').close()" class="style-bar-btn" style="padding: 4px 10px; font-weight: bold; cursor: pointer;">✕</button>
+        </div>
+        <div style="color: #2c4c6d; font-size: 14px; line-height: 1.6; display: flex; flex-direction: column; gap: 12px;">
+            <p style="margin: 0;"><b>🚪 Exiting formatting:</b> Press <code>Cmd/Ctrl+Shift+E</code> to hop out of any style, type <code>\</code> + space to break out to the right, or tap the exit button in the ribbon!</p>
+            <p style="margin: 0;"><b>🟡 Highlighters:</b> Select any text and pick a color tile from the highlight popup to apply a glossy wash. Press the style buttons a second time to toggle them off!</p>
+        </div>
+    </dialog>
+
+    <!-- Marketplace Dialog Box -->
+    <dialog id="marketplace-dialog" class="aero-dialog-box marketplace-dialog">
+        <div class="mkt-header">
+            <h3>Marketplace <span id="mkt-installed-count" class="mkt-installed-pill">0 installed</span></h3>
+            <button id="marketplace-close-btn" class="mkt-close-btn" title="Close">✕</button>
+        </div>
+        <div class="mkt-toolbar-row">
+            <input id="marketplace-search" class="mkt-search" type="text" placeholder="Search extensions..." />
+            <label class="mkt-toggle" title="Show only extensions you haven't installed yet">
+                <input type="checkbox" id="marketplace-hide-installed" />
+                <span>New only</span>
+            </label>
+        </div>
+        <div class="mkt-tabs">
+            <button class="mkt-tab active" data-cat="all">All</button>
+            <button class="mkt-tab" data-cat="styles">Keydown Styles</button>
+            <button class="mkt-tab" data-cat="utilities">Utilities</button>
+            <button class="mkt-tab" data-cat="themes">Themes</button>
+        </div>
+        <div id="marketplace-grid" class="mkt-grid"></div>
+        <div class="mkt-footer">
+            <p class="mkt-footer-note">Extensions persist in localStorage across sessions.</p>
+            <button id="marketplace-reset-btn" class="mkt-reset-btn">Remove all</button>
+        </div>
+    </dialog>
+
+    <script src="app.js?v=20260928"></script>
+    <script src="marketplace.js?v=20260928"></script>
 </body>
 </html>

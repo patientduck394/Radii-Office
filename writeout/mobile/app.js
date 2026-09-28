@@ -1773,9 +1773,17 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Action: Apply text formatting toggles (Bold, Italic, Underline, Strikethrough)
+// Hand-rolled toggle path first (works everywhere!), execCommand fallback!
 function applyTextFormatting(commandName) {
     playAeroClickSound(600, 0.08);
-    document.execCommand(commandName, false, null);
+    const cmd = String(commandName || '').toLowerCase();
+    const tagMap = { bold: 'b', italic: 'i', underline: 'u', strikethrough: 's', strikeThrough: 's', strike: 's' };
+    if (tagMap[cmd] && typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle(tagMap[cmd])) {
+        return;
+    }
+    try {
+        if (typeof document.execCommand === 'function') document.execCommand(commandName, false, null);
+    } catch (e) {}
     autoSaveCanvasContent();
 }
 
@@ -1823,13 +1831,17 @@ document.querySelectorAll('#aero-selection-toolbar .style-bar-btn').forEach(butt
         const styleType = button.getAttribute('data-style');
         
         if (styleType === 'bold') {
-            document.execCommand('bold', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('b')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('bold', false, null); } catch (e) {}
         } else if (styleType === 'italic') {
-            document.execCommand('italic', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('i')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('italic', false, null); } catch (e) {}
         } else if (styleType === 'underline') {
-            document.execCommand('underline', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('u')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('underline', false, null); } catch (e) {}
         } else if (styleType === 'strike') {
-            document.execCommand('strikeThrough', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('s')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('strikeThrough', false, null); } catch (e) {}
         } else if (styleType === 'code') {
             // Apply inline code wrapping
             const selection = window.getSelection();
@@ -2150,6 +2162,9 @@ function printWriteoutPage() {
 // exactly where you currently have paintCanvas.addEventListener('mousedown'...)
 
 // Prevent scrolling while drawing on the canvas
+// (Guarded: paintCanvas only exists inside the ::draw console builder below,
+// so these touch hooks attach only when a sketchpad is actually present!)
+if (typeof paintCanvas !== 'undefined' && paintCanvas) {
 paintCanvas.addEventListener('touchstart', function(evt) {
     evt.preventDefault(); 
     isDrawing = true;
@@ -2190,6 +2205,7 @@ paintCanvas.addEventListener('touchmove', function(evt) {
 
 paintCanvas.addEventListener('touchend', function() { isDrawing = false; });
 paintCanvas.addEventListener('touchcancel', function() { isDrawing = false; });
+} // end paintCanvas guard -- dead sketchpad hooks stay parked until ::draw builds one!
 
 
 // ========================================================
@@ -2257,7 +2273,2065 @@ function closeMobileMenu() {
     playAeroClickSound(450, 0.12);
     const sideMenu = document.getElementById('sidebar');
     const mobileShield = document.getElementById('mobile-sidebar-shield');
-    
+
     if (sideMenu) sideMenu.classList.add('collapsed');
     if (mobileShield) mobileShield.classList.remove('active');
+}
+
+// ==========================================
+// PORTED FROM DESKTOP: HIGHLIGHTER (25 Aero washes!)
+// EXIT FORMATTING (Cmd/Ctrl+Shift+E!) + B/I/U/S TOGGLE ROW!
+// ==========================================
+var FMT_HIGHLIGHT_STYLES = [
+    { label: 'Marker Yellow', cls: 'hl-1' },
+    { label: 'Marker Pink', cls: 'hl-2' },
+    { label: 'Marker Green', cls: 'hl-3' },
+    { label: 'Marker Blue', cls: 'hl-4' },
+    { label: 'Marker Orange', cls: 'hl-5' },
+    { label: 'Marker Purple', cls: 'hl-6' },
+    { label: 'Marker Teal', cls: 'hl-7' },
+    { label: 'Marker Red', cls: 'hl-8' },
+    { label: 'Neon Lemon', cls: 'hl-9' },
+    { label: 'Neon Magenta', cls: 'hl-10' },
+    { label: 'Neon Mint', cls: 'hl-11' },
+    { label: 'Neon Cyan', cls: 'hl-12' },
+    { label: 'Pastel Lemon', cls: 'hl-13' },
+    { label: 'Pastel Rose', cls: 'hl-14' },
+    { label: 'Pastel Mint', cls: 'hl-15' },
+    { label: 'Pastel Sky', cls: 'hl-16' },
+    { label: 'Pastel Peach', cls: 'hl-17' },
+    { label: 'Pastel Lilac', cls: 'hl-18' },
+    { label: 'Sunset', cls: 'hl-19' },
+    { label: 'Ocean', cls: 'hl-20' },
+    { label: 'Berry', cls: 'hl-21' },
+    { label: 'Citrus', cls: 'hl-22' },
+    { label: 'Midnight', cls: 'hl-23' },
+    { label: 'Espresso', cls: 'hl-24' },
+    { label: 'Slate', cls: 'hl-25' }
+];
+
+function fmtApplyHighlight(cls) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    const range = sel.getRangeAt(0);
+    try {
+        const span = document.createElement('span');
+        span.className = cls;
+        span.setAttribute('spellcheck', 'false');
+        if (range.collapsed) {
+            span.appendChild(document.createTextNode(''));
+            range.insertNode(span);
+            const caret = document.createRange();
+            caret.setStart(span.firstChild, 0);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        } else {
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            const reselected = document.createRange();
+            reselected.selectNodeContents(span);
+            sel.removeAllRanges();
+            sel.addRange(reselected);
+        }
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+        return true;
+    } catch (e) { return false; }
+}
+
+var hlPopupWired = false;
+
+function fmtToggleHighlightPopup() {
+    const popup = document.getElementById('hl-popup');
+    if (!popup) return;
+    popup.hidden = !popup.hidden;
+}
+
+// ==========================================
+// RAINBOW CHIPS (25 non-Keydown chips in the Highlight section!)
+// Same split-button + popup architecture as the washes!
+// ==========================================
+var FMT_CHIP_STYLES = [
+    { label: 'Orb Red', cls: 'gel-orb gel-r' },
+    { label: 'Orb Orange', cls: 'gel-orb gel-o' },
+    { label: 'Orb Yellow', cls: 'gel-orb gel-y' },
+    { label: 'Orb Lime', cls: 'gel-orb gel-lm' },
+    { label: 'Orb Green', cls: 'gel-orb gel-g' },
+    { label: 'Orb Aqua', cls: 'gel-orb gel-aq' },
+    { label: 'Orb Cyan', cls: 'gel-orb gel-c' },
+    { label: 'Orb Blue', cls: 'gel-orb gel-b' },
+    { label: 'Orb Violet', cls: 'gel-orb gel-v' },
+    { label: 'Orb Magenta', cls: 'gel-orb gel-mg' },
+    { label: 'Orb Pink', cls: 'gel-orb gel-p' },
+    { label: 'Orb Slate', cls: 'gel-orb gel-sl' }
+];
+
+function fmtApplyChip(cls) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    const range = sel.getRangeAt(0);
+    try {
+        const span = document.createElement('span');
+        span.className = cls;
+        span.setAttribute('spellcheck', 'false');
+        if (range.collapsed) {
+            span.appendChild(document.createTextNode(''));
+            range.insertNode(span);
+            const caret = document.createRange();
+            caret.setStart(span.firstChild, 0);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        } else {
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            const reselected = document.createRange();
+            reselected.selectNodeContents(span);
+            sel.removeAllRanges();
+            sel.addRange(reselected);
+        }
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+        return true;
+    } catch (e) { return false; }
+}
+
+var chipPopupWired = false;
+
+function fmtToggleChipPopup() {
+    const popup = document.getElementById('cp-popup');
+    if (!popup) return;
+    popup.hidden = !popup.hidden;
+}
+
+function fmtWireChips() {
+    if (fmtWireChips._done) return;
+    fmtWireChips._done = true;
+    const grid = document.getElementById('cp-grid');
+    if (grid && !grid.children.length) {
+        FMT_CHIP_STYLES.forEach(function (item) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'cp-swatch ' + item.cls;
+            btn.title = item.label;
+            btn.textContent = 'Aa';
+            btn.setAttribute('data-chip-class', item.cls);
+            grid.appendChild(btn);
+        });
+    }
+    const main = document.getElementById('cp-main-btn');
+    if (main) {
+        main.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        main.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleChipPopup();
+        });
+    }
+    const chev = document.getElementById('cp-chevron-btn');
+    if (chev) {
+        chev.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        chev.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleChipPopup();
+        });
+    }
+    if (grid) {
+        grid.addEventListener('mousedown', function (e) {
+            if (e.target.closest && e.target.closest('[data-chip-class]')) e.preventDefault();
+        });
+        grid.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-chip-class]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            fmtApplyChip(btn.getAttribute('data-chip-class'));
+        });
+    }
+    if (!chipPopupWired) {
+        chipPopupWired = true;
+        document.addEventListener('click', function (ev) {
+            const pop = document.getElementById('cp-popup');
+            const m = document.getElementById('cp-main-btn');
+            const c = document.getElementById('cp-chevron-btn');
+            if (!pop || pop.hidden) return;
+            if (pop.contains(ev.target)) return;
+            if ((m && m.contains(ev.target)) || (c && c.contains(ev.target))) return;
+            pop.hidden = true;
+        });
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') {
+                const pop = document.getElementById('cp-popup');
+                if (pop) pop.hidden = true;
+            }
+        });
+    }
+}
+
+// ==========================================
+// AQUA CHIPS (25 hand-tuned droplet pills in the Highlight section!)
+// Same split-button + popup architecture as the rainbow chips!
+// ==========================================
+var FMT_AQUA_STYLES = [
+    { label: 'Bubble Red', cls: 'gel-bubble-chip gel-chip-red' },
+    { label: 'Bubble Orange', cls: 'gel-bubble-chip gel-chip-orange' },
+    { label: 'Bubble Yellow', cls: 'gel-bubble-chip gel-chip-yellow' },
+    { label: 'Bubble Gold', cls: 'gel-bubble-chip gel-chip-gold' },
+    { label: 'Bubble Lime', cls: 'gel-bubble-chip gel-chip-lime' },
+    { label: 'Bubble Green', cls: 'gel-bubble-chip gel-chip-green' },
+    { label: 'Bubble Teal', cls: 'gel-bubble-chip gel-chip-teal' },
+    { label: 'Bubble Turquoise', cls: 'gel-bubble-chip gel-chip-turquoise' },
+    { label: 'Bubble Cyan', cls: 'gel-bubble-chip gel-chip-cyan' },
+    { label: 'Bubble Blue', cls: 'gel-bubble-chip gel-chip-blue' },
+    { label: 'Bubble Purple', cls: 'gel-bubble-chip gel-chip-purple' },
+    { label: 'Bubble Pink', cls: 'gel-bubble-chip gel-chip-pink' },
+    { label: 'Bubble White', cls: 'gel-bubble-chip gel-chip-white' },
+    { label: 'Bubble Fog', cls: 'gel-bubble-chip gel-chip-fog' },
+    { label: 'Bubble Slate', cls: 'gel-bubble-chip gel-chip-slate' },
+    { label: 'Bubble Black', cls: 'gel-bubble-chip gel-chip-black' }
+];
+
+function fmtApplyAqua(cls) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    const range = sel.getRangeAt(0);
+    try {
+        const span = document.createElement('span');
+        span.className = cls;
+        span.setAttribute('spellcheck', 'false');
+        if (range.collapsed) {
+            span.appendChild(document.createTextNode(''));
+            range.insertNode(span);
+            const caret = document.createRange();
+            caret.setStart(span.firstChild, 0);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        } else {
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            const reselected = document.createRange();
+            reselected.selectNodeContents(span);
+            sel.removeAllRanges();
+            sel.addRange(reselected);
+        }
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+        return true;
+    } catch (e) { return false; }
+}
+
+var aquaPopupWired = false;
+
+function fmtToggleAquaPopup() {
+    const popup = document.getElementById('aq-popup');
+    if (!popup) return;
+    popup.hidden = !popup.hidden;
+}
+
+function fmtWireAqua() {
+    if (fmtWireAqua._done) return;
+    fmtWireAqua._done = true;
+    const grid = document.getElementById('aq-grid');
+    if (grid && !grid.children.length) {
+        FMT_AQUA_STYLES.forEach(function (item) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'aq-swatch ' + item.cls;
+            btn.title = item.label;
+            btn.textContent = 'Aa';
+            btn.setAttribute('data-aqua-class', item.cls);
+            grid.appendChild(btn);
+        });
+    }
+    const main = document.getElementById('aq-main-btn');
+    if (main) {
+        main.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        main.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleAquaPopup();
+        });
+    }
+    const chev = document.getElementById('aq-chevron-btn');
+    if (chev) {
+        chev.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        chev.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleAquaPopup();
+        });
+    }
+    if (grid) {
+        grid.addEventListener('mousedown', function (e) {
+            if (e.target.closest && e.target.closest('[data-aqua-class]')) e.preventDefault();
+        });
+        grid.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-aqua-class]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            fmtApplyAqua(btn.getAttribute('data-aqua-class'));
+        });
+    }
+    if (!aquaPopupWired) {
+        aquaPopupWired = true;
+        document.addEventListener('click', function (ev) {
+            const pop = document.getElementById('aq-popup');
+            const m = document.getElementById('aq-main-btn');
+            const c = document.getElementById('aq-chevron-btn');
+            if (!pop || pop.hidden) return;
+            if (pop.contains(ev.target)) return;
+            if ((m && m.contains(ev.target)) || (c && c.contains(ev.target))) return;
+            pop.hidden = true;
+        });
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') {
+                const pop = document.getElementById('aq-popup');
+                if (pop) pop.hidden = true;
+            }
+        });
+    }
+}
+
+function fmtWireHighlighter() {
+    if (fmtWireHighlighter._done) return;
+    fmtWireHighlighter._done = true;
+    const grid = document.getElementById('hl-grid');
+    if (grid && !grid.children.length) {
+        FMT_HIGHLIGHT_STYLES.forEach(function (item) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'hl-swatch ' + item.cls;
+            btn.title = item.label;
+            btn.textContent = 'Aa';
+            btn.setAttribute('data-hl-class', item.cls);
+            grid.appendChild(btn);
+        });
+    }
+    const main = document.getElementById('hl-main-btn');
+    if (main) {
+        main.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        main.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleHighlightPopup();
+        });
+    }
+    const chev = document.getElementById('hl-chevron-btn');
+    if (chev) {
+        chev.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        chev.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleHighlightPopup();
+        });
+    }
+    if (grid) {
+        grid.addEventListener('mousedown', function (e) {
+            if (e.target.closest && e.target.closest('[data-hl-class]')) e.preventDefault();
+        });
+        grid.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-hl-class]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            fmtApplyHighlight(btn.getAttribute('data-hl-class'));
+        });
+    }
+    if (!hlPopupWired) {
+        hlPopupWired = true;
+        document.addEventListener('click', function (ev) {
+            const pop = document.getElementById('hl-popup');
+            const m = document.getElementById('hl-main-btn');
+            const c = document.getElementById('hl-chevron-btn');
+            if (!pop || pop.hidden) return;
+            if (pop.contains(ev.target)) return;
+            if ((m && m.contains(ev.target)) || (c && c.contains(ev.target))) return;
+            pop.hidden = true;
+        });
+        document.addEventListener('keydown', function (ev) {
+            if (ev.key === 'Escape') {
+                const pop = document.getElementById('hl-popup');
+                if (pop) pop.hidden = true;
+            }
+        });
+    }
+}
+
+// --- EXIT FORMATTING (global!): Cmd/Ctrl+Shift+E hops out of the current
+// style from ANY focus -- canvas, ribbon, or popup -- nodes untouched! ---
+// --- Text selected? The escape button strips styles off the selection! ---
+function fmtExitRemoveSelectedStyles() {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const selection = window.getSelection();
+    if (!selection.rangeCount || selection.isCollapsed) return false;
+    const range = selection.getRangeAt(0);
+    if (!canvas.contains(range.commonAncestorContainer)) return false;
+    const SEL = 'span[class],b,strong,i,em,u,s,strike,code,font,a';
+    const nodeEl = function (n) {
+        if (!n) return null;
+        return (n.nodeType === Node.TEXT_NODE) ? n.parentElement : n;
+    };
+    const found = [];
+    [selection.anchorNode, selection.focusNode].forEach(function (n) {
+        let el = nodeEl(n);
+        while (el && el !== canvas && canvas.contains(el)) {
+            if (el.matches && el.matches(SEL)) found.push(el);
+            el = el.parentElement;
+        }
+    });
+    try {
+        const host = range.commonAncestorContainer;
+        const scope = (host && host.nodeType === 1) ? host : (host && host.parentElement);
+        if (scope && scope.querySelectorAll) {
+            Array.from(scope.querySelectorAll(SEL)).forEach(function (el) {
+                let inside = false;
+                try {
+                    if (typeof range.intersectsNode === 'function') inside = range.intersectsNode(el);
+                    else if (selection.containsNode) inside = selection.containsNode(el, true);
+                } catch (e) { inside = false; }
+                if (inside) found.push(el);
+            });
+        }
+    } catch (e) {}
+    const uniq = [];
+    found.forEach(function (el) { if (uniq.indexOf(el) === -1) uniq.push(el); });
+    uniq.sort(function (a, b) { return a.contains(b) ? -1 : (b.contains(a) ? 1 : 0); });
+    const saved = range.cloneRange();
+    let n = 0;
+    uniq.forEach(function (el) {
+        if (!el.isConnected || !canvas.contains(el) || el === canvas) return;
+        // Hands off applets + form fields: unwrap text styles only!
+        try {
+            if (el.querySelector && el.querySelector('input,textarea,select,button,[contenteditable="false"]')) return;
+        } catch (e) {}
+        if (typeof fmtUnwrapInline === 'function') { fmtUnwrapInline(el); n++; }
+    });
+    if (!n) return false;
+    try { selection.removeAllRanges(); selection.addRange(saved); } catch (e) {}
+    playAeroClickSound(450, 0.08);
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+    if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+    return true;
+}
+function fmtExitFormattingNow() {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+    // Text selected? Strip its styles instead of hopping!
+    if (!selection.isCollapsed) return fmtExitRemoveSelectedStyles();
+    const n = selection.anchorNode;
+    if (!n || !canvas.contains(n)) return false;
+    if (n.nodeType === 1 && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(n.tagName)) return false;
+    if (n.parentElement && n.parentElement.closest && n.parentElement.closest('input,textarea,select,button')) return false;
+    const el = (n.nodeType === Node.TEXT_NODE) ? n.parentElement : n;
+    const styled = (el && el.closest && el !== canvas)
+        ? el.closest('span[class],b,strong,i,em,u,s,strike,code,font,a')
+        : null;
+    if (!styled || styled === canvas || !canvas.contains(styled)) return false;
+    playAeroClickSound(450, 0.08);
+    // At the very start? Hop back out front. Otherwise hop forward!
+    let atStart = false;
+    try {
+        const probe = document.createRange();
+        probe.selectNodeContents(styled);
+        probe.setEnd(selection.anchorNode, selection.anchorOffset);
+        atStart = probe.toString().length === 0;
+    } catch (err) { atStart = false; }
+    const r = document.createRange();
+    if (atStart) r.setStartBefore(styled);
+    else r.setStartAfter(styled);
+    r.collapse(true);
+    selection.removeAllRanges();
+    selection.addRange(r);
+    return true;
+}
+function fmtExitFormatting(e) {
+    if (!e || (e.key !== 'E' && e.key !== 'e') || !e.shiftKey || !(e.metaKey || e.ctrlKey)) return false;
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const selection = window.getSelection();
+    if (!selection.rangeCount) return false;
+    const popOpen = document.querySelector('.modal-blur-gate.active:not(#mobile-sidebar-shield)') ||
+        ['hl-popup', 'style-picker-popup', 'file-chip-popup', 'help-deck-dialog'].some(function (id) {
+            const p = document.getElementById(id);
+            if (!p) return false;
+            if (typeof p.open === 'boolean') return !!p.open;
+            return !p.hidden;
+        }) ||
+        ['download-menu', 'insert-menu-popup'].some(function (id) {
+            const p = document.getElementById(id);
+            return p && p.style.display !== 'none';
+        });
+    if (popOpen) return false;
+    return fmtExitFormattingNow();
+}
+
+// --- BASIC INLINE STYLES (B/I/U/S!): selection wraps, collapsed caret
+// gets a fresh element with the caret parked inside -- zero dependencies!
+// Second press frees the NEXT letter: the word keeps its style!
+// (Only a fresh empty tag gets removed outright!) ---
+function fmtBasicTagMatches(el, tag) {
+    if (!el || el.nodeType !== 1) return false;
+    const t = String(el.tagName || '').toUpperCase();
+    if (tag === 'b') return t === 'B' || t === 'STRONG';
+    if (tag === 'i') return t === 'I' || t === 'EM';
+    if (tag === 'u') return t === 'U';
+    if (tag === 's') return t === 'S' || t === 'STRIKE' || t === 'DEL';
+    return false;
+}
+function fmtUnwrapInline(el) {
+    if (!el || !el.parentNode) return;
+    const parent = el.parentNode;
+    while (el.firstChild) parent.insertBefore(el.firstChild, el);
+    parent.removeChild(el);
+    parent.normalize();
+}
+function fmtApplyBasicStyle(tag) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const allowed = { b: 1, i: 1, u: 1, s: 1 };
+    tag = String(tag || '').toLowerCase();
+    if (!allowed[tag]) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    const range = sel.getRangeAt(0);
+    try {
+        const nodeEl = function (n) {
+            if (!n) return null;
+            return (n.nodeType === Node.TEXT_NODE) ? n.parentElement : n;
+        };
+        // --- Collapsed: inside the style? Free the NEXT letter, keep the word! ---
+        if (range.collapsed) {
+            const here = nodeEl(sel.anchorNode);
+            const wrap = (here && here.closest && here !== canvas)
+                ? here.closest('b,strong,i,em,u,s,strike,del')
+                : null;
+            let mine = wrap;
+            while (mine && !fmtBasicTagMatches(mine, tag)) {
+                mine = mine.parentElement && mine.parentElement.closest
+                    ? mine.parentElement.closest('b,strong,i,em,u,s,strike,del')
+                    : null;
+            }
+            if (mine && mine !== canvas && canvas.contains(mine)) {
+                // Fresh empty pending tag? Remove it outright!
+                if (((mine.textContent || '').replace(/[\s\u200B]/g, '')) === '') {
+                    fmtUnwrapInline(mine);
+                    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                    if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+                    return true;
+                }
+                // Real word: split-and-exit! Style stays, caret parks outside!
+                let atStart = false, atEnd = false;
+                try {
+                    const p1 = document.createRange();
+                    p1.selectNodeContents(mine);
+                    p1.setEnd(sel.anchorNode, sel.anchorOffset);
+                    atStart = p1.toString().length === 0;
+                } catch (e) { atStart = false; }
+                try {
+                    const p2 = document.createRange();
+                    p2.setStart(sel.anchorNode, sel.anchorOffset);
+                    p2.setEnd(mine, mine.childNodes.length);
+                    atEnd = p2.toString().length === 0;
+                } catch (e) { atEnd = false; }
+                try {
+                    if (atStart) {
+                        const caret = document.createRange();
+                        caret.setStartBefore(mine);
+                        caret.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(caret);
+                    } else if (atEnd) {
+                        const caret = document.createRange();
+                        caret.setStartAfter(mine);
+                        caret.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(caret);
+                    } else {
+                        const after = document.createRange();
+                        after.setStart(sel.anchorNode, sel.anchorOffset);
+                        after.setEnd(mine, mine.childNodes.length);
+                        const frag = after.extractContents();
+                        const clone = mine.cloneNode(false);
+                        clone.appendChild(frag);
+                        mine.parentNode.insertBefore(clone, mine.nextSibling);
+                        const parent = mine.parentNode;
+                        const idx = Array.prototype.indexOf.call(parent.childNodes, clone);
+                        const caret = document.createRange();
+                        caret.setStart(parent, idx);
+                        caret.collapse(true);
+                        sel.removeAllRanges();
+                        sel.addRange(caret);
+                    }
+                } catch (e) {
+                    const caret = document.createRange();
+                    caret.setStartAfter(mine);
+                    caret.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(caret);
+                }
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+                return true;
+            }
+            const el = document.createElement(tag);
+            el.appendChild(document.createTextNode(''));
+            range.insertNode(el);
+            const caret = document.createRange();
+            caret.setStart(el.firstChild, 0);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+            if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+            return true;
+        }
+        // --- Expanded: anchored inside the style? Unwrap it! ---
+        const aWrapRaw = (function () {
+            const a = nodeEl(sel.anchorNode);
+            return (a && a.closest) ? a.closest('b,strong,i,em,u,s,strike,del') : null;
+        })();
+        const fWrapRaw = (function () {
+            const f = nodeEl(sel.focusNode);
+            return (f && f.closest) ? f.closest('b,strong,i,em,u,s,strike,del') : null;
+        })();
+        const matchUp = function (w) {
+            let m = w;
+            while (m && !fmtBasicTagMatches(m, tag)) {
+                m = m.parentElement && m.parentElement.closest
+                    ? m.parentElement.closest('b,strong,i,em,u,s,strike,del')
+                    : null;
+            }
+            return (m && m !== canvas && canvas.contains(m)) ? m : null;
+        };
+        const aMine = matchUp(aWrapRaw);
+        const fMine = matchUp(fWrapRaw);
+        if (aMine || fMine) {
+            const saved = range.cloneRange();
+            if (aMine) fmtUnwrapInline(aMine);
+            if (fMine && fMine !== aMine && fMine.isConnected) fmtUnwrapInline(fMine);
+            try {
+                const host = range.commonAncestorContainer;
+                const scope = (host && host.nodeType === 1) ? host : (host && host.parentElement);
+                if (scope && scope.querySelectorAll) {
+                    Array.from(scope.querySelectorAll('b,strong,i,em,u,s,strike,del')).forEach(function (x) {
+                        if (!x.isConnected || !canvas.contains(x)) return;
+                        if (!fmtBasicTagMatches(x, tag)) return;
+                        let inside = false;
+                        try {
+                            if (typeof range.intersectsNode === 'function') inside = range.intersectsNode(x);
+                            else if (sel.containsNode) inside = sel.containsNode(x, true);
+                        } catch (e) { inside = false; }
+                        if (inside) fmtUnwrapInline(x);
+                    });
+                }
+            } catch (e) {}
+            try {
+                sel.removeAllRanges();
+                sel.addRange(saved);
+            } catch (e) {}
+            if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+            return true;
+        }
+        const el = document.createElement(tag);
+        el.appendChild(range.extractContents());
+        range.insertNode(el);
+        const reselected = document.createRange();
+        reselected.selectNodeContents(el);
+        sel.removeAllRanges();
+        sel.addRange(reselected);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+        return true;
+    } catch (err) { return false; }
+}
+
+function fmtWireExitAndBasic() {
+    if (fmtWireExitAndBasic._done) return;
+    fmtWireExitAndBasic._done = true;
+    const ids = [
+        ['fmt-exit-btn', null],
+        ['fmt-bold-btn', 'b'],
+        ['fmt-italic-btn', 'i'],
+        ['fmt-underline-btn', 'u'],
+        ['fmt-strike-btn', 's']
+    ];
+    ids.forEach(function (pair) {
+        const btn = document.getElementById(pair[0]);
+        if (!btn) return;
+        btn.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        btn.addEventListener('click', function () {
+            if (!pair[1]) {
+                const pop = document.getElementById('hl-popup');
+                if (pop) pop.hidden = true;
+                fmtExitFormattingNow();
+            } else {
+                playAeroClickSound(600, 0.08);
+                fmtApplyBasicStyle(pair[1]);
+            }
+        });
+    });
+}
+
+if (typeof canvas !== 'undefined' && canvas) {
+    fmtWireHighlighter();
+    fmtWireChips();
+    fmtWireAqua();
+    fmtWireExitAndBasic();
+    document.addEventListener('keydown', function (e) {
+        fmtExitFormatting(e);
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        fmtWireHighlighter();
+        fmtWireChips();
+        fmtWireExitAndBasic();
+    });
+}
+// ==========================================
+// PORTED FROM DESKTOP: FORMAT SIDEBAR ENGINE
+// (Main/Style/Doc groups + style inspector + page sizes!)
+// ==========================================
+function fmtResetColor(prop) {
+    if (typeof canvas === 'undefined' || !canvas) return 0;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return 0;
+    const range = sel.getRangeAt(0);
+    if (!canvas.contains(range.commonAncestorContainer)) return 0;
+    const container = range.commonAncestorContainer;
+    const root = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+    const scopeEl = (root && canvas.contains(root)) ? root : canvas;
+    const isText = prop === 'foreColor';
+    const cssProp = isText ? 'color' : 'background-color';
+    const cands = [];
+    if (scopeEl.querySelectorAll) Array.from(scopeEl.querySelectorAll('font, span')).reverse().forEach(function (el) { cands.push(el); });
+    fmtScopeChain(scopeEl).forEach(function (el) {
+        if (el.tagName === 'FONT' || el.tagName === 'SPAN') cands.push(el);
+    });
+    return fmtEachTouching(scopeEl, range, function () { return cands; }, function (el) {
+        let touched = false;
+        if (isText && el.tagName === 'FONT' && el.hasAttribute && el.hasAttribute('color')) {
+            try { el.removeAttribute('color'); } catch (e) {}
+            touched = true;
+        }
+        if (el.style) {
+            let v = '';
+            try { v = el.style.getPropertyValue(cssProp) || ''; } catch (e) {}
+            if (v) {
+                try { el.style.removeProperty(cssProp); } catch (e) {}
+                touched = true;
+            }
+        }
+        if (touched) {
+            fmtStripBare(el);
+            return true;
+        }
+        return false;
+    }, true);
+}
+
+// Show each reset button only while the caret sits under an explicit color!
+// (Class-ruled chip colors and plain theme text have nothing to reset!)
+function fmtUpdateResetButtons() {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const textBtn = document.querySelector('#format-text-controls [data-reset-action="foreColor"]');
+    const hlBtn = document.querySelector('#format-text-controls [data-reset-action="hiliteColor"]');
+    if (!textBtn && !hlBtn) return;
+    const sel = window.getSelection();
+    let anchorEl = null;
+    if (sel.rangeCount) {
+        const a = sel.anchorNode;
+        if (a && canvas.contains(a)) anchorEl = a.nodeType === Node.TEXT_NODE ? a.parentElement : a;
+    }
+    const hasExplicit = function (prop, isText) {
+        let el = anchorEl;
+        while (el && el !== canvas && canvas.contains(el)) {
+            if (isText && el.tagName === 'FONT') {
+                try { if (el.hasAttribute && el.hasAttribute('color')) return true; } catch (e) {}
+            }
+            try {
+                if (el.style && el.style.getPropertyValue(prop)) return true;
+            } catch (e) {}
+            el = el.parentElement;
+        }
+        return false;
+    };
+    if (textBtn) textBtn.style.display = (anchorEl && hasExplicit('color', true)) ? '' : 'none';
+    if (hlBtn) hlBtn.style.display = (anchorEl && hasExplicit('background-color', false)) ? '' : 'none';
+}
+
+// Align one selection's blocks (execCommand first, inline style fallback)!
+var FMT_ALIGN_CMDS = { left: 'justifyLeft', center: 'justifyCenter', right: 'justifyRight', justify: 'justifyFull' };
+
+function fmtAlignBlocks(align) {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const cmd = FMT_ALIGN_CMDS[align];
+    if (!cmd) return;
+    if (typeof document.execCommand === 'function') {
+        try {
+            canvas.focus();
+            document.execCommand(cmd, false, null);
+            if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            fmtSyncAlignButtons();
+            return;
+        } catch (e) {}
+    }
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return;
+    const range = sel.getRangeAt(0);
+    const blocks = [];
+    Array.from(canvas.children).forEach(function (kid) {
+        try {
+            if (range.intersectsNode(kid)) blocks.push(kid);
+        } catch (e) {}
+    });
+    if (!blocks.length) {
+        const node = sel.anchorNode;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        const block = (el && el.closest) ? fmtAlignScope(el) : null;
+        if (block && canvas.contains(block)) blocks.push(block);
+    }
+    blocks.forEach(function (b) { b.style.textAlign = align; });
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+    fmtSyncAlignButtons();
+}
+
+// Indent = tab char at each line start; outdent strips ONE leading tab (only if there)!
+function fmtIndentBlocks(dir) {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return;
+    const range = sel.getRangeAt(0);
+    const blocks = [];
+    Array.from(canvas.children).forEach(function (kid) {
+        try {
+            if (range.intersectsNode(kid)) blocks.push(kid);
+        } catch (e) {}
+    });
+    if (!blocks.length) {
+        const node = sel.anchorNode;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        const block = el && el.closest ? el.closest('div, p, li, h1, h2, h3, blockquote') : null;
+        if (block && canvas.contains(block)) blocks.push(block);
+    }
+    // Remember a collapsed caret so it lands after its fresh tab (never at line start)!
+    const wasCollapsed = sel.isCollapsed;
+    let caretAnchor = null;
+    let caretOffset = 0;
+    let caretBlock = null;
+    try {
+        caretAnchor = sel.anchorNode;
+        caretOffset = sel.anchorOffset;
+        const ael = caretAnchor && caretAnchor.nodeType === 3 ? caretAnchor.parentElement : caretAnchor;
+        caretBlock = (ael && ael.closest) ? ael.closest('div, p, li, h1, h2, h3, blockquote') : null;
+        if (caretBlock && !canvas.contains(caretBlock)) caretBlock = null;
+    } catch (e) {}
+    let caretTab = null;
+    let strippedNode = null;
+    let strippedGoneBlock = null;
+    blocks.forEach(function (b) {
+        if (dir > 0) {
+            const first = b.firstChild;
+            let tabNode = null;
+            if (first && first.nodeType === 3) { first.nodeValue = '\t' + first.nodeValue; tabNode = first; }
+            else { tabNode = document.createTextNode('\t'); b.insertBefore(tabNode, first); }
+            if (b === caretBlock) caretTab = tabNode;
+        } else {
+            let node = b.firstChild;
+            while (node && node.nodeType === 3 && node.nodeValue === '') {
+                const husk = node;
+                node = node.nextSibling;
+                husk.remove();
+            }
+            while (node && node.nodeType === 1 && node.tagName !== 'BR' && node.firstChild) node = node.firstChild;
+            if (node && node.nodeType === 3 && node.nodeValue.charAt(0) === '\t') {
+                const heldCaret = (node === caretAnchor);
+                node.nodeValue = node.nodeValue.substring(1);
+                if (!node.nodeValue.length) {
+                    node.remove();
+                    if (b === caretBlock && heldCaret) strippedGoneBlock = b;
+                } else if (b === caretBlock) {
+                    strippedNode = node;
+                }
+            }
+        }
+    });
+    try {
+        if (wasCollapsed && dir > 0 && caretTab) {
+            const caret = document.createRange();
+            caret.setStart(caretTab, 1);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        } else if (wasCollapsed && dir < 0 && caretBlock && (strippedNode || strippedGoneBlock)) {
+            const caret = document.createRange();
+            if (strippedNode) {
+                const at = (caretAnchor === strippedNode) ? Math.max(0, caretOffset - 1) : 0;
+                caret.setStart(strippedNode, at);
+            } else {
+                caret.setStart(strippedGoneBlock, 0);
+            }
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        }
+    } catch (e) {}
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+}
+
+// Nearest block-level box owns the line's alignment! Never guess tag names
+// (closest('div,p,...') is blind to <center>, <section>, table cells, pasted
+// markup!) -- ask layout: first non-inline ancestor-or-self wins!
+function fmtAlignScope(el) {
+    let node = el;
+    while (node && typeof canvas !== 'undefined' && canvas && canvas.contains(node)) {
+        if (node === canvas) return canvas;
+        let disp = '';
+        try { disp = String((window.getComputedStyle(node) || {}).display || '').toLowerCase(); } catch (e) {}
+        if (disp !== 'inline') return node;
+        node = node.parentElement;
+    }
+    return (typeof canvas !== 'undefined' && canvas) ? canvas : null;
+}
+
+function fmtSyncAlignButtons() {
+    const bar = document.getElementById('format-text-controls');
+    if (!bar) return;
+    // Null = cursor is NOT in text: leave the last highlight alone (never lie)!
+    // NOTE: the blinking cursor lives at the FOCUS end (anchor == focus collapsed)!
+    let align = null;
+    try {
+        const sel = window.getSelection();
+        if (sel.rangeCount) {
+            let node = sel.focusNode || sel.anchorNode;
+            if (node && typeof canvas !== 'undefined' && canvas && canvas.contains(node)) {
+                align = 'left';
+                const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+                const scope = (el && el.closest) ? (fmtAlignScope(el) || canvas) : canvas;
+                const computed = window.getComputedStyle(scope);
+                const t = ((computed && computed.textAlign) || scope.style.textAlign || '').toLowerCase();
+                if (t === 'center' || t === '-webkit-center') align = 'center';
+                else if (t === 'right' || t === 'end' || t === '-webkit-right') align = 'right';
+                else if (t === 'justify') align = 'justify';
+            }
+        }
+    } catch (e) { align = null; }
+    if (!align) return;
+    bar.querySelectorAll('[data-align]').forEach(function (btn) {
+        if (btn.getAttribute('data-align') === align) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+}
+var FMT_WEIGHT_STEPS = ['300', '400', '500', '600', '700', '800', '900'];
+
+// Wrap the selection (or park a collapsed caret) in a styled span!
+function fmtWrapInline(prop, value) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    const range = sel.getRangeAt(0);
+    try {
+        const span = document.createElement('span');
+        span.style.setProperty(prop, value);
+        if (range.collapsed) {
+            span.appendChild(document.createTextNode(''));
+            range.insertNode(span);
+            const caret = document.createRange();
+            caret.setStart(span.firstChild, 0);
+            caret.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(caret);
+        } else {
+            span.appendChild(range.extractContents());
+            range.insertNode(span);
+            const reselected = document.createRange();
+            reselected.selectNodeContents(span);
+            sel.removeAllRanges();
+            sel.addRange(reselected);
+        }
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+        return true;
+    } catch (e) { return false; }
+}
+
+function fmtApplyWeight(value) {
+    let v = String(value || '').trim().toLowerCase();
+    if (v === 'normal') v = '400';
+    else if (v === 'bold') v = '700';
+    if (FMT_WEIGHT_STEPS.indexOf(v) === -1) {
+        const n = parseInt(v, 10);
+        v = isNaN(n) ? '400' : String(Math.min(900, Math.max(100, Math.round(n / 100) * 100)));
+    }
+    playAeroClickSound(600, 0.08);
+    return fmtWrapInline('font-weight', v);
+}
+
+function fmtApplySizePx(value) {
+    let px = Math.round(parseFloat(value));
+    if (isNaN(px)) return false;
+    px = Math.min(200, Math.max(6, px));
+    playAeroClickSound(600, 0.08);
+    return fmtWrapInline('font-size', px + 'px');
+}
+var FMT_DEFAULT_STYLES = [
+    { label: 'Orb Yellow', cls: 'gel-orb gel-y' },
+    { label: 'Orb Red', cls: 'gel-orb gel-r' },
+    { label: 'Orb Green', cls: 'gel-orb gel-g' },
+    { label: 'Orb Cyan', cls: 'gel-orb gel-c' },
+    { label: 'Orb Blue', cls: 'gel-orb gel-b' },
+    { label: 'Orb Violet', cls: 'gel-orb gel-v' },
+    { label: 'Orb Pink', cls: 'gel-orb gel-p' },
+    { label: 'Orb Orange', cls: 'gel-orb gel-o' },
+    { label: 'Orb Magenta', cls: 'gel-orb gel-mg' },
+    { label: 'Orb Lime', cls: 'gel-orb gel-lm' },
+    { label: 'Orb Aqua', cls: 'gel-orb gel-aq' },
+    { label: 'Orb Slate', cls: 'gel-orb gel-sl' },
+    { label: 'Spark Text', cls: 'spark-text' },
+    { label: 'Green Flash', cls: 'gel-green-flash' },
+    { label: 'Liquid Underline', cls: 'liquid-underline' },
+    { label: 'Glossy Border', cls: 'glossy-border-badge' },
+    { label: 'Cyber Spark', cls: 'cyber-glow-spark' },
+    { label: 'Liquid Glow', cls: 'liquid-text-glow' },
+    { label: 'Mirror Block', cls: 'reflected-text-block' },
+    { label: 'Embossed Glass', cls: 'embossed-glass-text' },
+    { label: 'Wave Text', cls: 'kinetic-wave-text' },
+    { label: 'Tag Amber', cls: 'aero-tag-chip tag-chip-a' },
+    { label: 'Tag Green', cls: 'aero-tag-chip tag-chip-g' },
+    { label: 'Tag Orange', cls: 'aero-tag-chip tag-chip-o' },
+    { label: 'Tag Red', cls: 'aero-tag-chip tag-chip-r' },
+    { label: 'Tag Purple', cls: 'aero-tag-chip tag-chip-pr' },
+    { label: 'Tag Pink', cls: 'aero-tag-chip tag-chip-pk' },
+    { label: 'Tag Yellow', cls: 'aero-tag-chip tag-chip-y' },
+    { label: 'Tag Slate', cls: 'aero-tag-chip tag-chip-sl' },
+    { label: 'Bubble Cyan', cls: 'gel-bubble-chip gel-chip-cyan' },
+    { label: 'Bubble Orange', cls: 'gel-bubble-chip gel-chip-orange' },
+    { label: 'Bubble Green', cls: 'gel-bubble-chip gel-chip-green' },
+    { label: 'Bubble Red', cls: 'gel-bubble-chip gel-chip-red' },
+    { label: 'Bubble Purple', cls: 'gel-bubble-chip gel-chip-purple' },
+    { label: 'Bubble Pink', cls: 'gel-bubble-chip gel-chip-pink' },
+    { label: 'Bubble Yellow', cls: 'gel-bubble-chip gel-chip-yellow' },
+    { label: 'Bubble Blue', cls: 'gel-bubble-chip gel-chip-blue' },
+    { label: 'Bubble Lime', cls: 'gel-bubble-chip gel-chip-lime' },
+    { label: 'Bubble Teal', cls: 'gel-bubble-chip gel-chip-teal' },
+    { label: 'Bubble Gold', cls: 'gel-bubble-chip gel-chip-gold' },
+    { label: 'Bubble Slate', cls: 'gel-bubble-chip gel-chip-slate' },
+    { label: 'Bubble White', cls: 'gel-bubble-chip gel-chip-white' },
+    { label: 'Bubble Black', cls: 'gel-bubble-chip gel-chip-black' },
+    { label: 'Bubble Fog', cls: 'gel-bubble-chip gel-chip-fog' },
+    { label: 'Bubble Turquoise', cls: 'gel-bubble-chip gel-chip-turquoise' },
+    { label: 'Mercury Pearl', cls: 'effect-mercury-pearl' },
+    { label: 'Prism Refract', cls: 'effect-prism-refract' },
+    { label: 'Screen Cavity', cls: 'effect-screen-cavity' },
+    { label: 'Sunlight Ray', cls: 'effect-sunlight-ray' },
+    { label: 'Abyssal Plate', cls: 'effect-abyssal-plate' },
+    { label: 'Metallic Mesh', cls: 'effect-metallic-mesh' },
+    { label: 'Fluid Expand', cls: 'effect-fluid-expand' },
+    { label: 'Metric Cavity', cls: 'effect-metric-cavity' },
+    { label: 'Pearl Orb', cls: 'effect-pearl-orb' },
+    { label: 'Lens Flare', cls: 'effect-lens-flare' },
+    { label: 'Waterdrop Chip', cls: 'gel-chip-waterdrop' },
+    { label: 'Solarflare Chip', cls: 'gel-chip-solarflare' },
+    { label: 'Aurorawave Chip', cls: 'gel-chip-aurorawave' },
+    { label: 'Glass Stamp', cls: 'applet-glass-stamp' },
+    { label: 'Drop Shadow', cls: 'effect-drop-shadow-window' },
+    { label: 'Glow Tube', cls: 'effect-glow-tube' },
+    { label: 'Hardware Bevel', cls: 'effect-hardware-bevel' },
+    { label: 'Screen Segment', cls: 'effect-screen-segment' },
+    { label: 'Gel Capsule', cls: 'effect-gel-capsule' },
+    { label: 'Fluid Orbit', cls: 'effect-fluid-orbit' },
+    { label: 'X-Ray Glass', cls: 'effect-xray-glass' },
+    { label: 'Waveform Line', cls: 'effect-waveform-line' },
+    { label: 'Plasma Gel', cls: 'effect-plasma-gel' },
+    { label: 'Water Bubble', cls: 'effect-water-bubble' },
+    { label: 'Glow Tracer', cls: 'effect-glow-tracer' },
+    { label: 'Shimmer Title', cls: 'effect-shimmer-title' },
+    { label: 'Tinted Lens', cls: 'effect-tinted-lens' },
+    { label: 'Audio Loop', cls: 'effect-audio-stream-loop' },
+    { label: 'Biogel Capsule', cls: 'effect-biogel-capsule' },
+    { label: 'Neon Ribbon', cls: 'effect-neon-ribbon' },
+    { label: 'Droplet Amber', cls: 'droplet-amber' },
+    { label: 'Droplet Crimson', cls: 'droplet-crimson' },
+    { label: 'Droplet Fuchsia', cls: 'droplet-fuchsia' },
+    { label: 'Droplet Amethyst', cls: 'droplet-amethyst' },
+    { label: 'Droplet Tangerine', cls: 'droplet-tangerine' },
+    { label: 'Droplet Slate', cls: 'droplet-slate' },
+    { label: 'Plasma Cyan', cls: 'megachip-plasma plasma-cyan' },
+    { label: 'Plasma Orange', cls: 'megachip-plasma plasma-orange' },
+    { label: 'Plasma Crimson', cls: 'megachip-plasma plasma-crimson' },
+    { label: 'Plasma Lime', cls: 'megachip-plasma plasma-lime' },
+    { label: 'Bracket Blue', cls: 'megachip-glass-bracket bracket-blue' },
+    { label: 'Bracket Amethyst', cls: 'megachip-glass-bracket bracket-amethyst' },
+    { label: 'Bracket Fuchsia', cls: 'megachip-glass-bracket bracket-fuchsia' },
+    { label: 'Bracket Amber', cls: 'megachip-glass-bracket bracket-amber' },
+    { label: 'Badge Sky', cls: 'aero-glass-badge-chip badge-frame-sky' },
+    { label: 'Badge Emerald', cls: 'aero-glass-badge-chip badge-frame-emerald' },
+    { label: 'Badge Orange', cls: 'aero-glass-badge-chip badge-frame-orange' },
+    { label: 'Badge Crimson', cls: 'aero-glass-badge-chip badge-frame-crimson' },
+    { label: 'Badge Amethyst', cls: 'aero-glass-badge-chip badge-frame-amethyst' },
+    { label: 'Badge Gold', cls: 'aero-glass-badge-chip badge-frame-gold' },
+    { label: 'Swayed Sky', cls: 'gel-chip-swayed swayed-sky' },
+    { label: 'Swayed Emerald', cls: 'gel-chip-swayed swayed-emerald' },
+    { label: 'Swayed Orange', cls: 'gel-chip-swayed swayed-orange' },
+    { label: 'Swayed Amethyst', cls: 'gel-chip-swayed swayed-amethyst' },
+    { label: 'Pill Sky', cls: 'gel-chip-pill-variant pill-sky' },
+    { label: 'Pill Emerald', cls: 'gel-chip-pill-variant pill-emerald' },
+    { label: 'Pill Orange', cls: 'gel-chip-pill-variant pill-orange' },
+    { label: 'Pill Amethyst', cls: 'gel-chip-pill-variant pill-amethyst' },
+    { label: 'Pastel Yellow', cls: 'gel-chip-pastel pastel-yellow' },
+    { label: 'Pastel Blue', cls: 'gel-chip-pastel pastel-blue' },
+    { label: 'Pastel Green', cls: 'gel-chip-pastel pastel-green' },
+    { label: 'Pastel Pink', cls: 'gel-chip-pastel pastel-pink' },
+    { label: 'Pastel Purple', cls: 'gel-chip-pastel pastel-purple' },
+    { label: 'Pastel Orange', cls: 'gel-chip-pastel pastel-orange' },
+    { label: 'Ribbon Tangerine', cls: 'gel-chip-droplet-ribbon droplet-ribbon-tangerine' },
+    { label: 'Ribbon Citrus', cls: 'gel-chip-droplet-ribbon droplet-ribbon-citrus' },
+    { label: 'Ribbon Emerald', cls: 'gel-chip-droplet-ribbon droplet-ribbon-emerald' },
+    { label: 'Ribbon Sapphire', cls: 'gel-chip-droplet-ribbon droplet-ribbon-sapphire' },
+    { label: 'Ribbon Amethyst', cls: 'gel-chip-droplet-ribbon droplet-ribbon-amethyst' },
+    { label: 'Ribbon Fuchsia', cls: 'gel-chip-droplet-ribbon droplet-ribbon-fuchsia' },
+    { label: 'Ribbon Crimson', cls: 'gel-chip-droplet-ribbon droplet-ribbon-crimson' },
+    { label: 'Ribbon Slate', cls: 'gel-chip-droplet-ribbon droplet-ribbon-slate' },
+    { label: 'Heading 1', cls: 'header-1' },
+    { label: 'Heading 2', cls: 'header-2' },
+    { label: 'Heading 3', cls: 'header-3' },
+    { label: 'Blockquote', cls: 'blockquote-list' },
+    { label: 'Bullet List', cls: 'bulleted-list' },
+    { label: 'Mega Header', cls: 'mega-header' },
+    { label: 'Code Function', cls: 'dev-chip-function' },
+    { label: 'Code Variable', cls: 'dev-chip-variable' },
+    { label: 'Code String', cls: 'dev-chip-string' },
+    { label: 'Radar Sweep', cls: 'av-chip-radar-sweep' },
+    { label: 'AV Heading', cls: 'av-chip-heading' },
+    { label: 'Altimeter', cls: 'av-chip-altimeter' },
+    { label: 'Folder Tab', cls: 'jr-folder-tab' }
+];
+
+// Every extension style that EXISTS, live from the Marketplace (nothing hardcoded)!
+function fmtExtensionVariants() {
+    const out = [];
+    try {
+        const M = window.WriteoutMarketplace;
+        if (!M || !M.catalog || typeof M.installed !== 'function') return out;
+        const installed = M.installed();
+        M.catalog.forEach(function (ext) {
+            if (ext.category !== 'styles') return;
+            const isIn = installed.indexOf(ext.id) !== -1;
+            let variants = [];
+            if (ext.kind === 'style-pack' && Array.isArray(ext.styles)) variants = ext.styles;
+            else if (ext.kind === 'toolbar-style' && ext.toolbarClass) {
+                variants = [{ name: ext.name, className: ext.toolbarClass }];
+            }
+            variants.forEach(function (v) {
+                if (v && v.className) {
+                    out.push({ label: (v.name || v.className) + ' \u00B7 ' + ext.name, cls: v.className, extId: ext.id, installed: isIn });
+                }
+            });
+        });
+    } catch (e) {}
+    return out;
+}
+
+// One shared apply path (Marketplace owns it; local fallback if missing)!
+// Set when a collapsed insert parks the caret on purpose: rescue must NOT
+// yank it back to the old offset (that lands AFTER the fresh style)!
+var fmtParkedCaret = false;
+function fmtApplyPickerClass(cls) {
+    try {
+        if (typeof canvas === 'undefined' || !canvas) return false;
+        const sel = window.getSelection();
+        if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+        // Collapsed caret? Park a fresh styled span, just like the highlight washes!
+        if (sel.isCollapsed) {
+            try {
+                const range = sel.getRangeAt(0);
+                const span = document.createElement('span');
+                span.className = cls;
+                span.setAttribute('spellcheck', 'false');
+                span.appendChild(document.createTextNode(''));
+                range.insertNode(span);
+                const caret = document.createRange();
+                caret.setStart(span.firstChild, 0);
+                caret.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(caret);
+                fmtParkedCaret = true;
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection();
+                return true;
+            } catch (e) { return false; }
+        }
+        const M = window.WriteoutMarketplace;
+        if (M && typeof M.apply === 'function') { M.apply(cls); return true; }
+    } catch (e) {}
+    try {
+        if (typeof canvas === 'undefined' || !canvas) return false;
+        const sel = window.getSelection();
+        if (!sel.rangeCount || sel.isCollapsed || !canvas.contains(sel.anchorNode)) return false;
+        const range = sel.getRangeAt(0);
+        const span = document.createElement('span');
+        span.className = cls;
+        span.setAttribute('spellcheck', 'false');
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        return true;
+    } catch (e) { return false; }
+}
+var FMT_PICKER_VIEW_KEY = 'writeout_picker_view';
+var fmtPickerTab = 'default';
+var fmtPickerView = 'list';
+try {
+    const pv = localStorage.getItem(FMT_PICKER_VIEW_KEY);
+    if (pv === 'mini' || pv === 'list') fmtPickerView = pv;
+} catch (e) {}
+
+function fmtRenderStylePicker() {
+    const popup = document.getElementById('style-picker-popup');
+    const list = document.getElementById('style-picker-list');
+    if (!popup || !list) return;
+    const tabs = document.getElementById('style-picker-tabs');
+    if (tabs) {
+        tabs.querySelectorAll('[data-picker-tab]').forEach(function (btn) {
+            if (btn.getAttribute('data-picker-tab') === fmtPickerTab) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+    const views = popup.querySelectorAll ? popup.querySelectorAll('[data-picker-view]') : [];
+    Array.from(views).forEach(function (btn) {
+        if (btn.getAttribute('data-picker-view') === fmtPickerView) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+    const isExt = fmtPickerTab === 'ext';
+    const mini = fmtPickerView === 'mini';
+    const items = isExt ? fmtExtensionVariants() : FMT_DEFAULT_STYLES;
+    if (mini) list.classList.add('mini');
+    else list.classList.remove('mini');
+    list.innerHTML = '';
+    if (!items.length) {
+        const p = document.createElement('p');
+        p.className = 'style-picker-empty';
+        p.textContent = isExt ? 'No extension styles installed yet.' : 'No default styles found.';
+        list.appendChild(p);
+        return;
+    }
+    items.forEach(function (item) {
+        if (mini) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'style-picker-mini';
+            btn.title = item.label;
+            btn.setAttribute('data-picker-class', item.cls);
+            if (item.extId) btn.setAttribute('data-picker-ext', item.extId);
+            const sw = document.createElement('span');
+            sw.className = item.cls;
+            sw.textContent = 'Aa';
+            btn.appendChild(sw);
+            list.appendChild(btn);
+        } else {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'style-picker-item';
+            btn.setAttribute('data-picker-class', item.cls);
+            if (item.extId) btn.setAttribute('data-picker-ext', item.extId);
+            const sw = document.createElement('span');
+            sw.className = 'picker-preview ' + item.cls;
+            sw.textContent = 'Ab';
+            const nm = document.createElement('span');
+            nm.className = 'picker-name';
+            nm.textContent = item.label + (item.extId && !item.installed ? ' (Get)' : '');
+            btn.appendChild(sw);
+            btn.appendChild(nm);
+            list.appendChild(btn);
+        }
+    });
+}
+
+function fmtOpenStylePicker(kind) {
+    fmtPickerTab = (kind === 'ext') ? 'ext' : 'default';
+    const popup = document.getElementById('style-picker-popup');
+    if (!popup) return;
+    popup.removeAttribute('hidden');
+    fmtRenderStylePicker();
+}
+
+function fmtToggleStylePicker(kind) {
+    const popup = document.getElementById('style-picker-popup');
+    if (!popup) return;
+    const want = (kind === 'ext') ? 'ext' : 'default';
+    if (!popup.hasAttribute('hidden') && fmtPickerTab === want) {
+        popup.setAttribute('hidden', '');
+        return;
+    }
+    fmtOpenStylePicker(want);
+}
+
+function fmtWireStylePicker() {
+    const group = document.getElementById('format-group-style');
+    if (group && !group._fmtMouseWired) {
+        group._fmtMouseWired = true;
+        group.addEventListener('mousedown', function (e) {
+            if (e.target.closest && e.target.closest('button')) e.preventDefault();
+        });
+    }
+    const add = document.getElementById('style-add-btn');
+    if (add && !add._fmtPickerWired) {
+        add._fmtPickerWired = true;
+        add.addEventListener('click', function () {
+            playAeroClickSound(600, 0.08);
+            fmtToggleStylePicker('default');
+        });
+    }
+    const x = document.getElementById('style-picker-x');
+    if (x && !x._fmtPickerWired) {
+        x._fmtPickerWired = true;
+        x.addEventListener('click', function () {
+            const popup = document.getElementById('style-picker-popup');
+            if (popup) popup.setAttribute('hidden', '');
+        });
+    }
+    const list = document.getElementById('style-picker-list');
+    if (list && !list._fmtPickerWired) {
+        list._fmtPickerWired = true;
+        list.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-picker-class]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            const cls = btn.getAttribute('data-picker-class');
+            const extId = btn.getAttribute('data-picker-ext');
+            try {
+                const M = window.WriteoutMarketplace;
+                if (extId && M && typeof M.installed === 'function' && typeof M.install === 'function') {
+                    if (M.installed().indexOf(extId) === -1) {
+                        M.install(extId);
+                        fmtRenderStylePicker();
+                    }
+                }
+            } catch (err) {}
+            if (typeof fmtRescueSelection === 'function') {
+                fmtRescueSelection(function () { fmtApplyPickerClass(cls); });
+            } else {
+                fmtApplyPickerClass(cls);
+            }
+        });
+    }
+    const tabs = document.getElementById('style-picker-tabs');
+    if (tabs && !tabs._fmtPickerWired) {
+        tabs._fmtPickerWired = true;
+        tabs.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-picker-tab]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            fmtPickerTab = btn.getAttribute('data-picker-tab') === 'ext' ? 'ext' : 'default';
+            fmtRenderStylePicker();
+        });
+    }
+    const popup = document.getElementById('style-picker-popup');
+    if (popup && !popup._fmtViewWired) {
+        popup._fmtViewWired = true;
+        popup.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-picker-view]') : null;
+            if (!btn) return;
+            playAeroClickSound(600, 0.08);
+            fmtPickerView = btn.getAttribute('data-picker-view') === 'mini' ? 'mini' : 'list';
+            try { localStorage.setItem(FMT_PICKER_VIEW_KEY, fmtPickerView); } catch (err) {}
+            fmtRenderStylePicker();
+        });
+    }
+}
+// ==========================================
+// FORMAT SIDEBAR GROUPS + DOCUMENT PAGE SIZE
+// (Page size rides along inside every .KD snapshot!)
+// ==========================================
+var FMT_GROUP_KEY = 'writeout_format_group';
+var KD_PAGE_SIZE_KEY = 'writeout_page_size';
+var KD_PAGE_ORIENT_KEY = 'writeout_page_orientation';
+var KD_PAGE_SIZES = [
+    { id: 'kd', name: 'KD Document', hint: 'current canvas size' },
+    { id: 'a4', name: 'A4', w: 794, h: 1123 },
+    { id: 'a5', name: 'A5', w: 559, h: 794 },
+    { id: 'a3', name: 'A3', w: 1123, h: 1587 },
+    { id: 'letter', name: 'Letter', w: 816, h: 1056 },
+    { id: 'legal', name: 'Legal', w: 816, h: 1344 }
+];
+var kdPageSizeId = 'kd';
+var kdPageOrient = 'portrait';
+var KD_DOC_PASSWORD_KEY = 'writeout_doc_password';
+var kdDocPasswordHash = '';
+try {
+    const ph = localStorage.getItem(KD_DOC_PASSWORD_KEY);
+    if (ph) kdDocPasswordHash = ph;
+} catch (e) {}
+
+// Salted sync hash (lock-screen deterrent, not encryption)!
+function kdHashPassword(pw) {
+    const s = 'writeout-doc-lock:' + String(pw);
+    let h1 = 0xdeadbeef, h2 = 0x41c6ce57;
+    for (let i = 0; i < s.length; i++) {
+        const ch = s.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 = Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^ Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^ Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return ('00000000' + (h2 >>> 0).toString(16)).slice(-8) + ('00000000' + (h1 >>> 0).toString(16)).slice(-8);
+}
+
+function kdSetDocPassword(value) {
+    kdDocPasswordHash = value ? kdHashPassword(value) : '';
+    try {
+        if (kdDocPasswordHash) localStorage.setItem(KD_DOC_PASSWORD_KEY, kdDocPasswordHash);
+        else localStorage.removeItem(KD_DOC_PASSWORD_KEY);
+    } catch (e) {}
+    kdRenderDocSettings();
+}
+try {
+    const sid = localStorage.getItem(KD_PAGE_SIZE_KEY);
+    if (sid && KD_PAGE_SIZES.some(function (s) { return s.id === sid; })) kdPageSizeId = sid;
+    const so = localStorage.getItem(KD_PAGE_ORIENT_KEY);
+    if (so === 'landscape' || so === 'portrait') kdPageOrient = so;
+} catch (e) {}
+
+function kdPageSizeDef(id) {
+    for (let i = 0; i < KD_PAGE_SIZES.length; i++) {
+        if (KD_PAGE_SIZES[i].id === id) return KD_PAGE_SIZES[i];
+    }
+    return KD_PAGE_SIZES[0];
+}
+
+// Effective canvas width (null = KD Document = no override)!
+function kdPageWidth() {
+    const def = kdPageSizeDef(kdPageSizeId);
+    if (!def.w) return null;
+    return kdPageOrient === 'landscape' ? Math.max(def.w, def.h) : Math.min(def.w, def.h);
+}
+
+// Effective canvas height: fixed sizes use their page height, KD starts extended!
+function kdPageHeight() {
+    const def = kdPageSizeDef(kdPageSizeId);
+    if (!def.h) return 1123;
+    return kdPageOrient === 'landscape' ? Math.min(def.w, def.h) : Math.max(def.w, def.h);
+}
+
+function kdApplyPageSize() {
+    try {
+        if (typeof canvasViewport !== 'undefined' && canvasViewport) {
+            const w = kdPageWidth();
+            if (w) canvasViewport.style.maxWidth = w + 'px';
+            else canvasViewport.style.removeProperty('max-width');
+            canvasViewport.style.minHeight = kdPageHeight() + 'px';
+        }
+    } catch (e) {}
+    kdRenderDocSettings();
+}
+
+function kdSetPageSize(id) {
+    kdPageSizeId = kdPageSizeDef(id).id;
+    try { localStorage.setItem(KD_PAGE_SIZE_KEY, kdPageSizeId); } catch (e) {}
+    playAeroClickSound(600, 0.08);
+    kdApplyPageSize();
+}
+
+function kdSetOrient(o) {
+    kdPageOrient = (o === 'landscape') ? 'landscape' : 'portrait';
+    try { localStorage.setItem(KD_PAGE_ORIENT_KEY, kdPageOrient); } catch (e) {}
+    playAeroClickSound(600, 0.08);
+    kdApplyPageSize();
+}
+
+function kdRenderDocSettings() {
+    const box = document.getElementById('format-page-sizes');
+    if (box) {
+        box.innerHTML = '';
+        KD_PAGE_SIZES.forEach(function (def) {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'format-page-row' + (def.id === kdPageSizeId ? ' active' : '');
+            btn.setAttribute('data-page-size', def.id);
+            btn.textContent = def.name;
+            box.appendChild(btn);
+        });
+    }
+    const pwBox = document.getElementById('format-doc-password');
+    if (pwBox && document.activeElement !== pwBox) {
+        pwBox.placeholder = kdDocPasswordHash ? 'Protected - clear to unlock' : 'Set a password...';
+    }
+    const orow = document.getElementById('format-orient-row');
+    if (orow) {
+        orow.querySelectorAll('[data-orient]').forEach(function (btn) {
+            if (btn.getAttribute('data-orient') === kdPageOrient) btn.classList.add('active');
+            else btn.classList.remove('active');
+        });
+    }
+}
+
+var FMT_GROUPS = ['main', 'style', 'doc'];
+
+function fmtStoredGroup() {
+    try {
+        const g = localStorage.getItem(FMT_GROUP_KEY);
+        if (FMT_GROUPS.indexOf(g) !== -1) return g;
+    } catch (e) {}
+    return 'main';
+}
+
+function fmtSetGroup(g, silent) {
+    if (FMT_GROUPS.indexOf(g) === -1) g = 'main';
+    try { localStorage.setItem(FMT_GROUP_KEY, g); } catch (e) {}
+    if (!silent) playAeroClickSound(600, 0.08);
+    document.querySelectorAll('[data-fmt-group]').forEach(function (btn) {
+        if (btn.getAttribute('data-fmt-group') === g) btn.classList.add('active');
+        else btn.classList.remove('active');
+    });
+    const panes = [['format-group-main', 'main'], ['format-group-style', 'style'], ['format-group-document', 'doc']];
+    panes.forEach(function (pair) {
+        const el = document.getElementById(pair[0]);
+        if (!el) return;
+        if (g === pair[1]) {
+            el.removeAttribute('hidden');
+            if (pair[1] === 'doc') kdRenderDocSettings();
+        } else {
+            el.setAttribute('hidden', '');
+        }
+    });
+}
+
+function fmtWireDocSettings() {
+    const seg = document.querySelector('.format-segmented');
+    if (seg && !seg._fmtGroupWired) {
+        seg._fmtGroupWired = true;
+        seg.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-fmt-group]') : null;
+            if (!btn) return;
+            fmtSetGroup(btn.getAttribute('data-fmt-group'));
+        });
+    }
+    const box = document.getElementById('format-page-sizes');
+    if (box && !box._fmtSizeWired) {
+        box._fmtSizeWired = true;
+        box.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-page-size]') : null;
+            if (!btn) return;
+            kdSetPageSize(btn.getAttribute('data-page-size'));
+        });
+    }
+    const pwBox = document.getElementById('format-doc-password');
+    if (pwBox && !pwBox._fmtPasswordWired) {
+        pwBox._fmtPasswordWired = true;
+        pwBox.addEventListener('input', function () {
+            kdSetDocPassword(pwBox.value);
+        });
+    }
+    const orow = document.getElementById('format-orient-row');
+    if (orow && !orow._fmtOrientWired) {
+        orow._fmtOrientWired = true;
+        orow.addEventListener('click', function (e) {
+            const btn = e.target.closest ? e.target.closest('[data-orient]') : null;
+            if (!btn) return;
+            kdSetOrient(btn.getAttribute('data-orient'));
+        });
+    }
+}
+// ==========================================
+// PART 14: RIGHT FORMAT SIDEBAR (REMOVE FORMATTING)
+// Buttons act on the text selection when one exists inside the canvas,
+// otherwise they act on the whole document. The scope hint says which!
+// ==========================================
+var fmtWired = false;
+var FMT_HIGHLIGHT_SEL = '.gel-orb, .gel-bubble-chip, .aero-tag-chip, .aero-glass-badge-chip, ' +
+    'span[class*="gel-chip-"], span[class*="megachip-"], span[class*="droplet-"]';
+var FMT_EFFECT_SEL = '.spark-text, .liquid-underline, .glossy-border-badge, .cyber-glow-spark, ' +
+    '.liquid-text-glow, .aqua-bubble-text, .reflected-text-block, .embossed-glass-text, ' +
+    '.kinetic-wave-text, span[class*="effect-"], span[class*="mkt-"], span[class*="orange-hl-"], ' +
+    'span[class*="dev-chip-"], span[class*="av-chip-"], span[class*="jr-chip-"]';
+var FMT_INLINE_TAGS = 'b, strong, i, em, u, strike, s, font';
+
+// The live range when text is selected, else a range over the whole canvas!
+function fmtScopeRange() {
+    const sel = window.getSelection();
+    if (sel.rangeCount) {
+        const r = sel.getRangeAt(0);
+        if (!sel.isCollapsed && canvas.contains(r.commonAncestorContainer)) return { range: r, whole: false };
+    }
+    const full = document.createRange();
+    full.selectNodeContents(canvas);
+    return { range: full, whole: true };
+}
+
+function fmtScopeEl(scope) {
+    const container = scope.range.commonAncestorContainer;
+    const root = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+    return (root && canvas.contains(root)) ? root : canvas;
+}
+
+function fmtUpdateScopeHint() {
+    const hint = document.getElementById('format-scope-hint');
+    if (!hint || typeof canvas === 'undefined' || !canvas) return;
+    hint.textContent = fmtScopeRange().whole ? 'Scope: Document' : 'Scope: Selection';
+}
+
+function fmtUnwrap(el) {
+    // Lift real child nodes (never flatten!) so nested styles survive!
+    const parent = el.parentNode;
+    const moved = [];
+    while (el.firstChild) {
+        const kid = el.firstChild;
+        parent.insertBefore(kid, el);
+        moved.push(kid);
+    }
+    parent.removeChild(el);
+    return moved.length ? moved[moved.length - 1] : null;
+}
+
+// Unwrap only when truly bare (an emptied style="" still counts as an attribute)!
+function fmtStripBare(el) {
+    try {
+        if (el.hasAttribute && el.hasAttribute('style') && !(el.getAttribute('style') || '').trim()) {
+            el.removeAttribute('style');
+        }
+    } catch (e) {}
+    if (!el.attributes.length) fmtUnwrap(el);
+}
+
+// Self + every ancestor up to the canvas — nested styles hide up there!
+function fmtScopeChain(scopeEl) {
+    const chain = [scopeEl];
+    let p = scopeEl.parentElement;
+    while (p && (typeof canvas === 'undefined' || !canvas || canvas.contains(p))) {
+        chain.push(p);
+        p = p.parentElement;
+    }
+    return chain;
+}
+
+// One shared, mutation-proof sweep: snapshot candidates + the original range
+// ONCE, then test each candidate against the snapshot (never live nodes)!
+function fmtEachTouching(scopeEl, range, collect, fn, strict) {
+    const cac = range.commonAncestorContainer;
+    const cacPar = (cac.nodeType === Node.TEXT_NODE && cac.parentElement) ? cac.parentElement : null;
+    let root = null;
+    let snap = null;
+    try {
+        const node = cac;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        if (el && el.closest) {
+            const block = el.closest('div, p, li, h1, h2, h3, blockquote');
+            if (block && canvas.contains(block)) root = block;
+        }
+        if (!root) root = canvas;
+        const preS = range.cloneRange();
+        preS.selectNodeContents(root);
+        preS.setEnd(range.startContainer, range.startOffset);
+        const preE = range.cloneRange();
+        preE.selectNodeContents(root);
+        preE.setEnd(range.endContainer, range.endOffset);
+        snap = { s: preS.toString().length, e: preE.toString().length };
+    } catch (e) { snap = null; }
+    const owned = function (el) {
+        if (!el || el === cac) return true;
+        if (cacPar) {
+            if (el === cacPar) return true;
+            try { return cacPar.contains(el) && el !== cacPar; } catch (e) { return false; }
+        }
+        try { return !!(cac.contains && cac.contains(el)); } catch (e) { return false; }
+    };
+    const touches = function (el) {
+        // Strict mode (property stripping) skips ancestor context; unwrap
+        // mode keeps it — matching wrappers ARE the style being removed!
+        if (strict && !owned(el)) return false;
+        if (snap && root) {
+            try {
+                const r = document.createRange();
+                r.selectNodeContents(root);
+                r.setEnd(el, 0);
+                const s = r.toString().length;
+                const e = s + (el.textContent || '').length;
+                return s < snap.e && e > snap.s;
+            } catch (err) { return false; }
+        }
+        try { return range.intersectsNode(el); } catch (err) { return false; }
+    };
+    const cands = collect();
+    let count = 0;
+    cands.forEach(function (el) {
+        if (!el || el.isConnected === false) return;
+        if (touches(el) && fn(el)) count++;
+    });
+    return count;
+}
+
+// Unwrap every matching element touched by the scope (self included)!
+function fmtStripInScope(selector) {
+    if (typeof canvas === 'undefined' || !canvas) return 0;
+    const scope = fmtScopeRange();
+    const scopeEl = fmtScopeEl(scope);
+    const descs = scopeEl.querySelectorAll ? Array.from(scopeEl.querySelectorAll(selector)).reverse() : [];
+    const chain = fmtScopeChain(scopeEl).filter(function (el) {
+        if (!el.matches) return false;
+        try { return el.matches(selector); } catch (e) { return false; }
+    });
+    return fmtEachTouching(scopeEl, scope.range, function () { return descs.concat(chain); }, function (el) {
+        fmtUnwrap(el);
+        return true;
+    }, false);
+}
+
+// Run an execCommand across the scope, restoring the caret afterwards!
+// Manual fallback when execCommand is missing: unwrap the tag itself!
+function fmtUnwrapTagsInScope(tagList) {
+    if (typeof canvas === 'undefined' || !canvas) return 0;
+    const scope = fmtScopeRange();
+    const scopeEl = fmtScopeEl(scope);
+    let count = 0;
+    const tags = tagList.split(',').map(function (s) { return s.trim().toUpperCase(); });
+    const walker = document.createTreeWalker(scopeEl, NodeFilter.SHOW_ELEMENT);
+    const found = [];
+    let n;
+    while ((n = walker.nextNode())) {
+        if (tags.indexOf(n.tagName) !== -1) found.push(n);
+    }
+    found.reverse();
+    fmtScopeChain(scopeEl).forEach(function (el) {
+        if (tags.indexOf(el.tagName) !== -1 && found.indexOf(el) === -1) found.push(el);
+    });
+    return fmtEachTouching(scopeEl, scope.range, function () { return found; }, function (el) {
+        fmtUnwrap(el);
+        return true;
+    }, false);
+}
+
+var FMT_STYLE_TAGS = ['B', 'STRONG', 'I', 'EM', 'U', 'STRIKE', 'S', 'A', 'CODE'];
+var FMT_STYLE_SPAN_SEL = FMT_HIGHLIGHT_SEL + ', ' + FMT_EFFECT_SEL + ', span[class*="orange-hl-"], span[class*="green-hl-"], span[class*="blue-hl-"], span[class*="pool-hl-"], span[class*="mkt-cp-"], span[class*="bcp-"], span[class*="pill-hl-"], span[class*="hl-"], span[class*="cp-"], span[class*="aq-"]';
+var FMT_INLINE_PROPS = [
+    { prop: 'fontWeight', cssProp: 'font-weight', css: 'bold', label: 'Bold', test: function (v) { return v === 'bold' || v === 'bolder' || parseInt(v, 10) >= 600; } },
+    { prop: 'fontStyle', cssProp: 'font-style', css: 'italic', label: 'Italic', test: function (v) { return v === 'italic' || v === 'oblique'; } },
+    { prop: 'fontSize', cssProp: 'font-size', css: '18px', label: 'Size', test: function (v) { return !!(v || '').trim(); } },
+    { prop: 'textDecoration', cssProp: 'text-decoration', css: 'underline', label: 'Underline', test: function (v) { return (v || '').indexOf('underline') !== -1; } },
+    { prop: 'textDecoration', cssProp: 'text-decoration', css: 'line-through', label: 'Strikethrough', test: function (v) { return (v || '').indexOf('line-through') !== -1; } }
+];
+
+function fmtCheckInline(el, consider) {
+    if (!el || !el.style) return;
+    FMT_INLINE_PROPS.forEach(function (rule) {
+        let v = '';
+        try { v = el.style[rule.prop] || ''; } catch (e) {}
+        if (rule.test(v)) consider('inline:' + rule.prop + ':' + rule.css, { kind: 'inline', prop: rule.prop, cssProp: rule.cssProp, css: rule.css, label: rule.label, el: el });
+    });
+}
+
+function fmtTagLabel(tag) {
+    switch (tag) {
+        case 'B': case 'STRONG': return 'Bold';
+        case 'I': case 'EM': return 'Italic';
+        case 'U': return 'Underline';
+        case 'STRIKE': case 'S': return 'Strikethrough';
+        case 'FONT': return 'Font';
+        case 'A': return 'Link';
+        case 'CODE': return 'Code';
+        default: return tag;
+    }
+}
+
+// Extra selector covering INSTALLED Marketplace styles (future packs included)!
+function fmtMarketplaceSuffix() {
+    const sels = [];
+    try {
+        const M = window.WriteoutMarketplace;
+        if (!M || !M.catalog || typeof M.installed !== 'function') return '';
+        const installed = M.installed();
+        M.catalog.forEach(function (ext) {
+            if (installed.indexOf(ext.id) === -1) return;
+            let variants = [];
+            if (ext.kind === 'style-pack' && Array.isArray(ext.styles)) variants = ext.styles;
+            else if (ext.kind === 'toolbar-style' && ext.toolbarClass) variants = [{ className: ext.toolbarClass }];
+            variants.forEach(function (v) {
+                if (v.className) sels.push('span.' + String(v.className).trim().split(/\s+/).join('.'));
+            });
+        });
+    } catch (e) {}
+    return sels.length ? ', ' + sels.join(', ') : '';
+}
+
+// Every removable style touching the current selection!
+function fmtDetectStyles() {
+    const found = [];
+    if (typeof canvas === 'undefined' || !canvas) return found;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return found;
+    const range = sel.getRangeAt(0);
+    if (!canvas.contains(range.commonAncestorContainer)) return found;
+    const seen = {};
+    const consider = function (key, style) {
+        try {
+            if (!range.intersectsNode(style.el)) return;
+        } catch (e) { return; }
+        if (seen[key]) return;
+        seen[key] = true;
+        found.push(style);
+    };
+    const checkEl = function (el) {
+        if (!el || !el.tagName) return;
+        const tag = el.tagName;
+        if (FMT_STYLE_TAGS.indexOf(tag) !== -1) {
+            consider('tag:' + tag, { kind: 'tag', tag: tag, label: fmtTagLabel(tag), el: el });
+        } else if (tag === 'SPAN') {
+            if (el.className && typeof el.matches === 'function') {
+                try {
+                    if (el.matches(FMT_STYLE_SPAN_SEL + fmtMarketplaceSuffix())) {
+                        consider('cls:' + el.className, { kind: 'cls', cls: el.className, label: el.className, el: el });
+                    }
+                } catch (e) {}
+            }
+            fmtCheckInline(el, consider);
+        }
+    };
+    const container = range.commonAncestorContainer;
+    const root = container.nodeType === Node.TEXT_NODE ? container.parentElement : container;
+    const scopeEl = (root && canvas.contains(root)) ? root : canvas;
+    checkEl(scopeEl);
+    if (scopeEl.querySelectorAll) {
+        scopeEl.querySelectorAll('b, strong, i, em, u, strike, s, a, code, span').forEach(checkEl);
+    }
+    // Walk UP too: nested styles live on ancestors above the common ancestor!
+    let ancestor = scopeEl.parentElement;
+    while (ancestor && canvas.contains(ancestor)) {
+        checkEl(ancestor);
+        ancestor = ancestor.parentElement;
+    }
+    return found;
+}
+
+// Run fn while keeping the user's selection anchored by block offsets!
+function fmtRescueSelection(fn) {
+    const sel = window.getSelection();
+    let saved = null;
+    if (sel.rangeCount) {
+        const r = sel.getRangeAt(0);
+        let node = r.commonAncestorContainer;
+        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+        const block = (el && el.closest) ? (el.closest('div, p, li, h1, h2, h3, blockquote') || canvas) : canvas;
+        if (canvas.contains(block)) {
+            try {
+                const preS = r.cloneRange();
+                preS.selectNodeContents(block);
+                preS.setEnd(r.startContainer, r.startOffset);
+                const preE = r.cloneRange();
+                preE.selectNodeContents(block);
+                preE.setEnd(r.endContainer, r.endOffset);
+                saved = { block: block, s: preS.toString().length, e: preE.toString().length };
+            } catch (err) { saved = null; }
+        }
+    }
+    const out = fn();
+    // Fresh style parked the caret ON purpose: leave it inside, not after!
+    if (typeof fmtParkedCaret !== 'undefined' && fmtParkedCaret) {
+        fmtParkedCaret = false;
+        return out;
+    }
+    if (saved && canvas.contains(saved.block)) {
+        try {
+            const walker = document.createTreeWalker(saved.block, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            let n;
+            while ((n = walker.nextNode())) nodes.push(n);
+            if (nodes.length) {
+                const total = nodes.reduce(function (a, t) { return a + t.nodeValue.length; }, 0);
+                const point = function (abs) {
+                    abs = Math.max(0, Math.min(abs, total));
+                    let acc = 0;
+                    for (const t of nodes) {
+                        if (acc + t.nodeValue.length >= abs) return { node: t, off: abs - acc };
+                        acc += t.nodeValue.length;
+                    }
+                    const last = nodes[nodes.length - 1];
+                    return { node: last, off: last.nodeValue.length };
+                };
+                const a = point(saved.s);
+                const b = point(saved.e);
+                const nr = document.createRange();
+                nr.setStart(a.node, a.off);
+                nr.setEnd(b.node, b.off);
+                sel.removeAllRanges();
+                sel.addRange(nr);
+            }
+        } catch (err) {}
+    }
+    return out;
+}
+
+function fmtRemoveStyle(style) {
+    const sel = window.getSelection();
+    if (!sel.rangeCount || sel.isCollapsed) return 0;
+    if (style.kind === 'tag') return fmtUnwrapTagsInScope(style.tag);
+    if (style.kind === 'inline') {
+        const range = sel.getRangeAt(0);
+        if (!canvas.contains(range.commonAncestorContainer)) return 0;
+        const scope = { range: range };
+        const scopeEl = fmtScopeEl(scope);
+        const cands = [];
+        if (scopeEl.querySelectorAll) Array.from(scopeEl.querySelectorAll('span')).reverse().forEach(function (el) { cands.push(el); });
+        fmtScopeChain(scopeEl).forEach(function (el) { if (el.tagName === 'SPAN') cands.push(el); });
+        return fmtEachTouching(scopeEl, range, function () { return cands; }, function (el) {
+            let v = '';
+            try { v = el.style ? (el.style[style.prop] || '') : ''; } catch (e) {}
+            if (!v) return false;
+            try { el.style.removeProperty(style.cssProp); } catch (e) {}
+            fmtStripBare(el);
+            return true;
+        }, true);
+    }
+    return fmtStripInScope('[class="' + style.cls + '"]');
+}
+
+function fmtRenderStyleList() {
+    const list = document.getElementById('format-style-list');
+    if (!list) return;
+    list.innerHTML = '';
+    const sel = window.getSelection();
+    const hasSel = sel.rangeCount && !sel.isCollapsed &&
+        typeof canvas !== 'undefined' && canvas && canvas.contains(sel.getRangeAt(0).commonAncestorContainer);
+    if (!hasSel) {
+        const p = document.createElement('p');
+        p.className = 'format-empty';
+        p.textContent = 'Select text to see its styles.';
+        list.appendChild(p);
+        return;
+    }
+    const styles = fmtDetectStyles();
+    if (!styles.length) {
+        const p = document.createElement('p');
+        p.className = 'format-empty';
+        p.textContent = 'No removable styles here.';
+        list.appendChild(p);
+        return;
+    }
+    styles.forEach(function (style) {
+        const row = document.createElement('div');
+        row.className = 'fmt-style-row';
+        const preview = document.createElement('span');
+        preview.className = 'fmt-style-preview';
+        const sample = document.createElement(style.kind === 'tag' ? style.tag.toLowerCase() : 'span');
+        if (style.kind === 'cls') sample.className = style.cls;
+        if (style.kind === 'inline') { try { sample.style[style.prop] = style.css; } catch (e) {} }
+        sample.textContent = 'Ab';
+        preview.appendChild(sample);
+        const name = document.createElement('span');
+        name.className = 'fmt-style-name';
+        name.textContent = style.label;
+        name.title = style.label;
+        const x = document.createElement('button');
+        x.type = 'button';
+        x.className = 'fmt-style-x';
+        x.textContent = '✕';
+        x.title = 'Remove ' + style.label;
+        x.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        x.addEventListener('click', function (e) {
+            e.stopPropagation();
+            playAeroClickSound(350, 0.1);
+            fmtRescueSelection(function () { return fmtRemoveStyle(style); });
+            if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            fmtRenderStyleList();
+            fmtUpdateScopeHint();
+            fmtUpdateResetButtons();
+        });
+        row.appendChild(preview);
+        row.appendChild(name);
+        row.appendChild(x);
+        list.appendChild(row);
+    });
+}
+
+// ==========================================
+// MOBILE FORMAT SIDEBAR ROOT WIRE
+// (Groups + sidebar text controls + live inspector refresh!)
+// ==========================================
+
+function fmtWireSidebar() {
+    if (typeof fmtSetGroup === 'function') fmtSetGroup(fmtStoredGroup(), true);
+    if (typeof kdApplyPageSize === 'function') kdApplyPageSize();
+    if (typeof fmtWireDocSettings === 'function') fmtWireDocSettings();
+    if (typeof fmtWireStylePicker === 'function') fmtWireStylePicker();
+    if (typeof fmtWireChips === 'function') fmtWireChips();
+    if (typeof fmtWireAqua === 'function') fmtWireAqua();
+    if (typeof fmtRenderStyleList === 'function') fmtRenderStyleList();
+    const side = document.getElementById('format-sidebar');
+    // Sidebar text controls: weight / size / font / color!
+    if (side && !side._fmtControlsWired) {
+        side._fmtControlsWired = true;
+        side.addEventListener('mousedown', function (e) {
+            if (e.target.closest && e.target.closest('button')) e.preventDefault();
+        });
+        side.addEventListener('change', function (e) {
+            const action = e.target.getAttribute && e.target.getAttribute('data-edit-action');
+            if (!action) return;
+            if (action === 'fontWeight') { fmtApplyWeight(e.target.value); autoSaveCanvasContent(); return; }
+            if (action === 'fontSizePx') { fmtApplySizePx(e.target.value); autoSaveCanvasContent(); return; }
+            if (typeof canvas !== 'undefined' && canvas) {
+                try { canvas.focus(); } catch (err) {}
+                try {
+                    if (typeof document.execCommand === 'function') document.execCommand(action, false, e.target.value);
+                } catch (err) {}
+                autoSaveCanvasContent();
+            }
+        });
+        side.addEventListener('input', function (e) {
+            const action = e.target.getAttribute && e.target.getAttribute('data-edit-action');
+            if (!action || action === 'fontWeight' || action === 'fontSizePx') return;
+            if (action !== 'foreColor') return;
+            if (typeof canvas !== 'undefined' && canvas) {
+                try { canvas.focus(); } catch (err) {}
+                try {
+                    if (typeof document.execCommand === 'function') document.execCommand(action, false, e.target.value);
+                } catch (err) {}
+                autoSaveCanvasContent();
+            }
+        });
+        side.addEventListener('click', function (e) {
+            const reset = e.target.closest ? e.target.closest('[data-reset-action]') : null;
+            if (reset) {
+                playAeroClickSound(600, 0.08);
+                fmtResetColor(reset.getAttribute('data-reset-action'));
+                autoSaveCanvasContent();
+                fmtUpdateResetButtons();
+                return;
+            }
+            const alignBtn = e.target.closest ? e.target.closest('[data-align]') : null;
+            if (alignBtn) {
+                playAeroClickSound(600, 0.08);
+                fmtAlignBlocks(alignBtn.getAttribute('data-align'));
+                return;
+            }
+            const indentBtn = e.target.closest ? e.target.closest('[data-indent]') : null;
+            if (indentBtn) {
+                playAeroClickSound(600, 0.08);
+                fmtIndentBlocks(indentBtn.getAttribute('data-indent') === 'in' ? 'in' : 'out');
+            }
+        });
+    }
+    // Collapse latch (stays visible when collapsed)!
+    const toggle = document.getElementById('format-toggle-zone');
+    if (toggle && !toggle._fmtLatchWired) {
+        toggle._fmtLatchWired = true;
+        toggle.addEventListener('click', function () {
+            playAeroClickSound(450, 0.12);
+            const collapsed = document.body.classList.toggle('format-collapsed');
+            const panel = document.getElementById('format-sidebar');
+            if (!collapsed && panel && typeof panel.focus === 'function') {
+                try { panel.focus(); } catch (e) {}
+            }
+        });
+    }
+}
+
+if (typeof canvas !== 'undefined' && canvas) {
+    fmtWireSidebar();
+    const fmtRefresh = function () {
+        if (typeof fmtUpdateScopeHint === 'function') fmtUpdateScopeHint();
+        if (typeof fmtRenderStyleList === 'function') fmtRenderStyleList();
+        if (typeof fmtSyncAlignButtons === 'function') fmtSyncAlignButtons();
+    };
+    canvas.addEventListener('keyup', fmtRefresh);
+    canvas.addEventListener('mouseup', fmtRefresh);
+    document.addEventListener('selectionchange', fmtRefresh);
+    document.addEventListener('DOMContentLoaded', function () {
+        fmtWireSidebar();
+        fmtRefresh();
+        if (typeof fmtUpdateResetButtons === 'function') fmtUpdateResetButtons();
+    });
 }
