@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="settings.css?v=20260928">
     <link rel="icon" type="image/svg+xml" href="/writeout/favicon.svg">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <meta name="theme-color" content="#0284c7">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
 
@@ -603,5 +605,17 @@
     <script src="app.js?v=20260928"></script>
     <script src="marketplace.js?v=20260928"></script>
     <script src="settings.js?v=20260928"></script>
+    <script>
+    // PWA service worker: offline shell, skipped on file:// and old browsers!
+    (function () {
+        try {
+            if (!('serviceWorker' in navigator)) return;
+            if (window.location.protocol !== 'http:' && window.location.protocol !== 'https:') return;
+            window.addEventListener('load', function () {
+                navigator.serviceWorker.register('service-worker.js').catch(function () {});
+            });
+        } catch (e) {}
+    })();
+    </script>
 </body>
 </html>

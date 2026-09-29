@@ -1,0 +1,31 @@
+{
+  "name": "Writeout - Radii Office",
+  "short_name": "Writeout",
+  "description": "Frutiger Aero rich-document editor with Keydown styles, highlights, chips, pages, and multi-format export.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#e0f2fe",
+  "theme_color": "#0284c7",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

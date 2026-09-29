@@ -40,18 +40,20 @@ function loadActivePadDataStream(padId) {
 function autoSaveCanvasContent() {
     // Prevent saves if initial boot streaming is still executing setup hooks
     if (!canvas || isInitialBootSync) return;
-    
+
+    // One serialization per save: innerHTML is the expensive part on big docs!
+    const htmlNow = canvas.innerHTML;
     if (currentActivePadId === "3") {
-        temporaryTableScratchContent = canvas.innerHTML;
+        temporaryTableScratchContent = htmlNow;
     } else {
         const saveKeyId = `writedown_save_slot_${currentActivePadId}`;
-        localStorage.setItem(saveKeyId, canvas.innerHTML);
+        localStorage.setItem(saveKeyId, htmlNow);
     }
     // Keep the tab snapshot in lockstep (programmatic edits fire no input event)!
     try {
         if (typeof kdActiveTab === 'function' && typeof kdSaveTabs === 'function') {
             const t = kdActiveTab();
-            if (t) t.html = canvas.innerHTML;
+            if (t) t.html = htmlNow;
             kdSaveTabs();
         }
     } catch (e) {}
@@ -185,6 +187,8 @@ if (canvas) {
             const aNodeX = selection.anchorNode;
             const inField = (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) ||
                 (aNodeX && aNodeX.nodeType === 1 && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(aNodeX.tagName));
+            // --- FOOTNOTES: "[^1]: text" + Enter becomes the definition block! ---
+            if (!inField && kdTryFootnoteEnter(e, selection, range)) return;
             if (!inField && (function () {
                 let startEl = null;
                 if (aNodeX) startEl = (aNodeX.nodeType === Node.TEXT_NODE) ? aNodeX.parentElement : aNodeX;
@@ -305,6 +309,8 @@ if (canvas) {
                 if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
                 return;
             }
+            // --- FOOTNOTES: "[^1] " becomes a linkable chip, "[^1]: text " a definition! ---
+            if (kdTryFootnoteSpace(e, currentLineText, textNode, range, selection)) return;
             if (currentLineText === '::glass') {
                 e.preventDefault(); playAeroClickSound(750, 0.15);
                 const glassBlock = document.createElement('div');
@@ -6001,6 +6007,7 @@ function fmtWireSidebar() {
     fmtWireHighlighter();
     fmtWireChips();
     fmtWireAqua();
+    kdWireFootnotes();
     fmtWireExitAndBasic();
     fmtRenderStyleList();
     const toggle = document.getElementById('format-toggle-zone');
@@ -6335,7 +6342,19 @@ if (typeof canvas !== 'undefined' && canvas) {
     kdWireLockDialog();
     fmtWireInsertMenu();
     fmtWireFileChip();
-    const fmtRefresh = function () { fmtUpdateScopeHint(); fmtRenderStyleList(); fmtSyncAlignButtons(); };
+    // Throttled: selectionchange storms (scroll/IME/caret drift) coalesce here
+    // instead of rebuilding the inspector on every single tick!
+    let fmtRefreshArmed = true;
+    let fmtRefreshQueued = false;
+    const fmtRefresh = function () {
+        if (!fmtRefreshArmed) { fmtRefreshQueued = true; return; }
+        fmtRefreshArmed = false;
+        fmtUpdateScopeHint(); fmtRenderStyleList(); fmtSyncAlignButtons();
+        setTimeout(function () {
+            fmtRefreshArmed = true;
+            if (fmtRefreshQueued) { fmtRefreshQueued = false; fmtRefresh(); }
+        }, 120);
+    };
     canvas.addEventListener('keyup', fmtRefresh);
     canvas.addEventListener('mouseup', fmtRefresh);
     document.addEventListener('selectionchange', fmtRefresh);
@@ -6346,6 +6365,149 @@ if (typeof canvas !== 'undefined' && canvas) {
         fmtWireSidebar();
         fmtRefresh();
         fmtUpdateResetButtons();
+    });
+}
+
+// ==========================================
+// LINKABLE FOOTNOTE CHIPS ([^label] refs + definitions!)
+// Type "[^1] " for a jump chip, "[^1]: text " for its definition!
+// ==========================================
+function kdFootnoteSlug(label) {
+    const s = String(label || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+    return s || 'note';
+}
+function kdFootnoteEnsureBacklink(slug) {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const def = document.getElementById('fn-' + slug);
+    if (!def || !canvas.contains(def)) return;
+    const refs = canvas.querySelectorAll('a.kd-footnote-ref[href="#fn-' + slug + '"]');
+    if (!refs.length) return;
+    let back = def.querySelector('a.kd-footnote-back');
+    if (!back) {
+        back = document.createElement('a');
+        back.className = 'kd-footnote-back';
+        back.textContent = '\u21A9';
+        back.setAttribute('spellcheck', 'false');
+        def.insertBefore(back, def.firstChild);
+    }
+    back.setAttribute('href', '#' + refs[0].id);
+}
+function kdInsertFootnoteRef(label, textNode, caretOffset, range, selection) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const slug = kdFootnoteSlug(label);
+    try {
+        const tail = String(label || '');
+        const r = document.createRange();
+        r.setStart(textNode, caretOffset - (tail.length + 3));
+        r.setEnd(textNode, caretOffset);
+        r.deleteContents();
+        const a = document.createElement('a');
+        const existing = canvas.querySelectorAll('a.kd-footnote-ref[href="#fn-' + slug + '"]').length;
+        a.id = 'fnref-' + slug + '-' + (existing + 1);
+        a.className = 'kd-footnote-ref';
+        a.setAttribute('href', '#fn-' + slug);
+        a.setAttribute('spellcheck', 'false');
+        a.textContent = label;
+        r.insertNode(a);
+        const sp = document.createTextNode(' ');
+        a.parentNode.insertBefore(sp, a.nextSibling);
+        const caret = document.createRange();
+        caret.setStart(sp, 1);
+        caret.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(caret);
+        playAeroClickSound(600, 0.08);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        kdFootnoteEnsureBacklink(slug);
+        return true;
+    } catch (e) { return false; }
+}
+function kdInsertFootnoteDef(slug, label, bodyText, textNode, range, selection) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    try {
+        const block = textNode.parentElement;
+        if (!block || !canvas.contains(block) || textNode.previousSibling) return false;
+        block.textContent = '';
+        const def = document.createElement('div');
+        def.className = 'kd-footnote-def';
+        def.id = 'fn-' + slug;
+        const tag = document.createElement('span');
+        tag.className = 'kd-footnote-tag';
+        tag.textContent = label;
+        def.appendChild(tag);
+        def.appendChild(document.createTextNode(' '));
+        const span = document.createElement('span');
+        span.className = 'kd-footnote-text';
+        span.textContent = bodyText;
+        def.appendChild(span);
+        def.appendChild(document.createTextNode(' '));
+        block.appendChild(def);
+        const caret = document.createRange();
+        caret.setStart(def.lastChild, 1);
+        caret.collapse(true);
+        selection.removeAllRanges();
+        selection.addRange(caret);
+        playAeroClickSound(600, 0.08);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        kdFootnoteEnsureBacklink(slug);
+        return true;
+    } catch (e) { return false; }
+}
+function kdTryFootnoteSpace(e, currentLineText, textNode, range, selection) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    if (!selection.isCollapsed) return false;
+    try {
+        const anchorEl = (textNode.nodeType === Node.TEXT_NODE) ? textNode.parentElement : textNode;
+        if (anchorEl && anchorEl.closest && anchorEl.closest('a.kd-footnote-ref')) return false;
+        // Reference only here: tail "[^label]" anywhere in the line!
+        // (Definitions wait for Enter via kdTryFootnoteEnter!)
+        const rm = /\[\^([^\]\s][^\]]*)\]$/.exec(currentLineText);
+        if (rm) {
+            e.preventDefault();
+            return kdInsertFootnoteRef(rm[1], textNode, range.startOffset, range, selection);
+        }
+    } catch (err) {}
+    return false;
+}
+function kdTryFootnoteEnter(e, selection, range) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    if (!selection.isCollapsed) return false;
+    try {
+        const textNode = range.startContainer;
+        if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return false;
+        // Whole line "[^label]: text" with caret at the very end!
+        if (range.startOffset !== textNode.nodeValue.length) return false;
+        const dm = /^\[\^([^\]\s][^\]]*)\]:\s(\S[\s\S]*)$/.exec(textNode.nodeValue);
+        if (!dm) return false;
+        e.preventDefault();
+        return kdInsertFootnoteDef(kdFootnoteSlug(dm[1]), dm[1], dm[2], textNode, range, selection);
+    } catch (err) {}
+    return false;
+}
+function kdWireFootnotes() {
+    if (kdWireFootnotes._done) return;
+    kdWireFootnotes._done = true;
+    if (typeof canvas === 'undefined' || !canvas) return;
+    // Contenteditable eats link clicks: jump manually instead!
+    canvas.addEventListener('click', function (e) {
+        const a = e.target.closest ? e.target.closest('a.kd-footnote-ref,a.kd-footnote-back') : null;
+        if (!a || !canvas.contains(a)) return;
+        const href = a.getAttribute('href');
+        if (!href || href.charAt(0) !== '#') return;
+        const target = document.getElementById(href.slice(1));
+        if (!target) return;
+        e.preventDefault();
+        try {
+            if (typeof target.scrollIntoView === 'function') target.scrollIntoView();
+        } catch (err) {}
+        try {
+            const r = document.createRange();
+            r.selectNodeContents(target);
+            r.collapse(true);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(r);
+        } catch (err) {}
     });
 }
 
