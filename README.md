@@ -17,4 +17,7 @@ Radii Office will be free forever, and we hope to improve your user experience b
 **A**: Generally, no because even if those companies don't do anything, we'll still serve as a free alternative so users won't be locked in to a company's closed-source ecosystem!\
 \
 **Q**: May I promote/recommend your apps on social media?\
-**A**: Of course! Unlike other companies which prevent endorsement, we allow it unless you aren't impersonating us or saying that you're affiliated with us (if you're not)!
+**A**: Of course! Unlike other companies which prevent endorsement, we allow it unless you aren't impersonating us or saying that you're affiliated with us (if you're not)!\
+\
+**Q**: What the heck is Keydown?\
+**A**: Keydown is a better version of Markdown with more features!
