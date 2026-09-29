@@ -4,7 +4,7 @@
   <a href="https://neocities.org/"><img src="https://img.shields.io/badge/hoster-neocities-orange"/></a>
   <a href="https://radii-office.neocities.org/"><img src="https://img.shields.io/badge/status-passing-green"/></a>
   <a href="https://github.com/patientduck394/Radii-Office/graphs/contributors"><img src="https://img.shields.io/badge/contributors-1-red"/></a>
-  <a href="https://github.com/patientduck394/Radii-Office/graphs/contributors"><img src="https://img.shields.io/badge/license-MIT,_Apache,_ISC,_PMPL--NTM--BY-blue"/></a>
+  <a href="https://github.com/patientduck394/Radii-Office/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT,_Apache,_ISC,_PMPL--NTM--BY-blue"/></a>
 </p>
 
 # Radii Office
