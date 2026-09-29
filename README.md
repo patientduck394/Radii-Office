@@ -7,7 +7,7 @@
 </p>
 
 # Radii Office
-A free-and-open-source office suite designed to give an alternative to apps like Google Docs or Word
+A free-and-open-source office suite designed to give an alternative to apps like Google Docs or Word!
 
 ## Pricing
 Radii Office will be free forever, and we hope to improve your user experience by making more updates!
