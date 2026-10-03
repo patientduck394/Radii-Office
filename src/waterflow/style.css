@@ -1,3 +1,93 @@
+/* --- Ultimate Frutiger Aero Ambient Reset --- */
+body {
+    background: linear-gradient(135deg, #0284c7 0%, #06b6d4 35%, #10b981 75%, #eab308 100%);
+    font-family: 'Segoe UI', -apple-system, sans-serif;
+    margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; box-sizing: border-box;
+    box-shadow: inset 0 0 200px rgba(255, 255, 255, 0.5); overflow: hidden;
+    position: relative;
+}
+
+/* --- Animated 3D Floating Aqua Droplets Background --- */
+.ambient-droplet {
+    position: absolute; border-radius: 50%; pointer-events: none; z-index: 1;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.1) 40%, rgba(6,182,212,0.2) 75%, transparent 100%);
+    box-shadow: inset -3px -3px 8px rgba(0,0,0,0.15), 0 8px 20px rgba(2,132,199,0.15);
+    animation: drift 20s infinite ease-in-out alternate;
+}
+@keyframes drift {
+    0% { transform: translateY(0px) rotate(0deg) scale(1); }
+    100% { transform: translateY(-50px) rotate(360deg) scale(1.1); }
+}
+
+/* --- High-Gloss Header Navigation bar --- */
+#top-bar {
+    height: 50px; background: linear-gradient(180deg, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0.3) 50%, rgba(2,132,199,0.2) 100%);
+    border-bottom: 3px solid rgba(255, 255, 255, 0.7); display: flex; align-items: center; justify-content: space-between; padding: 0 25px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1), inset 0 1px 1px #fff; position: relative; z-index: 10;
+}
+#top-bar h1 { color: #fff; font-size: 18px; margin: 0; text-shadow: 0 2px 4px rgba(2,44,87,0.65); display: flex; align-items: center; gap: 10px; }
+#top-bar svg { width: 22px; height: 22px; fill: none; stroke: #fff; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Skeuomorphic Resource Tracker Bar */
+.system-meter {
+    display: flex; align-items: center; gap: 8px; font-size: 12px; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+.meter-track {
+    width: 100px; height: 12px; background: rgba(0,0,0,0.2); border-radius: 6px; border: 1px solid rgba(255,255,255,0.4); overflow: hidden; position: relative;
+}
+.meter-fill {
+    width: 72%; height: 100%; background: linear-gradient(180deg, #4ade80 0%, #22c55e 50%, #15803d 100%);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.5), 0 0 8px #22c55e;
+}
+
+/* --- Layout Workspace Split Deck --- */
+#app-deck { display: flex; flex: 1; height: calc(100vh - 50px); position: relative; z-index: 5; }
+
+#sidebar {
+    width: 270px; height: 100%; display: flex; flex-direction: column; gap: 18px; position: relative; box-sizing: border-box;
+    background: linear-gradient(90deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.25) 96%, rgba(0,0,0,0.06) 100%);
+    border-right: 2px solid rgba(255, 255, 255, 0.6); padding: 25px; 
+    transition: width 0.3s cubic-bezier(0.1, 0.9, 0.2, 1), padding 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+    backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+}
+#sidebar.collapsed { width: 0px; padding: 25px 0px; border-right: none; overflow: hidden; }
+
+/* --- Fixed Edge Seam Toggle Zone Orb Button --- */
+#toggle-zone {
+    position: absolute; top: 22px; left: 255px; width: 30px; height: 30px; border-radius: 50%; z-index: 90;
+    background: linear-gradient(180deg, #ffffff 0%, #e2e8f0 45%, #cbd5e1 100%); border: 2px solid #94a3b8;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.18), inset 0 1px 1px #fff; display: flex; align-items: center; justify-content: center; 
+    cursor: pointer;
+    transition: left 0.3s cubic-bezier(0.1, 0.9, 0.2, 1); /* Coordinates with sidebar slide animations */
+}
+
+.sidebar-btn {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 48%, #0369a1 100%);
+    border: 2px solid #bae6fd; border-radius: 10px; padding: 14px 18px; color: white;
+    font-weight: bold; font-size: 14px; cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    box-shadow: 0 6px 14px rgba(0,0,0,0.16), inset 0 1px 2px rgba(255,255,255,0.85);
+    display: flex; align-items: center; gap: 12px; transition: transform 0.05s;
+}
+.sidebar-btn svg { width: 18px; height: 18px; stroke: #fff; stroke-width: 2.5; fill: none; }
+.sidebar-btn:active { transform: translateY(1px); box-shadow: 0 2px 4px rgba(0,0,0,0.2), inset 0 2px 5px rgba(0,0,0,0.4); }
+
+#toggle-zone:hover { background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 45%, #e2e8f0 100%); }
+
+/* Snap button tracking directly to the far left margin frame edge line when collapsed */
+#sidebar.collapsed + #toggle-zone {
+    left: 10px;
+}
+#toggle-zone svg { width: 16px; height: 16px; stroke: #334155; stroke-width: 3; fill: none; transition: transform 0.3s; }
+
+/* --- Embedded Monitor Screen Cavity --- */
+#canvas-deck { flex: 1; padding: 30px; box-sizing: border-box; display: flex; position: relative; }
+
+#wysiwyg-canvas {
+    flex: 1; background: rgba(255, 255, 255, 0.96); border: 3px solid rgba(2, 132, 199, 0.6); border-radius: 18px;
+    padding: 35px; font-family: 'JetBrains Mono', monospace; font-size: 16px; color: #0f172a;
+    line-height: 1.7; outline: none; overflow-y: auto; box-sizing: border-box;
+    box-shadow: inset 8px 8px 18px rgba(0, 0, 0, 0.2), 0 8px 30px rgba(0, 0, 0, 0.08);
+}
 
 /* --- Advanced Inline Element Formatting --- */
 #wysiwyg-canvas h1 { color: #0284c7; font-weight: 800; border-bottom: 3px solid #38bdf8; padding-bottom: 6px; margin: 15px 0; }
@@ -153,7 +243,7 @@
 
 /* --- 2. Retro-Gloss Mirror Reflection --- */
 .reflected-text-block {
-    display: inline-flex !important;
+    display: inline-flex;
     flex-direction: column;
     position: relative;
     font-weight: 800;
@@ -188,7 +278,7 @@
 
 /* --- 4. Kinetic Horizontal Wave Oscillation --- */
 .kinetic-wave-text {
-    display: inline-flex !important;
+    display: inline-flex;
     gap: 1px;
     font-weight: bold;
     color: #10b981;
@@ -548,7 +638,7 @@
 
 /* --- Inline Gel Highlight Common Chassis --- */
 .gel-bubble-chip {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 2px 10px;
@@ -669,7 +759,7 @@
 
 /* --- Polished 3D Water Drop Highlight (~WD~) --- */
 .gel-chip-waterdrop {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     /* Removed the intense white radial gloss overlay to kill the annoying reflection */
     background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
@@ -689,7 +779,7 @@
 
 /* --- 2. Solar Flare Glow Highlight (~SF~) --- */
 .gel-chip-solarflare {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     background: linear-gradient(180deg, #fef08a 0%, #f97316 60%, #ea580c 100%);
     border: 2px solid #fef08a;
@@ -711,7 +801,7 @@
 
 /* --- 3. Aurora Wave Glass Shard (~AW~) --- */
 .gel-chip-aurorawave {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     background: linear-gradient(135deg, rgba(56,189,248,0.7) 0%, rgba(16,185,129,0.7) 100%);
     border: 2px solid rgba(255,255,255,0.8);
@@ -727,7 +817,7 @@
 
 /* --- Common Chassis for Custom !# # Tags --- */
 .aero-tag-chip {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 2px 10px;
@@ -760,7 +850,7 @@
 
 /* --- 1. Tactile Vista Foldout Note Tab (~FN~) --- */
 .applet-foldout-tab {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     background: linear-gradient(135deg, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
     border: 2px solid #94a3b8;
@@ -784,7 +874,7 @@
 
 /* --- 2. 3D Aqua Toggle Switch (~TS~) --- */
 .applet-aqua-switch {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     gap: 8px;
     background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(226,232,240,0.3) 100%);
@@ -817,7 +907,7 @@
 
 /* --- 3. Glossy Glass Stamp Marker (~SM~) --- */
 .applet-glass-stamp {
-    display: inline-flex !important;
+    display: inline-flex;
     transform: rotate(-3deg);
     background: rgba(239, 68, 68, 0.15);
     border: 3px double #ef4444;
@@ -987,7 +1077,7 @@
 
 /* --- 3D State-Flipping Toggle Applet (~TB~) --- */
 .applet-state-button {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 3px 14px;
@@ -1038,7 +1128,7 @@
 
 /* --- 1. Circular Media Volume Dial (~VD~) --- */
 .applet-volume-dial {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
     border: 2px solid #cbd5e1; border-radius: 20px; padding: 4px 12px; margin: 0 4px;
     font-size: 12px; color: #475569; font-weight: 800; vertical-align: middle;
@@ -1057,7 +1147,7 @@
 
 /* --- 2. Liquid Battery/Energy Cell Tracker (~BC~) --- */
 .applet-battery-cell {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: #1e293b; border: 2px solid #475569; border-radius: 4px;
     padding: 3px 8px; margin: 0 4px; font-size: 11px; font-family: monospace;
     color: #4ade80; vertical-align: middle; user-select: none;
@@ -1075,7 +1165,7 @@
 
 /* --- 3. Compact Windows Calendar Desk Overlay (~CD~) --- */
 .applet-calendar-desk {
-    display: inline-flex !important; flex-direction: column; align-items: center;
+    display: inline-flex; flex-direction: column; align-items: center;
     width: 42px; border: 2px solid #0284c7; border-radius: 6px;
     margin: 0 4px; vertical-align: middle; overflow: hidden; user-select: none;
     box-shadow: 0 4px 10px rgba(2,132,199,0.15);
@@ -1092,7 +1182,7 @@
 
 /* --- 4. Micro Segmented Star Rating Bar (~SR~) --- */
 .applet-star-rating {
-    display: inline-flex !important; align-items: center; gap: 2px;
+    display: inline-flex; align-items: center; gap: 2px;
     background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(241,245,249,0.3) 100%);
     border: 1px solid #cbd5e1; border-radius: 12px; padding: 2px 8px; margin: 0 4px;
     cursor: pointer; vertical-align: middle; user-select: none;
@@ -1102,7 +1192,7 @@
 
 /* --- 5. Glass Push-Button Counter Badge (~CC~) --- */
 .applet-counter-badge {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
     border: 2px solid #bae6fd; border-radius: 6px; padding: 3px 10px; margin: 0 4px;
     color: #fff; font-weight: bold; font-size: 12px; cursor: pointer; vertical-align: middle;
@@ -1116,7 +1206,7 @@
 
 /* --- Brushed Metal Lock-Latch Security Frame (~LK~) --- */
 .applet-security-latch {
-    display: inline-flex !important; 
+    display: inline-flex; 
     align-items: center; 
     gap: 6px;
     background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
@@ -1158,7 +1248,7 @@
 
 /* 1. Glossy Media Playback Progress Ribbon (~PR~) */
 .applet-playback-ribbon {
-    display: inline-flex !important; align-items: center; gap: 10px;
+    display: inline-flex; align-items: center; gap: 10px;
     background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
     border: 2px solid #cbd5e1; border-radius: 6px; padding: 4px 12px; margin: 0 4px;
     font-size: 12px; color: #334155; font-weight: bold; vertical-align: middle; user-select: none;
@@ -1192,7 +1282,7 @@
 
 /* 4. Windows Sidebar System CPU Radial Gauge (~CR~) */
 .applet-cpu-gauge {
-    display: inline-flex !important; align-items: center; justify-content: center; width: 32px; height: 32px;
+    display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px;
     border-radius: 50%; background: radial-gradient(circle at 35% 35%, #f8fafc 0%, #cbd5e1 100%);
     border: 2px solid #94a3b8; margin: 0 4px; vertical-align: middle; position: relative;
     box-shadow: 0 3px 6px rgba(0,0,0,0.1), inset 0 1px 1px #fff; cursor: pointer; user-select: none;
@@ -1219,7 +1309,7 @@
 
 /* 6. Mechanical Stepper Increment Button (~SI~) */
 .applet-stepper-mesh {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
     border: 2px solid #94a3b8; border-radius: 4px; padding: 2px 8px; margin: 0 4px;
     color: #334155; font-weight: 800; font-size: 12px; cursor: pointer; vertical-align: middle; user-select: none;
@@ -1321,7 +1411,7 @@
 
 /* 2. 3D Hydro-Orb Status Indicator (~ORB~) */
 .applet-hydro-orb {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
     border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px; margin: 0 4px;
     font-size: 13px; font-weight: 800; cursor: pointer; user-select: none; vertical-align: middle;
@@ -1371,7 +1461,7 @@
 
 /* 5. Skeuomorphic Lock Slider (~SLS~) */
 .applet-lock-slider {
-    display: inline-flex !important; align-items: center; gap: 10px;
+    display: inline-flex; align-items: center; gap: 10px;
     background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
     border: 2px solid #94a3b8; border-radius: 6px; padding: 3px 8px; margin: 0 4px;
     color: #334155; font-weight: 800; font-size: 12px; cursor: pointer; user-select: none; vertical-align: middle;
@@ -1392,7 +1482,7 @@
 
 /* 6. Vista Sidebar Gadget Clock (~VM~) */
 .applet-gadget-clock {
-    display: inline-flex !important; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     width: 28px; height: 28px; border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
     border: 2px solid #64748b; margin: 0 4px; vertical-align: middle; position: relative;
@@ -1428,7 +1518,7 @@
 
 /* 3. Metallic Media Playback Trigger (~MT~) */
 .applet-metal-trigger {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: linear-gradient(180deg, #e2e8f0 0%, #94a3b8 100%);
     border: 2px solid #cbd5e1; border-radius: 6px; padding: 3px 10px; margin: 0 4px;
     color: #334155; font-weight: 800; font-size: 11px; cursor: pointer; user-select: none; vertical-align: middle;
@@ -1441,7 +1531,7 @@
 
 /* 4. Glossy Inset Checkbox Utility (~IC~) */
 .applet-inset-check {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
     border: 1px solid rgba(255,255,255,0.6); border-radius: 6px; padding: 3px 10px; margin: 0 4px;
     font-size: 13px; font-weight: 800; color: #334155; cursor: pointer; user-select: none; vertical-align: middle;
@@ -1574,7 +1664,7 @@
 
 /* 5. Interactive Color Swatch Hex Tag (~HEX~) */
 .dev-chip-hex {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: #ffffff; border: 2px solid #cbd5e1; border-radius: 6px;
     padding: 2px 8px; margin: 0 4px; font-family: 'JetBrains Mono', monospace;
     font-size: 14px; font-weight: bold; color: #334155; vertical-align: middle; cursor: pointer;
@@ -1635,7 +1725,7 @@
 
 /* 4. Telemetry Ping Signal Node (~SG~) */
 .av-chip-signal {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
     border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px;
     margin: 0 4px; font-size: 13px; font-weight: 800; color: #1e293b;
@@ -1681,7 +1771,7 @@
    STYLE 1: LIQUID PLASMA PODS (~PP-x~)
    ------------------------------------------ */
 .megachip-plasma {
-    display: inline-flex !important; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     padding: 3px 14px; border-radius: 20px 4px 20px 24px; font-weight: 800;
     white-space: nowrap; margin: 0 4px; vertical-align: middle;
     box-shadow: 0 4px 10px rgba(0,0,0,0.12), inset 0 1px 1px rgba(255,255,255,0.5);
@@ -1695,7 +1785,7 @@
    STYLE 2: GLOSSY GLASS BADGE BRACKETS (~GB-x~)
    ------------------------------------------ */
 .megachip-glass-bracket {
-    display: inline-flex !important; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     padding: 2px 12px; border-radius: 4px; font-weight: 800; font-size: 14px;
     white-space: nowrap; margin: 0 4px; vertical-align: middle;
     background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(240,253,250,0.3) 100%);
@@ -1710,7 +1800,7 @@
    STYLE 3: TACTILE CIRCUIT NODE STRIPS (~CN-x~)
    ------------------------------------------ */
 .megachip-circuit-node {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 2px 10px; border-radius: 6px; font-family: monospace; font-weight: bold;
     font-size: 13px; white-space: nowrap; margin: 0 4px; vertical-align: middle;
     box-shadow: 0 3px 6px rgba(0,0,0,0.08); text-shadow: 0 1px 0 #fff;
@@ -1735,7 +1825,7 @@
 
 /* 1. Glass Plate Date Ribbon (~DR~) */
 .jr-chip-date-plate {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, rgba(255,255,255,0.65) 0%, rgba(219,234,254,0.3) 100%);
     border: 2px solid rgba(255,255,255,0.8); border-radius: 6px; padding: 3px 12px; margin: 0 4px;
     color: #1e3a8a; font-family: sans-serif; font-weight: 800; font-size: 13px; white-space: nowrap;
@@ -1764,7 +1854,7 @@
 
 /* 3. High-Contrast Liquid Mood Capsule (~MD~) */
 .jr-chip-mood {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: linear-gradient(180deg, #fef08a 0%, #facc15 100%);
     border: 2px solid #ca8a04; border-radius: 12px 25px 12px 20px; padding: 2px 12px;
     margin: 0 4px; color: #451a03; font-weight: bold; font-size: 13px;
@@ -1774,7 +1864,7 @@
 
 /* 4. Inset Audio Dictation Voice Memo Tag (~VO~) */
 .jr-chip-voice-tag {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: #0f172a; border: 2px solid #0284c7; border-radius: 4px;
     padding: 3px 10px; margin: 0 4px; font-family: monospace; font-size: 12px;
     color: #38bdf8; cursor: pointer; user-select: none; vertical-align: middle;
@@ -1783,7 +1873,7 @@
 
 /* 5. Translucent Weather Status Shard (~WX~) */
 .jr-chip-weather {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: linear-gradient(135deg, rgba(56,189,248,0.6) 0%, rgba(251,191,36,0.3) 100%);
     border: 2px solid rgba(255,255,255,0.7); border-radius: 8px; padding: 2px 10px;
     margin: 0 4px; color: #1e3a8a; font-weight: bold; font-size: 13px;
@@ -1793,7 +1883,7 @@
 
 /* 6. Skeuomorphic Pressed Wax Stamp Overlay (~WS~) */
 .jr-chip-wax-stamp {
-    display: inline-flex !important; transform: rotate(4deg);
+    display: inline-flex; transform: rotate(4deg);
     background: radial-gradient(circle at 35% 35%, #fca5a5 0%, #dc2626 70%, #991b1b 100%);
     border: 2px dashed #fee2e2; border-radius: 50%; padding: 4px 12px; margin: 0 8px;
     color: #fff; font-family: 'Segoe UI', sans-serif; font-size: 11px; font-weight: 900;
@@ -1869,6 +1959,16 @@
     box-shadow: 0 3px 6px rgba(245,158,11,0.15), inset 0 2px 4px rgba(251,191,36,0.2);
 }
 
+/* This was added later */
+
+/* 5. Amethyst Purple Badge (~B-AM~) */
+.badge-frame-rose {
+    border: 3px solid #FF7FCB;
+    background: #faf5ff;
+    color: #9E3366;
+    box-shadow: 0 3px 6px rgba(255,99,223,0.15), inset 0 2px 4px rgba(255,147,216,0.2);
+}
+
 /* ==========================================
    AERO PLATFORM EXPANSION BLOCK 11
    ========================================== */
@@ -1886,7 +1986,7 @@
 
 /* 2. 3D Neon Notification Node (~NO~) */
 .applet-neon-node {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, rgba(255,255,255,0.5) 0%, rgba(241,245,249,0.2) 100%);
     border: 1px solid rgba(255,255,255,0.6); border-radius: 20px; padding: 3px 12px; margin: 0 4px;
     font-size: 13px; font-weight: 800; cursor: pointer; user-select: none; vertical-align: middle;
@@ -1921,7 +2021,7 @@
 
 /* 5. Tactile Latch Toggle Switch (~LS~) */
 .applet-latch-toggle {
-    display: inline-flex !important; align-items: center; gap: 10px;
+    display: inline-flex; align-items: center; gap: 10px;
     background: linear-gradient(180deg, #e2e8f0 0%, #cbd5e1 100%);
     border: 2px solid #94a3b8; border-radius: 6px; padding: 3px 8px; margin: 0 4px;
     color: #475569; font-weight: 800; font-size: 12px; cursor: pointer; user-select: none; vertical-align: middle;
@@ -1934,7 +2034,7 @@
 
 /* 6. Desktop Gadget System Clock (~GC~) */
 .applet-gadget-system-clock {
-    display: inline-flex !important; align-items: center; justify-content: center;
+    display: inline-flex; align-items: center; justify-content: center;
     width: 26px; height: 26px; border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #ffffff 0%, #f1f5f9 60%, #cbd5e1 100%);
     border: 2px solid #475569; margin: 0 4px; vertical-align: middle; position: relative;
@@ -1948,7 +2048,7 @@
 
 /* 1. 3D Beveled Folder Tab (~FT~) */
 .jr-folder-tab {
-    display: inline-flex !important; align-items: center;
+    display: inline-flex; align-items: center;
     background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
     border: 2px solid #94a3b8; border-bottom: none;
     border-radius: 8px 8px 0 0; padding: 2px 12px; margin: 0 4px;
@@ -1959,7 +2059,7 @@
 
 /* 2. Glass Capsule Progress Tracker (~PT~) */
 .jr-progress-capsule {
-    display: inline-flex !important; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px;
     background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(241,245,249,0.2) 100%);
     border: 1px solid rgba(255,255,255,0.6); border-radius: 12px; padding: 3px 12px;
     margin: 0 4px; color: #475569; font-weight: bold; font-size: 12px; vertical-align: middle;
@@ -1984,7 +2084,7 @@
 
 /* 4. Windows Vista Rating Dot Matrix (~RD~) */
 .jr-dot-matrix {
-    display: inline-flex !important; align-items: center; gap: 3px;
+    display: inline-flex; align-items: center; gap: 3px;
     background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 10px;
     padding: 2px 8px; margin: 0 4px; vertical-align: middle; cursor: pointer; user-select: none;
 }
@@ -1993,7 +2093,7 @@
 
 /* 5. Brushed Steel Latch Lock Toggle (~ST~) */
 .jr-latch-lock {
-    display: inline-flex !important; align-items: center; gap: 6px;
+    display: inline-flex; align-items: center; gap: 6px;
     background: linear-gradient(180deg, #94a3b8 0%, #475569 100%);
     border: 2px solid #cbd5e1; border-radius: 4px; padding: 3px 10px; margin: 0 4px;
     color: #111827 !important; font-weight: 800; font-size: 12px; cursor: pointer;
@@ -2038,7 +2138,7 @@
 
 /* --- 1. Duplex Split-Color Highlight (~DH~) --- */
 .gel-chip-duplex {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     background: linear-gradient(90deg, #38bdf8 0%, #38bdf8 50%, #10b981 50%, #10b981 100%);
     border: 2px solid #0284c7;
@@ -2057,7 +2157,7 @@
 
 /* --- 2. Swayed Rounded Square Highlight (~SH~) --- */
 .gel-chip-swayed {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     background: linear-gradient(180deg, #fbcfe8 0%, #ec4899 100%);
     border: 2px solid #be185d;
@@ -2077,7 +2177,7 @@
 
 /* --- 3. Rounded Pill Chip Highlight (~PH~) --- */
 .gel-chip-pill-variant {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     background: linear-gradient(180deg, #fde047 0%, #eab308 100%);
     border: 2px solid #ca8a04;
@@ -2100,7 +2200,7 @@
 
 /* --- STYLE 1: SIDE-BY-SIDE SPLIT DUPLEX CHIPS --- */
 .gel-chip-duplex {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     border-radius: 6px;
@@ -2138,7 +2238,7 @@
 
 /* --- Common Chassis for Multi-Input Duplex Boxes (~DH-x~) --- */
 .aero-duplex-input-chassis {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     border-radius: 6px;
     margin: 0 4px;
@@ -2195,7 +2295,7 @@
 
 /* --- STYLE 1: SWAYED ROUNDED SQUARES --- */
 .gel-chip-swayed {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 3px 12px;
@@ -2234,7 +2334,7 @@
 
 /* --- STYLE 2: ROUNDED PILL CHIPS --- */
 .gel-chip-pill-variant {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 2px 14px;
@@ -2277,7 +2377,7 @@
 
 /* --- Common Base Chassis --- */
 .gel-chip-pastel {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 2px 10px;
@@ -2346,7 +2446,7 @@
 
 /* --- Common Base Chassis --- */
 .gel-chip-droplet-ribbon {
-    display: inline-flex !important;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
     padding: 3px 12px;
@@ -2425,6 +2525,122 @@
     color: #1e293b !important;
     box-shadow: 0 3px 6px rgba(71, 85, 105, 0.15), inset 0 1px 1px #fff;
 }
+
+/* --- Active Pad State Shading Highlight --- */
+.sidebar-btn.pad-toggle-btn { opacity: 0.7; transform: scale(0.96); transition: all 0.15s ease; }
+.sidebar-btn.pad-toggle-btn.active { opacity: 1; transform: scale(1.02); border-width: 3px; box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+
+/* --- 3D One-Time Data Table Frame Chassis (::table) --- */
+.writedown-one-time-table {
+    border-collapse: separate; border-spacing: 0; width: 100%; margin: 20px 0;
+    border: 3px solid #0284c7; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 8px 24px rgba(2,132,199,0.15);
+}
+.writedown-one-time-table th {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 50%, #0369a1 100%);
+    border-bottom: 2px solid #0284c7; padding: 10px 15px; color: #fff;
+    font-family: 'Segoe UI', sans-serif; font-size: 13px; font-weight: 800;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.4); text-align: left;
+}
+.writedown-one-time-table td {
+    background: #ffffff; padding: 12px 15px; font-family: 'Segoe UI', sans-serif;
+    font-size: 14px; color: #334155; border-bottom: 1px solid #e2e8f0; border-right: 1px solid #e2e8f0;
+    outline: none; min-width: 60px;
+}
+.writedown-one-time-table tr:last-child td { border-bottom: none; }
+.writedown-one-time-table td:last-child { border-right: none; }
+/* Soft inset glare look on row hover triggers */
+.writedown-one-time-table tr:hover td { background: #f0f9ff; }
+
+/* --- Polished Silver Pad Variant Button (Matches Layout Profiles Exactly) --- */
+.btn-silver-table {
+    background: linear-gradient(180deg, #f8fafc 0%, #cbd5e1 50%, #94a3b8 100%) !important;
+    border: 2px solid #e2e8f0 !important;
+    color: #334155 !important;
+    text-shadow: 0 1px 0 rgba(255,255,255,0.8) !important;
+}
+.btn-silver-table svg {
+    stroke: #475569 !important;
+    fill: none !important;
+}
+
+
+/* --- Clean Sidebar Pad Toggle Button Highlight Matrix --- */
+.sidebar-btn.pad-toggle-btn { 
+    opacity: 0.7; 
+    transform: scale(0.96); 
+    transition: all 0.15s ease; 
+}
+.sidebar-btn.pad-toggle-btn.active { 
+    opacity: 1; 
+    transform: scale(1.02); 
+    border-width: 3px; 
+    box-shadow: 0 0 15px rgba(255,255,255,0.4); 
+}
+
+/* --- Yellow Settings Button Variant Styling --- */
+.btn-settings {
+    background: linear-gradient(180deg, #fef08a 0%, #eab308 48%, #a16207 100%) !important;
+    border-color: #fef9c3 !important;
+    color: #451a03 !important;
+    margin-top: 67px; /* Drops the Help item cleanly to the bottom of your sidebar tray layout */
+}
+.btn-settings:hover {
+    background: linear-gradient(180deg, #fef9c3 0%, #facc15 48%, #eab308 100%) !important;
+}
+.btn-settings svg { stroke: #451a03 !important; fill: none !important; }
+
+/* Shared Glass Dialog Modal Core Layouts */
+.aero-modal-overlay-common {
+    position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(2, 132, 199, 0.18); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+    z-index: 100; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.2s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+.aero-modal-overlay-common.active { opacity: 1; pointer-events: auto; }
+
+.aero-dialog-box-common {
+    width: 500px; background: linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(248,250,252,0.92) 100%);
+    border: 3px solid rgba(255, 255, 255, 0.9); border-radius: 16px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.25), inset 0 1px 2px #fff;
+    display: flex; flex-direction: column; overflow: hidden; transform: scale(0.88); transition: transform 0.2s;
+}
+.aero-modal-overlay-common.active .aero-dialog-box-common { transform: scale(1); }
+
+.yellow-header { background: linear-gradient(180deg, #fef08a 0%, #eab308 50%, #ca8a04 100%) !important; }
+.yellow-header h3 { color: #451a03 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important; }
+
+.dialog-body-scroll-common { padding: 25px; box-sizing: border-box; }
+.dialog-body-scroll-common h4 { margin: 0 0 10px 0; font-size: 13px; color: #854d0e; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+
+/* --- 3D Tactile Wipe History Button Component --- */
+.wipe-history-btn {
+    display: inline-flex; align-items: center; justify-content: center; width: 100%;
+    background: linear-gradient(180deg, #fee2e2 0%, #f87171 48%, #ef4444 52%, #b91c1c 100%);
+    border: 2px solid #fca5a5; border-radius: 8px; padding: 12px;
+    color: #ffffff; font-family: 'Segoe UI', sans-serif; font-size: 13px; font-weight: 800;
+    cursor: pointer; text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 12px rgba(239,68,68,0.25), inset 0 1px 1px rgba(255,255,255,0.3);
+    transition: transform 0.05s;
+}
+.wipe-history-btn:active {
+    transform: translateY(1px); box-shadow: 0 2px 5px rgba(0,0,0,0.2), inset 0 2px 4px rgba(0,0,0,0.4);
+}
+
+/* Control Dialog Confirmation Close Button */
+.btn-yellow-orb {
+    background: linear-gradient(180deg, #fef08a 0%, #eab308 48%, #ca8a04 100%) !important;
+    border-color: #fef9c3 !important; color: #451a03 !important; text-shadow: 0 1px 0 rgba(255,255,255,0.4) !important;
+    box-shadow: 0 4px 10px rgba(234,179,8,0.25), inset 0 1px 1px #fff !important;
+}
+
+.dialog-close-btn-common {
+    width: 22px; height: 22px; background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%);
+    border: 1px solid #f87171; border-radius: 4px; color: white; font-size: 11px;
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.dialog-close-btn-common:active { transform: scale(0.9); }
 
 /* ========================================================
    AERO PLATFORM EXPANSION: 3D SKETCHPAD CONSOLE (::draw)
@@ -2542,97 +2758,76 @@
     height: 180px !important;
 }
 
-/* --- Advanced Inline Element Formatting --- */
-.mega-header { color: #BD499D; font-weight: 900; border-bottom: 5px solid #DA6CBE; padding-bottom: 6px; margin: 15px 0; font-size: 3.0em; }
-.header-1 { color: #0284c7; font-weight: 800; border-bottom: 3px solid #38bdf8; padding-bottom: 6px; margin: 15px 0; font-size: 2.0em; }
-.header-2 { color: #059669; font-weight: 700; margin: 20px 0 8px 0; font-size: 1.5em; }
-.header-3 { color: #d97706; font-size: 18px; margin: 15px 0 5px 0; font-size: 1.17em; }
-.blockquote-list {
-    background: linear-gradient(90deg, rgba(56,189,248,0.15) 0%, rgba(255,255,255,0) 100%);
-    border-left: 5px solid #0284c7; margin: 15px 0; padding: 10px 20px; color: #0369a1; font-style: italic; border-radius: 0 8px 8px 0;
-}/* --- Sidebar Highlighter Washes (hl-1..hl-25, Frutiger Aero gloss!) --- */
-.hl-1{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(255,235,59,.55);border:1px solid #eab308;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(234,179,8,.35);}
-.hl-2{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(244,114,182,.5);border:1px solid #ec4899;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(236,72,153,.3);}
-.hl-3{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(74,222,128,.5);border:1px solid #16a34a;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(34,197,94,.3);}
-.hl-4{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(96,165,250,.5);border:1px solid #2563eb;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(59,130,246,.3);}
-.hl-5{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(251,146,60,.5);border:1px solid #ea580c;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(249,115,22,.3);}
-.hl-6{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(192,132,252,.5);border:1px solid #9333ea;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(168,85,247,.3);}
-.hl-7{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(45,212,191,.45);border:1px solid #0d9488;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(20,184,166,.3);}
-.hl-8{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(248,113,113,.5);border:1px solid #dc2626;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(239,68,68,.3);}
-.hl-9{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(253,224,71,.8);border:1px solid #eab308;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(253,224,71,.8);}
-.hl-10{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(240,171,252,.75);border:1px solid #d946ef;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(240,171,252,.8);}
-.hl-11{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(110,231,183,.75);border:1px solid #10b981;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(110,231,183,.8);}
-.hl-12{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(103,232,249,.75);border:1px solid #06b6d4;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(103,232,249,.8);}
-.hl-13{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(254,240,138,.6);border:1px solid rgba(255,255,255,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(202,138,4,.25);}
-.hl-14{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(253,164,175,.55);border:1px solid rgba(255,255,255,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(190,24,93,.2);}
-.hl-15{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(167,243,208,.6);border:1px solid rgba(255,255,255,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(4,120,87,.2);}
-.hl-16{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(186,230,253,.6);border:1px solid rgba(255,255,255,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(2,132,199,.2);}
-.hl-17{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(253,186,116,.55);border:1px solid rgba(255,255,255,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(194,65,12,.2);}
-.hl-18{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(221,214,254,.6);border:1px solid rgba(255,255,255,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(109,40,217,.2);}
-.hl-19{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),linear-gradient(90deg,rgba(251,146,60,.55),rgba(244,114,182,.55));border:1px solid #fb7185;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(251,146,60,.3);}
-.hl-20{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),linear-gradient(90deg,rgba(96,165,250,.55),rgba(45,212,191,.55));border:1px solid #38bdf8;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(56,189,248,.3);}
-.hl-21{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),linear-gradient(90deg,rgba(244,114,182,.55),rgba(192,132,252,.55));border:1px solid #e879f9;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(217,70,239,.3);}
-.hl-22{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),linear-gradient(90deg,rgba(253,224,71,.6),rgba(163,230,53,.55));border:1px solid #a3e635;border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(132,204,22,.3);}
-.hl-23{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(15,23,42,.78);border:1px solid rgba(125,211,252,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(56,189,248,.45);color:#fff;}
-.hl-24{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(120,53,15,.62);border:1px solid rgba(253,186,116,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(251,146,60,.4);color:#fff7ed;}
-.hl-25{background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(255,255,255,0) 48%),rgba(71,85,105,.62);border:1px solid rgba(203,213,225,.7);border-radius:8px;padding:1px 6px;-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(100,116,139,.4);color:#fff;}
+/* --- Global Line Spacing Compression Fix --- */
+#wysiwyg-canvas p, 
+#wysiwyg-canvas div {
+    margin: 0 !important;
+    padding: 0 !important; /* Wipes out the hidden padding gaps to keep rows tight */
+    line-height: 1.4 !important;
+}
 
-/* --- Rainbow Chips (cp-1..cp-25, gel fade-to-white -- NOT a wash!) --- */
-.cp-1{background:linear-gradient(180deg,hsla(0,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(0,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(0,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(0,85%,45%,.35);}
-.cp-2{background:linear-gradient(180deg,hsla(14,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(14,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(14,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(14,85%,45%,.35);}
-.cp-3{background:linear-gradient(180deg,hsla(29,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(29,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(29,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(29,85%,45%,.35);}
-.cp-4{background:linear-gradient(180deg,hsla(43,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(43,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(43,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(43,85%,45%,.35);}
-.cp-5{background:linear-gradient(180deg,hsla(58,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(58,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(58,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(58,85%,45%,.35);}
-.cp-6{background:linear-gradient(180deg,hsla(72,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(72,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(72,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(72,85%,45%,.35);}
-.cp-7{background:linear-gradient(180deg,hsla(86,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(86,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(86,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(86,85%,45%,.35);}
-.cp-8{background:linear-gradient(180deg,hsla(101,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(101,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(101,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(101,85%,45%,.35);}
-.cp-9{background:linear-gradient(180deg,hsla(115,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(115,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(115,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(115,85%,45%,.35);}
-.cp-10{background:linear-gradient(180deg,hsla(130,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(130,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(130,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(130,85%,45%,.35);}
-.cp-11{background:linear-gradient(180deg,hsla(144,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(144,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(144,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(144,85%,45%,.35);}
-.cp-12{background:linear-gradient(180deg,hsla(158,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(158,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(158,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(158,85%,45%,.35);}
-.cp-13{background:linear-gradient(180deg,hsla(173,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(173,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(173,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(173,85%,45%,.35);}
-.cp-14{background:linear-gradient(180deg,hsla(187,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(187,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(187,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(187,85%,45%,.35);}
-.cp-15{background:linear-gradient(180deg,hsla(202,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(202,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(202,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(202,85%,45%,.35);}
-.cp-16{background:linear-gradient(180deg,hsla(216,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(216,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(216,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(216,85%,45%,.35);}
-.cp-17{background:linear-gradient(180deg,hsla(230,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(230,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(230,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(230,85%,45%,.35);}
-.cp-18{background:linear-gradient(180deg,hsla(245,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(245,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(245,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(245,85%,45%,.35);}
-.cp-19{background:linear-gradient(180deg,hsla(259,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(259,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(259,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(259,85%,45%,.35);}
-.cp-20{background:linear-gradient(180deg,hsla(273,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(273,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(273,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(273,85%,45%,.35);}
-.cp-21{background:linear-gradient(180deg,hsla(288,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(288,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(288,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(288,85%,45%,.35);}
-.cp-22{background:linear-gradient(180deg,hsla(302,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(302,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(302,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(302,85%,45%,.35);}
-.cp-23{background:linear-gradient(180deg,hsla(317,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(317,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(317,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(317,85%,45%,.35);}
-.cp-24{background:linear-gradient(180deg,hsla(331,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(331,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(331,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(331,85%,45%,.35);}
-.cp-25{background:linear-gradient(180deg,hsla(345,90%,62%,.92) 0%,rgba(255,255,255,.92) 100%);border:2px solid hsl(345,70%,40%);border-radius:14px;padding:2px 10px;color:hsl(345,75%,28%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px hsla(345,85%,45%,.35);}
+/* Ensure list items and macro blocks respect the same compact spacing profiles */
+#wysiwyg-canvas li {
+    margin: 0 !important;
+    padding: 1px 0 !important;
+}
 
-/* --- Aqua Chips (aq-1..aq-25, gel fade + cut corners!) --- */
-.aq-1{background:linear-gradient(180deg,hsla(6,95%,62%,.95),rgba(255,255,255,.92));border:3px solid hsl(6,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(6,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(6,85%,50%,.4);}
-.aq-2{background:linear-gradient(180deg,hsla(17,95%,60%,.95),rgba(255,255,255,.92));border:3px solid hsl(17,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(17,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(17,90%,50%,.4);}
-.aq-3{background:linear-gradient(180deg,hsla(31,95%,62%,.95),rgba(255,255,255,.92));border:3px solid hsl(31,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(31,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(31,88%,50%,.4);}
-.aq-4{background:linear-gradient(180deg,hsla(44,95%,63%,.95),rgba(255,255,255,.92));border:3px solid hsl(44,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(44,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(44,85%,50%,.4);}
-.aq-5{background:linear-gradient(180deg,hsla(68,82%,62%,.95),rgba(255,255,255,.92));border:3px solid hsl(68,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(68,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(68,70%,50%,.4);}
-.aq-6{background:linear-gradient(180deg,hsla(88,77%,60%,.95),rgba(255,255,255,.92));border:3px solid hsl(88,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(88,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(88,65%,50%,.4);}
-.aq-7{background:linear-gradient(180deg,hsla(115,72%,63%,.95),rgba(255,255,255,.92));border:3px solid hsl(115,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(115,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(115,60%,50%,.4);}
-.aq-8{background:linear-gradient(180deg,hsla(142,77%,59%,.95),rgba(255,255,255,.92));border:3px solid hsl(142,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(142,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(142,65%,50%,.4);}
-.aq-9{background:linear-gradient(180deg,hsla(168,82%,56%,.95),rgba(255,255,255,.92));border:3px solid hsl(168,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(168,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(168,70%,50%,.4);}
-.aq-10{background:linear-gradient(180deg,hsla(182,87%,64%,.95),rgba(255,255,255,.92));border:3px solid hsl(182,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(182,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(182,75%,50%,.4);}
-.aq-11{background:linear-gradient(180deg,hsla(196,95%,63%,.95),rgba(255,255,255,.92));border:3px solid hsl(196,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(196,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(196,85%,50%,.4);}
-.aq-12{background:linear-gradient(180deg,hsla(210,92%,60%,.95),rgba(255,255,255,.92));border:3px solid hsl(210,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(210,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(210,80%,50%,.4);}
-.aq-13{background:linear-gradient(180deg,hsla(224,87%,56%,.95),rgba(255,255,255,.92));border:3px solid hsl(224,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(224,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(224,75%,50%,.4);}
-.aq-14{background:linear-gradient(180deg,hsla(244,82%,58%,.95),rgba(255,255,255,.92));border:3px solid hsl(244,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(244,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(244,70%,50%,.4);}
-.aq-15{background:linear-gradient(180deg,hsla(262,84%,57%,.95),rgba(255,255,255,.92));border:3px solid hsl(262,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(262,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(262,72%,50%,.4);}
-.aq-16{background:linear-gradient(180deg,hsla(280,82%,61%,.95),rgba(255,255,255,.92));border:3px solid hsl(280,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(280,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(280,70%,50%,.4);}
-.aq-17{background:linear-gradient(180deg,hsla(296,92%,60%,.95),rgba(255,255,255,.92));border:3px solid hsl(296,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(296,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(296,80%,50%,.4);}
-.aq-18{background:linear-gradient(180deg,hsla(314,95%,62%,.95),rgba(255,255,255,.92));border:3px solid hsl(314,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(314,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(314,85%,50%,.4);}
-.aq-19{background:linear-gradient(180deg,hsla(330,92%,64%,.95),rgba(255,255,255,.92));border:3px solid hsl(330,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(330,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(330,80%,50%,.4);}
-.aq-20{background:linear-gradient(180deg,hsla(344,90%,58%,.95),rgba(255,255,255,.92));border:3px solid hsl(344,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(344,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(344,78%,50%,.4);}
-.aq-21{background:linear-gradient(180deg,hsla(356,82%,56%,.95),rgba(255,255,255,.92));border:3px solid hsl(356,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(356,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(356,70%,50%,.4);}
-.aq-22{background:linear-gradient(180deg,hsla(12,72%,56%,.95),rgba(255,255,255,.92));border:3px solid hsl(12,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(12,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(12,60%,50%,.4);}
-.aq-23{background:linear-gradient(180deg,hsla(98,57%,59%,.95),rgba(255,255,255,.92));border:3px solid hsl(98,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(98,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(98,45%,50%,.4);}
-.aq-24{background:linear-gradient(180deg,hsla(215,37%,58%,.95),rgba(255,255,255,.92));border:3px solid hsl(215,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(215,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(215,25%,50%,.4);}
-.aq-25{background:linear-gradient(180deg,hsla(45,42%,67%,.95),rgba(255,255,255,.92));border:3px solid hsl(45,55%,50%);border-radius:14px 10px 14px 10px;padding:2px 12px;color:hsl(45,70%,26%);text-shadow:0 1px 0 rgba(255,255,255,.6);-webkit-box-decoration-break:clone;box-decoration-break:clone;box-shadow:inset 0 2px 3px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.12),0 2px 8px hsla(45,30%,50%,.4);}
+/* Clear default paragraph margins so native lines sit beautifully tight */
+#wysiwyg-canvas {
+    line-height: 1.4 !important;
+}
 
-/* --- Linkable footnote chips! --- */
-.kd-footnote-ref{font-size:.78em;vertical-align:super;line-height:1;background:linear-gradient(180deg,rgba(255,255,255,.6),rgba(255,255,255,0) 50%),rgba(125,211,252,.55);border:1px solid #0284c7;border-radius:8px;padding:0 5px;text-decoration:none;color:#0c4a6e;font-weight:800;cursor:pointer;box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 1px 3px rgba(2,132,199,.3);-webkit-box-decoration-break:clone;box-decoration-break:clone;}
-.kd-footnote-tag{display:inline-block;background:#0284c7;color:#fff;font-weight:900;font-size:.78em;border-radius:6px;padding:0 6px;margin-right:6px;}
-.kd-footnote-def{background:rgba(224,242,254,.35);border-left:3px solid #0284c7;border-radius:0 8px 8px 0;margin:8px 0;padding:6px 10px;font-size:.88em;color:#0c4a6e;}
-.kd-footnote-back{text-decoration:none;color:#0284c7;font-weight:900;margin-right:6px;cursor:pointer;}
+/* ==========================================
+   AUTOMATED CC BY 4.0 LICENSE FOOTER STYLES
+   ========================================== */
+
+/* Dim text properties to keep the metadata clean and unobtrusive */
+.license-text {
+    font-family: "Arimo", "Liberation Sans", sans-serif;
+    font-size: 11px;
+    color: rgba(27, 117, 188, 0.75) !important; /* Kept highly dim against dark terminal viewports */
+    letter-spacing: 0.5px;
+    line-height: 1.5;
+}
+
+/* Hyperlink design rules for your Creative Commons registry anchor */
+.license-link {
+    color: #1B75BC !important; /* Custom theme accent blue tint */
+    text-decoration: underline !important;
+    transition: color 0.2s ease-in-out;
+}
+
+/* Triggers an even dimmer layout phase once a viewer clicks the link path */
+.license-link:visited {
+    color: rgba(27, 117, 188, 0.5) !important; /* Dimmed, low-saturation blue indicator */
+}
+
+/* Hover style to keep it clean and interactive */
+.license-link:hover {
+    color: #D2E2F0 !important; /* Crisp slate white shine when hovered */
+}
+
+/* --- Export & Import Button Variant Styling --- */
+.btn-export {
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 48%, #0369a1 100%) !important;
+    border-color: #bae6fd !important;
+    margin-top: auto; /* Drops the Help item cleanly to the bottom of your sidebar tray layout */
+}
+.btn-export:hover {
+    background: linear-gradient(180deg, #7dd3fc 0%, #38bdf8 48%, #0284c7 100%) !important;
+}
+
+.btn-import {
+    background: linear-gradient(180deg, #a7f3d0 0%, #10b981 48%, #047857 100%) !important;
+    border-color: #d1fae5 !important;
+    color: #064e3b !important;
+    margin-top: auto; /* Drops the Help item cleanly to the bottom of your sidebar tray layout */
+}
+.btn-import:hover {
+    background: linear-gradient(180deg, #6ee7b7 0%, #34d399 48%, #10b981 100%) !important;
+}
+.btn-import svg { 
+    stroke: #064e3b !important; 
+    fill: none !important; 
+    margin-top: auto; /* Drops the Help item cleanly to the bottom of your sidebar tray layout */
+}

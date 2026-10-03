@@ -5084,7 +5084,8 @@ function printWriteoutPage() {
 // ==========================================
 function checkAndRedirectMobile() {
     // 1. Set your target mobile page URL here
-    const mobileTargetUrl = 'mobile.html'; 
+    // (Relative to this page at /writeout/, so it lands on /writeout/mobile/index.html!)
+    const mobileTargetUrl = 'mobile/index.html'; 
     
     // 2. Detect mobile via screen width (e.g., tablets/phones under 768px) and User Agent regex
     const isMobileScreen = window.innerWidth <= 768;

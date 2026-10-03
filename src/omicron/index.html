@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Omicron - Ultra Visual Builder & Exporter</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700;800&display=swap">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="keydown.css">
+</head>
+<body>
+
+  <!-- Left Aero Property Sidebar -->
+  <div class="aero-sidebar">
+    <div class="sidebar-brand">
+      <h2>OMICRON</h2>
+    </div>
+
+    <div class="pad-selection-stack">
+      <div class="sidebar-section-title">GLOBAL THEME</div>
+      
+      <div class="property-row">
+        <label>Accent Color</label>
+        <input type="color" id="accent-color" value="#00D6B6" onchange="updateAccent(this.value)">
+      </div>
+
+      <div class="property-row">
+        <label>Canvas Layout</label>
+        <select id="canvas-width-select" onchange="updateCanvasWidth(this.value)">
+          <option value="720px">Default Desktop (720px)</option>
+          <option value="920px">Wide Desktop (920px)</option>
+          <option value="420px">Mobile Frame (420px)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="sidebar-footer-controls">
+      <button class="sidebar-action-btn" onclick="clearPage()">🗑️ Clear Page</button>
+    </div>
+  </div>
+
+  <!-- Workspace Viewport -->
+  <div class="workspace-viewport-wrapper">
+    
+    <!-- Top Action Dock with Variation Dropdowns & Export Button -->
+    <div class="sheets-toolbar">
+      <div class="toolbar-tools-dock">
+
+        <!-- Heading Menu -->
+        <div class="tool-dropdown-wrapper">
+          <button class="style-tool-btn" onclick="spawnElement('heading', 'h1')">H1</button>
+          <button class="caret-btn" onclick="toggleMenu('heading-menu', event)">▾</button>
+          <div class="variation-menu" id="heading-menu">
+            <div class="menu-item" onclick="spawnElement('heading', 'h1')">H1 Main Hero Title</div>
+            <div class="menu-item" onclick="spawnElement('heading', 'h2')">H2 Section Heading</div>
+            <div class="menu-item" onclick="spawnElement('heading', 'subtitle')">Subtitle / Lead</div>
+          </div>
+        </div>
+
+        <!-- Paragraph Menu -->
+        <div class="tool-dropdown-wrapper">
+          <button class="style-tool-btn" onclick="spawnElement('paragraph', 'standard')">¶</button>
+          <button class="caret-btn" onclick="toggleMenu('paragraph-menu', event)">▾</button>
+          <div class="variation-menu" id="paragraph-menu">
+            <div class="menu-item" onclick="spawnElement('paragraph', 'standard')">Standard Paragraph</div>
+            <div class="menu-item" onclick="spawnElement('paragraph', 'lead')">Large Lead Text</div>
+            <div class="menu-item" onclick="spawnElement('paragraph', 'quote')">Blockquote Callout</div>
+          </div>
+        </div>
+
+        <!-- Button Menu -->
+        <div class="tool-dropdown-wrapper">
+          <button class="style-tool-btn" onclick="spawnElement('button', 'primary')">🔘</button>
+          <button class="caret-btn" onclick="toggleMenu('button-menu', event)">▾</button>
+          <div class="variation-menu" id="button-menu">
+            <div class="menu-item" onclick="spawnElement('button', 'primary')">Solid Accent Button</div>
+            <div class="menu-item" onclick="spawnElement('button', 'glass')">Frosted Glass Button</div>
+            <div class="menu-item" onclick="spawnElement('button', 'outline')">Neon Outline Button</div>
+          </div>
+        </div>
+
+        <!-- Image Menu -->
+        <div class="tool-dropdown-wrapper">
+          <button class="style-tool-btn" onclick="spawnElement('image', 'hero')">🖼️</button>
+          <button class="caret-btn" onclick="toggleMenu('image-menu', event)">▾</button>
+          <div class="variation-menu" id="image-menu">
+            <div class="menu-item" onclick="spawnElement('image', 'hero')">Wide Hero Banner</div>
+            <div class="menu-item" onclick="spawnElement('image', 'card')">Aspect Square Card</div>
+            <div class="menu-item" onclick="spawnElement('image', 'avatar')">Circular Avatar</div>
+          </div>
+        </div>
+
+        <!-- Card Menu -->
+        <div class="tool-dropdown-wrapper">
+          <button class="style-tool-btn" onclick="spawnElement('card', 'border')">🎴</button>
+          <button class="caret-btn" onclick="toggleMenu('card-menu', event)">▾</button>
+          <div class="variation-menu" id="card-menu">
+            <div class="menu-item" onclick="spawnElement('card', 'border')">Left Border Accent</div>
+            <div class="menu-item" onclick="spawnElement('card', 'glass')">Full Aero Glass Panel</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Export Action Trigger -->
+      <button class="export-code-btn" onclick="openExportModal()">⚡ EXPORT HTML</button>
+    </div>
+
+    <!-- Centered Scrollable Document Sheet Container -->
+    <div id="spreadsheet-container">
+      <div id="wysiwyg-page" class="page-paper"></div>
+    </div>
+
+  </div>
+
+  <!-- Export HTML Code Modal Popover -->
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>EXPORT HTML & CSS CODE</h3>
+        <button class="modal-close-btn" onclick="closeExportModal()">✕</button>
+      </div>
+      <textarea id="export-textarea" readonly></textarea>
+      <div class="modal-actions">
+        <button class="modal-copy-btn" id="copy-btn" onclick="copyCodeToClipboard()">📋 COPY TO CLIPBOARD</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

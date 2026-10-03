@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0">
+<channel>
+    <title>Radii Office</title>
+    <link>https://radii-office.neocities.org/</link>
+    <description>Updates and posts from my site</description>
+    <item>
+        <title>Formly is now live!</title>
+        <link>https://radii-office.neocities.org/formly/</link>
+        <description>We've created Formly as an alternative to proprietary form-making websites, such as Google Forms!</description>
+        <pubDate>Tue, 15 Sep 2026 18:33:00 GMT</pubDate>
+        <guid>formly-is-now-live</guid>
+    </item>
+</channel>
+</rss>

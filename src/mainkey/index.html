@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mainkey - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="/mainkey/favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+</head>
+<body>
+
+    <nav class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Mainkey</h2>
+        </div>
+
+        <div class="pad-selection-stack">
+            <span class="section-label">Database Controls</span>
+            <button class="action-btn active" id="btn-add-record" onclick="openRecordModal()">➕ Add New Record</button>
+            <button class="action-btn" id="btn-add-field" onclick="openFieldModal()">⚙️ Add Field</button>
+
+            <span class="section-label">Views</span>
+            <button class="action-btn" id="view-table-btn" onclick="setViewMode('table')">📊 Grid Table View</button>
+            <button class="action-btn" id="view-cards-btn" onclick="setViewMode('cards')">🃏 Card Gallery View</button>
+
+            <span class="section-label">File Operations</span>
+            <button class="action-btn" onclick="exportKB()">💾 Export .KB</button>
+            <button class="action-btn" onclick="document.getElementById('file-kb').click()">📂 Import .KB</button>
+            <button class="action-btn" onclick="clearDatabase()" style="border-color:#ef4444; color:#fca5a5;">🗑️ Clear Base</button>
+            
+            <input type="file" id="file-kb" style="display:none" accept=".kb,.yaml,.yml" onchange="importKB(event)">
+        </div>
+    </nav>
+
+    <main class="workspace-viewport-wrapper">
+        <div class="canvas-area-container">
+            <div class="sheets-toolbar">
+                <span class="toolbar-label">SEARCH:</span>
+                <input type="text" id="search-input" class="search-field" placeholder="Search database records..." oninput="render()">
+                <span class="toolbar-hint" id="record-count">0 Records</span>
+            </div>
+
+            <div class="base-frame">
+                <!-- Grid Table View -->
+                <div id="table-view" class="view-panel">
+                    <table class="aero-table">
+                        <thead>
+                            <tr id="table-header-row"></tr>
+                        </thead>
+                        <tbody id="table-body"></tbody>
+                    </table>
+                </div>
+
+                <!-- Card Gallery View -->
+                <div id="cards-view" class="view-panel" style="display: none;">
+                    <div class="cards-grid" id="cards-container"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Adding/Editing Records -->
+    <div id="record-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-title" id="modal-title-text">Add Record</div>
+            <div id="record-form-fields" class="form-stack"></div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="saveRecord()">Save</button>
+                <button class="action-btn cancel-btn" onclick="closeRecordModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding Custom Fields -->
+    <div id="field-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-title">Create Custom Field</div>
+            <div class="form-stack">
+                <div class="control-group">
+                    <label>Field Name</label>
+                    <input type="text" id="new-field-name" placeholder="e.g. Status, Priority, Tags">
+                </div>
+                <div class="control-group">
+                    <label>Field Type</label>
+                    <select id="new-field-type">
+                        <option value="text">Single Line Text</option>
+                        <option value="number">Number</option>
+                        <option value="tag">Status Tag</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="createField()">Create Field</button>
+                <button class="action-btn cancel-btn" onclick="closeFieldModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

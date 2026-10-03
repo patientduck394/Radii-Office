@@ -1,0 +1,404 @@
+/* ========================================================
+   AMBER MARKETPLACE — Aero Glass Extension Store
+   Inspired by Writeout Marketplace!
+   ======================================================== */
+
+.marketplace-dialog {
+  padding: 0 !important;
+  border-radius: 16px !important;
+  border: 3px solid rgba(255,255,255,0.9) !important;
+  background: linear-gradient(180deg, rgba(255,255,255,0.97) 0%, rgba(255,251,235,0.95) 100%) !important;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.35), inset 0 1px 2px #fff !important;
+  max-width: 660px !important;
+  width: calc(100vw - 40px) !important;
+  max-height: 84vh;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+}
+
+.marketplace-dialog::backdrop {
+  background: rgba(20, 12, 2, 0.5);
+  backdrop-filter: blur(4px);
+}
+
+.mkt-header {
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 50%, #92400e 100%);
+  border-bottom: 2px solid rgba(255,255,255,0.4);
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mkt-header h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 15px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mkt-installed-pill {
+  background: rgba(255,255,255,0.22);
+  border: 1px solid rgba(255,255,255,0.55);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  border-radius: 20px;
+  padding: 2px 10px;
+  white-space: nowrap;
+}
+
+.mkt-close-btn {
+  width: 26px;
+  height: 26px;
+  background: linear-gradient(180deg, #fca5a5 0%, #ef4444 100%);
+  border: 1px solid #f87171;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mkt-toolbar-row {
+  display: flex;
+  gap: 8px;
+  padding: 12px 18px 0 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.mkt-search {
+  flex: 1;
+  min-width: 160px;
+  padding: 7px 12px;
+  border-radius: 8px;
+  border: 1px solid #fbbf24;
+  background: linear-gradient(180deg, #fff 0%, #fef3c7 100%);
+  font-family: inherit;
+  font-size: 12px;
+  color: #92400e;
+  outline: none;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.06);
+}
+
+.mkt-search:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 2px rgba(217,119,6,0.2);
+}
+
+.mkt-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  border: 1px solid #cbd5e1;
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  cursor: pointer;
+  font-family: inherit;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.mkt-toggle input { accent-color: #d97706; cursor: pointer; }
+
+.mkt-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 10px 18px 0 18px;
+  flex-wrap: wrap;
+}
+
+.mkt-tab {
+  background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 20px;
+  padding: 5px 13px;
+  font-size: 11px;
+  font-weight: 800;
+  color: #475569;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.mkt-tab:hover { border-color: #fbbf24; color: #d97706; }
+
+.mkt-tab.active {
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+  border-color: #d97706;
+  color: #fff;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  box-shadow: 0 3px 8px rgba(217,119,6,0.35), inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+.mkt-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 12px;
+  padding: 14px 18px 18px 18px;
+  overflow-y: auto;
+  max-height: calc(84vh - 230px);
+  min-height: 200px;
+}
+
+.mkt-card {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06), inset 0 1px 0 #fff;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mkt-card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(217,119,6,0.18), inset 0 1px 0 #fff;
+}
+
+.mkt-card.installed {
+  border-color: #34d399;
+  box-shadow: 0 2px 8px rgba(16,185,129,0.2), inset 0 1px 0 #fff;
+}
+
+.mkt-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mkt-card-name { font-size: 13px; font-weight: 800; color: #0f172a; margin: 0; line-height: 1.3; }
+.mkt-card-version { font-size: 10px; color: #94a3b8; font-weight: 700; }
+
+.mkt-badge {
+  font-size: 9px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-radius: 20px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.mkt-badge-themes { background: linear-gradient(180deg, #ede9fe 0%, #ddd6fe 100%); border: 1px solid #8b5cf6; color: #5b21b6; }
+.mkt-badge-templates { background: linear-gradient(180deg, #e0f2fe 0%, #bae6fd 100%); border: 1px solid #38bdf8; color: #0369a1; }
+.mkt-badge-shapes { background: linear-gradient(180deg, #fef3c7 0%, #fde68a 100%); border: 1px solid #f59e0b; color: #92400e; }
+
+.mkt-card-desc { font-size: 11.5px; line-height: 1.55; color: #475569; margin: 0; font-family: 'Segoe UI', sans-serif; }
+
+.mkt-preview {
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  overflow: hidden;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mkt-preview-swatches { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; }
+.mkt-preview-dot {
+  width: 30px; height: 30px; border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.2);
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.8);
+  cursor: pointer;
+}
+.mkt-mini-slide {
+  width: 120px; aspect-ratio: 16/9; border-radius: 6px;
+  border: 1px solid rgba(0,0,0,0.2);
+  position: relative; overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+.mkt-mini-slide span {
+  position: absolute; font-size: 6px; font-weight: 900; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  left: 8%; right: 8%; text-align: center;
+}
+
+.mkt-card-actions { display: flex; gap: 6px; margin-top: auto; }
+
+.mkt-install-btn {
+  flex: 1;
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 50%, #92400e 100%);
+  border: 1px solid #d97706;
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+  box-shadow: 0 3px 8px rgba(217,119,6,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
+}
+.mkt-install-btn:hover { filter: brightness(1.08); }
+.mkt-install-btn:active { transform: translateY(1px); }
+.mkt-card.installed .mkt-install-btn {
+  background: linear-gradient(180deg, #6ee7b7 0%, #10b981 50%, #047857 100%);
+  border-color: #059669;
+}
+
+.mkt-view-btn, .mkt-use-btn {
+  background: linear-gradient(180deg, #fff 0%, #f1f5f9 100%);
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 7px 10px;
+  color: #334155;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+.mkt-view-btn:hover, .mkt-use-btn:hover { border-color: #fbbf24; color: #d97706; }
+.mkt-use-btn { border-color: #38bdf8; color: #0369a1; }
+
+.mkt-footer {
+  padding: 12px 18px;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fffbeb;
+  border-radius: 0 0 13px 13px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.mkt-footer-note { font-size: 10.5px; color: #94a3b8; margin: 0; }
+.mkt-reset-btn {
+  background: transparent; border: 1px solid #e2e8f0; border-radius: 6px;
+  padding: 5px 12px; font-size: 11px; font-weight: 700; color: #94a3b8;
+  cursor: pointer; font-family: inherit;
+}
+.mkt-reset-btn:hover { border-color: #fca5a5; color: #dc2626; }
+.mkt-empty { grid-column: 1 / -1; text-align: center; padding: 30px 10px; color: #94a3b8; font-size: 12px; }
+.mkt-back-btn {
+  grid-column: 1 / -1; justify-self: start;
+  background: linear-gradient(180deg, #fff 0%, #f1f5f9 100%);
+  border: 1px solid #cbd5e1; border-radius: 8px; padding: 6px 14px;
+  font-size: 12px; font-weight: 800; color: #92400e; cursor: pointer; font-family: inherit;
+}
+.mkt-back-btn:hover { border-color: #fbbf24; }
+.mkt-detail { grid-column: 1 / -1; }
+.mkt-detail-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.mkt-theme-row {
+  display: flex; align-items: center; gap: 8px; justify-content: space-between;
+  background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 8px;
+  font-size: 11px; color: #334155; font-weight: 700;
+}
+.mkt-theme-row .mkt-preview-dot { width: 26px; height: 26px; }
+
+/* Marketplace themes dropdown inside the Amber theme picker group! */
+.mkt-themes-btn .mkt-themes-swatch {
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+  color: #fff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+.mkt-themes-popup {
+  width: 250px !important;
+  left: auto !important;
+  right: 0;
+}
+
+.mkt-themes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.mkt-themes-pack-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 800;
+  color: #92400e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid #fde68a;
+  padding-bottom: 3px;
+}
+
+.mkt-themes-dots {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.mkt-themes-dots .mkt-preview-dot {
+  cursor: pointer;
+  transition: transform 0.12s ease;
+  padding: 0;
+}
+
+.mkt-themes-dots .mkt-preview-dot:hover {
+  transform: scale(1.2);
+}
+
+.mkt-empty-note {
+  font-size: 11px;
+  line-height: 1.5;
+  color: #92400e;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+}
+
+.mkt-open-btn {
+  background: linear-gradient(180deg, #fbbf24 0%, #d97706 100%);
+  border: 1px solid #d97706;
+  border-radius: 8px;
+  padding: 7px 12px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+  font-family: 'JetBrains Mono', monospace;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+}
+
+.mkt-open-btn:hover { filter: brightness(1.08); }
+.mkt-tray-swatch {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.2); cursor: pointer; padding: 0;
+  box-shadow: inset 0 1px 2px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.15s ease;
+}
+.mkt-tray-swatch:hover { transform: scale(1.15); }
+
+/* Marketplace shape buttons appended to the shape grid! */
+.shape-grid-btn.mkt-shape-btn {
+  background: linear-gradient(180deg, #fffbeb 0%, #fde68a 100%);
+  border-color: #f59e0b;
+}
+
+.shape-grid-btn svg {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}

@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amber - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="slides-style.css?v=20261002-3">
+    <link rel="stylesheet" href="marketplace.css?v=20261002-3">
+    <link rel="stylesheet" href="keydown.css?v=20261002-3">
+    <link rel="icon" type="image/svg+xml" href="/amber/favicon.svg">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#d97706">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Amber">
+</head>
+<body>
+
+    <!-- 3D Glass Side Navigation Panel -->
+    <nav id="sidebar" class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Amber</h2>
+        </div>
+        
+        <div class="pad-selection-stack">
+            <button class="pad-toggle-btn active" onclick="addNewSlide()" data-tooltip="Create a new blank slide">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 12H12m0 0H4.5m7.5 0V4.5m0 7.5v7.5" />
+                </svg>
+                New Slide
+            </button>
+            <button class="pad-toggle-btn" onclick="startPresentation()" data-tooltip="Start full screen deck view (F5)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15.03 8.13l-.004-.002a29 29 0 0 0-1.615-1.238a27 27 0 0 0-1.47-.952l-.002-.002C9.93 4.715 8.925 4.104 8.024 4.78S7.04 6.87 6.876 9.696l-.001.013A41 41 0 0 0 6.8 12q.006 1.146.076 2.291v.006c.164 2.831.246 4.246 1.148 4.923c.9.676 1.905.065 3.915-1.156l.002-.002c.521-.317 1.025-.64 1.47-.952a29 29 0 0 0 1.615-1.238C17.042 14.23 18.05 13.406 18.05 12s-1.007-2.227-3.02-3.87" />
+                </svg>
+                Present (F5)
+            </button>
+            <button class="pad-toggle-btn" onclick="deleteCurrentSlide()" data-tooltip="Delete active slide from deck">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5.937h4.923m0 0h6.154m-6.154 0c0-5.25 6.154-5.25 6.154 0m0 0H20M5.6 6s-.252 8.925.445 11.933C6.73 20.89 7.8 22 10.741 22h2.518c2.941 0 4.012-1.11 4.697-4.067C18.653 14.926 18.4 6 18.4 6" />
+                </svg>
+                Delete Slide
+            </button>
+            <button id="marketplace-trigger-btn" class="pad-toggle-btn" data-tooltip="Browse themes, templates & shape packs">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                        <path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" />
+                        <path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" />
+                    </g>
+                </svg>
+                Marketplace
+            </button>
+            <button class="pad-toggle-btn" onclick="exportKaFile()" data-tooltip="Save this deck as a .ka file (Ctrl+S)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v16m8-7.5a15.46 15.46 0 0 0-6.493 5.334L12 18l-1.507-2.166A15.46 15.46 0 0 0 4 10.5M17 22H7" />
+                </svg>
+                Save .ka
+            </button>
+            <button class="pad-toggle-btn" onclick="document.getElementById('ka-file-input').click()" data-tooltip="Open a .ka slide file">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18V2m8 7.5a15.46 15.46 0 0 1-6.493-5.334L12 2l-1.507 2.166A15.46 15.46 0 0 1 4 9.5M17 22H7" />
+                </svg>
+                Import .ka
+            </button>
+            <input type="file" id="ka-file-input" accept=".ka,application/json" style="display: none;" onchange="importKaFile(event)">
+        </div>
+
+        <div class="sidebar-footer-controls">
+            <button class="sidebar-action-btn" data-tooltip="View keyboard shortcuts & tips">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                    <path d="M0 0h24v24H0z" fill="none" />
+                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                        <path d="M12 17h.01" />
+                    </g>
+                </svg>
+                Help Deck
+            </button>
+            <button class="sidebar-action-btn" data-tooltip="Configure slide suite preferences">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                    <path d="M0 0h16v16H0z" fill="none" />
+                    <path fill="currentColor" fill-rule="evenodd" d="M7.199 2H8.8a.2.2 0 0 1 .2.2c0 1.808 1.958 2.939 3.524 2.034a.2.2 0 0 1 .271.073l.802 1.388a.2.2 0 0 1-.073.272c-1.566.904-1.566 3.164 0 4.069a.2.2 0 0 1 .073.271l-.802 1.388a.2.2 0 0 1-.271.073C10.958 10.863 9 11.993 9 13.8a.2.2 0 0 1-.199.2H7.2a.2.2 0 0 1-.2-.2c0-1.808-1.958-2.938-3.524-2.034a.2.2 0 0 1-.272-.073l-.8-1.388a.2.2 0 0 1 .072-.271c1.566-.905 1.566-3.165 0-4.07a.2.2 0 0 1-.073-.27l.801-1.389a.2.2 0 0 1 .272-.072C5.042 5.138 7 4.007 7 2.199c0-.11.089-.199.199-.199M5.5 2.2c0-.94.76-1.7 1.699-1.7H8.8c.94 0 1.7.76 1.7 1.7a.85.85 0 0 0 1.274.735a1.7 1.7 0 0 1 2.32.622l.802 1.388c.469.813.19 1.851-.622 2.32a.85.85 0 0 0 0 1.472a1.7 1.7 0 0 1 .622 2.32l-.802 1.388a1.7 1.7 0 0 1-2.32.622a.85.85 0 0 0-1.274.735c0 .939-.76 1.7-1.699 1.7H7.2a1.7 1.7 0 0 1-1.699-1.7a.85.85 0 0 0-1.274-.735a1.7 1.7 0 0 1-2.32-.622l-.802-1.388a1.7 1.7 0 0 1 .622-2.32a.85.85 0 0 0 0-1.471a1.7 1.7 0 0 1-.622-2.32l.801-1.389a1.7 1.7 0 0 1 2.32-.622A.85.85 0 0 0 5.5 2.2m4 5.8a1.5 1.5 0 1 1-3 0a1.5 1.5 0 0 1 3 0M11 8a3 3 0 1 1-6 0a3 3 0 0 1 6 0" clip-rule="evenodd" />
+                </svg>
+                Settings
+            </button>
+        </div>
+
+        <div id="toggle-zone" class="latch-toggle-strip" onclick="toggleSidebar()">
+            <svg id="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m15 18-6-6 6-6" />
+            </svg>
+        </div>
+    </nav>
+
+    <!-- Main Workspace Viewport -->
+    <main class="workspace-viewport-wrapper">
+        <!-- Glossy Rich Formatting Toolbar -->
+        <div class="slides-toolbar">
+            <div class="toolbar-tools-dock">
+                <button class="style-tool-btn" onclick="undo()" title="Undo (Ctrl+Z)" data-tooltip="Undo last action (Ctrl+Z)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="M9 14 4 9l5-5" />
+                            <path d="M20 20v-7a4 4 0 0 0-4-4H4" />
+                        </g>
+                    </svg>
+                </button>
+                <button class="style-tool-btn" onclick="redo()" title="Redo (Ctrl+Y)" data-tooltip="Redo last action (Ctrl+Y)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="m15 14 5-5-5-5" />
+                            <path d="M4 20v-7a4 4 0 0 1 4-4h12" />
+                        </g>
+                    </svg>
+                </button>
+
+                <div class="toolbar-divider"></div>
+
+                <button class="style-tool-btn" onclick="addTextBox()" title="Add Text Box" data-tooltip="Add new editable text box">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                        <path d="M0 0h24v24H0z" fill="none" />
+                        <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                            <path d="M4 7V4h16v3" />
+                            <path d="M9 20h6" />
+                            <path d="M12 4v16" />
+                        </g>
+                    </svg>
+                </button>
+
+                <!-- Shapes Popup Menu Trigger -->
+                <div class="popup-tool-container">
+                    <button id="shapes-btn" class="style-tool-btn" onclick="toggleShapesPopup(event)" title="Insert Shapes" data-tooltip="Open SVG shape picker grid">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                            <path d="M0 0h16v16H0z" fill="none" />
+                            <g fill="none">
+                                <g clip-path="url(#amberShapesGlyph)">
+                                    <path fill="currentColor" fill-rule="evenodd" d="M8 2.075L10.193 6H5.807zM6.909.953a1.25 1.25 0 0 1 2.182 0l2.62 4.687A1.25 1.25 0 0 1 10.62 7.5H5.38a1.25 1.25 0 0 1-1.09-1.86zM4 15.25a3.5 3.5 0 1 1 .001-6.999A3.5 3.5 0 0 1 4 15.25m2-3.5a2 2 0 1 1-4 0a2 2 0 0 1 4 0m8 1.75h-3.5V10H14zM9 9.75c0-.69.56-1.25 1.25-1.25h4c.69 0 1.25.56 1.25 1.25v4c0 .69-.56 1.25-1.25 1.25h-4C9.56 15 9 14.44 9 13.75z" clip-rule="evenodd" />
+                                </g>
+                                <defs>
+                                    <clipPath id="amberShapesGlyph">
+                                        <path fill="currentColor" d="M0 0h16v16H0z" />
+                                    </clipPath>
+                                </defs>
+                            </g>
+                        </svg>
+                    </button>
+                    
+                    <div id="shapes-popup" class="aero-palette-menu shape-grid-popup">
+                        <div class="palette-header">VECTOR SHAPE LIBRARY</div>
+                        <div class="shape-compact-grid">
+                            <button class="shape-grid-btn" onclick="addShape('rect')" data-tooltip="Rectangle">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                                    <path d="M0 0h16v16H0z" fill="none" />
+                                    <path fill="currentColor" fill-rule="evenodd" d="M11.5 3h-7A1.5 1.5 0 0 0 3 4.5v7A1.5 1.5 0 0 0 4.5 13h7a1.5 1.5 0 0 0 1.5-1.5v-7A1.5 1.5 0 0 0 11.5 3m-7-1.5a3 3 0 0 0-3 3v7a3 3 0 0 0 3 3h7a3 3 0 0 0 3-3v-7a3 3 0 0 0-3-3z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('rounded')" data-tooltip="Rounded Rect">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                                    <path d="M0 0h16v16H0z" fill="none" />
+                                    <path fill="currentColor" fill-rule="evenodd" d="M4.5 3A1.5 1.5 0 0 0 3 4.5v1.75a.75.75 0 0 1-1.5 0V4.5a3 3 0 0 1 3-3h1.75a.75.75 0 0 1 0 1.5zM9 2.25a.75.75 0 0 1 .75-.75h1.75a3 3 0 0 1 3 3v1.75a.75.75 0 0 1-1.5 0V4.5A1.5 1.5 0 0 0 11.5 3H9.75A.75.75 0 0 1 9 2.25M2.25 9a.75.75 0 0 1 .75.75v1.75A1.5 1.5 0 0 0 4.5 13h1.75a.75.75 0 0 1 0 1.5H4.5a3 3 0 0 1-3-3V9.75A.75.75 0 0 1 2.25 9m11.5 0a.75.75 0 0 1 .75.75v1.75a3 3 0 0 1-3 3H9.75a.75.75 0 0 1 0-1.5h1.75a1.5 1.5 0 0 0 1.5-1.5V9.75a.75.75 0 0 1 .75-.75" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('circle')" data-tooltip="Circle / Oval">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('diamond')" data-tooltip="Diamond">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 3l7 9-7 9-7-9z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('triangle')" data-tooltip="Triangle">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('star')" data-tooltip="5-Point Star">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('heart')" data-tooltip="Heart">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('hexagon')" data-tooltip="Hexagon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('arrow-right')" data-tooltip="Right Arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <path d="M5 12h14" />
+                                        <path d="m12 5 7 7-7 7" />
+                                    </g>
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('arrow-left')" data-tooltip="Left Arrow">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <path d="M19 12H5" />
+                                        <path d="m12 19-7-7 7-7" />
+                                    </g>
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('speech')" data-tooltip="Speech Bubble">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn" onclick="addShape('plus')" data-tooltip="Plus Sign">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.5 12H12m0 0H4.5m7.5 0V4.5m0 7.5v7.5" />
+                                </svg>
+                            </button>
+                            <button class="shape-grid-btn wide-btn" onclick="addShape('chip')" data-tooltip="Aero Gel Chip Badge">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <path d="M0 0h24v24H0z" fill="none" />
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" />
+                                </svg> Aero Chip
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="popup-tool-container">
+                    <button id="snap-btn" class="style-tool-btn" onclick="toggleSnapPopup(event)" title="Snap Settings" data-tooltip="Configure layout alignment guides">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                            <path d="M0 0h16v16H0z" fill="none" />
+                            <path fill="currentColor" fill-rule="evenodd" d="M9.25 3.5h-2.5v2h2.5zM4 3.5h1.25v2H2.5V5A1.5 1.5 0 0 1 4 3.5M2.5 7h2.75v2H2.5zm0 3.5v.5A1.5 1.5 0 0 0 4 12.5h1.25v-2zm4.25 0v2h2.5v-2zm4 0v2H12a1.5 1.5 0 0 0 1.5-1.5v-.5zM13.5 9h-2.75V7h2.75zM9.25 9h-2.5V7h2.5zm1.5-5.5v2h2.75V5A1.5 1.5 0 0 0 12 3.5zM4 2a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h8a3 3 0 0 0 3-3V5a3 3 0 0 0-3-3z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <div id="snap-popup" class="aero-palette-menu">
+                        <div class="palette-header">SNAP SETTINGS</div>
+                        <div class="snap-option-row">
+                            <label><input type="checkbox" id="snap-h-center" checked onchange="toggleSnapRule('hCenter', this.checked)"> Horizontal Center</label>
+                        </div>
+                        <div class="snap-option-row">
+                            <label><input type="checkbox" id="snap-v-center" checked onchange="toggleSnapRule('vCenter', this.checked)"> Vertical Center</label>
+                        </div>
+                        <div class="snap-option-row">
+                            <label><input type="checkbox" id="snap-grid" onchange="toggleSnapRule('grid', this.checked)"> Snap to Grid (20px)</label>
+                        </div>
+                        <div class="palette-header">LAYOUT</div>
+                        <div class="snap-option-row">
+                            <label><input type="checkbox" id="dual-handles-box" onchange="toggleLayoutOpt('dualHandles', this.checked)"> Dual rounding handles</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-format-group">
+                    <select id="font-size-select" class="aero-dropdown" onchange="changeActiveFontSize(this.value)" title="Text Size" data-tooltip="Change text font size">
+                        <option value="14px">14px</option>
+                        <option value="18px" selected>18px</option>
+                        <option value="24px">24px</option>
+                        <option value="32px">32px</option>
+                        <option value="48px">48px</option>
+                    </select>
+
+                    <div class="popup-tool-container">
+                        <button id="text-color-btn" class="custom-picker-wrapper" onclick="toggleRgbaPicker(event, 'text')" title="Text Color" data-tooltip="Pick text color (RGBA / HSVA sliders)">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                                <path d="M0 0h16v16H0z" fill="none" />
+                                <path fill="currentColor" fill-rule="evenodd" d="M3.279 2.544A.75.75 0 0 1 4 2h8a.75.75 0 0 1 .721.544l.5 1.75a.75.75 0 1 1-1.442.412L11.434 3.5H8.75l-.004 9H9.5a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1 0-1.5h.746l.004-9H4.566L4.22 4.706a.75.75 0 1 1-1.442-.412z" clip-rule="evenodd" />
+                            </svg>
+                            <span id="text-color-dot" class="current-color-dot" style="background: #ffffff;"></span>
+                        </button>
+                        <div id="rgba-picker-popup" class="aero-palette-menu rgba-picker-popup">
+                            <div class="palette-header rgba-picker-head">
+                                <span id="rgba-picker-title">TEXT COLOR</span>
+                                <span class="rgba-mode-toggle">
+                                    <button id="rgba-mode-rgba" class="rgba-mode-btn active" onclick="setPickerMode('rgba')">RGBA</button>
+                                    <button id="rgba-mode-hsva" class="rgba-mode-btn" onclick="setPickerMode('hsva')">HSVA</button>
+                                </span>
+                            </div>
+                            <div class="rgba-preview-row">
+                                <div class="rgba-checker"><div id="rgba-preview"></div></div>
+                                <input type="text" id="rgba-tag-input" class="rgba-tag-input" spellcheck="false" autocomplete="off" title="RGBA tag — click to copy, type or paste a color!">
+                            </div>
+                            <div class="rgba-slider-row">
+                                <span id="rgba-c0" class="rgba-chan rgba-r">R</span>
+                                <input type="range" id="rgba-r" min="0" max="255" step="1" value="255">
+                                <span class="rgba-val" id="rgba-r-val">255</span>
+                            </div>
+                            <div class="rgba-slider-row">
+                                <span id="rgba-c1" class="rgba-chan rgba-g">G</span>
+                                <input type="range" id="rgba-g" min="0" max="255" step="1" value="255">
+                                <span class="rgba-val" id="rgba-g-val">255</span>
+                            </div>
+                            <div class="rgba-slider-row">
+                                <span id="rgba-c2" class="rgba-chan rgba-b">B</span>
+                                <input type="range" id="rgba-b" min="0" max="255" step="1" value="255">
+                                <span class="rgba-val" id="rgba-b-val">255</span>
+                            </div>
+                            <div class="rgba-slider-row">
+                                <span class="rgba-chan rgba-a">A</span>
+                                <input type="range" id="rgba-a" min="0" max="100" step="1" value="100">
+                                <span class="rgba-val" id="rgba-a-val">100</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="popup-tool-container">
+                        <button id="fill-btn" class="custom-picker-wrapper" onclick="toggleFillPopup(event)" title="Fill & Stroke" data-tooltip="Fill color, Stroke Sync, stroke color & width">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16">
+                                <path d="M0 0h16v16H0z" fill="none" />
+                                <path fill="currentColor" fill-rule="evenodd" d="M11.773 7.412c-.064.064-.27.249-1.017-.027c-.75-.277-1.706-.928-2.695-1.918c-.99-.99-1.64-1.945-1.918-2.695c-.276-.747-.091-.953-.027-1.017s.27-.249 1.017.027q.14.052.29.121c.7.324 1.54.93 2.405 1.797c.99.99 1.641 1.945 1.918 2.695c.276.747.091.953.027 1.017M7 6.528c.85.85 1.738 1.535 2.581 1.972H1.694v-.027a1.3 1.3 0 0 1 .1-.507l2.802-4.33l.172-.26C5.16 4.383 5.956 5.485 7 6.529m3.89-3.889c2.147 2.148 3.24 4.537 1.944 5.834a13 13 0 0 1-2.127 1.719L6.352 13.01s-1.945 1.296-4.537-1.296C-.778 9.12.518 7.176.518 7.176l2.818-4.355A13 13 0 0 1 5.056.694C6.351-.602 8.74.491 10.888 2.64M12.748 15c.966 0 1.75-.765 1.75-1.71c0-1.234-1.17-2.76-1.512-3.178a.3.3 0 0 0-.237-.111a.31.31 0 0 0-.24.112c-.34.422-1.511 1.96-1.511 3.178c0 .944.784 1.71 1.75 1.71" clip-rule="evenodd" />
+                            </svg>
+                            <span id="fill-btn-dot" class="current-color-dot" style="background: #38bdf8;"></span>
+                        </button>
+                        <div id="fill-popup" class="aero-palette-menu fill-popup">
+                            <div class="palette-header">FILL & STROKE</div>
+                            <button class="fill-row" onclick="openFillPicker(event, 'fill')" data-tooltip="Pick the fill color">
+                                <span id="fill-dot" class="fill-dot" style="background: #38bdf8;"></span>
+                                <span class="fill-row-label">Fill</span>
+                            </button>
+                            <label class="snap-option-row fill-sync-row" title="Stroke follows the fill color" data-tooltip="Synced strokes derive from fill">
+                                <input type="checkbox" id="stroke-sync-box" checked onchange="toggleStrokeSync(this.checked)">
+                                <span>Stroke Sync</span>
+                            </label>
+                            <button id="stroke-row" class="fill-row" onclick="openFillPicker(event, 'stroke')" data-tooltip="Pick an independent stroke color">
+                                <span id="stroke-dot" class="fill-dot" style="background: #7dd3fc;"></span>
+                                <span class="fill-row-label">Stroke</span>
+                            </button>
+                            <div class="fill-width-row" data-tooltip="Stroke outline width">
+                                <span class="fill-row-label">Width</span>
+                                <input type="range" id="stroke-width" min="0" max="12" step="1" value="2">
+                                <span class="rgba-val" id="stroke-width-val">2</span>
+                            </div>
+                            <div class="fill-width-row" data-tooltip="Blur the background behind this shape">
+                                <span class="fill-row-label">Blur</span>
+                                <input type="range" id="bg-blur" min="0" max="24" step="1" value="0">
+                                <span class="rgba-val" id="bg-blur-val">0</span>
+                            </div>
+                            <label class="snap-option-row fill-sync-row" title="Carve a soft shadow inside the shape" data-tooltip="Toggle the inner shadow">
+                                <input type="checkbox" id="inner-shadow-box" onchange="toggleInnerShadow(this.checked)">
+                                <span>Inner Shadow</span>
+                            </label>
+                            <div id="inner-shadow-opts">
+                                <div class="fill-width-row" data-tooltip="Inner shadow softness">
+                                    <span class="fill-row-label">Blur</span>
+                                    <input type="range" id="inner-blur" min="0" max="20" step="1" value="6">
+                                    <span class="rgba-val" id="inner-blur-val">6</span>
+                                </div>
+                                <button id="inner-row" class="fill-row" onclick="openFillPicker(event, 'innershadow')" data-tooltip="Pick the inner shadow color">
+                                    <span id="inner-dot" class="fill-dot" style="background: rgba(0, 0, 0, 0.45);"></span>
+                                    <span class="fill-row-label">Shadow</span>
+                                </button>
+                                <div class="fill-width-row" data-tooltip="Inner shadow horizontal offset">
+                                    <span class="fill-row-label">Off X</span>
+                                    <input type="range" id="inner-dx" min="-12" max="12" step="1" value="0">
+                                    <span class="rgba-val" id="inner-dx-val">0</span>
+                                </div>
+                                <div class="fill-width-row" data-tooltip="Inner shadow vertical offset">
+                                    <span class="fill-row-label">Off Y</span>
+                                    <input type="range" id="inner-dy" min="-12" max="12" step="1" value="2">
+                                    <span class="rgba-val" id="inner-dy-val">2</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="theme-picker-group">
+                    <button class="theme-swatch-btn" onclick="changeBackground('linear-gradient(180deg, #fbbf24 0%, #d97706 100%)')" title="Goldenrod Aero" data-tooltip="Apply Goldenrod background">
+                        <span class="theme-swatch" style="background: linear-gradient(180deg, #fbbf24, #d97706);"></span>
+                    </button>
+                    <button class="theme-swatch-btn" onclick="changeBackground('linear-gradient(180deg, #a3e635 0%, #65a30d 100%)')" title="Lime Aero" data-tooltip="Apply Lime background">
+                        <span class="theme-swatch" style="background: linear-gradient(180deg, #a3e635, #65a30d);"></span>
+                    </button>
+                    <button class="theme-swatch-btn" onclick="changeBackground('linear-gradient(180deg, #38bdf8 0%, #0284c7 100%)')" title="Aqua Gel" data-tooltip="Apply Aqua background">
+                        <span class="theme-swatch" style="background: linear-gradient(180deg, #38bdf8, #0284c7);"></span>
+                    </button>
+                    <button class="theme-swatch-btn" onclick="changeBackground('linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)')" title="Classic Glass" data-tooltip="Apply Classic Glass background">
+                        <span class="theme-swatch" style="background: #ffffff; border-color: #cbd5e1;"></span>
+                    </button>
+                    <!-- Marketplace Themes Dropdown -->
+                    <div class="popup-tool-container">
+                        <button id="mkt-themes-btn" class="theme-swatch-btn mkt-themes-btn" onclick="toggleMktThemesPopup(event)" title="Marketplace Themes" data-tooltip="Open Marketplace theme collection">
+                            <span class="theme-swatch mkt-themes-swatch"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <path d="M0 0h24v24H0z" fill="none" />
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                    <path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" />
+                                    <path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" />
+                                </g>
+                            </svg></span>
+                        </button>
+                        <div id="mkt-themes-popup" class="aero-palette-menu mkt-themes-popup">
+                            <div class="palette-header">MARKETPLACE THEMES</div>
+                            <div id="mkt-themes-list" class="mkt-themes-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="presentation-title-badge">
+                <span class="badge-label">SLIDE 1</span>
+                <input type="text" id="slide-title-input" class="slide-title-field" value="Presentation Title" oninput="updateSlideTitle(this.value)">
+            </div>
+        </div>
+
+        <!-- Editor Viewport -->
+        <div class="slides-editor-container">
+            <div id="thumbnail-strip" class="thumbnail-panel"></div>
+
+            <div class="canvas-stage">
+                <div id="slide-canvas" class="slide-surface" oncontextmenu="handleCanvasContextMenu(event)">
+                    <div id="guide-x" class="snap-guide snap-guide-x" style="display: none;"></div>
+                    <div id="guide-y" class="snap-guide snap-guide-y" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Context Menu -->
+    <div id="context-menu" class="aero-context-menu">
+        <div class="context-item" onclick="changeLayer('front')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <path d="m17 11-5-5-5 5" />
+                    <path d="m17 18-5-5-5 5" />
+                </g>
+            </svg> Bring to Front
+        </div>
+        <div class="context-item" onclick="changeLayer('forward')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m18 15-6-6-6 6" />
+            </svg> Bring Forward
+        </div>
+        <div class="context-item" onclick="changeLayer('backward')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m6 9 6 6 6-6" />
+            </svg> Send Backward
+        </div>
+        <div class="context-item" onclick="changeLayer('back')">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <path d="m7 6 5 5 5-5" />
+                    <path d="m7 13 5 5 5-5" />
+                </g>
+            </svg> Send to Back
+        </div>
+        <div class="context-divider"></div>
+        <div class="context-item danger" onclick="deleteActiveElement()">
+            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5.937h4.923m0 0h6.154m-6.154 0c0-5.25 6.154-5.25 6.154 0m0 0H20M5.6 6s-.252 8.925.445 11.933C6.73 20.89 7.8 22 10.741 22h2.518c2.941 0 4.012-1.11 4.697-4.067C18.653 14.926 18.4 6 18.4 6" />
+            </svg> Delete Item
+        </div>
+    </div>
+
+    <!-- Animated Glass Tooltip Container -->
+    <div id="aero-tooltip" class="aero-glass-tooltip"></div>
+
+    <!-- Presentation Mode Overlay -->
+    <div id="presentation-overlay" class="fullscreen-presentation-stage" style="display: none;">
+        <div id="presentation-canvas" class="slide-surface presentation-mode"></div>
+        <div class="presentation-controls">
+            <button class="present-control-btn" onclick="prevSlide()">‹</button>
+            <span id="present-slide-counter">Slide 1 / 1</span>
+            <button class="present-control-btn" onclick="nextSlide()">›</button>
+            <button class="present-control-btn exit-btn" onclick="exitPresentation()">✕ Exit</button>
+        </div>
+    </div>
+
+    <!-- Marketplace Dialog Box -->
+    <dialog id="marketplace-dialog" class="marketplace-dialog">
+        <div class="mkt-header">
+            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                <path d="M0 0h24v24H0z" fill="none" />
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                    <path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" />
+                    <path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" />
+                </g>
+            </svg> Marketplace <span id="mkt-installed-count" class="mkt-installed-pill">0 installed</span></h3>
+            <button id="marketplace-close-btn" class="mkt-close-btn" title="Close">✕</button>
+        </div>
+        <div class="mkt-toolbar-row">
+            <input id="marketplace-search" class="mkt-search" type="text" placeholder="Search themes, templates, shapes..." />
+            <label class="mkt-toggle" title="Show only extensions you haven't installed yet">
+                <input type="checkbox" id="marketplace-hide-installed" />
+                <span>New only</span>
+            </label>
+        </div>
+        <div class="mkt-tabs">
+            <button class="mkt-tab active" data-cat="all">All</button>
+            <button class="mkt-tab" data-cat="themes">Themes</button>
+            <button class="mkt-tab" data-cat="templates">Templates</button>
+            <button class="mkt-tab" data-cat="shapes">Shapes</button>
+        </div>
+        <div id="marketplace-grid" class="mkt-grid"></div>
+        <div class="mkt-footer">
+            <p class="mkt-footer-note">Double-click text to edit! Extensions persist in localStorage.</p>
+            <button id="marketplace-reset-btn" class="mkt-reset-btn">Remove all</button>
+        </div>
+    </dialog>
+
+    <script src="slides-app.js?v=20261002-3"></script>
+    <script src="marketplace.js?v=20261002-3"></script>
+    <script>
+      // Offline-first: app shell installs on first visit!
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('sw.js').catch(() => {});
+        });
+      }
+    </script>
+</body>
+</html>
