@@ -1,8 +1,8 @@
 <p align="center"><img width="500" height="350" alt="Radii Office banner" src="https://github.com/user-attachments/assets/45d30a1f-0cf2-4e65-8bc3-478afc186839" /> </p>
 <p align="center">
-  <a href="https://radii-office.com/"><img src="https://img.shields.io/badge/app-needs--some--improvement-yellow"/></a>
   <a href="https://pages.dev/"><img src="https://img.shields.io/badge/hoster-cloudflare-888888"/></a>
   <a href="https://radii-office.com/"><img src="https://img.shields.io/badge/deployment-passing-green"/></a>
+  <a href="https://github.com/patientduck394/Radii-Office/releases/"><img src="https://img.shields.io/badge/release-8.0.0-green"/></a>
   <a href="https://github.com/patientduck394/Radii-Office/graphs/contributors"><img src="https://img.shields.io/badge/contributors-1-red"/></a>
   <a href="https://github.com/patientduck394/Radii-Office/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT,_Apache,_ISC,_PMPL--NTM--BY-blue"/></a>
 </p>
