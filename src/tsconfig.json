@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "target": "ES2020",
+        "module": "es2020",
+        "strict": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "sourceMap": false,
+        "declaration": false,
+        "rootDir": "."
+    },
+    "include": ["imbuer/formula_engine.ts"]
+}

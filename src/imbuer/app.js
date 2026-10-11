@@ -374,16 +374,18 @@ function updateCellFromFormula(value) {
 }
 
 function evaluateFormulas() {
+    // Resolve chained formulas once (SUM/AVG/MIN/MAX/COUNT + cycle safety)!
+    const resolved = FormulaEngine.evaluateSheet(cellData);
     for (let r = 1; r <= numRows; r++) {
         for (let c = 0; c < numCols; c++) {
             let cellId = `${getColumnName(c)}${r}`;
             let val = cellData[cellId] || "";
             let cell = document.getElementById(cellId);
-            
+
             if (cellId === activeCellId) continue;
 
             if (val.startsWith("=")) {
-                let result = computeFormula(val);
+                let result = resolved[cellId] !== undefined ? resolved[cellId] : "ERROR";
                 if (cell) cell.innerHTML = applyKeydownFormatting(result);
             } else {
                 if (cell) cell.innerHTML = applyKeydownFormatting(val);
@@ -393,41 +395,12 @@ function evaluateFormulas() {
 }
 
 function computeFormula(formula) {
-    try {
-        let cleanFormula = formula.substring(1).toUpperCase();
-        if (cleanFormula.startsWith("SUM(") || cleanFormula.startsWith("AVG(")) {
-            let isAvg = cleanFormula.startsWith("AVG(");
-            let range = cleanFormula.substring(4, cleanFormula.indexOf(")"));
-            let parts = range.split(":");
-            if (parts.length === 2) {
-                let values = getRangeValues(parts[0].trim(), parts[1].trim());
-                let sum = values.reduce((a, b) => a + b, 0);
-                if (isAvg) return values.length > 0 ? sum / values.length : 0;
-                return sum;
-            }
-        }
-        return "ERROR";
-    } catch (e) {
-        return "ERROR";
-    }
+    // Live engine (see formula_engine.js + scripts/engines/imbuer.mjs)!
+    return FormulaEngine.computeFormula(formula, cellData);
 }
 
 function getRangeValues(startCell, endCell) {
-    let colStart = startCell.charCodeAt(0) - 65;
-    let rowStart = parseInt(startCell.substring(1));
-    let colEnd = endCell.charCodeAt(0) - 65;
-    let rowEnd = parseInt(endCell.substring(1));
-
-    let values = [];
-    for (let r = rowStart; r <= rowEnd; r++) {
-        for (let c = colStart; c <= colEnd; c++) {
-            let cid = `${getColumnName(c)}${r}`;
-            let raw = cellData[cid] || "0";
-            let num = parseFloat(raw);
-            if (!isNaN(num)) values.push(num);
-        }
-    }
-    return values;
+    return FormulaEngine.getRangeValues(cellData, startCell, endCell);
 }
 
 function cycleChartColumn(direction) {
@@ -459,13 +432,14 @@ function renderChartForColumn(colIdx) {
     const colLetter = getColumnName(colIdx);
     const values = [];
     let maxVal = 0;
+    const resolved = FormulaEngine.evaluateSheet(cellData);
 
     for (let r = 1; r <= numRows; r++) {
         let cid = `${colLetter}${r}`;
         let rawVal = cellData[cid] || "";
         
         if (rawVal.startsWith("=")) {
-            rawVal = computeFormula(rawVal);
+            rawVal = resolved[cid] !== undefined ? resolved[cid] : "ERROR";
         }
         
         let num = parseFloat(rawVal);

@@ -1,1 +1,1 @@
-{"generator":"julia-build","column_A_stats":{"mean":30.0,"min":10.0,"sum":150.0,"max":60.0,"count":5.0},"evaluated":{"A1":"10","A4":60.0,"B3":5,"A2":"20","A3":"30","B1":10.0,"B2":30.0,"A5":30.0}}
+{"generator":"js-build","column_A_stats":{"mean":30,"min":10,"sum":150,"max":60,"count":5},"evaluated":{"A1":"10","A4":60,"B3":5,"A2":"20","A3":"30","B1":10,"B2":30,"A5":30}}
