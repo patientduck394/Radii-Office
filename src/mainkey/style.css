@@ -218,3 +218,41 @@ html, body {
 
 .modal-actions { display: flex; gap: 8px; margin-top: 10px; }
 .cancel-btn { border-color: #ef4444; color: #fca5a5; }
+
+.sortable-th { cursor: pointer; user-select: none; white-space: nowrap; }
+.sortable-th:hover { filter: brightness(1.1); text-decoration: underline; }
+
+.stats-bar {
+    background: rgba(0, 0, 0, 0.35);
+    border: 1px solid rgba(163, 5, 255, 0.5);
+    border-radius: 8px;
+    color: #e9d5ff;
+    font-size: 11px;
+    padding: 8px 12px;
+}
+
+.row-actions { white-space: nowrap; }
+.card-actions { display: flex; gap: 8px; margin-top: 4px; }
+.card-actions button {
+    flex: 1;
+    background: rgba(163, 5, 255, 0.1);
+    border: 1px solid rgba(163, 5, 255, 0.4);
+    border-radius: 6px;
+    font-size: 11px;
+    padding: 4px 6px;
+    cursor: pointer;
+}
+.card-actions button:hover { background: rgba(163, 5, 255, 0.25); }
+
+.fields-list { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow: auto; }
+.field-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(163, 5, 255, 0.35);
+    border-radius: 6px;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+.field-row button { background: none; border: none; cursor: pointer; }

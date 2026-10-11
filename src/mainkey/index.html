@@ -30,8 +30,10 @@
 
             <span class="section-label">File Operations</span>
             <button class="action-btn" onclick="exportKB()">💾 Export .KB</button>
+            <button class="action-btn" onclick="exportCSV()">📊 Export .CSV</button>
             <button class="action-btn" onclick="document.getElementById('file-kb').click()">📂 Import .KB</button>
             <button class="action-btn" onclick="clearDatabase()" style="border-color:#ef4444; color:#fca5a5;">🗑️ Clear Base</button>
+            <button class="action-btn" onclick="resetDemo()">↩️ Reset Demo</button>
             
             <input type="file" id="file-kb" style="display:none" accept=".kb,.yaml,.yml" onchange="importKB(event)">
         </div>
@@ -61,6 +63,7 @@
                     <div class="cards-grid" id="cards-container"></div>
                 </div>
             </div>
+            <div id="stats-bar" class="stats-bar">Loading stats!</div>
         </div>
     </main>
 
@@ -92,6 +95,10 @@
                         <option value="number">Number</option>
                         <option value="tag">Status Tag</option>
                     </select>
+                </div>
+                <div class="control-group">
+                    <label>Existing Fields (click 🗑️ to delete!)</label>
+                    <div id="existing-fields" class="fields-list"></div>
                 </div>
             </div>
             <div class="modal-actions">
