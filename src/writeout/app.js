@@ -6043,7 +6043,8 @@ function fmtExitRemoveSelectedStyles() {
     if (!selection.rangeCount || selection.isCollapsed) return false;
     const range = selection.getRangeAt(0);
     if (!canvas.contains(range.commonAncestorContainer)) return false;
-    const SEL = 'span[class],b,strong,i,em,u,s,strike,code,font,a';
+    // NOTE: span[style] covers class-less weight/size spans too!
+    const SEL = 'span[class],span[style],b,strong,i,em,u,s,strike,code,font,a';
     const nodeEl = function (n) {
         if (!n) return null;
         return (n.nodeType === Node.TEXT_NODE) ? n.parentElement : n;
@@ -6101,8 +6102,10 @@ function fmtExitFormattingNow() {
     if (n.nodeType === 1 && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(n.tagName)) return false;
     if (n.parentElement && n.parentElement.closest && n.parentElement.closest('input,textarea,select,button')) return false;
     const el = (n.nodeType === Node.TEXT_NODE) ? n.parentElement : n;
+    // NOTE: span[style] covers class-less weight/size spans (font-weight dropdown,
+    // font-size input) that span[class] alone can never match!
     const styled = (el && el.closest && el !== canvas)
-        ? el.closest('span[class],b,strong,i,em,u,s,strike,code,font,a')
+        ? el.closest('span[class],span[style],b,strong,i,em,u,s,strike,code,font,a')
         : null;
     if (!styled || styled === canvas || !canvas.contains(styled)) return false;
     playAeroClickSound(450, 0.08);
@@ -6137,7 +6140,11 @@ function fmtExitFormatting(e) {
             return p && p.style.display !== 'none';
         });
     if (popOpen) return false;
-    return fmtExitFormattingNow();
+    try {
+        return fmtExitFormattingNow();
+    } catch (e) {
+        return false;
+    }
 }
 
 // --- BASIC INLINE STYLES (sidebar B/I/U/S!): selection wraps, collapsed caret
@@ -6340,10 +6347,39 @@ function fmtWireExitAndBasic() {
             if (!pair[1]) {
                 const pop = document.getElementById('hl-popup');
                 if (pop) pop.hidden = true;
-                fmtExitFormattingNow();
+                // Sound + guarded call: a silent no-op here is exactly the
+                // "click heard, nothing happens" symptom, so never fail quiet!
+                playAeroClickSound(450, 0.08);
+                try {
+                    fmtExitFormattingNow();
+                } catch (e) {
+                    try {
+                        if (typeof document.execCommand === 'function') {
+                            canvas.focus();
+                            document.execCommand('removeFormat', false, null);
+                        }
+                    } catch (ignore) {}
+                }
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
             } else {
                 playAeroClickSound(600, 0.08);
-                fmtApplyBasicStyle(pair[1]);
+                let done = false;
+                try {
+                    done = fmtApplyBasicStyle(pair[1]);
+                } catch (e) { done = false; }
+                if (!done) {
+                    // Helper bailed: fall back to execCommand rather than nothing!
+                    try {
+                        if (typeof document.execCommand === 'function') {
+                            document.execCommand(
+                                pair[1] === 'b' ? 'bold'
+                                : pair[1] === 'i' ? 'italic'
+                                : pair[1] === 'u' ? 'underline' : 'strikeThrough',
+                                false, null);
+                        }
+                    } catch (e) {}
+                }
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
             }
         });
     });
