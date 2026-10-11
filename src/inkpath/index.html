@@ -93,6 +93,8 @@
                 <div class="ops-wrap">
                     <button id="edit-btn" class="action-btn" onclick="toggleEditPopup(event)">Edit ▾</button>
                     <div id="edit-popup" class="ops-popup" style="display:none;">
+                        <button class="action-btn ops-item" onclick="undo(); closeEditPopup();" data-tooltip="Undo last change">Undo <span class="ops-kbd">⌘Z</span></button>
+                        <button class="action-btn ops-item" onclick="redo(); closeEditPopup();" data-tooltip="Redo last change">Redo <span class="ops-kbd">⇧⌘Z</span></button>
                         <button class="action-btn ops-item" onclick="duplicateSelected(); closeEditPopup();" data-tooltip="Duplicate selection in place">Duplicate <span class="ops-kbd">⌘D</span></button>
                         <button class="action-btn ops-item" onclick="deleteSelectedObject(); closeEditPopup();" data-tooltip="Delete selection">Delete <span class="ops-kbd">⌫</span></button>
                     </div>
@@ -113,7 +115,31 @@
                         <button class="action-btn ops-item" onclick="convertToPathMenu()" data-tooltip="Turn shapes into editable paths">Convert to Path <span class="ops-kbd">⇧⌘P</span></button>
                     </div>
                 </div>
+                <div class="ops-wrap">
+                    <button id="fx-btn" class="action-btn" onclick="toggleFxWindow(event)">Filters</button>
+                </div>
                 <span class="toolbar-hint">Full 16-Tool Vector Suite Active!</span>
+            </div>
+
+            <div class="tool-settings-bar" id="tool-settings-bar" style="display:none;">
+                <span class="toolbar-label">TOOL:</span>
+                <div id="bezier-mode-seg" class="segmented-control bez-modes" role="group" aria-label="Bezier pen mode" style="display:none;">
+                    <button id="bezmode-bezier" class="seg-btn active" onclick="switchBezierMode('bezier')" data-tooltip="Classic pen: click for corners, drag for smooth symmetric curves">Bezier</button>
+                    <button id="bezmode-spiro" class="seg-btn" onclick="switchBezierMode('spiro')" data-tooltip="Spiro: smooth flowing curve through every point">Spiro</button>
+                    <button id="bezmode-bspline" class="seg-btn" onclick="switchBezierMode('bspline')" data-tooltip="B-Spline: soft curve guided by your points">Spline</button>
+                    <button id="bezmode-straight" class="seg-btn" onclick="switchBezierMode('straight')" data-tooltip="Straight segments only">Lines</button>
+                    <button id="bezmode-paraxial" class="seg-btn" onclick="switchBezierMode('paraxial')" data-tooltip="Axis-locked horizontal / vertical segments">Parax</button>
+                </div>
+                <div id="poly-settings" class="toolbar-settings" style="display:none;">
+                    <label class="tool-opt">Sides <input type="number" id="tool-poly-sides" min="3" max="24" step="1" value="5" oninput="setPolySides(this.value)"></label>
+                    <label class="tool-opt">Spokes <input type="range" id="tool-poly-ratio" min="20" max="100" step="1" value="50" oninput="setPolyRatio(this.value)"></label>
+                    <label class="tool-opt" id="lbl-poly-round">Round <input type="range" class="prop-slider" id="tool-poly-round" min="0" max="100" step="1" value="0" oninput="setPolyRound(this.value)"></label>
+                    <svg id="poly-preview" class="poly-preview" width="46" height="30" viewBox="0 0 46 30"></svg>
+                    <div class="segmented-control mini-seg" role="group" aria-label="Polygon shape">
+                        <button id="polyvar-poly" class="seg-btn active" onclick="setPolyVariant('poly')" data-tooltip="Polygon / star">Poly</button>
+                        <button id="polyvar-squircle" class="seg-btn" onclick="setPolyVariant('squircle')" data-tooltip="Squircle">Sqrcl</button>
+                    </div>
+                </div>
             </div>
 
             <div class="canvas-frame">
@@ -170,7 +196,7 @@
                     <span class="section-label">Effects &amp; Transforms</span>
                     <div class="control-group">
                         <label>Opacity (<span id="val-opacity">100</span>%)</label>
-                        <input type="range" id="insp-opacity" min="0" max="1" step="0.05" value="1" oninput="updateSelectedObject()">
+                        <input type="range" class="prop-slider" id="insp-opacity" min="0" max="1" step="0.05" value="1" oninput="updateSelectedObject()">
                     </div>
                     <div class="control-group">
                         <label>Blur (<span id="val-blur">0</span>px)</label>
@@ -275,7 +301,10 @@
 
                     <div class="control-group" id="grp-fill-angle" style="display:none;">
                         <label>Angle (<span id="val-fill-angle">0</span>°)</label>
-                        <input type="range" id="insp-fill-angle" min="0" max="360" step="1" value="0" oninput="updateGradientAngle('fill')">
+                        <div class="angle-row">
+                            <input type="range" class="prop-slider" id="insp-fill-angle" min="0" max="360" step="1" value="0" oninput="updateGradientAngle('fill')">
+                            <button class="mini-icon-btn" onclick="rotateGradientAngle('fill')" data-tooltip="Rotate 90°" aria-label="Rotate fill gradient 90 degrees"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M20 12a8 8 0 1 1-2.3-5.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 3v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        </div>
                     </div>
                     </div>
 
@@ -365,7 +394,10 @@
 
                     <div class="control-group" id="grp-stroke-angle" style="display:none;">
                         <label>Angle (<span id="val-stroke-angle">0</span>°)</label>
-                        <input type="range" id="insp-stroke-angle" min="0" max="360" step="1" value="0" oninput="updateGradientAngle('stroke')">
+                        <div class="angle-row">
+                            <input type="range" id="insp-stroke-angle" class="prop-slider" min="0" max="360" step="1" value="0" oninput="updateGradientAngle('stroke')">
+                            <button class="mini-icon-btn" onclick="rotateGradientAngle('stroke')" data-tooltip="Rotate 90°" aria-label="Rotate stroke gradient 90 degrees"><svg viewBox="0 0 24 24" width="18" height="18"><path d="M20 12a8 8 0 1 1-2.3-5.6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M20 3v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+                        </div>
                     </div>
 
                     <div class="control-group" id="grp-stroke-width">
@@ -386,6 +418,63 @@
             </div>
         </aside>
     </main>
+
+    <div id="fx-window" class="fx-window" style="display:none;">
+        <div id="fx-head" class="fx-head">
+            <span>Filters Studio</span>
+            <button class="fx-close" onclick="closeFxWindow()" aria-label="Close">✕</button>
+        </div>
+        <div class="segmented-control" role="group" aria-label="Effect type">
+            <button id="fx-type-drop" class="seg-btn active" onclick="switchFxType('drop')" data-tooltip="Soft outer shadow">Drop</button>
+            <button id="fx-type-inner" class="seg-btn" onclick="switchFxType('inner')" data-tooltip="Shadow inside the edges">Inner</button>
+        </div>
+        <svg id="fx-preview" width="100%" height="110" viewBox="0 0 220 110">
+            <defs id="fx-preview-defs"></defs>
+        </svg>
+        <button id="fx-bg-btn" class="popup-pick-btn" onclick="cycleFxPreviewBg(event)">Background: Dark</button>
+        <div class="popup-row">
+            <label>X offset (<span id="val-fx-dx">6</span>px)</label>
+            <input type="range" id="fx-dx" min="-30" max="30" step="1" value="6" oninput="updateFxFromUI()">
+        </div>
+        <div class="popup-row">
+            <label>Y offset (<span id="val-fx-dy">6</span>px)</label>
+            <input type="range" id="fx-dy" min="-30" max="30" step="1" value="6" oninput="updateFxFromUI()">
+        </div>
+        <div class="popup-row">
+            <label>Blur (<span id="val-fx-blur">8</span>px)</label>
+            <input type="range" id="fx-blur" min="0" max="30" step="1" value="8" oninput="updateFxFromUI()">
+        </div>
+        <div id="grp-fx-color" style="position:relative;">
+            <button id="fx-swatch" class="color-swatch" onclick="toggleFxPopup(event)" title="Pick effect color">--</button>
+            <div id="fx-popup" class="color-popup" style="display:none;">
+                <div class="popup-row">
+                    <label>H <span id="val-fx-h">0</span>°</label>
+                    <input type="range" id="insp-fx-h" min="0" max="360" step="1" value="0" oninput="updateFxFromHSVA()">
+                </div>
+                <div class="popup-row">
+                    <label>S <span id="val-fx-s">0</span>%</label>
+                    <input type="range" id="insp-fx-s" min="0" max="100" step="1" value="0" oninput="updateFxFromHSVA()">
+                </div>
+                <div class="popup-row">
+                    <label>V <span id="val-fx-v">100</span>%</label>
+                    <input type="range" id="insp-fx-v" min="0" max="100" step="1" value="100" oninput="updateFxFromHSVA()">
+                </div>
+                <div class="popup-row">
+                    <label>A <span id="val-fx-a">100</span>%</label>
+                    <input type="range" id="insp-fx-a" min="0" max="100" step="1" value="100" oninput="updateFxFromHSVA()">
+                </div>
+                <div class="popup-preview-row">
+                    <span id="fx-color-preview" class="popup-preview"></span>
+                    <input id="fx-color" class="popup-hex-input" value="#000000cc" spellcheck="false" autocomplete="off" maxlength="9" onchange="setFxColorFromHex()">
+                </div>
+                <button class="popup-pick-btn" onclick="pickFxFromCanvas(event)">Pick from canvas</button>
+            </div>
+        </div>
+        <div class="fx-actions">
+            <button class="action-btn" onclick="applyFxToSelection()" data-tooltip="Apply to all selected shapes">Apply</button>
+            <button class="action-btn" onclick="clearFxFromSelection()" data-tooltip="Remove this effect from selection">Clear</button>
+        </div>
+    </div>
 
     <div id="aero-tooltip" class="aero-glass-tooltip" role="tooltip"></div>
     <script src="app.js"></script>

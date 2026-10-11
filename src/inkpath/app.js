@@ -15,6 +15,22 @@ let pencilPoints = [];
 let startPoint = { x: 0, y: 0 };
 let currentDragPos = { x: 0, y: 0 };
 let dragTarget = null;
+// Pending node-handle press (bezier tool): a press-and-release on the FIRST
+// node without dragging finishes the path closed instead of moving the node.
+let nodePress = null;
+
+// Bezier pen: click = corner node, drag = symmetric smooth handles.
+let bezierMode = 'bezier';
+let isBezierPlacing = false;
+let bezierDownPos = { x: 0, y: 0 };
+let bezierActive = null;
+let previewAngleSnap = false;
+
+// Polygon tool settings.
+let polySides = 5;
+let polyRatio = 0.5;
+let polyRound = 0;
+let polyVariant = 'poly';
 
 // Global Active Palette State
 let activePrimaryColor = '#A305FF';
@@ -32,6 +48,292 @@ let stopDrag = null;
 // follow-up click onto the track itself (adding a phantom stop).
 // Marker interactions set this timestamp; track clicks ignore clicks before it.
 let suppressTrackClickUntil = 0;
+
+// Undo/redo history (snapshots of objects; selection is reset on travel).
+let undoStack = [];
+let redoStack = [];
+let lastPush = 0;
+const HISTORY_LIMIT = 60;
+const HISTORY_COALESCE_MS = 1000;
+// Set once a continuous gesture (move/scale/node-drag) first mutates.
+let gestureDirty = false;
+
+function pushHistory(force) {
+    const now = Date.now();
+    if (!force && now - lastPush < HISTORY_COALESCE_MS) return;
+    lastPush = now;
+    undoStack.push(JSON.stringify(objects));
+    if (undoStack.length > HISTORY_LIMIT) undoStack.shift();
+    redoStack.length = 0;
+}
+
+function undo() {
+    if (undoStack.length === 0) { playUISound('delete'); return; }
+    redoStack.push(JSON.stringify(objects));
+    objects = JSON.parse(undoStack.pop());
+    selectedIndices = [];
+    fillStopSel = {}; strokeStopSel = {};
+    colorPickMode = null; svg.style.cursor = '';
+    playUISound('click');
+    render();
+}
+
+function redo() {
+    if (redoStack.length === 0) { playUISound('delete'); return; }
+    undoStack.push(JSON.stringify(objects));
+    objects = JSON.parse(redoStack.pop());
+    selectedIndices = [];
+    fillStopSel = {}; strokeStopSel = {};
+    colorPickMode = null; svg.style.cursor = '';
+    playUISound('click');
+    render();
+}
+
+// ---- Filters studio (drop shadow + inner shadow) ----
+let fxEdit = {
+    type: 'drop',
+    drop: { dx: 6, dy: 6, blur: 8, color: '#000000cc' },
+    inner: { dx: 0, dy: 4, blur: 6, color: '#000000cc' }
+};
+let fxDrag = null;
+let fxPreviewBg = 0;
+const FX_BG_MODES = [
+    { name: 'Dark', css: 'rgba(0, 0, 0, 0.4)' },
+    { name: 'Light', css: '#f5f0fa' },
+    { name: 'Checker', css: 'repeating-conic-gradient(#888 0% 25%, #ccc 0% 50%) 0 0 / 14px 14px' }
+];
+
+function fxCurrent() { return fxEdit[fxEdit.type] || fxEdit.drop; }
+
+function switchFxType(type) {
+    fxEdit.type = (type === 'inner') ? 'inner' : 'drop';
+    playUISound('click');
+    syncFxEditor();
+}
+
+function syncFxEditor() {
+    const cur = fxCurrent();
+    const td = document.getElementById('fx-type-drop'), ti = document.getElementById('fx-type-inner');
+    if (td) td.classList.toggle('active', fxEdit.type !== 'inner');
+    if (ti) ti.classList.toggle('active', fxEdit.type === 'inner');
+    const set = (id, v) => { const el = document.getElementById(id); if (el && document.activeElement !== el) el.value = v; };
+    set('fx-dx', cur.dx); set('fx-dy', cur.dy); set('fx-blur', cur.blur);
+    const hex = document.getElementById('fx-color');
+    if (hex && document.activeElement !== hex) { hex.value = cur.color; hex.placeholder = ''; }
+    const vd = document.getElementById('val-fx-dx'); if (vd) vd.innerText = cur.dx;
+    const vy = document.getElementById('val-fx-dy'); if (vy) vy.innerText = cur.dy;
+    const vb = document.getElementById('val-fx-blur'); if (vb) vb.innerText = cur.blur;
+    syncFxColorUI();
+    paintFxSliders();
+    paintFxPreview();
+}
+
+function updateFxFromUI() {
+    const cur = fxCurrent();
+    const num = (id, lo, hi, fb) => {
+        const el = document.getElementById(id);
+        const v = el ? parseFloat(el.value) : NaN;
+        return isNaN(v) ? fb : clampNum(Math.round(v), lo, hi);
+    };
+    cur.dx = num('fx-dx', -30, 30, cur.dx);
+    cur.dy = num('fx-dy', -30, 30, cur.dy);
+    cur.blur = num('fx-blur', 0, 30, cur.blur);
+    const vd = document.getElementById('val-fx-dx'); if (vd) vd.innerText = cur.dx;
+    const vy = document.getElementById('val-fx-dy'); if (vy) vy.innerText = cur.dy;
+    const vb = document.getElementById('val-fx-blur'); if (vb) vb.innerText = cur.blur;
+    paintFxSliders();
+    paintFxPreview();
+}
+
+function setFxColorFromHex() {
+    const hexEl = document.getElementById('fx-color');
+    if (!hexEl) return;
+    const hex8 = toHex8String(hexEl.value, '#000000cc');
+    if (!hex8) { playUISound('delete'); syncFxEditor(); return; }
+    fxCurrent().color = hex8;
+    playUISound('snap');
+    syncFxEditor();
+    const popup = document.getElementById('fx-popup');
+    if (popup) popup.style.display = 'flex';
+}
+
+function updateFxFromHSVA() {
+    const h = parseFloat(document.getElementById('insp-fx-h').value) || 0;
+    const s = parseFloat(document.getElementById('insp-fx-s').value) || 0;
+    const v = parseFloat(document.getElementById('insp-fx-v').value) || 0;
+    const a = parseFloat(document.getElementById('insp-fx-a').value);
+    const aSafe = isNaN(a) ? 100 : a;
+    const colorStr = hsvaToStrokeString(h, s, v, aSafe);
+    fxCurrent().color = colorStr;
+    const sw = document.getElementById('fx-swatch');
+    if (sw) { sw.style.background = colorStr; sw.textContent = colorStr; }
+    const preview = document.getElementById('fx-color-preview');
+    if (preview) preview.style.background = colorStr;
+    const hexEl = document.getElementById('fx-color');
+    if (hexEl && document.activeElement !== hexEl) { hexEl.value = colorStr; hexEl.placeholder = ''; }
+    const vh = document.getElementById('val-fx-h'); if (vh) vh.innerText = Math.round(h);
+    const vs = document.getElementById('val-fx-s'); if (vs) vs.innerText = Math.round(s);
+    const vv = document.getElementById('val-fx-v'); if (vv) vv.innerText = Math.round(v);
+    const va = document.getElementById('val-fx-a'); if (va) va.innerText = Math.round(aSafe);
+    updateColorSliderGradients('fx', h, s, v);
+    paintFxSliders();
+    paintFxPreview();
+    const popup = document.getElementById('fx-popup');
+    if (popup) popup.style.display = 'flex';
+}
+
+function syncFxColorUI() {
+    const cur = fxCurrent();
+    const hEl = document.getElementById('insp-fx-h');
+    const sEl = document.getElementById('insp-fx-s');
+    const vEl = document.getElementById('insp-fx-v');
+    const aEl = document.getElementById('insp-fx-a');
+    if (!hEl || !sEl || !vEl || !aEl) return;
+    const activeId = document.activeElement && document.activeElement.id;
+    const editing = activeId === 'insp-fx-h' || activeId === 'insp-fx-s' || activeId === 'insp-fx-v' || activeId === 'insp-fx-a' || activeId === 'fx-color';
+    const { r, g, b, a } = parseColorToRgba(cur.color || '#000000cc');
+    const { h, s, v } = rgbToHsv(r, g, b);
+    const aPct = Math.round(clampNum(a ?? 1, 0, 1) * 100);
+    if (!editing) {
+        hEl.value = Math.round(h); sEl.value = Math.round(s * 100); vEl.value = Math.round(v * 100); aEl.value = aPct;
+    }
+    const colorStr = toHex8String(cur.color || '#000000cc', '#000000cc') || '#000000cc';
+    const sw = document.getElementById('fx-swatch');
+    if (sw) { sw.style.background = colorStr; sw.textContent = colorStr; }
+    const preview = document.getElementById('fx-color-preview');
+    if (preview) preview.style.background = colorStr;
+    const hexEl = document.getElementById('fx-color');
+    if (hexEl && document.activeElement !== hexEl) { hexEl.value = colorStr; hexEl.placeholder = ''; }
+    const vh = document.getElementById('val-fx-h'); if (vh) vh.innerText = Math.round(h);
+    const vs = document.getElementById('val-fx-s'); if (vs) vs.innerText = Math.round(s * 100);
+    const vv = document.getElementById('val-fx-v'); if (vv) vv.innerText = Math.round(v * 100);
+    const va = document.getElementById('val-fx-a'); if (va) va.innerText = aPct;
+    updateColorSliderGradients('fx', h, s * 100, v * 100);
+}
+
+function toggleFxPopup(evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    playUISound('click');
+    const popup = document.getElementById('fx-popup');
+    if (!popup) return;
+    const willShow = popup.style.display === 'none' || popup.style.display === '';
+    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+    if (willShow) { syncFxColorUI(); popup.style.display = 'flex'; }
+}
+
+async function pickFxFromCanvas(evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    if (window.EyeDropper) {
+        try {
+            const eye = new window.EyeDropper();
+            const res = await eye.open();
+            const hex8 = toHex8String(res && res.sRGBHex ? res.sRGBHex : '', '#ffffffff');
+            if (hex8) {
+                fxCurrent().color = hex8;
+                playUISound('snap');
+                syncFxEditor();
+            }
+            const popup = document.getElementById('fx-popup');
+            if (popup) popup.style.display = 'flex';
+            return;
+        } catch (e) { /* fall through to canvas mode */ }
+    }
+    colorPickMode = { prefix: 'fx', prop: '__fx__' };
+    playUISound('click');
+    document.querySelectorAll('.popup-pick-btn').forEach(b => b.classList.remove('armed'));
+    const popup = document.getElementById('fx-popup');
+    const btn = popup ? popup.querySelector('.popup-pick-btn') : null;
+    if (btn) btn.classList.add('armed');
+    svg.style.cursor = 'crosshair';
+}
+
+function paintFxSliders() {
+    const cur = fxCurrent();
+    const dxEl = document.getElementById('fx-dx'), dyEl = document.getElementById('fx-dy'), bEl = document.getElementById('fx-blur');
+    if (dxEl) dxEl.style.background = 'linear-gradient(to right, #38bdf8, #0f020c 50%, #FF60C5)';
+    if (dyEl) dyEl.style.background = 'linear-gradient(to right, #38bdf8, #0f020c 50%, #FF60C5)';
+    if (bEl) {
+        const c = stopStyle(cur.color, '#000000cc');
+        bEl.style.background = `linear-gradient(to right, rgba(255,255,255,0.05), ${c.color})`;
+    }
+    const sw = document.getElementById('fx-swatch');
+    if (sw) { sw.style.background = cur.color; sw.textContent = cur.color; }
+}
+
+function paintFxPreview() {
+    const svgEl = document.getElementById('fx-preview');
+    const defsEl = document.getElementById('fx-preview-defs');
+    if (!svgEl || !defsEl) return;
+    svgEl.style.background = FX_BG_MODES[fxPreviewBg % FX_BG_MODES.length].css;
+    const bgBtn = document.getElementById('fx-bg-btn');
+    if (bgBtn) bgBtn.textContent = 'Background: ' + FX_BG_MODES[fxPreviewBg % FX_BG_MODES.length].name;
+    defsEl.innerHTML = '';
+    const fx = {};
+    fx[fxEdit.type] = { ...fxCurrent() };
+    const url = buildFxFilterInto(defsEl, 'fxprev', 0, fx);
+    let shape = svgEl.querySelector('.fx-sample');
+    if (!shape) {
+        shape = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+        shape.setAttribute('class', 'fx-sample');
+        shape.setAttribute('x', 70); shape.setAttribute('y', 25);
+        shape.setAttribute('width', 80); shape.setAttribute('height', 60);
+        shape.setAttribute('rx', 10);
+        shape.setAttribute('fill', '#A305FF');
+        svgEl.appendChild(shape);
+    }
+    if (url) shape.setAttribute('filter', url);
+    else shape.removeAttribute('filter');
+}
+
+function toggleFxWindow(evt) {
+    if (evt) { evt.stopPropagation(); evt.preventDefault(); }
+    playUISound('click');
+    const w = document.getElementById('fx-window');
+    if (!w) return;
+    const willShow = w.style.display === 'none' || w.style.display === '';
+    if (willShow) { w.style.display = 'flex'; syncFxEditor(); }
+    else w.style.display = 'none';
+}
+
+function closeFxWindow() {
+    const w = document.getElementById('fx-window');
+    if (w) w.style.display = 'none';
+}
+
+function cycleFxPreviewBg(evt) {
+    if (evt) evt.stopPropagation();
+    fxPreviewBg = (fxPreviewBg + 1) % FX_BG_MODES.length;
+    playUISound('click');
+    paintFxPreview();
+}
+
+function applyFxToSelection() {
+    if (selectedIndices.length === 0) { playUISound('delete'); return; }
+    pushHistory(true);
+    const src = fxCurrent();
+    selectedIndices.forEach(idx => {
+        const o = objects[idx]; if (!o) return;
+        o.effects = o.effects || {};
+        o.effects[fxEdit.type] = { dx: src.dx, dy: src.dy, blur: src.blur, color: src.color };
+    });
+    playUISound('snap');
+    render();
+}
+
+function clearFxFromSelection() {
+    if (selectedIndices.length === 0) { playUISound('delete'); return; }
+    pushHistory(true);
+    selectedIndices.forEach(idx => {
+        const o = objects[idx]; if (!o || !o.effects) return;
+        delete o.effects[fxEdit.type];
+        if (Object.keys(o.effects).length === 0) delete o.effects;
+    });
+    playUISound('delete');
+    render();
+}
 
 // Canvas Zoom & Pan
 let zoomLevel = 1;
@@ -93,6 +395,7 @@ function setTool(tool) {
 }
 
 function clearCanvas() {
+    pushHistory(true);
     playUISound('delete');
     objects = []; selectedIndices = []; activePathNodes = []; render();
 }
@@ -131,7 +434,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener("click", (e) => {
-        ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup'].forEach(id => {
+        ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'fx-popup'].forEach(id => {
             const popup = document.getElementById(id);
             if (!popup || popup.style.display === 'none' || popup.style.display === '') return;
             if (popup.contains(e.target)) return;
@@ -177,6 +480,33 @@ window.addEventListener('DOMContentLoaded', () => {
     });
     document.addEventListener("click", () => { if (aeroTooltip) aeroTooltip.classList.remove("show"); }, true);
 
+    const fxHead = document.getElementById("fx-head");
+    if (fxHead) {
+        fxHead.addEventListener("pointerdown", (e) => {
+            const w = document.getElementById("fx-window");
+            if (!w || e.button === 2) return;
+            if (e.target && e.target.closest && e.target.closest("button")) return;
+            e.preventDefault();
+            fxDrag = { x: e.clientX - w.offsetLeft, y: e.clientY - w.offsetTop };
+            try { fxHead.setPointerCapture(e.pointerId); } catch (err) {}
+            const onMove = (ev) => {
+                if (!fxDrag) return;
+                w.style.left = Math.max(0, ev.clientX - fxDrag.x) + "px";
+                w.style.top = Math.max(0, ev.clientY - fxDrag.y) + "px";
+                w.style.right = "auto";
+            };
+            const onUp = () => {
+                fxHead.removeEventListener("pointermove", onMove);
+                fxHead.removeEventListener("pointerup", onUp);
+                fxHead.removeEventListener("pointercancel", onUp);
+                fxDrag = null;
+            };
+            fxHead.addEventListener("pointermove", onMove);
+            fxHead.addEventListener("pointerup", onUp);
+            fxHead.addEventListener("pointercancel", onUp);
+        });
+    }
+
     document.addEventListener("click", (e) => {
         [['ops-popup', 'ops-btn'], ['edit-popup', 'edit-btn']].forEach(([popId, btnId]) => {
             const pop = document.getElementById(popId);
@@ -191,7 +521,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             closeOpsPopup();
             closeEditPopup();
-            ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup'].forEach(id => {
+            ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'fx-popup'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
@@ -212,8 +542,27 @@ window.addEventListener('DOMContentLoaded', () => {
             if (selectedIndices.length > 0) deleteSelectedObject();
             return;
         }
+        if (kd === 'enter' && !isTextEdit) {
+            if (currentTool === 'bezier' && activePathNodes.length >= 2) finalizeBezierPath();
+            else if (currentTool === 'bezier' && activePathNodes.length > 0) { playUISound('delete'); return; }
+            selectedIndices = [];
+            if (currentTool !== 'select') setTool('select');
+            else render();
+            return;
+        }
+        const nudge = { arrowup: [0, -1], arrowdown: [0, 1], arrowleft: [-1, 0], arrowright: [1, 0] }[kd];
+        if (nudge && !isTextEdit && selectedIndices.length > 0) {
+            e.preventDefault();
+            const amt = e.shiftKey ? 10 : 1;
+            pushHistory(false);
+            selectedIndices.forEach(idx => moveObject(objects[idx], nudge[0] * amt, nudge[1] * amt));
+            render();
+            return;
+        }
         if (isTextEdit) return;
         if (!(e.metaKey || e.ctrlKey)) return;
+        if (kd === 'z' && !e.shiftKey) { e.preventDefault(); undo(); return; }
+        if ((kd === 'z' && e.shiftKey) || kd === 'y') { e.preventDefault(); redo(); return; }
         if (kd === 'd' && !e.shiftKey) { e.preventDefault(); duplicateSelected(); return; }
         // Union = Cmd/Ctrl + "+" (aka Cmd/Ctrl + Shift + "=") ; Subtract = Cmd/Ctrl + "-"
         if (e.key === '+' || e.key === '=') { e.preventDefault(); doBooleanOp('union'); return; }
@@ -271,6 +620,8 @@ function applyTransform() {
 function handleCanvasMouseDown(evt) {
     if (colorPickMode) { sampleColorFromCanvas(evt); if (evt.stopPropagation) evt.stopPropagation(); return; }
     if (evt.button === 2) return; // Ignore right clicks for drawing
+    gestureDirty = false;
+    nodePress = null;
     const pt = getMousePos(evt);
     startPoint = pt; currentDragPos = pt;
 
@@ -316,19 +667,34 @@ function handleCanvasMouseDown(evt) {
         }
     } else if (currentTool === 'bezier') {
         const selNodes = selectedPathNodes();
-        if (selNodes) {
-            selNodes.push({ x: pt.x, y: pt.y, cx1: pt.x - 30, cy1: pt.y, cx2: pt.x + 30, cy2: pt.y });
+        const target = (selNodes && selNodes.length > 0) ? selNodes : activePathNodes;
+        const first = (target.length >= 3) ? target[0] : null;
+        if (first && Math.hypot(pt.x - first.x, pt.y - first.y) < 10 / zoomLevel) {
+            // Clicked the start point: finish CLOSED.
+            finishPathClosed(target);
         } else {
-            activePathNodes.push({ x: pt.x, y: pt.y, cx1: pt.x - 30, cy1: pt.y, cx2: pt.x + 30, cy2: pt.y });
+            const base = target.length > 0 ? target[target.length - 1] : null;
+            let ptx = pt.x, pty = pt.y;
+            if (bezierMode === 'paraxial' && base) {
+                if (Math.abs(ptx - base.x) > Math.abs(pty - base.y)) pty = base.y; else ptx = base.x;
+            } else if (base && angleSnapOn(evt)) {
+                const sn = snapAngle15(ptx, pty, base.x, base.y);
+                ptx = sn[0]; pty = sn[1];
+            }
+            const node = { x: ptx, y: pty, cx1: ptx, cy1: pty, cx2: ptx, cy2: pty };
+            if (selNodes) { selNodes.push(node); bezierActive = { nodes: selNodes, index: selNodes.length - 1 }; }
+            else { activePathNodes.push(node); bezierActive = { nodes: activePathNodes, index: activePathNodes.length - 1 }; }
+            isBezierPlacing = true; bezierDownPos = { x: pt.x, y: pt.y };
+            playUISound('snap');
+            render();
         }
-        playUISound('snap');
-        render();
     } else if (currentTool === 'text') {
         const newText = {
             type: 'text', text: 'Inkpath', fontSize: 28, fontFamily: 'JetBrains Mono',
             fontWeight: 'bold', textAlign: 'start', x: pt.x, y: pt.y,
             fill: activePrimaryColor, fillType: 'color', stroke: '#ffffff', strokeWidth: 1, opacity: 1, blur: 0, rotation: 0
         };
+        pushHistory(true);
         objects.push(newText);
         selectedIndices = [objects.length - 1];
         playUISound('snap');
@@ -364,12 +730,17 @@ function handleCanvasMouseMove(evt) {
         let nodes = selectedPathNodes();
         if (!nodes) nodes = currentTool === 'bezier' ? activePathNodes : (selectedIndices.length > 0 ? objects[selectedIndices[0]].nodes : null);
         if (nodes) {
+            if (!gestureDirty) { pushHistory(true); gestureDirty = true; }
             if (dragTarget.kind === 'node') {
                 const node = nodes[dragTarget.index];
                 const dx = pt.x - node.x, dy = pt.y - node.y;
                 node.x = pt.x; node.y = pt.y;
                 node.cx1 += dx; node.cy1 += dy;
                 node.cx2 += dx; node.cy2 += dy;
+                if (activeCurveMode() !== 'bezier') {
+                    node.cx1 = node.x; node.cy1 = node.y;
+                    node.cx2 = node.x; node.cy2 = node.y;
+                }
             } else if (dragTarget.kind === 'control1') {
                 nodes[dragTarget.index].cx1 = pt.x; nodes[dragTarget.index].cy1 = pt.y;
             } else if (dragTarget.kind === 'control2') {
@@ -382,6 +753,7 @@ function handleCanvasMouseMove(evt) {
 
     if (isMovingShape && selectedIndices.length > 0) {
         const dx = pt.x - currentDragPos.x, dy = pt.y - currentDragPos.y;
+        if (!gestureDirty) { pushHistory(true); gestureDirty = true; }
         selectedIndices.forEach(idx => moveObject(objects[idx], dx, dy));
         currentDragPos = pt;
         render();
@@ -390,20 +762,41 @@ function handleCanvasMouseMove(evt) {
 
     if (isScalingShape && selectedIndices.length > 0) {
         const scaleFactor = 1 + (pt.x - currentDragPos.x) / 100;
+        if (!gestureDirty) { pushHistory(true); gestureDirty = true; }
         selectedIndices.forEach(idx => scaleObject(objects[idx], scaleFactor));
         currentDragPos = pt;
         render();
         return;
     }
 
+    if (currentTool === 'bezier' && isBezierPlacing && bezierActive && bezierMode === 'bezier') {
+        const dx = pt.x - bezierDownPos.x, dy = pt.y - bezierDownPos.y;
+        if (Math.hypot(dx, dy) > 4) {
+            const n = bezierActive.nodes[bezierActive.index];
+            if (n) { n.cx1 = n.x - dx; n.cy1 = n.y - dy; n.cx2 = n.x + dx; n.cy2 = n.y + dy; }
+        }
+    }
+
     if (isDrawingShape || currentTool === 'bezier') {
         currentDragPos = pt;
+        previewAngleSnap = (currentTool === 'line' || currentTool === 'bezier') && angleSnapOn(evt);
         renderPreviewShape();
     }
 }
 
 function handleCanvasMouseUp(evt) {
     isPanning = false;
+    gestureDirty = false;
+    isBezierPlacing = false; bezierActive = null;
+    const press = nodePress;
+    nodePress = null;
+    dragTarget = null;
+    if (press && currentTool === 'bezier' && press.index === 0 &&
+        Math.hypot(evt.clientX - press.x, evt.clientY - press.y) < 6 &&
+        press.nodes && press.nodes.length >= 3) {
+        finishPathClosed(press.nodes);
+        return;
+    }
 
     if (isMultiSelecting) {
         isMultiSelecting = false;
@@ -416,6 +809,7 @@ function handleCanvasMouseUp(evt) {
     if (isPencilDrawing) {
         isPencilDrawing = false;
         if (pencilPoints.length > 1) {
+            pushHistory(true);
             objects.push({
                 type: 'path', nodes: pencilPoints, fill: 'none', fillType: 'none',
                 stroke: activePrimaryColor, strokeWidth: 3, opacity: 1, blur: 0, rotation: 0
@@ -429,7 +823,12 @@ function handleCanvasMouseUp(evt) {
     }
 
     if (isDrawingShape) {
-        createShapeFromDrag(startPoint, getMousePos(evt));
+        const endPt = getMousePos(evt);
+        if (currentTool === 'line' && angleSnapOn(evt)) {
+            const sn = snapAngle15(endPt.x, endPt.y, startPoint.x, startPoint.y);
+            endPt.x = sn[0]; endPt.y = sn[1];
+        }
+        createShapeFromDrag(startPoint, endPt);
         isDrawingShape = false;
         previewLayer.innerHTML = '';
         playUISound('snap');
@@ -477,6 +876,7 @@ function createShapeFromDrag(p1, p2) {
     const x = Math.min(p1.x, p2.x), y = Math.min(p1.y, p2.y);
     const w = Math.abs(p2.x - p1.x), h = Math.abs(p2.y - p1.y);
     if (w < 2 && h < 2 && currentTool !== 'line') return;
+    pushHistory(true);
 
     const baseStyle = { fill: activePrimaryColor, fill2: activeSecondaryColor, fillType: 'color', fillAngle: 0, stroke: '#ffffffff', stroke2: '#38bdf8ff', strokeType: 'color', strokeAngle: 0, strokeWidth: 2, rx: 6, opacity: 1, blur: 0, rotation: 0 };
     let newShape = null;
@@ -487,7 +887,7 @@ function createShapeFromDrag(p1, p2) {
     else if (currentTool === 'ellipse') newShape = { ...baseStyle, type: 'ellipse', cx: x + w / 2, cy: y + h / 2, rx: Math.max(w / 2, 4), ry: Math.max(h / 2, 4) };
     else if (currentTool === 'line') newShape = { type: 'line', x1: p1.x, y1: p1.y, x2: p2.x, y2: p2.y, ...baseStyle, fillType: 'none', stroke: activePrimaryColor, strokeWidth: 3 };
     else if (currentTool === 'triangle') newShape = { type: 'polygon', cx: p1.x, cy: p1.y, r: Math.hypot(p2.x - p1.x, p2.y - p1.y), sides: 3, ...baseStyle };
-    else if (currentTool === 'polygon') newShape = { type: 'polygon', cx: p1.x, cy: p1.y, r: Math.hypot(p2.x - p1.x, p2.y - p1.y), sides: 5, ...baseStyle };
+    else if (currentTool === 'polygon') newShape = { type: 'polygon', cx: p1.x, cy: p1.y, r: Math.hypot(p2.x - p1.x, p2.y - p1.y), sides: polySides, ratio: polyRatio, roundness: polyRound, variant: polyVariant, ...baseStyle };
     else if (currentTool === 'star') newShape = { type: 'star', cx: p1.x, cy: p1.y, r: Math.hypot(p2.x - p1.x, p2.y - p1.y), points: 5, ...baseStyle };
 
     if (newShape) { objects.push(newShape); selectedIndices = [objects.length - 1]; }
@@ -602,15 +1002,8 @@ function shapeToNodes(obj) {
         ];
     }
     if (obj.type === 'polygon' || obj.type === 'star') {
-        const cx = obj.cx || 0, cy = obj.cy || 0, r = obj.r || 0;
-        const spikes = obj.type === 'polygon' ? (obj.sides || 5) : (obj.points || 5);
-        const inner = obj.type === 'polygon' ? r / 2 : r / 2;
-        let rot = Math.PI / 2 * 3;
-        const step = Math.PI / spikes, pts = [];
-        for (let i = 0; i < spikes; i++) {
-            pts.push([cx + Math.cos(rot) * r, cy + Math.sin(rot) * r]); rot += step;
-            pts.push([cx + Math.cos(rot) * inner, cy + Math.sin(rot) * inner]); rot += step;
-        }
+        let pts = obj.type === 'polygon' ? polyPoints(obj) : buildStarPoints(obj.cx || 0, obj.cy || 0, obj.points || 5, obj.r || 0, (obj.r || 0) / 2).split(' ').map(p => p.split(',').map(Number));
+        if ((obj.variant || 'poly') === 'squircle' && pts.length > 32) pts = pts.filter((_, i) => i % 2 === 0);
         return pts.map(([x, y]) => P(x, y));
     }
     if (obj.type === 'line') {
@@ -629,6 +1022,8 @@ function selectedPathNodes() {
 
 function convertSelectedToPath() {
     if (selectedIndices.length === 0) return;
+    if (!selectedIndices.some(idx => shapeToNodes(objects[idx]))) return;
+    pushHistory(true);
     let converted = false;
     selectedIndices.forEach(idx => {
         const obj = objects[idx];
@@ -638,10 +1033,21 @@ function convertSelectedToPath() {
     if (converted) playUISound('snap');
 }
 
-function finalizeBezierPath() {
-    if (activePathNodes.length > 1) {
+// Close a path loop by appending an exact copy of its first node (tangents
+// included). Drafts finalize into new objects; selected paths update live.
+function finishPathClosed(nodesArray) {
+    if (!nodesArray || nodesArray.length < 3) return false;
+    const first = nodesArray[0];
+    nodesArray.push({ x: first.x, y: first.y, cx1: first.cx1, cy1: first.cy1, cx2: first.cx2, cy2: first.cy2 });
+    if (nodesArray === activePathNodes) finalizeBezierPath();
+    else { playUISound('snap'); render(); }
+    return true;
+}
+
+function finalizeBezierPath() {    if (activePathNodes.length > 1) {
+        pushHistory(true);
         objects.push({
-            type: 'path', nodes: JSON.parse(JSON.stringify(activePathNodes)),
+            type: 'path', pathMode: bezierMode, nodes: JSON.parse(JSON.stringify(activePathNodes)),
             fill: activePrimaryColor, fill2: activeSecondaryColor, fillType: 'none', stroke: activePrimaryColor, strokeWidth: 4, opacity: 1, blur: 0, rotation: 0
         });
         selectedIndices = [objects.length - 1];
@@ -659,26 +1065,63 @@ function renderPreviewPencil() {
     previewLayer.appendChild(pathEl);
 }
 
+// Snap a point so the segment from base keeps its length but locks to the
+// nearest 15 degrees. Used by the line + bezier tools while Control (or Cmd)
+// is held. Returns [x, y].
+function snapAngle15(px, py, bx, by) {
+    const dx = px - bx, dy = py - by;
+    const len = Math.hypot(dx, dy);
+    if (!(len > 1e-9)) return [px, py];
+    const step = Math.PI / 12;
+    const a = Math.round(Math.atan2(dy, dx) / step) * step;
+    return [bx + Math.cos(a) * len, by + Math.sin(a) * len];
+}
+
+function angleSnapOn(evt) {
+    return !!(evt && (evt.ctrlKey || evt.metaKey));
+}
+
 function renderPreviewShape() {
     previewLayer.innerHTML = '';
     const p1 = startPoint, p2 = currentDragPos;
     const x = Math.min(p1.x, p2.x), y = Math.min(p1.y, p2.y);
     const w = Math.abs(p2.x - p1.x), h = Math.abs(p2.y - p1.y);
 
-    if (currentTool === 'bezier' && activePathNodes.length > 0) {
-        const previewNodes = [...activePathNodes, { x: p2.x, y: p2.y, cx1: p2.x - 30, cy1: p2.y, cx2: p2.x + 30, cy2: p2.y }];
-        const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        pathEl.setAttribute('d', buildPathData(previewNodes));
-        pathEl.setAttribute('fill', 'none'); pathEl.setAttribute('stroke', activePrimaryColor);
-        pathEl.setAttribute('stroke-width', '2'); pathEl.setAttribute('stroke-dasharray', '4 4');
-        previewLayer.appendChild(pathEl);
-        return;
-    }
-
     if (currentTool === 'bezier') {
-        const selNodes = selectedPathNodes();
-        if (selNodes && selNodes.length > 0) {
-            const previewNodes = [...selNodes, { x: p2.x, y: p2.y, cx1: p2.x - 30, cy1: p2.y, cx2: p2.x + 30, cy2: p2.y }];
+        const draft = activePathNodes.length > 0 ? activePathNodes : selectedPathNodes();
+        if (draft && draft.length > 0) {
+            let gx = p2.x, gy = p2.y;
+            const b0 = draft[draft.length - 1];
+            if (previewAngleSnap && bezierMode !== 'paraxial') {
+                const sn = snapAngle15(gx, gy, b0.x, b0.y);
+                gx = sn[0]; gy = sn[1];
+            }
+            if (bezierMode === 'paraxial') {
+                if (Math.abs(gx - b0.x) > Math.abs(gy - b0.y)) gy = b0.y; else gx = b0.x;
+            }
+            // Preview must match what gets committed! Straight/paraxial nodes are
+            // stored with degenerate handles (cx1=cx2=x), so preview them the same
+            // way — the old code always used ±30 handles and drew a phantom curve!
+            // Spiro/bspline are resampled like displayNodesFor() does! Classic
+            // bezier mode is corner-aware: click-placed anchors commit straight,
+            // so they preview straight — smooth preview only after handles exist!
+            let previewNodes;
+            if (bezierMode === 'straight' || bezierMode === 'paraxial') {
+                const straightDraft = draft.map((n, i) => i === draft.length - 1 ? { ...n, cx2: n.x, cy2: n.y } : n);
+                previewNodes = [...straightDraft, { x: gx, y: gy, cx1: gx, cy1: gy, cx2: gx, cy2: gy }];
+            } else if (bezierMode === 'spiro') {
+                previewNodes = catmullRom2bezier([...draft, { x: gx, y: gy, cx1: gx, cy1: gy, cx2: gx, cy2: gy }]);
+            } else if (bezierMode === 'bspline') {
+                previewNodes = bsplineToBezier([...draft, { x: gx, y: gy, cx1: gx, cy1: gy, cx2: gx, cy2: gy }]);
+            } else {
+                const last = draft[draft.length - 1];
+                const hasOutHandle = Math.hypot((last.cx2 ?? last.x) - last.x, (last.cy2 ?? last.y) - last.y) > 0.75;
+                if (hasOutHandle) {
+                    previewNodes = [...draft, { x: gx, y: gy, cx1: gx - 30, cy1: gy, cx2: gx + 30, cy2: gy }];
+                } else {
+                    previewNodes = [...draft, { x: gx, y: gy, cx1: gx, cy1: gy, cx2: gx, cy2: gy }];
+                }
+            }
             const pathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             pathEl.setAttribute('d', buildPathData(previewNodes));
             pathEl.setAttribute('fill', 'none'); pathEl.setAttribute('stroke', activePrimaryColor);
@@ -699,23 +1142,64 @@ function renderPreviewShape() {
     else if (currentTool === 'circle' || currentTool === 'polygon' || currentTool === 'triangle') { el.setAttribute('cx', p1.x); el.setAttribute('cy', p1.y); el.setAttribute('r', Math.hypot(p2.x - p1.x, p2.y - p1.y)); }
     else if (currentTool === 'star') { el.setAttribute('points', buildStarPoints(p1.x, p1.y, 5, Math.hypot(p2.x - p1.x, p2.y - p1.y), Math.hypot(p2.x - p1.x, p2.y - p1.y) / 2)); }
     else if (currentTool === 'ellipse') { el.setAttribute('cx', x + w / 2); el.setAttribute('cy', y + h / 2); el.setAttribute('rx', Math.max(w / 2, 4)); el.setAttribute('ry', Math.max(h / 2, 4)); }
-    else if (currentTool === 'line') { el.setAttribute('x1', p1.x); el.setAttribute('y1', p1.y); el.setAttribute('x2', p2.x); el.setAttribute('y2', p2.y); }
+    else if (currentTool === 'line') {
+        let lx2 = p2.x, ly2 = p2.y;
+        if (previewAngleSnap) { const sn = snapAngle15(lx2, ly2, p1.x, p1.y); lx2 = sn[0]; ly2 = sn[1]; }
+        el.setAttribute('x1', p1.x); el.setAttribute('y1', p1.y); el.setAttribute('x2', lx2); el.setAttribute('y2', ly2);
+    }
 
     previewLayer.appendChild(el);
 }
 
-// ---- Boolean / clip / mask rendering ----
-function makeBlurFilter(idp, blurVal) {
-    blurVal = parseFloat(blurVal) || 0;
-    if (!(blurVal > 0)) return null;
-    const fId = `blur-${idp}`;
-    const filt = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-    filt.setAttribute('id', fId);
-    filt.setAttribute('x', '-50%'); filt.setAttribute('y', '-50%');
-    filt.setAttribute('width', '200%'); filt.setAttribute('height', '200%');
-    filt.innerHTML = `<feGaussianBlur stdDeviation="${clampNum(blurVal, 0, 20)}" />`;
-    defs.appendChild(filt);
-    return `url(#${fId})`;
+// ---- Unified effects filter: blur + inner shadow + drop shadow ----
+// Chain: source -> [gaussian blur] -> [inner shadow merged under] -> [drop shadow].
+// Returns a filter url, or null when there is nothing to do.
+function buildFxFilterInto(defsEl, id, blurVal, fx) {
+    const drop = fx && fx.drop, inner = fx && fx.inner;
+    const hasBlur = (parseFloat(blurVal) || 0) > 0;
+    if (!hasBlur && !drop && !inner) return null;
+    const NS = 'http://www.w3.org/2000/svg';
+    const fe = (parent, tag, attrs) => {
+        const el = document.createElementNS(NS, tag);
+        for (const k in attrs) el.setAttribute(k, attrs[k]);
+        parent.appendChild(el);
+        return el;
+    };
+    const f = document.createElementNS(NS, 'filter');
+    f.setAttribute('id', id);
+    f.setAttribute('x', '-60%'); f.setAttribute('y', '-60%');
+    f.setAttribute('width', '220%'); f.setAttribute('height', '220%');
+    let cur = 'SourceGraphic';
+    if (hasBlur) {
+        fe(f, 'feGaussianBlur', { in: 'SourceGraphic', stdDeviation: clampNum(blurVal, 0, 20), result: 'fxs' });
+        cur = 'fxs';
+    }
+    if (inner) {
+        let curAlpha = 'SourceAlpha';
+        if (cur !== 'SourceGraphic') {
+            fe(f, 'feColorMatrix', { in: cur, result: 'fxsa' })
+                .setAttribute('values', '0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 1 0');
+            curAlpha = 'fxsa';
+        }
+        fe(f, 'feComponentTransfer', { in: cur, result: 'fxia' })
+            .appendChild(fe(document.createElementNS(NS, 'filter'), 'feFuncA', { type: 'table', tableValues: '1 0' }));
+        const sc = stopStyle(inner.color || '#000000cc', '#000000cc');
+        fe(f, 'feGaussianBlur', { in: 'fxia', stdDeviation: clampNum(inner.blur, 0, 30), result: 'fxib' });
+        fe(f, 'feOffset', { in: 'fxib', dx: inner.dx || 0, dy: inner.dy || 0, result: 'fxio' });
+        fe(f, 'feFlood', { 'flood-color': sc.color, 'flood-opacity': sc.opacity, result: 'fxic' });
+        fe(f, 'feComposite', { in: 'fxic', in2: 'fxio', operator: 'in', result: 'fxish' });
+        fe(f, 'feComposite', { in: 'fxish', in2: curAlpha, operator: 'in', result: 'fxs2' });
+        const mg = fe(f, 'feMerge', { result: 'fxm' });
+        fe(mg, 'feMergeNode', { in: cur });
+        fe(mg, 'feMergeNode', { in: 'fxs2' });
+        cur = 'fxm';
+    }
+    if (drop) {
+        const sc = stopStyle(drop.color || '#00000080', '#00000080');
+        fe(f, 'feDropShadow', { in: cur, dx: drop.dx || 0, dy: drop.dy || 0, stdDeviation: clampNum(drop.blur, 0, 30), 'flood-color': sc.color, 'flood-opacity': sc.opacity });
+    }
+    defsEl.appendChild(f);
+    return `url(#${id})`;
 }
 
 // Gradient angle helpers. Angle convention: 0 = left-to-right (matches the
@@ -767,7 +1251,7 @@ function leafPaintFor(obj, idp, mode) {
     } else if (strokeType === 'none') { strokeAttr = 'none'; }
     if (mode === 'fill') strokeAttr = 'none';
 
-    const filterAttr = makeBlurFilter(idp, obj.blur);
+    const filterAttr = buildFxFilterInto(defs, `fx-${idp}`, obj.blur, obj.effects);
     let el = null;
     if (obj.type === 'rect') {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -782,8 +1266,14 @@ function leafPaintFor(obj, idp, mode) {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
         el.setAttribute('x1', obj.x1); el.setAttribute('y1', obj.y1); el.setAttribute('x2', obj.x2); el.setAttribute('y2', obj.y2);
     } else if (obj.type === 'polygon') {
-        el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-        el.setAttribute('points', buildStarPoints(obj.cx, obj.cy, obj.sides || 5, obj.r, obj.r / 2));
+        const pts = polyPoints(obj);
+        if ((obj.variant || 'poly') === 'squircle' || (obj.roundness || 0) > 0) {
+            el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            el.setAttribute('d', (obj.variant || 'poly') === 'squircle' ? polyPathFromPoints(pts) : roundedPolyPath(pts, clampNum(obj.roundness || 0, 0, 1)));
+        } else {
+            el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+            el.setAttribute('points', pts.map(p => `${p[0]},${p[1]}`).join(' '));
+        }
     } else if (obj.type === 'star') {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
         el.setAttribute('points', buildStarPoints(obj.cx, obj.cy, obj.points || 5, obj.r, obj.r / 2));
@@ -797,7 +1287,7 @@ function leafPaintFor(obj, idp, mode) {
         el.textContent = obj.text || 'Inkpath';
     } else if (obj.type === 'path') {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        el.setAttribute('d', buildPathData(obj.nodes));
+        el.setAttribute('d', buildPathData(displayNodesFor(obj)));
     }
     if (!el) return { el: null, filterAttr: null };
     el.classList.add('shape-element');
@@ -884,7 +1374,7 @@ function renderContainerInto(obj, idp, parent, topIdx) {
     g.dataset.idx = topIdx;
     g.setAttribute('opacity', obj.opacity !== undefined ? obj.opacity : 1);
     if (obj.rotation) { const c = getCenter(obj); g.setAttribute('transform', `rotate(${obj.rotation} ${c.x} ${c.y})`); }
-    const bf = makeBlurFilter('c' + idp, obj.blur);
+    const bf = buildFxFilterInto(defs, `fxc-${idp}`, obj.blur, obj.effects);
     if (bf) g.setAttribute('filter', bf);
 
     if (obj.type === 'boolean') {
@@ -1069,18 +1559,7 @@ function render() {
             strokeAttr = `url(#${sgradId})`;
         } else if (strokeType === 'none') { strokeAttr = 'none'; }
 
-        let filterAttr = null;
-        const blurVal = parseFloat(obj.blur) || 0;
-        if (blurVal > 0) {
-            const fId = `blur-${idx}`;
-            const filt = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-            filt.setAttribute('id', fId);
-            filt.setAttribute('x', '-50%'); filt.setAttribute('y', '-50%');
-            filt.setAttribute('width', '200%'); filt.setAttribute('height', '200%');
-            filt.innerHTML = `<feGaussianBlur stdDeviation="${clampNum(blurVal, 0, 20)}" />`;
-            defs.appendChild(filt);
-            filterAttr = `url(#${fId})`;
-        }
+        let filterAttr = buildFxFilterInto(defs, `fx-${idx}`, obj.blur, obj.effects);
 
         if (obj.type === 'rect') {
             el = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
@@ -1095,8 +1574,14 @@ function render() {
             el = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             el.setAttribute('x1', obj.x1); el.setAttribute('y1', obj.y1); el.setAttribute('x2', obj.x2); el.setAttribute('y2', obj.y2);
         } else if (obj.type === 'polygon') {
-            el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
-            el.setAttribute('points', buildStarPoints(obj.cx, obj.cy, obj.sides || 5, obj.r, obj.r / 2));
+            const pts = polyPoints(obj);
+            if ((obj.variant || 'poly') === 'squircle' || (obj.roundness || 0) > 0) {
+                el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                el.setAttribute('d', (obj.variant || 'poly') === 'squircle' ? polyPathFromPoints(pts) : roundedPolyPath(pts, clampNum(obj.roundness || 0, 0, 1)));
+            } else {
+                el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+                el.setAttribute('points', pts.map(p => `${p[0]},${p[1]}`).join(' '));
+            }
         } else if (obj.type === 'star') {
             el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             el.setAttribute('points', buildStarPoints(obj.cx, obj.cy, obj.points || 5, obj.r, obj.r / 2));
@@ -1116,7 +1601,7 @@ function render() {
             };
         } else if (obj.type === 'path') {
             el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            el.setAttribute('d', buildPathData(obj.nodes));
+            el.setAttribute('d', buildPathData(displayNodesFor(obj)));
         }
 
         if (el) {
@@ -1160,14 +1645,21 @@ function render() {
 
     if ((currentTool === 'node' || currentTool === 'bezier') && (selectedIndices.length > 0 || activePathNodes.length > 0)) {
         const nodes = selectedPathNodes() || (currentTool === 'bezier' ? activePathNodes : objects[selectedIndices[0]].nodes);
+        const showControls = activeCurveMode() === 'bezier';
         if (nodes) {
             nodes.forEach((node, i) => {
-                createLine(node.x, node.y, node.cx1, node.cy1, 'control-line');
-                createLine(node.x, node.y, node.cx2, node.cy2, 'control-line');
-                createCircle(node.cx1, node.cy1, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control1', index: i }; });
-                createCircle(node.cx2, node.cy2, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control2', index: i }; });
-                
-                const circle = createCircle(node.x, node.y, 7, 'node-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'node', index: i }; });
+                if (showControls) {
+                    createLine(node.x, node.y, node.cx1, node.cy1, 'control-line');
+                    createLine(node.x, node.y, node.cx2, node.cy2, 'control-line');
+                    createCircle(node.cx1, node.cy1, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control1', index: i }; });
+                    createCircle(node.cx2, node.cy2, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control2', index: i }; });
+                }
+
+                const circle = createCircle(node.x, node.y, 7, 'node-handle', (e) => {
+                    e.stopPropagation();
+                    dragTarget = { kind: 'node', index: i };
+                    if (currentTool === 'bezier') nodePress = { nodes, index: i, x: e.clientX, y: e.clientY };
+                });
                 circle.ondblclick = () => { if (nodes.length > 2) { nodes.splice(i, 1); playUISound('delete'); render(); } };
             });
         }
@@ -1248,17 +1740,66 @@ function ellipsePathData(cx, cy, rx, ry) {
 // Closed silhouette path for clip/mask/boolean use (any shape type)
 function silhouettePathData(obj) {
     if (!obj) return rectPathData(0, 0, 10, 10, 0);
-    if (obj.type === 'path' && Array.isArray(obj.nodes) && obj.nodes.length > 0) return buildPathData(obj.nodes) + ' Z';
+    if (obj.type === 'path' && Array.isArray(obj.nodes) && obj.nodes.length > 0) return buildPathData(displayNodesFor(obj)) + ' Z';
     if (obj.type === 'rect') return rectPathData(obj.x, obj.y, obj.width, obj.height, obj.rx);
     if (obj.type === 'circle') { const r = Math.max(obj.r || 0, 0.1); return ellipsePathData(obj.cx || 0, obj.cy || 0, r, r); }
     if (obj.type === 'ellipse') return ellipsePathData(obj.cx || 0, obj.cy || 0, Math.max(obj.rx || 0, 0.1), Math.max(obj.ry || 0, 0.1));
     if (obj.type === 'polygon' || obj.type === 'star') {
-        const pts = buildStarPoints(obj.cx || 0, obj.cy || 0, obj.type === 'polygon' ? (obj.sides || 5) : (obj.points || 5), Math.max(obj.r || 0, 0.1), Math.max(obj.r || 0, 0.1) / 2);
-        const pairs = pts.split(' ').map(p => p.split(','));
-        return 'M ' + pairs.map(p => p.join(' ')).join(' L ') + ' Z';
+        const pts = obj.type === 'polygon' ? polyPoints({ ...obj, r: Math.max(obj.r || 0, 0.1) })
+            : buildStarPoints(obj.cx || 0, obj.cy || 0, obj.points || 5, Math.max(obj.r || 0, 0.1), Math.max(obj.r || 0, 0.1) / 2).split(' ').map(p => p.split(',').map(Number));
+        return 'M ' + pts.map(p => `${p[0]} ${p[1]}`).join(' L ') + ' Z';
     }
     const bb = shapeBBox(obj);
     return rectPathData(bb.x, bb.y, bb.w, bb.h, 0);
+}
+
+function polyPoints(obj) {
+    const cx = obj.cx || 0, cy = obj.cy || 0, r = Math.max(obj.r || 0, 0.1);
+    if ((obj.variant || 'poly') === 'squircle') return squirclePoints(cx, cy, r, 4, 64);
+    const spikes = obj.sides || 5;
+    const ratio = (obj.ratio === undefined) ? 0.5 : obj.ratio;
+    const inner = r * ratio;
+    let rot = Math.PI / 2 * 3;
+    const step = Math.PI / spikes, pts = [];
+    for (let i = 0; i < spikes; i++) {
+        pts.push([cx + Math.cos(rot) * r, cy + Math.sin(rot) * r]); rot += step;
+        pts.push([cx + Math.cos(rot) * inner, cy + Math.sin(rot) * inner]); rot += step;
+    }
+    return pts;
+}
+
+function squirclePoints(cx, cy, r, n, count) {
+    n = Math.max(n || 4, 2); count = count || 64;
+    const e = 2 / n, pts = [];
+    for (let i = 0; i < count; i++) {
+        const t = (i / count) * Math.PI * 2;
+        const c = Math.cos(t), s = Math.sin(t);
+        pts.push([cx + r * Math.sign(c) * Math.pow(Math.abs(c), e), cy + r * Math.sign(s) * Math.pow(Math.abs(s), e)]);
+    }
+    return pts;
+}
+
+function polyPathFromPoints(pts) {
+    if (!pts || pts.length === 0) return '';
+    return 'M ' + pts.map(p => `${p[0]} ${p[1]}`).join(' L ') + ' Z';
+}
+
+function roundedPolyPath(pts, roundness) {
+    const n = pts.length;
+    if (n < 3) return polyPathFromPoints(pts);
+    const dist = (a, b) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+    const lerp = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t];
+    const f = (v) => Math.round(v * 100) / 100;
+    let d = '';
+    for (let i = 0; i < n; i++) {
+        const p = pts[i], prev = pts[(i - 1 + n) % n], next = pts[(i + 1) % n];
+        const t = roundness * Math.min(dist(p, prev), dist(p, next)) / 2;
+        const a = lerp(p, prev, dist(p, prev) > 0 ? t / dist(p, prev) : 0);
+        const b = lerp(p, next, dist(p, next) > 0 ? t / dist(p, next) : 0);
+        d += (i === 0 ? `M ${f(a[0])} ${f(a[1])} ` : `L ${f(a[0])} ${f(a[1])} `);
+        d += `Q ${f(p[0])} ${f(p[1])} ${f(b[0])} ${f(b[1])} `;
+    }
+    return d + 'Z';
 }
 
 function buildStarPoints(cx, cy, spikes, outerRadius, innerRadius) {
@@ -1277,6 +1818,128 @@ function buildPathData(nodes) {
         d += ` C ${nodes[i-1].cx2} ${nodes[i-1].cy2}, ${nodes[i].cx1} ${nodes[i].cy1}, ${nodes[i].x} ${nodes[i].y}`;
     }
     return d;
+}
+
+// ---- Bezier pen modes ----
+// pathMode lives on path objects ('bezier' default). spiro/bspline store raw
+// anchors in nodes (controls ignored) and are resampled to cubics for display.
+function activeCurveMode() {
+    if (currentTool === 'bezier') return bezierMode;
+    if (selectedIndices.length > 0) {
+        const o = objects[selectedIndices[0]];
+        if (o && o.type === 'path') return o.pathMode || 'bezier';
+    }
+    return 'bezier';
+}
+
+function switchBezierMode(mode) {
+    if (!['bezier', 'spiro', 'bspline', 'straight', 'paraxial'].includes(mode)) return;
+    bezierMode = mode;
+    playUISound('click');
+    render();
+}
+
+// Polygon tool settings (creation-time; new shapes pick these up).
+function setPolySides(v) {
+    polySides = clampNum(Math.round(parseFloat(v) || 5), 3, 24);
+    const el = document.getElementById('tool-poly-sides');
+    if (el) el.value = polySides;
+    paintPolyPreview();
+}
+function setPolyRatio(v) {
+    polyRatio = clampNum((parseFloat(v) || 50) / 100, 0.2, 1);
+    paintPolyPreview();
+}
+function setPolyRound(v) {
+    polyRound = clampNum((parseFloat(v) || 0) / 100, 0, 1);
+    paintPolyPreview();
+}
+function setPolyVariant(v) {
+    if (v !== 'squircle') v = 'poly';
+    polyVariant = v;
+    playUISound('click');
+    syncToolbarSettings();
+    paintPolyPreview();
+}
+
+function syncToolbarSettings() {
+    const showBez = currentTool === 'bezier', showPoly = currentTool === 'polygon';
+    const bar = document.getElementById('tool-settings-bar');
+    if (bar) bar.style.display = (showBez || showPoly) ? 'flex' : 'none';
+    const bez = document.getElementById('bezier-mode-seg');
+    if (bez) bez.style.display = showBez ? 'grid' : 'none';
+    ['bezier', 'spiro', 'bspline', 'straight', 'paraxial'].forEach(m => {
+        const b = document.getElementById(`bezmode-${m}`);
+        if (b) b.classList.toggle('active', bezierMode === m);
+    });
+    const poly = document.getElementById('poly-settings');
+    if (poly) poly.style.display = currentTool === 'polygon' ? 'flex' : 'none';
+    const pv = document.getElementById('polyvar-poly');
+    const sv = document.getElementById('polyvar-squircle');
+    if (pv) pv.classList.toggle('active', polyVariant !== 'squircle');
+    if (sv) sv.classList.toggle('active', polyVariant === 'squircle');
+    const roundRow = document.getElementById('lbl-poly-round');
+    if (roundRow) roundRow.style.display = polyVariant === 'squircle' ? 'none' : 'flex';
+    if (poly && poly.style.display !== 'none') paintPolyPreview();
+}
+
+function catmullRom2bezier(pts) {
+    const n = pts.length;
+    if (n === 0) return [];
+    if (n === 1) { const p = pts[0]; return [{ x: p.x, y: p.y, cx1: p.x, cy1: p.y, cx2: p.x, cy2: p.y }]; }
+    const P = (i) => pts[Math.max(0, Math.min(n - 1, i))];
+    const out = [];
+    for (let i = 0; i < n; i++) {
+        const p = P(i), pm = P(i - 1), pp = P(i + 1);
+        out.push({
+            x: p.x, y: p.y,
+            cx1: p.x - (pp.x - pm.x) / 6, cy1: p.y - (pp.y - pm.y) / 6,
+            cx2: p.x + (pp.x - pm.x) / 6, cy2: p.y + (pp.y - pm.y) / 6
+        });
+    }
+    out[0].cx1 = pts[0].x; out[0].cy1 = pts[0].y;
+    out[n - 1].cx2 = pts[n - 1].x; out[n - 1].cy2 = pts[n - 1].y;
+    return out;
+}
+
+function bsplineToBezier(pts) {
+    const n = pts.length;
+    if (n === 0) return [];
+    if (n <= 2) return pts.map(p => ({ x: p.x, y: p.y, cx1: p.x, cy1: p.y, cx2: p.x, cy2: p.y }));
+    const ext = [pts[0], ...pts, pts[n - 1]];
+    const spans = [];
+    for (let j = 0; j < ext.length - 3; j++) {
+        const A = ext[j], B = ext[j + 1], C = ext[j + 2], D = ext[j + 3];
+        spans.push({
+            b1: { x: (4 * B.x + 2 * C.x) / 6, y: (4 * B.y + 2 * C.y) / 6 },
+            b2: { x: (2 * B.x + 4 * C.x) / 6, y: (2 * B.y + 4 * C.y) / 6 },
+            b3: { x: (B.x + 4 * C.x + D.x) / 6, y: (B.y + 4 * C.y + D.y) / 6 }
+        });
+    }
+    const out = [{
+        x: pts[0].x, y: pts[0].y, cx1: pts[0].x, cy1: pts[0].y,
+        cx2: spans[0].b1.x, cy2: spans[0].b1.y
+    }];
+    for (let j = 0; j < spans.length; j++) {
+        const s = spans[j], next = spans[j + 1];
+        out.push({
+            x: s.b3.x, y: s.b3.y,
+            cx1: s.b2.x, cy1: s.b2.y,
+            cx2: next ? next.b1.x : s.b3.x, cy2: next ? next.b1.y : s.b3.y
+        });
+    }
+    out[out.length - 1].x = pts[n - 1].x;
+    out[out.length - 1].y = pts[n - 1].y;
+    return out;
+}
+
+// Cubic nodes actually drawn for a path object (resamples spiro/bspline).
+function displayNodesFor(pathObj) {
+    const nodes = (pathObj && pathObj.nodes) || [];
+    const mode = (pathObj && pathObj.pathMode) || 'bezier';
+    if (mode === 'spiro') return catmullRom2bezier(nodes);
+    if (mode === 'bspline') return bsplineToBezier(nodes);
+    return nodes;
 }
 
 function createCircle(cx, cy, r, className, onMouseDown) {
@@ -1553,6 +2216,7 @@ function addStopAt(kind, t) {
     const objIdx = selectedIndices[0];
     const obj = paintTarget(objects[objIdx]); if (!obj) return;
     t = Math.round(clampNum(t, 0, 1) * 1000) / 1000;
+    pushHistory(true);
     if (kind === 'fill') {
         const stops = getFillStops(obj);
         const c = sampleGradientAt(stops, t);
@@ -1595,6 +2259,7 @@ function deleteStop(kind, which) {
     if (stops.length <= 2) { playUISound('delete'); return; }
     const rawSi = (which !== undefined) ? which : (kind === 'fill' ? selectedFillStopIdx(objIdx) : selectedStrokeStopIdx(objIdx));
     if (!isFinite(rawSi) || rawSi < 0) return;
+    pushHistory(true);
     const si = rawSi;
     stops.splice(clampNum(si, 0, stops.length - 1), 1);
     if (kind === 'fill') { fillStopSel[objIdx] = clampNum(si, 0, stops.length - 1); mirrorFillStops(obj); }
@@ -1631,6 +2296,7 @@ function startStopDrag(kind, stopIdx, evt) {
     const objIdx = selectedIndices[0];
     const obj = paintTarget(objects[objIdx]); if (!obj) return;
     if (!isFinite(stopIdx) || stopIdx < 0) return;
+    pushHistory(true);
     if (kind === 'fill') fillStopSel[objIdx] = stopIdx; else strokeStopSel[objIdx] = stopIdx;
     loadStopIntoSliders(kind);
     const track = kind === 'fill' ? document.getElementById('fill-stop-track') : document.getElementById('stroke-stop-track');
@@ -1723,13 +2389,55 @@ function updateColorSliderGradients(prefix, h, sPct, vPct) {
     const full = hsvToRgb(h, sPct / 100, vPct / 100);
     aEl.style.background = `linear-gradient(to right, ${rgbCss(full.r, full.g, full.b, 0)} 0%, ${rgbCss(full.r, full.g, full.b, 1)} 100%), repeating-conic-gradient(#555 0% 25%, #999 0% 50%) 0 0 / 12px 12px`;
 }
+// Custom property tracks: angle previews the live gradient direction,
+// opacity fades over transparency, roundness gets a true shape preview.
+function stopsCssList(stops) {
+    return stops.map(s => `${s.c} ${Math.round(clampNum(s.o, 0, 1) * 100)}%`).join(', ');
+}
+function paintAngleSliders() {
+    if (selectedIndices.length === 0) return;
+    const o = paintTarget(objects[selectedIndices[0]]);
+    if (!o) return;
+    if (o.fillType === 'linear') {
+        const fEl = document.getElementById('insp-fill-angle');
+        if (fEl) {
+            const css = ((90 + (parseFloat(o.fillAngle) || 0)) % 360 + 360) % 360;
+            fEl.style.background = `linear-gradient(${css}deg, ${stopsCssList(getFillStops(o))})`;
+        }
+    }
+    if ((o.strokeType || 'color') === 'linear') {
+        const sEl = document.getElementById('insp-stroke-angle');
+        if (sEl) {
+            const css = ((90 + (parseFloat(o.strokeAngle) || 0)) % 360 + 360) % 360;
+            sEl.style.background = `linear-gradient(${css}deg, ${stopsCssList(getStrokeStops(o))})`;
+        }
+    }
+}
+function paintOpacitySlider() {
+    const el = document.getElementById('insp-opacity');
+    if (!el) return;
+    let r = 255, g = 255, b = 255;
+    if (selectedIndices.length > 0) {
+        const o = objects[selectedIndices[0]];
+        const c = parseColorToRgba(o && typeof o.fill === 'string' ? o.fill : '#ffffff');
+        r = c.r; g = c.g; b = c.b;
+    }
+    el.style.background = `linear-gradient(to right, rgba(${r},${g},${b},0), rgba(${r},${g},${b},1)), repeating-conic-gradient(#555 0% 25%, #999 0% 50%) 0 0 / 12px 12px`;
+}
+function paintPolyPreview() {
+    const svg = document.getElementById('poly-preview');
+    if (!svg) return;
+    const pts = polyPoints({ cx: 23, cy: 15, r: 12, sides: polySides, ratio: polyRatio, variant: polyVariant });
+    const d = (polyVariant === 'squircle' || !(polyRound > 0)) ? polyPathFromPoints(pts) : roundedPolyPath(pts, polyRound);
+    svg.innerHTML = `<path d="${d}" fill="rgba(255,96,197,0.85)" stroke="#ffffff" stroke-width="1"/>`;
+}
 function toggleColorPopup(popupId, evt) {
     if (evt) { evt.stopPropagation(); evt.preventDefault(); }
     playUISound('click');
     const popup = document.getElementById(popupId);
     if (!popup) return;
     const willShow = popup.style.display === 'none' || popup.style.display === '';
-    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup'].forEach(id => {
+    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'fx-popup'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
     });
@@ -1740,6 +2448,7 @@ function toggleFill2Popup(evt) { toggleColorPopup('fill2-popup', evt); }
 function toggleStroke2Popup(evt) { toggleColorPopup('stroke2-popup', evt); }
 function updateColorFromHSVA(prefix, prop) {
     if (selectedIndices.length === 0) return null;
+    pushHistory(false);
     const h = parseFloat(document.getElementById(`insp-${prefix}-h`).value) || 0;
     const s = parseFloat(document.getElementById(`insp-${prefix}-s`).value) || 0;
     const v = parseFloat(document.getElementById(`insp-${prefix}-v`).value) || 0;
@@ -1767,6 +2476,7 @@ function setColorFromHex(prefix, prop) {
     const fallback = prop === 'fill' ? '#a305ffff' : '#38bdf8ff';
     const hex8 = toHex8String(hexEl.value, fallback);
     if (!hex8) { playUISound('delete'); render(); return; }
+    pushHistory(true);
     applyColorToProp(prop, hex8);
     playUISound('snap');
     render();
@@ -1785,6 +2495,7 @@ async function pickFromCanvas(prefix, prop, evt) {
             const res = await eye.open();
             const hex8 = toHex8String(res && res.sRGBHex ? res.sRGBHex : '', '#ffffffff');
             if (hex8) {
+                pushHistory(true);
                 applyColorToProp(prop, hex8);
                 playUISound('snap');
                 render();
@@ -1811,9 +2522,22 @@ function sampleColorFromCanvas(evt) {
     const t = evt.target;
     const srcIdx = t && t.dataset && t.dataset.idx !== undefined ? parseInt(t.dataset.idx, 10) : NaN;
     if (isNaN(srcIdx) || !objects[srcIdx]) { render(); return; }
+    if (mode.prefix === 'fx') {
+        const src = objects[srcIdx].fill || '#a305ffff';
+        const hex8 = toHex8String(src, '#ffffffff') || '#ffffffff';
+        fxCurrent().color = hex8;
+        playUISound('snap');
+        syncFxEditor();
+        setTimeout(() => {
+            const popup = document.getElementById('fx-popup');
+            if (popup) popup.style.display = 'flex';
+        }, 0);
+        return;
+    }
     const fallback = mode.prop === 'fill' ? '#a305ffff' : '#38bdf8ff';
     const src = objects[srcIdx][mode.prop] || objects[srcIdx].fill || fallback;
     const hex8 = toHex8String(src, fallback) || fallback;
+    pushHistory(true);
     applyColorToProp(mode.prop, hex8);
     playUISound('snap');
     render();
@@ -1883,6 +2607,7 @@ function syncStroke2Popup(stroke2Val) { syncColorPopup('stroke2', stroke2Val, '#
 function setFillType(type) {
     if (selectedIndices.length === 0) return;
     if (!['color', 'linear', 'radial', 'none'].includes(type)) return;
+    pushHistory(true);
     playUISound('click');
     selectedIndices.forEach(idx => {
         const t = paintTarget(objects[idx]); if (!t) return;
@@ -1895,6 +2620,7 @@ function setFillType(type) {
 function setStrokeType(type) {
     if (selectedIndices.length === 0) return;
     if (!['color', 'linear', 'radial', 'none'].includes(type)) return;
+    pushHistory(true);
     playUISound('click');
     selectedIndices.forEach(idx => {
         const t = paintTarget(objects[idx]); if (!t) return;
@@ -1904,13 +2630,25 @@ function setStrokeType(type) {
     });
     render();
 }
-function updateGradientAngle(kind) {
+function rotateGradientAngle(kind) {
     if (selectedIndices.length === 0) return;
+    pushHistory(true);
+    selectedIndices.forEach(idx => {
+        const o = paintTarget(objects[idx]); if (!o) return;
+        const cur = kind === 'fill' ? (o.fillAngle || 0) : (o.strokeAngle || 0);
+        const next = (Math.round(cur) + 90) % 360;
+        if (kind === 'fill') o.fillAngle = next; else o.strokeAngle = next;
+    });
+    playUISound('snap');
+    render();
+}
+function updateGradientAngle(kind) {    if (selectedIndices.length === 0) return;
     const input = document.getElementById(kind === 'fill' ? 'insp-fill-angle' : 'insp-stroke-angle');
     if (!input) return;
     const label = document.getElementById(kind === 'fill' ? 'val-fill-angle' : 'val-stroke-angle');
     const ang = clampNum(Math.round(parseFloat(input.value) || 0), 0, 360);
     if (label) label.innerText = ang;
+    pushHistory(false);
     selectedIndices.forEach(idx => {
         const o = paintTarget(objects[idx]); if (!o) return;
         if (kind === 'fill') o.fillAngle = ang; else o.strokeAngle = ang;
@@ -1934,7 +2672,8 @@ function syncInspector() {
     const content = document.getElementById('inspector-content');
     const empty = document.getElementById('inspector-empty');
 
-    if (selectedIndices.length > 0) {
+    const hasSel = selectedIndices.length > 0;
+    if (hasSel || inspectorTab === 'layers') {
         content.style.display = 'flex'; empty.style.display = 'none';
 
         const segDesign = document.getElementById('seg-design');
@@ -1945,11 +2684,13 @@ function syncInspector() {
         if (segLayers) segLayers.classList.toggle('active', inspectorTab === 'layers');
         const panelDesign = document.getElementById('panel-design');
         const panelStyle = document.getElementById('panel-style');
-        if (panelDesign) panelDesign.style.display = inspectorTab === 'design' ? 'flex' : 'none';
-        if (panelStyle) panelStyle.style.display = inspectorTab === 'style' ? 'flex' : 'none';
+        if (panelDesign) panelDesign.style.display = (hasSel && inspectorTab === 'design') ? 'flex' : 'none';
+        if (panelStyle) panelStyle.style.display = (hasSel && inspectorTab === 'style') ? 'flex' : 'none';
         const panelLayers = document.getElementById('panel-layers');
         if (panelLayers) panelLayers.style.display = inspectorTab === 'layers' ? 'flex' : 'none';
         renderLayerList();
+        syncToolbarSettings();
+        if (!hasSel) return;
 
         const clipContent = (selectedIndices.length > 0 && objects[selectedIndices[0]] && objects[selectedIndices[0]].type === 'clip') ? paintTarget(objects[selectedIndices[0]]) : null;
         const fillVal = clipContent ? clipContent.fill : getMixedProperty('fill');
@@ -2032,6 +2773,7 @@ function syncInspector() {
         if (valFillAngle && fillAngleVal !== 'MIXED' && fillAngleVal !== undefined) valFillAngle.innerText = Math.round(fillAngleVal);
         const valStrokeAngle = document.getElementById('val-stroke-angle');
         if (valStrokeAngle && strokeAngleVal !== 'MIXED' && strokeAngleVal !== undefined) valStrokeAngle.innerText = Math.round(strokeAngleVal);
+        paintAngleSliders();
         renderStopTracks();
 
         const strokeWidthInput = document.getElementById('insp-stroke-width');
@@ -2078,6 +2820,7 @@ function syncInspector() {
         if (valOpacity && opacityVal !== 'MIXED' && opacityVal !== undefined) valOpacity.innerText = Math.round(opacityVal * 100);
         if (valBlur && blurVal !== 'MIXED' && blurVal !== undefined) valBlur.innerText = blurVal;
         if (valRotation && rotationVal !== 'MIXED' && rotationVal !== undefined) valRotation.innerText = rotationVal;
+        paintOpacitySlider();
 
         const isTextSelection = selectedIndices.every(idx => objects[idx] && objects[idx].type === 'text');
         const lblText = document.getElementById('lbl-text-section');
@@ -2106,28 +2849,29 @@ function syncInspector() {
                 }
             }
         }
-    } else if (inspectorTab === 'layers') {
-        content.style.display = 'flex'; empty.style.display = 'none';
+    } else {
+        // No selection and not on Layers: keep the tab bar visible so Layers
+        // stays reachable, with all panels hidden behind the empty hint.
+        content.style.display = 'flex'; empty.style.display = 'block';
         const segDesign = document.getElementById('seg-design');
         const segStyle = document.getElementById('seg-style');
         const segLayers = document.getElementById('seg-layers');
-        if (segDesign) segDesign.classList.remove('active');
-        if (segStyle) segStyle.classList.remove('active');
-        if (segLayers) segLayers.classList.add('active');
+        if (segDesign) segDesign.classList.toggle('active', inspectorTab === 'design');
+        if (segStyle) segStyle.classList.toggle('active', inspectorTab === 'style');
+        if (segLayers) segLayers.classList.toggle('active', inspectorTab === 'layers');
         const panelDesign = document.getElementById('panel-design');
         const panelStyle = document.getElementById('panel-style');
         const panelLayers = document.getElementById('panel-layers');
         if (panelDesign) panelDesign.style.display = 'none';
         if (panelStyle) panelStyle.style.display = 'none';
-        if (panelLayers) panelLayers.style.display = 'flex';
-        renderLayerList();
-    } else {
-        content.style.display = 'none'; empty.style.display = 'block';
+        if (panelLayers) panelLayers.style.display = 'none';
+        syncToolbarSettings();
     }
 }
 
 function updateSelectedObject() {
     if (selectedIndices.length === 0) return;
+    pushHistory(false);
 
     const activeId = document.activeElement && document.activeElement.id;
     const textInput = document.getElementById('insp-text-val');
@@ -2181,6 +2925,7 @@ function updateSelectedObject() {
 
 function deleteSelectedObject() {
     if (selectedIndices.length > 0) {
+        pushHistory(true);
         playUISound('delete');
         objects = objects.filter((_, idx) => !selectedIndices.includes(idx));
         selectedIndices = [];
@@ -2194,6 +2939,7 @@ function sortedSelected() { return [...selectedIndices].sort((a, b) => a - b); }
 function replaceSelectedWith(newObj) {
     const idxs = sortedSelected();
     if (idxs.length === 0) return -1;
+    pushHistory(true);
     const copies = idxs.map(i => JSON.parse(JSON.stringify(objects[i])));
     for (let k = idxs.length - 1; k >= 0; k--) objects.splice(idxs[k], 1);
     const at = Math.min(idxs[0], objects.length);
@@ -2246,6 +2992,7 @@ function releaseOp() {
     else if (obj.type === 'mask') parts = [obj.mask, ...(obj.children || [])].filter(Boolean);
     else parts = (obj.children || []).slice();
     if (parts.length === 0) { playUISound('delete'); closeOpsPopup(); return; }
+    pushHistory(true);
     objects.splice(at, 1);
     parts.forEach((p, k) => objects.splice(at + k, 0, p));
     selectedIndices = parts.map((_, k) => at + k);
@@ -2299,6 +3046,7 @@ function moveLayerByIndex(idx, dir) {
     else if (dir === 'down') to = Math.max(0, idx - 1);
     else return;
     if (to === idx) return;
+    pushHistory(true);
     const item = objects.splice(idx, 1)[0];
     objects.splice(to, 0, item);
     selectedIndices = selectedIndices.map(i => i === idx ? to : (idx < i && i <= to ? i - 1 : (to <= i && i < idx ? i + 1 : i)));
@@ -2313,6 +3061,7 @@ function moveLayer(dir) {
 
 function deleteObjectByIndex(idx) {
     if (!isFinite(idx) || !objects[idx]) return;
+    pushHistory(true);
     playUISound('delete');
     objects.splice(idx, 1);
     selectedIndices = selectedIndices.filter(i => i !== idx).map(i => i > idx ? i - 1 : i);
@@ -2321,6 +3070,7 @@ function deleteObjectByIndex(idx) {
 
 function duplicateSelected() {
     if (selectedIndices.length === 0) return;
+    pushHistory(true);
     const idxs = [...selectedIndices].sort((a, b) => a - b);
     const copies = idxs.map(i => JSON.parse(JSON.stringify(objects[i])));
     copies.forEach(c => objects.push(c));
@@ -2405,7 +3155,7 @@ function importKV(evt) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const doc = jsyaml.load(e.target.result);
-        if (doc && doc.shapes) { objects = doc.shapes; selectedIndices = []; playUISound('snap'); render(); }
+        if (doc && doc.shapes) { pushHistory(true); objects = doc.shapes; selectedIndices = []; playUISound('snap'); render(); }
     };
     reader.readAsText(file);
 }
