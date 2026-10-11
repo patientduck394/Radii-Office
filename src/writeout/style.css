@@ -24,6 +24,8 @@ body {
 /* --- 3D Glass Side Navigation Panel --- */
 .aero-sidebar {
     width: 260px;
+    height: 100vh;
+    max-height: 100vh;
     background: linear-gradient(90deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0.05) 100%);
     backdrop-filter: blur(20px);
     border-right: 2px solid rgba(255,255,255,0.2);
@@ -249,6 +251,7 @@ body {
     overflow: hidden;
     text-overflow: ellipsis;
     font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+    flex-shrink: 0;
 }
 
 .outline-item:hover {
@@ -281,13 +284,11 @@ body {
 .side-scroll-box .tabs-section,
 .side-scroll-box .outline-section {
     margin-top: 0;
+    min-height: 0;
 }
 
-.side-scroll-box .tabs-list,
-.side-scroll-box .outline-list {
-    max-height: none;
-    overflow: visible;
-}
+/* Each menu scrolls on its own (caps live on .tabs-list/.outline-list!),
+   and the outer box scrolls as backup on short screens! */
 
 .outline-item-l3 {
     padding-left: 34px;
@@ -306,11 +307,13 @@ body {
     display: flex;
     align-items: center;
     gap: 4px;
+    flex-shrink: 0;
 }
 
 .tab-row .outline-item {
     flex: 1;
     min-width: 0;
+    flex-shrink: 0;
 }
 
 .tab-rename-input {
