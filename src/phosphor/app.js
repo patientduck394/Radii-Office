@@ -4,26 +4,45 @@
 import { MiniMqtt } from './mqtt.js';
 
 const ROOT = 'radii-phosphor/v1';
+// ONE central meeting-point relay + automatic backups! Everyone prefers the
+// first entry, so near + far devices overlap by default! The rest only serve
+// while central is unreachable (hot standby)! Note: plain ws:// is useless
+// here (browsers block it on https pages), so every entry must be wss://!
 const BROKERS = [
+    'wss://mqtt.eclipseprojects.io:443/mqtt',
     'wss://broker.emqx.io:8084/mqtt',
     'wss://broker.hivemq.com:8884/mqtt',
     'wss://test.mosquitto.org:8081/mqtt',
 ];
+const CENTRALIZED = true; // single-path traffic via the preferred relay!
 const HEARTBEAT_MS = 20000;
 const PRESENCE_TTL = 50000;
 const HIST_MAX = 100;
+const MAX_FILE_BYTES = 8 * 1024 * 1024; // big files ride chunked streams!
+const MAX_SINGLE_BYTES = 2 * 1024 * 1024; // instant single-shot ceiling (relay permitting)!
+const CHUNK_RAW = 32 * 1024; // raw bytes per chunk (base64 inflates it)!
+const CHUNK_PER_TICK = 8; // chunks fired per pump tick!
+const PUMP_MS = 60; // sender pacing, keeps the UI breathing!
+const RETRY_WAIT_MS = 15000; // receiver patience before asking for gaps!
+const MAX_RETRIES = 3; // then the transfer is marked failed!
+const SEND_CACHE_MS = 120000; // senders keep chunks this long for retries!
+const MAX_ZIP_FILES = 500; // folder sanity cap!
+const MAX_BLOB_BYTES = 24 * 1024 * 1024; // in-memory completed downloads cap!
+const MAX_FILE_DATA_CHARS = 3 * 1024 * 1024; // single-message inbound abuse guard!
+const KEPT_FILE_PAYLOADS = 3; // only newest single-file contents persist locally!
 
 let me = null; // {clientId, name}
 let spaces = []; // [{code, name, desc, mine}]
 let activeCode = null;
 let members = new Map(); // clientId -> {name, at}
 let seenIds = new Set();
-let dirRetryTimer = null;
-let mqtt = null;
-let connectSeq = 0;
-let reconnectTimer = null;
+let activeBrokerUrl = null; // first live relay (conn tooltip)!
 let heartbeatTimer = null;
 let sweepTimer = null;
+let dirNudgeTimer = null;
+let relays = []; // [{url, host, mqtt, retryTimer}] — one link per relay!
+let wantedSubs = new Set(); // every topic we want, on every live relay!
+let meshWon = false;
 
 function esc(s) {
     return String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -177,7 +196,8 @@ function rememberUser(name, id) {
     saveKnownUsers();
 }
 
-function getKnownUsers() {
+function getKnownUsers(opts) {
+    const includeHidden = !!(opts && opts.includeHidden);
     const byLower = new Map();
     const add = (name, id, online) => {
         const clean = String(name || '').trim().slice(0, 24);
@@ -207,7 +227,15 @@ function getKnownUsers() {
     try {
         for (const u of knownUsers) add(u.name, u.id, false);
     } catch (e) {}
-    return [...byLower.values()].sort((a, b) => ((b.online - a.online) || a.name.localeCompare(b.name)));
+    let list = [...byLower.values()];
+    // Hidden trolls stay out of suggestions (moderation still sees them)!
+    if (!includeHidden) {
+        try {
+            const hidden = new Set(hiddenUsers.map(u => u.key));
+            if (hidden.size) list = list.filter(u => !hidden.has(u.name.toLowerCase()));
+        } catch (e) {}
+    }
+    return list.sort((a, b) => ((b.online - a.online) || a.name.localeCompare(b.name)));
 }
 
 function extractMentionNames(text) {
@@ -312,9 +340,16 @@ function openMentionMenu(cands, query) {
         const dot = document.createElement('span');
         dot.className = 'mention-status' + (u.online ? ' on' : '');
         dot.title = u.online ? 'In this Space now!' : 'Away or in another Space — still mentionable!';
+        const hide = document.createElement('button');
+        hide.type = 'button';
+        hide.className = 'mention-hide';
+        hide.innerText = '✖';
+        hide.title = 'Hide @' + u.name + ' from suggestions!';
+        hide.onmousedown = (e) => { e.preventDefault(); e.stopPropagation(); hideUser(u.name); };
         b.appendChild(av);
         b.appendChild(label);
         b.appendChild(dot);
+        b.appendChild(hide);
         b.onmousedown = (e) => { e.preventDefault(); pickMention(i); };
         menu.appendChild(b);
     });
@@ -447,6 +482,590 @@ function initMentions() {
     renderMentionChips();
 }
 
+// ---------- Moderation (/kick, /ban, /unban, /warn — Space owner only!) ----------
+// Cooperative by necessity: relays are public with no accounts, so every
+// client enforces what it can verify. Only the Space creator's clientId
+// (published in the directory entry) may issue mod actions, targets obey
+// on their own client, and warns stay invisible to everyone but the target!
+let bans = {}; // code -> {at, by} — Spaces I am banned from!
+
+function loadBans() {
+    const saved = storeGet('phosphor_bans', {});
+    bans = (saved && typeof saved === 'object' && !Array.isArray(saved)) ? saved : {};
+}
+
+function saveBans() {
+    storeSet('phosphor_bans', bans);
+}
+
+function isBanned(code) {
+    return !!(code && bans && bans[code]);
+}
+
+function setBan(code, by) {
+    bans[code] = { at: Date.now(), by: String(by || '').slice(0, 24) };
+    saveBans();
+}
+
+function clearBan(code) {
+    if (code && bans[code]) {
+        delete bans[code];
+        saveBans();
+    }
+}
+
+function isSpaceOwner(code) {
+    const s = spaces.find(x => x.code === code);
+    if (!s || !me) return false;
+    if (s.owner) return s.owner === me.clientId;
+    return !!s.mine;
+}
+
+function isSenderOwner(code, senderId) {
+    const s = spaces.find(x => x.code === code);
+    if (!s || !senderId || !s.owner) return false;
+    return senderId === s.owner;
+}
+
+function splitTarget(rest) {
+    let r = String(rest || '').trim().replace(/^@/, '');
+    if (!r) return null;
+    const users = getKnownUsers({ includeHidden: true });
+    let best = null;
+    for (const u of users) {
+        if (r.length >= u.name.length && r.slice(0, u.name.length).toLowerCase() === u.name.toLowerCase()) {
+            const after = r.slice(u.name.length);
+            if (after === '' || /^[\s"']/.test(after)) {
+                if (!best || u.name.length > best.name.length) best = { name: u.name, rest: after.trim() };
+            }
+        }
+    }
+    if (best) return best;
+    const tok = r.split(/\s+/)[0];
+    return { name: tok, rest: r.slice(tok.length).trim() };
+}
+
+function resolveTarget(name) {
+    const key = String(name || '').trim().toLowerCase().replace(/^@/, '');
+    if (!key) return null;
+    const hit = getKnownUsers({ includeHidden: true }).find(u => u.name.toLowerCase() === key);
+    if (hit) return { id: hit.id || null, name: hit.name };
+    return null;
+}
+
+function modFallback(action, targetName, ownerName) {
+    if (action === 'warn') return '🔒 Private notice for @' + targetName + ' — update Phosphor to view!';
+    if (action === 'kick') return '🔨 ' + ownerName + ' kicked @' + targetName + '!';
+    if (action === 'ban') return '🔨 ' + ownerName + ' banned @' + targetName + '!';
+    return '🔓 ' + ownerName + ' unbanned @' + targetName + '!';
+}
+
+function sendMod(code, action, target, text) {
+    const msg = {
+        v: 1,
+        id: genMsgId(),
+        from: me.clientId,
+        name: me.name,
+        body: modFallback(action, target.name, me.name),
+        kind: 'mod',
+        mod: { action, target: { id: target.id || null, name: target.name }, text: String(text || '').slice(0, 2000) },
+        at: Date.now(),
+    };
+    seenIds.add(msg.id);
+    try {
+        mesh.publish(topicMsg(code), JSON.stringify(msg), false);
+    } catch (e) {
+        alert('Send failed!');
+        uiSound('error');
+        return null;
+    }
+    return msg;
+}
+
+function buildSysNotice(text) {
+    const div = document.createElement('div');
+    div.className = 'msg sys';
+    div.textContent = String(text || '');
+    return div;
+}
+
+function showLocalNotice(text) {
+    try {
+        const box = document.getElementById('messages');
+        if (!box) return;
+        const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+        box.appendChild(buildSysNotice(text));
+        if (nearBottom) box.scrollTop = box.scrollHeight;
+    } catch (e) {}
+}
+
+function addSysNotice(code, text, id) {
+    const entry = { id: id || genMsgId(), from: '', name: '', body: '', at: Date.now(), kind: 'sys', text: String(text || '').slice(0, 500) };
+    try {
+        if (code === activeCode) {
+            const box = document.getElementById('messages');
+            if (box) {
+                const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+                const div = buildSysNotice(entry.text);
+                try { div.dataset.mid = String(entry.id); } catch (e) {}
+                box.appendChild(div);
+                if (nearBottom) box.scrollTop = box.scrollHeight;
+                try { renumberMessages(); } catch (e) {}
+            }
+        }
+    } catch (e) {}
+    try {
+        const hist = loadHist(code);
+        hist.push(entry);
+        saveHist(code, hist);
+    } catch (e) {}
+}
+
+function onModMessage(code, m) {
+    const mod = (m.mod && typeof m.mod === 'object') ? m.mod : null;
+    if (!mod) return;
+    const action = String(mod.action || '');
+    if (!['kick', 'ban', 'unban', 'warn', 'delete'].includes(action)) return;
+    if (!isSenderOwner(code, m.from)) return; // forged or unverifiable: ignore!
+    const space = spaces.find(s => s.code === code);
+    const sname = (space && space.name) || code;
+    const ownerName = (space && space.ownerName) || m.name;
+    const target = mod.target || {};
+    const tname = String(target.name || '?').slice(0, 24);
+    const isMe = (target.id && me && target.id === me.clientId)
+        || (!target.id && me && tname.toLowerCase() === me.name.toLowerCase());
+    const reason = String(mod.text || '').trim().slice(0, 200);
+    if (action === 'warn') {
+        if (!isMe) return; // private: only the target ever sees it!
+        const entry = { id: m.id, from: m.from, name: m.name, body: String(mod.text || '').slice(0, 2000), at: m.at || Date.now(), kind: 'warn', warnFrom: ownerName };
+        if (code === activeCode) showMessage(entry, true);
+        try {
+            const hist = loadHist(code);
+            hist.push(entry);
+            saveHist(code, hist);
+        } catch (e) {}
+        uiSound('mention');
+        return;
+    }
+    if (action === 'delete') {
+        const ids = (target && Array.isArray(target.ids)) ? target.ids.map(String).slice(0, 200) : [];
+        if (!ids.length) return;
+        const removed = deleteLocalMessages(code, ids);
+        if (removed) addSysNotice(code, ownerName + ' deleted ' + removed + ' message(s)!', m.id);
+        return;
+    }
+    if (action === 'unban') {
+        if (isMe) {
+            clearBan(code);
+            renderSpaces();
+            showLocalNotice('You were unbanned from #' + sname + '! Open it to rejoin the chat!');
+            uiSound('success');
+        } else {
+            addSysNotice(code, ownerName + ' unbanned @' + tname + '!', m.id);
+        }
+        return;
+    }
+    const notice = ownerName + (action === 'kick' ? ' kicked @' : ' banned @') + tname + '!' + (reason ? ' ' + reason : '');
+    if (isMe) {
+        if (action === 'kick') {
+            leaveSpace(code);
+            alert('You were kicked from #' + sname + ' by ' + ownerName + '!' + (reason ? ' Reason: ' + reason : ''));
+        } else {
+            setBan(code, ownerName);
+            try {
+                mesh.publish(topicPresence(code, me.clientId), JSON.stringify({ online: false }), true);
+                mesh.unsubscribe([ROOT + '/presence/' + code + '/+']);
+            } catch (e) {}
+            if (activeCode === code) {
+                activeCode = null;
+                members = new Map();
+                document.getElementById('empty-chat').style.display = 'block';
+                document.getElementById('chat-view').style.display = 'none';
+            }
+            renderSpaces();
+            uiSound('leave');
+            alert('You were banned from #' + sname + ' by ' + ownerName + '!' + (reason ? ' Reason: ' + reason : ''));
+        }
+        return;
+    }
+    addSysNotice(code, notice, m.id);
+}
+
+function checkModTarget(target, splitName) {
+    if (!target) {
+        showLocalNotice('Could not find @' + splitName + '! They need to have visited this Space!');
+        uiSound('error');
+        return false;
+    }
+    if (me && ((target.id && target.id === me.clientId) || target.name.toLowerCase() === me.name.toLowerCase())) {
+        showLocalNotice('You cannot target yourself!');
+        uiSound('error');
+        return false;
+    }
+    const space = spaces.find(s => s.code === activeCode);
+    if (space && space.owner && target.id && target.id === space.owner) {
+        showLocalNotice('That is the Space owner — untouchable!');
+        uiSound('error');
+        return false;
+    }
+    if (space && space.ownerName && !target.id && target.name.toLowerCase() === String(space.ownerName).toLowerCase()) {
+        showLocalNotice('That is the Space owner — untouchable!');
+        uiSound('error');
+        return false;
+    }
+    return true;
+}
+
+function doKickBan(cmd, rest) {
+    if (!isSpaceOwner(activeCode)) {
+        showLocalNotice('Only the Space owner can use /' + cmd + '!');
+        uiSound('error');
+        return true;
+    }
+    const split = splitTarget(rest);
+    if (!split) {
+        showLocalNotice('Who? Try /' + cmd + ' @name!');
+        uiSound('error');
+        return true;
+    }
+    const target = resolveTarget(split.name);
+    if (!checkModTarget(target, split.name)) return true;
+    const msg = sendMod(activeCode, cmd, target, split.rest);
+    if (!msg) return true;
+    addSysNotice(activeCode, me.name + (cmd === 'kick' ? ' kicked @' : ' banned @') + target.name + '!' + (split.rest ? ' ' + split.rest.slice(0, 200) : ''), msg.id);
+    uiSound('send');
+    return true;
+}
+
+function doWarnCmd(rest) {
+    if (!isSpaceOwner(activeCode)) {
+        showLocalNotice('Only the Space owner can use /warn!');
+        uiSound('error');
+        return true;
+    }
+    const split = splitTarget(rest);
+    if (!split) {
+        showLocalNotice('Who? Try /warn @name "message"!');
+        uiSound('error');
+        return true;
+    }
+    let text = split.rest;
+    if (text.length >= 2 && text.startsWith('"') && text.endsWith('"')) text = text.slice(1, -1);
+    text = text.trim().slice(0, 500);
+    if (!text) {
+        showLocalNotice('Give them a message! Try /warn @name "message"!');
+        uiSound('error');
+        return true;
+    }
+    const target = resolveTarget(split.name);
+    if (!checkModTarget(target, split.name)) return true;
+    const msg = sendMod(activeCode, 'warn', target, text);
+    if (!msg) return true;
+    showLocalNotice('Warned @' + target.name + ' — only they can see it!');
+    uiSound('send');
+    return true;
+}
+
+function doUnbanCmd(rest) {
+    if (!isSpaceOwner(activeCode)) {
+        showLocalNotice('Only the Space owner can use /unban!');
+        uiSound('error');
+        return true;
+    }
+    const split = splitTarget(rest);
+    if (!split) {
+        showLocalNotice('Who? Try /unban @name!');
+        uiSound('error');
+        return true;
+    }
+    const target = resolveTarget(split.name);
+    if (!checkModTarget(target, split.name)) return true;
+    const msg = sendMod(activeCode, 'unban', target, '');
+    if (!msg) return true;
+    addSysNotice(activeCode, me.name + ' unbanned @' + target.name + '!', msg.id);
+    uiSound('send');
+    return true;
+}
+
+// ---------- Delete (/delete 1-3&5 — owner wipes messages by number!) ----------
+// Numbers are positions in history: top message is 1! Dashes delete ranges,
+// ampersands delete multiples, combined like 1-10&7-3&6-8! Positions resolve
+// to internal IDs here, so every device deletes the SAME messages even when
+// histories differ! Enforcement is cooperative like the other mod commands!
+function parseDeleteSpec(rest, total) {
+    const s = String(rest || '').trim();
+    if (!s) return { nums: [], error: 'Give message numbers! Try /delete 1-3&5!' };
+    const parts = s.split('&').map(x => x.trim()).filter(x => x.length);
+    if (!parts.length) return { nums: [], error: 'Give message numbers! Try /delete 1-3&5!' };
+    const set = new Set();
+    for (const part of parts) {
+        const m = /^(\d+)(?:\s*-\s*(\d+))?$/.exec(part);
+        if (!m) return { nums: [], error: 'Bad bit "' + part.slice(0, 20) + '"! Use numbers and ranges like 1-3&5!' };
+        const a = parseInt(m[1], 10);
+        const b = (m[2] === undefined) ? a : parseInt(m[2], 10);
+        if (!(a >= 1) || !(b >= 1)) return { nums: [], error: 'Numbers start at 1! Bad bit "' + part.slice(0, 20) + '"!' };
+        const lo = Math.min(a, b);
+        const hi = Math.max(a, b);
+        if (lo > total) return { nums: [], error: 'Only ' + total + ' message(s) here! #' + lo + ' is out of range!' };
+        const top = Math.min(hi, total);
+        for (let n = lo; n <= top; n++) set.add(n);
+    }
+    if (!set.size) return { nums: [], error: 'Nothing to delete!' };
+    return { nums: [...set].sort((x, y) => x - y), error: null };
+}
+
+function compactRanges(nums) {
+    const sorted = [...new Set(nums)].map(Number).filter(n => n >= 1).sort((x, y) => x - y);
+    if (!sorted.length) return '';
+    const out = [];
+    let start = sorted[0], prev = sorted[0];
+    for (let i = 1; i <= sorted.length; i++) {
+        const cur = sorted[i];
+        if (cur === prev + 1) { prev = cur; continue; }
+        out.push(start === prev ? String(start) : start + '-' + prev);
+        start = cur; prev = cur;
+    }
+    return out.join('&');
+}
+
+function sendDelete(code, ids, nums) {
+    const msg = {
+        v: 1,
+        id: genMsgId(),
+        from: me.clientId,
+        name: me.name,
+        body: '🗑️ ' + me.name + ' deleted ' + ids.length + ' message(s)! (' + compactRanges(nums) + ')',
+        kind: 'mod',
+        mod: { action: 'delete', target: { ids: ids.slice(0, 200) }, text: compactRanges(nums).slice(0, 200) },
+        at: Date.now(),
+    };
+    seenIds.add(msg.id);
+    try {
+        mesh.publish(topicMsg(code), JSON.stringify(msg), false);
+    } catch (e) {
+        alert('Send failed!');
+        uiSound('error');
+        return null;
+    }
+    return msg;
+}
+
+function deleteLocalMessages(code, ids) {
+    const wanted = new Set((ids || []).map(String));
+    if (!wanted.size) return 0;
+    let removed = 0;
+    try {
+        const hist = loadHist(code);
+        const kept = hist.filter(m => {
+            const id = (m && m.id) ? String(m.id) : '';
+            if (id && wanted.has(id)) { removed++; return false; }
+            return true;
+        });
+        if (removed) {
+            saveHist(code, kept);
+            // Drop in-flight file transfers for removed messages!
+            try {
+                for (const id of wanted) {
+                    const t = fileTransfers.get(id);
+                    if (t) {
+                        try { clearInterval(t.sendTimer); } catch (e) {}
+                        try { clearTimeout(t.retryTimer); } catch (e) {}
+                        try { if (t.transferId) transferByTid.delete(t.transferId); } catch (e) {}
+                        fileTransfers.delete(id);
+                    }
+                }
+            } catch (e) {}
+        }
+    } catch (e) { return 0; }
+    if (removed && code === activeCode) {
+        try { renderHistory(); } catch (e) {}
+    }
+    return removed;
+}
+
+function doDeleteCmd(rest) {
+    if (!isSpaceOwner(activeCode)) {
+        showLocalNotice('Only the Space owner can use /delete!');
+        uiSound('error');
+        return true;
+    }
+    const hist = loadHist(activeCode);
+    if (!hist.length) {
+        showLocalNotice('No messages to delete!');
+        uiSound('error');
+        return true;
+    }
+    const parsed = parseDeleteSpec(rest, hist.length);
+    if (parsed.error) {
+        showLocalNotice(parsed.error);
+        uiSound('error');
+        return true;
+    }
+    const ids = [];
+    for (const n of parsed.nums) {
+        const m = hist[n - 1];
+        if (m && m.id) ids.push(String(m.id));
+    }
+    if (!ids.length) {
+        showLocalNotice('Nothing to delete!');
+        uiSound('error');
+        return true;
+    }
+    const msg = sendDelete(activeCode, ids, parsed.nums);
+    if (!msg) return true;
+    const removed = deleteLocalMessages(activeCode, ids);
+    showLocalNotice('Deleted ' + removed + ' message(s)! (' + compactRanges(parsed.nums) + ')');
+    uiSound('send');
+    return true;
+}
+
+function handleSlashCommand(raw) {
+    const m = /^\/(\w+)\s*([\s\S]*)$/.exec(String(raw || '').trim());
+    if (!m) return true;
+    const cmd = m[1].toLowerCase();
+    const rest = (m[2] || '').trim();
+    if (!['kick', 'ban', 'unban', 'warn', 'delete'].includes(cmd)) {
+        showLocalNotice('Unknown command! Try /kick, /ban, /unban, /warn, or /delete!');
+        uiSound('error');
+        return true;
+    }
+    if (!activeCode) return true;
+    try { closeMentionMenu(); } catch (e) {}
+    if (cmd === 'warn') return doWarnCmd(rest);
+    if (cmd === 'unban') return doUnbanCmd(rest);
+    if (cmd === 'delete') return doDeleteCmd(rest);
+    return doKickBan(cmd, rest);
+}
+
+// ---------- Mention filter (hide trolls from @ suggestions, clear the index!) ----------
+// Hiding only affects suggestions: typed-out mentions still notify, and mod
+// commands can still target hidden users. The index itself (everyone ever
+// seen) can be wiped; current Spaces + history keep suggesting as usual!
+let hiddenUsers = []; // [{name, key}] — filtered out of @ suggestions!
+
+function loadHiddenUsers() {
+    const saved = storeGet('phosphor_hidden_users', []);
+    hiddenUsers = Array.isArray(saved)
+        ? saved.filter(u => u && u.key).map(u => ({ name: String(u.name || u.key).slice(0, 24), key: String(u.key).toLowerCase().slice(0, 24) }))
+        : [];
+}
+
+function saveHiddenUsers() {
+    storeSet('phosphor_hidden_users', hiddenUsers.slice(-200));
+}
+
+function hideUser(name) {
+    const clean = String(name || '').trim().slice(0, 24);
+    if (clean.length < 2) return false;
+    const key = clean.toLowerCase();
+    if (!hiddenUsers.some(u => u.key === key)) {
+        hiddenUsers.push({ name: clean, key });
+        if (hiddenUsers.length > 200) hiddenUsers = hiddenUsers.slice(-200);
+        saveHiddenUsers();
+    }
+    updateFilterButton();
+    renderHiddenList();
+    try { refreshMentionMenu(); } catch (e) {}
+    uiSound('click');
+    return false;
+}
+
+function unhideUser(name) {
+    const key = String(name || '').trim().toLowerCase();
+    if (!key) return false;
+    hiddenUsers = hiddenUsers.filter(u => u.key !== key);
+    saveHiddenUsers();
+    updateFilterButton();
+    renderHiddenList();
+    try { refreshMentionMenu(); } catch (e) {}
+    uiSound('click');
+    return false;
+}
+
+function unhideAllUsers() {
+    hiddenUsers = [];
+    saveHiddenUsers();
+    updateFilterButton();
+    renderHiddenList();
+    try { refreshMentionMenu(); } catch (e) {}
+    uiSound('toggle');
+    return false;
+}
+
+function clearKnownUsers() {
+    knownUsers = [];
+    saveKnownUsers();
+    updateFilterButton();
+    renderHiddenList();
+    try { refreshMentionMenu(); } catch (e) {}
+    uiSound('toggle');
+    return false;
+}
+
+function updateFilterButton() {
+    try {
+        const btn = document.getElementById('filter-open-btn');
+        if (btn) btn.innerText = hiddenUsers.length ? 'Mention filter (' + hiddenUsers.length + ')!' : 'Mention filter!';
+    } catch (e) {}
+}
+
+function renderHiddenList() {
+    try {
+        const count = document.getElementById('hidden-count');
+        if (count) count.innerText = String(hiddenUsers.length);
+        const indexed = document.getElementById('indexed-count');
+        if (indexed) indexed.innerText = String(knownUsers.length);
+        const all = document.getElementById('unhide-all-btn');
+        if (all) all.style.display = hiddenUsers.length ? 'inline-block' : 'none';
+        const list = document.getElementById('hidden-list');
+        if (!list) return;
+        list.innerHTML = '';
+        if (!hiddenUsers.length) {
+            const empty = document.createElement('div');
+            empty.className = 'modal-note';
+            empty.innerText = 'Nobody hidden! Everyone shows up in @ suggestions!';
+            list.appendChild(empty);
+            return;
+        }
+        for (const u of hiddenUsers.slice().sort((a, b) => a.name.localeCompare(b.name))) {
+            const row = document.createElement('div');
+            row.className = 'hidden-row';
+            const label = document.createElement('span');
+            label.innerText = '@' + u.name;
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'mini-btn';
+            btn.innerText = 'Unhide';
+            btn.title = 'Suggest @' + u.name + ' again!';
+            btn.onclick = () => unhideUser(u.key);
+            row.appendChild(label);
+            row.appendChild(btn);
+            list.appendChild(row);
+        }
+    } catch (e) {}
+}
+
+function openFilterModal() {
+    renderHiddenList();
+    updateFilterButton();
+    document.getElementById('filter-modal').style.display = 'flex';
+    uiSound('open');
+    return false;
+}
+
+function initFilter() {
+    loadHiddenUsers();
+    updateFilterButton();
+    renderHiddenList();
+    try {
+        const all = document.getElementById('unhide-all-btn');
+        if (all && !all.dataset.wired) {
+            all.dataset.wired = '1';
+            all.onclick = () => unhideAllUsers();
+        }
+    } catch (e) {}
+}
+
 // ---------- Identity (your "account" lives in this browser!) ----------
 function loadIdentity() {
     me = storeGet('phosphor_identity', null);
@@ -506,8 +1125,9 @@ function renderSpaces() {
         const row = document.createElement('div');
         row.className = 'space-row';
         const b = document.createElement('button');
-        b.className = 'action-btn space-btn' + (s.code === activeCode ? ' active' : '');
+        b.className = 'action-btn space-btn' + (s.code === activeCode ? ' active' : '') + (isBanned(s.code) ? ' banned' : '');
         b.innerHTML = `<span># ${esc(s.name)}<small>${esc(s.code)}</small></span>`;
+        if (isBanned(s.code)) b.title = 'Banned from ' + s.name + '!';
         const badgeCount = mentionBadgesEnabled ? (parseInt(mentionBadges[s.code], 10) || 0) : 0;
         if (badgeCount > 0) {
             const badge = document.createElement('span');
@@ -534,10 +1154,10 @@ function askLeaveSpace(code) {
 }
 
 function leaveSpace(code) {
-    if (mqtt && mqtt.connected && me) {
+    if (mesh.connected && me) {
         try {
-            mqtt.publish(topicPresence(code, me.clientId), JSON.stringify({ name: me.name, at: Date.now(), online: false }), true);
-            mqtt.unsubscribe([topicMsg(code), topicDir(code), ROOT + '/presence/' + code + '/+']);
+            mesh.publish(topicPresence(code, me.clientId), JSON.stringify({ name: me.name, at: Date.now(), online: false }), true);
+            mesh.unsubscribe([topicMsg(code), topicDir(code), ROOT + '/presence/' + code + '/+']);
         } catch (e) {}
     }
     spaces = spaces.filter(s => s.code !== code);
@@ -572,6 +1192,7 @@ function closeModals() {
     uiSound('close');
     document.getElementById('space-modal').style.display = 'none';
     document.getElementById('join-modal').style.display = 'none';
+    document.getElementById('filter-modal').style.display = 'none';
 }
 
 function createSpace() {
@@ -579,7 +1200,7 @@ function createSpace() {
     if (name.length < 2) { alert('Name your Space (2+ chars)!'); uiSound('error'); return; }
     const description = document.getElementById('new-space-desc').value.trim().slice(0, 200);
     const code = newCode();
-    spaces.push({ code, name, description, mine: true });
+    spaces.push({ code, name, description, mine: true, owner: me.clientId, ownerName: me.name });
     saveSpaces();
     publishDir(code, name, description);
     closeModals();
@@ -587,9 +1208,54 @@ function createSpace() {
     openSpace(code);
 }
 
+// ---------- Invites (click the Invite link -> invite page -> click to join!) ----------
+function inviteUrl(code) {
+    try {
+        const u = new URL('invite.html', location.href);
+        u.searchParams.set('code', code);
+        return u.toString();
+    } catch (e) {
+        return 'invite.html?code=' + encodeURIComponent(code);
+    }
+}
+
+function getInviteCodeFromUrl() {
+    try {
+        const q = new URLSearchParams(location.search);
+        const c = String(q.get('code') || q.get('invite') || q.get('space') || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (c.length >= 4) return c;
+    } catch (e) {}
+    try {
+        const h = String(location.hash || '').replace(/^#/, '').replace(/^code=/i, '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+        if (h.length >= 4) return h;
+    } catch (e) {}
+    return '';
+}
+
+function clearInviteCodeFromUrl() {
+    try {
+        const u = new URL(location.href);
+        u.searchParams.delete('code');
+        u.searchParams.delete('invite');
+        u.searchParams.delete('space');
+        u.hash = '';
+        history.replaceState(null, '', u.toString());
+    } catch (e) {}
+}
+
 function joinSpace() {
     const code = document.getElementById('join-code').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-    if (code.length < 4) { alert('That code looks too short!'); uiSound('error'); return; }
+    joinSpaceByCode(code);
+}
+
+function joinSpaceByCode(rawCode) {
+    const code = String(rawCode || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+    if (code.length < 4) { alert('That code looks too short!'); uiSound('error'); return false; }
+    if (isBanned(code)) {
+        alert('You are banned from this Space! Ask the owner for /unban!');
+        uiSound('error');
+        return false;
+    }
     if (!spaces.some(s => s.code === code)) {
         spaces.push({ code, name: code, description: 'Resolving…', mine: false });
         saveSpaces();
@@ -598,12 +1264,30 @@ function joinSpace() {
     renderSpaces();
     openSpace(code);
     // Ask the network who lives here!
-    if (mqtt && mqtt.connected) mqtt.subscribe(ROOT + '/dir/' + code);
+    mesh.subscribe(ROOT + '/dir/' + code);
+    return true;
+}
+
+function consumePendingInvite() {
+    const code = getInviteCodeFromUrl();
+    if (!code) return;
+    if (isBanned(code)) {
+        alert('You are banned from this Space!');
+        clearInviteCodeFromUrl();
+        return;
+    }
+    if (joinSpaceByCode(code)) clearInviteCodeFromUrl();
+    else {
+        try {
+            document.getElementById('join-code').value = code;
+            openJoinModal();
+        } catch (e) {}
+    }
 }
 
 function publishDir(code, name, description) {
-    if (!mqtt || !mqtt.connected) return;
-    mqtt.publish(ROOT + '/dir/' + code, JSON.stringify({ name, description, at: Date.now() }), true);
+    if (!mesh.connected || !me) return;
+    mesh.publish(ROOT + '/dir/' + code, JSON.stringify({ name, description, at: Date.now(), owner: me.clientId, ownerName: me.name }), true);
 }
 
 // ---------- Chat ----------
@@ -616,14 +1300,18 @@ function spaceMsgTopics() {
 }
 
 function subscribeAllSpaceMsgs() {
-    if (!mqtt || !mqtt.connected) return;
     try {
         const topics = spaceMsgTopics();
-        if (topics.length) mqtt.subscribe(topics);
+        if (topics.length) mesh.subscribe(topics);
     } catch (e) {}
 }
 
 function openSpace(code) {
+    if (isBanned(code)) {
+        alert('You are banned from this Space!');
+        uiSound('error');
+        return;
+    }
     uiSound('open');
     leaveView(false);
     activeCode = code;
@@ -639,41 +1327,32 @@ function openSpace(code) {
     updateMeta();
     const invite = document.getElementById('invite-code');
     invite.innerText = 'Invite: ' + code;
+    invite.title = 'Copy invite link! Share it, friends click Join on the invite page!';
     invite.onclick = () => {
-        if (navigator.clipboard) navigator.clipboard.writeText(code).catch(() => {});
+        const link = inviteUrl(code);
+        try {
+            if (navigator.clipboard) navigator.clipboard.writeText(link).catch(() => {});
+        } catch (e) {}
         invite.innerText = 'Copied!';
         setTimeout(() => { invite.innerText = 'Invite: ' + code; }, 1200);
     };
     renderHistory();
-    if (mqtt && mqtt.connected) {
-        subscribeAllSpaceMsgs();
-        mqtt.subscribe([topicDir(code), ROOT + '/presence/' + code + '/+']);
-        heartbeat();
-    }
-    // If we joined blind, the retained directory usually answers instantly —
-    // but ask again in a few seconds in case the first ask got lost!
-    clearTimeout(dirRetryTimer);
-    const joined = spaces.find(s => s.code === code);
-    if (joined && joined.name === joined.code) {
-        dirRetryTimer = setTimeout(() => {
-            const still = spaces.find(s => s.code === code);
-            if (still && still.name === still.code && mqtt && mqtt.connected) {
-                mqtt.subscribe(topicDir(code));
-            }
-        }, 5000);
-    }
+    subscribeAllSpaceMsgs();
+    mesh.subscribe([topicDir(code), ROOT + '/presence/' + code + '/+']);
+    heartbeat();
+    // Blind joins show "Resolving…" until the retained directory lands!
+    // The global nudger keeps re-asking while it stays unresolved!
+    nudgeUnresolvedDir();
+    watchResolving(code);
 }
 
 function leaveView(clearActive = true) {
-    if (mqtt && mqtt.connected && activeCode && me) {
+    if (mesh.connected && activeCode && me) {
         try {
-            mqtt.publish(topicPresence(activeCode, me.clientId), JSON.stringify({ online: false }), true);
-            mqtt.unsubscribe([topicMsg(activeCode), topicDir(activeCode), ROOT + '/presence/' + activeCode + '/+']);
+            mesh.publish(topicPresence(activeCode, me.clientId), JSON.stringify({ online: false }), true);
+            mesh.unsubscribe([topicMsg(activeCode), topicDir(activeCode), ROOT + '/presence/' + activeCode + '/+']);
         } catch (e) {}
     }
-    clearInterval(heartbeatTimer);
-    clearInterval(sweepTimer);
-    clearTimeout(dirRetryTimer);
     if (clearActive) {
         activeCode = null;
         renderSpaces();
@@ -682,16 +1361,39 @@ function leaveView(clearActive = true) {
     }
 }
 
+function isUnresolved(code) {
+    const s = spaces.find(x => x.code === code);
+    return !!(s && !s.mine && s.name === s.code);
+}
+
 function updateMeta() {
     const online = [...members.values()].filter(m => m.online).length;
     const space = spaces.find(s => s.code === activeCode);
     const names = [...members.values()].filter(m => m.online).map(m => m.name).slice(0, 12).join(', ');
-    document.getElementById('chat-meta').innerText =
-        ((space && space.description) || 'No description!') + ` · ${online} online!`;
+    const metaEl = document.getElementById('chat-meta');
+    if (space && space.name === space.code && !space.mine) {
+        const live = relaysConnected().length;
+        const total = relays.length || BROKERS.length;
+        if (!mesh.connected) {
+            metaEl.innerText = 'Still resolving… No relays yet! Wi-Fi may block chat ports! Click to retry! · ' + online + ' online!';
+        } else {
+            metaEl.innerText = 'Still resolving… Waiting for host! (' + live + '/' + total + ' relays)! Click to retry! · ' + online + ' online!';
+        }
+        metaEl.style.cursor = 'pointer';
+        metaEl.title = 'Retry resolving this Space!';
+        metaEl.onclick = () => retryResolving();
+    } else {
+        metaEl.innerText =
+            ((space && space.description) || 'No description!') + ` · ${online} online!`;
+        metaEl.style.cursor = '';
+        metaEl.title = '';
+        metaEl.onclick = null;
+    }
     const bar = document.getElementById('members-bar');
     if (names) {
         bar.style.display = 'flex';
         bar.innerHTML = ONLINE_SVG + '<span>' + esc(names) + '</span>';
+        try { bar.title = 'My relays: ' + myRelayHosts().join(', ') + '!'; } catch (e) {}
     } else bar.style.display = 'none';
     try { if (isMentionMenuOpen()) refreshMentionMenu(); } catch (e) {}
 }
@@ -704,7 +1406,608 @@ function loadHist(code) {
 }
 
 function saveHist(code, list) {
-    storeSet(histKey(code), list.slice(-HIST_MAX));
+    const trimmed = list.slice(-HIST_MAX);
+    trimFilePayloads(trimmed);
+    if (trySaveHist(code, trimmed)) return;
+    // Storage quota hit (huge file payloads!): drop ALL file contents, retry!
+    for (const m of trimmed) {
+        if (m && m.kind === 'file' && m.file && m.file.data) {
+            m.file = { name: m.file.name, size: m.file.size, type: m.file.type, expired: true };
+        }
+    }
+    if (trySaveHist(code, trimmed)) return;
+    // Still failing: keep last text messages only!
+    trySaveHist(code, trimmed.filter(m => !(m && m.kind === 'file')).slice(-30));
+}
+
+function trySaveHist(code, list) {
+    try {
+        localStorage.setItem(histKey(code), JSON.stringify(list));
+        return true;
+    } catch (e) { return false; }
+}
+
+function trimFilePayloads(trimmed) {
+    // File contents are heavy: keep only the newest few, older ones stay as stubs!
+    let kept = 0;
+    for (let i = trimmed.length - 1; i >= 0; i--) {
+        const m = trimmed[i];
+        if (m && m.kind === 'file' && m.file && m.file.data) {
+            kept++;
+            if (kept > KEPT_FILE_PAYLOADS) {
+                m.file = { name: m.file.name, size: m.file.size, type: m.file.type, expired: true };
+            }
+        }
+    }
+}
+
+function fmtSize(n) {
+    n = Math.max(0, parseInt(n, 10) || 0);
+    if (n < 1024) return n + ' B';
+    if (n < 1024 * 1024) return (n / 1024).toFixed(n < 10240 ? 1 : 0) + ' KB';
+    return (n / 1048576).toFixed(1) + ' MB';
+}
+
+function renderFileCard(m) {
+    const f = effectiveFile(m);
+    const card = document.createElement('div');
+    card.className = 'file-card';
+    const hasData = !!(f.data && !f.expired && typeof f.data === 'string' && f.data.startsWith('data:'));
+    if (hasData && /^data:image\//.test(f.data)) {
+        const thumb = document.createElement('img');
+        thumb.className = 'file-thumb';
+        thumb.src = f.data;
+        thumb.alt = String(f.name || 'image');
+        card.appendChild(thumb);
+    }
+    const info = document.createElement('div');
+    info.className = 'file-info';
+    const nm = document.createElement('div');
+    nm.className = 'file-name';
+    nm.textContent = String(f.name || 'file');
+    info.appendChild(nm);
+    const sz = document.createElement('div');
+    sz.className = 'file-size';
+    sz.textContent = fmtSize(f.size) + (f.type ? ' · ' + String(f.type).slice(0, 80) : '');
+    info.appendChild(sz);
+    card.appendChild(info);
+    if (hasData) {
+        const a = document.createElement('a');
+        a.className = 'file-dl';
+        a.href = f.data;
+        a.download = String(f.name || 'download');
+        a.textContent = 'Download!';
+        a.title = 'Download ' + String(f.name || 'file') + '!';
+        card.appendChild(a);
+    } else {
+        const exp = document.createElement('div');
+        exp.className = 'file-expired';
+        exp.textContent = 'No longer stored here — ask the sender to resend!';
+        card.appendChild(exp);
+    }
+    return card;
+}
+
+function genMsgId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+}
+
+function shareFile(el) {
+    const f = el && el.files && el.files[0];
+    if (el) el.value = '';
+    if (!f) return false;
+    if (!me || !activeCode || !mesh.connected) {
+        alert('Join a Space and wait for Live first!');
+        uiSound('error');
+        return false;
+    }
+    if (f.size > MAX_FILE_BYTES || f.size <= 0) {
+        alert(f.size > MAX_FILE_BYTES ? 'That file is too big! Keep it under 8 MB!' : 'That file looks empty!');
+        uiSound('error');
+        return false;
+    }
+    const code = activeCode;
+    const reader = new FileReader();
+    reader.onload = () => {
+        const dataUrl = String(reader.result || '');
+        if (!dataUrl.startsWith('data:')) {
+            alert('Could not package that file!');
+            uiSound('error');
+            return;
+        }
+        if (!me || activeCode !== code) {
+            alert('You switched Spaces — pick the file again!');
+            uiSound('error');
+            return;
+        }
+        deliverFile({ name: String(f.name).slice(0, 120), type: String(f.type || '').slice(0, 80), size: f.size, dataUrl }, code);
+    };
+    reader.onerror = () => { alert('Could not read that file!'); uiSound('error'); };
+    try {
+        reader.readAsDataURL(f);
+    } catch (e) {
+        alert('Could not read that file!');
+        uiSound('error');
+    }
+    return false;
+}
+
+function shareFolder(el) {
+    const files = el && el.files ? [...el.files] : [];
+    if (el) el.value = '';
+    if (!files.length) return false;
+    if (!me || !activeCode || !mesh.connected) {
+        alert('Join a Space and wait for Live first!');
+        uiSound('error');
+        return false;
+    }
+    if (files.length > MAX_ZIP_FILES) {
+        alert('That folder has too many files! Keep it under ' + MAX_ZIP_FILES + '!');
+        uiSound('error');
+        return false;
+    }
+    let total = 0;
+    for (const f of files) total += f.size || 0;
+    if (total > MAX_FILE_BYTES || total <= 0) {
+        alert(total > MAX_FILE_BYTES ? 'That folder is too big! Keep it under 8 MB!' : 'That folder looks empty!');
+        uiSound('error');
+        return false;
+    }
+    const code = activeCode;
+    uiSound('open');
+    Promise.all(files.map(f => f.arrayBuffer().then(buf => ({ f, buf }))))
+        .then(items => {
+            if (!me || activeCode !== code) {
+                alert('You switched Spaces — pick the folder again!');
+                uiSound('error');
+                return;
+            }
+            const entries = [];
+            for (const { f, buf } of items) {
+                const p = cleanZipPath(f.webkitRelativePath || f.name);
+                if (!p) continue;
+                entries.push({ path: p, data: new Uint8Array(buf), time: f.lastModified });
+            }
+            if (!entries.length) {
+                alert('That folder is empty!');
+                uiSound('error');
+                return;
+            }
+            let zip;
+            try {
+                zip = buildStoredZip(entries);
+            } catch (e) {
+                alert('Could not zip that folder!');
+                uiSound('error');
+                return;
+            }
+            const root = String((files[0].webkitRelativePath || files[0].name || 'folder').split('/')[0] || 'folder').slice(0, 80);
+            deliverFile({ name: root + '.zip', type: 'application/zip', size: zip.length, dataUrl: 'data:application/zip;base64,' + b64encodeBytes(zip) }, code);
+        })
+        .catch(() => { alert('Could not read that folder!'); uiSound('error'); });
+    return false;
+}
+
+function singleFileLimit() {
+    // Respect the TRAFFIC relay: EMQX drops packets over ~1 MB!
+    try {
+        const p = preferredRelay();
+        if (!p) return 512 * 1024;
+        if (/emqx\.io/i.test(p.url || '')) return 512 * 1024;
+        return MAX_SINGLE_BYTES;
+    } catch (e) { return 512 * 1024; }
+}
+
+function deliverFile(p, code) {
+    if (!me || !mesh.connected || activeCode !== code) {
+        alert('Join a Space and wait for Live first!');
+        uiSound('error');
+        return false;
+    }
+    if (p.size <= singleFileLimit() && p.dataUrl.length <= MAX_FILE_DATA_CHARS) {
+        const msg = {
+            v: 1,
+            id: genMsgId(),
+            from: me.clientId,
+            name: me.name,
+            body: '📎 ' + p.name + ' (' + fmtSize(p.size) + ')',
+            kind: 'file',
+            file: { name: p.name, size: p.size, type: p.type, data: p.dataUrl },
+            at: Date.now(),
+        };
+        seenIds.add(msg.id);
+        try {
+            mesh.publish(topicMsg(code), JSON.stringify(msg), false);
+        } catch (e) {
+            alert('Send failed!');
+            uiSound('error');
+            return false;
+        }
+        if (code === activeCode) showMessage(msg, true);
+        uiSound('send');
+        const hist = loadHist(code);
+        hist.push({ id: msg.id, from: msg.from, name: msg.name, body: msg.body, at: msg.at, kind: 'file', file: msg.file });
+        saveHist(code, hist);
+        return true;
+    }
+    return startChunkedTransfer(p, code);
+}
+
+// ---------- Chunked big-file transfers (progress + retries, all over MQTT!) ----------
+const fileTransfers = new Map(); // msgId -> transfer (both directions)!
+const transferByTid = new Map(); // transferId -> transfer!
+const orphanChunks = new Map(); // transferId -> {at, map} chunks before file-start!
+const sentChunkCache = new Map(); // transferId -> {chunks} kept briefly for retries!
+const fileBlobs = new Map(); // msgId -> dataUrl of completed downloads!
+let fileBlobBytes = 0;
+
+function stashFileBlob(msgId, dataUrl) {
+    try {
+        if (fileBlobs.has(msgId)) {
+            fileBlobBytes -= (fileBlobs.get(msgId) || '').length;
+            fileBlobs.delete(msgId);
+        }
+        fileBlobs.set(msgId, dataUrl);
+        fileBlobBytes += dataUrl.length;
+        while (fileBlobBytes > MAX_BLOB_BYTES && fileBlobs.size > 1) {
+            const oldest = fileBlobs.keys().next().value;
+            if (oldest === msgId) break;
+            fileBlobBytes -= (fileBlobs.get(oldest) || '').length;
+            fileBlobs.delete(oldest);
+        }
+    } catch (e) {}
+}
+
+function pruneTransferMaps() {
+    if (transferByTid.size <= 120) return;
+    for (const [tid, t] of transferByTid) {
+        if ((t.done || t.failed) && transferByTid.size > 120) transferByTid.delete(tid);
+    }
+}
+
+function startChunkedTransfer(p, code) {
+    const comma = p.dataUrl.indexOf(',');
+    const raw = comma >= 0 ? p.dataUrl.slice(comma + 1) : '';
+    if (!raw) {
+        alert('Could not package that file!');
+        uiSound('error');
+        return false;
+    }
+    const chunks = [];
+    for (let i = 0; i < raw.length; i += CHUNK_RAW) chunks.push(raw.slice(i, i + CHUNK_RAW));
+    if (!chunks.length || chunks.length > 400) {
+        alert('That file is too big! Keep it under 8 MB!');
+        uiSound('error');
+        return false;
+    }
+    const transferId = genMsgId();
+    const msg = {
+        v: 1,
+        id: genMsgId(),
+        from: me.clientId,
+        name: me.name,
+        body: '📎 ' + p.name + ' (' + fmtSize(p.size) + ') — streaming…',
+        kind: 'file',
+        mentions: [],
+        file: { name: p.name, size: p.size, type: p.type, transferId, chunks: chunks.length, chunked: true },
+        at: Date.now(),
+    };
+    const t = {
+        msgId: msg.id, code, transferId, name: p.name, size: p.size, type: p.type,
+        total: chunks.length, chunks, sent: 0, received: null, count: 0,
+        isSender: true, fromId: me.clientId, done: false, failed: false,
+        retries: 0, lastActivity: Date.now(), sendTimer: null, retryTimer: null, msg,
+    };
+    fileTransfers.set(msg.id, t);
+    transferByTid.set(transferId, t);
+    pruneTransferMaps();
+    seenIds.add(msg.id);
+    try {
+        mesh.publish(topicMsg(code), JSON.stringify(msg), false);
+    } catch (e) {
+        fileTransfers.delete(msg.id);
+        transferByTid.delete(transferId);
+        alert('Send failed!');
+        uiSound('error');
+        return false;
+    }
+    if (code === activeCode) showMessage(msg, true);
+    uiSound('send');
+    const hist = loadHist(code);
+    hist.push({ id: msg.id, from: msg.from, name: msg.name, body: msg.body, at: msg.at, mentions: [], kind: 'file', file: { name: p.name, size: p.size, type: p.type, transferId, chunks: chunks.length, chunked: true } });
+    saveHist(code, hist);
+    stashFileBlob(msg.id, p.dataUrl);
+    pumpSendQueue(t);
+    return true;
+}
+
+function pumpSendQueue(t) {
+    if (t.sendTimer) return;
+    t.sendTimer = setInterval(() => {
+        try {
+            if (!mesh.connected) return;
+            if (!spaces.some(s => s.code === t.code)) {
+                clearInterval(t.sendTimer);
+                t.sendTimer = null;
+                t.failed = true;
+                refreshFileSlot(t.msgId);
+                uiSound('error');
+                return;
+            }
+            let n = 0;
+            while (n < CHUNK_PER_TICK && t.sent < t.total) {
+                const i = t.sent;
+                mesh.publish(topicMsg(t.code), JSON.stringify({ v: 1, id: t.transferId + ':' + i, from: me.clientId, name: me.name, kind: 'file-chunk', chunk: { t: t.transferId, i, d: t.chunks[i] } }), false);
+                t.sent++;
+                n++;
+            }
+            t.lastActivity = Date.now();
+            refreshFileSlot(t.msgId);
+            if (t.sent >= t.total) {
+                clearInterval(t.sendTimer);
+                t.sendTimer = null;
+                t.done = true;
+                sentChunkCache.set(t.transferId, { chunks: t.chunks, at: Date.now() });
+                if (sentChunkCache.size > 5) sentChunkCache.delete(sentChunkCache.keys().next().value);
+                setTimeout(() => { sentChunkCache.delete(t.transferId); }, SEND_CACHE_MS);
+                t.chunks = null;
+                refreshFileSlot(t.msgId);
+                uiSound('success');
+            }
+        } catch (e) {
+            clearInterval(t.sendTimer);
+            t.sendTimer = null;
+            t.failed = true;
+            refreshFileSlot(t.msgId);
+            uiSound('error');
+        }
+    }, PUMP_MS);
+}
+
+function registerIncomingTransfer(code, m) {
+    const f = m.file || {};
+    if (fileTransfers.has(m.id)) return;
+    const total = parseInt(f.chunks, 10) || 0;
+    const size = Math.max(0, parseInt(f.size, 10) || 0);
+    const tid = String(f.transferId || '');
+    if (!tid || total < 1 || total > 400 || size > MAX_FILE_BYTES) {
+        m.file = { name: f.name, size: f.size, type: f.type, expired: true };
+        return;
+    }
+    const t = {
+        msgId: m.id, code, transferId: tid, name: String(f.name || 'file').slice(0, 120),
+        size, type: String(f.type || '').slice(0, 80), total,
+        chunks: null, sent: 0, received: new Array(total).fill(null), count: 0,
+        isSender: false, fromId: m.from, done: false, failed: false,
+        retries: 0, lastActivity: Date.now(), sendTimer: null, retryTimer: null, msg: m,
+    };
+    fileTransfers.set(m.id, t);
+    transferByTid.set(tid, t);
+    pruneTransferMaps();
+    const orph = orphanChunks.get(tid);
+    if (orph) {
+        try {
+            for (const [i, d] of orph.map) {
+                if (i >= 0 && i < total && typeof d === 'string' && !t.received[i]) {
+                    t.received[i] = d;
+                    t.count++;
+                }
+            }
+        } catch (e) {}
+        orphanChunks.delete(tid);
+    }
+    if (t.count >= t.total) completeTransfer(t);
+    else scheduleRetryCheck(t);
+}
+
+function onFileChunk(code, m) {
+    const c = (m.chunk && typeof m.chunk === 'object') ? m.chunk : null;
+    if (!c || typeof c.d !== 'string') return;
+    const tid = String(c.t || '').slice(0, 64);
+    const idx = parseInt(c.i, 10);
+    if (!tid || !(idx >= 0)) return;
+    if (me && m.from === me.clientId) return;
+    const t = transferByTid.get(tid);
+    if (!t) {
+        let o = orphanChunks.get(tid);
+        if (!o) {
+            if (orphanChunks.size > 20) orphanChunks.delete(orphanChunks.keys().next().value);
+            o = { at: Date.now(), map: new Map() };
+            orphanChunks.set(tid, o);
+        }
+        if (idx < 2000) o.map.set(idx, c.d);
+        return;
+    }
+    if (t.done || t.failed || t.isSender || t.code !== code || m.from !== t.fromId) return;
+    if (idx >= t.total || t.received[idx]) return;
+    t.received[idx] = c.d;
+    t.count++;
+    t.lastActivity = Date.now();
+    refreshFileSlot(t.msgId);
+    if (t.count >= t.total) completeTransfer(t);
+}
+
+function onFileRetry(code, m) {
+    const r = (m.retry && typeof m.retry === 'object') ? m.retry : null;
+    if (!r) return;
+    const cache = sentChunkCache.get(String(r.t || ''));
+    if (!cache || !mesh.connected || !me) return;
+    const missing = (Array.isArray(r.missing) ? r.missing : [])
+        .filter(i => Number.isInteger(i) && i >= 0 && i < cache.chunks.length)
+        .slice(0, 500);
+    for (const i of missing) {
+        try {
+            mesh.publish(topicMsg(code), JSON.stringify({ v: 1, id: r.t + ':' + i, from: me.clientId, name: me.name, kind: 'file-chunk', chunk: { t: r.t, i, d: cache.chunks[i] } }), false);
+        } catch (e) { break; }
+    }
+}
+
+function scheduleRetryCheck(t) {
+    try { clearTimeout(t.retryTimer); } catch (e) {}
+    t.retryTimer = setTimeout(() => checkTransfer(t), RETRY_WAIT_MS);
+}
+
+function checkTransfer(t) {
+    if (!t || t.done || t.failed) return;
+    const missing = [];
+    for (let i = 0; i < t.total; i++) if (!t.received[i]) missing.push(i);
+    if (!missing.length) return;
+    if (t.retries >= MAX_RETRIES) {
+        t.failed = true;
+        transferByTid.delete(t.transferId);
+        refreshFileSlot(t.msgId);
+        uiSound('error');
+        return;
+    }
+    t.retries++;
+    try {
+        if (mesh.connected && me) {
+            mesh.publish(topicMsg(t.code), JSON.stringify({ v: 1, id: 'r' + genMsgId(), from: me.clientId, name: me.name, kind: 'file-retry', retry: { t: t.transferId, missing: missing.slice(0, 500) } }), false);
+        }
+    } catch (e) {}
+    scheduleRetryCheck(t);
+}
+
+function completeTransfer(t) {
+    if (t.done) return;
+    try {
+        stashFileBlob(t.msgId, 'data:' + (t.type || 'application/octet-stream') + ';base64,' + t.received.join(''));
+    } catch (e) {
+        t.failed = true;
+        refreshFileSlot(t.msgId);
+        return;
+    }
+    t.done = true;
+    t.received = null;
+    t.lastActivity = Date.now();
+    try { clearTimeout(t.retryTimer); } catch (e) {}
+    transferByTid.delete(t.transferId);
+    pruneTransferMaps();
+    refreshFileSlot(t.msgId);
+    uiSound('success');
+}
+
+function effectiveFile(m) {
+    const base = (m && m.file) || {};
+    try {
+        if (m && m.id && fileBlobs.has(m.id)) {
+            const d = fileBlobs.get(m.id);
+            fileBlobs.delete(m.id);
+            fileBlobs.set(m.id, d);
+            return { name: base.name, size: base.size, type: base.type, data: d };
+        }
+    } catch (e) {}
+    return base;
+}
+
+function buildFileContent(m) {
+    const t = m && m.id && fileTransfers.get(m.id);
+    if (t && !t.done && !t.failed) return buildFileProgress(t);
+    if (t && t.failed) return buildFileProgress(t);
+    return renderFileCard(m);
+}
+
+function buildFileProgress(t) {
+    const card = document.createElement('div');
+    card.className = 'file-card file-progress';
+    const info = document.createElement('div');
+    info.className = 'file-info';
+    const nm = document.createElement('div');
+    nm.className = 'file-name';
+    nm.textContent = String(t.name || 'file');
+    info.appendChild(nm);
+    const pct = t.total > 0 ? Math.round(((t.isSender ? t.sent : t.count) / t.total) * 100) : 0;
+    const label = document.createElement('div');
+    label.className = 'file-progress-label';
+    label.textContent = t.failed
+        ? 'Transfer failed — ask the sender to resend!'
+        : (t.isSender ? 'Sending… ' : 'Receiving… ') + pct + '%';
+    info.appendChild(label);
+    const track = document.createElement('div');
+    track.className = 'file-progress-track';
+    const fill = document.createElement('div');
+    fill.className = 'file-progress-fill' + (t.failed ? ' failed' : '');
+    fill.style.width = (t.failed ? 100 : pct) + '%';
+    track.appendChild(fill);
+    info.appendChild(track);
+    card.appendChild(info);
+    return card;
+}
+
+function refreshFileSlot(msgId) {
+    try {
+        const t = fileTransfers.get(msgId);
+        if (!t || !t.msg) return;
+        const box = document.getElementById('messages');
+        if (!box) return;
+        const slot = box.querySelector('[data-fslot="' + msgId + '"]');
+        if (!slot) return;
+        const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
+        slot.replaceChildren(buildFileContent(t.msg));
+        if (nearBottom) box.scrollTop = box.scrollHeight;
+    } catch (e) {}
+}
+
+// ---------- Tiny stored (uncompressed) ZIP writer for folder uploads! ----------
+const _zipCrcTable = (() => {
+    const tab = new Uint32Array(256);
+    for (let n = 0; n < 256; n++) {
+        let c = n;
+        for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+        tab[n] = c >>> 0;
+    }
+    return tab;
+})();
+
+function zipCrc32(bytes) {
+    let c = 0xFFFFFFFF;
+    for (let i = 0; i < bytes.length; i++) c = _zipCrcTable[(c ^ bytes[i]) & 0xFF] ^ (c >>> 8);
+    return (c ^ 0xFFFFFFFF) >>> 0;
+}
+
+function cleanZipPath(p) {
+    return String(p || '').split('/').filter(seg => seg && seg !== '.' && seg !== '..').join('/').slice(0, 500);
+}
+
+function b64encodeBytes(bytes) {
+    let s = '';
+    const STEP = 0x8000;
+    for (let i = 0; i < bytes.length; i += STEP) {
+        s += String.fromCharCode.apply(null, bytes.subarray(i, i + STEP));
+    }
+    return btoa(s);
+}
+
+function buildStoredZip(entries) {
+    const enc = new TextEncoder();
+    const w16 = v => { const b = new Uint8Array(2); new DataView(b.buffer).setUint16(0, v, true); return b; };
+    const w32 = v => { const b = new Uint8Array(4); new DataView(b.buffer).setUint32(0, v >>> 0, true); return b; };
+    const locals = [];
+    const centrals = [];
+    let offset = 0;
+    for (const e of entries) {
+        const nameB = enc.encode(e.path);
+        const data = e.data;
+        const crc = zipCrc32(data);
+        const d = new Date(e.time || Date.now());
+        const time = ((d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1)) & 0xFFFF;
+        const date = (((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate()) & 0xFFFF;
+        const lh = [w32(0x04034b50), w16(20), w16(0x0800), w16(0), w16(time), w16(date), w32(crc), w32(data.length), w32(data.length), w16(nameB.length), w16(0), nameB, data];
+        const lhSize = lh.reduce((n, p) => n + p.length, 0);
+        locals.push(...lh);
+        centrals.push([w32(0x02014b50), w16(20), w16(20), w16(0x0800), w16(0), w16(time), w16(date), w32(crc), w32(data.length), w32(data.length), w16(nameB.length), w16(0), w16(0), w16(0), w16(0), w32(0), w32(offset), nameB]);
+        offset += lhSize;
+    }
+    const centralParts = [];
+    for (const parts of centrals) centralParts.push(...parts);
+    const cdSize = centralParts.reduce((n, p) => n + p.length, 0);
+    const end = [w32(0x06054b50), w16(0), w16(0), w16(centrals.length), w16(centrals.length), w32(cdSize), w32(offset), w16(0)];
+    const all = [...locals, ...centralParts, ...end];
+    const total = all.reduce((n, p) => n + p.length, 0);
+    const out = new Uint8Array(total);
+    let o = 0;
+    for (const p of all) { out.set(p, o); o += p.length; }
+    return out;
 }
 
 function renderHistory() {
@@ -713,6 +2016,32 @@ function renderHistory() {
     for (const m of loadHist(activeCode)) box.appendChild(renderMessage(m));
     box.scrollTop = box.scrollHeight;
     box.onscroll = null;
+    try { renumberMessages(); } catch (e) {}
+}
+
+// Number badges! Every history-backed bubble shows its position (top = 1),
+// so /delete numbers match exactly what you see! Local-only notes stay blank!
+function renumberMessages() {
+    try {
+        const box = document.getElementById('messages');
+        if (!box) return;
+        let n = 0;
+        for (const el of box.children) {
+            try {
+                if (!el.dataset || !el.dataset.mid) continue;
+                n++;
+                let badge = null;
+                try { badge = el.querySelector(':scope > .msg-num'); } catch (e) { badge = null; }
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'msg-num';
+                    el.prepend(badge);
+                }
+                badge.textContent = '#' + n;
+                badge.title = 'Message ' + n + '! Try /delete ' + n + '!';
+            } catch (e) {}
+        }
+    } catch (e) {}
 }
 
 function fmtTime(ts) {
@@ -734,10 +2063,38 @@ function kdBody(raw) {
 
 function renderMessage(m) {
     const div = document.createElement('div');
+    try { if (m && m.id) div.dataset.mid = String(m.id); } catch (e) {}
+    if (m.kind === 'sys') {
+        div.className = 'msg sys';
+        div.textContent = String(m.text || m.body || '');
+        return div;
+    }
+    if (m.kind === 'warn') {
+        div.className = 'msg warn';
+        const head = document.createElement('div');
+        head.className = 'warn-head';
+        head.textContent = '⚠️ Warning from ' + (m.warnFrom || m.name) + ' — only you can see this!';
+        const bodyEl = document.createElement('div');
+        bodyEl.className = 'warn-body';
+        bodyEl.innerHTML = highlightMentionsInHtml(kdBody(m.body), m);
+        div.appendChild(head);
+        div.appendChild(bodyEl);
+        return div;
+    }
     div.className = 'msg' + (me && m.from === me.clientId ? ' me' : '');
     if (isMentioned(m)) div.classList.add('mentions-me');
     div.innerHTML = `<span class="who">${esc(m.name)}</span>`
-        + `<span class="when">${fmtTime(m.at)}</span><br><span class="msg-body">${highlightMentionsInHtml(kdBody(m.body), m)}</span>`;
+        + `<span class="when">${fmtTime(m.at)}</span>`;
+    if (m.kind === 'file' && m.file) {
+        div.appendChild(document.createElement('br'));
+        const slot = document.createElement('div');
+        slot.className = 'file-slot';
+        try { slot.dataset.fslot = m.id || ''; } catch (e) {}
+        slot.appendChild(buildFileContent(m));
+        div.appendChild(slot);
+    } else {
+        div.innerHTML += `<br><span class="msg-body">${highlightMentionsInHtml(kdBody(m.body), m)}</span>`;
+    }
     return div;
 }
 
@@ -746,29 +2103,47 @@ function showMessage(m, forceScroll) {
     const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
     box.appendChild(renderMessage(m));
     if (forceScroll || nearBottom) box.scrollTop = box.scrollHeight;
+    try { renumberMessages(); } catch (e) {}
 }
 
 function onChatMessage(code, payload) {
     let m = null;
     try { m = JSON.parse(payload); } catch (e) { return; }
-    if (!m || m.v !== 1 || !m.id || !m.body || !m.from) return;
+    if (!m || m.v !== 1 || !m.id || !m.from) return;
+    if (m.kind === 'file-chunk') { onFileChunk(code, m); return; }
+    if (m.kind === 'file-retry') { onFileRetry(code, m); return; }
+    if (!m.body) return;
     if (seenIds.has(m.id)) return;
     seenIds.add(m.id);
     if (seenIds.size > 500) seenIds = new Set([...seenIds].slice(-300));
+    if (m.kind === 'mod') { onModMessage(code, m); return; }
     m.body = String(m.body).slice(0, 2000);
     if (!Array.isArray(m.mentions)) m.mentions = [];
+    if (m.kind === 'file') {
+        const f = (m.file && typeof m.file === 'object') ? m.file : null;
+        if (!f) return;
+        if (f.chunked) {
+            m.file = { name: String(f.name || 'file').slice(0, 120), size: f.size, type: String(f.type || '').slice(0, 80), transferId: String(f.transferId || '').slice(0, 64), chunks: parseInt(f.chunks, 10) || 0, chunked: true };
+        } else if (typeof f.data !== 'string' || !f.data.startsWith('data:') || f.data.length > MAX_FILE_DATA_CHARS) {
+            m.file = { name: String(f.name || 'file').slice(0, 120), size: f.size, type: String(f.type || '').slice(0, 80), expired: true };
+        } else {
+            m.file = { name: String(f.name || 'file').slice(0, 120), size: f.size, type: String(f.type || '').slice(0, 80), data: f.data };
+        }
+    }
     rememberUser(m.name, m.from);
+    if (m.kind === 'file' && m.file && m.file.chunked && me && m.from !== me.clientId) registerIncomingTransfer(code, m);
     const mentioned = isMentioned(m);
     const viewing = (code === activeCode);
+    const bannedHere = isBanned(code);
     if (viewing) {
         showMessage(m);
         if (!me || m.from !== me.clientId) uiSound(mentioned ? 'mention' : 'receive');
-    } else if (mentioned) {
+    } else if (mentioned && !bannedHere) {
         bumpMentionBadge(code);
         uiSound('mention');
     }
     const hist = loadHist(code);
-    hist.push({ id: m.id, from: m.from, name: m.name, body: m.body, at: m.at, mentions: m.mentions.slice(0, 20) });
+    hist.push({ id: m.id, from: m.from, name: m.name, body: m.body, at: m.at, mentions: m.mentions.slice(0, 20), kind: m.kind, file: m.file });
     saveHist(code, hist);
 }
 
@@ -780,6 +2155,10 @@ function onDirMessage(code, payload) {
     if (s && !s.mine) {
         s.name = String(d.name).slice(0, 40);
         s.description = String(d.description || '').slice(0, 200);
+        if (d.owner) {
+            s.owner = String(d.owner).slice(0, 32);
+            s.ownerName = String(d.ownerName || '').slice(0, 24);
+        }
         saveSpaces();
         renderSpaces();
         if (code === activeCode) {
@@ -793,9 +2172,10 @@ function onPresenceMessage(clientId, payload) {
     let p = null;
     try { p = JSON.parse(payload); } catch (e) { return; }
     if (!p) return;
+    const peerRelays = Array.isArray(p.relays) ? p.relays.map(r => String(r).slice(0, 40)).slice(0, 6) : [];
     if (me && clientId === me.clientId) {
         if (p.online === false) members.delete(clientId);
-        else members.set(clientId, { name: String(p.name || '?').slice(0, 24), at: p.at || Date.now(), online: true });
+        else members.set(clientId, { name: String(p.name || '?').slice(0, 24), at: p.at || Date.now(), online: true, relays: peerRelays });
         updateMeta();
         return;
     }
@@ -804,7 +2184,7 @@ function onPresenceMessage(clientId, payload) {
         members.delete(clientId);
     } else {
         if (!members.has(clientId)) uiSound('join');
-        members.set(clientId, { name: String(p.name || '?').slice(0, 24), at: p.at || Date.now(), online: true });
+        members.set(clientId, { name: String(p.name || '?').slice(0, 24), at: p.at || Date.now(), online: true, relays: peerRelays });
         rememberUser(p.name, clientId);
     }
     updateMeta();
@@ -819,105 +2199,538 @@ function sweepPresence() {
     if (changed) updateMeta();
 }
 
+function myRelayHosts() {
+    try {
+        const p = preferredRelay();
+        return p ? [String(p.host).slice(0, 40)] : [];
+    } catch (e) { return []; }
+}
+
 function heartbeat() {
-    if (!mqtt || !mqtt.connected || !activeCode || !me) return;
-    mqtt.publish(topicPresence(activeCode, me.clientId),
-        JSON.stringify({ name: me.name, at: Date.now(), online: true }), true);
+    if (!mesh.connected || !activeCode || !me) return;
+    mesh.publish(topicPresence(activeCode, me.clientId),
+        JSON.stringify({ v: 1, id: genMsgId(), name: me.name, at: Date.now(), online: true, relays: myRelayHosts() }), true);
+    try { flushOutbox(); } catch (e) {}
+}
+
+// Offline outbox! Messages typed with zero relays queue locally (persisted!)
+// and flush in order on reconnect, so flaky Wi-Fi never eats a message!
+const OUTBOX_MAX = 20;
+function loadOutbox() {
+    const o = storeGet('phosphor_outbox', {});
+    return (o && typeof o === 'object' && !Array.isArray(o)) ? o : {};
+}
+function saveOutbox(o) {
+    storeSet('phosphor_outbox', o);
+}
+function outboxCount(code) {
+    try {
+        const o = loadOutbox();
+        return (o && Array.isArray(o[code])) ? o[code].length : 0;
+    } catch (e) { return 0; }
+}
+function queueMessage(code, body, mentions) {
+    const o = loadOutbox();
+    if (!Array.isArray(o[code])) o[code] = [];
+    o[code].push({ body: String(body).slice(0, 2000), mentions: (mentions || []).slice(0, 20), at: Date.now() });
+    while (o[code].length > OUTBOX_MAX) o[code].shift();
+    saveOutbox(o);
+}
+function flushOutbox() {
+    if (!me || !mesh.connected) return false;
+    const o = loadOutbox();
+    const codes = Object.keys(o);
+    if (!codes.length) return false;
+    let sent = 0;
+    for (const code of codes) {
+        const list = o[code];
+        if (!Array.isArray(list) || !list.length) { delete o[code]; continue; }
+        if (isBanned(code) || !spaces.some(s => s.code === code)) { delete o[code]; continue; }
+        while (list.length) {
+            const entry = list[0];
+            const msg = {
+                v: 1,
+                id: genMsgId(),
+                from: me.clientId,
+                name: me.name,
+                body: String(entry.body).slice(0, 2000),
+                mentions: Array.isArray(entry.mentions) ? entry.mentions.slice(0, 20) : [],
+                at: Date.now(),
+            };
+            try {
+                mesh.publish(topicMsg(code), JSON.stringify(msg), false);
+            } catch (e) { break; }
+            list.shift();
+            seenIds.add(msg.id);
+            if (code === activeCode) showMessage(msg, true);
+            uiSound('send');
+            try {
+                const hist = loadHist(code);
+                hist.push({ id: msg.id, from: msg.from, name: msg.name, body: msg.body, at: msg.at, mentions: msg.mentions });
+                saveHist(code, hist);
+            } catch (e) {}
+            sent++;
+        }
+        if (!list.length) delete o[code];
+    }
+    saveOutbox(o);
+    if (sent && activeCode) updateMeta();
+    return sent > 0;
 }
 
 // ---------- Connection ----------
+// Centralized relay with hot-standby backups! EVERYONE prefers BROKERS[0],
+// so near + far devices meet on the same broker by default! The other relays
+// stay connected in the background purely for instant failover: if central
+// drops, traffic moves as one path and moves back when central returns!
+// Duplicates still collapse via the idempotent handlers + seenIds!
 function setConn(on, label) {
-    document.getElementById('conn-dot').classList.toggle('on', !!on);
+    const dot = document.getElementById('conn-dot');
+    if (dot) {
+        dot.classList.toggle('on', !!on);
+        dot.style.cursor = 'pointer';
+        dot.title = 'Connection! Click to retry!';
+        dot.onclick = () => reconnectNow();
+    }
     const lab = document.getElementById('conn-label');
-    if (lab) lab.innerText = label || (on ? 'Live!' : 'Connecting…');
+    if (lab) {
+        lab.innerText = label || (on ? 'Live!' : 'Connecting…');
+        lab.style.cursor = 'pointer';
+        lab.title = 'Click to reconnect!';
+        lab.onclick = () => reconnectNow();
+    }
+}
+
+function relayHost(url) {
+    try { return new URL(url).hostname.replace(/^broker\./, ''); } catch (e) { return url; }
+}
+
+function relaysConnected() {
+    return relays.filter(r => r.mqtt && r.mqtt.connected);
+}
+
+// Centralized traffic! ONE preferred relay (first connected in BROKERS
+// order = central when reachable) carries everything, so all devices meet
+// on the same broker! Other live relays are hot standby for instant failover!
+function preferredRelay() {
+    for (const url of BROKERS) {
+        const e = relays.find(r => r.url === url);
+        if (e && e.mqtt && e.mqtt.connected) return e;
+    }
+    return null;
+}
+
+const mesh = {
+    get connected() { return !!preferredRelay(); },
+    get via() { const p = preferredRelay(); return p ? p.host : null; },
+    publish(topic, payload, retain) {
+        const p = preferredRelay();
+        if (!p) throw new Error('No relay!');
+        p.mqtt.publish(topic, payload, retain);
+    },
+    subscribe(topics) {
+        const list = Array.isArray(topics) ? topics : [topics];
+        for (const t of list) wantedSubs.add(t);
+        const p = preferredRelay();
+        if (p) {
+            try { p.mqtt.subscribe(list); } catch (e) {}
+        }
+    },
+    unsubscribe(topics) {
+        const list = Array.isArray(topics) ? topics : [topics];
+        for (const t of list) wantedSubs.delete(t);
+        const p = preferredRelay();
+        if (p) {
+            try { p.mqtt.unsubscribe(list); } catch (e) {}
+        }
+    },
+};
+
+// (Re)subscribe the single traffic path! Called whenever the preferred
+// relay changes, so failover never leaves us deaf!
+function syncSubscription() {
+    const p = preferredRelay();
+    if (!p || !wantedSubs.size) return;
+    try { p.mqtt.subscribe([...wantedSubs]); } catch (e) {}
+}
+
+function meshRoute(topic, payload, fromEntry) {
+    if (topic.startsWith(ROOT + '/msg/')) {
+        onChatMessage(topic.slice((ROOT + '/msg/').length), payload);
+        bridgePacket(topic, payload, fromEntry, false);
+        return;
+    }
+    // Directory first, so background Spaces resolve even with nothing open!
+    if (topic.startsWith(ROOT + '/dir/')) {
+        onDirMessage(topic.slice((ROOT + '/dir/').length), payload);
+        bridgePacket(topic, payload, fromEntry, true);
+        return;
+    }
+    // Presence from any Space gets bridged (member lists track chat!),
+    // but only the open Space feeds the members bar!
+    if (topic.startsWith(ROOT + '/presence/')) {
+        bridgePacket(topic, payload, fromEntry, true);
+    }
+    if (!activeCode) return;
+    if (topic === topicDir(activeCode)) onDirMessage(activeCode, payload);
+    else if (topic.startsWith(ROOT + '/presence/' + activeCode + '/')) {
+        onPresenceMessage(topic.split('/').pop(), payload);
+    }
+}
+
+// One-hop bridge across relays (legacy mesh mode)! Disabled while CENTRALIZED:
+// single-path traffic means nobody listens on the other relays, so bridging
+// would only burn data! Kept for fallback if multi-path ever returns!
+let bridgedIds = new Set();
+let bridgedDirAt = {}; // code -> last bridged time (dirs carry no id)!
+function bridgePacket(topic, payload, fromEntry, retain) {
+    try {
+        if (CENTRALIZED) return;
+        if (relaysConnected().length < 2) return;
+        let m = null;
+        try { m = JSON.parse(payload); } catch (e) { return; }
+        if (!m || typeof m !== 'object' || m.b) return;
+        // Heavy streaming chunks stay on their home relay! Chunked file
+        // headers would strand receivers (chunks never follow), so skip those!
+        if (m.kind === 'file-chunk' || m.kind === 'file-retry') return;
+        if (m.file && m.file.chunked) return;
+        const isDir = topic.startsWith(ROOT + '/dir/');
+        if (isDir) {
+            const code = topic.slice((ROOT + '/dir/').length);
+            const now = Date.now();
+            if (bridgedDirAt[code] && now - bridgedDirAt[code] < 5000) return;
+            bridgedDirAt[code] = now;
+            if (!m.name) return;
+        } else {
+            if (!m.id || m.v !== 1) return;
+            if (bridgedIds.has(m.id)) return;
+            bridgedIds.add(m.id);
+            if (bridgedIds.size > 1000) bridgedIds = new Set([...bridgedIds].slice(-600));
+        }
+        m.b = 1;
+        const out = JSON.stringify(m);
+        for (const r of relaysConnected()) {
+            if (fromEntry && r === fromEntry) continue;
+            try { r.mqtt.publish(topic, out, !!retain); } catch (e) {}
+        }
+    } catch (e) {}
+}
+
+let lastPreferredUrl = null;
+function refreshConn() {
+    const p = preferredRelay();
+    const live = relaysConnected();
+    if (p) {
+        const central = p.url === BROKERS[0];
+        setConn(true, 'Live! via ' + p.host + (central ? ' (central)!' : ' (backup)!'));
+        try {
+            const lab = document.getElementById('conn-label');
+            if (lab) lab.title = 'Relay: ' + p.host + (central ? ' (central meeting point)!' : ' (backup — central unreachable)!') + ' Click to reconnect!';
+            const dot = document.getElementById('conn-dot');
+            if (dot) dot.title = 'Connected via ' + p.host + '! Click to reconnect!';
+        } catch (e) {}
+    } else if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        setConn(false, 'Offline! Check Wi-Fi!');
+    } else {
+        setConn(false, meshWon ? 'Retrying… Tap to retry!' : 'Connecting…');
+    }
+    // Preferred relay changed? Move the single traffic path with it!
+    const cur = p ? p.url : null;
+    if (cur !== lastPreferredUrl) {
+        const was = lastPreferredUrl;
+        lastPreferredUrl = cur;
+        if (was && cur) {
+            try {
+                const old = relays.find(r => r.url === was);
+                if (old && old.mqtt && old.mqtt.connected) old.mqtt.unsubscribe([...wantedSubs]);
+            } catch (e) {}
+        }
+        if (p) {
+            try { syncSubscription(); } catch (e) {}
+            try { publishAllMyDirs(); } catch (e) {}
+            try { heartbeat(); } catch (e) {}
+            try { flushOutbox(); } catch (e) {}
+            if (activeCode && was && cur && was !== cur) {
+                const central = BROKERS[0];
+                if (was === central && cur !== central) showLocalNotice('Central relay lost! On backup — far-away users may not see you until it returns!');
+                else if (was !== central && cur === central) showLocalNotice('Back on the central relay! Everyone can reach you again!');
+            }
+        }
+    }
+    try { if (activeCode) updateMeta(); } catch (e) {}
+}
+
+function publishAllMyDirs() {
+    if (!me) return;
+    for (const s of spaces) {
+        if (!s || !s.mine || !s.name || s.name === s.code) continue;
+        try {
+            mesh.publish(ROOT + '/dir/' + s.code, JSON.stringify({ name: s.name, description: s.description || '', at: Date.now(), owner: me.clientId, ownerName: me.name }), true);
+        } catch (e) {}
+    }
+    gossipKnownDirs();
+}
+
+let gossipAt = 0;
+function gossipKnownDirs() {
+    // Gossip: re-share resolved Space cards so newcomers on a different
+    // relay can resolve even when the owner is offline!
+    if (!me || !mesh.connected) return;
+    const now = Date.now();
+    if (now - gossipAt < 30000) return;
+    gossipAt = now;
+    for (const s of spaces) {
+        if (!s || !s.name || s.name === s.code) continue;
+        try {
+            const payload = { name: s.name, description: s.description || '', at: Date.now() };
+            if (s.owner) {
+                payload.owner = String(s.owner).slice(0, 32);
+                payload.ownerName = String(s.ownerName || '').slice(0, 24);
+            } else if (s.mine) {
+                payload.owner = me.clientId;
+                payload.ownerName = me.name;
+            } else continue;
+            mesh.publish(ROOT + '/dir/' + s.code, JSON.stringify(payload), true);
+        } catch (e) {}
+    }
+}
+
+function nudgeUnresolvedDir() {
+    try {
+        if (!me || !activeCode) return;
+        const s = spaces.find(x => x.code === activeCode);
+        if (!s || s.name !== s.code) return;
+        if (mesh.connected) mesh.subscribe(topicDir(activeCode));
+        gossipKnownDirs();
+        if (activeCode) updateMeta();
+    } catch (e) {}
+}
+
+let resolveTimer = null;
+function watchResolving(code) {
+    try { clearTimeout(resolveTimer); } catch (e) {}
+    resolveTimer = setTimeout(() => {
+        try {
+            if (activeCode !== code || !isUnresolved(code)) return;
+            if (!mesh.connected) {
+                showLocalNotice('Still resolving… No relays connected! This Wi-Fi may block chat ports (only 443 gets through)! Waiting + retrying automatically — click the status above to retry now!');
+            } else {
+                const live = relaysConnected().length;
+                const total = relays.length || BROKERS.length;
+                showLocalNotice('Still resolving… Connected (' + live + '/' + total + ' relays) but no host card yet! Wrong code, or owner offline on a different relay! Retrying automatically — click the status above to retry now!');
+                mesh.subscribe(topicDir(code));
+            }
+            uiSound('error');
+        } catch (e) {}
+    }, 8000);
+}
+
+function retryResolving() {
+    try {
+        uiSound('click');
+        if (!activeCode) return false;
+        refreshConn();
+        nudgeUnresolvedDir();
+        heartbeat();
+        showLocalNotice('Retrying… Re-asking all live relays for this Space!');
+        watchResolving(activeCode);
+    } catch (e) {}
+    return false;
+}
+
+function relayBackoffMs(entry) {
+    const fails = Math.max(0, entry.failCount || 0);
+    const base = Math.min(30000, 2500 * Math.pow(2, Math.min(fails, 4)));
+    return Math.round(base + Math.random() * 1000);
+}
+
+function scheduleRelayRetry(entry) {
+    try { clearTimeout(entry.retryTimer); } catch (e) {}
+    if (!me) return;
+    entry.failCount = (entry.failCount || 0) + 1;
+    const wait = relayBackoffMs(entry);
+    entry.nextRetryAt = Date.now() + wait;
+    entry.retryTimer = setTimeout(() => { if (me) dialRelay(entry); }, wait);
+    refreshConn();
+}
+
+function reconnectNow() {
+    try {
+        uiSound('click');
+        if (!me) return false;
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+            showLocalNotice('You look offline! Check Wi-Fi, then click to retry!');
+            return false;
+        }
+        let redialed = 0;
+        for (const entry of relays) {
+            const live = entry.mqtt && entry.mqtt.connected;
+            if (!live) {
+                try { clearTimeout(entry.retryTimer); } catch (e) {}
+                entry.failCount = 0;
+                dialRelay(entry);
+                redialed++;
+            }
+        }
+        refreshConn();
+        try { nudgeUnresolvedDir(); } catch (e) {}
+        try { heartbeat(); } catch (e) {}
+        try { flushOutbox(); } catch (e) {}
+        if (activeCode) showLocalNotice(redialed ? 'Reconnecting ' + redialed + ' relay(s)! Hang tight!' : 'Already live! Re-asking for updates!');
+        else if (redialed) showLocalNotice('Reconnecting ' + redialed + ' relay(s)! Hang tight!');
+    } catch (e) {}
+    return false;
+}
+
+let netListenersWired = false;
+function wireNetListeners() {
+    if (netListenersWired) return;
+    netListenersWired = true;
+    try {
+        window.addEventListener('online', () => {
+            try {
+                showLocalNotice('Back online! Reconnecting!');
+                reconnectNow();
+            } catch (e) {}
+        });
+        window.addEventListener('offline', () => {
+            try {
+                setConn(false, 'Offline! Check Wi-Fi!');
+                if (activeCode) showLocalNotice('You went offline! Messages queue until Wi-Fi returns!');
+            } catch (e) {}
+        });
+        document.addEventListener('visibilitychange', () => {
+            try {
+                if (document.visibilityState !== 'visible' || !me) return;
+                heartbeat();
+                nudgeUnresolvedDir();
+                let dead = 0;
+                for (const entry of relays) {
+                    if (!(entry.mqtt && entry.mqtt.connected)) dead++;
+                }
+                if (dead) reconnectNow();
+                else refreshConn();
+            } catch (e) {}
+        });
+    } catch (e) {}
+}
+
+function dialRelay(entry) {
+    try { clearTimeout(entry.retryTimer); } catch (e) {}
+    if (!me) return;
+    try { if (entry.mqtt) entry.mqtt.close(); } catch (e) {}
+    entry.mqtt = null;
+    let clientId = 'ph_x';
+    try { clientId = me.clientId + '_' + Date.now().toString(36); } catch (e) {}
+    let m = null;
+    try {
+        m = new MiniMqtt(entry.url, { clientId, keepalive: 60 });
+    } catch (e) {
+        scheduleRelayRetry(entry);
+        return;
+    }
+    entry.mqtt = m;
+    let done = false;
+    const failTimer = setTimeout(() => {
+        if (done) return;
+        done = true;
+        try { m.close(); } catch (e) {}
+        if (entry.mqtt === m) entry.mqtt = null;
+        scheduleRelayRetry(entry);
+        refreshConn();
+    }, 7000);
+    m.onopen = () => {
+        if (done || entry.mqtt !== m || !me) return;
+        done = true;
+        clearTimeout(failTimer);
+        entry.failCount = 0;
+        entry.nextRetryAt = 0;
+        const first = !meshWon;
+        meshWon = true;
+        if (!activeBrokerUrl) { try { activeBrokerUrl = entry.url; } catch (e) {} }
+        m.onmessage = (t, p) => meshRoute(t, p, entry);
+        m.onclose = () => {
+            if (entry.mqtt !== m) return;
+            entry.mqtt = null;
+            refreshConn();
+            scheduleRelayRetry(entry);
+        };
+        m.onerror = () => {};
+        try {
+            const subs = [...wantedSubs];
+            if (subs.length) m.subscribe(subs);
+        } catch (e) {}
+        publishAllMyDirs();
+        if (first) uiSound('connect');
+        refreshConn();
+        renderSpaces();
+        try { nudgeUnresolvedDir(); } catch (e) {}
+        heartbeat();
+        try { flushOutbox(); } catch (e) {}
+    };
+    m.onclose = () => {
+        if (done || entry.mqtt !== m) return;
+        done = true;
+        clearTimeout(failTimer);
+        entry.mqtt = null;
+        refreshConn();
+        scheduleRelayRetry(entry);
+    };
+    m.onerror = () => {
+        // Blocked ports fire error before close: fail fast, don't wait out the timer!
+        if (done || entry.mqtt !== m || (m.connected)) return;
+        done = true;
+        try { clearTimeout(failTimer); } catch (e) {}
+        try { m.close(); } catch (e) {}
+        entry.mqtt = null;
+        scheduleRelayRetry(entry);
+        refreshConn();
+    };
+    try {
+        m.connect();
+    } catch (e) {
+        if (!done) { done = true; clearTimeout(failTimer); }
+        if (entry.mqtt === m) entry.mqtt = null;
+        scheduleRelayRetry(entry);
+        refreshConn();
+    }
 }
 
 function connect() {
     if (!me) return;
     closeMqtt();
-    setConn(false, 'Connecting…');
-    // Race every broker in parallel: first CONNACK wins! Blocked ports and
-    // dead relays fail fast (7s) instead of hanging the whole app!
-    const mySeq = ++connectSeq;
-    const pending = new Set();
-    let won = false;
-    const cleanupLosers = () => {
-        pending.forEach(m => { try { m.close(); } catch (e) {} });
-        pending.clear();
-    };
-    const allFailed = () => {
-        if (won || mySeq !== connectSeq) return;
-        cleanupLosers();
-        setConn(false, 'Retrying…');
-        clearTimeout(reconnectTimer);
-        reconnectTimer = setTimeout(() => {
-            if (me && (activeCode || spaces.length)) connect();
-        }, 3000);
-    };
-    const onWin = (m) => {
-        if (won || mySeq !== connectSeq) { try { m.close(); } catch (e) {} return; }
-        won = true;
-        cleanupLosers();
-        mqtt = m;
-        mqtt.onmessage = (topic, payload) => {
-            if (topic.startsWith(ROOT + '/msg/')) {
-                onChatMessage(topic.slice((ROOT + '/msg/').length), payload);
-                return;
-            }
-            if (!activeCode) return;
-            if (topic === topicDir(activeCode)) onDirMessage(activeCode, payload);
-            else if (topic.startsWith(ROOT + '/presence/' + activeCode + '/')) {
-                onPresenceMessage(topic.split('/').pop(), payload);
-            } else if (topic.startsWith(ROOT + '/dir/')) {
-                onDirMessage(topic.slice((ROOT + '/dir/').length), payload);
-            }
-        };
-        mqtt.onclose = () => {
-            if (mqtt !== m) return;
-            mqtt = null;
-            setConn(false, 'Retrying…');
-            clearTimeout(reconnectTimer);
-            reconnectTimer = setTimeout(() => {
-                if (me && (activeCode || spaces.length)) connect();
-            }, 3000);
-        };
-        mqtt.onerror = () => {};
-        setConn(true, 'Live!');
-        uiSound('connect');
-        renderSpaces();
-        if (activeCode) {
-            subscribeAllSpaceMsgs();
-            mqtt.subscribe([topicDir(activeCode), ROOT + '/presence/' + activeCode + '/+']);
-            heartbeat();
-            clearInterval(heartbeatTimer);
-            heartbeatTimer = setInterval(heartbeat, HEARTBEAT_MS);
-            clearInterval(sweepTimer);
-            sweepTimer = setInterval(sweepPresence, 10000);
-        }
-    };
-    for (const url of BROKERS) {
-        const m = new MiniMqtt(url, { clientId: me.clientId + '_' + Date.now().toString(36), keepalive: 60 });
-        pending.add(m);
-        const timer = setTimeout(() => {
-            try { m.close(); } catch (e) {}
-            pending.delete(m);
-            allFailed();
-        }, 7000);
-        m.onopen = () => { clearTimeout(timer); pending.delete(m); onWin(m); };
-        m.onclose = () => { clearTimeout(timer); pending.delete(m); allFailed(); };
-        m.onerror = () => {};
-        try { m.connect(); } catch (e) { clearTimeout(timer); pending.delete(m); allFailed(); }
+    wireNetListeners();
+    meshWon = false;
+    if (typeof navigator !== 'undefined' && !navigator.onLine) {
+        setConn(false, 'Offline! Check Wi-Fi!');
+    } else {
+        setConn(false, 'Connecting…');
     }
-    if (pending.size === 0) allFailed();
+    relays = BROKERS.map(url => ({ url, host: relayHost(url), mqtt: null, retryTimer: null, failCount: 0, nextRetryAt: 0 }));
+    // Stagger dials so one slow relay can't hog the burst + first win lands fast!
+    relays.forEach((entry, i) => {
+        if (i === 0) dialRelay(entry);
+        else setTimeout(() => { if (me && relays.includes(entry) && !(entry.mqtt && entry.mqtt.connected)) dialRelay(entry); }, i * 400);
+    });
+    refreshConn();
+    clearInterval(heartbeatTimer);
+    heartbeatTimer = setInterval(heartbeat, HEARTBEAT_MS);
+    clearInterval(sweepTimer);
+    sweepTimer = setInterval(sweepPresence, 10000);
+    clearInterval(dirNudgeTimer);
+    dirNudgeTimer = setInterval(nudgeUnresolvedDir, 5000);
 }
 
 function closeMqtt() {
-    connectSeq++;
+    for (const entry of relays) {
+        try { clearTimeout(entry.retryTimer); } catch (e) {}
+        try { if (entry.mqtt) entry.mqtt.close(); } catch (e) {}
+        entry.mqtt = null;
+    }
+    relays = [];
     clearInterval(heartbeatTimer);
     clearInterval(sweepTimer);
-    clearTimeout(reconnectTimer);
-    if (mqtt) { try { mqtt.close(); } catch (e) {} }
-    mqtt = null;
+    clearInterval(dirNudgeTimer);
 }
 
 function sendMessage(e) {
@@ -925,6 +2738,15 @@ function sendMessage(e) {
     const input = document.getElementById('send-input');
     const body = input.value.trim();
     if (!body) return false;
+    if (isBanned(activeCode)) {
+        alert('You are banned from this Space!');
+        uiSound('error');
+        return false;
+    }
+    if (body.startsWith('/')) {
+        handleSlashCommand(body);
+        return false;
+    }
     // Mention flow: picking from the @ menu never sends, it stages a chip!
     if (isMentionMenuOpen()) { pickMention(mentionMenuIndex); return false; }
     const unstaged = findUnstagedMentionMatch(body);
@@ -934,7 +2756,20 @@ function sendMessage(e) {
         uiSound('click');
         return false;
     }
-    if (!mqtt || !mqtt.connected || !activeCode) return false;
+    if (!mesh.connected || !activeCode) {
+        if (!activeCode) return false;
+        // Offline? Queue it instead of dropping it! Flushes on reconnect!
+        const mentions = buildMentionsForSend(body);
+        queueMessage(activeCode, body, mentions);
+        try { reconnectNow(); } catch (e) {}
+        showLocalNotice('Offline! Queued — sends automatically when live! (' + outboxCount(activeCode) + ' queued!)');
+        uiSound('click');
+        input.value = '';
+        resetMentionComposer();
+        updateKdTypingIcon();
+        return false;
+    }
+    try { flushOutbox(); } catch (e) {}
     const mentions = buildMentionsForSend(body);
     const msg = {
         v: 1,
@@ -946,11 +2781,11 @@ function sendMessage(e) {
         at: Date.now(),
     };
     seenIds.add(msg.id);
-    mqtt.publish(topicMsg(activeCode), JSON.stringify(msg), false);
+    mesh.publish(topicMsg(activeCode), JSON.stringify(msg), false);
     showMessage(msg, true);
     uiSound('send');
     const hist = loadHist(activeCode);
-    hist.push({ id: msg.id, from: msg.from, name: msg.name, body: msg.body, at: msg.at, mentions: msg.mentions });
+    hist.push({ id: msg.id, from: msg.from, name: msg.name, body: msg.body, at: msg.at, mentions: msg.mentions, kind: msg.kind, file: msg.file });
     saveHist(activeCode, hist);
     input.value = '';
     resetMentionComposer();
@@ -1002,18 +2837,23 @@ function enterApp() {
     connect();
     wireKdTypingIcon();
     initMentions();
+    initFilter();
+    loadBans();
+    try { consumePendingInvite(); } catch (e) {}
 }
 
 // Inline handlers (the page uses onclick)!
 Object.assign(window, {
     enterName, switchName, openSpaceModal, openJoinModal, closeModals,
-    createSpace, joinSpace, sendMessage, askLeaveSpace, leaveSpace, toggleTheme,
-    toggleMentionBadges, pickMention, unstageMention,
+    createSpace, joinSpace, joinSpaceByCode, inviteUrl, getInviteCodeFromUrl, retryResolving, reconnectNow, sendMessage, shareFile, shareFolder, askLeaveSpace, leaveSpace, toggleTheme,
+    toggleMentionBadges, pickMention, unstageMention, openFilterModal, clearKnownUsers,
 });
 
 // ---------- Boot ----------
 initTheme();
 initMentions();
+initFilter();
+loadBans();
 if (loadIdentity()) {
     enterApp();
 } else {

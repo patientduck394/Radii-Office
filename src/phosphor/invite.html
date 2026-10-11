@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phosphor Space Invite!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <style>
+        .invite-code-big {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 4px;
+            text-align: center;
+            color: #02241a;
+            background: #6ee7b7;
+            border-radius: 10px;
+            padding: 12px;
+            margin: 12px 0;
+        }
+        .invite-actions { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+        .invite-actions .go-btn { text-align: center; text-decoration: none; display: block; }
+        .invite-row { display: flex; gap: 8px; }
+        .invite-row .action-btn { justify-content: center; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="auth-view">
+        <div class="auth-card">
+            <h1>Phosphor!</h1>
+            <p class="auth-sub" id="invite-sub">You are invited to join a Space!</p>
+            <div id="invite-error" class="auth-error" style="display:none;"></div>
+            <div id="invite-code-big" class="invite-code-big">…</div>
+            <p class="auth-fine" id="invite-meta">Pick a name on the next page, then you jump straight into the chat! No signup, no password, just vibes!</p>
+            <div class="invite-actions">
+                <a id="join-link" class="go-btn" href="index.html">Join Space!</a>
+                <div class="invite-row">
+                    <button class="action-btn" id="copy-btn" type="button">Copy Code!</button>
+                    <a class="action-btn cancel-btn" href="index.html" style="justify-content:center;">Open Phosphor!</a>
+                </div>
+            </div>
+            <p class="auth-fine">Public park, not a vault! Anyone with this code can read this Space, so no secrets!</p>
+        </div>
+    </div>
+
+    <script>
+        function getCode() {
+            try {
+                var q = new URLSearchParams(location.search);
+                var c = q.get('code') || q.get('invite') || q.get('space') || '';
+                c = String(c).trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+                if (c.length >= 4) return c;
+            } catch (e) {}
+            try {
+                var h = String(location.hash || '').replace(/^#/, '');
+                h = h.replace(/^code=/i, '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
+                if (h.length >= 4) return h;
+            } catch (e) {}
+            return '';
+        }
+        (function () {
+            var code = getCode();
+            var big = document.getElementById('invite-code-big');
+            var join = document.getElementById('join-link');
+            var err = document.getElementById('invite-error');
+            var sub = document.getElementById('invite-sub');
+            if (!code) {
+                big.innerText = '???';
+                err.innerText = 'No invite code found! Ask your friend for a fresh invite link!';
+                err.style.display = 'block';
+                join.innerText = 'Open Phosphor!';
+                join.href = 'index.html';
+                sub.innerText = 'Hmm, that invite link looks broken!';
+                return;
+            }
+            big.innerText = code;
+            sub.innerText = 'You are invited to join Space #' + code + '!';
+            try {
+                var u = new URL('index.html', location.href);
+                u.searchParams.set('code', code);
+                join.href = u.toString();
+            } catch (e) {
+                join.href = 'index.html?code=' + encodeURIComponent(code);
+            }
+            document.getElementById('copy-btn').onclick = function () {
+                try {
+                    if (navigator.clipboard) navigator.clipboard.writeText(code).catch(function () {});
+                } catch (e) {}
+                this.innerText = 'Copied!';
+                var btn = this;
+                setTimeout(function () { btn.innerText = 'Copy Code!'; }, 1200);
+                return false;
+            };
+        })();
+    </script>
+</body>
+</html>
