@@ -161,12 +161,10 @@ if (canvas) {
                 const sel = window.getSelection();
                 if (sel.rangeCount && !sel.isCollapsed && canvas.contains(sel.anchorNode)) {
                     e.preventDefault();
-                    try {
-                        if (typeof document.execCommand === 'function') {
-                            document.execCommand(k === 'b' ? 'bold' : (k === 'i' ? 'italic' : 'underline'), false, null);
-                        }
-                    } catch (err) {}
-                    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                    // Hand-rolled toggle first (Windows-safe!), execCommand fallback inside!
+                    if (typeof applyTextFormatting === 'function') {
+                        applyTextFormatting(k === 'b' ? 'bold' : (k === 'i' ? 'italic' : 'underline'));
+                    }
                 }
                 return;
             }
@@ -3303,9 +3301,18 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Action: Apply text formatting toggles (Bold, Italic, Underline, Strikethrough)
+// Hand-rolled toggle path first (works everywhere, incl. Windows browsers
+// where deprecated execCommand silently fails!), execCommand fallback!
 function applyTextFormatting(commandName) {
     playAeroClickSound(600, 0.08);
-    document.execCommand(commandName, false, null);
+    const cmd = String(commandName || '').toLowerCase();
+    const tagMap = { bold: 'b', italic: 'i', underline: 'u', strikethrough: 's', strikeThrough: 's', strike: 's' };
+    if (tagMap[cmd] && typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle(tagMap[cmd])) {
+        return;
+    }
+    try {
+        if (typeof document.execCommand === 'function') document.execCommand(commandName, false, null);
+    } catch (e) {}
     autoSaveCanvasContent();
 }
 
@@ -3358,13 +3365,17 @@ document.querySelectorAll('#aero-selection-toolbar .style-bar-btn').forEach(butt
         playAeroClickSound(600, 0.08);
         
         if (styleType === 'bold') {
-            document.execCommand('bold', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('b')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('bold', false, null); } catch (e) {}
         } else if (styleType === 'italic') {
-            document.execCommand('italic', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('i')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('italic', false, null); } catch (e) {}
         } else if (styleType === 'underline') {
-            document.execCommand('underline', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('u')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('underline', false, null); } catch (e) {}
         } else if (styleType === 'strike') {
-            document.execCommand('strikeThrough', false, null);
+            if (typeof fmtApplyBasicStyle === 'function' && fmtApplyBasicStyle('s')) { autoSaveCanvasContent(); return; }
+            try { document.execCommand('strikeThrough', false, null); } catch (e) {}
         } else if (styleType === 'code') {
             // Apply inline code wrapping
             const selection = window.getSelection();
