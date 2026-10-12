@@ -6,9 +6,9 @@
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import * as imbuer from "./engines/imbuer.mjs";
-import * as mainkey from "./engines/mainkey.mjs";
-import * as inkpath from "./engines/inkpath.mjs";
+import * as imbuer from "./engines/imbuer.js";
+import * as mainkey from "./engines/mainkey.js";
+import * as inkpath from "./engines/inkpath.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 

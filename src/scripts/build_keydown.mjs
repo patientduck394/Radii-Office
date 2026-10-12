@@ -5,7 +5,7 @@
 import { writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
-import { APPS } from "./keydown.mjs";
+import { APPS } from "./keydown.js";
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 
