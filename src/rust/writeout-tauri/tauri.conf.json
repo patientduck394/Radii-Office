@@ -1,0 +1,29 @@
+{
+    "productName": "Writeout",
+    "version": "1.0.0",
+    "identifier": "com.radii-office.writeout",
+    "build": {
+        "frontendDist": "../../writeout",
+        "devUrl": "http://localhost:1420",
+        "beforeDevCommand": "",
+        "beforeBuildCommand": ""
+    },
+    "app": {
+        "windows": [
+            {
+                "title": "Writeout",
+                "width": 1280,
+                "height": 800
+            }
+        ],
+        "security": {
+            "csp": null
+        }
+    },
+    "bundle": {
+        "active": true,
+        "targets": "all",
+        "icon": ["icons/icon.icns", "icons/icon.png"],
+        "category": "Productivity"
+    }
+}
