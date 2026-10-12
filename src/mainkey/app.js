@@ -1,21 +1,21 @@
+"use strict";
+// app.ts — TypeScript source of Mainkey (incremental typing pilot)!
+// Compiles to app.js (committed, browsers run the output as-is)!
+// Recompile with: npx -y -p typescript tsc --project tsconfig.dom.json
 let fields = [
     { id: 'title', name: 'Title', type: 'text' },
     { id: 'status', name: 'Status', type: 'tag' },
     { id: 'value', name: 'Value', type: 'number' }
 ];
-
 let records = [
     { id: 1, title: 'Project Alpha', status: 'In Progress', value: 1200 },
     { id: 2, title: 'Radii Game Asset', status: 'Completed', value: 450 }
 ];
-
 let editingRecordId = null;
 let currentView = 'table';
 let sortField = null;
 let sortDir = 1;
-
 const STORAGE_KEY = 'mainkey-base-v1';
-
 function escapeHtml(s) {
     return String(s === undefined || s === null ? '' : s)
         .replace(/&/g, '&amp;')
@@ -24,79 +24,81 @@ function escapeHtml(s) {
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
 }
-
 function persist() {
     try {
-        if (typeof localStorage === 'undefined') return;
+        if (typeof localStorage === 'undefined')
+            return;
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ fields, records }));
-    } catch (e) {}
+    }
+    catch (e) { }
 }
-
 function restore() {
     try {
-        if (typeof localStorage === 'undefined') return;
+        if (typeof localStorage === 'undefined')
+            return;
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
+        if (!raw)
+            return;
         const doc = JSON.parse(raw);
         if (doc && Array.isArray(doc.fields) && Array.isArray(doc.records)) {
-            if (doc.fields.length > 0) fields = doc.fields;
+            if (doc.fields.length > 0)
+                fields = doc.fields;
             records = doc.records;
         }
-    } catch (e) {}
+    }
+    catch (e) { }
 }
-
 function setViewMode(mode) {
     currentView = mode;
     document.getElementById('table-view').style.display = mode === 'table' ? 'block' : 'none';
     document.getElementById('cards-view').style.display = mode === 'cards' ? 'block' : 'none';
     render();
 }
-
 function getFilteredSorted() {
     const query = document.getElementById('search-input').value.toLowerCase();
-    let filtered = records.filter(r =>
-        Object.values(r).some(val => String(val).toLowerCase().includes(query))
-    );
+    let filtered = records.filter(r => Object.values(r).some(val => String(val).toLowerCase().includes(query)));
     if (sortField) {
-        const numeric = fields.find(f => f.id === sortField)?.type === 'number';
+        const sortKey = sortField;
+        const numeric = fields.find(f => f.id === sortKey)?.type === 'number';
         filtered = [...filtered].sort((a, b) => {
-            let av = a[sortField], bv = b[sortField];
-            if (av === undefined) return 1;
-            if (bv === undefined) return -1;
-            if (numeric) return (Number(av) - Number(bv)) * sortDir;
+            let av = a[sortKey], bv = b[sortKey];
+            if (av === undefined)
+                return 1;
+            if (bv === undefined)
+                return -1;
+            if (numeric)
+                return (Number(av) - Number(bv)) * sortDir;
             return String(av).localeCompare(String(bv)) * sortDir;
         });
     }
     return filtered;
 }
-
 function sortBy(fieldId) {
     if (sortField === fieldId) {
         sortDir = sortDir === 1 ? -1 : 1;
-    } else {
+    }
+    else {
         sortField = fieldId;
         sortDir = 1;
     }
     render();
 }
-
 function render() {
     const filtered = getFilteredSorted();
-
     document.getElementById('record-count').innerText = `${filtered.length} Records`;
-
     if (currentView === 'table') {
         renderTable(filtered);
-    } else {
+    }
+    else {
         renderCards(filtered);
     }
     renderStatsBar(filtered);
     renderExistingFields();
 }
-
 function renderStatsBar(data) {
     const bar = document.getElementById('stats-bar');
-    if (!bar) return;
+    if (!bar)
+        return;
     const numericFields = fields.filter(f => f.type === 'number');
     if (data.length === 0) {
         bar.innerText = 'No records to summarize! Add one to get started!';
@@ -105,40 +107,47 @@ function renderStatsBar(data) {
     const parts = [`${data.length} shown`];
     numericFields.forEach(f => {
         const vals = data.map(r => Number(r[f.id])).filter(v => !isNaN(v));
-        if (vals.length === 0) return;
+        if (vals.length === 0)
+            return;
         const sum = vals.reduce((a, b) => a + b, 0);
         const avg = sum / vals.length;
         parts.push(`${f.name}: sum ${sum} / avg ${Math.round(avg * 100) / 100}`);
     });
     const statuses = {};
     data.forEach(r => {
-        const s = r.status || 'General';
+        const s = String(r.status || 'General');
         statuses[s] = (statuses[s] || 0) + 1;
     });
     const topStatus = Object.entries(statuses).sort((a, b) => b[1] - a[1])[0];
-    if (topStatus) parts.push(`top status: ${topStatus[0]} (${topStatus[1]})`);
+    if (topStatus)
+        parts.push(`top status: ${topStatus[0]} (${topStatus[1]})`);
     bar.innerText = parts.join('  •  ');
     renderStatsMedians(bar, data, numericFields);
 }
-
 // Per-field medians, silently Python-backed (JS fallback, no branding)!
 // Field names only ever enter via textContent, so custom names stay safe!
 function renderStatsMedians(bar, data, numericFields) {
-    if (typeof PySilent === "undefined") return;
+    if (typeof PySilent === "undefined")
+        return;
     const jobs = numericFields.map(f => ({
         name: f.name,
         vals: data.map(r => Number(r[f.id])).filter(v => !isNaN(v))
     })).filter(j => j.vals.length > 0);
-    if (jobs.length === 0) return;
+    if (jobs.length === 0)
+        return;
     const meds = {};
     jobs.forEach(j => {
         meds[j.name] = Math.round(PySilent.fallback(j.vals).median * 100) / 100;
     });
     const paint = (engine) => {
         const el = document.getElementById("stats-py-meds");
-        if (!el) return;
+        if (!el)
+            return;
         el.textContent = "medians: " + jobs.map(j => `${j.name} ${meds[j.name]}`).join(" / ");
-        try { el.dataset.engine = engine; } catch (e) {}
+        try {
+            el.dataset.engine = engine;
+        }
+        catch (e) { }
     };
     bar.innerHTML += '  •  <span id="stats-py-meds"></span>';
     paint("js-fallback");
@@ -150,21 +159,17 @@ function renderStatsMedians(bar, data, numericFields) {
         });
     });
 }
-
 function renderTable(data) {
     const headerRow = document.getElementById('table-header-row');
     const tbody = document.getElementById('table-body');
-
     headerRow.innerHTML = fields.map(f => {
         const arrow = sortField === f.id ? (sortDir === 1 ? ' ▲' : ' ▼') : '';
         return `<th class="sortable-th" onclick="sortBy('${escapeHtml(f.id)}')" title="Click to sort!">${escapeHtml(f.name)}${arrow}</th>`;
     }).join('') + '<th>Actions</th>';
-
     if (data.length === 0) {
         tbody.innerHTML = `<tr><td colspan="${fields.length + 1}" style="text-align:center; padding:20px; color:#64748b;">No matching records! Try a different search!</td></tr>`;
         return;
     }
-
     tbody.innerHTML = data.map(rec => `
         <tr>
             ${fields.map(f => `<td>${escapeHtml(rec[f.id] !== undefined ? rec[f.id] : '')}</td>`).join('')}
@@ -176,7 +181,6 @@ function renderTable(data) {
         </tr>
     `).join('');
 }
-
 function renderCards(data) {
     const container = document.getElementById('cards-container');
     if (data.length === 0) {
@@ -199,11 +203,9 @@ function renderCards(data) {
         </div>
     `).join('');
 }
-
 function openRecordModal(rec = null) {
     editingRecordId = rec ? rec.id : null;
     document.getElementById('modal-title-text').innerText = rec ? 'Edit Record' : 'Add Record';
-
     const form = document.getElementById('record-form-fields');
     form.innerHTML = fields.map(f => `
         <div class="control-group">
@@ -211,57 +213,53 @@ function openRecordModal(rec = null) {
             <input type="${f.type === 'number' ? 'number' : 'text'}" id="field-input-${escapeHtml(f.id)}" value="${escapeHtml(rec && rec[f.id] !== undefined ? rec[f.id] : '')}">
         </div>
     `).join('');
-
     document.getElementById('record-modal').style.display = 'flex';
 }
-
 function closeRecordModal() {
     document.getElementById('record-modal').style.display = 'none';
 }
-
 function saveRecord() {
     let rec = editingRecordId ? records.find(r => r.id === editingRecordId) : { id: Date.now() };
     fields.forEach(f => {
         const val = document.getElementById(`field-input-${f.id}`).value;
         rec[f.id] = f.type === 'number' ? Number(val) : val;
     });
-
-    if (!editingRecordId) records.push(rec);
+    if (!editingRecordId)
+        records.push(rec);
     closeRecordModal();
     persist();
     render();
 }
-
 function editRecord(id) {
     const rec = records.find(r => r.id === id);
-    if (rec) openRecordModal(rec);
+    if (rec)
+        openRecordModal(rec);
 }
-
 function duplicateRecord(id) {
     const rec = records.find(r => r.id === id);
-    if (!rec) return;
+    if (!rec)
+        return;
     const copy = { ...rec, id: Date.now() };
-    if (copy.title) copy.title = `${copy.title} (copy)`;
+    if (copy.title)
+        copy.title = `${copy.title} (copy)`;
     records.push(copy);
     persist();
     render();
 }
-
 function deleteRecord(id) {
     records = records.filter(r => r.id !== id);
     persist();
     render();
 }
-
 function openFieldModal() {
     renderExistingFields();
     document.getElementById('field-modal').style.display = 'flex';
 }
 function closeFieldModal() { document.getElementById('field-modal').style.display = 'none'; }
-
 function renderExistingFields() {
     const box = document.getElementById('existing-fields');
-    if (!box) return;
+    if (!box)
+        return;
     box.innerHTML = fields.map(f => `
         <div class="field-row">
             <span>${escapeHtml(f.name)} <small>(${escapeHtml(f.type)})</small></span>
@@ -269,24 +267,24 @@ function renderExistingFields() {
         </div>
     `).join('');
 }
-
 function createField() {
     const name = document.getElementById('new-field-name').value.trim();
     const type = document.getElementById('new-field-type').value;
-    if (!name) return;
-
+    if (!name)
+        return;
     let id = name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
-    if (!id) return;
+    if (!id)
+        return;
     let suffix = 2;
     const base = id;
-    while (fields.some(f => f.id === id)) id = `${base}_${suffix++}`;
+    while (fields.some(f => f.id === id))
+        id = `${base}_${suffix++}`;
     fields.push({ id, name, type });
     document.getElementById('new-field-name').value = '';
     persist();
     closeFieldModal();
     render();
 }
-
 function deleteField(id) {
     if (fields.length <= 1) {
         alert('Keep at least one field!');
@@ -294,42 +292,43 @@ function deleteField(id) {
     }
     fields = fields.filter(f => f.id !== id);
     records.forEach(r => { delete r[id]; });
-    if (sortField === id) sortField = null;
+    if (sortField === id)
+        sortField = null;
     persist();
     render();
 }
-
 function clearDatabase() {
-    if (!confirm('Clear all records? Fields are kept!')) return;
+    if (!confirm('Clear all records? Fields are kept!'))
+        return;
     records = [];
     persist();
     render();
 }
-
 function resetDemo() {
-    try { if (typeof localStorage !== 'undefined') localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+    try {
+        if (typeof localStorage !== 'undefined')
+            localStorage.removeItem(STORAGE_KEY);
+    }
+    catch (e) { }
     location.reload();
 }
-
 function csvCell(v) {
     const s = String(v === undefined || v === null ? '' : v);
     return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
-
 function exportCSV() {
     const header = fields.map(f => csvCell(f.name)).join(',');
     const lines = records.map(rec => fields.map(f => csvCell(rec[f.id])).join(','));
     downloadFile(new Blob([[header, ...lines].join('\n')], { type: 'text/csv' }), 'database.csv');
 }
-
 function exportKB() {
     const kbStr = jsyaml.dump({ app: "Radii Base", version: "1.0", fields, records });
     downloadFile(new Blob([kbStr], { type: 'text/yaml' }), 'database.kb');
 }
-
 function importKB(evt) {
     const file = evt.target.files[0];
-    if (!file) return;
+    if (!file)
+        return;
     const reader = new FileReader();
     reader.onload = (e) => {
         const doc = jsyaml.load(e.target.result);
@@ -343,17 +342,14 @@ function importKB(evt) {
     };
     reader.readAsText(file);
 }
-
 function downloadFile(blob, filename) {
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
     a.download = filename;
     a.click();
 }
-
 restore();
 render();
-
 // Export pure helpers for build-time testing in Node!
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = { escapeHtml, csvCell, getFilteredSorted, sortBy, duplicateRecord, deleteField, createField };
