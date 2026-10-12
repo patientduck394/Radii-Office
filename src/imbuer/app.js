@@ -392,6 +392,12 @@ function evaluateFormulas() {
             }
         }
     }
+    // Silent Lua cross-check (Fengari): never touches the display!
+    if (typeof FengariFormula !== "undefined") {
+        try {
+            FengariFormula.verifyAsync(cellData, resolved);
+        } catch (e) {}
+    }
 }
 
 function computeFormula(formula) {
@@ -457,6 +463,8 @@ function renderChartForColumn(colIdx) {
 
     if (values.length === 0) {
         container.innerHTML = `<div style="margin:auto; font-family:'JetBrains Mono'; font-size:12px; color:#94a3b8;">No numeric data in Column ${colLetter}</div>`;
+        const emptyLine = document.getElementById("chart-stats-line");
+        if (emptyLine) emptyLine.textContent = "";
         return;
     }
 
@@ -483,6 +491,22 @@ function renderChartForColumn(colIdx) {
         colDiv.appendChild(barFill);
         colDiv.appendChild(labelSpan);
         container.appendChild(colDiv);
+    });
+    renderChartStatsLine(values.map(item => item.val));
+}
+
+// Extended column stats, silently Python-backed (JS fallback, no branding)!
+function renderChartStatsLine(nums) {
+    const line = document.getElementById("chart-stats-line");
+    if (!line || typeof PySilent === "undefined") return;
+    const fmt = (v) => (v === null || v === undefined ? "n/a" : Math.round(v * 10000) / 10000);
+    const show = (r, engine) => {
+        line.textContent = `median ${fmt(r.median)} · stdev ${fmt(r.stdev)} · trend ${fmt(r.slope)}/pt + ${fmt(r.intercept)}`;
+        try { line.dataset.engine = engine; } catch (e) {}
+    };
+    show(PySilent.fallback(nums), "js-fallback");
+    PySilent.run(nums, (r) => {
+        show(r || PySilent.fallback(nums), r ? "pyodide" : "js-fallback");
     });
 }
 

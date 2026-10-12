@@ -118,6 +118,37 @@ function renderStatsBar(data) {
     const topStatus = Object.entries(statuses).sort((a, b) => b[1] - a[1])[0];
     if (topStatus) parts.push(`top status: ${topStatus[0]} (${topStatus[1]})`);
     bar.innerText = parts.join('  •  ');
+    renderStatsMedians(bar, data, numericFields);
+}
+
+// Per-field medians, silently Python-backed (JS fallback, no branding)!
+// Field names only ever enter via textContent, so custom names stay safe!
+function renderStatsMedians(bar, data, numericFields) {
+    if (typeof PySilent === "undefined") return;
+    const jobs = numericFields.map(f => ({
+        name: f.name,
+        vals: data.map(r => Number(r[f.id])).filter(v => !isNaN(v))
+    })).filter(j => j.vals.length > 0);
+    if (jobs.length === 0) return;
+    const meds = {};
+    jobs.forEach(j => {
+        meds[j.name] = Math.round(PySilent.fallback(j.vals).median * 100) / 100;
+    });
+    const paint = (engine) => {
+        const el = document.getElementById("stats-py-meds");
+        if (!el) return;
+        el.textContent = "medians: " + jobs.map(j => `${j.name} ${meds[j.name]}`).join(" / ");
+        try { el.dataset.engine = engine; } catch (e) {}
+    };
+    bar.innerHTML += '  •  <span id="stats-py-meds"></span>';
+    paint("js-fallback");
+    jobs.forEach(j => {
+        PySilent.run(j.vals, (r) => {
+            const src = r || PySilent.fallback(j.vals);
+            meds[j.name] = Math.round(src.median * 100) / 100;
+            paint(r ? "pyodide" : "js-fallback");
+        });
+    });
 }
 
 function renderTable(data) {
