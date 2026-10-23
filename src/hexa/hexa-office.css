@@ -1,0 +1,43 @@
+/* =====================================================================
+   Hexa's Outlook layout! (body.os-office) Light page, teal chrome,
+   the app's own content in the middle. Hexa Classic stays untouched!
+   ===================================================================== */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #eefaf8;
+    color: #252525;
+}
+body.os-office.os-dark { background: #0e1f1d; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .aero-sidebar { display: none !important; }
+body.os-office .workspace-viewport-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+    height: auto;
+    min-height: 0;
+    width: auto;
+    padding: 18px 26px 0;
+    animation: osFade 0.3s;
+    color: #1e293b;
+}
+body.os-office .toolbar-hint { color: #4f8f88; }
+body.os-office .calendar-toolbar { background: #fff; border: 1px solid #cfeeea; box-shadow: 0 1px 3px rgba(15, 155, 140, 0.12); }
+body.os-office .month-title { color: #0f6f65; }
+body.os-office .nav-btn { background: #e6f8f5; border: 1px solid #99f6e4; color: #0f6f65; }
+body.os-office .nav-btn:hover { background: #ccfbf1; }
+body.os-office .agenda-panel, body.os-office .calendar-frame { color: #1e293b; }
+body.os-office #agenda-date { color: #0f6f65; }
+body.os-office #board-select { background: #e6f8f5 !important; color: #0f6f65; }
+.hx-bs-doc img { width: 36px; height: 36px; }
+.hx-classic-layout { margin-top: 2px; }
+.os-dlg.hx-layout-dlg { width: 560px; }
+body.os-office .agenda-panel { background: #fff; border: 1px solid #cfeeea; border-radius: 12px; color: #1e293b; box-shadow: 0 1px 3px rgba(15, 155, 140, 0.12); }
+body.os-office .agenda-item { color: #1e293b; border-color: #e0f4f1; }
+body.os-office .agenda-item span, body.os-office .agenda-item small { color: #1e293b; }
+body.os-office .agenda-panel div[style*="99f6e4"] { color: #4f8f88 !important; }
+body.os-office .board-column { box-shadow: 0 1px 3px rgba(15, 155, 140, 0.15); }

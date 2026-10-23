@@ -9,7 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
     <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/svg+xml" href="/mainkey/favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/mainkey/favicon-96.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body>
@@ -32,6 +32,7 @@
             <button class="action-btn" onclick="exportKB()">💾 Export .KB</button>
             <button class="action-btn" onclick="exportCSV()">📊 Export .CSV</button>
             <button class="action-btn" onclick="document.getElementById('file-kb').click()">📂 Import .KB</button>
+            <button class="action-btn" id="btn-website-kit" onclick="openKitModal()">🌐 Website Kit</button>
             <button class="action-btn" onclick="clearDatabase()" style="border-color:#ef4444; color:#fca5a5;">🗑️ Clear Base</button>
             <button class="action-btn" onclick="resetDemo()">↩️ Reset Demo</button>
             
@@ -104,6 +105,39 @@
             <div class="modal-actions">
                 <button class="action-btn" onclick="createField()">Create Field</button>
                 <button class="action-btn cancel-btn" onclick="closeFieldModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Website Kit: turn the database into a live one on any site! -->
+    <div id="kit-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-card kit-card">
+            <div class="modal-title">🌐 Website Kit</div>
+            <p class="kit-intro">Put your database on any website and it becomes a live one that visitors can search, sort and edit!</p>
+            <div class="kit-step">
+                <strong>Option 1: Two files</strong>
+                <span>Download both, upload them next to your page, then paste the snippet!</span>
+                <div class="kit-row">
+                    <button class="action-btn" onclick="exportKB()">💾 database.kb</button>
+                    <button class="action-btn" onclick="downloadLibrary()">📦 mainkey-live.js</button>
+                </div>
+                <pre class="kit-code" id="kit-snippet">&lt;div data-mainkey="database.kb"&gt;&lt;/div&gt;
+&lt;script src="mainkey-live.js"&gt;&lt;/script&gt;</pre>
+                <div class="kit-row">
+                    <button class="action-btn" onclick="copyKitSnippet()">📋 Copy snippet</button>
+                    <span class="kit-status" id="kit-status" aria-live="polite"></span>
+                </div>
+            </div>
+            <div class="kit-step">
+                <strong>Option 2: One file</strong>
+                <span>A single page with the library and your data built in! It even works when opened straight from your disk!</span>
+                <div class="kit-row">
+                    <button class="action-btn" onclick="downloadLivePage()">📄 database.html</button>
+                </div>
+            </div>
+            <p class="kit-note">Visitors' edits are saved in their own browser! Upload a new database.kb any time and everyone gets the new version! <a href="live/demo.html" target="_blank" rel="noopener">See the demo</a> or <a href="live/README.md" target="_blank" rel="noopener">read the API docs</a>!</p>
+            <div class="modal-actions">
+                <button class="action-btn cancel-btn" onclick="closeKitModal()">Close</button>
             </div>
         </div>
     </div>

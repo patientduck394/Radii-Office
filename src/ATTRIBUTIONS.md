@@ -49,3 +49,11 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 ### 7. Mage Icons & Vadivam Icons / Other Bundled Sets
 * **Licenses:** Maintained under their respective open-source terms as distributed by their original upstream authors. 
 * **Note:** All intellectual property rights, original filenames, and vector structures for these specialized icon sets remain the property of their respective creators.
+
+---
+
+### 8. AbyssBox / BeepBox synth (Bitbook "BeepBox Song" skill)
+* **License:** MIT License
+* **Copyright:** Copyright (c) 2024 choptop84 (AbyssBox); Copyright (c) 2012-2022 John Nesky and contributing authors (BeepBox)
+* **Source:** https://github.com/choptop84/abyssbox-source (built from commit 33bb994 into `bitbook/abyssbox_synth.min.js`), https://github.com/johnnesky/beepbox
+* **Modifications:** Removed the synth's writes to the host page's title and its URL-rewrite/page-reload path for custom-sample songs, so it can run embedded in Bitbook.

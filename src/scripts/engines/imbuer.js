@@ -1,7 +1,8 @@
 // engines/imbuer.ts — TypeScript source of the build-time spreadsheet engine!
 // Compiles to imbuer.js (committed, Node runs the output as-is)!
 // Recompile with: npx -y -p typescript tsc --project tsconfig.json
-// SUM, AVG, MIN, MAX, COUNT plus dependency ordering and cycle detection!
+// SUM, AVG, MIN, MAX, COUNT over ranges PLUS arithmetic: cell refs,
+// +-*/ parentheses and unary minus (e.g. =A1*2, =(A1+A2)/2, =SUM(A1:A3)*2)!
 export function colToIndex(col) {
     // 0-based!
     let idx = 0;
@@ -52,49 +53,198 @@ export function getRangeValues(data, startRef, endRef) {
     return vals;
 }
 const FNAMES = new Set(["SUM", "AVG", "MIN", "MAX", "COUNT"]);
-export function extractRange(formula) {
-    const m = /^(SUM|AVG|MIN|MAX|COUNT)\(\s*([A-Za-z]+\d+)\s*:\s*([A-Za-z]+\d+)\s*\)$/.exec(String(formula).slice(1).trim().toUpperCase());
-    if (!m || !FNAMES.has(m[1]))
-        return null;
-    return { fn: m[1], start: m[2], end: m[3] };
-}
-export function computeFormula(formula, data) {
-    if (!String(formula).startsWith("="))
-        return formula;
-    const parsed = extractRange(formula);
-    if (!parsed)
-        return "ERROR";
-    const vals = getRangeValues(data || {}, parsed.start, parsed.end);
-    if (parsed.fn === "SUM")
-        return vals.reduce((a, b) => a + b, 0);
-    if (parsed.fn === "COUNT")
-        return vals.length;
-    if (parsed.fn === "MIN")
-        return vals.length === 0 ? 0 : Math.min(...vals);
-    if (parsed.fn === "MAX")
-        return vals.length === 0 ? 0 : Math.max(...vals);
-    if (parsed.fn === "AVG") {
-        return vals.length === 0 ? 0 : vals.reduce((a, b) => a + b, 0) / vals.length;
+class ArithParser {
+    constructor(text) {
+        this.text = text;
+        this.pos = 0;
+        this.refs = [];
     }
-    return "ERROR";
-}
-export function formulaDeps(formula) {
-    if (!String(formula).startsWith("="))
-        return [];
-    const parsed = extractRange(formula);
-    if (!parsed)
-        return [];
-    const s = parseCellRef(parsed.start);
-    const e = parseCellRef(parsed.end);
-    if (!s || !e)
-        return [];
-    const deps = [];
-    for (let r = Math.min(s.row, e.row); r <= Math.max(s.row, e.row); r++) {
-        for (let c = Math.min(s.col, e.col); c <= Math.max(s.col, e.col); c++) {
-            deps.push(cellId(c, r));
+    skipWs() {
+        while (this.pos < this.text.length && /\s/.test(this.text[this.pos]))
+            this.pos++;
+    }
+    parse() {
+        const n = this.parseExpr();
+        if (!n)
+            return null;
+        this.skipWs();
+        return this.pos === this.text.length ? n : null;
+    }
+    parseExpr() {
+        let l = this.parseTerm();
+        if (!l)
+            return null;
+        for (;;) {
+            this.skipWs();
+            const c = this.text[this.pos];
+            if (c !== "+" && c !== "-")
+                return l;
+            this.pos++;
+            const r = this.parseTerm();
+            if (!r)
+                return null;
+            l = c === "+" ? { kind: "add", l, r } : { kind: "sub", l, r };
         }
     }
-    return deps;
+    parseTerm() {
+        let l = this.parseFactor();
+        if (!l)
+            return null;
+        for (;;) {
+            this.skipWs();
+            const c = this.text[this.pos];
+            if (c !== "*" && c !== "/")
+                return l;
+            this.pos++;
+            const r = this.parseFactor();
+            if (!r)
+                return null;
+            l = c === "*" ? { kind: "mul", l, r } : { kind: "div", l, r };
+        }
+    }
+    parseFactor() {
+        this.skipWs();
+        if (this.pos >= this.text.length)
+            return null;
+        const c = this.text[this.pos];
+        if (c === "(") {
+            this.pos++;
+            const n = this.parseExpr();
+            if (!n)
+                return null;
+            this.skipWs();
+            if (this.text[this.pos] !== ")")
+                return null;
+            this.pos++;
+            return n;
+        }
+        if (c === "-") {
+            this.pos++;
+            const v = this.parseFactor();
+            return v ? { kind: "neg", v } : null;
+        }
+        const num = /^[0-9]+(\.[0-9]+)?/.exec(this.text.slice(this.pos));
+        if (num) {
+            this.pos += num[0].length;
+            return { kind: "num", value: parseFloat(num[0]) };
+        }
+        const word = /^[A-Za-z]+/.exec(this.text.slice(this.pos));
+        if (word) {
+            const name = word[0].toUpperCase();
+            let j = this.pos + word[0].length;
+            while (j < this.text.length && /\s/.test(this.text[j]))
+                j++;
+            if (this.text[j] === "(") {
+                if (!FNAMES.has(name))
+                    return null;
+                this.pos = j + 1;
+                const start = this.parseRef();
+                if (!start)
+                    return null;
+                this.skipWs();
+                if (this.text[this.pos] !== ":")
+                    return null;
+                this.pos++;
+                const end = this.parseRef();
+                if (!end)
+                    return null;
+                this.skipWs();
+                if (this.text[this.pos] !== ")")
+                    return null;
+                this.pos++;
+                this.refs.push(...rangeCells(start, end));
+                return { kind: "call", fn: name, start, end };
+            }
+            const ref = /^([A-Za-z]+\d+)/.exec(this.text.slice(this.pos));
+            if (ref && parseCellRef(ref[1])) {
+                this.pos += ref[1].length;
+                this.refs.push(ref[1].toUpperCase());
+                return { kind: "ref", cell: ref[1].toUpperCase() };
+            }
+            return null;
+        }
+        return null;
+    }
+    parseRef() {
+        this.skipWs();
+        const ref = /^([A-Za-z]+\d+)/.exec(this.text.slice(this.pos));
+        if (!ref || !parseCellRef(ref[1]))
+            return null;
+        this.pos += ref[1].length;
+        return ref[1].toUpperCase();
+    }
+}
+function rangeCells(startRef, endRef) {
+    const s = parseCellRef(startRef);
+    const e = parseCellRef(endRef);
+    if (!s || !e)
+        return [];
+    const out = [];
+    for (let r = Math.min(s.row, e.row); r <= Math.max(s.row, e.row); r++) {
+        for (let c = Math.min(s.col, e.col); c <= Math.max(s.col, e.col); c++) {
+            out.push(cellId(c, r));
+        }
+    }
+    return out;
+}
+function parseArithmetic(inner) {
+    const parser = new ArithParser(inner.toUpperCase());
+    const node = parser.parse();
+    if (!node)
+        return null;
+    return { node, refs: parser.refs };
+}
+function refValue(cell, data) {
+    const raw = data[cell];
+    if (raw === undefined)
+        return 0; // missing counts as 0!
+    if (typeof raw === "number")
+        return isNaN(raw) ? 0 : raw;
+    const s = String(raw).trim();
+    if (s.startsWith("="))
+        return 0; // unresolved formula counts as 0!
+    const n = parseFloat(s);
+    return isNaN(n) ? 0 : n; // plain text counts as 0!
+}
+function evalNode(node, data) {
+    switch (node.kind) {
+        case "num": return node.value;
+        case "ref": return refValue(node.cell, data);
+        case "neg": return -evalNode(node.v, data);
+        case "add": return evalNode(node.l, data) + evalNode(node.r, data);
+        case "sub": return evalNode(node.l, data) - evalNode(node.r, data);
+        case "mul": return evalNode(node.l, data) * evalNode(node.r, data);
+        case "div": return evalNode(node.l, data) / evalNode(node.r, data);
+        case "call": {
+            const vals = getRangeValues(data, node.start, node.end);
+            if (node.fn === "SUM")
+                return vals.reduce((a, b) => a + b, 0);
+            if (node.fn === "COUNT")
+                return vals.length;
+            if (node.fn === "MIN")
+                return vals.length === 0 ? 0 : Math.min(...vals);
+            if (node.fn === "MAX")
+                return vals.length === 0 ? 0 : Math.max(...vals);
+            return vals.length === 0 ? 0 : vals.reduce((a, b) => a + b, 0) / vals.length;
+        }
+    }
+}
+export function computeFormula(formula, data) {
+    const s = String(formula);
+    if (!s.startsWith("="))
+        return formula;
+    const parsed = parseArithmetic(s.slice(1).trim());
+    if (!parsed)
+        return "ERROR";
+    const result = evalNode(parsed.node, data || {});
+    return isFinite(result) ? result : "ERROR";
+}
+export function formulaDeps(formula) {
+    const s = String(formula);
+    if (!s.startsWith("="))
+        return [];
+    const parsed = parseArithmetic(s.slice(1).trim());
+    return parsed ? parsed.refs : [];
 }
 export function evaluateSheet(data) {
     const result = {};

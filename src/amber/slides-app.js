@@ -16,7 +16,7 @@ let activeElementId = null;
 let undoStack = [];
 let redoStack = [];
 
-let snapRules = { hCenter: true, vCenter: true, grid: false };
+let snapRules = { hCenter: true, vCenter: true, grid: false, objects: true };
 
 // Layout options (persisted)! Dual rounding handles adds a mirrored dot!
 let layoutOpts = { dualHandles: false };
@@ -57,7 +57,7 @@ function getSvgShapeMarkup(shapeType, fillHex, strokeCss, strokeW, radius, inner
     } else {
         const polyDefault = (shapeType === 'triangle' || shapeType === 'star' || shapeType === 'hexagon' || shapeType === 'diamond') ? 0 : 4;
         const r = (radius === undefined || radius === null)
-            ? (shapeType === 'rounded' ? 20 : shapeType === 'chip' ? 24 : polyDefault)
+            ? (shapeType === 'rounded' ? 20 : shapeType === 'chip' ? 48 : polyDefault)
             : Math.max(0, Math.min(48, radius));
         rx = ry = r;
     }
@@ -158,24 +158,35 @@ function getSvgShapeMarkup(shapeType, fillHex, strokeCss, strokeW, radius, inner
         if (rounded) pathD = `<path d="${rounded}" />`;
     }
 
-    // Glassy transparent Aero badge: frosted translucent fill + crisp white rim!
+    // Aero badge: a glossy gel pill! Vivid fill gradient, a glassy top shine,
+    // a soft glow pooling at the bottom and a crisp white rim!
     if (shapeType === 'chip') {
-        const chipStroke = strokeCss || 'rgba(255,255,255,0.9)';
+        const chipStroke = strokeCss || 'rgba(255,255,255,0.92)';
+        const gx = Math.max(2, Math.round(rx * 0.85)), gy = Math.max(2, Math.round(ry * 0.85));
         return `
         <svg class="slide-svg-shape" viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
                 <linearGradient id="${gradId}" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.7" />
-                    <stop offset="45%" stop-color="${fillHex}" stop-opacity="0.35" />
-                    <stop offset="100%" stop-color="${darkTone}" stop-opacity="0.5" />
+                    <stop offset="0%" stop-color="${lightTone}" />
+                    <stop offset="55%" stop-color="${fillHex}" />
+                    <stop offset="100%" stop-color="${darkTone}" />
                 </linearGradient>
-                <filter id="shadow-${gradId}" x="-20%" y="-20%" width="140%" height="140%">
-                    <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#000000" flood-opacity="0.25" />
+                <linearGradient id="gloss-${gradId}" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+                    <stop offset="100%" stop-color="#ffffff" stop-opacity="0.08" />
+                </linearGradient>
+                <radialGradient id="glow-${gradId}" cx="50%" cy="100%" r="65%">
+                    <stop offset="0%" stop-color="${lightTone}" stop-opacity="0.75" />
+                    <stop offset="100%" stop-color="${lightTone}" stop-opacity="0" />
+                </radialGradient>
+                <filter id="shadow-${gradId}" x="-20%" y="-30%" width="140%" height="160%">
+                    <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="${darkTone}" flood-opacity="0.45" />
                 </filter>${innerDef}
             </defs>
             <g filter="url(#shadow-${gradId})">
                 <rect x="2" y="2" width="96" height="96" rx="${rx}" ry="${ry}" fill="url(#${gradId})" stroke="${chipStroke}" stroke-width="${sw}" vector-effect="non-scaling-stroke"${innerAttr} />
-                <rect x="6" y="5" width="88" height="30" rx="${Math.max(2, Math.round(rx * 0.6))}" ry="${Math.max(2, Math.round(ry * 0.6))}" fill="#ffffff" opacity="0.22" />
+                <rect x="2" y="2" width="96" height="96" rx="${rx}" ry="${ry}" fill="url(#glow-${gradId})" />
+                <rect x="6" y="6" width="88" height="44" rx="${gx}" ry="${gy}" fill="url(#gloss-${gradId})" />
             </g>
         </svg>
     `;
@@ -362,7 +373,7 @@ function cornerRadiusFor(el) {
 function cornerDefaultFor(shapeType) {
     // Polygons default to razor sharp (legacy look); rects keep their baked rounding!
     if (shapeType === 'rounded') return 20;
-    if (shapeType === 'chip') return 24;
+    if (shapeType === 'chip') return 48;
     if (shapeType === 'rect') return 4;
     return 0;
 }
@@ -371,6 +382,12 @@ function cornerDefaultFor(shapeType) {
 function cornerRadiiFor(el) {
     if (!isRoundableShape(el)) return null;
     const clamp48 = (v) => Math.max(0, Math.min(48, v));
+    // Untouched Aero badges are true pills: round ends sized by the SHORT side!
+    const unset = (v) => v === undefined || v === null;
+    if (el.shapeType === 'chip' && unset(el.cornerRadius) && unset(el.cornerRx) && unset(el.cornerRy)) {
+        const w = el.width || 170, h = el.height || 48;
+        return w >= h ? { rx: clamp48(48 * h / w), ry: 48 } : { rx: 48, ry: clamp48(48 * w / h) };
+    }
     const legacy = (el.cornerRadius === undefined || el.cornerRadius === null)
         ? cornerDefaultFor(el.shapeType) : clamp48(el.cornerRadius);
     const rx = (el.cornerRx === undefined || el.cornerRx === null) ? legacy : clamp48(el.cornerRx);
@@ -579,7 +596,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("click", (e) => {
         const isElement = e.target.closest('.slide-element');
-        const isToolbar = e.target.closest('.slides-toolbar') || e.target.closest('.aero-sidebar') || e.target.closest('.aero-palette-menu') || e.target.closest('.marketplace-dialog');
+        const isToolbar = e.target.closest('.slides-toolbar') || e.target.closest('.aero-sidebar') || e.target.closest('.aero-palette-menu') || e.target.closest('.marketplace-dialog') ||
+            e.target.closest('#os-top, #os-status, #os-backstage, .os-menu, .os-dlg-back, .am-pane, #amber-notes');
         
         if (!isElement && !isToolbar && (activeElementId !== null || editingElementId !== null)) {
             activeElementId = null;
@@ -714,6 +732,8 @@ function renderThumbnails() {
                 mini.style.color = el.color || "#ffffff";
                 const plain = String(el.content || "").replace(/<[^>]*>/g, "").slice(0, 42);
                 mini.textContent = plain || "Text";
+                if (el.textAlign) mini.style.textAlign = el.textAlign;
+                if (el.fontFamily) mini.style.fontFamily = el.fontFamily;
             }
             live.appendChild(mini);
         });
@@ -729,7 +749,37 @@ function renderThumbnails() {
 
     const badge = document.querySelector(".presentation-title-badge .badge-label");
     if (badge) badge.innerText = `SLIDE ${activeSlideIndex + 1}`;
+    amberQueueSave();
 }
+
+/* ========================================================
+   AUTOSAVE: the deck survives reloads (amber_deck_v1)!
+   ======================================================== */
+const AMBER_DECK_KEY = 'amber_deck_v1';
+let amberSaveTimer = null;
+function amberQueueSave() {
+    clearTimeout(amberSaveTimer);
+    amberSaveTimer = setTimeout(amberSaveNow, 250);
+}
+function amberSaveNow() {
+    clearTimeout(amberSaveTimer);
+    try {
+        localStorage.setItem(AMBER_DECK_KEY, JSON.stringify({ app: 'amber', version: 1, savedAt: new Date().toISOString(), activeSlideIndex, slides }));
+        if (window.Amber && typeof window.Amber.onSaved === 'function') window.Amber.onSaved();
+    } catch (e) {}
+}
+function amberRestoreDeck() {
+    try {
+        const raw = localStorage.getItem(AMBER_DECK_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        const clean = (Array.isArray(data.slides) ? data.slides : []).map(sanitizeKaSlide).filter(Boolean);
+        if (!clean.length) return;
+        slides = clean;
+        activeSlideIndex = Math.max(0, Math.min(clean.length - 1, data.activeSlideIndex | 0));
+    } catch (e) {}
+}
+window.addEventListener('beforeunload', amberSaveNow);
 
 function renderActiveSlide() {
     const canvas = document.getElementById("slide-canvas");
@@ -778,6 +828,8 @@ function renderActiveSlide() {
 
         const textSpan = document.createElement("span");
         textSpan.className = "slide-text-content";
+        if (el.textAlign) textSpan.style.textAlign = el.textAlign;
+        if (el.fontFamily) div.style.fontFamily = el.fontFamily;
         // Only editable when selected AND double-clicked!
         textSpan.contentEditable = isEditing ? "true" : "false";
         textSpan.innerHTML = el.content;
@@ -918,10 +970,19 @@ function renderActiveSlide() {
     updatePickerDots();
 }
 
+// Screen pixels per slide pixel (1 in Classic, the zoom in PowerPoint layout)!
+function amberCanvasScale() {
+    const c = document.getElementById("slide-canvas");
+    if (!c || !c.offsetWidth) return 1;
+    const s = c.getBoundingClientRect().width / c.offsetWidth;
+    return (isFinite(s) && s > 0.05) ? s : 1;
+}
+
 function handleResize(e) {
     if (!resizingElement) return;
-    const dx = e.clientX - resizeStartX;
-    const dy = e.clientY - resizeStartY;
+    const S = amberCanvasScale();
+    const dx = (e.clientX - resizeStartX) / S;
+    const dy = (e.clientY - resizeStartY) / S;
     const MIN = 10;
 
     if (resizeHandleType === 'se') {
@@ -1033,7 +1094,7 @@ function addShape(shapeType) {
     let defaultContent = "Shape";
     if (shapeType === "chip") defaultContent = "Aero Badge";
 
-    const newId = `el-${Date.now()}`;
+    const newId = `el-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
     const isBadge = shapeType === "chip";
     slides[activeSlideIndex].elements.push({
         id: newId,
@@ -1042,13 +1103,13 @@ function addShape(shapeType) {
         content: defaultContent,
         top: 100,
         left: 100,
-        width: 120,
-        height: 80,
+        width: isBadge ? 170 : 120,
+        height: isBadge ? 48 : 80,
         zIndex: slides[activeSlideIndex].elements.length + 1,
-        fontSize: "14px",
-        // Aero badges default to white glass with dark readable text!
-        color: isBadge ? "#475569" : "#ffffff",
-        fillColor: isBadge ? "#ffffff" : "#38bdf8",
+        fontSize: isBadge ? "17px" : "14px",
+        // Aero badges default to a sky-blue gel pill with crisp white text!
+        color: "#ffffff",
+        fillColor: "#38bdf8",
         strokeSync: true,
         strokeColor: null,
         strokeWidth: 2,
@@ -1153,12 +1214,14 @@ function handleDrag(e) {
     const guideY = document.getElementById("guide-y");
 
     const canvasRect = canvas.getBoundingClientRect();
+    // The PowerPoint layout zooms the slide: work in slide pixels!
+    const S = amberCanvasScale();
 
-    let rawLeft = e.clientX - canvasRect.left - dragOffsetX;
-    let rawTop = e.clientY - canvasRect.top - dragOffsetY;
+    let rawLeft = (e.clientX - canvasRect.left - dragOffsetX) / S;
+    let rawTop = (e.clientY - canvasRect.top - dragOffsetY) / S;
 
-    const centerX = canvasRect.width / 2;
-    const centerY = canvasRect.height / 2;
+    const centerX = canvasRect.width / S / 2;
+    const centerY = canvasRect.height / S / 2;
     const snapTolerance = 12;
 
     let finalLeft = rawLeft;
@@ -1171,30 +1234,51 @@ function handleDrag(e) {
 
     let showGuideX = false;
     let showGuideY = false;
+    let guideXAt = centerX, guideYAt = centerY;
 
-    if (snapRules.hCenter && Math.abs(rawLeft - (centerX - 60)) < snapTolerance) {
-        finalLeft = centerX - 60;
-        showGuideX = true;
+    // Snap by the element's REAL size: its left edge, center or right edge
+    // lines up with the slide center or another object's edges/center!
+    const w = draggedElement.width || 120;
+    const h = draggedElement.height || 40;
+    const xs = [], ys = [];
+    if (snapRules.hCenter) xs.push(centerX);
+    if (snapRules.vCenter) ys.push(centerY);
+    if (snapRules.objects !== false) {
+        slides[activeSlideIndex].elements.forEach(o => {
+            if (o === draggedElement) return;
+            const ow = o.width || 120, oh = o.height || 40;
+            xs.push(o.left, o.left + ow / 2, o.left + ow);
+            ys.push(o.top, o.top + oh / 2, o.top + oh);
+        });
     }
+    const bestSnap = (pos, size, lines) => {
+        let best = null;
+        [0, size / 2, size].forEach(off => {
+            lines.forEach(line => {
+                const d = Math.abs(pos + off - line);
+                if (d < snapTolerance && (!best || d < best.d)) best = { d, pos: line - off, line };
+            });
+        });
+        return best;
+    };
+    const sx = bestSnap(rawLeft, w, xs);
+    if (sx) { finalLeft = sx.pos; showGuideX = true; guideXAt = sx.line; }
+    const sy = bestSnap(rawTop, h, ys);
+    if (sy) { finalTop = sy.pos; showGuideY = true; guideYAt = sy.line; }
 
-    if (snapRules.vCenter && Math.abs(rawTop - (centerY - 20)) < snapTolerance) {
-        finalTop = centerY - 20;
-        showGuideY = true;
-    }
-
-    finalLeft = Math.min(canvasRect.width - 20, finalLeft);
-    finalTop = Math.min(canvasRect.height - 20, finalTop);
+    finalLeft = Math.min(canvasRect.width / S - 20, finalLeft);
+    finalTop = Math.min(canvasRect.height / S - 20, finalTop);
 
     draggedElement.left = finalLeft;
     draggedElement.top = finalTop;
 
     if (guideX) {
         guideX.style.display = showGuideX ? "block" : "none";
-        guideX.style.left = centerX + "px";
+        guideX.style.left = guideXAt + "px";
     }
     if (guideY) {
         guideY.style.display = showGuideY ? "block" : "none";
-        guideY.style.top = centerY + "px";
+        guideY.style.top = guideYAt + "px";
     }
 
     renderActiveSlide();
@@ -1214,11 +1298,12 @@ function addNewSlide() {
     saveState();
     playAeroClickSound(650, 0.08);
     slides.push({
-        id: `slide-${slides.length + 1}`,
+        // Unique ids, so two collaborators adding slides at once never collide!
+        id: `slide-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`,
         title: `Slide ${slides.length + 1}`,
         background: "linear-gradient(180deg, #fbbf24 0%, #d97706 100%)",
         elements: [
-            { id: `el-${Date.now()}`, type: "text", content: "New Slide Header", top: 130, left: 180, width: 300, height: 40, zIndex: 1, fontSize: "28px", color: "#ffffff" }
+            { id: `el-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`, type: "text", content: "New Slide Header", top: 130, left: 180, width: 300, height: 40, zIndex: 1, fontSize: "28px", color: "#ffffff" }
         ]
     });
     activeSlideIndex = slides.length - 1;
@@ -1276,7 +1361,56 @@ function sanitizeKaElement(raw) {
             color: typeof raw.innerShadow.color === 'string' ? raw.innerShadow.color : 'rgba(0, 0, 0, 0.45)',
             dx: sanitizeKaNumber(raw.innerShadow.dx, 0),
             dy: sanitizeKaNumber(raw.innerShadow.dy, 2)
-        } : null
+        } : null,
+        textAlign: ['left', 'center', 'right', 'justify'].includes(raw.textAlign) ? raw.textAlign : null,
+        fontFamily: typeof raw.fontFamily === 'string' ? raw.fontFamily.slice(0, 80) : null,
+        morphId: typeof raw.morphId === 'string' ? raw.morphId.slice(0, 80) : null,
+        anims: sanitizeKaAnims(raw)
+    };
+}
+
+// Element animations (entrance, emphasis, exit) ride inside .ka files!
+const KA_ANIM_EFFECTS = ['appear', 'fade', 'fly', 'float', 'zoom', 'wipe', 'bounce', 'spin', 'grow', 'pulse', 'teeter', 'emSpin', 'flash', 'fadeOut', 'flyOut', 'zoomOut', 'wipeOut', 'shrinkOut'];
+function sanitizeKaAnim(raw) {
+    if (!raw || typeof raw !== 'object' || !KA_ANIM_EFFECTS.includes(raw.effect)) return null;
+    return {
+        effect: raw.effect,
+        dir: ['left', 'right', 'up', 'down'].includes(raw.dir) ? raw.dir : 'up',
+        start: ['click', 'with', 'after'].includes(raw.start) ? raw.start : 'click',
+        duration: Math.max(0.05, Math.min(20, sanitizeKaNumber(raw.duration, 0.6))),
+        delay: Math.max(0, Math.min(60, sanitizeKaNumber(raw.delay, 0))),
+        order: sanitizeKaNumber(raw.order, 0)
+    };
+}
+
+// Slide comment threads (from collaborators) ride inside .ka files too!
+function sanitizeKaComments(raw) {
+    if (!Array.isArray(raw)) return [];
+    return raw.slice(0, 200).map(function (c) {
+        if (!c || typeof c.id !== 'string' || !Array.isArray(c.items)) return null;
+        return { id: c.id.slice(0, 40), items: c.items.slice(0, 100).map(function (it) {
+            return { by: String(it.by || '').slice(0, 40), name: String(it.name || 'Someone').slice(0, 24), text: String(it.text || '').slice(0, 2000), at: typeof it.at === 'number' ? it.at : 0 };
+        }) };
+    }).filter(Boolean);
+}
+
+// An object can have SEVERAL animations (Float In, then Teeter, then Fade Out)!
+// Older decks stored a single "anim": it converts to a one-item list!
+function sanitizeKaAnims(raw) {
+    const list = Array.isArray(raw.anims) ? raw.anims : (raw.anim ? [raw.anim] : []);
+    return list.map(sanitizeKaAnim).filter(Boolean).slice(0, 20);
+}
+
+// Slide transitions (Fade, Push, Morph...) ride inside .ka files too!
+const KA_TRANSITIONS = ['none', 'fade', 'push', 'wipe', 'split', 'reveal', 'cover', 'zoom', 'flip', 'cube', 'gallery', 'morph', 'vortex'];
+function sanitizeKaTransition(raw) {
+    if (!raw || typeof raw !== 'object' || !KA_TRANSITIONS.includes(raw.type) || raw.type === 'none') return null;
+    const after = raw.advanceAfter;
+    return {
+        type: raw.type,
+        dir: ['left', 'right', 'up', 'down'].includes(raw.dir) ? raw.dir : 'left',
+        duration: Math.max(0.1, Math.min(10, sanitizeKaNumber(raw.duration, 0.8))),
+        advanceAfter: (typeof after === 'number' && isFinite(after) && after >= 0) ? Math.min(600, after) : null
     };
 }
 
@@ -1287,7 +1421,11 @@ function sanitizeKaSlide(raw) {
         id: typeof raw.id === 'string' ? raw.id : `slide-${Date.now()}`,
         title: typeof raw.title === 'string' ? raw.title : 'Untitled Slide',
         background: typeof raw.background === 'string' ? raw.background : 'linear-gradient(180deg, #fbbf24 0%, #d97706 100%)',
-        elements
+        elements,
+        transition: sanitizeKaTransition(raw.transition),
+        notes: typeof raw.notes === 'string' ? raw.notes.slice(0, 20000) : '',
+        hidden: raw.hidden === true,
+        comments: sanitizeKaComments(raw.comments)
     };
 }
 
@@ -1347,7 +1485,7 @@ function importKaFile(e) {
 function addTextBox() {
     saveState();
     playAeroClickSound(750, 0.1);
-    const newId = `el-${Date.now()}`;
+    const newId = `el-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
     slides[activeSlideIndex].elements.push({
         id: newId,
         type: "text",
@@ -1952,3 +2090,15 @@ window.Amber.addShapeType = (shapeType, def) => {
     if (typeof addShape === 'function') addShape(shapeType);
 };
 window.Amber.refresh = () => { renderThumbnails(); renderActiveSlide(); };
+window.Amber.goToSlide = (i) => {
+    if (i < 0 || i >= slides.length) return;
+    activeSlideIndex = i;
+    activeElementId = null;
+    editingElementId = null;
+    renderThumbnails();
+    renderActiveSlide();
+};
+window.Amber.saveNow = () => amberSaveNow();
+
+// Restore the autosaved deck (runs before DOMContentLoaded renders it)!
+amberRestoreDeck();

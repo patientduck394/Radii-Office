@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="radii-file.js?v=20261042"></script>
+    <script>RadiiFile.scope(/^(hexa-calendar-v1$|hexa_collab_backup$)/);</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hexa - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="office-shell.css?v=20261019">
+    <link rel="stylesheet" href="hexa-office.css?v=20261037">
+    <link rel="stylesheet" href="radii-collab.css?v=20261042">
+    <link rel="icon" type="image/png" sizes="96x96" href="/hexa/favicon-96.png">
+    <link rel="apple-touch-icon" href="/hexa/apple-touch-icon.png">
+</head>
+<body>
+
+    <nav class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Hexa</h2>
+        </div>
+
+        <div class="pad-selection-stack">
+            <span class="section-label">Calendar Controls</span>
+            <button class="action-btn active" onclick="openEventModal()">📅 Add New Event</button>
+            <button class="action-btn" onclick="goToday()">⏰ Jump to Today</button>
+
+            <span class="section-label">Views</span>
+            <button class="action-btn" id="view-calendar-btn" onclick="setViewMode('calendar')">🗓️ Calendar View</button>
+            <button class="action-btn" id="view-boards-btn" onclick="setViewMode('boards')">📌 Boards View</button>
+
+            <span class="section-label">File Operations</span>
+            <button class="action-btn" onclick="exportICS()">💾 Export .ICS</button>
+            <button class="action-btn" onclick="document.getElementById('file-ics').click()">📂 Import .ICS</button>
+            <button class="action-btn" onclick="exportKH()">📦 Export .KH</button>
+            <button class="action-btn" onclick="document.getElementById('file-kh').click()">📥 Import .KH</button>
+            <button class="action-btn" onclick="askClearCalendar()" style="border-color:#ef4444; color:#fca5a5;">🗑️ Clear Calendar</button>
+
+            <input type="file" id="file-ics" style="display:none" accept=".ics,.ical,.icalendar" onchange="importICS(event)">
+            <input type="file" id="file-kh" style="display:none" accept=".kh,.json" onchange="importKH(event)">
+        </div>
+    </nav>
+
+    <main class="workspace-viewport-wrapper">
+        <div id="calendar-view" style="display:flex; flex-direction:column; gap:12px; flex:1; overflow:hidden;">
+        <div class="calendar-toolbar">
+            <button class="nav-btn" onclick="shiftMonth(-1)" title="Previous month!">◀</button>
+            <span class="month-title" id="month-title-text">Month</span>
+            <button class="nav-btn" onclick="shiftMonth(1)" title="Next month!">▶</button>
+            <span class="toolbar-hint" id="event-count">0 Events</span>
+        </div>
+
+        <div class="calendar-frame">
+            <div class="weekday-row" id="hexa-weekday-row">
+                <div class="weekday-cell">Sun</div><div class="weekday-cell">Mon</div><div class="weekday-cell">Tue</div><div class="weekday-cell">Wed</div><div class="weekday-cell">Thu</div><div class="weekday-cell">Fri</div><div class="weekday-cell">Sat</div>
+            </div>
+            <div class="hexa-grid" id="hexa-grid"></div>
+        </div>
+
+        <div class="agenda-panel">
+            <div id="agenda-date" style="font-weight:800; margin-bottom:4px;">Agenda</div>
+            <div id="agenda-list"></div>
+        </div>
+        </div>
+
+        <div id="boards-view" style="display:none; flex-direction:column; gap:12px; flex:1; overflow:hidden;">
+            <div class="calendar-toolbar">
+                <span class="month-title">📌 Boards</span>
+                <select id="board-select" class="nav-btn" onchange="switchBoard(this.value)" style="background:rgba(0,0,0,0.35);"></select>
+                <button class="nav-btn" onclick="askAddBoard()" title="New board!">＋ Board</button>
+                <button class="nav-btn" onclick="askDeleteBoard()" title="Delete board!">🗑️</button>
+                <button class="nav-btn" onclick="askAddColumn()" title="New column!">＋ Column</button>
+                <span class="toolbar-hint" id="board-count">0 Cards</span>
+            </div>
+            <div class="calendar-frame">
+                <div id="board-columns" class="board-columns"></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal for Adding/Editing Events -->
+    <div id="event-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-title" id="modal-title-text">Add Event</div>
+            <div class="form-stack">
+                <div class="control-group">
+                    <label>Title</label>
+                    <input type="text" id="event-title" placeholder="e.g. Design review">
+                </div>
+                <div class="control-group">
+                    <label>Date</label>
+                    <input type="date" id="event-date">
+                </div>
+                <div class="control-group">
+                    <label>Time (blank = all-day!)</label>
+                    <input type="time" id="event-time">
+                </div>
+                <div class="control-group">
+                    <label>Color</label>
+                    <div class="color-picker-wrap">
+                        <button type="button" id="event-color-btn" class="event-chip mkt-bubble-slate" onclick="toggleColorPopup('event')">auto</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Notes</label>
+                    <textarea id="event-desc" rows="3" placeholder="Optional details..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="saveEvent()">Save</button>
+                <button class="action-btn cancel-btn" onclick="closeEventModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Adding/Editing Cards -->
+    <div id="card-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-title" id="card-modal-title-text">Add Card</div>
+            <div class="form-stack">
+                <div class="control-group">
+                    <label>Title</label>
+                    <input type="text" id="card-title" placeholder="e.g. Draft proposal">
+                </div>
+                <div class="control-group">
+                    <label>Due date (shows on the calendar!)</label>
+                    <input type="date" id="card-due">
+                </div>
+                <div class="control-group">
+                    <label>Color</label>
+                    <div class="color-picker-wrap">
+                        <button type="button" id="card-color-btn" class="event-chip mkt-bubble-slate" onclick="toggleColorPopup('card')">auto</button>
+                    </div>
+                </div>
+                <div class="control-group">
+                    <label>Notes</label>
+                    <textarea id="card-desc" rows="3" placeholder="Optional details..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="saveCard()">Save</button>
+                <button class="action-btn cancel-btn" onclick="closeCardModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared floating color popup: body-level so EVERY modal can use it! -->
+    <div id="event-color-popup" class="swatch-popup" style="display:none;"></div>
+
+    <script src="app.js?v=20261036"></script>
+    <script src="office-shell.js?v=20261019"></script>
+    <script src="hexa-office.js?v=20261037"></script>
+    <script src="radii-collab.js?v=20261052"></script>
+    <script src="collab-hexa.js?v=20261036"></script>
+</body>
+</html>

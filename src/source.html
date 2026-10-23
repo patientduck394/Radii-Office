@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Source Code - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        * { box-sizing: border-box; }
+        html, body { margin: 0; min-height: 100vh; font-family: 'Segoe UI', 'JetBrains Mono', -apple-system, BlinkMacSystemFont, sans-serif; background: radial-gradient(circle at 50% 30%, #021f2b 0%, #000a12 100%); color: #fff; }
+        .top-navbar { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 clamp(16px, 4vw, 40px); position: fixed; top: 0; left: 0; right: 0; z-index: 10; background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03)); backdrop-filter: blur(20px); border-bottom: 2px solid rgba(5,147,255,.4); }
+        .nav-links { display: flex; gap: 22px; flex-wrap: wrap; }
+        .nav-links a { color: #cde9f5; text-decoration: none; font-weight: 600; font-size: 14px; }
+        .nav-links a:hover, .nav-links a.active { color: #fff; }
+        main { max-width: 900px; margin: 0 auto; padding: 110px clamp(16px, 4vw, 40px) 60px; }
+        h1 { font-size: clamp(28px, 5vw, 40px); margin: 0 0 8px; }
+        .sub { color: #9fc4d6; line-height: 1.6; margin: 0 0 28px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+        .card { padding: 22px; border-radius: 16px; border: 1px solid rgba(126,226,255,.35); background: linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.03)); box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 1px rgba(255,255,255,.4); display: flex; flex-direction: column; gap: 10px; }
+        .card h2 { margin: 0; font-size: 20px; }
+        .card p { margin: 0; color: #b6d3e0; font-size: 14px; line-height: 1.55; flex: 1; }
+        .meta { font-size: 12px; color: #7fb0c6; font-family: 'JetBrains Mono', monospace; }
+        .btn { display: inline-block; text-align: center; text-decoration: none; color: #fff; font-weight: 800; padding: 12px 18px; border-radius: 12px; background: linear-gradient(180deg, #38d4ff, #0593ff); border: 1px solid #9be8ff; box-shadow: 0 6px 18px rgba(5,147,255,.45), inset 0 1px 2px #fff; transition: transform .15s, box-shadow .15s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(5,147,255,.6), inset 0 1px 2px #fff; }
+        .btn.kc { background: linear-gradient(180deg, #ff9a8f, #FF6B5E); border-color: #ffc2bb; box-shadow: 0 6px 18px rgba(255,107,94,.45), inset 0 1px 2px #fff; }
+        .note { margin-top: 28px; padding: 16px 18px; border-radius: 12px; background: rgba(255,255,255,.06); color: #b6d3e0; font-size: 13.5px; line-height: 1.65; }
+        .note a { color: #7ee2ff; }
+        code { font-family: 'JetBrains Mono', monospace; background: rgba(255,255,255,.1); padding: 1px 6px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <header class="top-navbar">
+        <a href="/" class="brand-logo"><div style="display:flex;align-items:center;gap:8px"><img src="/logo.png" width="120" height="45" alt="Radii"><span style="font-size:1.5em"> Office</span></div></a>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/products">Products</a>
+            <a href="/source" class="active">Source Code</a>
+            <a href="mailto:patientduck0394@gmail.com">Contact</a>
+        </nav>
+    </header>
+    <main>
+        <h1>Source Code</h1>
+        <p class="sub">Every app in the Radii Office suite is plain HTML, CSS and JavaScript, so you can read it, run it and remix it! Grab the whole site below, as a regular ZIP or as a Cabinet drawer (.kc)!</p>
+        <div class="grid">
+            <section class="card">
+                <h2>Full site (.zip)</h2>
+                <p>Every page, app, font and image, ready to unzip and open. Host the folder anywhere, or open <code>index.html</code> through a local web server!</p>
+                <div class="meta" id="zip-meta">ZIP archive</div>
+                <a class="btn" href="/downloads/radii-office-source.zip" download>Download ZIP</a>
+            </section>
+            <section class="card">
+                <h2>Cabinet drawer (.kc)</h2>
+                <p>All the code plus the small images as one readable bundle, with a folder for every app! Open it in <a href="/cabinet/" style="color:#7ee2ff">Cabinet</a> with <b>Open Drawer</b> to browse it, or share it with a friend live!</p>
+                <div class="meta" id="kc-meta">Cabinet drawer</div>
+                <a class="btn kc" href="/downloads/radii-office-source.kc" download>Download .kc</a>
+            </section>
+        </div>
+        <div class="note">The ZIP holds the whole site; the .kc leaves out the font files, large images and the huge Bitbook synth libraries to stay under 25 MB. Check <code>ATTRIBUTIONS.md</code> and the <code>LICENSE-*.txt</code> files inside for the licenses that apply to the code, fonts and art!</div>
+    </main>
+    <script>
+        fetch('/downloads/source-info.json').then(function (r) { return r.json(); }).then(function (i) {
+            const mb = function (b) { return (b / 1048576).toFixed(1) + ' MB'; };
+            document.getElementById('zip-meta').textContent = i.zipFiles + ' files · ' + mb(i.zipBytes);
+            document.getElementById('kc-meta').textContent = i.kcFiles + ' files · ' + mb(i.kcBytes);
+        }).catch(function () {});
+    </script>
+</body>
+</html>

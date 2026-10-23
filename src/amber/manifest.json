@@ -1,5 +1,5 @@
 {
-  "name": "Amber — Radii Office Slides",
+  "name": "Amber \u2014 Radii Office Slides",
   "short_name": "Amber",
   "description": "Glassy slide deck studio: shapes, themes, marketplace packs and .ka files.",
   "start_url": ".",
@@ -19,18 +19,12 @@
       "src": "icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "apple-touch-icon.png",
       "sizes": "180x180",
       "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
       "purpose": "any"
     }
   ]

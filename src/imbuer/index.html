@@ -1,94 +1,515 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="radii-file.js?v=20261042"></script>
+    <script>RadiiFile.scope(/^(imbuer-book-v2$|imbuer-sheet-v1$|imbuer_collab_backup$)/);</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Imbuer - Radii Office</title>
-    <script src="https://iconify.design"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="keydown.css">
-    <link rel="icon" type="image/svg+xml" href="/imbuer/favicon.svg">
+    <link rel="stylesheet" href="marketplace-packs.css">
+    <link rel="stylesheet" href="style.css?v=20261018c">
+    <link rel="stylesheet" href="radii-collab.css?v=20261042">
+    <link rel="icon" type="image/png" sizes="96x96" href="/imbuer/favicon-96.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
 <body>
+<!-- Classic layout: drifting gel orbs behind the glass! -->
+<div id="orbs" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
 
-    <!-- 3D Liquid-Gel Sidebar Navigation Dock Frame -->
-    <nav id="sidebar" class="aero-sidebar">
-        <div class="sidebar-brand">
-            <h2>Imbuer</h2>
-        </div>
-        
-        <div class="pad-selection-stack">
-            <input type="file" id="file-loader-gate" style="display: none;" onchange="importSheetsFile(event)">
-            
-            <button class="pad-toggle-btn active" onclick="exportSheetsFile()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v16m8-7.5a15.46 15.46 0 0 0-6.493 5.334L12 18l-1.507-2.166A15.46 15.46 0 0 0 4 10.5M17 22H7" />
-                </svg>
-                Export .ks
-            </button>
-            <button class="pad-toggle-btn" onclick="document.getElementById('file-loader-gate').click()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18V2m8 7.5a15.46 15.46 0 0 1-6.493-5.334L12 2l-1.507 2.166A15.46 15.46 0 0 1 4 9.5M17 22H7" />
-                </svg>
-                Import .ks
-            </button>
-            <button class="pad-toggle-btn" onclick="addNewRow()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14" />
-                </svg>
-                Add Row
-            </button>
-            <button class="pad-toggle-btn" onclick="addNewColumn()">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14" />
-                </svg>
-                Add Column
-            </button>
-        </div>
+<!-- Classic layout: the original Imbuer glass sidebar! -->
+<nav id="classic-side" class="aero-sidebar" aria-label="Imbuer sidebar">
+    <div class="side-brand"><img src="favicon.svg" alt=""><h2>Imbuer</h2></div>
+    <div class="pad-stack">
+        <button class="pad-btn" data-cmd="newBlank"><i data-ico="newDoc"></i>New</button>
+        <button class="pad-btn" data-cmd="openFile"><i data-ico="folder"></i>Open .ks</button>
+        <button class="pad-btn" data-cmd="saveCopy"><i data-ico="save"></i>Export .ks</button>
+        <button class="pad-btn" data-cmd="templates"><i data-ico="sparkle"></i>Templates</button>
+    </div>
+    <div class="side-label">Sheet</div>
+    <div class="pad-stack">
+        <button class="pad-btn" data-cmd="insertRows"><i data-ico="plus"></i>Add Row</button>
+        <button class="pad-btn" data-cmd="insertCols"><i data-ico="plus"></i>Add Column</button>
+        <button class="pad-btn" data-cmd="deleteRows"><i data-ico="minus"></i>Delete Row</button>
+        <button class="pad-btn" data-cmd="deleteCols"><i data-ico="minus"></i>Delete Column</button>
+        <button class="pad-btn" data-cmd="chartColumn"><i data-ico="chartColumn"></i>Chart</button>
+    </div>
+    <div class="side-foot">
+        <button class="side-act" data-cmd="help"><i data-ico="help"></i>Help Deck</button>
+        <button class="side-act" data-cmd="settings"><i data-ico="gear"></i>Settings</button>
+    </div>
+    <button id="side-latch" data-cmd="toggleSide" title="Collapse the sidebar"><i data-ico="arrowL"></i></button>
+</nav>
 
-        <div class="sidebar-footer-controls">
-            <button id="help-trigger-btn" class="sidebar-action-btn" onclick="toggleModal(true)">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                        <path d="M4.929 4.929A10 10 0 0 0 2 12a10.1 10.1 0 0 0 2.929 7.071A10.1 10.1 0 0 0 12 22c2.626 0 5.214-1.072 7.071-2.929A10.1 10.1 0 0 0 22 12A10 10 0 0 0 4.929 4.929" />
-                        <path d="M12 13.833c0-2.503 2.75-2.337 2.75-4.84c0-3.324-5.5-3.324-5.5 0M12 17.5v-.625" />
-                    </g>
-                </svg>
-                Help Deck
-            </button>
-            <button id="settings-trigger-btn" class="sidebar-action-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none"></path>
-                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                        <path d="M13.945 10.056a2.75 2.75 0 1 1-3.889 3.888a2.75 2.75 0 0 1 3.889-3.889"></path>
-                        <path d="M9.75 4.1c0 1.595-2.027 2.816-3.458 1.991c-2.555-1.359-4.496 2.384-2.239 3.885c1.377.793 1.378 3.2 0 3.994c-2.433 1.457-.212 5.178 2.239 3.873c1.551-.893 3.46.57 3.46 2.174c0 2.678 4.477 2.61 4.477 0c0-1.635 1.879-3.084 3.458-2.174c2.52 1.341 4.69-2.569 2.239-3.873c-1.38-.794-1.378-3.211 0-4.004c2.433-1.457.214-5.178-2.239-3.875c-1.398.807-3.457-.403-3.458-1.99c0-2.845-4.478-2.756-4.478 0"></path>
-                    </g>
-                </svg>
-                Settings
-            </button>
+<div id="app">
+
+    <!-- Title bar -->
+    <header id="titlebar">
+        <div class="tb-left">
+            <img class="tb-logo" src="favicon.svg" alt="">
+            <div class="qat">
+                <button class="qbtn" data-cmd="save" title="Save (⌘S)"><i data-ico="save"></i></button>
+                <button class="qbtn" data-cmd="undo" title="Undo (⌘Z)"><i data-ico="undo"></i></button>
+                <button class="qbtn" data-cmd="redo" title="Redo (⌘⇧Z)"><i data-ico="redo"></i></button>
+            </div>
+            <span class="tb-brand">Imbuer</span>
         </div>
-        <div id="toggle-zone" class="latch-toggle-strip" onclick="toggleSidebar()">
-            <svg id="toggle-icon" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 19a18 18 0 0 0-7-7a18 18 0 0 0 7-7" />
-            </svg>
+        <div class="tb-title">
+            <input id="book-name" spellcheck="false" aria-label="Workbook name">
+            <span id="save-state" class="tb-saved">Saved</span>
         </div>
+        <div class="tb-right">
+            <div class="cmd-search">
+                <i data-ico="search"></i>
+                <input id="cmd-search" placeholder="Search for tools, help and more (⌘K)" spellcheck="false" autocomplete="off">
+                <div id="cmd-results" class="menu" hidden></div>
+            </div>
+            <button class="qbtn" data-cmd="settings" title="Settings"><i data-ico="gear"></i></button>
+        </div>
+    </header>
+
+    <!-- Ribbon tabs -->
+    <nav id="ribbon-tabs" role="tablist">
+        <button class="rtab file" data-tab="file">File</button>
+        <button class="rtab on" data-tab="home">Home</button>
+        <button class="rtab" data-tab="insert">Insert</button>
+        <button class="rtab" data-tab="formulas">Formulae</button>
+        <button class="rtab" data-tab="data">Data</button>
+        <button class="rtab" data-tab="view">View</button>
+        <button class="rtab" data-tab="help">Help</button>
+        <span id="tab-ink"></span>
+        <button class="rtab-collapse" data-cmd="toggleRibbon" title="Collapse the ribbon"><i data-ico="chevUp"></i></button>
     </nav>
 
-    <!-- Main Viewport Area -->
-    <main class="workspace-viewport-wrapper">
-        <!-- Imbuer Floating Selection Toolbar -->
+    <!-- Ribbon -->
+    <section id="ribbon">
+        <!-- HOME -->
+        <div class="rpanel on" data-panel="home">
+            <div class="rgroup">
+                <div class="rg-body">
+                    <div class="split big">
+                        <button class="rb big" data-cmd="paste" title="Paste (⌘V)"><i data-ico="paste"></i><span>Paste</span></button>
+                        <button class="split-arrow" data-menu="paste" title="Paste options">▾</button>
+                    </div>
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="cut" title="Cut (⌘X)"><i data-ico="cut"></i><span>Cut</span></button>
+                        <button class="rb sm" data-cmd="copy" title="Copy (⌘C)"><i data-ico="copy"></i><span>Copy</span></button>
+                        <button class="rb sm" data-cmd="painter" title="Format Painter: copy formatting to other cells (double-click to keep it on)"><i data-ico="brush"></i><span>Format Painter</span></button>
+                    </div>
+                </div>
+                <div class="rg-label">Clipboard</div>
+            </div>
+
+            <div class="rgroup">
+                <div class="rg-body col">
+                    <div class="row">
+                        <div class="combo" id="font-combo" title="Font">
+                            <input id="font-name" spellcheck="false" autocomplete="off">
+                            <button class="combo-arrow" data-menu="fonts">▾</button>
+                        </div>
+                        <div class="combo narrow" id="size-combo" title="Font Size">
+                            <input id="font-size" spellcheck="false" autocomplete="off">
+                            <button class="combo-arrow" data-menu="sizes">▾</button>
+                        </div>
+                        <button class="rb ic" data-cmd="growFont" title="Increase Font Size"><i data-ico="growFont"></i></button>
+                        <button class="rb ic" data-cmd="shrinkFont" title="Decrease Font Size"><i data-ico="shrinkFont"></i></button>
+                    </div>
+                    <div class="row">
+                        <button class="rb ic" data-cmd="bold" title="Bold (⌘B)"><b class="glyph">B</b></button>
+                        <button class="rb ic" data-cmd="italic" title="Italic (⌘I)"><i class="glyph it">I</i></button>
+                        <button class="rb ic" data-cmd="underline" title="Underline (⌘U)"><u class="glyph">U</u></button>
+                        <button class="rb ic" data-cmd="strike" title="Strikethrough (⌘⇧X)"><s class="glyph">ab</s></button>
+                        <span class="rsep"></span>
+                        <div class="split ic">
+                            <button class="rb ic" data-cmd="borderBottom" title="Borders"><i data-ico="borders"></i></button>
+                            <button class="split-arrow" data-menu="borders">▾</button>
+                        </div>
+                        <div class="split ic">
+                            <button class="rb ic color-btn" data-cmd="fillColor" title="Fill Color"><i data-ico="bucket"></i><b class="cbar" id="fill-bar"></b></button>
+                            <button class="split-arrow" data-menu="fillColor">▾</button>
+                        </div>
+                        <div class="split ic">
+                            <button class="rb ic color-btn" data-cmd="fontColor" title="Font Color"><b class="glyph">A</b><b class="cbar" id="font-bar"></b></button>
+                            <button class="split-arrow" data-menu="fontColor">▾</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="rg-label">Font</div>
+            </div>
+
+            <div class="rgroup">
+                <div class="rg-body col">
+                    <div class="row">
+                        <button class="rb ic" data-cmd="alignTop" title="Top Align"><i data-ico="vTop"></i></button>
+                        <button class="rb ic" data-cmd="alignMiddle" title="Middle Align"><i data-ico="vMid"></i></button>
+                        <button class="rb ic" data-cmd="alignBottom" title="Bottom Align"><i data-ico="vBot"></i></button>
+                        <span class="rsep"></span>
+                        <button class="rb sm" data-cmd="wrap" title="Wrap Text"><i data-ico="wrap"></i><span>Wrap Text</span></button>
+                    </div>
+                    <div class="row">
+                        <button class="rb ic" data-cmd="alignLeft" title="Align Left"><i data-ico="aLeft"></i></button>
+                        <button class="rb ic" data-cmd="alignCenter" title="Center"><i data-ico="aCenter"></i></button>
+                        <button class="rb ic" data-cmd="alignRight" title="Align Right"><i data-ico="aRight"></i></button>
+                        <span class="rsep"></span>
+                        <button class="rb ic" data-cmd="outdent" title="Decrease Indent"><i data-ico="outdent"></i></button>
+                        <button class="rb ic" data-cmd="indent" title="Increase Indent"><i data-ico="indent"></i></button>
+                    </div>
+                </div>
+                <div class="rg-label">Alignment</div>
+            </div>
+
+            <div class="rgroup">
+                <div class="rg-body col">
+                    <div class="row">
+                        <div class="combo wide" id="fmt-combo" title="Number Format">
+                            <input id="fmt-name" readonly>
+                            <button class="combo-arrow" data-menu="numFormats">▾</button>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <button class="rb ic" data-cmd="fmtCurrency" title="Currency"><b class="glyph">$</b></button>
+                        <button class="rb ic" data-cmd="fmtPercent" title="Percent Style (⌘⇧%)"><b class="glyph">%</b></button>
+                        <button class="rb ic" data-cmd="fmtComma" title="Comma Style"><b class="glyph">,</b></button>
+                        <span class="rsep"></span>
+                        <button class="rb ic" data-cmd="decMore" title="Increase Decimal"><i data-ico="decMore"></i></button>
+                        <button class="rb ic" data-cmd="decLess" title="Decrease Decimal"><i data-ico="decLess"></i></button>
+                    </div>
+                </div>
+                <div class="rg-label">Number</div>
+            </div>
+
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-menu="condFormat" title="Conditional Formatting"><i data-ico="condFormat"></i><span>Conditional<br>Formatting ▾</span></button>
+                    <button class="rb big" data-menu="tableStyles" title="Format as Table"><i data-ico="table"></i><span>Format as<br>Table ▾</span></button>
+                    <button class="rb big" data-menu="cellStyles" title="Cell Styles"><i data-ico="cellStyles"></i><span>Cell<br>Styles ▾</span></button>
+                    <button class="rb big kd-btn" data-cmd="keydownCells" title="Keydown Styles: gel orbs, chips and effects for the selected cells"><i data-ico="sparkle"></i><span>Keydown<br>Styles</span></button>
+                </div>
+                <div class="rg-label">Styles</div>
+            </div>
+
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-menu="insertCells" title="Insert"><i data-ico="insertRow"></i><span>Insert ▾</span></button>
+                    <button class="rb big" data-menu="deleteCells" title="Delete"><i data-ico="deleteRow"></i><span>Delete ▾</span></button>
+                    <button class="rb big" data-menu="formatCells" title="Format"><i data-ico="format"></i><span>Format ▾</span></button>
+                </div>
+                <div class="rg-label">Cells</div>
+            </div>
+
+            <div class="rgroup">
+                <div class="rg-body">
+                    <div class="stack">
+                        <div class="split sm">
+                            <button class="rb sm" data-cmd="autoSum" title="AutoSum (⌥=)"><b class="glyph sigma">Σ</b><span>AutoSum</span></button>
+                            <button class="split-arrow" data-menu="autoSum">▾</button>
+                        </div>
+                        <button class="rb sm" data-menu="fill" title="Fill"><i data-ico="fillDown"></i><span>Fill ▾</span></button>
+                        <button class="rb sm" data-menu="clear" title="Clear"><i data-ico="eraser"></i><span>Clear ▾</span></button>
+                    </div>
+                    <button class="rb big" data-menu="sortFilter" title="Sort &amp; Filter"><i data-ico="sortFilter"></i><span>Sort &amp;<br>Filter ▾</span></button>
+                    <button class="rb big" data-menu="findSelect" title="Find &amp; Select"><i data-ico="find"></i><span>Find &amp;<br>Select ▾</span></button>
+                </div>
+                <div class="rg-label">Editing</div>
+            </div>
+        </div>
+
+        <!-- INSERT -->
+        <div class="rpanel" data-panel="insert">
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-menu="tableStyles" title="Format the data as a table"><i data-ico="table"></i><span>Table ▾</span></button>
+                </div>
+                <div class="rg-label">Tables</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="onlinePicture" title="Search free CC0 / CC BY / CC BY-SA pictures"><i data-ico="search"></i><span>Online<br>Pictures</span></button>
+                </div>
+                <div class="rg-label">Illustrations</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="chartColumn" title="Column Chart"><i data-ico="chartColumn"></i><span>Column</span></button>
+                    <button class="rb big" data-cmd="chartLine" title="Line Chart"><i data-ico="chartLine"></i><span>Line</span></button>
+                    <button class="rb big" data-cmd="chartPie" title="Pie Chart"><i data-ico="chartPie"></i><span>Pie</span></button>
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="chartBar" title="Bar Chart"><i data-ico="chartBar"></i><span>Bar</span></button>
+                        <button class="rb sm" data-cmd="chartArea" title="Area Chart"><i data-ico="chartArea"></i><span>Area</span></button>
+                        <button class="rb sm" data-cmd="chartDoughnut" title="Doughnut Chart"><i data-ico="chartDoughnut"></i><span>Doughnut</span></button>
+                    </div>
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="chartScatter" title="Scatter Chart"><i data-ico="chartScatter"></i><span>Scatter</span></button>
+                    </div>
+                </div>
+                <div class="rg-label">Charts</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="sparkLine" title="Line sparkline in the active cell"><i data-ico="sparkLine"></i><span>Line</span></button>
+                        <button class="rb sm" data-cmd="sparkColumn" title="Column sparkline in the active cell"><i data-ico="sparkColumn"></i><span>Column</span></button>
+                        <button class="rb sm" data-cmd="sparkWinLoss" title="Win/Loss sparkline in the active cell"><i data-ico="sparkWin"></i><span>Win/Loss</span></button>
+                    </div>
+                </div>
+                <div class="rg-label">Sparklines</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="checkbox" title="Turn cells into checkboxes"><i data-ico="checkbox"></i><span>Checkbox</span></button>
+                    <button class="rb big" data-cmd="newNote" title="New Note"><i data-ico="note"></i><span>Note</span></button>
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="insertDate" title="Today's date (⌘;)"><i data-ico="calendar"></i><span>Date</span></button>
+                        <button class="rb sm" data-cmd="insertTime" title="The time now (⌘⇧;)"><i data-ico="clock"></i><span>Time</span></button>
+                        <button class="rb sm" data-menu="symbols" title="Symbols"><b class="glyph">Ω</b><span>Symbol ▾</span></button>
+                    </div>
+                </div>
+                <div class="rg-label">Insert</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big kd-btn" data-cmd="keydownCells" title="Keydown Styles"><i data-ico="sparkle"></i><span>Keydown<br>Styles</span></button>
+                </div>
+                <div class="rg-label">Radii</div>
+            </div>
+        </div>
+
+        <!-- FORMULAS -->
+        <div class="rpanel" data-panel="formulas">
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="insertFunction" title="Insert Function (⇧F3)"><b class="glyph fx">fx</b><span>Insert<br>Function</span></button>
+                    <div class="split big">
+                        <button class="rb big" data-cmd="autoSum" title="AutoSum"><b class="glyph sigma big">Σ</b><span>AutoSum</span></button>
+                        <button class="split-arrow" data-menu="autoSum">▾</button>
+                    </div>
+                    <div class="stack">
+                        <button class="rb sm" data-menu="fnMath"><i data-ico="calc"></i><span>Math ▾</span></button>
+                        <button class="rb sm" data-menu="fnStatistical"><i data-ico="chartColumn"></i><span>Statistical ▾</span></button>
+                        <button class="rb sm" data-menu="fnLogical"><i data-ico="logic"></i><span>Logical ▾</span></button>
+                    </div>
+                    <div class="stack">
+                        <button class="rb sm" data-menu="fnText"><b class="glyph sm">A</b><span>Text ▾</span></button>
+                        <button class="rb sm" data-menu="fnLookup"><i data-ico="find"></i><span>Lookup ▾</span></button>
+                        <button class="rb sm" data-menu="fnDate"><i data-ico="calendar"></i><span>Date &amp; Time ▾</span></button>
+                    </div>
+                </div>
+                <div class="rg-label">Function Library</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="showFormulas" title="Show Formulas (⌘`)"><i data-ico="showFormulas"></i><span>Show<br>Formulas</span></button>
+                    <button class="rb big" data-cmd="traceRefs" title="Highlight the cells the active formula uses"><i data-ico="trace"></i><span>Trace<br>Precedents</span></button>
+                </div>
+                <div class="rg-label">Formula Auditing</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="calcNow" title="Calculate Now (F9)"><i data-ico="calc"></i><span>Calculate<br>Now</span></button>
+                </div>
+                <div class="rg-label">Calculation</div>
+            </div>
+        </div>
+
+        <!-- DATA -->
+        <div class="rpanel" data-panel="data">
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="importCsv" title="Import a CSV file into a new sheet"><i data-ico="import"></i><span>From<br>CSV</span></button>
+                    <button class="rb big" data-cmd="exportCsv" title="Save this sheet as CSV"><i data-ico="export"></i><span>To<br>CSV</span></button>
+                </div>
+                <div class="rg-label">Get &amp; Save Data</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="sortAsc" title="Sort A to Z"><i data-ico="sortAsc"></i><span>Sort A→Z</span></button>
+                        <button class="rb sm" data-cmd="sortDesc" title="Sort Z to A"><i data-ico="sortDesc"></i><span>Sort Z→A</span></button>
+                    </div>
+                    <button class="rb big" data-cmd="customSort" title="Custom Sort"><i data-ico="sortFilter"></i><span>Sort</span></button>
+                    <button class="rb big" data-cmd="filter" title="Filter (⌘⇧L)"><i data-ico="funnel"></i><span>Filter</span></button>
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="clearFilter" title="Clear all filters"><i data-ico="funnelX"></i><span>Clear</span></button>
+                        <button class="rb sm" data-cmd="reapplyFilter" title="Reapply the filter"><i data-ico="refresh"></i><span>Reapply</span></button>
+                    </div>
+                </div>
+                <div class="rg-label">Sort &amp; Filter</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="textToColumns" title="Split one column into several"><i data-ico="split"></i><span>Text to<br>Columns</span></button>
+                    <button class="rb big" data-cmd="removeDupes" title="Remove Duplicates"><i data-ico="dedupe"></i><span>Remove<br>Duplicates</span></button>
+                    <div class="stack">
+                        <button class="rb sm" data-cmd="trimSpaces" title="Trim extra spaces from text"><i data-ico="eraser"></i><span>Trim Spaces</span></button>
+                        <button class="rb sm" data-cmd="fillSeries" title="Fill a series"><i data-ico="fillDown"></i><span>Series…</span></button>
+                        <button class="rb sm" data-cmd="randomFill" title="Fill the selection with random numbers"><i data-ico="dice"></i><span>Random…</span></button>
+                    </div>
+                </div>
+                <div class="rg-label">Data Tools</div>
+            </div>
+        </div>
+
+        <!-- VIEW -->
+        <div class="rpanel" data-panel="view">
+            <div class="rgroup">
+                <div class="rg-body">
+                    <div class="stack">
+                        <label class="rcheck"><input type="checkbox" data-pref="gridlines"><span>Gridlines</span></label>
+                        <label class="rcheck"><input type="checkbox" data-pref="headings"><span>Headings</span></label>
+                        <label class="rcheck"><input type="checkbox" data-pref="formulaBar"><span>Formula Bar</span></label>
+                    </div>
+                </div>
+                <div class="rg-label">Show</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-menu="zoom" title="Zoom"><i data-ico="zoom"></i><span>Zoom ▾</span></button>
+                    <button class="rb big" data-cmd="zoom100" title="Zoom to 100%"><b class="glyph sm">100</b><span>100%</span></button>
+                    <button class="rb big" data-cmd="zoomSel" title="Zoom to Selection"><i data-ico="zoomSel"></i><span>Zoom to<br>Selection</span></button>
+                </div>
+                <div class="rg-label">Zoom</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-menu="freeze" title="Freeze Panes"><i data-ico="freeze"></i><span>Freeze<br>Panes ▾</span></button>
+                </div>
+                <div class="rg-label">Window</div>
+            </div>
+            <div class="rgroup">
+                <div class="rg-body">
+                    <div class="stack">
+                        <label class="rcheck"><input type="checkbox" data-pref="dark"><span>Dark Mode</span></label>
+                        <label class="rcheck"><input type="checkbox" data-pref="anim"><span>Animations</span></label>
+                        <label class="rcheck"><input type="checkbox" data-pref="sound"><span>Sounds</span></label>
+                    </div>
+                    <button class="rb big" data-menu="layout" title="Switch between the Excel and Imbuer Classic layouts"><i data-ico="layout"></i><span>Layout ▾</span></button>
+                    <button class="rb big" data-cmd="settings" title="All settings"><i data-ico="gear"></i><span>Settings</span></button>
+                </div>
+                <div class="rg-label">Appearance</div>
+            </div>
+        </div>
+
+        <!-- HELP -->
+        <div class="rpanel" data-panel="help">
+            <div class="rgroup">
+                <div class="rg-body">
+                    <button class="rb big" data-cmd="help" title="Help Deck"><i data-ico="help"></i><span>Help<br>Deck</span></button>
+                    <button class="rb big" data-cmd="shortcuts" title="Keyboard Shortcuts"><i data-ico="keyboard"></i><span>Keyboard<br>Shortcuts</span></button>
+                    <button class="rb big" data-cmd="functionList" title="Every function"><b class="glyph fx">fx</b><span>Function<br>List</span></button>
+                    <button class="rb big" data-cmd="tour" title="Load a sample workbook"><i data-ico="sparkle"></i><span>Sample<br>Workbook</span></button>
+                </div>
+                <div class="rg-label">Help</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Name box + formula bar -->
+    <div id="formula-row">
+        <div class="name-box-wrap">
+            <input id="name-box" spellcheck="false" autocomplete="off" title="Name Box: type a cell like C10 or a range like A1:D5 and press Enter">
+            <button class="combo-arrow" data-menu="goto" title="Go To">▾</button>
+        </div>
+        <div class="fx-btns">
+            <button id="fx-cancel" title="Cancel (Esc)">✕</button>
+            <button id="fx-enter" title="Enter">✓</button>
+            <button id="fx-insert" data-cmd="insertFunction" title="Insert Function"><i>fx</i></button>
+        </div>
+        <div id="fbar-wrap">
+            <div id="fbar-hl" class="hl-layer" hidden></div>
+            <textarea id="formula-input" rows="1" spellcheck="false" autocomplete="off" placeholder=""></textarea>
+            <button id="fbar-expand" title="Expand Formula Bar"><i data-ico="chevDown"></i></button>
+        </div>
+    </div>
+
+    <!-- Grid -->
+    <main id="grid-scroll">
+        <div id="grid-inner">
+            <table id="grid">
+                <colgroup id="grid-cols"></colgroup>
+                <thead><tr id="table-header-row"></tr></thead>
+                <tbody id="table-body"></tbody>
+            </table>
+            <div id="ov">
+                <div id="ref-boxes"></div>
+                <div id="copy-ants" hidden></div>
+                <div id="sel-range" hidden></div>
+                <div id="sel-extras"></div>
+                <div id="sel-active" hidden></div>
+                <div id="sel-edges" hidden><i class="e-t"></i><i class="e-r"></i><i class="e-b"></i><i class="e-l"></i></div>
+                <div id="fill-handle" hidden></div>
+                <div id="fill-preview" hidden></div>
+                <div id="move-ghost" hidden></div>
+                <div id="trace-boxes"></div>
+            </div>
+            <div id="charts-layer"></div>
+            <div id="editor-wrap">
+                <div id="editor-hl" class="hl-layer" hidden></div>
+                <textarea id="cell-editor" spellcheck="false" autocomplete="off" aria-label="Cell editor"></textarea>
+            </div>
+            <div id="resize-guide" hidden></div>
+            <div id="drag-tip" hidden></div>
+        </div>
+    </main>
+
+    <!-- Sheet tabs + status bar -->
+    <footer id="footer">
+        <div id="sheet-bar">
+            <div class="sheet-nav">
+                <button data-cmd="prevSheet" title="Previous sheet (Ctrl+PgUp)">◀</button>
+                <button data-cmd="nextSheet" title="Next sheet (Ctrl+PgDn)">▶</button>
+            </div>
+            <div id="sheet-tabs"><span id="sheet-ink"></span></div>
+            <button id="add-sheet" data-cmd="addSheet" title="New Sheet">+</button>
+        </div>
+        <div id="status-bar">
+            <span id="status-mode">Ready</span>
+            <span id="status-info"></span>
+            <span class="grow"></span>
+            <span id="status-stats"></span>
+            <div class="zoom-ctl">
+                <button data-cmd="zoomOut" title="Zoom Out">−</button>
+                <input type="range" id="zoom-slider" min="25" max="300" step="5" value="100" aria-label="Zoom">
+                <button data-cmd="zoomIn" title="Zoom In">+</button>
+                <button id="zoom-label" data-menu="zoom" title="Zoom">100%</button>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<!-- Backstage (File tab) -->
+<div id="backstage" hidden>
+    <nav class="bs-nav">
+        <button class="bs-back" data-bs="close">← Back</button>
+        <button data-bs="home" class="on"><i data-ico="home"></i>Home</button>
+        <button data-bs="new"><i data-ico="newDoc"></i>New</button>
+        <button data-bs="open"><i data-ico="folder"></i>Open</button>
+        <button data-bs="save"><i data-ico="save"></i>Save a Copy</button>
+        <button data-bs="export"><i data-ico="export"></i>Export</button>
+        <span class="grow"></span>
+        <button data-bs="options"><i data-ico="gear"></i>Settings</button>
+        <button data-bs="about"><i data-ico="help"></i>About</button>
+    </nav>
+    <div class="bs-body" id="bs-body"></div>
+    <input type="file" id="file-loader-gate" accept=".ks,.json,.csv,.tsv,.txt" hidden>
+</div>
+
+<!-- Floating bits -->
+<div id="menus"></div>
+<div id="ac-list" class="menu" hidden></div>
+<div id="arg-tip" hidden></div>
+<div id="note-pop" class="note-pop" hidden><div class="note-author">Note</div><textarea id="note-text" spellcheck="true"></textarea></div>
+<div id="find-panel" hidden></div>
+<div id="dlg-host"></div>
+<div id="toast"></div>
+<span id="edit-measure" aria-hidden="true"></span>
+
+<!-- Imbuer Floating Keydown Toolbar (text styles while editing, or whole cells) -->
         <div id="aero-selection-toolbar" class="aero-floating-bar">
             <button class="style-bar-btn" data-style="bold" title="Bold"><b>B</b></button>
             <button class="style-bar-btn" data-style="italic" title="Italic"><i>I</i></button>
@@ -213,166 +634,585 @@
                     <button class="effect-swatch-item tag-chip-sl" data-class="aero-tag-chip tag-chip-sl" title="Tag SL"></button>
                 </div>
             </div>
-        </div>
-        <div id="top-format-bar" class="sheets-toolbar aero-format-ribbon">
-            <!-- 1. Color Picker Button & Popup -->
-            <div class="color-picker-container">
-                <button id="color-picker-btn" class="style-tool-btn" onclick="toggleColorPopup(event)" title="Cell Colors & Borders">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M12 22C6.553 22 2 17.447 2 12S6.553 2 12 2c5.006 0 10 3.695 10 9c0 4.15-4.035 4.01-7.25 5c-3.25 1-1.57 2.686-.757 4.093C14.805 21.5 13.076 22 12 22"/><path d="M6 14c0 .5.5 1.5 1 1.802M12.783 6s-1.283 0-2.033.345M7.06 8C6.5 8.5 6 9.768 6 9.768m11.6-.143S17 8.5 16.167 8.143"/></g></svg>
+
+            <!-- Dropdown 5: Pro Styles (Writeout marketplace collection!) -->
+            <div class="aero-dropdown">
+                <button class="style-bar-btn dropdown-toggle" title="Pro Styles">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
                 </button>
-
-                <!-- Floating Glass Palette Menu Popup -->
-                <div id="aero-color-popup" class="aero-palette-menu">
-                    <div class="palette-header">Cell Fill & Outline</div>
-                    
-                    <div class="palette-section">
-                        <label>Fill Color:</label>
-                        <div class="preset-row">
-                            <span class="color-swatch" style="background:#ffffff;" onclick="applyCellStyles('#ffffff', null)"></span>
-                            <span class="color-swatch" style="background:#bae6fd;" onclick="applyCellStyles('#bae6fd', null)"></span>
-                            <span class="color-swatch" style="background:#a7f3d0;" onclick="applyCellStyles('#a7f3d0', null)"></span>
-                            <span class="color-swatch" style="background:#fef08a;" onclick="applyCellStyles('#fef08a', null)"></span>
-                            <span class="color-swatch" style="background:#fca5a5;" onclick="applyCellStyles('#fca5a5', null)"></span>
-                            <span class="color-swatch" style="background:#e9d5ff;" onclick="applyCellStyles('#e9d5ff', null)"></span>
-                            
-                            <label class="custom-picker-wrapper" title="Custom Fill Color">
-                                <input type="color" onchange="applyCellStyles(this.value, null)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11A7 7 0 0 1 5 11c0-4.5 7-9 7-9s7 4.5 7 9Z"/></svg>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="palette-section">
-                        <label>Outline Color:</label>
-                        <div class="preset-row">
-                            <span class="color-swatch" style="background:#cbd5e1;" onclick="applyCellStyles(null, '#cbd5e1')"></span>
-                            <span class="color-swatch" style="background:#0284c7;" onclick="applyCellStyles(null, '#0284c7')"></span>
-                            <span class="color-swatch" style="background:#059669;" onclick="applyCellStyles(null, '#059669')"></span>
-                            <span class="color-swatch" style="background:#ca8a04;" onclick="applyCellStyles(null, '#ca8a04')"></span>
-                            <span class="color-swatch" style="background:#dc2626;" onclick="applyCellStyles(null, '#dc2626')"></span>
-                            <span class="color-swatch" style="background:#7e22ce;" onclick="applyCellStyles(null, '#7e22ce')"></span>
-                            
-                            <label class="custom-picker-wrapper" title="Custom Border Color">
-                                <input type="color" onchange="applyCellStyles(null, this.value)">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11A7 7 0 0 1 5 11c0-4.5 7-9 7-9s7 4.5 7 9Z"/></svg>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="palette-footer">
-                        <button class="reset-style-btn" onclick="applyCellStyles('#ffffff', '#cbd5e1')">Reset Style</button>
-                    </div>
+                <div class="dropdown-menu highlight-grid-menu effect-grid-menu" style="grid-template-columns: repeat(4, 1fr) !important; min-width: 200px !important;">
+                    <!-- Extra Gel Orbs -->
+                    <button class="color-swatch-item gel-v" data-class="gel-orb gel-v" title="Violet Orb"></button>
+                    <button class="color-swatch-item gel-p" data-class="gel-orb gel-p" title="Pink Orb"></button>
+                    <button class="color-swatch-item gel-o" data-class="gel-orb gel-o" title="Orange Orb"></button>
+                    <button class="color-swatch-item gel-mg" data-class="gel-orb gel-mg" title="Magenta Orb"></button>
+                    <button class="color-swatch-item gel-lm" data-class="gel-orb gel-lm" title="Lime Orb"></button>
+                    <button class="color-swatch-item gel-aq" data-class="gel-orb gel-aq" title="Aqua Orb"></button>
+                    <button class="color-swatch-item gel-sl" data-class="gel-orb gel-sl" title="Slate Orb"></button>
+                    <!-- Spark & Flash Styles -->
+                    <button class="effect-swatch-item spark-text" data-class="spark-text" title="Spark Text">✦</button>
+                    <button class="effect-swatch-item gel-green-flash" data-class="gel-green-flash" title="Green Flash">GF</button>
+                    <button class="effect-swatch-item liquid-underline" data-class="liquid-underline" title="Liquid Underline">LU</button>
+                    <button class="effect-swatch-item glossy-border-badge" data-class="glossy-border-badge" title="Glossy Border">GB</button>
+                    <button class="effect-swatch-item cyber-glow-spark" data-class="cyber-glow-spark" title="Cyber Spark">CS</button>
+                    <button class="effect-swatch-item liquid-text-glow" data-class="liquid-text-glow" title="Liquid Glow">LG</button>
+                    <button class="effect-swatch-item reflected-text-block" data-class="reflected-text-block" title="Mirror Block">MB</button>
+                    <button class="effect-swatch-item embossed-glass-text" data-class="embossed-glass-text" title="Embossed Glass">EG</button>
+                    <button class="effect-swatch-item kinetic-wave-text" data-class="kinetic-wave-text" title="Wave Text">WV</button>
+                    <!-- Extra Tag Chips -->
+                    <button class="effect-swatch-item tag-chip-r" data-class="aero-tag-chip tag-chip-r" title="Tag R"></button>
+                    <button class="effect-swatch-item tag-chip-pr" data-class="aero-tag-chip tag-chip-pr" title="Tag PR"></button>
+                    <button class="effect-swatch-item tag-chip-pk" data-class="aero-tag-chip tag-chip-pk" title="Tag PK"></button>
+                    <button class="effect-swatch-item tag-chip-y" data-class="aero-tag-chip tag-chip-y" title="Tag Y"></button>
+                    <button class="effect-swatch-item tag-chip-sl" data-class="aero-tag-chip tag-chip-sl" title="Tag SL"></button>
+                    <!-- Extra Bubble Chips -->
+                    <button class="chip-swatch-item gel-chip-red" data-class="gel-bubble-chip gel-chip-red" title="Red Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-purple" data-class="gel-bubble-chip gel-chip-purple" title="Purple Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-pink" data-class="gel-bubble-chip gel-chip-pink" title="Pink Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-yellow" data-class="gel-bubble-chip gel-chip-yellow" title="Yellow Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-blue" data-class="gel-bubble-chip gel-chip-blue" title="Blue Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-lime" data-class="gel-bubble-chip gel-chip-lime" title="Lime Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-teal" data-class="gel-bubble-chip gel-chip-teal" title="Teal Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-gold" data-class="gel-bubble-chip gel-chip-gold" title="Gold Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-slate" data-class="gel-bubble-chip gel-chip-slate" title="Slate Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-white" data-class="gel-bubble-chip gel-chip-white" title="White Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-black" data-class="gel-bubble-chip gel-chip-black" title="Black Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-fog" data-class="gel-bubble-chip gel-chip-fog" title="Fog Bubble"></button>
+                    <button class="chip-swatch-item gel-chip-turquoise" data-class="gel-bubble-chip gel-chip-turquoise" title="Turquoise Bubble"></button>
+                    <!-- Glass Stamp & Extra Effects -->
+                    <button class="effect-swatch-item applet-glass-stamp" data-class="applet-glass-stamp" title="Glass Stamp">SM</button>
+                    <button class="effect-swatch-item effect-prism-refract" data-class="effect-prism-refract" title="Prism">PG</button>
+                    <button class="effect-swatch-item effect-sunlight-ray" data-class="effect-sunlight-ray" title="Sunlight">SR</button>
+                    <button class="effect-swatch-item effect-abyssal-plate" data-class="effect-abyssal-plate" title="Abyssal">OA</button>
+                    <button class="effect-swatch-item effect-metallic-mesh" data-class="effect-metallic-mesh" title="Metallic">MM</button>
+                    <button class="effect-swatch-item effect-fluid-expand" data-class="effect-fluid-expand" title="Fluid">FE</button>
+                    <button class="effect-swatch-item effect-metric-cavity" data-class="effect-metric-cavity" title="Metric">MR</button>
+                    <button class="effect-swatch-item effect-pearl-orb" data-class="effect-pearl-orb" title="Pearl">PO</button>
+                    <button class="effect-swatch-item effect-lens-flare" data-class="effect-lens-flare" title="Lens">LF</button>
+                    <button class="effect-swatch-item effect-hardware-bevel" data-class="effect-hardware-bevel" title="Hardware">HB</button>
+                    <button class="effect-swatch-item effect-screen-segment" data-class="effect-screen-segment" title="Segment">IS</button>
+                    <button class="effect-swatch-item effect-gel-capsule" data-class="effect-gel-capsule" title="Capsule">GC</button>
+                    <button class="effect-swatch-item effect-fluid-orbit" data-class="effect-fluid-orbit" title="Orbit">KO</button>
+                    <button class="effect-swatch-item effect-xray-glass" data-class="effect-xray-glass" title="X-Ray">XG</button>
+                    <button class="effect-swatch-item effect-waveform-line" data-class="effect-waveform-line" title="Waveform">WL</button>
+                    <button class="effect-swatch-item effect-water-bubble" data-class="effect-water-bubble" title="Water">WB</button>
+                    <button class="effect-swatch-item effect-glow-tracer" data-class="effect-glow-tracer" title="Tracer">GT</button>
+                    <button class="effect-swatch-item effect-shimmer-title" data-class="effect-shimmer-title" title="Shimmer">ST</button>
+                    <button class="effect-swatch-item effect-tinted-lens" data-class="effect-tinted-lens" title="Tinted">TL</button>
+                    <button class="effect-swatch-item effect-audio-stream-loop" data-class="effect-audio-stream-loop" title="Stream">SL</button>
+                    <button class="effect-swatch-item effect-biogel-capsule" data-class="effect-biogel-capsule" title="Biogel">BG</button>
+                    <button class="effect-swatch-item jr-folder-tab" data-class="jr-folder-tab" title="Folder">FT</button>
+                    <button class="effect-swatch-item jr-digital-counter" data-class="jr-digital-counter" title="Counter">MC</button>
+                    <button class="effect-swatch-item effect-neon-ribbon" data-class="effect-neon-ribbon" title="Ribbon">WR</button>
+                    <!-- Droplets -->
+                    <button class="effect-swatch-item droplet-amber" data-class="droplet-amber" title="Amber Droplet"></button>
+                    <button class="effect-swatch-item droplet-crimson" data-class="droplet-crimson" title="Crimson Droplet"></button>
+                    <button class="effect-swatch-item droplet-fuchsia" data-class="droplet-fuchsia" title="Fuchsia Droplet"></button>
+                    <button class="effect-swatch-item droplet-amethyst" data-class="droplet-amethyst" title="Amethyst Droplet"></button>
+                    <button class="effect-swatch-item droplet-tangerine" data-class="droplet-tangerine" title="Tangerine Droplet"></button>
+                    <button class="effect-swatch-item droplet-slate" data-class="droplet-slate" title="Slate Droplet"></button>
+                    <!-- Dev Chips -->
+                    <button class="effect-swatch-item dev-chip-function" data-class="dev-chip-function" title="Function">FN</button>
+                    <button class="effect-swatch-item dev-chip-variable" data-class="dev-chip-variable" title="Variable">VR</button>
+                    <button class="effect-swatch-item dev-chip-string" data-class="dev-chip-string" title="String">ST</button>
+                    <!-- AV Chips -->
+                    <button class="effect-swatch-item av-chip-radar-sweep" data-class="av-chip-radar-sweep" title="Radar">RS</button>
+                    <button class="effect-swatch-item av-chip-heading" data-class="av-chip-heading" title="Heading">HD</button>
+                    <button class="effect-swatch-item av-chip-altimeter" data-class="av-chip-altimeter" title="Altimeter">AL</button>
+                    <!-- Plasma Pods -->
+                    <button class="effect-swatch-item plasma-cyan" data-class="megachip-plasma plasma-cyan" title="Cyan Plasma"></button>
+                    <button class="effect-swatch-item plasma-orange" data-class="megachip-plasma plasma-orange" title="Orange Plasma"></button>
+                    <button class="effect-swatch-item plasma-crimson" data-class="megachip-plasma plasma-crimson" title="Crimson Plasma"></button>
+                    <button class="effect-swatch-item plasma-lime" data-class="megachip-plasma plasma-lime" title="Lime Plasma"></button>
+                    <!-- Glass Brackets -->
+                    <button class="effect-swatch-item bracket-blue" data-class="megachip-glass-bracket bracket-blue" title="Blue Bracket"></button>
+                    <button class="effect-swatch-item bracket-amethyst" data-class="megachip-glass-bracket bracket-amethyst" title="Amethyst Bracket"></button>
+                    <button class="effect-swatch-item bracket-fuchsia" data-class="megachip-glass-bracket bracket-fuchsia" title="Fuchsia Bracket"></button>
+                    <button class="effect-swatch-item bracket-amber" data-class="megachip-glass-bracket bracket-amber" title="Amber Bracket"></button>
+                    <!-- Glass Badges -->
+                    <button class="effect-swatch-item badge-frame-sky" data-class="aero-glass-badge-chip badge-frame-sky" title="Sky Badge"></button>
+                    <button class="effect-swatch-item badge-frame-emerald" data-class="aero-glass-badge-chip badge-frame-emerald" title="Emerald Badge"></button>
+                    <button class="effect-swatch-item badge-frame-orange" data-class="aero-glass-badge-chip badge-frame-orange" title="Orange Badge"></button>
+                    <button class="effect-swatch-item badge-frame-crimson" data-class="aero-glass-badge-chip badge-frame-crimson" title="Crimson Badge"></button>
+                    <button class="effect-swatch-item badge-frame-amethyst" data-class="aero-glass-badge-chip badge-frame-amethyst" title="Amethyst Badge"></button>
+                    <button class="effect-swatch-item badge-frame-gold" data-class="aero-glass-badge-chip badge-frame-gold" title="Gold Badge"></button>
+                    <!-- Swayed Chips -->
+                    <button class="effect-swatch-item swayed-sky" data-class="gel-chip-swayed swayed-sky" title="Swayed Sky">SH</button>
+                    <button class="effect-swatch-item swayed-emerald" data-class="gel-chip-swayed swayed-emerald" title="Swayed Emerald">SH</button>
+                    <button class="effect-swatch-item swayed-orange" data-class="gel-chip-swayed swayed-orange" title="Swayed Orange">SH</button>
+                    <button class="effect-swatch-item swayed-amethyst" data-class="gel-chip-swayed swayed-amethyst" title="Swayed Amethyst">SH</button>
+                    <!-- Pill Chips -->
+                    <button class="effect-swatch-item pill-sky" data-class="gel-chip-pill-variant pill-sky" title="Pill Sky">PH</button>
+                    <button class="effect-swatch-item pill-emerald" data-class="gel-chip-pill-variant pill-emerald" title="Pill Emerald">PH</button>
+                    <button class="effect-swatch-item pill-orange" data-class="gel-chip-pill-variant pill-orange" title="Pill Orange">PH</button>
+                    <button class="effect-swatch-item pill-amethyst" data-class="gel-chip-pill-variant pill-amethyst" title="Pill Amethyst">PH</button>
+                    <!-- Pastel Chips -->
+                    <button class="effect-swatch-item pastel-yellow" data-class="gel-chip-pastel pastel-yellow" title="Pastel Yellow">PC</button>
+                    <button class="effect-swatch-item pastel-blue" data-class="gel-chip-pastel pastel-blue" title="Pastel Blue">PC</button>
+                    <button class="effect-swatch-item pastel-green" data-class="gel-chip-pastel pastel-green" title="Pastel Green">PC</button>
+                    <button class="effect-swatch-item pastel-pink" data-class="gel-chip-pastel pastel-pink" title="Pastel Pink">PC</button>
+                    <button class="effect-swatch-item pastel-purple" data-class="gel-chip-pastel pastel-purple" title="Pastel Purple">PC</button>
+                    <button class="effect-swatch-item pastel-orange" data-class="gel-chip-pastel pastel-orange" title="Pastel Orange">PC</button>
+                    <!-- Droplet Ribbons -->
+                    <button class="effect-swatch-item droplet-ribbon-tangerine" data-class="gel-chip-droplet-ribbon droplet-ribbon-tangerine" title="Tangerine Ribbon">DR</button>
+                    <button class="effect-swatch-item droplet-ribbon-citrus" data-class="gel-chip-droplet-ribbon droplet-ribbon-citrus" title="Citrus Ribbon">DR</button>
+                    <button class="effect-swatch-item droplet-ribbon-emerald" data-class="gel-chip-droplet-ribbon droplet-ribbon-emerald" title="Emerald Ribbon">DR</button>
+                    <button class="effect-swatch-item droplet-ribbon-sapphire" data-class="gel-chip-droplet-ribbon droplet-ribbon-sapphire" title="Sapphire Ribbon">DR</button>
+                    <button class="effect-swatch-item droplet-ribbon-amethyst" data-class="gel-chip-droplet-ribbon droplet-ribbon-amethyst" title="Amethyst Ribbon">DR</button>
+                    <button class="effect-swatch-item droplet-ribbon-fuchsia" data-class="gel-chip-droplet-ribbon droplet-ribbon-fuchsia" title="Fuchsia Ribbon">DR</button>
+                    <button class="effect-swatch-item droplet-ribbon-crimson" data-class="gel-chip-droplet-ribbon droplet-ribbon-crimson" title="Crimson Ribbon">DR</button>
+                    <button class="effect-swatch-item droplet-ribbon-slate" data-class="gel-chip-droplet-ribbon droplet-ribbon-slate" title="Slate Ribbon">DR</button>
+                    <!-- Headers -->
+                    <button class="effect-swatch-item header-1" data-class="header-1" title="Header 1">H1</button>
+                    <button class="effect-swatch-item header-2" data-class="header-2" title="Header 2">H2</button>
+                    <button class="effect-swatch-item header-3" data-class="header-3" title="Header 3">H3</button>
+                    <button class="effect-swatch-item blockquote-list" data-class="blockquote-list" title="Blockquote">BQ</button>
+                    <button class="effect-swatch-item mega-header" data-class="mega-header" title="Mega Header">MH</button>
+                </div>
+            </div>
+            <!-- Dropdown 6: Marketplace Packs (every Writeout pack!) -->
+            <div class="aero-dropdown">
+                <button class="style-bar-btn dropdown-toggle" title="Marketplace Packs">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 16l.9 2.1L22 19l-2.1.9L19 22l-.9-2.1L16 19l2.1-.9z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
+                </button>
+                <div class="dropdown-menu highlight-grid-menu effect-grid-menu" style="grid-template-columns: repeat(4, 1fr) !important; min-width: 220px !important; max-height: 320px; overflow: auto;">
+                    <!-- Outline Glow Pack -->
+                    <button class="effect-swatch-item mkt-outline-glow" data-class="mkt-outline-glow" title="Outline Cyan">OL</button>
+                    <button class="effect-swatch-item mkt-ol-magenta" data-class="mkt-ol-magenta" title="Outline Magenta">OM</button>
+                    <button class="effect-swatch-item mkt-ol-violet" data-class="mkt-ol-violet" title="Outline Violet">OV</button>
+                    <button class="effect-swatch-item mkt-ol-emerald" data-class="mkt-ol-emerald" title="Outline Emerald">OE</button>
+                    <button class="effect-swatch-item mkt-ol-amber" data-class="mkt-ol-amber" title="Outline Amber">OA</button>
+                    <button class="effect-swatch-item mkt-ol-rose" data-class="mkt-ol-rose" title="Outline Rose">OR</button>
+                    <!-- Keydown Mega Pack — 15 Styles! -->
+                    <button class="effect-swatch-item mkt-kp-sunset" data-class="mkt-kp-sunset" title="Sunset Gel">SU</button>
+                    <button class="effect-swatch-item mkt-kp-foam" data-class="mkt-kp-foam" title="Ocean Foam">FO</button>
+                    <button class="effect-swatch-item mkt-kp-grape" data-class="mkt-kp-grape" title="Grape Soda">GR</button>
+                    <button class="effect-swatch-item mkt-kp-matcha" data-class="mkt-kp-matcha" title="Matcha Cream">MA</button>
+                    <button class="effect-swatch-item mkt-kp-gum" data-class="mkt-kp-gum" title="Bubblegum Pop">GU</button>
+                    <button class="effect-swatch-item mkt-kp-lemon" data-class="mkt-kp-lemon" title="Lemon Drop">LE</button>
+                    <button class="effect-swatch-item mkt-kp-night" data-class="mkt-kp-night" title="Midnight Neon">NI</button>
+                    <button class="effect-swatch-item mkt-kp-candy" data-class="mkt-kp-candy" title="Cotton Candy">CA</button>
+                    <button class="effect-swatch-item mkt-kp-lava" data-class="mkt-kp-lava" title="Lava Alert">LA</button>
+                    <button class="effect-swatch-item mkt-kp-frost" data-class="mkt-kp-frost" title="Frosted Glass">FR</button>
+                    <button class="effect-swatch-item mkt-kp-gold" data-class="mkt-kp-gold" title="Gold Foil">GO</button>
+                    <button class="effect-swatch-item mkt-kp-mint" data-class="mkt-kp-mint" title="Mint Chip">MI</button>
+                    <button class="effect-swatch-item mkt-kp-uv" data-class="mkt-kp-uv" title="Ultraviolet">UV</button>
+                    <button class="effect-swatch-item mkt-kp-key" data-class="mkt-kp-key" title="Typewriter Key">KE</button>
+                    <button class="effect-swatch-item mkt-kp-stick" data-class="mkt-kp-stick" title="Sticker Peel">ST</button>
+                    <!-- Orange Ultrapack -->
+                    <button class="effect-swatch-item orange-hl-1" data-class="orange-hl-1" title="Orange 1">O1</button>
+                    <button class="effect-swatch-item orange-hl-2" data-class="orange-hl-2" title="Orange 2">O2</button>
+                    <button class="effect-swatch-item orange-hl-3" data-class="orange-hl-3" title="Orange 3">O3</button>
+                    <button class="effect-swatch-item orange-hl-4" data-class="orange-hl-4" title="Orange 4">O4</button>
+                    <button class="effect-swatch-item orange-hl-5" data-class="orange-hl-5" title="Orange 5">O5</button>
+                    <button class="effect-swatch-item orange-hl-6" data-class="orange-hl-6" title="Orange 6">O6</button>
+                    <button class="effect-swatch-item orange-hl-7" data-class="orange-hl-7" title="Orange 7">O7</button>
+                    <button class="effect-swatch-item orange-hl-8" data-class="orange-hl-8" title="Orange 8">O8</button>
+                    <button class="effect-swatch-item orange-hl-9" data-class="orange-hl-9" title="Orange 9">O9</button>
+                    <button class="effect-swatch-item orange-hl-10" data-class="orange-hl-10" title="Orange 10">O10</button>
+                    <button class="effect-swatch-item orange-hl-11" data-class="orange-hl-11" title="Orange 11">O11</button>
+                    <button class="effect-swatch-item orange-hl-12" data-class="orange-hl-12" title="Orange 12">O12</button>
+                    <button class="effect-swatch-item orange-hl-13" data-class="orange-hl-13" title="Orange 13">O13</button>
+                    <button class="effect-swatch-item orange-hl-14" data-class="orange-hl-14" title="Orange 14">O14</button>
+                    <button class="effect-swatch-item orange-hl-15" data-class="orange-hl-15" title="Orange 15">O15</button>
+                    <button class="effect-swatch-item orange-hl-16" data-class="orange-hl-16" title="Orange 16">O16</button>
+                    <button class="effect-swatch-item orange-hl-17" data-class="orange-hl-17" title="Orange 17">O17</button>
+                    <button class="effect-swatch-item orange-hl-18" data-class="orange-hl-18" title="Orange 18">O18</button>
+                    <button class="effect-swatch-item orange-hl-19" data-class="orange-hl-19" title="Orange 19">O19</button>
+                    <button class="effect-swatch-item orange-hl-20" data-class="orange-hl-20" title="Orange 20">O20</button>
+                    <button class="effect-swatch-item orange-hl-21" data-class="orange-hl-21" title="Orange 21">O21</button>
+                    <button class="effect-swatch-item orange-hl-22" data-class="orange-hl-22" title="Orange 22">O22</button>
+                    <button class="effect-swatch-item orange-hl-23" data-class="orange-hl-23" title="Orange 23">O23</button>
+                    <button class="effect-swatch-item orange-hl-24" data-class="orange-hl-24" title="Orange 24">O24</button>
+                    <button class="effect-swatch-item orange-hl-25" data-class="orange-hl-25" title="Orange 25">O25</button>
+                    <button class="effect-swatch-item orange-hl-26" data-class="orange-hl-26" title="Orange 26">O26</button>
+                    <button class="effect-swatch-item orange-hl-27" data-class="orange-hl-27" title="Orange 27">O27</button>
+                    <button class="effect-swatch-item orange-hl-28" data-class="orange-hl-28" title="Orange 28">O28</button>
+                    <button class="effect-swatch-item orange-hl-29" data-class="orange-hl-29" title="Orange 29">O29</button>
+                    <button class="effect-swatch-item orange-hl-30" data-class="orange-hl-30" title="Orange 30">O30</button>
+                    <button class="effect-swatch-item orange-hl-31" data-class="orange-hl-31" title="Orange 31">O31</button>
+                    <button class="effect-swatch-item orange-hl-32" data-class="orange-hl-32" title="Orange 32">O32</button>
+                    <button class="effect-swatch-item orange-hl-33" data-class="orange-hl-33" title="Orange 33">O33</button>
+                    <button class="effect-swatch-item orange-hl-34" data-class="orange-hl-34" title="Orange 34">O34</button>
+                    <button class="effect-swatch-item orange-hl-35" data-class="orange-hl-35" title="Orange 35">O35</button>
+                    <button class="effect-swatch-item orange-hl-36" data-class="orange-hl-36" title="Orange 36">O36</button>
+                    <button class="effect-swatch-item orange-hl-37" data-class="orange-hl-37" title="Orange 37">O37</button>
+                    <button class="effect-swatch-item orange-hl-38" data-class="orange-hl-38" title="Orange 38">O38</button>
+                    <button class="effect-swatch-item orange-hl-39" data-class="orange-hl-39" title="Orange 39">O39</button>
+                    <button class="effect-swatch-item orange-hl-40" data-class="orange-hl-40" title="Orange 40">O40</button>
+                    <button class="effect-swatch-item orange-hl-41" data-class="orange-hl-41" title="Orange 41">O41</button>
+                    <button class="effect-swatch-item orange-hl-42" data-class="orange-hl-42" title="Orange 42">O42</button>
+                    <button class="effect-swatch-item orange-hl-43" data-class="orange-hl-43" title="Orange 43">O43</button>
+                    <button class="effect-swatch-item orange-hl-44" data-class="orange-hl-44" title="Orange 44">O44</button>
+                    <button class="effect-swatch-item orange-hl-45" data-class="orange-hl-45" title="Orange 45">O45</button>
+                    <button class="effect-swatch-item orange-hl-46" data-class="orange-hl-46" title="Orange 46">O46</button>
+                    <button class="effect-swatch-item orange-hl-47" data-class="orange-hl-47" title="Orange 47">O47</button>
+                    <button class="effect-swatch-item orange-hl-48" data-class="orange-hl-48" title="Orange 48">O48</button>
+                    <button class="effect-swatch-item orange-hl-49" data-class="orange-hl-49" title="Orange 49">O49</button>
+                    <button class="effect-swatch-item orange-hl-50" data-class="orange-hl-50" title="Orange 50">O50</button>
+                    <!-- Green Ultrapack -->
+                    <button class="effect-swatch-item green-hl-1" data-class="green-hl-1" title="Green 1">G1</button>
+                    <button class="effect-swatch-item green-hl-2" data-class="green-hl-2" title="Green 2">G2</button>
+                    <button class="effect-swatch-item green-hl-3" data-class="green-hl-3" title="Green 3">G3</button>
+                    <button class="effect-swatch-item green-hl-4" data-class="green-hl-4" title="Green 4">G4</button>
+                    <button class="effect-swatch-item green-hl-5" data-class="green-hl-5" title="Green 5">G5</button>
+                    <button class="effect-swatch-item green-hl-6" data-class="green-hl-6" title="Green 6">G6</button>
+                    <button class="effect-swatch-item green-hl-7" data-class="green-hl-7" title="Green 7">G7</button>
+                    <button class="effect-swatch-item green-hl-8" data-class="green-hl-8" title="Green 8">G8</button>
+                    <button class="effect-swatch-item green-hl-9" data-class="green-hl-9" title="Green 9">G9</button>
+                    <button class="effect-swatch-item green-hl-10" data-class="green-hl-10" title="Green 10">G10</button>
+                    <button class="effect-swatch-item green-hl-11" data-class="green-hl-11" title="Green 11">G11</button>
+                    <button class="effect-swatch-item green-hl-12" data-class="green-hl-12" title="Green 12">G12</button>
+                    <button class="effect-swatch-item green-hl-13" data-class="green-hl-13" title="Green 13">G13</button>
+                    <button class="effect-swatch-item green-hl-14" data-class="green-hl-14" title="Green 14">G14</button>
+                    <button class="effect-swatch-item green-hl-15" data-class="green-hl-15" title="Green 15">G15</button>
+                    <button class="effect-swatch-item green-hl-16" data-class="green-hl-16" title="Green 16">G16</button>
+                    <button class="effect-swatch-item green-hl-17" data-class="green-hl-17" title="Green 17">G17</button>
+                    <button class="effect-swatch-item green-hl-18" data-class="green-hl-18" title="Green 18">G18</button>
+                    <button class="effect-swatch-item green-hl-19" data-class="green-hl-19" title="Green 19">G19</button>
+                    <button class="effect-swatch-item green-hl-20" data-class="green-hl-20" title="Green 20">G20</button>
+                    <button class="effect-swatch-item green-hl-21" data-class="green-hl-21" title="Green 21">G21</button>
+                    <button class="effect-swatch-item green-hl-22" data-class="green-hl-22" title="Green 22">G22</button>
+                    <button class="effect-swatch-item green-hl-23" data-class="green-hl-23" title="Green 23">G23</button>
+                    <button class="effect-swatch-item green-hl-24" data-class="green-hl-24" title="Green 24">G24</button>
+                    <button class="effect-swatch-item green-hl-25" data-class="green-hl-25" title="Green 25">G25</button>
+                    <button class="effect-swatch-item green-hl-26" data-class="green-hl-26" title="Green 26">G26</button>
+                    <button class="effect-swatch-item green-hl-27" data-class="green-hl-27" title="Green 27">G27</button>
+                    <button class="effect-swatch-item green-hl-28" data-class="green-hl-28" title="Green 28">G28</button>
+                    <button class="effect-swatch-item green-hl-29" data-class="green-hl-29" title="Green 29">G29</button>
+                    <button class="effect-swatch-item green-hl-30" data-class="green-hl-30" title="Green 30">G30</button>
+                    <button class="effect-swatch-item green-hl-31" data-class="green-hl-31" title="Green 31">G31</button>
+                    <button class="effect-swatch-item green-hl-32" data-class="green-hl-32" title="Green 32">G32</button>
+                    <button class="effect-swatch-item green-hl-33" data-class="green-hl-33" title="Green 33">G33</button>
+                    <button class="effect-swatch-item green-hl-34" data-class="green-hl-34" title="Green 34">G34</button>
+                    <button class="effect-swatch-item green-hl-35" data-class="green-hl-35" title="Green 35">G35</button>
+                    <button class="effect-swatch-item green-hl-36" data-class="green-hl-36" title="Green 36">G36</button>
+                    <button class="effect-swatch-item green-hl-37" data-class="green-hl-37" title="Green 37">G37</button>
+                    <button class="effect-swatch-item green-hl-38" data-class="green-hl-38" title="Green 38">G38</button>
+                    <button class="effect-swatch-item green-hl-39" data-class="green-hl-39" title="Green 39">G39</button>
+                    <button class="effect-swatch-item green-hl-40" data-class="green-hl-40" title="Green 40">G40</button>
+                    <button class="effect-swatch-item green-hl-41" data-class="green-hl-41" title="Green 41">G41</button>
+                    <button class="effect-swatch-item green-hl-42" data-class="green-hl-42" title="Green 42">G42</button>
+                    <button class="effect-swatch-item green-hl-43" data-class="green-hl-43" title="Green 43">G43</button>
+                    <button class="effect-swatch-item green-hl-44" data-class="green-hl-44" title="Green 44">G44</button>
+                    <button class="effect-swatch-item green-hl-45" data-class="green-hl-45" title="Green 45">G45</button>
+                    <button class="effect-swatch-item green-hl-46" data-class="green-hl-46" title="Green 46">G46</button>
+                    <button class="effect-swatch-item green-hl-47" data-class="green-hl-47" title="Green 47">G47</button>
+                    <button class="effect-swatch-item green-hl-48" data-class="green-hl-48" title="Green 48">G48</button>
+                    <button class="effect-swatch-item green-hl-49" data-class="green-hl-49" title="Green 49">G49</button>
+                    <button class="effect-swatch-item green-hl-50" data-class="green-hl-50" title="Green 50">G50</button>
+                    <!-- Blue Ultrapack -->
+                    <button class="effect-swatch-item blue-hl-1" data-class="blue-hl-1" title="Blue 1">B1</button>
+                    <button class="effect-swatch-item blue-hl-2" data-class="blue-hl-2" title="Blue 2">B2</button>
+                    <button class="effect-swatch-item blue-hl-3" data-class="blue-hl-3" title="Blue 3">B3</button>
+                    <button class="effect-swatch-item blue-hl-4" data-class="blue-hl-4" title="Blue 4">B4</button>
+                    <button class="effect-swatch-item blue-hl-5" data-class="blue-hl-5" title="Blue 5">B5</button>
+                    <button class="effect-swatch-item blue-hl-6" data-class="blue-hl-6" title="Blue 6">B6</button>
+                    <button class="effect-swatch-item blue-hl-7" data-class="blue-hl-7" title="Blue 7">B7</button>
+                    <button class="effect-swatch-item blue-hl-8" data-class="blue-hl-8" title="Blue 8">B8</button>
+                    <button class="effect-swatch-item blue-hl-9" data-class="blue-hl-9" title="Blue 9">B9</button>
+                    <button class="effect-swatch-item blue-hl-10" data-class="blue-hl-10" title="Blue 10">B10</button>
+                    <button class="effect-swatch-item blue-hl-11" data-class="blue-hl-11" title="Blue 11">B11</button>
+                    <button class="effect-swatch-item blue-hl-12" data-class="blue-hl-12" title="Blue 12">B12</button>
+                    <button class="effect-swatch-item blue-hl-13" data-class="blue-hl-13" title="Blue 13">B13</button>
+                    <button class="effect-swatch-item blue-hl-14" data-class="blue-hl-14" title="Blue 14">B14</button>
+                    <button class="effect-swatch-item blue-hl-15" data-class="blue-hl-15" title="Blue 15">B15</button>
+                    <button class="effect-swatch-item blue-hl-16" data-class="blue-hl-16" title="Blue 16">B16</button>
+                    <button class="effect-swatch-item blue-hl-17" data-class="blue-hl-17" title="Blue 17">B17</button>
+                    <button class="effect-swatch-item blue-hl-18" data-class="blue-hl-18" title="Blue 18">B18</button>
+                    <button class="effect-swatch-item blue-hl-19" data-class="blue-hl-19" title="Blue 19">B19</button>
+                    <button class="effect-swatch-item blue-hl-20" data-class="blue-hl-20" title="Blue 20">B20</button>
+                    <button class="effect-swatch-item blue-hl-21" data-class="blue-hl-21" title="Blue 21">B21</button>
+                    <button class="effect-swatch-item blue-hl-22" data-class="blue-hl-22" title="Blue 22">B22</button>
+                    <button class="effect-swatch-item blue-hl-23" data-class="blue-hl-23" title="Blue 23">B23</button>
+                    <button class="effect-swatch-item blue-hl-24" data-class="blue-hl-24" title="Blue 24">B24</button>
+                    <button class="effect-swatch-item blue-hl-25" data-class="blue-hl-25" title="Blue 25">B25</button>
+                    <button class="effect-swatch-item blue-hl-26" data-class="blue-hl-26" title="Blue 26">B26</button>
+                    <button class="effect-swatch-item blue-hl-27" data-class="blue-hl-27" title="Blue 27">B27</button>
+                    <button class="effect-swatch-item blue-hl-28" data-class="blue-hl-28" title="Blue 28">B28</button>
+                    <button class="effect-swatch-item blue-hl-29" data-class="blue-hl-29" title="Blue 29">B29</button>
+                    <button class="effect-swatch-item blue-hl-30" data-class="blue-hl-30" title="Blue 30">B30</button>
+                    <button class="effect-swatch-item blue-hl-31" data-class="blue-hl-31" title="Blue 31">B31</button>
+                    <button class="effect-swatch-item blue-hl-32" data-class="blue-hl-32" title="Blue 32">B32</button>
+                    <button class="effect-swatch-item blue-hl-33" data-class="blue-hl-33" title="Blue 33">B33</button>
+                    <button class="effect-swatch-item blue-hl-34" data-class="blue-hl-34" title="Blue 34">B34</button>
+                    <button class="effect-swatch-item blue-hl-35" data-class="blue-hl-35" title="Blue 35">B35</button>
+                    <button class="effect-swatch-item blue-hl-36" data-class="blue-hl-36" title="Blue 36">B36</button>
+                    <button class="effect-swatch-item blue-hl-37" data-class="blue-hl-37" title="Blue 37">B37</button>
+                    <button class="effect-swatch-item blue-hl-38" data-class="blue-hl-38" title="Blue 38">B38</button>
+                    <button class="effect-swatch-item blue-hl-39" data-class="blue-hl-39" title="Blue 39">B39</button>
+                    <button class="effect-swatch-item blue-hl-40" data-class="blue-hl-40" title="Blue 40">B40</button>
+                    <button class="effect-swatch-item blue-hl-41" data-class="blue-hl-41" title="Blue 41">B41</button>
+                    <button class="effect-swatch-item blue-hl-42" data-class="blue-hl-42" title="Blue 42">B42</button>
+                    <button class="effect-swatch-item blue-hl-43" data-class="blue-hl-43" title="Blue 43">B43</button>
+                    <button class="effect-swatch-item blue-hl-44" data-class="blue-hl-44" title="Blue 44">B44</button>
+                    <button class="effect-swatch-item blue-hl-45" data-class="blue-hl-45" title="Blue 45">B45</button>
+                    <button class="effect-swatch-item blue-hl-46" data-class="blue-hl-46" title="Blue 46">B46</button>
+                    <button class="effect-swatch-item blue-hl-47" data-class="blue-hl-47" title="Blue 47">B47</button>
+                    <button class="effect-swatch-item blue-hl-48" data-class="blue-hl-48" title="Blue 48">B48</button>
+                    <button class="effect-swatch-item blue-hl-49" data-class="blue-hl-49" title="Blue 49">B49</button>
+                    <button class="effect-swatch-item blue-hl-50" data-class="blue-hl-50" title="Blue 50">B50</button>
+                    <!-- Poolside Ultrapack -->
+                    <button class="effect-swatch-item pool-hl-1" data-class="pool-hl-1" title="Sunrise Frame">U1</button>
+                    <button class="effect-swatch-item pool-hl-2" data-class="pool-hl-2" title="Sunset Gel">U2</button>
+                    <button class="effect-swatch-item pool-hl-3" data-class="pool-hl-3" title="Chlorine Neon">U3</button>
+                    <button class="effect-swatch-item pool-hl-4" data-class="pool-hl-4" title="Beach Bands">U4</button>
+                    <button class="effect-swatch-item pool-hl-5" data-class="pool-hl-5" title="Breaker Wave">U5</button>
+                    <button class="effect-swatch-item pool-hl-6" data-class="pool-hl-6" title="Sun Pill">U6</button>
+                    <button class="effect-swatch-item pool-hl-7" data-class="pool-hl-7" title="Moonlit Abyss">U7</button>
+                    <button class="effect-swatch-item pool-hl-8" data-class="pool-hl-8" title="Sea Foam">U8</button>
+                    <button class="effect-swatch-item pool-hl-9" data-class="pool-hl-9" title="Cabana Stripes">U9</button>
+                    <button class="effect-swatch-item pool-hl-10" data-class="pool-hl-10" title="Tideline Fusion">U10</button>
+                    <button class="effect-swatch-item pool-hl-11" data-class="pool-hl-11" title="Lifebuoy Ring">U11</button>
+                    <button class="effect-swatch-item pool-hl-12" data-class="pool-hl-12" title="Sand Dollar">U12</button>
+                    <button class="effect-swatch-item pool-hl-13" data-class="pool-hl-13" title="Starfish Point">U13</button>
+                    <button class="effect-swatch-item pool-hl-14" data-class="pool-hl-14" title="Shell Rings">U14</button>
+                    <button class="effect-swatch-item pool-hl-15" data-class="pool-hl-15" title="Lap Lane">U15</button>
+                    <button class="effect-swatch-item pool-hl-16" data-class="pool-hl-16" title="Dive Bubbles">U16</button>
+                    <button class="effect-swatch-item pool-hl-17" data-class="pool-hl-17" title="Cannonball Splash">U17</button>
+                    <button class="effect-swatch-item pool-hl-18" data-class="pool-hl-18" title="Marco Echo">U18</button>
+                    <button class="effect-swatch-item pool-hl-19" data-class="pool-hl-19" title="Polo Seam">U19</button>
+                    <button class="effect-swatch-item pool-hl-20" data-class="pool-hl-20" title="Gutter Lip">U20</button>
+                    <button class="effect-swatch-item pool-hl-21" data-class="pool-hl-21" title="Skimmer Mesh">U21</button>
+                    <button class="effect-swatch-item pool-hl-22" data-class="pool-hl-22" title="Sunscreen Squeeze">U22</button>
+                    <button class="effect-swatch-item pool-hl-23" data-class="pool-hl-23" title="Towel Cabana">U23</button>
+                    <button class="effect-swatch-item pool-hl-24" data-class="pool-hl-24" title="Cooler Lid">U24</button>
+                    <button class="effect-swatch-item pool-hl-25" data-class="pool-hl-25" title="Ice Pop Split">U25</button>
+                    <button class="effect-swatch-item pool-hl-26" data-class="pool-hl-26" title="Boardwalk Planks">U26</button>
+                    <button class="effect-swatch-item pool-hl-27" data-class="pool-hl-27" title="Pier Silhouette">U27</button>
+                    <button class="effect-swatch-item pool-hl-28" data-class="pool-hl-28" title="Sailcloth">U28</button>
+                    <button class="effect-swatch-item pool-hl-29" data-class="pool-hl-29" title="Regatta Dots">U29</button>
+                    <button class="effect-swatch-item pool-hl-30" data-class="pool-hl-30" title="Harbor Rope">U30</button>
+                    <button class="effect-swatch-item pool-hl-31" data-class="pool-hl-31" title="Beacon Stripes">U31</button>
+                    <button class="effect-swatch-item pool-hl-32" data-class="pool-hl-32" title="Sandbar Ripple">U32</button>
+                    <button class="effect-swatch-item pool-hl-33" data-class="pool-hl-33" title="Dune Cross">U33</button>
+                    <button class="effect-swatch-item pool-hl-34" data-class="pool-hl-34" title="Floatie Ring">U34</button>
+                    <button class="effect-swatch-item pool-hl-35" data-class="pool-hl-35" title="Noodle Roll">U35</button>
+                    <button class="effect-swatch-item pool-hl-36" data-class="pool-hl-36" title="Goggle Lens">U36</button>
+                    <button class="effect-swatch-item pool-hl-37" data-class="pool-hl-37" title="Swim Sheen">U37</button>
+                    <button class="effect-swatch-item pool-hl-38" data-class="pool-hl-38" title="Kickboard Grip">U38</button>
+                    <button class="effect-swatch-item pool-hl-39" data-class="pool-hl-39" title="Fin Kick">U39</button>
+                    <button class="effect-swatch-item pool-hl-40" data-class="pool-hl-40" title="Shoreline">U40</button>
+                    <button class="effect-swatch-item pool-hl-41" data-class="pool-hl-41" title="Seashell Rays">U41</button>
+                    <button class="effect-swatch-item pool-hl-42" data-class="pool-hl-42" title="Conch Lustre">U42</button>
+                    <button class="effect-swatch-item pool-hl-43" data-class="pool-hl-43" title="Pearl Drop">U43</button>
+                    <button class="effect-swatch-item pool-hl-44" data-class="pool-hl-44" title="Driftwood Grain">U44</button>
+                    <button class="effect-swatch-item pool-hl-45" data-class="pool-hl-45" title="Sea Glass">U45</button>
+                    <button class="effect-swatch-item pool-hl-46" data-class="pool-hl-46" title="Message Bottle">U46</button>
+                    <button class="effect-swatch-item pool-hl-47" data-class="pool-hl-47" title="Treasure Gold">U47</button>
+                    <button class="effect-swatch-item pool-hl-48" data-class="pool-hl-48" title="Mermaid Scales">U48</button>
+                    <button class="effect-swatch-item pool-hl-49" data-class="pool-hl-49" title="Grayfin">U49</button>
+                    <button class="effect-swatch-item pool-hl-50" data-class="pool-hl-50" title="Tower Stripes">U50</button>
+                    <!-- Dark Gel Chip Pack -->
+                    <button class="effect-swatch-item mkt-cp-red" data-class="mkt-cp-red" title="Chip Red">CR</button>
+                    <button class="effect-swatch-item mkt-cp-orange" data-class="mkt-cp-orange" title="Chip Orange">CO</button>
+                    <button class="effect-swatch-item mkt-cp-amber" data-class="mkt-cp-amber" title="Chip Amber">AM</button>
+                    <button class="effect-swatch-item mkt-cp-yellow" data-class="mkt-cp-yellow" title="Chip Yellow">CY</button>
+                    <button class="effect-swatch-item mkt-cp-lime" data-class="mkt-cp-lime" title="Chip Lime">CL</button>
+                    <button class="effect-swatch-item mkt-cp-green" data-class="mkt-cp-green" title="Chip Green">CG</button>
+                    <button class="effect-swatch-item mkt-cp-emerald" data-class="mkt-cp-emerald" title="Chip Emerald">CE</button>
+                    <button class="effect-swatch-item mkt-cp-teal" data-class="mkt-cp-teal" title="Chip Teal">CT</button>
+                    <button class="effect-swatch-item mkt-cp-cyan" data-class="mkt-cp-cyan" title="Chip Cyan">CN</button>
+                    <button class="effect-swatch-item mkt-cp-sky" data-class="mkt-cp-sky" title="Chip Sky">CS</button>
+                    <button class="effect-swatch-item mkt-cp-blue" data-class="mkt-cp-blue" title="Chip Blue">CB</button>
+                    <button class="effect-swatch-item mkt-cp-indigo" data-class="mkt-cp-indigo" title="Chip Indigo">CI</button>
+                    <button class="effect-swatch-item mkt-cp-violet" data-class="mkt-cp-violet" title="Chip Violet">CV</button>
+                    <button class="effect-swatch-item mkt-cp-fuchsia" data-class="mkt-cp-fuchsia" title="Chip Fuchsia">CF</button>
+                    <button class="effect-swatch-item mkt-cp-pink" data-class="mkt-cp-pink" title="Chip Pink">CP</button>
+                    <button class="effect-swatch-item mkt-cp-slate" data-class="mkt-cp-slate" title="Chip Slate">Cq</button>
+                    <!-- Blue Chip Pack -->
+                    <button class="effect-swatch-item bcp-tide" data-class="bcp-tide" title="Blue Tideframe">P1</button>
+                    <button class="effect-swatch-item bcp-highlighter" data-class="bcp-highlighter" title="Blue Highlighter">P2</button>
+                    <button class="effect-swatch-item bcp-bevel" data-class="bcp-bevel" title="Blue Deep">P3</button>
+                    <button class="effect-swatch-item bcp-stitch" data-class="bcp-stitch" title="Blue Light">P4</button>
+                    <button class="effect-swatch-item bcp-scan" data-class="bcp-scan" title="Blue Bright">P5</button>
+                    <button class="effect-swatch-item bcp-hatch" data-class="bcp-hatch" title="Blue Ocean">P6</button>
+                    <button class="effect-swatch-item bcp-emboss" data-class="bcp-emboss" title="Blue Sea">P7</button>
+                    <button class="effect-swatch-item bcp-halo" data-class="bcp-halo" title="Blue Sky">P8</button>
+                    <button class="effect-swatch-item bcp-dots" data-class="bcp-dots" title="Blue Dotted">P9</button>
+                    <button class="effect-swatch-item bcp-marker" data-class="bcp-marker" title="Blue Ice">P10</button>
+                    <!-- Pill Chip Pack -->
+                    <button class="effect-swatch-item pill-hl-red" data-class="pill-hl-red" title="Pill Red">L1</button>
+                    <button class="effect-swatch-item pill-hl-orange" data-class="pill-hl-orange" title="Pill Orange">L2</button>
+                    <button class="effect-swatch-item pill-hl-amber" data-class="pill-hl-amber" title="Pill Amber">L3</button>
+                    <button class="effect-swatch-item pill-hl-yellow" data-class="pill-hl-yellow" title="Pill Yellow">L4</button>
+                    <button class="effect-swatch-item pill-hl-lime" data-class="pill-hl-lime" title="Pill Lime">L5</button>
+                    <button class="effect-swatch-item pill-hl-green" data-class="pill-hl-green" title="Pill Green">L6</button>
+                    <button class="effect-swatch-item pill-hl-emerald" data-class="pill-hl-emerald" title="Pill Emerald">L7</button>
+                    <button class="effect-swatch-item pill-hl-teal" data-class="pill-hl-teal" title="Pill Teal">L8</button>
+                    <button class="effect-swatch-item pill-hl-cyan" data-class="pill-hl-cyan" title="Pill Cyan">L9</button>
+                    <button class="effect-swatch-item pill-hl-sky" data-class="pill-hl-sky" title="Pill Sky">L10</button>
+                    <button class="effect-swatch-item pill-hl-blue" data-class="pill-hl-blue" title="Pill Blue">L11</button>
+                    <button class="effect-swatch-item pill-hl-indigo" data-class="pill-hl-indigo" title="Pill Indigo">L12</button>
+                    <button class="effect-swatch-item pill-hl-violet" data-class="pill-hl-violet" title="Pill Violet">L13</button>
+                    <button class="effect-swatch-item pill-hl-fuchsia" data-class="pill-hl-fuchsia" title="Pill Fuchsia">L14</button>
+                    <button class="effect-swatch-item pill-hl-pink" data-class="pill-hl-pink" title="Pill Pink">L15</button>
+                    <button class="effect-swatch-item pill-hl-slate" data-class="pill-hl-slate" title="Pill Slate">L16</button>
+                    <!-- Poolside Chip Pack -->
+                    <button class="effect-swatch-item mkt-pool-tide" data-class="mkt-pool-tide" title="Poolside Tideframe">S1</button>
+                    <button class="effect-swatch-item mkt-pool-sunset" data-class="mkt-pool-sunset" title="Sunset Splash">S2</button>
+                    <button class="effect-swatch-item mkt-pool-chlorine" data-class="mkt-pool-chlorine" title="Chlorine Glow">S3</button>
+                    <button class="effect-swatch-item mkt-pool-beachball" data-class="mkt-pool-beachball" title="Beach Ball">S4</button>
+                    <button class="effect-swatch-item mkt-pool-wave" data-class="mkt-pool-wave" title="Wave Rider">S5</button>
+                    <button class="effect-swatch-item mkt-pool-lounger" data-class="mkt-pool-lounger" title="Sun Lounger">S6</button>
+                    <button class="effect-swatch-item mkt-pool-deep" data-class="mkt-pool-deep" title="Deep End">S7</button>
+                    <button class="effect-swatch-item mkt-pool-foam" data-class="mkt-pool-foam" title="Foam Party">S8</button>
+                    <button class="effect-swatch-item mkt-pool-lifeguard" data-class="mkt-pool-lifeguard" title="Lifeguard Stripes">S9</button>
+                    <button class="effect-swatch-item mkt-pool-fusion" data-class="mkt-pool-fusion" title="Cocktail Fusion">S10</button>
+                    <!-- Autumn Chip Pack -->
+                    <button class="effect-swatch-item mkt-autumn-harvest" data-class="mkt-autumn-harvest" title="Harvest Frame">A1</button>
+                    <button class="effect-swatch-item mkt-autumn-pumpkin" data-class="mkt-autumn-pumpkin" title="Pumpkin Spice">A2</button>
+                    <button class="effect-swatch-item mkt-autumn-cider" data-class="mkt-autumn-cider" title="Cider Glow">A3</button>
+                    <button class="effect-swatch-item mkt-autumn-candy" data-class="mkt-autumn-candy" title="Candy Corn">A4</button>
+                    <button class="effect-swatch-item mkt-autumn-leaves" data-class="mkt-autumn-leaves" title="Falling Leaves">A5</button>
+                    <button class="effect-swatch-item mkt-autumn-golden" data-class="mkt-autumn-golden" title="Golden Hour">A6</button>
+                    <button class="effect-swatch-item mkt-autumn-bonfire" data-class="mkt-autumn-bonfire" title="Bonfire Night">A7</button>
+                    <button class="effect-swatch-item mkt-autumn-frost" data-class="mkt-autumn-frost" title="Morning Frost">A8</button>
+                    <button class="effect-swatch-item mkt-autumn-flannel" data-class="mkt-autumn-flannel" title="Flannel Stripes">A9</button>
+                    <button class="effect-swatch-item mkt-autumn-orchard" data-class="mkt-autumn-orchard" title="Orchard Fusion">A10</button>
+                    <!-- Winter Chip Pack -->
+                    <button class="effect-swatch-item mkt-winter-icicle" data-class="mkt-winter-icicle" title="Icicle Drip">W1</button>
+                    <button class="effect-swatch-item mkt-winter-frost" data-class="mkt-winter-frost" title="Frost Etch">W2</button>
+                    <button class="effect-swatch-item mkt-winter-pine" data-class="mkt-winter-pine" title="Pine Stitch">W3</button>
+                    <button class="effect-swatch-item mkt-winter-garnet" data-class="mkt-winter-garnet" title="Garnet Facet">W4</button>
+                    <button class="effect-swatch-item mkt-winter-snowdrift" data-class="mkt-winter-snowdrift" title="Snowdrift Pill">W5</button>
+                    <button class="effect-swatch-item mkt-winter-aurora" data-class="mkt-winter-aurora" title="Aurora Veil">W6</button>
+                    <button class="effect-swatch-item mkt-winter-pond" data-class="mkt-winter-pond" title="Frozen Pond">W7</button>
+                    <button class="effect-swatch-item mkt-winter-seal" data-class="mkt-winter-seal" title="Evergreen Seal">W8</button>
+                    <button class="effect-swatch-item mkt-winter-blizzard" data-class="mkt-winter-blizzard" title="Blizzard Swirl">W9</button>
+                    <button class="effect-swatch-item mkt-winter-cranberry" data-class="mkt-winter-cranberry" title="Cranberry Frost">W10</button>
+                    <!-- Fruit Chip Pack -->
+                    <button class="effect-swatch-item mkt-fruit-apple" data-class="mkt-fruit-apple" title="Apple Crunch">F1</button>
+                    <button class="effect-swatch-item mkt-fruit-mango" data-class="mkt-fruit-mango" title="Mango Tango">F2</button>
+                    <button class="effect-swatch-item mkt-fruit-grape" data-class="mkt-fruit-grape" title="Grape Cluster">F3</button>
+                    <button class="effect-swatch-item mkt-fruit-strawberry" data-class="mkt-fruit-strawberry" title="Strawberry Seeds">F4</button>
+                    <button class="effect-swatch-item mkt-fruit-blueberry" data-class="mkt-fruit-blueberry" title="Blueberry Bloom">F5</button>
+                    <button class="effect-swatch-item mkt-fruit-orange" data-class="mkt-fruit-orange" title="Orange Citrus">F6</button>
+                    <button class="effect-swatch-item mkt-fruit-lemon" data-class="mkt-fruit-lemon" title="Lemon Zest">F7</button>
+                    <button class="effect-swatch-item mkt-fruit-lime" data-class="mkt-fruit-lime" title="Lime Squeeze">F8</button>
+                    <button class="effect-swatch-item mkt-fruit-cherry" data-class="mkt-fruit-cherry" title="Cherry Shine">F9</button>
+                    <button class="effect-swatch-item mkt-fruit-peach" data-class="mkt-fruit-peach" title="Peach Fuzz">F10</button>
+                    <button class="effect-swatch-item mkt-fruit-pear" data-class="mkt-fruit-pear" title="Pear Glow">F11</button>
+                    <button class="effect-swatch-item mkt-fruit-plum" data-class="mkt-fruit-plum" title="Plum Jewel">F12</button>
+                    <button class="effect-swatch-item mkt-fruit-kiwi" data-class="mkt-fruit-kiwi" title="Kiwi Core">F13</button>
+                    <button class="effect-swatch-item mkt-fruit-pineapple" data-class="mkt-fruit-pineapple" title="Pineapple Cross">F14</button>
+                    <button class="effect-swatch-item mkt-fruit-watermelon" data-class="mkt-fruit-watermelon" title="Watermelon Rind">F15</button>
+                    <button class="effect-swatch-item mkt-fruit-banana" data-class="mkt-fruit-banana" title="Banana Peel">F16</button>
+                    <button class="effect-swatch-item mkt-fruit-coconut" data-class="mkt-fruit-coconut" title="Coconut Split">F17</button>
+                    <button class="effect-swatch-item mkt-fruit-raspberry" data-class="mkt-fruit-raspberry" title="Raspberry Dot">F18</button>
+                    <button class="effect-swatch-item mkt-fruit-blackberry" data-class="mkt-fruit-blackberry" title="Blackberry Night">F19</button>
+                    <button class="effect-swatch-item mkt-fruit-pomegranate" data-class="mkt-fruit-pomegranate" title="Pomegranate Ruby">F20</button>
+                    <!-- Hacker Chip Pack -->
+                    <button class="effect-swatch-item mkt-hacker-prompt" data-class="mkt-hacker-prompt" title="Phosphor Prompt">H1</button>
+                    <button class="effect-swatch-item mkt-hacker-matrix" data-class="mkt-hacker-matrix" title="Matrix Rain">H2</button>
+                    <button class="effect-swatch-item mkt-hacker-amber" data-class="mkt-hacker-amber" title="Amber Terminal">H3</button>
+                    <button class="effect-swatch-item mkt-hacker-scan" data-class="mkt-hacker-scan" title="CRT Scanlines">H4</button>
+                    <button class="effect-swatch-item mkt-hacker-alert" data-class="mkt-hacker-alert" title="Red Alert">H5</button>
+                    <button class="effect-swatch-item mkt-hacker-hex" data-class="mkt-hacker-hex" title="Hex Dump">H6</button>
+                    <button class="effect-swatch-item mkt-hacker-root" data-class="mkt-hacker-root" title="Root Access">H7</button>
+                    <button class="effect-swatch-item mkt-hacker-ghost" data-class="mkt-hacker-ghost" title="Ghost Shell">H8</button>
+                    <button class="effect-swatch-item mkt-hacker-ice" data-class="mkt-hacker-ice" title="Cyber Ice">H9</button>
+                    <button class="effect-swatch-item mkt-hacker-panic" data-class="mkt-hacker-panic" title="Kernel Panic">H10</button>
+                    <button class="effect-swatch-item mkt-hacker-null" data-class="mkt-hacker-null" title="Null Pointer">H11</button>
+                    <button class="effect-swatch-item mkt-hacker-bitflip" data-class="mkt-hacker-bitflip" title="Bit Flip">H12</button>
+                    <button class="effect-swatch-item mkt-hacker-firewall" data-class="mkt-hacker-firewall" title="Firewall">H13</button>
+                    <button class="effect-swatch-item mkt-hacker-darknet" data-class="mkt-hacker-darknet" title="Darknet">H14</button>
+                    <button class="effect-swatch-item mkt-hacker-sniffer" data-class="mkt-hacker-sniffer" title="Packet Sniffer">H15</button>
+                    <button class="effect-swatch-item mkt-hacker-overclock" data-class="mkt-hacker-overclock" title="Overclock">H16</button>
+                    <button class="effect-swatch-item mkt-hacker-leak" data-class="mkt-hacker-leak" title="Memory Leak">H17</button>
+                    <button class="effect-swatch-item mkt-hacker-zeroday" data-class="mkt-hacker-zeroday" title="Zero Day">H18</button>
+                    <button class="effect-swatch-item mkt-hacker-backdoor" data-class="mkt-hacker-backdoor" title="Backdoor">H19</button>
+                    <button class="effect-swatch-item mkt-hacker-cipher" data-class="mkt-hacker-cipher" title="Cipher">H20</button>
+                    <button class="effect-swatch-item mkt-hacker-daemon" data-class="mkt-hacker-daemon" title="Daemon">H21</button>
+                    <button class="effect-swatch-item mkt-hacker-fork" data-class="mkt-hacker-fork" title="Fork Bomb">H22</button>
+                    <button class="effect-swatch-item mkt-hacker-segfault" data-class="mkt-hacker-segfault" title="Segfault">H23</button>
+                    <button class="effect-swatch-item mkt-hacker-uptime" data-class="mkt-hacker-uptime" title="Uptime">H24</button>
+                    <button class="effect-swatch-item mkt-hacker-latency" data-class="mkt-hacker-latency" title="Latency">H25</button>
+                    <button class="effect-swatch-item mkt-hacker-mainframe" data-class="mkt-hacker-mainframe" title="Mainframe">H26</button>
+                    <button class="effect-swatch-item mkt-hacker-punchcard" data-class="mkt-hacker-punchcard" title="Punchcard">H27</button>
+                    <button class="effect-swatch-item mkt-hacker-turing" data-class="mkt-hacker-turing" title="Turing Gold">H28</button>
+                    <button class="effect-swatch-item mkt-hacker-quantum" data-class="mkt-hacker-quantum" title="Quantum">H29</button>
+                    <button class="effect-swatch-item mkt-hacker-sudo" data-class="mkt-hacker-sudo" title="Sudo Make">H30</button>
+                    <!-- Midnight Glass Chip Pack -->
+                    <button class="effect-swatch-item mkt-mg-red" data-class="mkt-mg-red" title="Midnight Red">M1</button>
+                    <button class="effect-swatch-item mkt-mg-orange" data-class="mkt-mg-orange" title="Midnight Orange">M2</button>
+                    <button class="effect-swatch-item mkt-mg-amber" data-class="mkt-mg-amber" title="Midnight Amber">M3</button>
+                    <button class="effect-swatch-item mkt-mg-yellow" data-class="mkt-mg-yellow" title="Midnight Yellow">M4</button>
+                    <button class="effect-swatch-item mkt-mg-lime" data-class="mkt-mg-lime" title="Midnight Lime">M5</button>
+                    <button class="effect-swatch-item mkt-mg-green" data-class="mkt-mg-green" title="Midnight Green">M6</button>
+                    <button class="effect-swatch-item mkt-mg-emerald" data-class="mkt-mg-emerald" title="Midnight Emerald">M7</button>
+                    <button class="effect-swatch-item mkt-mg-teal" data-class="mkt-mg-teal" title="Midnight Teal">M8</button>
+                    <button class="effect-swatch-item mkt-mg-cyan" data-class="mkt-mg-cyan" title="Midnight Cyan">M9</button>
+                    <button class="effect-swatch-item mkt-mg-sky" data-class="mkt-mg-sky" title="Midnight Sky">M10</button>
+                    <button class="effect-swatch-item mkt-mg-blue" data-class="mkt-mg-blue" title="Midnight Blue">M11</button>
+                    <button class="effect-swatch-item mkt-mg-indigo" data-class="mkt-mg-indigo" title="Midnight Indigo">M12</button>
+                    <button class="effect-swatch-item mkt-mg-violet" data-class="mkt-mg-violet" title="Midnight Violet">M13</button>
+                    <button class="effect-swatch-item mkt-mg-fuchsia" data-class="mkt-mg-fuchsia" title="Midnight Fuchsia">M14</button>
+                    <button class="effect-swatch-item mkt-mg-pink" data-class="mkt-mg-pink" title="Midnight Pink">M15</button>
+                    <button class="effect-swatch-item mkt-mg-slate" data-class="mkt-mg-slate" title="Midnight Slate">M16</button>
+                    <!-- Gel Dewdrop Chip Pack -->
+                    <button class="effect-swatch-item mkt-dew-cyan" data-class="mkt-dew-cyan" title="Dewdrop Cyan">D1</button>
+                    <button class="effect-swatch-item mkt-dew-orange" data-class="mkt-dew-orange" title="Dewdrop Orange">D2</button>
+                    <button class="effect-swatch-item mkt-dew-green" data-class="mkt-dew-green" title="Dewdrop Green">D3</button>
+                    <button class="effect-swatch-item mkt-dew-red" data-class="mkt-dew-red" title="Dewdrop Red">D4</button>
+                    <button class="effect-swatch-item mkt-dew-purple" data-class="mkt-dew-purple" title="Dewdrop Purple">D5</button>
+                    <button class="effect-swatch-item mkt-dew-pink" data-class="mkt-dew-pink" title="Dewdrop Pink">D6</button>
+                    <button class="effect-swatch-item mkt-dew-yellow" data-class="mkt-dew-yellow" title="Dewdrop Yellow">D7</button>
+                    <button class="effect-swatch-item mkt-dew-blue" data-class="mkt-dew-blue" title="Dewdrop Blue">D8</button>
+                    <button class="effect-swatch-item mkt-dew-lime" data-class="mkt-dew-lime" title="Dewdrop Lime">D9</button>
+                    <button class="effect-swatch-item mkt-dew-teal" data-class="mkt-dew-teal" title="Dewdrop Teal">D10</button>
+                    <button class="effect-swatch-item mkt-dew-gold" data-class="mkt-dew-gold" title="Dewdrop Gold">D11</button>
+                    <button class="effect-swatch-item mkt-dew-slate" data-class="mkt-dew-slate" title="Dewdrop Slate">D12</button>
+                    <button class="effect-swatch-item mkt-dew-white" data-class="mkt-dew-white" title="Dewdrop White">D13</button>
+                    <button class="effect-swatch-item mkt-dew-black" data-class="mkt-dew-black" title="Dewdrop Black">D14</button>
+                    <button class="effect-swatch-item mkt-dew-fog" data-class="mkt-dew-fog" title="Dewdrop Fog">D15</button>
+                    <button class="effect-swatch-item mkt-dew-turquoise" data-class="mkt-dew-turquoise" title="Dewdrop Turquoise">D16</button>
+                    <!-- Gel Bubble Remix Pack -->
+                    <button class="effect-swatch-item mkt-bubble-red" data-class="mkt-bubble-red" title="Bubble Red">BB1</button>
+                    <button class="effect-swatch-item mkt-bubble-coral" data-class="mkt-bubble-coral" title="Bubble Coral">BB2</button>
+                    <button class="effect-swatch-item mkt-bubble-orange" data-class="mkt-bubble-orange" title="Bubble Orange">BB3</button>
+                    <button class="effect-swatch-item mkt-bubble-amber" data-class="mkt-bubble-amber" title="Bubble Amber">BB4</button>
+                    <button class="effect-swatch-item mkt-bubble-gold" data-class="mkt-bubble-gold" title="Bubble Gold">BB5</button>
+                    <button class="effect-swatch-item mkt-bubble-yellow" data-class="mkt-bubble-yellow" title="Bubble Yellow">BB6</button>
+                    <button class="effect-swatch-item mkt-bubble-cream" data-class="mkt-bubble-cream" title="Bubble Cream">BB7</button>
+                    <button class="effect-swatch-item mkt-bubble-lime" data-class="mkt-bubble-lime" title="Bubble Lime">BB8</button>
+                    <button class="effect-swatch-item mkt-bubble-olive" data-class="mkt-bubble-olive" title="Bubble Olive">BB9</button>
+                    <button class="effect-swatch-item mkt-bubble-green" data-class="mkt-bubble-green" title="Bubble Green">BB10</button>
+                    <button class="effect-swatch-item mkt-bubble-emerald" data-class="mkt-bubble-emerald" title="Bubble Emerald">BB11</button>
+                    <button class="effect-swatch-item mkt-bubble-mint" data-class="mkt-bubble-mint" title="Bubble Mint">BB12</button>
+                    <button class="effect-swatch-item mkt-bubble-teal" data-class="mkt-bubble-teal" title="Bubble Teal">BB13</button>
+                    <button class="effect-swatch-item mkt-bubble-turquoise" data-class="mkt-bubble-turquoise" title="Bubble Turquoise">BB14</button>
+                    <button class="effect-swatch-item mkt-bubble-cyan" data-class="mkt-bubble-cyan" title="Bubble Cyan">BB15</button>
+                    <button class="effect-swatch-item mkt-bubble-sky" data-class="mkt-bubble-sky" title="Bubble Sky">BB16</button>
+                    <button class="effect-swatch-item mkt-bubble-blue" data-class="mkt-bubble-blue" title="Bubble Blue">BB17</button>
+                    <button class="effect-swatch-item mkt-bubble-navy" data-class="mkt-bubble-navy" title="Bubble Navy">BB18</button>
+                    <button class="effect-swatch-item mkt-bubble-indigo" data-class="mkt-bubble-indigo" title="Bubble Indigo">BB19</button>
+                    <button class="effect-swatch-item mkt-bubble-violet" data-class="mkt-bubble-violet" title="Bubble Violet">BB20</button>
+                    <button class="effect-swatch-item mkt-bubble-purple" data-class="mkt-bubble-purple" title="Bubble Purple">BB21</button>
+                    <button class="effect-swatch-item mkt-bubble-lavender" data-class="mkt-bubble-lavender" title="Bubble Lavender">BB22</button>
+                    <button class="effect-swatch-item mkt-bubble-fuchsia" data-class="mkt-bubble-fuchsia" title="Bubble Fuchsia">BB23</button>
+                    <button class="effect-swatch-item mkt-bubble-pink" data-class="mkt-bubble-pink" title="Bubble Pink">BB24</button>
+                    <button class="effect-swatch-item mkt-bubble-rose" data-class="mkt-bubble-rose" title="Bubble Rose">BB25</button>
+                    <button class="effect-swatch-item mkt-bubble-brown" data-class="mkt-bubble-brown" title="Bubble Brown">BB26</button>
+                    <button class="effect-swatch-item mkt-bubble-white" data-class="mkt-bubble-white" title="Bubble White">BB27</button>
+                    <button class="effect-swatch-item mkt-bubble-fog" data-class="mkt-bubble-fog" title="Bubble Fog">BB28</button>
+                    <button class="effect-swatch-item mkt-bubble-slate" data-class="mkt-bubble-slate" title="Bubble Slate">BB29</button>
+                    <button class="effect-swatch-item mkt-bubble-black" data-class="mkt-bubble-black" title="Bubble Black">BB30</button>
                 </div>
             </div>
 
-            <!-- 2. Chart Generator Button -->
-            <button class="style-tool-btn" onclick="generateAeroChart()" title="Generate Aero Chart from Selected Column">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" viewBox="0 0 24 24">
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3v18h18M18 17V9m-5 8v-5m-5 5v-3"/>
-                </svg>
-            </button>
-
-            <span class="ribbon-separator"></span>
-
-            <!-- 3. Font Family Dropdown -->
-            <select class="format-control" id="sheet-font-family" onchange="applyCellFontFamily(this.value)">
-                <option value="'JetBrains Mono', monospace">JetBrains Mono</option>
-                <option value="Roboto, sans-serif">Roboto</option>
-                <option value="'Space Grotesk', sans-serif">Space Grotesk</option>
-                <option value="'Comic Neue', cursive">Comic Neue</option>
-            </select>
-
-            <!-- 4. Font Size Dropdown -->
-            <select class="format-control" id="sheet-font-size" onchange="applyCellFontSize(this.value)">
-                <option value="11px">Small</option>
-                <option value="13px" selected>Normal</option>
-                <option value="16px">Large</option>
-                <option value="20px">Huge</option>
-            </select>
-
-            <span class="ribbon-separator"></span>
-
-            <!-- 5. Text Color Picker -->
-            <label class="color-picker-label" title="Text Color">
-                🎨 <input type="color" id="sheet-text-color" value="#1e293b" onchange="applyCellTextColor(this.value)">
-            </label>
-
-            <!-- 6. Highlight / Background Color Picker -->
-            <label class="color-picker-label" title="Highlight Color">
-                🖌️ <input type="color" id="sheet-bg-color" value="#ffffff" onchange="applyCellStyles(this.value, null)">
-            </label>
-
-            <span class="ribbon-separator"></span>
-
-            <!-- 7. Formula Input Wrapper -->
-            <div class="formula-bar-wrapper">
-                <span class="formula-badge" id="selected-cell-label">A1</span>
-                <input type="text" id="formula-input" placeholder="Enter value or formula (e.g., =SUM(A1:A3))" oninput="updateCellFromFormula(this.value)">
-            </div>
         </div>
 
-        <!-- Dynamic Glass Chart Container -->
-        <div id="chart-viewport" class="aero-chart-card" style="display: none;">
-            <div class="chart-header">
-                <div class="chart-nav-cluster">
-                    <button class="chart-nav-btn" onclick="cycleChartColumn(-1)" title="Previous Column">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" d="M15.5 19a18 18 0 0 0-7-7a18 18 0 0 0 7-7"/></svg>
-                    </button>
-                    <button class="chart-nav-btn" onclick="cycleChartColumn(1)" title="Next Column">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="6" d="M8.5 19a18 18 0 0 1 7-7a18 18 0 0 1-7-7"/></svg>
-                    </button>
-                    <span id="chart-title-text">COLUMN A DATA</span>
-                </div>
-                <button class="chart-close-orb" onclick="closeChart()">✕</button>
-            </div>
-            <div id="chart-bar-container" class="chart-bars-wrapper">
-                <!-- Dynamic 3D bars rendered via JS -->
-            </div>
-            <div id="chart-stats-line" style="font-size:11px;color:#64748b;padding:4px 2px 0 2px;"></div>
-        </div>
-
-        <div id="spreadsheet-container">
-            <table id="aero-grid-table">
-                <thead>
-                    <tr id="table-header-row">
-                        <th class="corner-header"></th>
-                    </tr>
-                </thead>
-                <tbody id="table-body">
-                    <!-- Dynamically generated rows -->
-                </tbody>
-            </table>
-        </div>
-    </main>
-
-    <!-- Modal Help Container -->
-    <div id="aero-modal-overlay" class="modal-blur-gate">
-        <div id="aero-dialog-box" class="embossed-dialogue-chassis">
-            <div class="dialog-header">
-                <h3>AERO SHEETS REFERENCE SPECS</h3>
-                <div id="dialog-close-btn" onclick="toggleModal(false)">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="2em" height="2em" viewBox="0 0 24 24">
-                        <path d="M0 0h24v24H0z" fill="none" />
-                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M18.5 5.5L12 12m0 0l-6.5 6.5M12 12L5.5 5.5M12 12l6.5 6.5" />
-                    </svg>
-                </div>
-            </div>
-            <div class="dialog-body-scroll">
-                <div class="help-card">
-                    <b>=SUM(range)</b> <span>Calculates total sum of cell ranges (e.g., A1:A5)</span><br>
-                    <b>=AVG(range)</b> Calculates arithmetic mean of cell ranges<br>
-                    <b>Cell Styling</b> Click the drop icon in the top toolbar to style cell background and borders!
-                </div>
-            </div>
-            <div class="dialog-footer">
-                <button id="dialog-confirm-btn" class="dialog-confirm-orb" onclick="toggleModal(false)">DISMISS DECK</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="formula_engine.js"></script>
-    <script src="app.js"></script>
-    <script src="../py_silent.js"></script>
-    <script src="fengari_formula.js"></script>
+<script src="formula_engine.js?v=20261018c"></script>
+<script src="app.js?v=20261018c"></script>
+<script src="ribbon.js?v=20261018c"></script>
+<script src="features.js?v=20261018c"></script>
+<script src="radii-images.js?v=20261019"></script>
+<script src="radii-collab.js?v=20261052"></script>
+<script src="collab-imbuer.js?v=20261019c"></script>
+<script src="../py_silent.js"></script>
+<script src="fengari_formula.js?v=20261018c"></script>
 </body>
 </html>

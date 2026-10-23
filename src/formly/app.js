@@ -700,4 +700,25 @@ function downloadFile(content, filename, contentType) {
     URL.revokeObjectURL(url);
 }
 
+// --- Autosave: the form survives reloads (and lives under its ?file= ID)! ---
+const FORMLY_KEY = 'formly_doc_v1';
+function saveFormly() {
+    try { localStorage.setItem(FORMLY_KEY, JSON.stringify({ form: formState, theme: currentThemeColor, mode: currentMode === 'builder' ? 'builder' : 'view' })); } catch (e) {}
+    if (typeof window.onFormlyChange === 'function') window.onFormlyChange();
+}
+(function restoreFormly() {
+    try {
+        const d = JSON.parse(localStorage.getItem(FORMLY_KEY) || 'null');
+        if (d && d.form && Array.isArray(d.form.fields)) {
+            formState = d.form;
+            if (d.theme) { currentThemeColor = d.theme; document.documentElement.style.setProperty('--aero-primary', d.theme); }
+        }
+    } catch (e) {}
+})();
+{
+    const origRenderForm = renderForm;
+    renderForm = function () { const r = origRenderForm.apply(this, arguments); saveFormly(); return r; };
+    ['input', 'change'].forEach(ev => document.addEventListener(ev, e => { if (e.target && e.target.closest && e.target.closest('#form-builder-root')) saveFormly(); }));
+    document.addEventListener('focusout', e => { if (e.target && e.target.closest && e.target.closest('#form-fields-list')) saveFormly(); });
+}
 renderForm();

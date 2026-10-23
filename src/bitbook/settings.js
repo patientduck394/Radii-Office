@@ -112,11 +112,95 @@
     try { localStorage.setItem(CLEAR_INFO_KEY, on ? '1' : '0'); } catch (e) {}
   }
 
+  /* Favorites sync between Find Styles and the Gallery: both ON by default (only '0' opts out)! */
+  var FAV_SEND_KEY = 'bitbook_fav_send';
+  var FAV_RECEIVE_KEY = 'bitbook_fav_receive';
+
+  function favSync(key) {
+    try { return localStorage.getItem(key) !== '0'; } catch (e) { return true; }
+  }
+
+  function setFavSync(key, on) {
+    try { localStorage.setItem(key, on ? '1' : '0'); } catch (e) {}
+    // Turning Receive on brings in the Gallery stars you already have!
+    if (on && key === FAV_RECEIVE_KEY && typeof window.csfOnFavSettings === 'function') {
+      try { window.csfOnFavSettings(); } catch (e) {}
+    }
+  }
+
+  function renderFavToggles() {
+    var send = document.getElementById('settings-fav-send');
+    if (send) send.checked = favSync(FAV_SEND_KEY);
+    var recv = document.getElementById('settings-fav-receive');
+    if (recv) recv.checked = favSync(FAV_RECEIVE_KEY);
+  }
+
   function renderClearInfoToggle() {
     var box = document.getElementById('settings-clear-note-info');
     if (!box) return;
     box.checked = clearNoteInfo();
   }
+
+  /* Frutiger Aero UI mode: restyles the app's controls like a Gallery style! */
+  var AERO_UI_KEY = 'bitbook_aero_ui';
+  var AERO_UI_MODES = [
+    { id: '', name: 'Off', preview: '' },
+    { id: 'toolbar', name: 'Toolbar Gel', preview: 'us-chip us-fatoolbar us-fatoolbar-1' }
+  ];
+
+  function aeroUiMode() {
+    var v = '';
+    try { v = localStorage.getItem(AERO_UI_KEY) || ''; } catch (e) {}
+    return AERO_UI_MODES.some(function (m) { return m.id === v; }) ? v : '';
+  }
+
+  function applyAeroUi(mode) {
+    var b = document.body;
+    if (!b) return;
+    ['chrome', 'liquid', 'pocket', 'toolbar'].forEach(function (id) { b.classList.remove('aero-ui-' + id); });
+    b.classList.toggle('aero-ui', !!mode);
+    if (mode) b.classList.add('aero-ui-' + mode);
+    // Follow Bitbook's own UI color (the theme-color), so the skin matches the app!
+    try {
+      var tc = document.querySelector('meta[name="theme-color"]');
+      var c = tc && tc.getAttribute('content');
+      if (mode && c) b.style.setProperty('--aui', c); else b.style.removeProperty('--aui');
+    } catch (e) {}
+  }
+
+  function setAeroUi(mode) {
+    try { localStorage.setItem(AERO_UI_KEY, mode || ''); } catch (e) {}
+    applyAeroUi(mode);
+    renderAeroUi();
+  }
+
+  function renderAeroUi() {
+    var box = document.getElementById('settings-aero-ui');
+    if (!box) return;
+    var cur = aeroUiMode();
+    box.innerHTML = '';
+    AERO_UI_MODES.forEach(function (m) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'settings-aero-opt' + (m.id === cur ? ' active' : '');
+      btn.setAttribute('role', 'radio');
+      btn.setAttribute('aria-checked', m.id === cur ? 'true' : 'false');
+      btn.setAttribute('data-aero-ui', m.id);
+      var chip = document.createElement('span');
+      chip.className = m.preview || 'settings-aero-off';
+      chip.textContent = m.id ? 'Aa' : '—';
+      var nm = document.createElement('span');
+      nm.className = 'settings-aero-name';
+      nm.textContent = m.name;
+      btn.appendChild(chip);
+      btn.appendChild(nm);
+      btn.addEventListener('click', function () { setAeroUi(m.id); });
+      box.appendChild(btn);
+    });
+  }
+
+  // Apply right away (this script loads at the end of <body>), so there's no flash!
+  applyAeroUi(aeroUiMode());
 
   function renderThemeList() {
     var list = document.getElementById('settings-theme-list');
@@ -176,11 +260,21 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     renderThemeList();
+    renderAeroUi();
     renderAmbientToggle();
     renderRestoreToggle();
     renderSaveInfoToggle();
     renderLoadInfoToggle();
     renderClearInfoToggle();
+    renderFavToggles();
+    [['settings-fav-send', FAV_SEND_KEY], ['settings-fav-receive', FAV_RECEIVE_KEY]].forEach(function (pair) {
+      var fBox = document.getElementById(pair[0]);
+      if (!fBox || fBox._bitbookFavWired) return;
+      fBox._bitbookFavWired = true;
+      fBox.addEventListener('change', function (e) {
+        setFavSync(pair[1], !!(e && e.target ? e.target.checked : fBox.checked));
+      });
+    });
     var rBox = document.getElementById('settings-restore-docs');
     if (rBox && !rBox._writeoutRestoreWired) {
       rBox._writeoutRestoreWired = true;
@@ -223,8 +317,8 @@
     }
     // Re-render every open so installs from the Marketplace show up instantly!
     var sBtn = document.getElementById('settings-trigger-btn');
-    if (sBtn) sBtn.addEventListener('click', function () { renderThemeList(); renderAmbientToggle(); renderRestoreToggle(); renderSaveInfoToggle(); renderLoadInfoToggle(); renderClearInfoToggle(); });
+    if (sBtn) sBtn.addEventListener('click', function () { renderThemeList(); renderAeroUi(); renderAmbientToggle(); renderRestoreToggle(); renderSaveInfoToggle(); renderLoadInfoToggle(); renderClearInfoToggle(); renderFavToggles(); });
   });
 
-  window.WriteoutSettings = { refresh: renderThemeList, ambientHidden: ambientHidden, setAmbientHidden: setAmbientHidden, restoreDocs: restoreDocs, setRestoreDocs: setRestoreDocs, saveNoteInfo: saveNoteInfo, setSaveNoteInfo: setSaveNoteInfo, loadNoteInfo: loadNoteInfo, setLoadNoteInfo: setLoadNoteInfo, clearNoteInfo: clearNoteInfo, setClearNoteInfo: setClearNoteInfo };
+  window.WriteoutSettings = { refresh: renderThemeList, aeroUiMode: aeroUiMode, setAeroUi: setAeroUi, ambientHidden: ambientHidden, setAmbientHidden: setAmbientHidden, restoreDocs: restoreDocs, setRestoreDocs: setRestoreDocs, saveNoteInfo: saveNoteInfo, setSaveNoteInfo: setSaveNoteInfo, loadNoteInfo: loadNoteInfo, setLoadNoteInfo: setLoadNoteInfo, clearNoteInfo: clearNoteInfo, setClearNoteInfo: setClearNoteInfo };
 })();

@@ -1,0 +1,219 @@
+/* =====================================================================
+   Writeout's Word layout! (body.os-office) The document itself looks
+   exactly the same as in Writeout Classic; only the chrome around it
+   changes, plus real page sheets in Pages view!
+   ===================================================================== */
+
+/* ---------- The Word frame: ribbon on top, panes beside the page ---------- */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #e8e8eb;
+    color: #252525;
+}
+body.os-office.os-dark { background: #1b1b1d; }
+body.os-office #os-top { grid-column: 1 / -1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1 / -1; grid-row: 3; }
+
+/* Navigation pane = the Writeout sidebar's Pages + Outline, in Word clothes! */
+body.os-office #sidebar {
+    grid-column: 1;
+    grid-row: 2;
+    width: 236px;
+    height: auto;
+    max-height: none;
+    transform: none !important;
+    padding: 12px 10px 10px;
+    background: var(--os-ui);
+    border-right: 1px solid var(--os-ribbon-line);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    z-index: 5;
+    animation: woPaneIn 0.32s var(--os-ease);
+}
+body.os-office.wo-nav-off #sidebar, body.os-office.wo-focus #sidebar { display: none; }
+body.os-office #sidebar::before {
+    content: "Navigation";
+    font-family: var(--os-brand-font);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--os-text);
+    padding: 0 6px 8px;
+}
+body.os-office #sidebar .sidebar-brand,
+body.os-office #sidebar .pad-selection-stack,
+body.os-office #sidebar .sidebar-footer-controls,
+body.os-office #sidebar #toggle-zone { display: none !important; }
+body.os-office .side-scroll-box { margin: 0; }
+body.os-office .outline-heading { color: var(--os-dim); border-bottom-color: var(--os-ribbon-line); font-size: 11px; }
+body.os-office .outline-toggle { color: var(--os-dim); border-color: var(--os-ribbon-line); }
+body.os-office .outline-toggle:hover { background: var(--os-hover); color: var(--os-text); }
+body.os-office .outline-item { color: var(--os-text); font-family: var(--os-font); font-size: 12.5px; font-weight: 500; transition: background 0.14s, padding 0.2s var(--os-spring); }
+body.os-office .outline-item:hover { background: var(--os-hover); color: var(--os-text); padding-left: 14px; }
+body.os-office .outline-item-l2:hover { padding-left: 26px; }
+body.os-office .outline-item-l3:hover { padding-left: 38px; }
+/* The active page/heading keeps its gel soul! */
+body.os-office .outline-item.active {
+    color: #fff;
+    border-color: var(--os-accent-d);
+    background: linear-gradient(180deg, var(--os-gel1) 0%, var(--os-gel2) 50%, var(--os-accent) 52%, var(--os-accent-d) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 6px rgba(24, 90, 189, 0.25);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+body.os-office .outline-empty { color: var(--os-dim); }
+body.os-office .tab-rename-input { background: #fff; color: #222; border-color: var(--os-accent); }
+body.os-office .tabs-list, body.os-office .outline-list { max-height: none; }
+body.os-office .outline-section { margin-top: 12px; }
+
+/* Format pane = the Writeout format sidebar, keeping its dark glass soul! */
+body.os-office #format-sidebar {
+    grid-column: 3;
+    grid-row: 2;
+    position: relative;
+    top: auto;
+    right: auto;
+    height: auto;
+    width: 250px;
+    transform: none !important;
+    display: none;
+    z-index: 5;
+}
+body.os-office.wo-pane-on #format-sidebar { display: flex; animation: woPaneInR 0.32s var(--os-ease); }
+body.os-office.wo-focus #format-sidebar { display: none; }
+body.os-office #format-toggle-zone { display: none !important; }
+
+@keyframes woPaneIn { from { opacity: 0; } }
+@keyframes woPaneInR { from { opacity: 0; transform: translateX(14px); } }
+
+/* The page area: gray desk, page centered! */
+body.os-office .workspace-viewport-wrapper {
+    grid-column: 2;
+    grid-row: 2;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+}
+body.os-office #top-format-bar { display: none !important; }
+body.os-office .canvas-scrollbox { padding: 0 16px; scroll-behavior: auto; overflow-x: auto; }
+/* Spheres drift on the gray desk, behind the pages! */
+body.os-office .ambient-droplet { z-index: 0; opacity: 0.7; }
+body.os-office .workspace-viewport-wrapper { z-index: 1; }
+
+#wo-zoomer { display: contents; }
+/* Safe centering: a page wider than the window scrolls instead of getting cut off! */
+body.os-office #wo-zoomer { display: block; position: relative; margin: 26px 0 46px; align-self: safe center; width: var(--wo-pw); flex: none; }
+body.os-office #wo-zoomer { animation: woPageIn 0.42s var(--os-spring); }
+@keyframes woPageIn { from { opacity: 0; transform: translateY(18px) scale(0.985); } }
+
+/* Continuous (Web Layout): one tall page with Word margins! */
+body.os-office.wo-web #wysiwyg-canvas {
+    width: var(--wo-pw) !important;
+    max-width: none !important;
+    min-height: var(--wo-ph) !important;
+    padding: var(--wo-mt) var(--wo-ms) var(--wo-mb) !important;
+    border-radius: 2px;
+    border: 0;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 6px 24px rgba(0, 0, 0, 0.1);
+    overflow: visible;
+    flex: none !important;
+    margin: 0 auto !important;
+}
+
+/* Pages (Print Layout): page sheets behind a see-through canvas! */
+#wo-sheets { display: none; }
+body.os-office.wo-pages #wo-sheets { display: block; position: absolute; left: 0; top: 0; width: var(--wo-pw); height: 0; z-index: 0; pointer-events: none; }
+.wo-sheet {
+    position: absolute;
+    left: 0;
+    width: var(--wo-pw);
+    height: var(--wo-ph);
+    background: var(--wo-sheet-bg, #fff);
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14), 0 8px 26px rgba(0, 0, 0, 0.11);
+}
+.wo-sheet.wo-sheet-new { animation: woSheetIn 0.45s var(--os-spring); }
+@keyframes woSheetIn { from { opacity: 0; transform: translateY(26px) scale(0.97); } }
+.wo-pnum {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: calc(var(--wo-mb) / 2 - 8px);
+    text-align: center;
+    font: 600 11px var(--os-brand-font);
+    color: rgba(100, 116, 139, 0.75);
+    display: none;
+}
+body.wo-numbers .wo-pnum { display: block; }
+body.os-office.wo-pages #wysiwyg-canvas {
+    position: relative;
+    z-index: 1;
+    width: var(--wo-pw) !important;
+    max-width: none !important;
+    min-height: var(--wo-total-h, var(--wo-ph)) !important;
+    padding: var(--wo-mt) var(--wo-ms) var(--wo-mb) !important;
+    margin: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    flex: none !important;
+}
+
+/* Focus mode: just you and the page! */
+body.os-office.wo-focus #os-top { display: none; }
+body.os-office.wo-focus #os-status { opacity: 0.35; transition: opacity 0.2s; }
+body.os-office.wo-focus #os-status:hover { opacity: 1; }
+
+/* Floating toolbars stay (Word has a mini toolbar too)! */
+body.os-office #aero-selection-toolbar, body.os-office #aero-block-toolbar { z-index: 40; }
+
+/* Ribbon gallery previews for Writeout's own heading styles! */
+.wo-gp { font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.2; display: block; padding: 4px 0 2px; }
+.wo-gp-h1 { color: #0284c7; font-weight: 800; font-size: 15px; border-bottom: 2px solid #38bdf8; }
+.wo-gp-h2 { color: #059669; font-weight: 700; font-size: 14px; }
+.wo-gp-h3 { color: #d97706; font-weight: 700; }
+.wo-gp-q { color: #0369a1; font-style: italic; border-left: 3px solid #0284c7; padding-left: 4px; }
+.wo-gp-c { background: #e2e8f0; border-radius: 3px; padding: 2px 3px; color: #475569; }
+body.os-dark .wo-gp-p { color: #e5e5e5; }
+
+/* Highlighter / orb / bubble menus reuse Writeout's own swatches! */
+.os-swatches.wo-sw-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 6px 8px 8px; }
+.os-swatches.wo-sw-grid .os-swatch { width: 40px; height: 28px; font: 700 12px 'JetBrains Mono', monospace; border-radius: 6px; }
+
+/* File screen bits! */
+.wo-prev-blank { background: #fff; box-shadow: inset 0 0 0 1px #e5e5e5; background-image: repeating-linear-gradient(transparent 0 9px, #e8e8e8 9px 10px); background-size: 70% 60%; background-repeat: no-repeat; background-position: 50% 30%; }
+.wo-bs-doc { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--os-menu-line); border-radius: 10px; max-width: 560px; }
+.wo-bs-doc img { width: 36px; height: 36px; }
+.wo-bs-doc div { display: flex; flex-direction: column; gap: 3px; }
+.wo-bs-doc span { color: var(--os-dim); font-size: 12.5px; }
+.wo-wc { border-collapse: collapse; min-width: 300px; margin: 4px 0 10px; }
+.wo-wc td { padding: 6px 10px; border-bottom: 1px solid var(--os-menu-line); }
+.wo-wc td:last-child { text-align: right; }
+.wo-wc.big { font-size: 14px; margin-bottom: 20px; }
+
+/* Layout cards inside Writeout Classic's own Settings dialog! */
+.wo-classic-cards { margin: 6px 0 10px; }
+.wo-classic-cards .os-lay-card { width: calc(50% - 8px); min-width: 200px; background: rgba(255, 255, 255, 0.6); }
+
+@media (max-width: 980px) {
+    body.os-office.wo-pane-on #format-sidebar { display: none; }
+}
+@media (max-width: 760px) {
+    body.os-office #sidebar { display: none; }
+}
+
+@media print {
+    body.os-office { display: block !important; height: auto; background: #fff; }
+    body.os-office #wo-zoomer { display: block; margin: 0; width: auto; zoom: 1 !important; }
+    body.os-office #wo-sheets { display: none !important; }
+    body.os-office.wo-pages #wysiwyg-canvas, body.os-office.wo-web #wysiwyg-canvas { padding: 0 !important; width: 100% !important; box-shadow: none !important; }
+    #wo-page-rules { display: none; }
+}

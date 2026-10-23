@@ -337,3 +337,60 @@ html, body {
     cursor: pointer;
   }
 }
+
+// Website Kit modal!
+.kit-card {
+  width: min(520px, calc(100vw - 32px));
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.kit-intro,
+.kit-note {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.85);
+
+  a {
+    color: t.$brand-light;
+  }
+}
+
+.kit-step {
+  @include t.stack(8px);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid t.brand-glow(0.35);
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 12px;
+
+  strong {
+    color: t.$brand-light;
+  }
+}
+
+.kit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.kit-code {
+  margin: 0;
+  padding: 10px;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid t.brand-glow(0.35);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 11px;
+  white-space: pre;
+  overflow-x: auto;
+  user-select: all;
+}
+
+.kit-status {
+  font-size: 11px;
+  color: t.$brand-light;
+}

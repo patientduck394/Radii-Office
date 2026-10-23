@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="radii-file.js?v=20261042"></script>
+    <script>RadiiFile.scope(/^(tasks-app-v1$|taskra_collab_backup$)/);</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskra - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="office-shell.css?v=20261019">
+    <link rel="stylesheet" href="taskra-office.css?v=20261037">
+    <link rel="stylesheet" href="radii-collab.css?v=20261042">
+    <link rel="icon" type="image/png" sizes="96x96" href="/taskra/favicon-96.png">
+    <link rel="apple-touch-icon" href="/taskra/apple-touch-icon.png">
+</head>
+<body>
+
+    <nav class="aero-sidebar">
+        <div class="sidebar-brand">
+            <h2>Taskra</h2>
+        </div>
+
+        <div class="pad-selection-stack">
+            <span class="section-label">Task Controls</span>
+            <button class="action-btn active" onclick="openTaskModal()">➕ Add New Task</button>
+            <button class="action-btn" onclick="askClearCompleted()" style="border-color:#ef4444; color:#fca5a5;">🧹 Clear Completed</button>
+
+            <span class="section-label">Views</span>
+            <button class="action-btn" onclick="setFilter('all')">📋 All Tasks</button>
+            <button class="action-btn" onclick="setFilter('active')">⚡ Active Only</button>
+            <button class="action-btn" onclick="setFilter('done')">✅ Done Only</button>
+            <button class="action-btn" onclick="setFilter('overdue')">🔥 Overdue Only</button>
+
+            <span class="section-label">File Operations</span>
+            <button class="action-btn" onclick="exportTasks()">💾 Export .TK</button>
+            <button class="action-btn" onclick="document.getElementById('file-tk').click()">📂 Import .TK</button>
+
+            <input type="file" id="file-tk" style="display:none" accept=".tk,.json" onchange="importTasks(event)">
+        </div>
+    </nav>
+
+    <main class="workspace-viewport-wrapper">
+        <div class="tasks-toolbar">
+            <span class="toolbar-label">SEARCH:</span>
+            <input type="text" id="task-search" class="search-field" placeholder="Search tasks..." oninput="setSearch(this.value)">
+            <span class="toolbar-hint" id="task-count">0 Tasks</span>
+        </div>
+
+        <div class="tasks-frame" id="tasks-list"></div>
+    </main>
+
+    <!-- Modal for Adding/Editing Tasks -->
+    <div id="task-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-card">
+            <div class="modal-title" id="task-modal-title-text">Add Task</div>
+            <div class="form-stack">
+                <div class="control-group">
+                    <label>Title</label>
+                    <input type="text" id="task-title" placeholder="e.g. Ship the release">
+                </div>
+                <div class="control-group">
+                    <label>Due date (blank = none!)</label>
+                    <input type="date" id="task-due">
+                </div>
+                <div class="control-group">
+                    <label>Priority</label>
+                    <select id="task-priority">
+                        <option value="low">Low</option>
+                        <option value="med" selected>Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label>Notes</label>
+                    <textarea id="task-notes" rows="3" placeholder="Optional details..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn" onclick="saveTask()">Save</button>
+                <button class="action-btn cancel-btn" onclick="closeTaskModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js?v=20261036"></script>
+    <script src="office-shell.js?v=20261019"></script>
+    <script src="taskra-office.js?v=20261037"></script>
+    <script src="radii-collab.js?v=20261052"></script>
+    <script src="collab-taskra.js?v=20261036"></script>
+</body>
+</html>

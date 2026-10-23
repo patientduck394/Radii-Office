@@ -114,3 +114,93 @@
     display: none !important;
   }
 }
+
+/* --- Frutiger Aero UI picker (Settings)! --- */
+.settings-aero-ui { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 6px; margin: 4px 0; }
+.settings-aero-opt {
+  display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px 7px;
+  border-radius: 10px; border: 1px solid #e9d5ff; background: #fffdf7; cursor: pointer; font: inherit;
+}
+.settings-aero-opt:hover { border-color: #c084fc; }
+.settings-aero-opt.active { border-color: #9333ea; box-shadow: 0 0 0 2px #9333ea; }
+.settings-aero-opt .us-chip { pointer-events: none; }
+.settings-aero-off { display: inline-block; padding: 1px 12px; border-radius: 6px; border: 1px dashed #a78bfa; color: #7e22ce; font-weight: 800; }
+.settings-aero-name { font-size: 11px; font-weight: 800; color: #6b21a8; text-align: center; }
+.settings-aero-hint { margin: 2px 0 8px; font-size: 12px; color: #7e22ce; }
+
+/* ========================================================
+   FRUTIGER AERO UI MODE: the whole UI wears a Gallery style!
+   Controls (buttons, latches, active items) use the chosen style;
+   the surfaces behind them get a calmer, DIFFERENT finish, so it's
+   never style-on-style! --aui follows Bitbook's UI color.
+   ======================================================== */
+body.aero-ui {
+  --aui: #9333ea;
+  --aui-ink: color-mix(in srgb, var(--aui) 40%, #000000);
+  --aui-edge: color-mix(in srgb, var(--aui) 45%, #ffffff);
+}
+/* Every control + latch + active item */
+body.aero-ui :is(.style-bar-btn, .style-tool-btn, .sidebar-action-btn, .fmt-align-btn, .px-seg-btn, .format-segment-btn,
+  .settings-theme-btn, .dialog-confirm-orb, .pad-toggle-btn, .mkt-tab, .fmt-hl-btn, .outline-toggle,
+  .latch-toggle-strip, .format-latch-toggle-strip, .outline-item.active) {
+  transition: filter 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease, right 0.3s cubic-bezier(0.1, 0.9, 0.2, 1) !important;
+}
+body.aero-ui :is(.style-bar-btn, .style-tool-btn, .sidebar-action-btn, .fmt-align-btn, .px-seg-btn, .format-segment-btn,
+  .settings-theme-btn, .dialog-confirm-orb, .pad-toggle-btn, .mkt-tab, .fmt-hl-btn, .outline-toggle,
+  .latch-toggle-strip, .format-latch-toggle-strip):hover { filter: brightness(1.07) saturate(1.1); }
+body.aero-ui :is(.style-bar-btn, .style-tool-btn, .sidebar-action-btn, .fmt-align-btn, .px-seg-btn, .format-segment-btn,
+  .settings-theme-btn, .dialog-confirm-orb, .pad-toggle-btn, .mkt-tab, .fmt-hl-btn, .outline-toggle):active { transform: translateY(1px); filter: brightness(0.95); }
+body.aero-ui :is(.style-bar-btn, .settings-theme-btn, .dialog-confirm-orb, .sidebar-action-btn, .px-seg-btn, .format-segment-btn, .pad-toggle-btn):disabled { filter: grayscale(0.6) opacity(0.6); }
+body.aero-ui :is(.latch-toggle-strip, .format-latch-toggle-strip) { backdrop-filter: none !important; }
+body.aero-ui .latch-toggle-strip { border-left: none !important; border-radius: 0 9px 9px 0 !important; }
+body.aero-ui .format-latch-toggle-strip { border-right: none !important; border-radius: 9px 0 0 9px !important; }
+body.aero-ui :is(.style-bar-btn, .style-tool-btn, .fmt-align-btn, .fmt-hl-btn, .latch-toggle-strip, .format-latch-toggle-strip) svg { color: inherit; }
+/* Inputs + selects: one quiet inset glass field in every mode! */
+body.aero-ui :is(.format-control, .font-size-number, .unichip-text, .unichip-hex, .mkt-search, select, input[type="number"], input[type="text"], input[type="search"]) {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--aui) 6%, #f4f6f9), #ffffff 45%) !important;
+  border: 1px solid var(--aui-edge) !important; color: var(--aui-ink) !important;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.12) !important;
+}
+/* Sidebar text stays crisp on the new surfaces */
+body.aero-ui .outline-item:not(.active):hover { background: rgba(255,255,255,0.14) !important; color: #ffffff !important; }
+
+/* ---------- Toolbar Gel: tinted split controls in a glass window frame ---------- */
+body.aero-ui-toolbar {
+  --aui-ctl: linear-gradient(180deg, color-mix(in srgb, var(--aui) 15%, #ffffff) 0%, color-mix(in srgb, var(--aui) 30%, #ffffff) 49%, color-mix(in srgb, var(--aui) 45%, #ffffff) 50%, color-mix(in srgb, var(--aui) 25%, #ffffff) 100%);
+  --aui-side: linear-gradient(180deg, rgba(255,255,255,0.32) 0, rgba(255,255,255,0.1) 40px, transparent 41px), linear-gradient(180deg, color-mix(in srgb, var(--aui) 55%, #26304a), color-mix(in srgb, var(--aui) 35%, #0e1426));
+  --aui-pane: linear-gradient(180deg, #fbfcfd 0%, #eef1f5 50%, #e6eaef 100%);
+}
+body.aero-ui-toolbar :is(.style-bar-btn, .style-tool-btn, .sidebar-action-btn, .fmt-align-btn, .px-seg-btn, .format-segment-btn,
+  .settings-theme-btn, .dialog-confirm-orb, .pad-toggle-btn, .mkt-tab, .fmt-hl-btn, .outline-toggle,
+  .latch-toggle-strip, .format-latch-toggle-strip, .outline-item.active) {
+  background: var(--aui-ctl) !important;
+  color: var(--aui-ink) !important; text-shadow: none !important;
+  border: 1px solid var(--aui-edge) !important;
+  box-shadow: inset 0 1px 0 #ffffff, 0 1px 1px rgba(0,0,0,0.12) !important;
+  border-radius: 3px !important; font-family: 'Segoe UI', system-ui, sans-serif !important;
+}
+body.aero-ui-toolbar :is(.px-seg-btn, .format-segment-btn).active {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--aui) 45%, #ffffff) 0%, color-mix(in srgb, var(--aui) 60%, #ffffff) 49%, color-mix(in srgb, var(--aui) 75%, #ffffff) 50%, color-mix(in srgb, var(--aui) 55%, #ffffff) 100%) !important;
+  color: color-mix(in srgb, var(--aui) 30%, #000000) !important; box-shadow: inset 0 2px 3px rgba(0,0,0,0.18) !important;
+}
+body.aero-ui-toolbar .latch-toggle-strip { border-radius: 0 6px 6px 0 !important; }
+body.aero-ui-toolbar .format-latch-toggle-strip { border-radius: 6px 0 0 6px !important; }
+body.aero-ui-toolbar :is(.insert-item, .download-item):hover { background: var(--aui-ctl) !important; color: var(--aui-ink) !important; border-color: var(--aui-edge) !important; }
+
+/* ---------- Surfaces (shared wiring, per-mode finishes above) ---------- */
+body.aero-ui :is(.aero-sidebar, .format-sidebar) {
+  background: var(--aui-side) !important; backdrop-filter: none !important;
+  border-color: color-mix(in srgb, var(--aui) 35%, rgba(255,255,255,0.5)) !important;
+  box-shadow: 0 0 25px rgba(0,0,0,0.35) !important;
+}
+body.aero-ui #top-format-bar.aero-format-ribbon,
+body.aero-ui :is(.aero-palette-menu, .dropdown-menu, .download-popup, #style-picker-popup, .cp-popup, #hl-popup, #cp-popup, #aq-popup) {
+  background: var(--aui-pane) !important; backdrop-filter: none !important;
+  border: 1px solid var(--aui-edge) !important;
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--aui) 25%, transparent), inset 0 1px 0 #ffffff !important;
+}
+body.aero-ui :is(dialog.aero-dialog-box, .embossed-dialogue-chassis) {
+  background: var(--aui-pane) !important; border: 1px solid var(--aui-edge) !important;
+}
+body.aero-ui .dialog-header { background: var(--aui-side) !important; border-bottom: 1px solid var(--aui-edge) !important; }
+

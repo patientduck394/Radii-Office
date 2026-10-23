@@ -1,0 +1,80 @@
+/* BeepBox song chips (for Omicron's editor)! */
+.bb-chip { position: relative; display: inline-flex; align-items: center; gap: 6px; padding: 3px 4px; margin: 0px 2px; border-radius: 4px 4px 10px 10px; font-family: "JetBrains Mono", monospace; font-size: 12px; font-weight: 800; vertical-align: middle; white-space: nowrap; cursor: pointer; user-select: none; background: linear-gradient(rgb(236, 231, 218) 0%, rgb(214, 207, 190) 100%); border: 1px solid rgb(156, 148, 131); box-shadow: rgba(255, 255, 255, 0.75) 0px 1px 0px inset, rgba(0, 0, 0, 0.1) 0px -2px 0px inset, rgb(138, 130, 114) 0px 2px 0px; transition: transform 0.1s, box-shadow 0.1s; }
+.bb-chip span { pointer-events: none; }
+.bb-chip:hover { transform: translateY(-1px); }
+.bb-chip:active { transform: translateY(1px); box-shadow: rgba(255, 255, 255, 0.75) 0px 1px 0px inset, rgba(0, 0, 0, 0.1) 0px -1px 0px inset, rgb(138, 130, 114) 0px 1px 0px; }
+.bb-chip-icon { position: relative; flex: 0 0 auto; width: 16px; height: 16px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgb(240, 98, 146) 0%, rgb(194, 24, 91) 55%, rgb(136, 14, 79) 100%); box-shadow: rgb(109, 10, 61) 0px 1px 0px, rgba(255, 255, 255, 0.45) 0px 1px 1px inset; }
+.bb-chip-icon::before { content: ""; position: absolute; left: 6px; top: 4px; border-style: solid; border-width: 4px 0px 4px 6px; border-color: transparent transparent transparent rgb(255, 255, 255); }
+.bb-chip-text { display: inline-flex; align-items: center; gap: 6px; padding: 1px 7px; border-radius: 3px; background: rgb(155, 188, 15); color: rgb(15, 56, 15); box-shadow: rgba(15, 56, 15, 0.55) 0px 1px 2px inset; border: 1px solid rgb(92, 107, 74); }
+.bb-chip.bb-playing .bb-chip-icon { transform: translateY(1px); box-shadow: rgba(0, 0, 0, 0.45) 0px 1px 2px inset; }
+.bb-chip.bb-playing .bb-chip-icon::before { left: 5px; top: 5px; width: 6px; height: 6px; border-width: medium; border-style: none; border-color: currentcolor; border-image: none; background: rgb(255, 255, 255); border-radius: 1px; }
+.bb-chip.bb-playing .bb-chip-text { background: rgb(196, 232, 107); box-shadow: rgba(15, 56, 15, 0.35) 0px 1px 2px inset, rgba(196, 232, 107, 0.75) 0px 0px 8px; }
+.bb-chip.bb-playing .bb-chip-text::after { content: ""; width: 11px; height: 9px; flex: 0 0 auto; background: linear-gradient(var(--bb-eq, #0f380f), var(--bb-eq, #0f380f)) 0 100% / 3px 40% no-repeat,
+        linear-gradient(var(--bb-eq, #0f380f), var(--bb-eq, #0f380f)) 4px 100% / 3px 90% no-repeat,
+        linear-gradient(var(--bb-eq, #0f380f), var(--bb-eq, #0f380f)) 8px 100% / 3px 60% no-repeat; animation: 0.6s steps(3) 0s infinite alternate none running bb-chip-eq; }
+.bb-chip.bb-error .bb-chip-text { background: rgb(232, 168, 124); color: rgb(90, 26, 10); }
+.bb-chip.bb-error .bb-chip-icon { filter: grayscale(1); }
+@media (prefers-reduced-motion: reduce){.bb-chip.bb-playing .bb-chip-text::after { animation: auto ease 0s 1 normal none running none; }
+.bb-chip, .bb-chip:hover, .bb-chip:active { transition: none; transform: none; }}
+.bb-style-btn .bb-chip { pointer-events: none; max-width: 100%; }
+.bb-style-btn .bb-chip-text { overflow: hidden; text-overflow: ellipsis; display: block; max-width: 100px; }
+.bb-chip.bb-st-cassette { --bb-eq: #2b2118; background: linear-gradient(rgb(59, 59, 68), rgb(36, 36, 43)); border: 1px solid rgb(17, 17, 17); border-radius: 5px; padding: 3px 5px; box-shadow: rgba(255, 255, 255, 0.15) 0px 1px 0px inset, rgb(13, 13, 16) 0px 2px 0px; }
+.bb-st-cassette .bb-chip-icon { background: rgb(232, 226, 208); box-shadow: rgb(36, 36, 43) 0px 0px 0px 2px inset; }
+.bb-st-cassette .bb-chip-icon::before { border-left-color: rgb(36, 36, 43); }
+.bb-st-cassette .bb-chip-text { background: linear-gradient(rgb(246, 239, 217) 0px, rgb(246, 239, 217) 80%, rgb(224, 90, 71) 80%, rgb(224, 90, 71) 90%, rgb(246, 239, 217) 90%); color: rgb(43, 33, 24); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 2px; padding: 0px 7px 4px; box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 1px inset; }
+.bb-chip.bb-st-cassette.bb-playing .bb-chip-icon { background: repeating-conic-gradient(rgb(232, 226, 208) 0deg, rgb(232, 226, 208) 30deg, rgb(36, 36, 43) 30deg, rgb(36, 36, 43) 60deg); animation: 1.2s linear 0s infinite normal none running bb-spin; }
+.bb-chip.bb-st-cassette.bb-playing .bb-chip-icon::before { left: 5px; top: 5px; width: 6px; height: 6px; border-radius: 50%; background: rgb(36, 36, 43); }
+.bb-chip.bb-st-cassette.bb-playing .bb-chip-text { background: linear-gradient(rgb(255, 250, 240) 0px, rgb(255, 250, 240) 80%, rgb(240, 107, 87) 80%, rgb(240, 107, 87) 90%, rgb(255, 250, 240) 90%); box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 0px 1px inset; }
+.bb-chip.bb-st-vinyl { --bb-eq: #e53935; background: linear-gradient(rgb(42, 42, 42), rgb(17, 17, 17)); border: 1px solid rgb(0, 0, 0); border-radius: 999px; padding: 2px 10px 2px 2px; box-shadow: rgba(0, 0, 0, 0.35) 0px 2px 4px; }
+.bb-st-vinyl .bb-chip-icon { width: 20px; height: 20px; background: radial-gradient(circle, rgb(229, 57, 53) 0px, rgb(229, 57, 53) 4px, rgb(20, 20, 20) 4.5px, rgb(44, 44, 44) 5.5px, rgb(20, 20, 20) 6.5px, rgb(44, 44, 44) 7.5px, rgb(20, 20, 20) 8.5px, rgb(58, 58, 58) 10px); box-shadow: rgb(0, 0, 0) 0px 0px 0px 1px; }
+.bb-st-vinyl .bb-chip-icon::before { left: 8px; top: 6px; border-width: 4px 0px 4px 6px; border-left-color: rgb(255, 255, 255); }
+.bb-st-vinyl .bb-chip-text { background: transparent; color: rgb(245, 245, 245); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; box-shadow: none; padding: 1px 2px; }
+.bb-chip.bb-st-vinyl.bb-playing .bb-chip-icon { transform: none; box-shadow: rgb(0, 0, 0) 0px 0px 0px 1px; animation: 1.8s linear 0s infinite normal none running bb-spin; }
+.bb-chip.bb-st-vinyl.bb-playing .bb-chip-icon::before { left: 8px; top: 8px; width: 4px; height: 4px; border-radius: 50%; background: rgb(255, 255, 255); }
+.bb-chip.bb-st-vinyl.bb-playing .bb-chip-text { background: transparent; color: rgb(255, 255, 255); box-shadow: none; }
+.bb-chip.bb-st-synth { --bb-eq: #5ff6ff; background: linear-gradient(rgb(42, 11, 69), rgb(18, 0, 43)); border: 1px solid rgb(255, 63, 180); border-radius: 6px; box-shadow: rgba(255, 63, 180, 0.5) 0px 0px 6px, rgba(255, 63, 180, 0.18) 0px -6px 10px inset; }
+.bb-st-synth .bb-chip-icon { border-radius: 4px; background: linear-gradient(rgb(255, 141, 224), rgb(255, 63, 180)); box-shadow: rgba(255, 63, 180, 0.8) 0px 0px 6px; }
+.bb-st-synth .bb-chip-text { background: transparent; color: rgb(95, 246, 255); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; box-shadow: none; font-style: italic; text-shadow: rgba(95, 246, 255, 0.8) 0px 0px 6px; }
+.bb-chip.bb-st-synth.bb-playing { animation: 1s ease-in-out 0s infinite normal none running bb-synth-pulse; }
+.bb-chip.bb-st-synth.bb-playing .bb-chip-text { background: transparent; color: rgb(255, 255, 255); box-shadow: none; text-shadow: rgb(95, 246, 255) 0px 0px 8px; }
+.bb-chip.bb-st-aqua { --bb-eq: #ffffff; background: linear-gradient(rgb(159, 227, 255) 0%, rgb(47, 168, 230) 55%, rgb(20, 120, 196) 100%); border: 2px solid rgb(15, 95, 158); border-radius: 999px; padding: 2px 11px 2px 3px; box-shadow: rgba(255, 255, 255, 0.6) 0px 1px 1px inset, rgba(0, 0, 0, 0.12) 0px 3px 6px; }
+.bb-chip.bb-st-aqua::before { content: ""; position: absolute; left: 6px; right: 6px; top: 1px; height: 45%; border-radius: 999px; pointer-events: none; background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.08)); }
+.bb-st-aqua .bb-chip-icon { background: radial-gradient(circle at 35% 30%, rgb(255, 255, 255), rgb(217, 243, 255) 60%, rgb(143, 205, 232)); box-shadow: rgba(0, 40, 80, 0.4) 0px 1px 1px; }
+.bb-st-aqua .bb-chip-icon::before { border-left-color: rgb(15, 95, 158); }
+.bb-st-aqua .bb-chip-text { position: relative; background: transparent; color: rgb(255, 255, 255); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; box-shadow: none; text-shadow: rgba(0, 40, 80, 0.6) 0px 1px 1px; }
+.bb-chip.bb-st-aqua.bb-playing { --bb-eq: #ffffff; background: linear-gradient(rgb(196, 247, 176) 0%, rgb(76, 201, 90) 55%, rgb(35, 144, 45) 100%); border-color: rgb(27, 110, 34); }
+.bb-chip.bb-st-aqua.bb-playing .bb-chip-icon::before { background: rgb(27, 110, 34); }
+.bb-chip.bb-st-aqua.bb-playing .bb-chip-text { background: transparent; box-shadow: none; text-shadow: rgba(10, 60, 15, 0.6) 0px 1px 1px; }
+.bb-chip.bb-st-piano { --bb-eq: #111111; background: rgb(253, 253, 253); border: 1px solid rgb(34, 34, 34); border-radius: 4px; padding: 3px 6px 3px 4px; box-shadow: rgb(34, 34, 34) 0px 2px 0px; }
+.bb-st-piano .bb-chip-icon { width: 11px; height: 18px; border-radius: 0px 0px 3px 3px; background: linear-gradient(rgb(58, 58, 58), rgb(0, 0, 0)); box-shadow: rgb(0, 0, 0) 0px 1px 0px; }
+.bb-st-piano .bb-chip-icon::before { left: 3px; top: 5px; border-width: 4px 0px 4px 5px; }
+.bb-st-piano .bb-chip-text { background: repeating-linear-gradient(90deg, rgb(17, 17, 17) 0px, rgb(17, 17, 17) 5px, transparent 5px, transparent 12px) 3px 0px / 100% 5px no-repeat, rgb(255, 255, 255); color: rgb(17, 17, 17); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; border-radius: 0px; box-shadow: none; padding: 6px 4px 1px; font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+.bb-chip.bb-st-piano.bb-playing .bb-chip-icon { background: linear-gradient(rgb(139, 92, 246), rgb(91, 33, 182)); }
+.bb-chip.bb-st-piano.bb-playing .bb-chip-icon::before { left: 3px; top: 6px; width: 5px; height: 5px; }
+.bb-chip.bb-st-piano.bb-playing .bb-chip-text { background: repeating-linear-gradient(90deg, rgb(124, 58, 237) 0px, rgb(124, 58, 237) 5px, transparent 5px, transparent 12px) 3px 0px / 100% 5px no-repeat, rgb(250, 245, 255); box-shadow: none; }
+.bb-chip.bb-st-musicbox { --bb-eq: #4a2c10; background: repeating-linear-gradient(100deg, rgba(0, 0, 0, 0.06) 0px, rgba(0, 0, 0, 0.06) 2px, transparent 2px, transparent 7px), linear-gradient(rgb(185, 130, 77), rgb(138, 90, 43)); border: 1px solid rgb(94, 58, 23); border-radius: 6px; box-shadow: rgba(255, 255, 255, 0.3) 0px 1px 0px inset, rgb(74, 44, 16) 0px 2px 0px; }
+.bb-st-musicbox .bb-chip-icon { background: radial-gradient(circle at 35% 30%, rgb(255, 243, 196), rgb(224, 180, 76) 55%, rgb(154, 116, 32)); box-shadow: rgb(74, 44, 16) 0px 1px 0px, rgba(255, 255, 255, 0.5) 0px 1px 1px inset; }
+.bb-st-musicbox .bb-chip-icon::before { border-left-color: rgb(94, 58, 23); }
+.bb-st-musicbox .bb-chip-text { background: linear-gradient(rgb(243, 227, 195), rgb(230, 207, 162)); color: rgb(74, 44, 16); border: 1px solid rgb(154, 116, 32); border-radius: 3px; box-shadow: rgba(0, 0, 0, 0.15) 0px 1px 1px inset; font-family: Georgia, "Times New Roman", serif; font-style: italic; }
+.bb-chip.bb-st-musicbox.bb-playing .bb-chip-icon { transform: none; animation: 2.2s linear 0s infinite normal none running bb-spin; }
+.bb-chip.bb-st-musicbox.bb-playing .bb-chip-icon::before { background: rgb(94, 58, 23); }
+.bb-chip.bb-st-musicbox.bb-playing .bb-chip-text { background: linear-gradient(rgb(255, 246, 221), rgb(241, 223, 182)); box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 1px inset, rgba(240, 200, 110, 0.7) 0px 0px 6px; }
+.bb-chip.bb-st-minimal { --bb-eq: #7c3aed; background: rgb(255, 255, 255); border: 1.5px solid rgb(203, 213, 225); border-radius: 999px; padding: 2px 11px 2px 3px; box-shadow: none; }
+.bb-chip.bb-st-minimal:active { box-shadow: none; }
+.bb-st-minimal .bb-chip-icon { background: rgb(15, 23, 42); box-shadow: none; }
+.bb-st-minimal .bb-chip-text { background: transparent; color: rgb(15, 23, 42); border-width: medium; border-style: none; border-color: currentcolor; border-image: none; box-shadow: none; padding: 1px 0px; font-family: inherit; font-weight: 700; }
+.bb-chip.bb-st-minimal.bb-playing { border-color: rgb(124, 58, 237); }
+.bb-chip.bb-st-minimal.bb-playing .bb-chip-icon { background: rgb(124, 58, 237); box-shadow: none; }
+.bb-chip.bb-st-minimal.bb-playing .bb-chip-text { background: transparent; box-shadow: none; color: rgb(91, 33, 182); }
+@media (prefers-reduced-motion: reduce){.bb-chip.bb-playing .bb-chip-icon, .bb-chip.bb-st-synth.bb-playing { animation: auto ease 0s 1 normal none running none !important; }}
+@keyframes bb-chip-eq { 
+  0% { background-size: 3px 40%, 3px 90%, 3px 60%; }
+  100% { background-size: 3px 100%, 3px 30%, 3px 85%; }
+}
+@keyframes bb-spin { 
+  100% { transform: rotate(360deg); }
+}
+@keyframes bb-synth-pulse { 
+  0%, 100% { box-shadow: rgba(255, 63, 180, 0.5) 0px 0px 6px, rgba(255, 63, 180, 0.18) 0px -6px 10px inset; }
+  50% { box-shadow: rgba(255, 63, 180, 0.9) 0px 0px 14px, rgba(95, 246, 255, 0.8) 0px 0px 4px, rgba(255, 63, 180, 0.3) 0px -6px 10px inset; }
+}

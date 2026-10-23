@@ -648,3 +648,28 @@ svg#viewport { width: 100%; height: 100%; cursor: crosshair; }
 .scale-handle { fill: #ffffff; stroke: #FF60C5; stroke-width: 2; cursor: nwse-resize; }
 .shape-selected { stroke: #FF60C5 !important; stroke-width: 2px !important; stroke-dasharray: 4 4; }
 .preview-shape { stroke: #FF60C5; stroke-dasharray: 2 2; fill: rgba(255, 96, 197, 0.2); }
+/* ========================================================
+   CSS TO SVG DIALOG (pink glass, like the rest of Inkpath!)
+   ======================================================== */
+#c2s-back { position: fixed; inset: 0; z-index: 3000; background: rgba(15, 2, 12, 0.6); backdrop-filter: blur(6px); display: grid; place-items: center; padding: 16px; }
+#c2s-back[hidden] { display: none; }
+.c2s-dlg { width: min(860px, 100%); max-height: 92vh; overflow: auto; display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: 16px; background: linear-gradient(180deg, rgba(60, 14, 48, 0.96) 0%, rgba(26, 4, 20, 0.97) 100%); border: 2px solid rgba(255, 96, 197, 0.45); box-shadow: 0 24px 70px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.15); }
+.c2s-head { display: flex; align-items: center; justify-content: space-between; }
+.c2s-head b { font-size: 18px; font-weight: 900; color: #ffb8e4; text-shadow: 0 0 12px rgba(255, 96, 197, 0.7); }
+.c2s-x { border: 1px solid rgba(255, 255, 255, 0.25); background: transparent; color: #fff; width: 28px; height: 28px; border-radius: 7px; cursor: pointer; }
+.c2s-sub { margin: 0; font-size: 12px; color: rgba(255, 255, 255, 0.75); line-height: 1.5; }
+.c2s-sub code { color: #ffb8e4; }
+.c2s-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.c2s-presets .action-btn { width: auto; padding: 6px 10px; font-size: 11px; }
+.c2s-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.c2s-col { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.c2s-col label { font-size: 10px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #ff92d8; }
+#c2s-css, #c2s-text { width: 100%; box-sizing: border-box; background: rgba(0, 0, 0, 0.35); color: #fff; border: 1px solid rgba(255, 96, 197, 0.4); border-radius: 9px; padding: 9px; font: 12px/1.5 'JetBrains Mono', monospace; outline: none; }
+#c2s-css { min-height: 220px; resize: vertical; }
+#c2s-css:focus, #c2s-text:focus { border-color: #FF60C5; box-shadow: 0 0 0 3px rgba(255, 96, 197, 0.25); }
+.c2s-stage { min-height: 120px; display: grid; place-items: center; padding: 14px; border-radius: 10px; overflow: auto; background: repeating-conic-gradient(rgba(255, 255, 255, 0.06) 0% 25%, transparent 0% 50%) 0 0 / 16px 16px, rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.12); }
+.c2s-stage svg { max-width: 100%; height: auto; overflow: visible; }
+.c2s-foot { display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.c2s-foot .action-btn, .c2s-foot .pad-toggle-btn { width: auto; padding: 9px 16px; }
+#c2s-msg { margin-right: auto; color: #fca5a5; font-size: 12px; }
+@media (max-width: 700px) { .c2s-grid { grid-template-columns: 1fr; } }

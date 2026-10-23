@@ -1,0 +1,31 @@
+/* =====================================================================
+   Formly's Forms layout! (body.os-office) A light page, violet chrome and
+   the form card in the middle. Formly Classic stays untouched!
+   ===================================================================== */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #f4f1fe;
+    color: #252525;
+}
+body.os-office.os-dark { background: #1a1530; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .aero-sidebar, body.os-office .sheets-toolbar { display: none !important; }
+body.os-office .workspace-viewport-wrapper { grid-column: 1; grid-row: 2; height: auto; min-height: 0; width: auto; padding: 0; animation: osFade 0.3s; }
+body.os-office #spreadsheet-container { height: 100%; max-width: none; margin: 0; padding: 28px 24px 60px; border: 0; border-radius: 0; box-shadow: none; background: #f4f1fe; backdrop-filter: none; overflow-y: auto; }
+body.os-office.os-dark #spreadsheet-container { background: #1a1530; }
+body.os-office .form-meta-card, body.os-office .form-field-card { border: 1px solid #e3dcfb !important; box-shadow: 0 1px 4px rgba(124, 79, 240, 0.12) !important; background: #fff !important; }
+
+/* Ribbon theme picker */
+.fm-accents { display: flex; flex-wrap: wrap; gap: 5px; max-width: 130px; padding: 4px 6px; align-content: center; }
+.fm-accents button { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.6); cursor: pointer; padding: 0; transition: transform 0.15s var(--os-spring); }
+.fm-accents button:hover { transform: scale(1.2); }
+.fm-custom { position: relative; width: 20px; height: 20px; border-radius: 50%; border: 1px dashed #a78bfa; display: grid; place-items: center; font-weight: 800; color: #7c4ff0; cursor: pointer; overflow: hidden; }
+.fm-custom input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.fm-bs-doc img { width: 36px; height: 36px; }
+.fm-classic-layout { margin-top: 2px; }
+.os-dlg.fm-layout-dlg { width: 560px; }

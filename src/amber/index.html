@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <script src="radii-file.js?v=20261042"></script>
+    <script>RadiiFile.scope(/^(amber_deck_v1$|amber_collab_backup$)/);</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Amber - Radii Office</title>
@@ -10,7 +12,10 @@
     <link rel="stylesheet" href="slides-style.css?v=20261002-3">
     <link rel="stylesheet" href="marketplace.css?v=20261002-3">
     <link rel="stylesheet" href="keydown.css?v=20261002-3">
-    <link rel="icon" type="image/svg+xml" href="/amber/favicon.svg">
+    <link rel="stylesheet" href="office-shell.css?v=20261019">
+    <link rel="stylesheet" href="amber-office.css?v=20261019">
+    <link rel="stylesheet" href="radii-collab.css?v=20261042">
+    <link rel="icon" type="image/png" sizes="96x96" href="/amber/favicon-96.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d97706">
@@ -265,6 +270,9 @@
                         </div>
                         <div class="snap-option-row">
                             <label><input type="checkbox" id="snap-v-center" checked onchange="toggleSnapRule('vCenter', this.checked)"> Vertical Center</label>
+                        </div>
+                        <div class="snap-option-row">
+                            <label><input type="checkbox" id="snap-objects" checked onchange="toggleSnapRule('objects', this.checked)"> Smart Guides (other objects)</label>
                         </div>
                         <div class="snap-option-row">
                             <label><input type="checkbox" id="snap-grid" onchange="toggleSnapRule('grid', this.checked)"> Snap to Grid (20px)</label>
@@ -527,8 +535,15 @@
         </div>
     </dialog>
 
-    <script src="slides-app.js?v=20261002-3"></script>
+    <script src="slides-app.js?v=20261019"></script>
     <script src="marketplace.js?v=20261002-3"></script>
+    <script src="office-shell.js?v=20261019"></script>
+    <script src="amber-show.js?v=20261019"></script>
+    <script src="amber-office.js?v=20261019"></script>
+    <script src="radii-images.js?v=20261019"></script>
+    <script src="images-glue.js?v=20261019"></script>
+    <script src="radii-collab.js?v=20261052"></script>
+    <script src="collab-amber.js?v=20261019c"></script>
     <script>
       // Offline-first: app shell installs on first visit!
       if ('serviceWorker' in navigator) {

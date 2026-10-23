@@ -61,60 +61,177 @@ end
 -- NOTE: Lua patterns have no | alternation, so the name is checked by set!
 local FNAMES = { SUM = true, AVG = true, MIN = true, MAX = true, COUNT = true }
 
-function E.extract_range(formula)
-  local inner = string.upper(tostring(formula):sub(2))
-  local fn, sref, eref =
-    inner:match("^%s*([A-Z]+)%(%s*([A-Za-z]+%d+)%s*:%s*([A-Za-z]+%d+)%s*%)%s*$")
-  if not fn or not FNAMES[fn] then return nil end
-  return fn, sref, eref
-end
-
 local function list_sum(vals)
   local s = 0.0
   for _, v in ipairs(vals) do s = s + v end
   return s
 end
 
-function E.compute_formula(formula, data)
-  if not tostring(formula):match("^=") then return formula end
-  local fn, sref, eref = E.extract_range(formula)
-  if not fn then return "ERROR" end
-  local vals = E.get_range_values(data or {}, sref, eref)
-  if fn == "SUM" then return list_sum(vals) end
-  if fn == "COUNT" then return #vals end
-  if fn == "MIN" then
+-- Arithmetic parser: expr := term (('+'|'-') term)* etc., collecting deps!
+local function parse_arithmetic(inner)
+  local text = string.upper(inner)
+  local pos, n = 1, #text
+  local refs = {}
+  local function skip_ws()
+    while pos <= n and text:sub(pos, pos):match("%s") do pos = pos + 1 end
+  end
+  local function parse_ref_at()
+    local sref = text:match("^([A-Za-z]+%d+)", pos)
+    if not sref then return nil end
+    local sc = E.parse_cell_ref(sref)
+    if not sc then return nil end
+    pos = pos + #sref
+    return sref
+  end
+  local parse_expr, parse_term, parse_factor
+  function parse_expr()
+    local l = parse_term()
+    if not l then return nil end
+    while true do
+      skip_ws()
+      local c = text:sub(pos, pos)
+      if c ~= "+" and c ~= "-" then return l end
+      pos = pos + 1
+      local r = parse_term()
+      if not r then return nil end
+      l = { kind = (c == "+") and "add" or "sub", l = l, r = r }
+    end
+  end
+  function parse_term()
+    local l = parse_factor()
+    if not l then return nil end
+    while true do
+      skip_ws()
+      local c = text:sub(pos, pos)
+      if c ~= "*" and c ~= "/" then return l end
+      pos = pos + 1
+      local r = parse_factor()
+      if not r then return nil end
+      l = { kind = (c == "*") and "mul" or "div", l = l, r = r }
+    end
+  end
+  function parse_factor()
+    skip_ws()
+    if pos > n then return nil end
+    local c = text:sub(pos, pos)
+    if c == "(" then
+      pos = pos + 1
+      local node = parse_expr()
+      if not node then return nil end
+      skip_ws()
+      if text:sub(pos, pos) ~= ")" then return nil end
+      pos = pos + 1
+      return node
+    end
+    if c == "-" then
+      pos = pos + 1
+      local v = parse_factor()
+      if not v then return nil end
+      return { kind = "neg", v = v }
+    end
+    local num = text:match("^(%d+%.?%d*)", pos)
+    if num then
+      pos = pos + #num
+      return { kind = "num", value = tonumber(num) }
+    end
+    local word = text:match("^([A-Za-z]+)", pos)
+    if word then
+      local j = pos + #word
+      while j <= n and text:sub(j, j):match("%s") do j = j + 1 end
+      if text:sub(j, j) == "(" then
+        if not FNAMES[word] then return nil end
+        pos = j + 1
+        local sref = parse_ref_at()
+        if not sref then return nil end
+        skip_ws()
+        if text:sub(pos, pos) ~= ":" then return nil end
+        pos = pos + 1
+        local eref = parse_ref_at()
+        if not eref then return nil end
+        skip_ws()
+        if text:sub(pos, pos) ~= ")" then return nil end
+        pos = pos + 1
+        local sc, sr = E.parse_cell_ref(sref)
+        local ec, er = E.parse_cell_ref(eref)
+        for r = math.min(sr, er), math.max(sr, er) do
+          for cc = math.min(sc, ec), math.max(sc, ec) do
+            refs[#refs + 1] = E.cell_id(cc, r)
+          end
+        end
+        return { kind = "call", fn = word, start = sref, finish = eref }
+      end
+      local full = text:match("^([A-Za-z]+%d+)", pos)
+      if full and E.parse_cell_ref(full) then
+        pos = pos + #full
+        refs[#refs + 1] = full
+        return { kind = "ref", cell = full }
+      end
+      return nil
+    end
+    return nil
+  end
+  local node = parse_expr()
+  if not node then return nil end
+  skip_ws()
+  if pos <= n then return nil end
+  return node, refs
+end
+
+local function ref_value(cell, data)
+  local raw = data[cell]
+  if raw == nil then return 0 end -- missing counts as 0!
+  if type(raw) == "number" then
+    return (raw ~= raw) and 0 or raw
+  end
+  local s = tostring(raw):match("^%s*(.-)%s*$")
+  if s:sub(1, 1) == "=" then return 0 end -- unresolved formula counts as 0!
+  return tonumber(s) or 0 -- plain text counts as 0!
+end
+
+local function eval_node(node, data)
+  if node.kind == "num" then return node.value end
+  if node.kind == "ref" then return ref_value(node.cell, data) end
+  if node.kind == "neg" then return -eval_node(node.v, data) end
+  if node.kind == "add" then return eval_node(node.l, data) + eval_node(node.r, data) end
+  if node.kind == "sub" then return eval_node(node.l, data) - eval_node(node.r, data) end
+  if node.kind == "mul" then return eval_node(node.l, data) * eval_node(node.r, data) end
+  if node.kind == "div" then return eval_node(node.l, data) / eval_node(node.r, data) end
+  local vals = E.get_range_values(data, node.start, node.finish)
+  if node.fn == "SUM" then return list_sum(vals) end
+  if node.fn == "COUNT" then return #vals end
+  if node.fn == "MIN" then
     if #vals == 0 then return 0 end
     local m = vals[1]
     for i = 2, #vals do m = math.min(m, vals[i]) end
     return m
   end
-  if fn == "MAX" then
+  if node.fn == "MAX" then
     if #vals == 0 then return 0 end
     local m = vals[1]
     for i = 2, #vals do m = math.max(m, vals[i]) end
     return m
   end
-  if fn == "AVG" then
-    if #vals == 0 then return 0 end
-    return list_sum(vals) / #vals
+  if #vals == 0 then return 0 end
+  return list_sum(vals) / #vals
+end
+
+function E.compute_formula(formula, data)
+  if not tostring(formula):match("^=") then return formula end
+  local inner = tostring(formula):sub(2):match("^%s*(.-)%s*$")
+  local node = parse_arithmetic(inner)
+  if not node then return "ERROR" end
+  local result = eval_node(node, data or {})
+  if result ~= result or result == math.huge or result == -math.huge then
+    return "ERROR"
   end
-  return "ERROR"
+  return result
 end
 
 function E.formula_deps(formula)
   if not tostring(formula):match("^=") then return {} end
-  local _, sref, eref = E.extract_range(formula)
-  if not sref then return {} end
-  local sc, sr = E.parse_cell_ref(sref)
-  local ec, er = E.parse_cell_ref(eref)
-  if not sc then return {} end
-  local deps = {}
-  for r = math.min(sr, er), math.max(sr, er) do
-    for c = math.min(sc, ec), math.max(sc, ec) do
-      deps[#deps + 1] = E.cell_id(c, r)
-    end
-  end
-  return deps
+  local inner = tostring(formula):sub(2):match("^%s*(.-)%s*$")
+  local _, refs = parse_arithmetic(inner)
+  return refs or {}
 end
 
 local function count_keys(t)
@@ -162,7 +279,9 @@ local function jnum(n)
   if n % 1 == 0 and math.abs(n) < 1e15 then
     return string.format("%d", math.tointeger(n))
   end
-  return tostring(n)
+  -- %.17g round-trips exactly on every Lua (Fengari prints %.14g by default,
+  -- which would silently shave the last ulp off long decimals)!
+  return string.format("%.17g", n)
 end
 
 local function jval(v)

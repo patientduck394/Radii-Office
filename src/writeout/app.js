@@ -227,6 +227,7 @@ if (canvas) {
                 nr.collapse(true);
                 selection.removeAllRanges();
                 selection.addRange(nr);
+                if (window.KdBlockEditor) { try { fresh.setAttribute('contenteditable', 'true'); fresh.focus({ preventScroll: true }); selection.removeAllRanges(); selection.addRange(nr); window.KdBlockEditor.keepFocus(); } catch (err) {} }
                 if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
                 return true;
             })()) return;
@@ -860,6 +861,8 @@ if (canvas) {
 
         }
         // --- SECTION B: Inline Saturated Formatting Definition Matrix ---
+        // Only Space or Enter compile a macro (any other key used to fire it mid-typing, e.g. "**" + "b")!
+        if (e.key !== ' ' && e.key !== 'Enter') return;
         const definitions = [
             { open: '=Y=',  close: '=Y=',  className: 'gel-orb gel-y' },
             { open: '=R=',  close: '=R=',  className: 'gel-orb gel-r' },
@@ -1085,6 +1088,9 @@ if (canvas) {
 
             // 1. Shrink the primary text node up to your starting token boundary marker
             textNode.nodeValue = beforeText;
+            // (Setting the text collapses the caret to offset 0, which put the chip BEFORE the text in front of it!)
+            range.setStart(textNode, beforeText.length);
+            range.collapse(true);
 
             // 2. Build out the replacement node element using the single correct variable name
             let newNode;
@@ -1106,15 +1112,17 @@ if (canvas) {
             range.insertNode(newNode);
 
             // 4. Reconstruct your trailing content stream bounds to anchor your blinking caret
-            const trailingText = afterText + (e.key === ' ' ? ' ' : '\n');
+            // Enter must really START A NEW LINE (a fake "\n" put the caret back on the old line)!
+            const trailingText = afterText + (e.key === ' ' ? ' ' : '');
             const trailingNode = document.createTextNode(trailingText);
             newNode.parentNode.insertBefore(trailingNode, newNode.nextSibling);
 
             const newRange = document.createRange();
-            newRange.setStart(trailingNode, 1); // Positions caret directly right after the element
+            newRange.setStart(trailingNode, e.key === ' ' ? 1 : trailingText.length); // Positions caret directly right after the element
             newRange.collapse(true);
             selection.removeAllRanges();
             selection.addRange(newRange);
+            if (e.key !== ' ') { try { if (typeof window.kdSplitBlock === 'function') window.kdSplitBlock(); else document.execCommand('insertParagraph'); } catch (err) {} }
 
             if (def.isFoldout) {
                 newNode.addEventListener('click', function() { 
@@ -3149,9 +3157,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const tbW = (typeof blockToolbar.offsetWidth === 'number' && blockToolbar.offsetWidth) || 120;
             let topPos, leftPos;
             if (caretRect && (caretRect.top !== 0 || caretRect.left !== 0 || caretRect.width !== 0 || caretRect.height !== 0)) {
-                topPos = caretRect.top - wrapperRect.top - tbH - 12;
-                if (topPos < 10) topPos = caretRect.bottom - wrapperRect.top + 12; // Cramped: dock below!
-                leftPos = caretRect.left - wrapperRect.left;
+                // Beside the empty line (never over the lines above, where it blocked clicks)!
+                topPos = caretRect.top - wrapperRect.top + ((caretRect.height || 24) - tbH) / 2;
+                leftPos = caretRect.left - wrapperRect.left + 28;
             } else {
                 // Last resort: the canvas head -- never the dead corner!
                 topPos = canvasRect.top - wrapperRect.top + 10;
@@ -3520,7 +3528,9 @@ if (fontSelect) {
 if (blockSelect) {
     blockSelect.addEventListener('change', (e) => {
         canvas.focus();
-        document.execCommand('formatBlock', false, `<${e.target.value}>`);
+        const bt = String(e.target.value || 'div').toLowerCase();
+        const cls = { h1: 'header-1', h2: 'header-2', h3: 'header-3', blockquote: 'blockquote-list' }[bt];
+        if (!(window.KdBlockEditor && window.KdBlockEditor.setBlock(bt === 'p' ? 'div' : bt, cls))) document.execCommand('formatBlock', false, `<${e.target.value}>`);
     });
 }
 
@@ -3682,6 +3692,11 @@ function fmtAlignBlocks(align) {
     if (typeof canvas === 'undefined' || !canvas) return;
     const cmd = FMT_ALIGN_CMDS[align];
     if (!cmd) return;
+    if (window.KdBlockEditor && window.KdBlockEditor.align(align)) {
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+        if (typeof fmtSyncAlignButtons === 'function') fmtSyncAlignButtons();
+        return;
+    }
     if (typeof document.execCommand === 'function') {
         try {
             canvas.focus();
@@ -6988,3 +7003,234 @@ if (typeof canvas !== 'undefined' && canvas) {
         if (section) section.classList.toggle('collapsed');
     });
 }
+// ==========================================
+// ENTER NEVER DRAGS A CHIP ONTO THE NEW LINE!
+// Browsers copy an inline style (like a Keydown chip) onto the empty new line, so
+// the next letters came out chipped and Enter seemed to "bring the cursor back"!
+// ==========================================
+if (typeof canvas !== 'undefined' && canvas) {
+    canvas.addEventListener('input', function (e) {
+        if (e.inputType !== 'insertParagraph' && e.inputType !== 'insertLineBreak') return;
+        const sel = window.getSelection();
+        if (!sel.rangeCount || !sel.isCollapsed) return;
+        const n = sel.anchorNode;
+        let el = n && (n.nodeType === 1 ? n : n.parentElement);
+        let top = null;
+        while (el && el !== canvas && canvas.contains(el) && el.tagName === 'SPAN' && el.className && String(el.className).trim() &&
+               !(el.textContent || '').replace(/[\s​]/g, '') && !el.querySelector('input,select,textarea,[contenteditable="false"]')) {
+            top = el;
+            el = el.parentElement;
+        }
+        if (!top) return;
+        const host = top.parentNode;
+        const idx = Array.prototype.indexOf.call(host.childNodes, top);
+        while (top.firstChild) host.insertBefore(top.firstChild, top);
+        top.remove();
+        if (!host.firstChild) host.appendChild(document.createElement('br'));
+        const r = document.createRange();
+        r.setStart(host, Math.min(idx, host.childNodes.length));
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+    });
+}
+
+// ==========================================
+// SELECTION TRUTH: the highlight must show EXACTLY what Delete will remove!
+// When a drag ends at the page margin the browser may select a line break without
+// painting it, so every selected line break gets its own little highlight tab!
+// ==========================================
+(function () {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const COLOR = location.pathname.indexOf('bitbook') !== -1 ? 'rgba(168, 85, 247, 0.4)' : 'rgba(20, 149, 255, 0.35)';
+    let layer = null, queued = false;
+    const LEAF_BLOCKS = 'div, p, h1, h2, h3, h4, h5, h6, blockquote, li, pre';
+    const NESTED = 'div, p, h1, h2, h3, h4, h5, h6, blockquote, li, ul, ol, pre';
+    function ensure() {
+        if (layer) return layer;
+        layer = document.createElement('div');
+        layer.id = 'selection-linebreak-layer';
+        layer.setAttribute('aria-hidden', 'true');
+        layer.style.cssText = 'position:fixed;left:0;top:0;width:0;height:0;pointer-events:none;z-index:40';
+        document.body.appendChild(layer);
+        return layer;
+    }
+    function draw() {
+        queued = false;
+        const L = ensure();
+        L.textContent = '';
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount || sel.isCollapsed || !canvas.contains(sel.anchorNode) || !canvas.contains(sel.focusNode)) return;
+        const R = sel.getRangeAt(0);
+        const blocks = [].filter.call(canvas.querySelectorAll(LEAF_BLOCKS), function (b) { return !b.querySelector(NESTED); });
+        const frag = document.createDocumentFragment();
+        blocks.forEach(function (b, i) {
+            if (!R.intersectsNode(b) || i === blocks.length - 1) return;
+            const br = document.createRange();
+            br.selectNodeContents(b);
+            // The selection must run PAST the end of this line to include its line break!
+            if (R.compareBoundaryPoints(Range.END_TO_END, br) <= 0) return;
+            let rect = null;
+            const rs = br.getClientRects();
+            if (rs.length && (b.textContent || '').length) rect = rs[rs.length - 1];
+            const bb = b.getBoundingClientRect();
+            const x = rect ? rect.right : bb.left;
+            const y = rect ? rect.top : bb.top;
+            const h = rect ? rect.height : Math.min(bb.height, 28);
+            if (!h || y + h < 0 || y > window.innerHeight) return;
+            const tab = document.createElement('div');
+            tab.style.cssText = 'position:fixed;left:' + x + 'px;top:' + y + 'px;width:9px;height:' + h + 'px;background:' + COLOR + ';border-radius:0 3px 3px 0';
+            frag.appendChild(tab);
+        });
+        L.appendChild(frag);
+    }
+    function soon() { if (!queued) { queued = true; requestAnimationFrame(draw); } }
+    document.addEventListener('selectionchange', soon);
+    document.addEventListener('mouseup', soon, true);
+    window.addEventListener('resize', soon);
+    document.addEventListener('scroll', soon, true);
+})();
+
+// ==========================================
+// MULTI-LINE DELETE, THE SAME IN EVERY BROWSER!
+// When a selection spans several lines, the app deletes EXACTLY the range you see
+// highlighted (some browsers only delete the last line when a drag ends at the margin)!
+// ==========================================
+(function () {
+    if (typeof canvas === 'undefined' || !canvas) return;
+    const ed = canvas;
+    return; // Replaced by block-editor.js (every line is its own box now)!
+    const LEAF = 'div, p, h1, h2, h3, h4, h5, h6, blockquote, li, pre';
+    const NESTED = 'div, p, h1, h2, h3, h4, h5, h6, blockquote, li, ul, ol, pre, table';
+    let busy = false, lastUndo = null;
+
+    function leafOf(node) {
+        let n = node && (node.nodeType === 1 ? node : node.parentNode);
+        while (n && n !== ed) {
+            if (n.matches && n.matches(LEAF) && !n.querySelector(NESTED)) return n;
+            n = n.parentNode;
+        }
+        return null;
+    }
+    // A boundary that sits directly on the canvas points at a child: use that child's leaf!
+    function boundaryLeaf(container, offset, isEnd) {
+        if (container === ed) {
+            const kids = ed.childNodes;
+            const k = isEnd ? kids[offset - 1] : kids[offset];
+            if (!k) return null;
+            if (k.nodeType === 1) { const inner = k.matches && k.matches(LEAF) && !k.querySelector(NESTED) ? k : null; if (inner) return inner; const leaves = k.querySelectorAll(LEAF); const flt = [].filter.call(leaves, function (x) { return !x.querySelector(NESTED); }); return flt.length ? (isEnd ? flt[flt.length - 1] : flt[0]) : null; }
+            return null;
+        }
+        return leafOf(container);
+    }
+    function spans() {
+        const sel = window.getSelection();
+        if (!sel || !sel.rangeCount || sel.isCollapsed || !ed.contains(sel.anchorNode) || !ed.contains(sel.focusNode)) return null;
+        const R = sel.getRangeAt(0);
+        const sb = boundaryLeaf(R.startContainer, R.startOffset, false);
+        const eb = boundaryLeaf(R.endContainer, R.endOffset, true);
+        // Both ends inside the same line (or the same loose text): the browser handles it!
+        if (sb === eb) return null;
+        return { R: R, sb: sb, eb: eb, sel: sel };
+    }
+    function textOffset(range) {
+        const pre = document.createRange();
+        pre.selectNodeContents(ed);
+        pre.setEnd(range.startContainer, range.startOffset);
+        return pre.toString().length;
+    }
+    function deleteSpan(info) {
+        if (busy) return;
+        busy = true;
+        try {
+            const R = info.R, sb = info.sb, eb = info.eb, sel = info.sel;
+            lastUndo = { html: ed.innerHTML, off: textOffset(R), at: Date.now() };
+            const sc = R.startContainer, so = R.startOffset;
+            R.deleteContents();
+            if (eb && eb !== sb && eb.isConnected) {
+                const parent = eb.parentNode;
+                if (sb && sb.isConnected && sb !== eb) {
+                    // Join the rest of the last line onto the first line!
+                    if (!sb.textContent.length && !sb.querySelector('img, input, select, [contenteditable="false"]')) sb.querySelectorAll('br').forEach(function (b) { b.remove(); });
+                    while (eb.firstChild) {
+                        if (eb.firstChild.nodeName === 'BR' && eb.childNodes.length === 1 && sb.childNodes.length) { eb.firstChild.remove(); break; }
+                        sb.appendChild(eb.firstChild);
+                    }
+                    if (!sb.firstChild) sb.appendChild(document.createElement('br'));
+                } else {
+                    // The first line is loose text on the canvas: pull the last line's content out beside it!
+                    while (eb.firstChild) parent.insertBefore(eb.firstChild, eb);
+                }
+                let p = parent;
+                eb.remove();
+                while (p && p !== ed && !p.firstChild) { const up = p.parentNode; p.remove(); p = up; }
+            }
+            const r = document.createRange();
+            try {
+                if (sc.isConnected) { r.setStart(sc, Math.min(so, sc.nodeType === 3 ? sc.nodeValue.length : sc.childNodes.length)); }
+                else if (sb && sb.isConnected) r.setStart(sb, 0);
+                else r.setStart(ed, 0);
+            } catch (e) { r.setStart(ed, 0); }
+            r.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(r);
+            const mine = lastUndo;
+            ed.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'deleteContent' }));
+            mine.after = ed.innerHTML;
+            lastUndo = mine;
+        } finally { busy = false; }
+    }
+    ed.addEventListener('keydown', function (e) {
+        if (e.isComposing || e.ctrlKey || e.metaKey || e.altKey) return;
+        const del = e.key === 'Backspace' || e.key === 'Delete';
+        const typing = e.key === 'Enter' || (e.key && e.key.length === 1);
+        if (!del && !typing) return;
+        const info = spans();
+        if (!info) return;
+        if (del) e.preventDefault();
+        deleteSpan(info);
+    }, true);
+    ed.addEventListener('beforeinput', function (e) {
+        if (busy || !e.inputType) return;
+        const del = e.inputType.indexOf('delete') === 0;
+        const ins = e.inputType.indexOf('insert') === 0 && e.inputType !== 'insertParagraph';
+        if (!del && !ins) return;
+        const info = spans();
+        if (!info) return;
+        if (del) e.preventDefault();
+        deleteSpan(info);
+    });
+    ed.addEventListener('cut', function (e) {
+        const info = spans();
+        if (!info) return;
+        try {
+            const holder = document.createElement('div');
+            holder.appendChild(info.R.cloneContents());
+            e.clipboardData.setData('text/plain', info.sel.toString());
+            e.clipboardData.setData('text/html', holder.innerHTML);
+            e.preventDefault();
+        } catch (err) { return; }
+        deleteSpan(info);
+    }, true);
+    // Writeout has no snapshot undo: Cmd/Ctrl+Z right after a multi-line delete puts it back!
+    if (typeof bbUndo !== 'function') {
+        ed.addEventListener('input', function (e) { if (e.isTrusted) lastUndo = null; });
+        ed.addEventListener('keydown', function (e) {
+            if (!lastUndo || !lastUndo.after || !(e.metaKey || e.ctrlKey) || e.shiftKey || String(e.key).toLowerCase() !== 'z') return;
+            if (ed.innerHTML !== lastUndo.after) { lastUndo = null; return; }
+            e.preventDefault();
+            ed.innerHTML = lastUndo.html;
+            const w = document.createTreeWalker(ed, NodeFilter.SHOW_TEXT);
+            let t, left = lastUndo.off;
+            const r = document.createRange();
+            r.setStart(ed, 0);
+            while ((t = w.nextNode())) { if (left <= t.nodeValue.length) { r.setStart(t, left); break; } left -= t.nodeValue.length; }
+            r.collapse(true);
+            const s = window.getSelection();
+            s.removeAllRanges();
+            s.addRange(r);
+            lastUndo = null;
+            ed.dispatchEvent(new InputEvent('input', { bubbles: true, inputType: 'historyUndo' }));
+        }, true);
+    }
+})();

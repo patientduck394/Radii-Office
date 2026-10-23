@@ -41,27 +41,173 @@ function range_values(data, sref, eref)
     return vals
 end
 
-function compute_formula(formula, data)
-    startswith(formula, "=") || return formula
-    m = match(r"^(SUM|AVG|MIN|MAX|COUNT)\(\s*([A-Za-z]+\d+)\s*:\s*([A-Za-z]+\d+)\s*\)$", strip(uppercase(formula[2:end])))
-    m === nothing && return "ERROR"
-    fn, sref, eref = m.captures
-    vals = range_values(data, sref, eref)
+const FNAMES = Set(["SUM", "AVG", "MIN", "MAX", "COUNT"])
+
+# Arithmetic parser: expr := term (('+'|'-') term)* etc., collecting deps!
+mutable struct ArithParser
+    text::String
+    pos::Int
+    refs::Vector{String}
+end
+ArithParser(text) = ArithParser(text, 1, String[])
+
+function pskip!(p::ArithParser)
+    while p.pos <= lastindex(p.text) && isspace(p.text[p.pos])
+        p.pos = nextind(p.text, p.pos)
+    end
+end
+
+function prange_cells(sref, eref)
+    s, e = parse_cell_ref(sref), parse_cell_ref(eref)
+    (s === nothing || e === nothing) && return String[]
+    return [cell_id(c, r) for r in min(s[2], e[2]):max(s[2], e[2]) for c in min(s[1], e[1]):max(s[1], e[1])]
+end
+
+function ppref(p::ArithParser)
+    pskip!(p)
+    m = match(r"^([A-Za-z]+\d+)", p.text[p.pos:end])
+    (m === nothing || parse_cell_ref(m.captures[1]) === nothing) && return nothing
+    p.pos += ncodeunits(m.captures[1])
+    return m.captures[1]
+end
+
+function pexpr!(p::ArithParser)
+    l = pterm!(p)
+    l === nothing && return nothing
+    while true
+        pskip!(p)
+        p.pos > lastindex(p.text) && return l
+        c = p.text[p.pos]
+        (c == '+' || c == '-') || return l
+        p.pos = nextind(p.text, p.pos)
+        r = pterm!(p)
+        r === nothing && return nothing
+        l = (c == '+' ? (:add, l, r) : (:sub, l, r))
+    end
+end
+
+function pterm!(p::ArithParser)
+    l = pfactor!(p)
+    l === nothing && return nothing
+    while true
+        pskip!(p)
+        p.pos > lastindex(p.text) && return l
+        c = p.text[p.pos]
+        (c == '*' || c == '/') || return l
+        p.pos = nextind(p.text, p.pos)
+        r = pfactor!(p)
+        r === nothing && return nothing
+        l = (c == '*' ? (:mul, l, r) : (:div, l, r))
+    end
+end
+
+function pfactor!(p::ArithParser)
+    pskip!(p)
+    p.pos > lastindex(p.text) && return nothing
+    c = p.text[p.pos]
+    if c == '('
+        p.pos = nextind(p.text, p.pos)
+        n = pexpr!(p)
+        n === nothing && return nothing
+        pskip!(p)
+        (p.pos > lastindex(p.text) || p.text[p.pos] != ')') && return nothing
+        p.pos = nextind(p.text, p.pos)
+        return n
+    end
+    if c == '-'
+        p.pos = nextind(p.text, p.pos)
+        v = pfactor!(p)
+        return v === nothing ? nothing : (:neg, v)
+    end
+    m = match(r"^([0-9]+(\.[0-9]+)?)", p.text[p.pos:end])
+    if m !== nothing
+        p.pos += ncodeunits(m.captures[1])
+        return (:num, parse(Float64, m.captures[1]))
+    end
+    m = match(r"^([A-Za-z]+)", p.text[p.pos:end])
+    if m !== nothing
+        name = uppercase(m.captures[1])
+        j = p.pos + ncodeunits(m.captures[1])
+        while j <= lastindex(p.text) && isspace(p.text[j])
+            j = nextind(p.text, j)
+        end
+        if j <= lastindex(p.text) && p.text[j] == '('
+            name in FNAMES || return nothing
+            p.pos = nextind(p.text, j)
+            sref = ppref(p)
+            sref === nothing && return nothing
+            pskip!(p)
+            (p.pos > lastindex(p.text) || p.text[p.pos] != ':') && return nothing
+            p.pos = nextind(p.text, p.pos)
+            eref = ppref(p)
+            eref === nothing && return nothing
+            pskip!(p)
+            (p.pos > lastindex(p.text) || p.text[p.pos] != ')') && return nothing
+            p.pos = nextind(p.text, p.pos)
+            append!(p.refs, prange_cells(sref, eref))
+            return (:call, name, uppercase(sref), uppercase(eref))
+        end
+        m2 = match(r"^([A-Za-z]+\d+)", p.text[p.pos:end])
+        if m2 !== nothing && parse_cell_ref(m2.captures[1]) !== nothing
+            p.pos += ncodeunits(m2.captures[1])
+            ref = uppercase(m2.captures[1])
+            push!(p.refs, ref)
+            return (:ref, ref)
+        end
+        return nothing
+    end
+    return nothing
+end
+
+function parse_arithmetic(inner)
+    p = ArithParser(uppercase(inner))
+    node = pexpr!(p)
+    node === nothing && return nothing
+    pskip!(p)
+    p.pos <= lastindex(p.text) && return nothing
+    return (node=node, refs=p.refs)
+end
+
+function ref_value(cell, data)
+    haskey(data, cell) || return 0.0 # missing counts as 0!
+    raw = data[cell]
+    raw isa Number && return isnan(Float64(raw)) ? 0.0 : Float64(raw)
+    s = strip(string(raw))
+    startswith(s, "=") && return 0.0 # unresolved formula counts as 0!
+    n = tryparse(Float64, s)
+    return n === nothing ? 0.0 : n # plain text counts as 0!
+end
+
+function eval_node(node, data)
+    kind = node[1]
+    kind == :num && return node[2]
+    kind == :ref && return ref_value(node[2], data)
+    kind == :neg && return -eval_node(node[2], data)
+    kind == :add && return eval_node(node[2], data) + eval_node(node[3], data)
+    kind == :sub && return eval_node(node[2], data) - eval_node(node[3], data)
+    kind == :mul && return eval_node(node[2], data) * eval_node(node[3], data)
+    kind == :div && return eval_node(node[2], data) / eval_node(node[3], data)
+    vals = range_values(data, node[3], node[4])
+    fn = node[2]
     fn == "SUM" && return sum(vals)
     fn == "COUNT" && return length(vals)
     fn == "MIN" && return isempty(vals) ? 0 : minimum(vals)
     fn == "MAX" && return isempty(vals) ? 0 : maximum(vals)
-    fn == "AVG" && return isempty(vals) ? 0 : sum(vals) / length(vals)
-    return "ERROR"
+    return isempty(vals) ? 0 : sum(vals) / length(vals)
+end
+function compute_formula(formula, data)
+    startswith(formula, "=") || return formula
+    parsed = parse_arithmetic(strip(formula[2:end]))
+    parsed === nothing && return "ERROR"
+    result = eval_node(parsed.node, data)
+    return isfinite(result) ? result : "ERROR"
 end
 
 function deps_of(formula)
     startswith(formula, "=") || return String[]
-    m = match(r"^(SUM|AVG|MIN|MAX|COUNT)\(\s*([A-Za-z]+\d+)\s*:\s*([A-Za-z]+\d+)\s*\)$", strip(uppercase(formula[2:end])))
-    m === nothing && return String[]
-    s, e = parse_cell_ref(m.captures[2]), parse_cell_ref(m.captures[3])
-    (s === nothing || e === nothing) && return String[]
-    return [cell_id(c, r) for r in min(s[2], e[2]):max(s[2], e[2]) for c in min(s[1], e[1]):max(s[1], e[1])]
+    parsed = parse_arithmetic(strip(formula[2:end]))
+    parsed === nothing && return String[]
+    return parsed.refs
 end
 
 function evaluate_sheet(data)

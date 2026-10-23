@@ -29,14 +29,74 @@ let elementsList = [
 ];
 
 let accentColor = '#00D6B6';
+// Page-level layout (flexbox) + hand-written code for experienced users!
+let pageFlex = { dir: 'column', wrap: 'nowrap', justify: 'flex-start', align: 'stretch', gap: 20 };
+let pageCode = { css: '', js: '', head: '' };
+const BLOCK_STYLE_KEYS = ['width', 'height', 'minHeight', 'maxWidth', 'minWidth', 'maxHeight', 'fontSize', 'lineHeight', 'textAlign', 'alignSelf', 'flex', 'order', 'padding', 'margin'];
+// One card's size + alignment, as CSS (block alignment = auto margins)!
+function blockStyleCss(item) {
+  const st = (item && item.style) || {};
+  const kebab = k => k.replace(/[A-Z]/g, m => '-' + m.toLowerCase());
+  let css = '';
+  BLOCK_STYLE_KEYS.forEach(k => { if (st[k] !== undefined && st[k] !== '') css += kebab(k) + ':' + String(st[k]).replace(/[;{}<>"]/g, '') + ';'; });
+  if (st.blockAlign === 'center') css += 'margin-left:auto;margin-right:auto;';
+  else if (st.blockAlign === 'right') css += 'margin-left:auto;margin-right:0;';
+  else if (st.blockAlign === 'left') css += 'margin-left:0;margin-right:auto;';
+  return css;
+}
+function pageFlexCss() {
+  const f = pageFlex || {};
+  return 'display:flex;flex-direction:' + (f.dir || 'column') + ';flex-wrap:' + (f.wrap || 'nowrap') + ';justify-content:' + (f.justify || 'flex-start') + ';align-items:' + (f.align || 'stretch') + ';gap:' + (parseInt(f.gap, 10) || 0) + 'px;';
+}
+function applyPageLayout() {
+  const page = document.getElementById('wysiwyg-page');
+  if (!page) return;
+  const f = pageFlex || {};
+  page.style.display = 'flex';
+  page.style.flexDirection = f.dir || 'column';
+  page.style.flexWrap = f.wrap || 'nowrap';
+  page.style.justifyContent = f.justify || 'flex-start';
+  page.style.alignItems = f.align || 'stretch';
+  page.style.gap = (parseInt(f.gap, 10) || 0) + 'px';
+  // Your own CSS applies inside the page only (@scope keeps it off the Omicron UI)!
+  let st = document.getElementById('om-page-css');
+  if (!st) { st = document.createElement('style'); st.id = 'om-page-css'; document.head.appendChild(st); }
+  st.textContent = pageCode.css ? '@scope (#wysiwyg-page) {\n' + pageCode.css + '\n}' : '';
+}
+
+// --- Autosave: your page survives reloads (omicron_doc_v1)! ---
+const OMICRON_KEY = 'omicron_doc_v1';
+function saveDoc() {
+  try { localStorage.setItem(OMICRON_KEY, JSON.stringify({ elementsList: elementsList, accentColor: accentColor, width: (document.getElementById('canvas-width-select') || {}).value, pageFlex: pageFlex, pageCode: pageCode })); } catch (e) {}
+  if (typeof window.onOmicronChange === 'function') window.onOmicronChange();
+}
+(function loadDoc() {
+  try {
+    const d = JSON.parse(localStorage.getItem(OMICRON_KEY) || 'null');
+    if (d && Array.isArray(d.elementsList)) { elementsList = d.elementsList; accentColor = d.accentColor || accentColor; window.__omicronWidth = d.width; if (d.pageFlex) pageFlex = Object.assign(pageFlex, d.pageFlex); if (d.pageCode) pageCode = Object.assign(pageCode, d.pageCode); }
+  } catch (e) {}
+})();
 
 function updateAccent(color) {
   accentColor = color;
   renderDocument();
 }
 
+// Card titles + text save too (title|text)!
+function updateCard(id, part, html) {
+  const item = elementsList.find(el => el.id === id);
+  if (!item) return;
+  const parts = String(item.content).split('|');
+  parts[part] = html.replace(/\|/g, '&#124;');
+  item.content = parts.join('|');
+  saveDoc();
+}
+
 function updateCanvasWidth(widthVal) {
   document.getElementById('wysiwyg-page').style.width = widthVal;
+  const sel = document.getElementById('canvas-width-select');
+  if (sel && sel.value !== widthVal) sel.value = widthVal;
+  saveDoc();
 }
 
 function toggleMenu(menuId, event) {
@@ -72,8 +132,13 @@ function spawnElement(type, variant) {
     content = 'Feature Card Title|Detailed description text for this feature block.';
   }
 
-  elementsList.push({ id: Date.now(), type, variant, content });
+  elementsList.push({ id: newBlockId(), type, variant, content });
   renderDocument();
+}
+
+// Block ids stay unique even when two people add a block in the same millisecond!
+function newBlockId() {
+  return Date.now() * 1000 + Math.floor(Math.random() * 1000);
 }
 
 function deleteElement(id) {
@@ -85,43 +150,79 @@ function deleteElement(id) {
 function updateContent(id, newText) {
   const item = elementsList.find(el => el.id === id);
   if (item) item.content = newText;
+  saveDoc();
+}
+
+// --- Code blocks: live preview in a sandboxed frame ---
+function previewDoc(bodyHtml) {
+  const base = location.href.replace(/[^/]*$/, '');
+  return '<!DOCTYPE html><html><head><meta charset="UTF-8"><base href="' + base + '"><link rel="stylesheet" href="export-style.css">' +
+    (pageCode.head || '') + '<style>body{padding:0;margin:0;display:block;background:transparent}' + (pageCode.css || '') + '</style></head><body><div class="kd-content">' + bodyHtml + '</div><script>' + String(pageCode.js || '').replace(/<\/script/gi, '<\\/script') + '<\/script></body></html>';
+}
+function refreshCodePreview(wrapper, html) {
+  const f = wrapper.querySelector('.om-code-prev');
+  if (f) f.srcdoc = previewDoc(html);
+}
+let codeTimers = {};
+function updateCodeBlock(id, ta) {
+  const item = elementsList.find(el => el.id === id);
+  if (!item) return;
+  item.content = ta.value;
+  saveDoc();
+  clearTimeout(codeTimers[id]);
+  codeTimers[id] = setTimeout(() => refreshCodePreview(ta.closest('.wysiwyg-block'), ta.value), 350);
 }
 
 // --- Render Document Canvas ---
 function renderDocument() {
   const page = document.getElementById('wysiwyg-page');
   page.innerHTML = '';
+  elementsList.forEach(item => page.appendChild(buildBlock(item)));
+  applyPageLayout();
+  if (window.BitLang) BitLang.hydrate(page);
+  saveDoc();
+}
 
-  elementsList.forEach(item => {
+// One block's DOM (live co-editing redraws single blocks with this)!
+function buildBlock(item) {
     const wrapper = document.createElement('div');
     wrapper.className = 'wysiwyg-block';
+    wrapper.dataset.id = item.id;
+    const bs = blockStyleCss(item);
+    if (bs) wrapper.style.cssText = bs;
 
     let innerHTML = '';
 
     if (item.type === 'heading') {
       const cls = item.variant === 'h2' ? 'wysiwyg-h2' : item.variant === 'subtitle' ? 'wysiwyg-subtitle' : 'wysiwyg-h1';
-      innerHTML = `<div class="${cls}" contenteditable="true" oninput="updateContent(${item.id}, this.innerText)" style="${item.variant === 'h1' ? 'color:' + accentColor : ''}">${item.content}</div>`;
+      innerHTML = `<div class="${cls}" contenteditable="true" oninput="updateContent(${item.id}, this.innerHTML)" style="${item.variant === 'h1' ? 'color:' + accentColor : ''}">${item.content}</div>`;
     } else if (item.type === 'paragraph') {
       const cls = item.variant === 'lead' ? 'wysiwyg-p-lead' : item.variant === 'quote' ? 'wysiwyg-p-quote' : 'wysiwyg-p-standard';
-      innerHTML = `<div class="${cls}" contenteditable="true" oninput="updateContent(${item.id}, this.innerText)">${item.content}</div>`;
+      innerHTML = `<div class="${cls} kd-content" contenteditable="true" oninput="updateContent(${item.id}, this.innerHTML)">${item.content}</div>`;
     } else if (item.type === 'button') {
       if (item.variant === 'glass') {
-        innerHTML = `<button class="btn-glass" style="border-color:${accentColor}; color:${accentColor}">${item.content}</button>`;
+        innerHTML = `<button class="btn-glass" style="--om-a:${accentColor}">${item.content}</button>`;
       } else if (item.variant === 'outline') {
-        innerHTML = `<button class="btn-outline" style="border-color:${accentColor}; color:${accentColor}">${item.content}</button>`;
+        innerHTML = `<button class="btn-outline" style="--om-a:${accentColor}">${item.content}</button>`;
       } else {
-        innerHTML = `<button class="btn-primary" style="background:${accentColor}">${item.content}</button>`;
+        innerHTML = `<button class="btn-primary" style="--om-a:${accentColor}">${item.content}</button>`;
       }
     } else if (item.type === 'image') {
       const cls = item.variant === 'avatar' ? 'img-avatar' : item.variant === 'card' ? 'img-card' : 'img-hero';
       innerHTML = `<img class="${cls}" src="${item.content}">`;
+    } else if (item.type === 'rich') {
+      // A Bitbook note (or any rich Keydown HTML), Skills + Tags included!
+      innerHTML = `<div class="wysiwyg-rich kd-content" contenteditable="true" oninput="updateContent(${item.id}, this.innerHTML)">${item.content}</div>`;
+    } else if (item.type === 'html') {
+      // Raw HTML for experienced users: edit the code, watch the live preview (scripts run in a sandbox)!
+      innerHTML = `<div class="om-code-card"><div class="om-code-head"><b>&lt;/&gt; HTML Block</b><span>Your own HTML (scripts run in the preview and the export)</span></div><textarea class="om-code-area" spellcheck="false" oninput="updateCodeBlock(${item.id}, this)"></textarea><iframe class="om-code-prev" sandbox="allow-scripts" title="Preview"></iframe></div>`;
     } else if (item.type === 'card') {
       const parts = item.content.split('|');
       const cls = item.variant === 'glass' ? 'card-glass' : 'card-border';
       innerHTML = `
-        <div class="${cls}" style="${item.variant === 'border' ? 'border-left-color:' + accentColor : ''}">
-          <h3 contenteditable="true" style="margin-bottom:6px; font-weight:800;">${parts[0]}</h3>
-          <p contenteditable="true" style="color:#64748b;">${parts[1] || ''}</p>
+        <div class="${cls}" style="--om-a:${accentColor}">
+          <h3 contenteditable="true" style="margin-bottom:6px; font-weight:800;" oninput="updateCard(${item.id}, 0, this.innerHTML)">${parts[0]}</h3>
+          <p contenteditable="true" style="color:#64748b;" oninput="updateCard(${item.id}, 1, this.innerHTML)">${parts[1] || ''}</p>
         </div>
       `;
     }
@@ -132,9 +233,12 @@ function renderDocument() {
         <button class="ctrl-btn" onclick="deleteElement(${item.id})">✕ Remove</button>
       </div>
     `;
-
-    page.appendChild(wrapper);
-  });
+    if (item.type === 'html') {
+      const ta = wrapper.querySelector('.om-code-area');
+      ta.value = item.content;
+      refreshCodePreview(wrapper, item.content);
+    }
+    return wrapper;
 }
 
 // --- ROBUST RANGE-BASED KEYDOWN PARSER & FULL TAG REGISTRY ---
@@ -205,9 +309,14 @@ document.addEventListener('DOMContentLoaded', () => {
         range.collapse(false);
         selection.removeAllRanges();
         selection.addRange(range);
+        const host = newEl.parentElement && newEl.parentElement.closest('[contenteditable="true"]');
+        if (host) host.dispatchEvent(new Event('input', { bubbles: true }));
         return;
       }
     }
+
+    // Inline macros need a caret inside a text node (a caret sitting on an element has no offsets to cut)!
+    if (container.nodeType !== Node.TEXT_NODE) return;
 
     // 2. Comprehensive Inline Macro & Tag Registry
     const inlineDefinitions = [
@@ -377,7 +486,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { open: '~DR-PK~', close: '~', className: 'gel-chip-droplet-ribbon droplet-ribbon-fuchsia' },
       { open: '~DR-R~', close: '~', className: 'gel-chip-droplet-ribbon droplet-ribbon-crimson' },
       { open: '~DR-SL~', close: '~', className: 'gel-chip-droplet-ribbon droplet-ribbon-slate' }
-    ];
+    ].concat(window.OMICRON_EXTRA_DEFS || []);
 
     for (let def of inlineDefinitions) {
       let openIdx = textContent.indexOf(def.open);
@@ -500,6 +609,8 @@ document.addEventListener('DOMContentLoaded', () => {
       afterRange.collapse(true);
       selection.removeAllRanges();
       selection.addRange(afterRange);
+      const host2 = newNode.parentElement && newNode.parentElement.closest('[contenteditable="true"]');
+      if (host2) host2.dispatchEvent(new Event('input', { bubbles: true }));
       break;
     }
   });
@@ -511,32 +622,71 @@ function clearPage() {
   renderDocument();
 }
 
-function generateExportHTML() {
+function exportBodyHTML() {
   let bodyHTML = '';
   elementsList.forEach(item => {
+    let inner = '';
     if (item.type === 'heading') {
       const tag = item.variant === 'h2' ? 'h2' : item.variant === 'subtitle' ? 'p' : 'h1';
-      bodyHTML += `<${tag} class="${item.variant}">${item.content}</${tag}>\n`;
+      const cls = item.variant === 'h2' ? 'wysiwyg-h2' : item.variant === 'subtitle' ? 'wysiwyg-subtitle' : 'wysiwyg-h1';
+      inner = `<${tag} class="${cls}"${item.variant === 'h1' ? ` style="color:${accentColor}"` : ''}>${item.content}</${tag}>`;
     } else if (item.type === 'paragraph') {
-      bodyHTML += `<p class="${item.variant}">${item.content}</p>\n`;
+      const cls = item.variant === 'lead' ? 'wysiwyg-p-lead' : item.variant === 'quote' ? 'wysiwyg-p-quote' : 'wysiwyg-p-standard';
+      inner = `<div class="${cls} kd-content">${item.content}</div>`;
     } else if (item.type === 'button') {
-      bodyHTML += `<button class="btn ${item.variant}">${item.content}</button>\n`;
+      const cls = item.variant === 'glass' ? 'btn-glass' : item.variant === 'outline' ? 'btn-outline' : 'btn-primary';
+      inner = `<button class="${cls}" style="--om-a:${accentColor}">${item.content}</button>`;
     } else if (item.type === 'image') {
-      bodyHTML += `<img class="${item.variant}" src="${item.content}" alt="Image">\n`;
+      const cls = item.variant === 'avatar' ? 'img-avatar' : item.variant === 'card' ? 'img-card' : 'img-hero';
+      inner = `<img class="${cls}" src="${item.content}" alt="">`;
+    } else if (item.type === 'rich') {
+      inner = `<div class="wysiwyg-rich kd-content">${item.content}</div>`;
+    } else if (item.type === 'html') {
+      inner = item.content;
     } else if (item.type === 'card') {
-      const parts = item.content.split('|');
-      bodyHTML += `<div class="card ${item.variant}">\n  <h3>${parts[0]}</h3>\n  <p>${parts[1] || ''}</p>\n</div>\n`;
+      const parts = String(item.content).split('|');
+      const cls = item.variant === 'glass' ? 'card-glass' : 'card-border';
+      inner = `<div class="${cls}" style="--om-a:${accentColor}">\n    <h3>${parts[0]}</h3>\n    <p>${parts[1] || ''}</p>\n  </div>`;
     }
+    const bs = blockStyleCss(item);
+    bodyHTML += `  <div class="omicron-block"${bs ? ` style="${bs}"` : ''}>${inner}</div>\n`;
   });
+  return bodyHTML;
+}
 
+// Pages holding BitLang programs carry the tiny runtime so they play when exported!
+let blSrc = '', bbSrc = '';
+fetch('bitlang.js?v=20261105').then(r => r.text()).then(t => { blSrc = t; }).catch(() => {});
+fetch('bb-lite.js?v=20261105').then(r => r.text()).then(t => { bbSrc = t; }).catch(() => {});
+function blExportScript() {
+  const body = exportBodyHTML();
+  const hasProg = /bl-prog/.test(body), hasSong = /bb-chip/.test(body);
+  if (!hasProg && !hasSong) return '';
+  const safe = t => t.replace(/<\/script/gi, '<\\/script');
+  let out = '\n<script>\n';
+  if (hasProg && blSrc) out += safe(blSrc) + '\n';
+  // songs in exported pages load the player from the live site!
+  if (bbSrc) out += "window.BB_SYNTH_URL='https://radii-office.com/omicron/abyssbox_synth.min.js';\n" + safe(bbSrc) + '\n';
+  if (hasProg && blSrc) out += 'BitLang.hydrate(document);\n';
+  return out + '<\/script>';
+}
+
+function generateExportHTML(inlineCss) {
+  const width = (document.getElementById('canvas-width-select') || {}).value || '720px';
+  const styleTag = inlineCss ? `<style>\n${inlineCss}\n</style>` : '<link rel="stylesheet" href="Style.css">';
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Exported Webpage</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&display=swap">
+  ${styleTag}${pageCode.css ? `\n  <style>\n${pageCode.css}\n  </style>` : ''}${pageCode.head ? `\n  ${pageCode.head}` : ''}
 </head>
 <body>
-${bodyHTML}</body>
+<main class="page-paper" style="width:${width};${pageFlexCss()}">
+${exportBodyHTML().replace(/<button[^>]*class="bl-chip-edit"[^>]*>[^<]*<\/button>/g, '')}</main>${blExportScript()}${pageCode.js ? `\n<script>\n${String(pageCode.js).replace(/<\/script/gi, '<\\/script')}\n</script>` : ''}
+</body>
 </html>`;
 }
 
@@ -560,4 +710,5 @@ function copyCodeToClipboard() {
 }
 
 // Initial Load
+if (window.__omicronWidth) updateCanvasWidth(window.__omicronWidth);
 renderDocument();

@@ -67,7 +67,7 @@
   // Large music/movie files blow past localStorage quota, so the full state
   // (including dataUrls) is mirrored to IndexedDB. localStorage keeps a fast
   // sync snapshot (possibly lite without big dataUrls) for instant first paint!
-  var IDB_DB = 'radii-cabinet';
+  var IDB_DB = 'radii-cabinet' + (window.RadiiFile ? window.RadiiFile.suffix() : '');
   var IDB_STORE = 'kv';
   var IDB_KEY = 'cabinet_state_v1';
   var idbSaveTimer = null;
@@ -189,7 +189,9 @@
       if (idbNewer) {
         try {
           drawers = record.drawers.map(function (d) {
-            return { id: String(d.id || uid()), name: String(d.name || 'My Drawer').substring(0, 60) || 'My Drawer', files: cleanFiles(d.files), folders: cleanFolders(d.folders) };
+            const cd = { id: String(d.id || uid()), name: String(d.name || 'My Drawer').substring(0, 60) || 'My Drawer', files: cleanFiles(d.files), folders: cleanFolders(d.folders) };
+            if (Array.isArray(d.comments) && d.comments.length) cd.comments = d.comments;
+            return cd;
           });
           if (record.activeId && drawers.some(function (d) { return d.id === record.activeId; })) activeDrawerId = record.activeId;
           D();
@@ -485,7 +487,9 @@
 
   function cleanFiles(files) {
     return (Array.isArray(files) ? files : []).filter(function (f) { return f && typeof f.name === 'string'; }).map(function (f) {
-      return { id: String(f.id || uid()), name: f.name, type: String(f.type || ''), size: Number(f.size) || 0, dataUrl: String(f.dataUrl || ''), tags: Array.isArray(f.tags) ? f.tags : [] };
+      const out = { id: String(f.id || uid()), name: f.name, type: String(f.type || ''), size: Number(f.size) || 0, dataUrl: String(f.dataUrl || ''), tags: Array.isArray(f.tags) ? f.tags : [] };
+      if (Array.isArray(f.comments) && f.comments.length) out.comments = f.comments;
+      return out;
     });
   }
 
@@ -503,7 +507,9 @@
   function cleanFolders(folders) {
     return (Array.isArray(folders) ? folders : []).filter(function (f) { return f && typeof f.name === 'string'; }).map(function (f) {
       const kind = normFolderKind(f.kind);
-      return { id: String(f.id || uid()), name: f.name, kind: kind, note: String(f.note || '').substring(0, 280), powered: kind === 'node' ? f.powered !== false : undefined, links: kindHoldsLinks(kind) ? cleanLinks(f.links) : [], entries: kind === 'log' ? cleanLogEntries(f.entries) : [], code: kind === 'branch' ? cleanBranchCode(f.code) : undefined, color: kind === 'branch' ? cleanBranchColor(f.color) : undefined, notes: kind === 'merge' ? cleanMergeNotes(f.notes) : [], tags: Array.isArray(f.tags) ? f.tags : [], files: cleanFiles(f.files), folders: cleanFolders(f.folders) };
+      const cf = { id: String(f.id || uid()), name: f.name, kind: kind, note: String(f.note || '').substring(0, 280), powered: kind === 'node' ? f.powered !== false : undefined, links: kindHoldsLinks(kind) ? cleanLinks(f.links) : [], entries: kind === 'log' ? cleanLogEntries(f.entries) : [], code: kind === 'branch' ? cleanBranchCode(f.code) : undefined, color: kind === 'branch' ? cleanBranchColor(f.color) : undefined, notes: kind === 'merge' ? cleanMergeNotes(f.notes) : [], tags: Array.isArray(f.tags) ? f.tags : [], files: cleanFiles(f.files), folders: cleanFolders(f.folders) };
+      if (Array.isArray(f.comments) && f.comments.length) cf.comments = f.comments;
+      return cf;
     });
   }
 
@@ -533,6 +539,8 @@
     }
     queueIDBSave();
     updateStorageFoot();
+    // Live collaboration listens here (collab-cabinet.js)!
+    try { if (typeof window.onCabinetChange === 'function') window.onCabinetChange(); } catch (e) {}
     return ok;
   }
 
@@ -543,7 +551,9 @@
         const parsed = JSON.parse(raw);
         if (parsed && Array.isArray(parsed.drawers) && parsed.drawers.length) {
           drawers = parsed.drawers.map(function (d) {
-            return { id: String(d.id || uid()), name: String(d.name || 'My Drawer').substring(0, 60) || 'My Drawer', files: cleanFiles(d.files), folders: cleanFolders(d.folders) };
+            const cd = { id: String(d.id || uid()), name: String(d.name || 'My Drawer').substring(0, 60) || 'My Drawer', files: cleanFiles(d.files), folders: cleanFolders(d.folders) };
+            if (Array.isArray(d.comments) && d.comments.length) cd.comments = d.comments;
+            return cd;
           });
           activeDrawerId = parsed.activeId || drawers[0].id;
           localSavedAt = Number(parsed.savedAt) || 0;
@@ -3480,6 +3490,39 @@
   document.addEventListener('DOMContentLoaded', initCabinet);
 
   window.RadiiCabinet = {
+    // Hooks for live collaboration (collab-cabinet.js)!
+    _collab: {
+      drawer: function () { return D(); },
+      id: function () { return activeDrawerId; },
+      path: function () { return currentFolderPath.slice(); },
+      goPath: function (p) { currentFolderPath = p.slice(); if (currentFolderPath.length && !getCurrentFolder()) currentFolderPath = []; renderDrawer(); },
+      set: function (name, files, folders, comments) {
+        const d = D();
+        d.name = name; d.files = files; d.folders = folders;
+        if (comments && comments.length) d.comments = comments; else delete d.comments;
+        if (currentFolderPath.length && !getCurrentFolder()) currentFolderPath = [];
+        renderDrawer();
+        saveDrawer();
+      },
+      fresh: function (name) {
+        const d = { id: uid(), name: name || 'Shared Drawer', files: [], folders: [] };
+        drawers.push(d);
+        activeDrawerId = d.id;
+        currentFolderPath = []; currentTagFilter = ''; openDetailIds = {};
+        saveDrawer();
+        renderDrawer();
+        return d.id;
+      },
+      switchTo: function (id) {
+        if (!drawers.some(function (x) { return x.id === id; })) return false;
+        activeDrawerId = id; currentFolderPath = []; currentTagFilter = ''; openDetailIds = {};
+        saveDrawer();
+        renderDrawer();
+        return true;
+      },
+      has: function (id) { return drawers.some(function (x) { return x.id === id; }); },
+      remove: function (id) { drawers = drawers.filter(function (x) { return x.id !== id; }); }
+    },
     init: initCabinet,
     render: renderDrawer,
     files: function () { var cur = getCurrentFolder() || D(); return (cur.files || []).slice(); },

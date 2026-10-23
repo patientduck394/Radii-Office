@@ -1,0 +1,226 @@
+/* =====================================================================
+   Bitbook's OneNote layout! (body.os-office) Purple chrome, a page list,
+   a OneNote page header (title + date), page colors and rule lines.
+   The note itself keeps every Bitbook style, chip and skill!
+   ===================================================================== */
+
+body.os-office {
+    display: grid !important;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #f5f2f8;
+    color: #252525;
+}
+body.os-office.os-dark { background: #1d1a21; }
+body.os-office #os-top { grid-column: 1 / -1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1 / -1; grid-row: 3; }
+
+/* Page list: the Bitbook sidebar's Notes + Outline, OneNote style! */
+body.os-office #sidebar {
+    grid-column: 1;
+    grid-row: 2;
+    width: 240px;
+    height: auto;
+    max-height: none;
+    transform: none !important;
+    padding: 12px 10px 10px;
+    background: #f1ebf6;
+    border-right: 1px solid #e0d4ea;
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    z-index: 5;
+    animation: osFade 0.3s;
+}
+body.os-office.os-dark #sidebar { background: #26212c; border-right-color: #3a3142; }
+body.os-office.bb-nav-off #sidebar, body.os-office.bb-full #sidebar { display: none; }
+body.os-office #sidebar::before {
+    content: "Notebook";
+    font-family: var(--os-brand-font);
+    font-weight: 800;
+    font-size: 15px;
+    color: var(--os-accent);
+    padding: 0 6px 8px;
+}
+body.os-office.os-dark #sidebar::before { color: #d8b4fe; }
+body.os-office #sidebar .sidebar-brand,
+body.os-office #sidebar .pad-selection-stack,
+body.os-office #sidebar .sidebar-footer-controls,
+body.os-office #sidebar #toggle-zone { display: none !important; }
+body.os-office .side-scroll-box { margin: 0; }
+body.os-office .outline-heading { color: var(--os-dim); border-bottom-color: #e0d4ea; font-size: 11px; }
+body.os-office .outline-toggle { color: var(--os-dim); border-color: #e0d4ea; }
+body.os-office .outline-toggle:hover { background: #e6dcef; color: var(--os-text); }
+body.os-office .outline-item { color: var(--os-text); font-family: var(--os-font); font-size: 13px; font-weight: 500; padding: 7px 10px; transition: background 0.14s, padding 0.2s var(--os-spring); }
+body.os-office .outline-item:hover { background: #e6dcef; color: var(--os-text); padding-left: 14px; }
+body.os-office.os-dark .outline-item:hover { background: #3a3142; }
+body.os-office .outline-item.active {
+    color: #fff;
+    border-color: var(--os-accent-d);
+    background: linear-gradient(180deg, var(--os-gel1) 0%, var(--os-gel2) 50%, var(--os-accent) 52%, var(--os-accent-d) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 2px 6px rgba(119, 25, 170, 0.3);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+body.os-office .outline-empty { color: var(--os-dim); }
+body.os-office .tab-rename-input { background: #fff; color: #222; border-color: var(--os-accent); }
+body.os-office .tabs-list, body.os-office .outline-list { max-height: none; }
+body.os-office .outline-section { margin-top: 12px; }
+
+/* Format pane keeps its purple glass soul! */
+body.os-office #format-sidebar {
+    grid-column: 3;
+    grid-row: 2;
+    position: relative;
+    top: auto;
+    right: auto;
+    height: auto;
+    width: 250px;
+    transform: none !important;
+    display: none;
+    z-index: 5;
+}
+body.os-office.bb-pane-on #format-sidebar { display: flex; animation: osFade 0.3s; }
+body.os-office.bb-full #format-sidebar { display: none; }
+body.os-office #format-toggle-zone { display: none !important; }
+
+/* The page: full-width, OneNote style, with a title + date header! */
+body.os-office .workspace-viewport-wrapper {
+    grid-column: 2;
+    grid-row: 2;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    padding: 0;
+    gap: 0;
+    z-index: 1;
+}
+body.os-office #top-format-bar { display: none !important; }
+body.os-office .canvas-scrollbox {
+    background: var(--on-page, #fff);
+    padding: 0;
+    transition: background 0.3s;
+}
+body.os-office.os-dark .canvas-scrollbox:not(.on-colored) { background: #1e1e1e; }
+body.os-office .ambient-droplet { z-index: 0; opacity: 0.5; }
+
+#on-page-head { display: none; }
+body.os-office #on-page-head {
+    display: block;
+    flex: none;
+    padding: 28px 48px 6px;
+    position: relative;
+    z-index: 3;
+}
+body.os-office #on-page-head.on-head-in { animation: onHeadIn 0.4s var(--os-spring); }
+@keyframes onHeadIn { from { opacity: 0; transform: translateY(-10px); } }
+#on-title {
+    width: min(100%, 640px);
+    border: 0;
+    border-bottom: 1px solid #d9cfe2;
+    background: transparent;
+    font: 600 28px var(--os-font);
+    color: var(--os-text);
+    padding: 2px 0 6px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+#on-title:focus { border-bottom-color: var(--os-accent); }
+#on-title::placeholder { color: #b7a9c4; }
+#on-date { font: 12.5px var(--os-font); color: var(--os-dim); padding-top: 6px; white-space: pre; }
+body.os-office.os-dark #on-title { color: #f3f3f3; border-bottom-color: #4a3f55; }
+
+body.os-office #wysiwyg-canvas {
+    max-width: none;
+    width: 100%;
+    margin: 0 !important;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 14px 48px 120px;
+}
+/* Plain pages show the page color + rule lines (canvas themes keep their own look!) */
+body.os-office #wysiwyg-canvas:not([class*="mkt-theme"]) {
+    background-color: transparent;
+    background-image: var(--on-lines, none);
+    background-size: var(--on-lines-size, auto);
+    background-position: 0 14px;
+    background-attachment: local;
+}
+
+/* Bitbook's purple scroll rail hugs the page's right edge, under the ribbon! */
+body.os-office { --bb-top: 170px; }
+body.os-office.os-ribbon-min { --bb-top: 73px; }
+body.os-office.bb-full { --bb-top: 0px; }
+body.os-office #doc-jumper-rail { top: var(--bb-top); bottom: 26px; right: 0; transition: top 0.25s var(--os-ease); }
+body.os-office.bb-pane-on #doc-jumper-rail { right: 250px; }
+
+/* Full Page View: just the page! */
+body.os-office.bb-full #os-top { display: none; }
+body.os-office.bb-full #os-status { opacity: 0.35; transition: opacity 0.2s; }
+body.os-office.bb-full #os-status:hover { opacity: 1; }
+
+body.os-office #aero-selection-toolbar, body.os-office #aero-block-toolbar { z-index: 40; }
+
+/* Ribbon gallery previews! */
+.bb-gp { font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 13px; display: block; padding: 4px 0 2px; }
+.bb-gp-h1 { color: #9333ea; font-weight: 800; font-size: 15px; }
+.bb-gp-h2 { color: #c026d3; font-weight: 700; font-size: 14px; }
+.bb-gp-h3 { color: #7c3aed; font-weight: 700; }
+.bb-gp-q { color: #6b21a8; font-style: italic; border-left: 3px solid #9333ea; padding-left: 4px; }
+.bb-gp-c { background: #ede9fe; border-radius: 3px; padding: 2px 3px; color: #5b21b6; }
+body.os-dark .bb-gp-p { color: #e5e5e5; }
+.bb-style-gal .os-gal-list { max-width: 262px; }
+.bb-tag-gal .os-gal-item { width: 64px; }
+.bb-tag-gal .os-gal-list { max-width: 268px; }
+.bb-tg {
+    font-style: normal;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 1px 3px rgba(0, 0, 0, 0.25);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s var(--os-spring);
+}
+.os-gal-item:hover .bb-tg { transform: scale(1.15) rotate(-6deg); }
+.bb-tg-todo { background: linear-gradient(180deg, #93c5fd, #2563eb); }
+.bb-tg-imp { background: linear-gradient(180deg, #fde68a, #f59e0b); }
+.bb-tg-idea { background: linear-gradient(180deg, #fef9c3, #facc15); font-size: 13px; }
+.bb-tg-contact { background: linear-gradient(180deg, #86efac, #16a34a); }
+.bb-tg-user { background: linear-gradient(180deg, #d8b4fe, #9333ea); }
+.bb-tg-hash { background: linear-gradient(180deg, #f9a8d4, #db2777); }
+.bb-tg-date { background: linear-gradient(180deg, #e9d5ff, #a78bfa); font-size: 12px; }
+.bb-tg-drop { background: linear-gradient(180deg, #cbd5e1, #64748b); }
+.os-swatches.bb-sw-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 6px 8px 8px; }
+.os-swatches.bb-sw-grid .os-swatch { width: 40px; height: 28px; font: 700 12px 'JetBrains Mono', monospace; border-radius: 6px; }
+
+.bb-bs-doc { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--os-menu-line); border-radius: 10px; max-width: 560px; }
+.bb-bs-doc img { width: 36px; height: 36px; }
+.bb-bs-doc div { display: flex; flex-direction: column; gap: 3px; }
+.bb-bs-doc span { color: var(--os-dim); font-size: 12.5px; }
+.bb-wc { border-collapse: collapse; min-width: 300px; margin: 4px 0 20px; font-size: 14px; }
+.bb-wc td { padding: 6px 10px; border-bottom: 1px solid var(--os-menu-line); }
+.bb-wc td:last-child { text-align: right; }
+
+.bb-classic-cards { margin: 6px 0 10px; }
+.bb-classic-cards .os-lay-card { width: calc(50% - 8px); min-width: 200px; background: rgba(255, 255, 255, 0.6); }
+
+@media (max-width: 980px) { body.os-office.bb-pane-on #format-sidebar { display: none; } }
+@media (max-width: 760px) {
+    body.os-office #sidebar { display: none; }
+    body.os-office #on-page-head { padding: 18px 18px 4px; }
+    body.os-office #wysiwyg-canvas { padding: 12px 18px 80px; }
+}
+@media print {
+    body.os-office { display: block !important; height: auto; }
+    #on-page-head { display: none !important; }
+}
+
+/* No OneNote page title header: the canvas is exactly Bitbook's own! (Rename pages from the title bar or the page list.) */
+#on-page-head { display: none !important; }

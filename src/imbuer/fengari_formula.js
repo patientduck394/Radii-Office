@@ -75,6 +75,21 @@
         return JSON.parse(fengari.lua.lua_tojsstring(L, -1));
     }
 
+    // The Lua twin only knows the classic grammar (refs, + - * / and
+    // SUM/AVG/MIN/MAX/COUNT), so sheets using anything newer are skipped!
+    var LEGACY_RE = /^=[\sA-Za-z0-9:+\-*/().]*$/;
+    var LEGACY_FN = { SUM: 1, AVG: 1, MIN: 1, MAX: 1, COUNT: 1 };
+    function legacyOnly(data) {
+        for (const k of Object.keys(data || {})) {
+            const v = String(data[k]);
+            if (v[0] !== "=") continue;
+            if (!LEGACY_RE.test(v)) return false;
+            const words = v.slice(1).match(/[A-Za-z]+(?=\s*\()/g) || [];
+            if (words.some((w) => !LEGACY_FN[w.toUpperCase()])) return false;
+        }
+        return true;
+    }
+
     function sameValue(a, b) {
         if (typeof a === "number" && typeof b === "number") return a === b;
         return String(a) === String(b);
@@ -93,12 +108,16 @@
             }
             if (signature === lastSignature) return; // unchanged sheet: skip!
             lastSignature = signature;
+            if (!legacyOnly(rawCellData)) return;
             ensureEngine().then((engine) => {
                 if (!engine) return;
                 try {
                     const luaResult = luaEvaluate(engine, rawCellData || {});
                     const keys = new Set([...Object.keys(resolved), ...Object.keys(luaResult)]);
                     for (const k of keys) {
+                        // Only formula results are compared (literals parse differently now)!
+                        if (String((rawCellData || {})[k])[0] !== "=") continue;
+                        if (typeof resolved[k] !== "number") continue;
                         if (!sameValue(resolved[k], luaResult[k])) {
                             if (typeof console !== "undefined" && console.debug) {
                                 console.debug("Fengari Lua mismatch at " + k);
@@ -106,7 +125,7 @@
                             return;
                         }
                     }
-                    const body = document.getElementById("table-body");
+                    const body = document.getElementById("grid");
                     if (body) {
                         try {
                             body.dataset.engine = "lua-fengari";

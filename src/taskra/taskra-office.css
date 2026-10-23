@@ -1,0 +1,36 @@
+/* =====================================================================
+   Taskra's To Do layout! (body.os-office) Light page, indigo chrome,
+   the app's own content in the middle. Taskra Classic stays untouched!
+   ===================================================================== */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #f3f4fe;
+    color: #252525;
+}
+body.os-office.os-dark { background: #16152b; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .aero-sidebar { display: none !important; }
+body.os-office .workspace-viewport-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+    height: auto;
+    min-height: 0;
+    width: auto;
+    padding: 18px 26px 0;
+    animation: osFade 0.3s;
+    color: #1e293b;
+}
+body.os-office .toolbar-hint { color: #6b6fa8; }
+body.os-office .tasks-toolbar { background: #fff; border: 1px solid #dfe2fb; box-shadow: 0 1px 3px rgba(79, 70, 229, 0.1); border-radius: 12px; }
+body.os-office .toolbar-label { color: #5558e3; }
+body.os-office .search-field { background: #f3f4fe; border: 1px solid #c7d2fe; color: #1e293b; }
+body.os-office .tasks-frame { box-shadow: 0 1px 4px rgba(79, 70, 229, 0.12); border: 1px solid #dfe2fb; background: #fff; }
+body.os-office .task-row { box-shadow: 0 1px 3px rgba(79, 70, 229, 0.1); }
+.tk-bs-doc img { width: 36px; height: 36px; }
+.tk-classic-layout { margin-top: 2px; }
+.os-dlg.tk-layout-dlg { width: 560px; }

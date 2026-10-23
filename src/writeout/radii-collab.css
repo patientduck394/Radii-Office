@@ -1,0 +1,188 @@
+/* =====================================================================
+   Radii Collab styles: the Collaborate drawer, the Share button with
+   live avatars, remote cursors and comment highlights! Colors come from
+   each app (--rc-a light, --rc-b deep, like its sidebar buttons)!
+   (Identical copy in each app folder; keep them in sync!)
+   ===================================================================== */
+:root { --rc-a: #38bdf8; --rc-b: #0284c7; --rc-rim: #7dd3fc; --rc-glow: rgba(2, 132, 199, 0.35); }
+
+#rc-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 340px;
+    max-width: 100vw;
+    z-index: 2400;
+    display: flex;
+    flex-direction: column;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0%, rgba(244, 247, 251, 0.96) 100%);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.18);
+    font: 13px "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    color: #1f2937;
+    box-sizing: border-box;
+}
+#rc-panel[hidden] { display: none !important; }
+#rc-panel * { box-sizing: border-box; }
+#rc-panel button, #rc-panel input, #rc-panel textarea { font: inherit; color: inherit; }
+
+.rc-head { display: flex; align-items: center; gap: 8px; padding: 14px 14px 10px; }
+.rc-head b { font: 800 16px "JetBrains Mono", ui-monospace, Menlo, monospace; color: var(--rc-b); flex: 1; }
+.rc-dot { width: 9px; height: 9px; border-radius: 50%; background: #cbd5e1; box-shadow: 0 0 0 2px #fff; }
+.rc-dot.wait { background: #f59e0b; animation: rcPulse 1s infinite; }
+.rc-dot.live { background: #22c55e; box-shadow: 0 0 0 2px #fff, 0 0 8px rgba(34, 197, 94, 0.7); }
+@keyframes rcPulse { 50% { opacity: 0.35; } }
+.rc-x { border: 0; background: transparent; width: 28px; height: 28px; border-radius: 7px; cursor: pointer; color: #64748b; }
+.rc-x:hover { background: rgba(0, 0, 0, 0.06); }
+
+.rc-tabs { display: flex; gap: 4px; padding: 0 12px 10px; border-bottom: 1px solid rgba(0, 0, 0, 0.08); }
+.rc-tabs button { flex: 1; border: 1px solid transparent; background: transparent; border-radius: 8px; padding: 7px 0; cursor: pointer; font-weight: 600; position: relative; transition: background 0.15s; }
+.rc-tabs button:hover { background: rgba(0, 0, 0, 0.05); }
+.rc-tabs button.on, .rc-seg button.on, .rc-channels button.on {
+    color: #fff;
+    background: linear-gradient(180deg, var(--rc-a) 0%, var(--rc-b) 100%);
+    border-color: var(--rc-rim);
+    box-shadow: 0 4px 12px var(--rc-glow), inset 0 1px 2px #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.rc-badge { position: absolute; top: -4px; right: 4px; min-width: 16px; height: 16px; border-radius: 99px; background: #ef4444; color: #fff; font: 700 10px/16px sans-serif; font-style: normal; padding: 0 4px; text-shadow: none; }
+.rc-badge[hidden], .rc-badge:empty { display: none; }
+
+.rc-body { flex: 1; overflow: auto; padding: 12px; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+.rc-body[hidden] { display: none; }
+.rc-card { border: 1px solid rgba(0, 0, 0, 0.09); border-radius: 12px; padding: 12px; background: #fff; display: flex; flex-direction: column; gap: 8px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05); }
+.rc-card b { font-size: 13.5px; }
+.rc-card p { margin: 0; color: #64748b; font-size: 12.5px; line-height: 1.45; }
+.rc-fine { margin: 0; color: #64748b; font-size: 11.5px; line-height: 1.45; }
+.rc-label { display: flex; flex-direction: column; gap: 5px; font-weight: 600; font-size: 12px; color: #475569; }
+.rc-row { display: flex; gap: 6px; align-items: center; }
+.rc-row .rc-input { flex: 1; min-width: 0; }
+.rc-input { width: 100%; border: 1px solid #cbd5e1; border-radius: 8px; padding: 7px 9px; background: #fff; outline: none; transition: border-color 0.15s, box-shadow 0.15s; resize: vertical; }
+.rc-input:focus { border-color: var(--rc-b); box-shadow: 0 0 0 3px var(--rc-glow); }
+.rc-shake { animation: rcShake 0.45s; }
+@keyframes rcShake { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+.rc-btn { border: 1px solid #cbd5e1; background: #fff; border-radius: 8px; padding: 7px 12px; cursor: pointer; font-weight: 600; white-space: nowrap; transition: transform 0.12s, background 0.15s; }
+.rc-btn:hover { background: #f1f5f9; }
+.rc-btn:active { transform: scale(0.95); }
+.rc-gel {
+    color: #fff;
+    background: linear-gradient(180deg, var(--rc-a) 0%, var(--rc-b) 100%);
+    border-color: var(--rc-rim);
+    box-shadow: 0 4px 12px var(--rc-glow), inset 0 1px 2px #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.rc-gel:hover { background: linear-gradient(180deg, var(--rc-a) 0%, var(--rc-b) 100%); filter: brightness(1.08); }
+.rc-leave { color: #b91c1c; }
+
+.rc-people { display: flex; flex-direction: column; gap: 4px; }
+.rc-person { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 9px; border: 0; background: transparent; text-align: left; cursor: default; }
+button.rc-person { cursor: pointer; }
+button.rc-person:hover { background: rgba(0, 0, 0, 0.05); }
+.rc-person i, .rc-msg > i, .rc-com-item > i, .rc-av i {
+    width: 28px; height: 28px; border-radius: 50%; flex: none; display: grid; place-items: center; color: #fff;
+    font: 700 12px sans-serif; font-style: normal; box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6), 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.rc-person span { display: flex; flex-direction: column; min-width: 0; }
+.rc-person small { color: #64748b; font-size: 11.5px; }
+
+.rc-channels { display: flex; flex-wrap: wrap; gap: 5px; }
+.rc-channels button { border: 1px solid #e2e8f0; background: #fff; border-radius: 99px; padding: 4px 10px; cursor: pointer; font-size: 12px; font-weight: 600; position: relative; display: inline-flex; align-items: center; gap: 4px; }
+.rc-channels .rc-unlink { font-weight: 800; opacity: 0.6; padding-left: 2px; }
+.rc-channels .rc-unlink:hover { opacity: 1; }
+.rc-channels .rc-badge { position: static; }
+.rc-addlink { border-style: dashed !important; color: var(--rc-b); }
+.rc-msgs { flex: 1; overflow: auto; display: flex; flex-direction: column; gap: 8px; min-height: 120px; padding: 2px; }
+.rc-msg { display: flex; gap: 8px; }
+.rc-msg > div { background: #fff; border: 1px solid #e5e7eb; border-radius: 4px 12px 12px 12px; padding: 6px 9px; max-width: 82%; }
+.rc-msg.mine { flex-direction: row-reverse; }
+.rc-msg.mine > div { background: linear-gradient(180deg, color-mix(in srgb, var(--rc-a) 18%, #fff), color-mix(in srgb, var(--rc-a) 30%, #fff)); border-color: color-mix(in srgb, var(--rc-b) 30%, transparent); border-radius: 12px 4px 12px 12px; }
+.rc-msg b { font-size: 12px; }
+.rc-msg small { font-weight: 400; color: #94a3b8; margin-left: 4px; }
+.rc-msg u { display: block; text-decoration: none; font-weight: 700; margin-top: 2px; }
+.rc-msg p, .rc-com-item p { margin: 2px 0 0; white-space: pre-wrap; word-break: break-word; line-height: 1.4; }
+.rc-empty { text-align: center; padding: 20px 8px; }
+.rc-send { display: flex; gap: 6px; padding-top: 8px; border-top: 1px solid rgba(0, 0, 0, 0.07); }
+.rc-send.rc-ro { opacity: 0.6; }
+.rc-seg { display: flex; gap: 4px; }
+.rc-seg button { flex: 1; border: 1px solid #e2e8f0; background: #fff; border-radius: 8px; padding: 6px; cursor: pointer; font-weight: 600; }
+
+.rc-com { border: 1px solid #e5e7eb; border-left: 3px solid var(--rc-b); border-radius: 10px; padding: 8px 10px; background: #fff; display: flex; flex-direction: column; gap: 6px; }
+.rc-com-where { border: 0; background: color-mix(in srgb, var(--rc-a) 15%, #fff); border-radius: 6px; padding: 3px 7px; font-size: 11.5px; text-align: left; cursor: pointer; color: var(--rc-b); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rc-com-item { display: flex; gap: 8px; }
+.rc-com-item > i { width: 22px; height: 22px; font-size: 10px; }
+.rc-com-item b { font-size: 12px; }
+.rc-com-item small { color: #94a3b8; font-weight: 400; }
+.rc-com-tools .rc-btn { padding: 5px 8px; }
+
+/* The Share button + avatar stack! */
+.rc-share:not(.rc-pad) {
+    display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px 0 8px; border-radius: 99px; cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.45); background: rgba(255, 255, 255, 0.16); color: inherit; font-family: inherit; font-size: 12.5px; font-weight: 600; white-space: nowrap;
+    transition: background 0.15s, transform 0.12s, box-shadow 0.2s;
+}
+.rc-share:not(.rc-pad):hover { background: rgba(255, 255, 255, 0.28); }
+.rc-share:not(.rc-pad):active { transform: scale(0.95); }
+.rc-share.rc-on {
+    color: #fff; background: linear-gradient(180deg, var(--rc-a) 0%, var(--rc-b) 100%); border-color: var(--rc-rim);
+    box-shadow: 0 4px 12px var(--rc-glow), inset 0 1px 2px #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+.rc-share.rc-has-unread::after { content: ""; width: 8px; height: 8px; border-radius: 50%; background: #ef4444; box-shadow: 0 0 0 2px #fff; margin-left: -2px; }
+.rc-av { display: inline-flex; }
+.rc-av:empty { display: none; }
+.rc-av i { width: 20px; height: 20px; font-size: 10px; margin-left: -6px; box-shadow: 0 0 0 2px #fff; }
+.rc-av i:first-child { margin-left: 0; }
+/* On light toolbars (classic sidebars are dark, office title bars are colored) the pill stays readable! */
+.rc-share.rc-light { border-color: #cbd5e1; background: #fff; color: #334155; }
+.rc-share.rc-light:hover { background: #f1f5f9; }
+/* In the Classic sidebars the button is JUST another sidebar button: its own class (pad-toggle-btn, action-btn...) draws it! */
+.rc-share.rc-pad { display: flex; align-items: center; gap: 8px; width: 100%; justify-content: flex-start; cursor: pointer; white-space: nowrap; }
+.rc-share.rc-pad .rc-av i { box-shadow: 0 0 0 2px rgba(15, 23, 42, 0.55); }
+
+/* Remote cursors: a colored caret with a name flag! */
+.rc-cursors { position: absolute; inset: 0; pointer-events: none; z-index: 60; overflow: visible; }
+.rc-caret { position: absolute; width: 2px; border-radius: 1px; transition: left 0.18s ease, top 0.18s ease, height 0.18s ease; }
+.rc-caret::before { content: ""; position: absolute; top: -3px; left: -2px; width: 6px; height: 6px; border-radius: 50%; background: inherit; }
+.rc-flag { position: absolute; left: 0; top: -17px; padding: 1px 6px; border-radius: 4px 4px 4px 0; color: #fff; font: 600 10.5px/15px "Segoe UI", sans-serif; white-space: nowrap; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); }
+.rc-box { position: absolute; border: 2px solid; border-radius: 3px; transition: left 0.18s ease, top 0.18s ease, width 0.18s ease, height 0.18s ease; }
+.rc-box .rc-flag { top: -18px; left: -2px; }
+
+/* Who's on which sheet/slide: tiny colored dots! */
+.rc-tabdots { display: inline-flex; gap: 2px; margin-left: 6px; vertical-align: middle; }
+.rc-thumbdots { position: absolute; right: 4px; bottom: 4px; margin: 0; z-index: 3; }
+.rc-tabdots i { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 0 0 1.5px #fff; }
+
+/* Inkpath: live mouse pointers with name tags! */
+.rc-pointer { position: absolute; width: 0; height: 0; transition: left 0.12s linear, top 0.12s linear; }
+.rc-pointer.rc-enter .rc-flag, .rc-caret.rc-enter .rc-flag, .rc-box.rc-enter .rc-flag { animation: rcPop 0.32s cubic-bezier(0.2, 0.9, 0.25, 1.25); }
+.rc-pointer svg { position: absolute; left: -2px; top: -2px; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.35)); }
+.rc-pointer .rc-flag { left: 14px; top: 14px; border-radius: 0 4px 4px 4px; }
+
+/* Comment anchors in text (Writeout + Bitbook)! */
+.rc-anchor { background: rgba(250, 204, 21, 0.35); border-bottom: 2px solid #f59e0b; border-radius: 2px; cursor: pointer; }
+.rc-anchor.rc-flash { animation: rcFlash 1.2s; }
+@keyframes rcFlash { 0%, 50% { background: rgba(250, 204, 21, 0.9); } }
+
+#rc-toast {
+    position: fixed; left: 50%; bottom: 40px; transform: translate(-50%, 16px); opacity: 0; z-index: 5000; pointer-events: none;
+    background: rgba(24, 27, 33, 0.94); color: #fff; padding: 8px 16px; border-radius: 99px; font: 13px sans-serif; transition: opacity 0.2s, transform 0.3s;
+}
+#rc-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+@media print { #rc-panel, .rc-cursors, .rc-share { display: none !important; } .rc-anchor { background: none; border: 0; } }
+@media (max-width: 760px) { #rc-panel { width: 100vw; } .rc-share-lab { display: none; } }
+
+/* ---------- Animations: ONLY when someone joins/leaves (or a message arrives)! ---------- */
+#rc-panel.rc-in { animation: rcIn 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.05); }
+#rc-panel.rc-out { animation: rcOut 0.2s ease forwards; }
+@keyframes rcIn { from { transform: translateX(40px); opacity: 0; } }
+@keyframes rcOut { to { transform: translateX(40px); opacity: 0; } }
+.rc-body.rc-tabin > * { animation: rcFade 0.22s ease backwards; }
+@keyframes rcFade { from { opacity: 0; transform: translateY(4px); } }
+.rc-msg.rc-enter, .rc-person.rc-enter { animation: rcFade 0.28s ease backwards; }
+.rc-av i.rc-enter, .rc-tabdots i.rc-enter { animation: rcPop 0.35s cubic-bezier(0.2, 0.9, 0.25, 1.3); }
+.rc-av i.rc-exit, .rc-tabdots i.rc-exit, .rc-cursors .rc-exit { animation: rcPopOut 0.2s ease forwards; }
+@keyframes rcPop { from { transform: scale(0); } }
+@keyframes rcPopOut { to { transform: scale(0); opacity: 0; } }

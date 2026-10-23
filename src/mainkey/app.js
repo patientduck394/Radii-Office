@@ -348,12 +348,76 @@ function downloadFile(blob, filename) {
     a.download = filename;
     a.click();
 }
+// ---------- Website Kit: ship the database to any site! ----------
+const LIBRARY_URL = 'live/mainkey-live.js';
+function openKitModal() {
+    setKitStatus('');
+    document.getElementById('kit-modal').style.display = 'flex';
+}
+function closeKitModal() { document.getElementById('kit-modal').style.display = 'none'; }
+function setKitStatus(msg) {
+    const el = document.getElementById('kit-status');
+    if (el)
+        el.textContent = msg;
+}
+function fetchLibrary() {
+    return fetch(LIBRARY_URL, { cache: 'no-cache' }).then(res => {
+        if (!res.ok)
+            throw new Error(`HTTP ${res.status}`);
+        return res.text();
+    });
+}
+function downloadLibrary() {
+    fetchLibrary().then(code => {
+        downloadFile(new Blob([code], { type: 'text/javascript' }), 'mainkey-live.js');
+    }).catch(() => setKitStatus('Could not load the library! Check your connection and try again!'));
+}
+// One self-contained page: library + data inline, so it even works from file://!
+function buildLivePage(code) {
+    const data = JSON.stringify({ app: 'Radii Base', version: '1.0', fields, records }).replace(/</g, '\\u003c');
+    const lib = code.replace(/<\/script/gi, '<\\/script');
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Database</title>
+<style>body{margin:0;padding:24px 16px;background:#f5f3ff;font-family:system-ui,sans-serif}main{max-width:960px;margin:0 auto}</style>
+</head>
+<body>
+<main>
+<div data-mainkey="#mainkey-data" data-mainkey-key="database-html" data-mainkey-title="Database"></div>
+</main>
+<script type="application/json" id="mainkey-data">${data}</script>
+<script>
+${lib}
+</script>
+</body>
+</html>
+`;
+}
+function downloadLivePage() {
+    fetchLibrary().then(code => {
+        downloadFile(new Blob([buildLivePage(code)], { type: 'text/html' }), 'database.html');
+    }).catch(() => setKitStatus('Could not load the library! Check your connection and try again!'));
+}
+function copyKitSnippet() {
+    const text = document.getElementById('kit-snippet').textContent || '';
+    const done = () => setKitStatus('Copied!');
+    const fail = () => setKitStatus('Select the snippet and copy it by hand!');
+    try {
+        navigator.clipboard.writeText(text).then(done, fail);
+    }
+    catch (e) {
+        fail();
+    }
+}
 restore();
 render();
 // Export pure helpers for build-time testing in Node!
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { escapeHtml, csvCell, getFilteredSorted, sortBy, duplicateRecord, deleteField, createField };
+    module.exports = { escapeHtml, csvCell, getFilteredSorted, sortBy, duplicateRecord, deleteField, createField, buildLivePage };
 }
 if (typeof globalThis !== 'undefined') {
-    Object.assign(globalThis, { setViewMode, render, renderTable, renderCards, openRecordModal, closeRecordModal, saveRecord, editRecord, duplicateRecord, deleteRecord, openFieldModal, closeFieldModal, createField, deleteField, clearDatabase, resetDemo, exportCSV, exportKB, importKB, sortBy });
+    Object.assign(globalThis, { setViewMode, render, renderTable, renderCards, openRecordModal, closeRecordModal, saveRecord, editRecord, duplicateRecord, deleteRecord, openFieldModal, closeFieldModal, createField, deleteField, clearDatabase, resetDemo, exportCSV, exportKB, importKB, sortBy, openKitModal, closeKitModal, downloadLibrary, downloadLivePage, copyKitSnippet });
 }

@@ -1,0 +1,29 @@
+app: Radii Base
+version: '1.0'
+fields:
+  - id: title
+    name: Title
+    type: text
+  - id: status
+    name: Status
+    type: tag
+  - id: value
+    name: Value
+    type: number
+records:
+  - id: 1
+    title: Project Alpha
+    status: In Progress
+    value: 1200
+  - id: 2
+    title: Radii Game Asset
+    status: Completed
+    value: 450
+  - id: 3
+    title: Project Beta
+    status: In Progress
+    value: 800
+  - id: 4
+    title: Launch Poster
+    status: Todo
+    value: 150

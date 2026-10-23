@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mainkey Live Demo</title>
+    <style>
+        body { margin: 0; padding: 24px 16px; font-family: system-ui, sans-serif; background: #f5f3ff; color: #1e293b; }
+        main { max-width: 900px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        h1 { margin: 0; color: #7c00c7; }
+        pre { background: #1e1033; color: #f3e8ff; padding: 12px; border-radius: 10px; overflow-x: auto; font-size: 12px; }
+        #api-out { font-family: ui-monospace, monospace; font-size: 12px; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Mainkey Live Demo!</h1>
+    <p>This whole database comes from <code>demo.kb</code> plus two lines of HTML!</p>
+    <pre>&lt;div data-mainkey="demo.kb" data-mainkey-title="Projects"&gt;&lt;/div&gt;
+&lt;script src="mainkey-live.js"&gt;&lt;/script&gt;</pre>
+
+    <div id="editable" data-mainkey="demo.kb" data-mainkey-title="Projects"></div>
+
+    <p>A second, read-only view of the <em>same</em> database! Edit above and watch it update live!</p>
+    <div id="readonly" data-mainkey="demo.kb" data-mainkey-editable="false" data-mainkey-view="cards" data-mainkey-search="false"></div>
+
+    <p>And the JavaScript API, re-running on every change:</p>
+    <div id="api-out">Loading!</div>
+</main>
+<script src="mainkey-live.js"></script>
+<script>
+    Mainkey.load('demo.kb').then(function (db) {
+        function show() {
+            var s = db.stats('value');
+            var open = db.query({ where: { status: 'In Progress' } }).length;
+            document.getElementById('api-out').textContent =
+                'db.count = ' + db.count + '  |  in progress = ' + open +
+                '  |  total value = ' + s.sum + '  |  biggest = ' +
+                (db.query({ sort: 'value', dir: 'desc', limit: 1 })[0] || {}).title;
+        }
+        db.subscribe(show);
+        show();
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,433 @@
+/* =====================================================================
+   Amber's PowerPoint layout (body.os-office) + the slide show engine!
+   The slides themselves look identical in both layouts!
+   ===================================================================== */
+
+/* ---------- The PowerPoint frame ---------- */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #e6e6e6;
+}
+body.os-office.os-dark { background: #1b1b1d; }
+body.os-office #os-top { grid-column: 1 / -1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1 / -1; grid-row: 3; }
+body.os-office #sidebar, body.os-office .slides-toolbar, body.os-office #presentation-overlay { display: none !important; }
+
+body.os-office .workspace-viewport-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+body.os-office .slides-editor-container { max-width: none; margin: 0; gap: 0; min-height: 0; }
+
+/* Thumbnails pane: numbered cards you can drag to reorder! */
+body.os-office .thumbnail-panel {
+    width: 214px;
+    flex: none;
+    border: 0;
+    border-right: 1px solid var(--os-ribbon-line);
+    border-radius: 0;
+    background: var(--os-ui);
+    box-shadow: none;
+    backdrop-filter: none;
+    padding: 12px 12px 12px 30px;
+    gap: 12px;
+}
+body.os-office .thumbnail-card {
+    overflow: visible;
+    border: 2px solid transparent;
+    border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.18);
+    transition: transform 0.2s var(--os-spring), border-color 0.15s, box-shadow 0.15s;
+}
+body.os-office .thumbnail-card .thumbnail-live { border-radius: 1px; }
+body.os-office .thumbnail-card:hover { border-color: color-mix(in srgb, var(--os-accent) 45%, transparent); }
+body.os-office .thumbnail-card.active { border-color: var(--os-accent); box-shadow: 0 0 0 1px var(--os-accent), 0 3px 10px rgba(196, 62, 28, 0.25); }
+body.os-office .thumbnail-number {
+    left: -22px;
+    top: 0;
+    background: none;
+    color: var(--os-dim);
+    font: 600 11px var(--os-font);
+    padding: 0;
+    width: 16px;
+    text-align: right;
+}
+body.os-office .thumbnail-card.active .thumbnail-number { color: var(--os-accent); }
+.am-thumb-star {
+    position: absolute;
+    left: -21px;
+    top: 18px;
+    font-size: 11px;
+    color: var(--os-accent);
+    text-shadow: 0 0 6px rgba(255, 170, 90, 0.7);
+    display: none;
+}
+body.os-office .am-thumb-star { display: block; }
+.thumbnail-card.am-hidden-slide .thumbnail-live { opacity: 0.4; }
+.thumbnail-card.am-hidden-slide .thumbnail-number { text-decoration: line-through; }
+.thumbnail-card.am-dragging { opacity: 0.35; transform: scale(0.94); }
+.thumbnail-card.am-drop-before { box-shadow: 0 -4px 0 -1px var(--os-accent) !important; }
+.thumbnail-card.am-drop-after { box-shadow: 0 4px 0 -1px var(--os-accent) !important; }
+.thumbnail-card.am-thumb-in { animation: amThumbIn 0.45s var(--os-spring); }
+@keyframes amThumbIn { from { opacity: 0; transform: translateX(-26px) scale(0.85); } }
+
+/* The slide sits big and centered on a gray desk! */
+body.os-office .canvas-stage {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    padding: 24px;
+    min-width: 0;
+}
+body.os-office #slide-canvas {
+    width: 720px !important;
+    max-width: none !important;
+    height: 405px;
+    aspect-ratio: auto;
+    flex: none;
+    border-radius: 2px;
+    border: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18), 0 12px 34px rgba(0, 0, 0, 0.16);
+    transition: background 0.3s;
+}
+
+/* Notes pane under the slide! */
+#amber-notes { display: none; }
+body.os-office.am-notes-on #amber-notes {
+    display: block;
+    flex: none;
+    height: 86px;
+    border-top: 1px solid var(--os-ribbon-line);
+    background: var(--os-field);
+    animation: amNotesIn 0.3s var(--os-ease);
+}
+@keyframes amNotesIn { from { height: 0; opacity: 0; } }
+#amber-notes textarea {
+    width: 100%;
+    height: 100%;
+    resize: none;
+    border: 0;
+    outline: 0;
+    padding: 10px 18px;
+    box-sizing: border-box;
+    font: 13px var(--os-font);
+    background: transparent;
+    color: var(--os-text);
+}
+
+/* Slide Sorter view! */
+#amber-sorter { display: none; }
+body.os-office.am-sorter .slides-editor-container, body.os-office.am-sorter #amber-notes { display: none !important; }
+body.os-office.am-sorter #amber-sorter {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 22px;
+    padding: 26px;
+    overflow: auto;
+    flex: 1;
+    align-content: start;
+    animation: osPanelIn 0.3s var(--os-ease);
+}
+.am-sort-card {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    text-align: left;
+    color: var(--os-text);
+    font: 12px var(--os-font);
+    position: relative;
+    transition: transform 0.22s var(--os-spring);
+}
+.am-sort-card:hover { transform: translateY(-3px); }
+.am-sort-thumb { aspect-ratio: 16 / 9; position: relative; border-radius: 3px; overflow: hidden; border: 3px solid transparent; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); background: #0f172a; }
+.am-sort-card.on .am-sort-thumb { border-color: var(--os-accent); }
+.am-sort-thumb .thumbnail-live { position: absolute; inset: 0; }
+.am-sort-thumb .thumbnail-live-el { font-size: 160% !important; }
+.am-sort-num { position: absolute; left: 6px; top: 6px; background: rgba(0, 0, 0, 0.6); color: #fff; font-weight: 700; padding: 1px 7px; border-radius: 4px; }
+.am-sort-title { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-sort-tr { color: var(--os-accent); font-size: 11px; }
+.am-sort-card.am-dragging { opacity: 0.35; }
+.am-sort-card.am-drop-before .am-sort-thumb { box-shadow: -5px 0 0 var(--os-accent); }
+
+/* Animation Pane on the right! */
+.am-pane { display: none; }
+body.os-office.am-pane-on #amber-anim-pane {
+    display: flex;
+    flex-direction: column;
+    grid-column: 2;
+    grid-row: 2;
+    width: 268px;
+    background: var(--os-ui);
+    border-left: 1px solid var(--os-ribbon-line);
+    font: 13px var(--os-font);
+    color: var(--os-text);
+    min-height: 0;
+    animation: amPaneIn 0.3s var(--os-ease);
+}
+@keyframes amPaneIn { from { opacity: 0; transform: translateX(16px); } }
+.am-pane-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 12px 6px; }
+.am-pane-head b { font-family: var(--os-brand-font); font-weight: 800; font-size: 14px; }
+.am-pane-x, .am-pane-tools button { border: 0; background: transparent; border-radius: 6px; cursor: pointer; color: var(--os-text); display: inline-flex; align-items: center; gap: 5px; padding: 4px 8px; font: inherit; }
+.am-pane-x:hover, .am-pane-tools button:hover { background: var(--os-hover); }
+.am-pane-x .os-ico, .am-pane-tools .os-ico { width: 15px; height: 15px; }
+.am-pane-tools { display: flex; gap: 4px; padding: 0 10px 8px; border-bottom: 1px solid var(--os-ribbon-line); }
+.am-pane-play {
+    color: #fff !important;
+    background: linear-gradient(180deg, var(--os-gel1) 0%, var(--os-gel2) 50%, var(--os-accent) 52%, var(--os-accent-d) 100%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    margin-right: auto;
+}
+#am-pane-list { overflow: auto; padding: 8px; display: flex; flex-direction: column; gap: 3px; }
+.am-pane-empty { color: var(--os-dim); font-size: 12.5px; line-height: 1.45; padding: 6px; }
+.am-pane-item {
+    display: grid;
+    grid-template-columns: 16px 16px 1fr auto;
+    grid-template-rows: auto 4px;
+    align-items: center;
+    column-gap: 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    border-radius: 7px;
+    padding: 5px 7px;
+    cursor: pointer;
+    text-align: left;
+    color: inherit;
+    font: inherit;
+    animation: amItemIn 0.3s var(--os-ease) backwards;
+}
+@keyframes amItemIn { from { opacity: 0; transform: translateX(10px); } }
+.am-pane-item:hover { background: var(--os-hover); }
+.am-pane-item.on { background: var(--os-on); border-color: color-mix(in srgb, var(--os-accent) 40%, transparent); }
+.am-pane-num { font-weight: 700; color: var(--os-dim); font-size: 12px; }
+.am-pane-start { font-size: 11px; }
+.am-pane-star { font-size: 13px; }
+.am-pane-name { display: flex; flex-direction: column; min-width: 0; }
+.am-pane-name b { font-weight: 600; font-size: 12.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.am-pane-name small { color: var(--os-dim); font-size: 11px; }
+.am-pane-bar { grid-column: 3 / 5; height: 3px; border-radius: 2px; width: var(--w); margin-left: var(--d, 0); background: var(--k); opacity: 0.8; margin-top: 2px; }
+.am-pane-nth { font-style: normal; font-size: 10px; font-weight: 700; color: var(--os-accent); background: var(--os-accent-l); border-radius: 99px; padding: 0 5px; margin-left: 3px; }
+.am-pane-start { font: 11px var(--os-font); border: 1px solid var(--os-field-line); border-radius: 5px; background: var(--os-field); color: var(--os-text); padding: 1px 2px; max-width: 108px; cursor: pointer; }
+/* Animations that start WITH the previous one hang off it, so "same time" is easy to see! */
+.am-pane-item.am-with { margin-left: 12px; border-left: 2px solid color-mix(in srgb, var(--os-accent) 45%, transparent); border-radius: 0 7px 7px 0; }
+.am-add-menu { min-width: 380px; }
+.os-swatches.am-add-grid { grid-template-columns: repeat(3, 1fr) !important; gap: 4px; }
+.os-swatches.am-add-grid .os-swatch { width: auto; height: 30px; display: flex; gap: 5px; justify-content: flex-start; padding: 0 8px; background: var(--os-field); border-color: var(--os-menu-line); font: 12px var(--os-font); color: var(--os-text); }
+.os-swatches.am-add-grid .os-swatch:hover { transform: none; background: var(--os-accent-l); }
+
+/* Numbered animation badges on the slide (like PowerPoint's)! */
+.am-badge {
+    position: absolute;
+    left: -14px;
+    top: -14px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    box-sizing: border-box;
+    border-radius: 4px;
+    font: 700 11px/20px var(--os-font);
+    text-align: center;
+    color: #fff;
+    background: linear-gradient(180deg, #4ade80, #16a34a);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    z-index: 50;
+    pointer-events: none;
+    animation: amBadgeIn 0.35s var(--os-spring);
+}
+.am-badge-emphasis { background: linear-gradient(180deg, #fcd34d, #d97706); }
+.am-badge-exit { background: linear-gradient(180deg, #f87171, #dc2626); }
+@keyframes amBadgeIn { from { transform: scale(0); } }
+
+/* ---------- Ribbon galleries ---------- */
+.am-theme-gal .os-gal-item { width: 76px; }
+.am-theme-prev { width: 60px; height: 36px; border-radius: 3px; display: grid; place-items: center; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.5); }
+.am-theme-prev b { color: #fff; font: 800 13px 'JetBrains Mono', monospace; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); }
+.os-gal-item:hover .am-theme-prev { transform: scale(1.06); transition: transform 0.2s var(--os-spring); }
+
+/* Transition previews: tiny slides that really transition on hover! */
+.am-tr-gal .os-gal-item { width: 64px; }
+.am-trp { width: 46px; height: 28px; position: relative; overflow: hidden; border-radius: 3px; display: block; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25); perspective: 120px; background: #222; }
+.am-trp i { position: absolute; inset: 0; display: block; }
+.am-trp .a { background: linear-gradient(180deg, #fbbf24, #d97706); }
+.am-trp .b { background: linear-gradient(180deg, #38bdf8, #0369a1); opacity: 0; }
+.am-trp-none .b { display: none; }
+.os-gal-item:hover .am-trp-fade .b, .os-gal-item.on .am-trp-fade .b { animation: trpFade 1.4s infinite; }
+.os-gal-item:hover .am-trp-push .a { animation: trpPushA 1.4s infinite; }
+.os-gal-item:hover .am-trp-push .b { animation: trpPushB 1.4s infinite; }
+.os-gal-item:hover .am-trp-wipe .b { animation: trpWipe 1.4s infinite; }
+.os-gal-item:hover .am-trp-split .b { animation: trpSplit 1.4s infinite; }
+.os-gal-item:hover .am-trp-reveal .b { opacity: 1; }
+.os-gal-item:hover .am-trp-reveal .a { z-index: 1; animation: trpPushA 1.4s infinite; }
+.os-gal-item:hover .am-trp-cover .b { animation: trpPushB 1.4s infinite; }
+.os-gal-item:hover .am-trp-zoom .b { animation: trpZoom 1.4s infinite; }
+.os-gal-item:hover .am-trp-flip .a { animation: trpFlipA 1.4s infinite; }
+.os-gal-item:hover .am-trp-flip .b { animation: trpFlipB 1.4s infinite; }
+.os-gal-item:hover .am-trp-cube .a { transform-origin: 0 50%; animation: trpCubeA 1.4s infinite; }
+.os-gal-item:hover .am-trp-cube .b { transform-origin: 100% 50%; animation: trpCubeB 1.4s infinite; }
+.os-gal-item:hover .am-trp-gallery .a { animation: trpGalA 1.4s infinite; }
+.os-gal-item:hover .am-trp-gallery .b { animation: trpGalB 1.4s infinite; }
+.os-gal-item:hover .am-trp-vortex .b { animation: trpVortex 1.4s infinite; }
+.am-trp-morph .b { opacity: 1; background: linear-gradient(180deg, #fbbf24, #d97706); }
+.am-trp-morph .b::after { content: ""; position: absolute; width: 12px; height: 12px; border-radius: 50%; background: #fff; left: 5px; top: 5px; box-shadow: 0 0 4px rgba(0, 0, 0, 0.3); }
+.os-gal-item:hover .am-trp-morph .b::after { animation: trpMorph 1.4s infinite; }
+@keyframes trpFade { 0%, 15% { opacity: 0; } 70%, 100% { opacity: 1; } }
+@keyframes trpPushA { 0%, 15% { transform: none; } 70%, 100% { transform: translateX(-100%); } }
+@keyframes trpPushB { 0%, 15% { opacity: 1; transform: translateX(100%); } 70%, 100% { opacity: 1; transform: none; } }
+@keyframes trpWipe { 0%, 15% { opacity: 1; clip-path: inset(0 0 0 100%); } 70%, 100% { opacity: 1; clip-path: inset(0); } }
+@keyframes trpSplit { 0%, 15% { opacity: 1; clip-path: inset(0 50%); } 70%, 100% { opacity: 1; clip-path: inset(0); } }
+@keyframes trpZoom { 0%, 15% { opacity: 0; transform: scale(0.2); } 70%, 100% { opacity: 1; transform: none; } }
+@keyframes trpFlipA { 0%, 15% { transform: rotateY(0); } 42%, 100% { transform: rotateY(90deg); } }
+@keyframes trpFlipB { 0%, 42% { opacity: 1; transform: rotateY(-90deg); } 70%, 100% { opacity: 1; transform: none; } }
+@keyframes trpCubeA { 0%, 15% { transform: none; } 70%, 100% { transform: translateX(-100%) rotateY(-90deg); } }
+@keyframes trpCubeB { 0%, 15% { opacity: 1; transform: translateX(100%) rotateY(90deg); } 70%, 100% { opacity: 1; transform: none; } }
+@keyframes trpGalA { 0%, 15% { transform: none; } 70%, 100% { transform: translateX(-110%) scale(0.75); } }
+@keyframes trpGalB { 0%, 15% { opacity: 1; transform: translateX(110%) scale(0.75); } 55% { transform: scale(0.75); } 80%, 100% { opacity: 1; transform: none; } }
+@keyframes trpVortex { 0%, 15% { opacity: 0; transform: rotate(-200deg) scale(0); } 70%, 100% { opacity: 1; transform: none; } }
+@keyframes trpMorph { 0%, 15% { left: 5px; top: 5px; width: 12px; height: 12px; } 70%, 100% { left: 24px; top: 10px; width: 18px; height: 14px; border-radius: 4px; } }
+
+/* Animation gallery: colored stars that do their effect on hover! */
+.am-an-gal .os-gal-item { width: 66px; }
+.am-anp { width: 30px; height: 30px; display: grid; place-items: center; font-style: normal; }
+.am-anp b { font-size: 22px; color: var(--k); text-shadow: 0 0 6px color-mix(in srgb, var(--k) 60%, transparent); display: block; }
+.os-gal-item:hover .am-anp-fade { animation: anpFade 1.2s infinite; }
+.os-gal-item:hover .am-anp-appear { animation: anpAppear 1.2s steps(1) infinite; }
+.os-gal-item:hover .am-anp-fly { animation: anpFly 1.2s infinite; }
+.os-gal-item:hover .am-anp-float { animation: anpFloat 1.2s infinite; }
+.os-gal-item:hover .am-anp-zoom { animation: anpZoom 1.2s infinite; }
+.os-gal-item:hover .am-anp-wipe { animation: anpWipe 1.2s infinite; }
+.os-gal-item:hover .am-anp-bounce { animation: anpBounce 1.2s infinite; }
+.os-gal-item:hover .am-anp-spin, .os-gal-item:hover .am-anp-emSpin { animation: anpSpin 1.2s infinite; }
+.os-gal-item:hover .am-anp-grow { animation: anpGrow 1.2s infinite; }
+.os-gal-item:hover .am-anp-pulse { animation: anpPulse 0.8s infinite; }
+.os-gal-item:hover .am-anp-teeter { animation: anpTeeter 0.8s infinite; }
+.os-gal-item:hover .am-anp-flash { animation: anpFlash 0.8s infinite; }
+.os-gal-item:hover .am-anp-fadeOut { animation: anpFade 1.2s infinite reverse; }
+.os-gal-item:hover .am-anp-flyOut { animation: anpFly 1.2s infinite reverse; }
+.os-gal-item:hover .am-anp-zoomOut { animation: anpZoom 1.2s infinite reverse; }
+.os-gal-item:hover .am-anp-wipeOut { animation: anpWipe 1.2s infinite reverse; }
+.os-gal-item:hover .am-anp-shrinkOut { animation: anpGrow 1.2s infinite reverse; }
+@keyframes anpFade { 0% { opacity: 0; } 60%, 100% { opacity: 1; } }
+@keyframes anpAppear { 0% { opacity: 0; } 40%, 100% { opacity: 1; } }
+@keyframes anpFly { 0% { transform: translateX(-30px); opacity: 0; } 60%, 100% { transform: none; opacity: 1; } }
+@keyframes anpFloat { 0% { transform: translateY(14px); opacity: 0; } 60%, 100% { transform: none; opacity: 1; } }
+@keyframes anpZoom { 0% { transform: scale(0.1); opacity: 0; } 60%, 100% { transform: none; opacity: 1; } }
+@keyframes anpWipe { 0% { clip-path: inset(0 100% 0 0); } 60%, 100% { clip-path: inset(0); } }
+@keyframes anpBounce { 0% { transform: translateY(-24px); } 35% { transform: none; } 50% { transform: translateY(-8px); } 65%, 100% { transform: none; } }
+@keyframes anpSpin { 0% { transform: rotate(0); } 70%, 100% { transform: rotate(360deg); } }
+@keyframes anpGrow { 0% { transform: scale(0.1) rotate(-90deg); opacity: 0; } 60%, 100% { transform: none; opacity: 1; } }
+@keyframes anpPulse { 50% { transform: scale(1.35); } }
+@keyframes anpTeeter { 25% { transform: rotate(-14deg); } 75% { transform: rotate(14deg); } }
+@keyframes anpFlash { 50% { opacity: 0.15; } }
+
+.os-swatches.am-shape-grid { grid-template-columns: repeat(7, 1fr); gap: 4px; padding: 6px; }
+.os-swatches.am-shape-grid .os-swatch { width: 34px; height: 30px; background: transparent; border-color: transparent; color: var(--os-text); }
+.os-swatches.am-shape-grid .os-swatch:hover { background: var(--os-accent-l); border-color: color-mix(in srgb, var(--os-accent) 40%, transparent); }
+.os-swatches.am-shape-grid .os-ico { width: 22px; height: 22px; }
+
+.am-bg-row { display: flex; gap: 14px; }
+.am-bg-row input[type=color] { width: 80px; height: 32px; border: 1px solid var(--os-field-line); border-radius: 6px; padding: 2px; background: var(--os-field); }
+.am-bg-prev { height: 90px; border-radius: 8px; margin-top: 10px; box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.12); }
+.am-bs-doc { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--os-menu-line); border-radius: 10px; max-width: 560px; }
+.am-bs-doc img { width: 36px; height: 36px; }
+.am-bs-doc div { display: flex; flex-direction: column; gap: 3px; }
+.am-bs-doc span { color: var(--os-dim); font-size: 12.5px; }
+.am-lay-prev i { position: absolute; display: block; border: 1px dashed rgba(255, 255, 255, 0.8); border-radius: 2px; }
+.am-keys { border-collapse: collapse; width: 100%; margin-top: 6px; }
+.am-keys td { padding: 5px 8px; border-bottom: 1px solid var(--os-menu-line); font-size: 12.5px; }
+.am-classic-settings h4 { margin: 8px 0; font: 800 12px var(--os-brand-font); color: var(--os-accent); text-transform: uppercase; letter-spacing: 0.5px; }
+.am-classic-settings .os-lay-card { width: calc(50% - 8px); min-width: 200px; }
+
+/* ---------- The slide show (both layouts!) ---------- */
+.amber-show {
+    position: fixed;
+    inset: 0;
+    z-index: 6000;
+    background: #000;
+    overflow: hidden;
+    cursor: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+}
+.amber-show.in { opacity: 1; }
+.amber-show.out { opacity: 0; transition-duration: 0.24s; }
+.amber-show.as-hud-on { cursor: default; }
+.amber-show .as-stage, .as-preview .as-stage {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 720px;
+    height: 405px;
+    transform-origin: 50% 50%;
+}
+.as-slide { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; }
+.as-bg { position: absolute; inset: 0; }
+.as-slide .slide-element { cursor: inherit; border-color: transparent !important; box-shadow: none !important; }
+.as-slide .slide-text-content { cursor: inherit; }
+.amber-show.as-black::after, .amber-show.as-white::after { content: ""; position: absolute; inset: 0; z-index: 20; background: #000; }
+.amber-show.as-white::after { background: #fff; }
+.as-hud {
+    position: absolute;
+    left: 50%;
+    bottom: 26px;
+    transform: translate(-50%, 20px);
+    opacity: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 14px;
+    border-radius: 30px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(254, 243, 199, 0.88) 100%);
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    color: #b45309;
+    font: 800 12px 'JetBrains Mono', monospace;
+    transition: opacity 0.25s, transform 0.3s cubic-bezier(0.2, 0.9, 0.25, 1.18);
+    pointer-events: none;
+}
+.amber-show.as-hud-on .as-hud { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.as-hud button {
+    border: 0;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    color: #fff;
+    font: 800 16px 'JetBrains Mono', monospace;
+    background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 50%, #d97706 52%, #b45309 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 2px 5px rgba(0, 0, 0, 0.25);
+    transition: transform 0.15s;
+}
+.as-hud button:hover { transform: scale(1.12); }
+.as-hud button.as-exit { width: auto; border-radius: 16px; padding: 0 12px; font-size: 12px; background: linear-gradient(180deg, #fca5a5 0%, #ef4444 50%, #dc2626 52%, #b91c1c 100%); }
+.as-end { position: absolute; inset: 0; z-index: 25; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: #e5e5e5; background: #000; }
+.as-end[hidden] { display: none; }
+.as-end b { font: 800 22px 'JetBrains Mono', monospace; color: #fbbf24; text-shadow: 0 0 18px rgba(251, 191, 36, 0.6); }
+.as-end span { font-size: 14px; color: #a3a3a3; }
+.as-end.in { animation: osPanelIn 0.4s ease; }
+
+/* Previews play right over the editing canvas! */
+.as-preview { position: fixed; z-index: 2000; overflow: hidden; border-radius: 2px; background: #000; cursor: pointer; animation: osFade 0.15s; }
+.as-preview.out { opacity: 0; transition: opacity 0.2s; }
+.as-prev-tag { position: absolute; right: 8px; top: 8px; z-index: 40; font: 700 11px var(--os-font, sans-serif); color: #fff; background: rgba(0, 0, 0, 0.55); padding: 2px 8px; border-radius: 99px; }
+
+@media (max-width: 760px) {
+    body.os-office .thumbnail-panel { width: 120px; padding-left: 24px; }
+    body.os-office.am-pane-on #amber-anim-pane { display: none; }
+}

@@ -9,5 +9,11 @@
         "declaration": false,
         "rootDir": "."
     },
-    "include": ["imbuer/formula_engine.ts"]
+    "include": [
+        "imbuer/formula_engine.ts",
+        "scripts/engines/imbuer.ts",
+        "scripts/engines/mainkey.ts",
+        "scripts/engines/inkpath.ts",
+        "scripts/keydown.ts"
+    ]
 }

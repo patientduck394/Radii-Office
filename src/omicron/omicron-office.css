@@ -1,0 +1,235 @@
+/* =====================================================================
+   Omicron's Sway layout! (body.os-office) Teal chrome, a soft gray
+   canvas, and the page in the middle. Omicron Classic stays untouched!
+   ===================================================================== */
+
+/* Omicron's "* { font-family }" would put the ribbon in JetBrains Mono:
+   :where() keeps this at zero specificity so the shell's own fonts win! */
+:where(#os-top, #os-status, #os-backstage, .os-menu, .os-dlg, #os-toast, #rc-panel, .rc-share, #rc-toast) * { font-family: inherit; }
+:where(#os-top, #os-status, #os-backstage, .os-menu, .os-dlg) { user-select: none; }
+:where(.os-dlg input, .os-dlg textarea, #os-backstage textarea, #rc-panel input, #rc-panel textarea) { user-select: text; }
+
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #eef3f2;
+    color: #252525;
+}
+body.os-office.os-dark { background: #1a1f1e; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .aero-sidebar,
+body.os-office .sheets-toolbar { display: none !important; }
+body.os-office .workspace-viewport-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    animation: osFade 0.3s;
+}
+body.os-office #spreadsheet-container {
+    max-width: none;
+    height: 100%;
+    margin: 0;
+    padding: 36px 24px 60px;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    background: #eef3f2;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+body.os-office.os-dark #spreadsheet-container { background: #1a1f1e; }
+body.os-office .page-paper {
+    max-width: 100%;
+    border-radius: 14px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08), 0 12px 32px rgba(15, 23, 42, 0.08);
+    border: 1px solid #dbe5e3;
+}
+
+/* The card you're on gets a soft teal outline (Sway-style)! */
+body.os-office .wysiwyg-block.om-cur { outline-color: rgba(0, 214, 182, 0.75); background: rgba(0, 214, 182, 0.035); }
+body.os-office.om-no-outlines .wysiwyg-block,
+body.os-office.om-no-outlines .wysiwyg-block:hover { outline-color: transparent; background: transparent; }
+
+/* Rich Text cards (Bitbook notes land here): tags + skills, Keydown everything! */
+.wysiwyg-rich { line-height: 1.7; color: #334155; white-space: pre-wrap; outline: none; min-height: 1.7em; }
+.wysiwyg-rich:empty::before { content: "Rich Text: type, or insert tags, skills and Keydown styles!"; color: #94a3b8; pointer-events: none; }
+.wysiwyg-rich img { max-width: 100%; }
+
+/* Ribbon previews */
+.om-gp { font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 13px; display: block; padding: 4px 0 2px; color: #334155; }
+.om-gp-h1 { color: #00a88f; font-weight: 900; font-size: 16px; }
+.om-gp-h2 { color: #1e293b; font-weight: 800; font-size: 14px; }
+.om-gp-sub { color: #64748b; font-weight: 600; }
+.om-gp-lead { color: #0f172a; font-weight: 600; font-size: 14px; }
+.om-gp-q { color: #475569; font-style: italic; border-left: 3px solid #00D6B6; padding-left: 4px; }
+body.os-dark .om-gp-p, body.os-dark .om-gp-h2, body.os-dark .om-gp-lead { color: #e5e5e5; }
+.om-card-gal .os-gal-list { max-width: 262px; }
+.om-sw-grid { gap: 6px; padding: 6px 8px 8px; }
+.os-swatch.om-sw { width: auto; height: 34px; min-width: 52px; padding: 0 6px; background: #f8fafc; overflow: visible; }
+.os-swatch.om-sw > span { font-size: 11px; white-space: nowrap; pointer-events: none; }
+.om-accents { display: grid; grid-template-columns: repeat(6, 18px); gap: 5px; padding: 4px 6px; align-content: center; }
+.om-accents button { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.6); cursor: pointer; padding: 0; transition: transform 0.15s var(--os-spring); }
+.om-accents button:hover { transform: scale(1.25); }
+
+/* Dialogs: Skills, Marketplace packs, cheat sheet, Bitbook pages */
+.os-dlg.om-skill-dlg { width: 640px; }
+.om-skill-tabs, .om-skill-cols { margin: 4px 0 10px; }
+.om-skill-cols button { padding: 4px 9px; font-size: 12px; }
+.om-skill-hint { color: var(--os-dim); font-size: 12.5px; margin: 0 0 8px; }
+.om-skill-row { display: flex; align-items: center; gap: 10px; font-weight: 600; margin-bottom: 10px; }
+.om-skill-row input[type=color] { width: 44px; height: 28px; border: 1px solid var(--os-menu-line); border-radius: 6px; background: none; padding: 1px; cursor: pointer; }
+.om-skill-stage { display: grid; place-items: center; padding: 26px; border: 1px dashed var(--os-menu-line); border-radius: 10px; background: #fff; }
+.om-skill-q { width: 100%; margin-bottom: 8px; }
+.om-skill-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; max-height: 340px; overflow: auto; padding: 4px; }
+.om-skill-grid button, .om-pack-item { display: grid; place-items: center; gap: 4px; min-height: 48px; padding: 8px 4px; border: 1px solid var(--os-menu-line); border-radius: 9px; background: #fff; cursor: pointer; transition: transform 0.15s var(--os-spring), box-shadow 0.15s; }
+.om-skill-grid button:hover, .om-pack-item:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); }
+.om-skill-grid button.on, .om-pack-item.on { border-color: var(--os-accent); box-shadow: 0 0 0 2px var(--os-gel-glow); }
+.om-skill-grid button > span { pointer-events: none; font-size: 12px; }
+.om-pack { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; max-height: 360px; overflow: auto; padding: 4px; }
+.om-pack-item small { color: var(--os-dim); font-size: 10.5px; font-family: 'JetBrains Mono', monospace; }
+.os-dlg:has(.om-pack) { width: 560px; }
+.om-cheat table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.om-cheat td { padding: 4px 8px; border-bottom: 1px solid var(--os-menu-line); }
+.om-cheat code { font-family: 'JetBrains Mono', monospace; background: var(--os-hover); border-radius: 4px; padding: 1px 4px; }
+.os-dlg-body:has(.om-cheat) { max-height: 60vh; }
+.om-pages { display: flex; flex-direction: column; gap: 6px; margin: 8px 0; max-height: 260px; overflow: auto; }
+.om-pages label { display: flex; align-items: center; gap: 8px; }
+.os-dlg.om-layout-dlg { width: 560px; }
+.om-layout-dlg .os-lay-cards { margin-top: 8px; }
+
+/* File screen */
+.om-bs-p { color: var(--os-dim); margin: -10px 0 12px; }
+.om-code { width: 100%; max-width: 820px; height: 46vh; resize: vertical; font: 12px/1.5 'JetBrains Mono', monospace; padding: 12px; border: 1px solid var(--os-menu-line); border-radius: 10px; background: #0f172a; color: #a5f3e7; margin-bottom: 16px; }
+
+/* Classic: the layout button sits with the other sidebar buttons! */
+.om-classic-layout { margin-bottom: 8px; }
+
+/* Bitbook's tag gallery look (shared with Bitbook's OneNote layout)! */
+.bb-tag-gal .os-gal-item { width: 64px; }
+.bb-tag-gal .os-gal-list { max-width: 268px; }
+.bb-tg {
+    font-style: normal;
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    display: grid;
+    place-items: center;
+    font-size: 15px;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), 0 1px 3px rgba(0, 0, 0, 0.25);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s var(--os-spring);
+}
+.os-gal-item:hover .bb-tg { transform: scale(1.15) rotate(-6deg); }
+.bb-tg-todo { background: linear-gradient(180deg, #93c5fd, #2563eb); }
+.bb-tg-imp { background: linear-gradient(180deg, #fde68a, #f59e0b); }
+.bb-tg-idea { background: linear-gradient(180deg, #fef9c3, #facc15); font-size: 13px; }
+.bb-tg-contact { background: linear-gradient(180deg, #86efac, #16a34a); }
+.bb-tg-user { background: linear-gradient(180deg, #d8b4fe, #9333ea); }
+.bb-tg-hash { background: linear-gradient(180deg, #f9a8d4, #db2777); }
+.bb-tg-date { background: linear-gradient(180deg, #e9d5ff, #a78bfa); font-size: 12px; }
+.bb-tg-drop { background: linear-gradient(180deg, #cbd5e1, #64748b); }
+.os-swatches.bb-sw-grid { grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 6px 8px 8px; }
+.os-swatches.bb-sw-grid .os-swatch { width: 40px; height: 28px; font: 700 12px 'JetBrains Mono', monospace; border-radius: 6px; }
+
+.bb-bs-doc { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--os-menu-line); border-radius: 10px; max-width: 560px; }
+.bb-bs-doc img { width: 36px; height: 36px; }
+.bb-bs-doc div { display: flex; flex-direction: column; gap: 3px; }
+.bb-bs-doc span { color: var(--os-dim); font-size: 12.5px; }
+.bb-wc { border-collapse: collapse; min-width: 300px; margin: 4px 0 20px; font-size: 14px; }
+.bb-wc td { padding: 6px 10px; border-bottom: 1px solid var(--os-menu-line); }
+.bb-wc td:last-child { text-align: right; }
+
+/* Comment badges + jump flash (both layouts)! */
+.om-com-badge { position: absolute; top: -11px; left: 10px; border: 0; border-radius: 999px; padding: 1px 8px; font: 700 11px 'JetBrains Mono', monospace; color: #fff; background: linear-gradient(180deg, #5ff0db, #00a88f); box-shadow: 0 2px 6px rgba(0, 168, 143, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.7); cursor: pointer; z-index: 3; }
+.wysiwyg-block.rc-flash { animation: omFlash 1.2s ease; }
+@keyframes omFlash { 0%, 100% { box-shadow: none; } 30% { box-shadow: 0 0 0 4px rgba(0, 214, 182, 0.45); } }
+
+/* Classic sidebar Share button matches Omicron's own sidebar buttons! */
+.aero-sidebar .rc-share.rc-pad { width: 100%; justify-content: center; padding: 10px; margin-top: 10px; font-size: 0.85rem; border-radius: 6px; }
+
+/* HTML blocks: code on top, live preview below */
+.om-code-card { border: 1px solid #cbd5e1; border-radius: 12px; overflow: hidden; background: #0f172a; }
+.om-code-head { display: flex; gap: 10px; align-items: baseline; padding: 6px 12px; background: linear-gradient(180deg, #1e293b, #0f172a); color: #a5f3e7; font: 12px 'JetBrains Mono', monospace; }
+.om-code-head span { color: #64748b; font-size: 11px; }
+.om-code-area { display: block; width: 100%; min-height: 110px; resize: vertical; border: 0; outline: none; padding: 10px 12px; background: #0b1220; color: #e2e8f0; font: 12.5px/1.55 'JetBrains Mono', monospace; tab-size: 2; user-select: text; }
+.om-code-prev { display: block; width: 100%; min-height: 120px; border: 0; border-top: 1px dashed #334155; background: #fff; resize: vertical; }
+
+/* Page code + card layout dialogs */
+.os-dlg.om-code-dlg { width: 720px; }
+.om-code-ta { width: 100%; height: 340px; resize: vertical; border: 1px solid var(--os-menu-line); border-radius: 8px; padding: 10px; background: #0b1220; color: #e2e8f0; font: 12.5px/1.55 'JetBrains Mono', monospace; tab-size: 2; user-select: text; }
+.om-code-ta[hidden] { display: none; }
+.os-dlg.om-adv-dlg { width: 620px; }
+.om-adv-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 14px; }
+.om-adv-grid label { display: flex; flex-direction: column; gap: 3px; font-size: 12px; font-weight: 600; }
+.om-adv-grid select { height: 32px; border: 1px solid var(--os-menu-line); border-radius: 8px; padding: 0 6px; font: inherit; background: var(--os-ribbon, #fff); }
+
+/* Content block + flexbox preset galleries */
+.om-cb-gal .os-gal-list { max-width: 460px; }
+.om-cb-gal .os-gal-item, .om-fx-gal .os-gal-item { width: 76px; }
+.om-fx-gal .os-gal-list { max-width: 330px; }
+.om-cb-gal .os-gal-item svg, .om-fx-gal .os-gal-item svg { margin: 2px auto 0; }
+.om-cb-gal .os-gal-item:hover svg, .om-fx-gal .os-gal-item:hover svg { border-color: var(--os-accent); box-shadow: 0 0 0 2px var(--os-gel-glow); }
+.wysiwyg-rich img[data-ph] { cursor: pointer; outline: 2px dashed transparent; transition: outline-color 0.15s; }
+.wysiwyg-rich img[data-ph]:hover { outline-color: #00D6B6; }
+
+/* Margin / padding / size, drawn like a box */
+.om-boxmodel { display: grid; place-items: center; margin: 6px 0 4px; }
+.om-bm-m, .om-bm-p { display: flex; flex-direction: column; align-items: center; gap: 4px; position: relative; padding: 22px 12px 8px; border-radius: 10px; font-family: 'JetBrains Mono', monospace; }
+.om-bm-m { background: #fde9c8; border: 2px dashed #e8a64b; min-width: 440px; }
+.om-bm-p { background: #d4efc9; border: 2px dashed #6fba5a; }
+.om-bm-m > b, .om-bm-p > b, .om-bm-c > b { position: absolute; top: 4px; left: 10px; font-size: 10px; letter-spacing: 0.08em; opacity: 0.75; }
+.om-bm-mid { display: flex; align-items: center; gap: 6px; }
+.om-bm-row { display: flex; justify-content: center; }
+.om-bm-c { position: relative; padding: 22px 10px 10px; background: #cfe3f8; border: 2px solid #6aa4dd; border-radius: 8px; }
+.om-bm-size { display: flex; align-items: center; gap: 6px; }
+.om-bm-size input { width: 92px; text-align: center; }
+.om-bx { width: 54px; height: 28px; text-align: center; border: 1px solid rgba(0, 0, 0, 0.25); border-radius: 6px; background: rgba(255, 255, 255, 0.85); font: 700 12px 'JetBrains Mono', monospace; user-select: text; }
+.om-bx:focus { outline: 2px solid var(--os-accent); }
+.om-link { display: flex; align-items: center; gap: 8px; font-size: 12.5px; margin: 8px 0 10px; }
+
+/* Cards pane */
+body.os-office.om-pane-on .workspace-viewport-wrapper { flex-direction: row !important; display: flex; }
+body.os-office.om-pane-on #spreadsheet-container { flex: 1; min-width: 0; }
+#om-pane { display: none; }
+body.os-office.om-pane-on #om-pane { display: flex; flex-direction: column; width: 270px; flex: none; background: #f4fbfa; border-right: 1px solid #cdeae6; animation: osFade 0.25s; }
+.omp-head { display: flex; flex-direction: column; padding: 12px 14px 8px; font-family: var(--os-brand-font); }
+.omp-head b { font-size: 15px; color: #0f6f65; }
+.omp-sub { font-size: 11px; color: var(--os-dim); }
+.omp-list { flex: 1; overflow: auto; padding: 0 8px 8px; display: flex; flex-direction: column; gap: 4px; }
+.omp-item { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; grid-template-rows: auto auto; gap: 2px 6px; align-items: center; padding: 6px 8px; border: 1px solid transparent; border-radius: 9px; background: #fff; cursor: pointer; font-size: 12.5px; box-shadow: 0 1px 2px rgba(15, 111, 101, 0.1); }
+.omp-item:hover { border-color: #99f6e4; }
+.omp-item.on { border-color: var(--os-accent); background: linear-gradient(180deg, #ecfffb, #d9fbf5); box-shadow: 0 0 0 2px var(--os-gel-glow); }
+.omp-item.omp-over { box-shadow: 0 -3px 0 var(--os-accent); }
+.omp-ic { grid-row: 1 / 3; color: #0f9b8c; display: grid; place-items: center; }
+.omp-ic svg { width: 18px; height: 18px; }
+.omp-t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.omp-t b { color: #0f9b8c; margin-right: 4px; }
+.omp-item select { grid-column: 3; grid-row: 1; width: 64px; height: 22px; font: 11px inherit; border: 1px solid #cdeae6; border-radius: 6px; background: #f4fbfa; }
+.omp-btns { grid-column: 2 / 4; grid-row: 2; display: flex; gap: 3px; justify-content: flex-end; }
+.omp-btns button { border: 0; background: #e6f8f5; color: #0f6f65; border-radius: 5px; width: 24px; height: 20px; font-size: 10px; cursor: pointer; }
+.omp-btns button:hover { background: var(--os-accent); color: #fff; }
+.omp-foot { padding: 8px 14px 12px; font-size: 12px; color: var(--os-dim); border-top: 1px solid #cdeae6; }
+.omp-foot a { color: #0f9b8c; font-weight: 700; text-decoration: none; }
+
+/* Size handles on the selected card */
+#om-h-layer { position: fixed; left: 0; top: 0; width: 0; height: 0; z-index: 55; pointer-events: none; display: none; }
+#om-h-layer .om-h { position: fixed; width: 13px; height: 13px; margin: -6.5px 0 0 -6.5px; background: #fff; border: 2px solid #00D6B6; border-radius: 4px; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.35); pointer-events: auto; touch-action: none; }
+#om-h-layer .om-h:hover { background: #00D6B6; }
+#om-h-layer .om-h-tip { position: fixed; transform: translate(-50%, 0); padding: 2px 10px; border-radius: 999px; background: rgba(15, 23, 42, 0.88); color: #fff; font: 700 11px/1.5 'JetBrains Mono', monospace; pointer-events: none; white-space: nowrap; }
+body:not(.os-office) #om-h-layer { display: none !important; }
+
+/* Margin + padding bands and their grips */
+#om-h-layer .om-band { position: fixed; pointer-events: none; }
+#om-h-layer .om-band-m { background: rgba(249, 168, 37, 0.32); outline: 1px dashed rgba(217, 119, 6, 0.6); }
+#om-h-layer .om-band-p { background: rgba(74, 190, 90, 0.32); outline: 1px dashed rgba(22, 128, 52, 0.55); }
+#om-h-layer .om-grip { position: fixed; width: 18px; height: 9px; margin: -4.5px 0 0 -9px; border-radius: 5px; pointer-events: auto; touch-action: none; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35); cursor: grab; }
+#om-h-layer .om-grip-m { background: #f59e0b; border: 1px solid #fff; }
+#om-h-layer .om-grip-p { background: #22a447; border: 1px solid #fff; }

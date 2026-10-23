@@ -1,17 +1,30 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20260929';
+var WRITEOUT_CACHE = 'writeout-shell-v20261042a';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
-  'app.js?v=20260928',
+  'app.js?v=20261030',
   'style.css?v=20260928',
   'keydown.css?v=20260928',
   'marketplace.js?v=20260928',
   'marketplace.css?v=20260928',
   'settings.js?v=20260928',
   'settings.css?v=20260928',
+  'block-editor.js?v=20261049',
+  'image-resize.js?v=20261040',
+  'office-shell.js?v=20261019',
+  'office-shell.css?v=20261019',
+  'writeout-office.js?v=20261028',
+  'writeout-office.css?v=20261019',
+  'radii-images.js?v=20261019',
+  'images-glue.js?v=20261019',
+  'radii-file.js?v=20261042',
+  'radii-collab.js?v=20261052',
+  'radii-collab.css?v=20261042',
+  'collab-kd.js?v=20261021',
   'manifest.json',
   'favicon.svg',
+  'favicon-96.png',
   'apple-touch-icon.png',
   'icon-192.png',
   'icon-512.png'
