@@ -1,0 +1,21 @@
+```yaml
+cff-version: 1.2.0
+message: "If you use Radii Office in your research, projects, or other work, please cite this repository."
+type: software
+title: "Radii Office"
+abstract: "Radii Office is a free and open-source office suite designed as an alternative to proprietary office applications such as Google Docs and Microsoft Word. It includes Keydown, an enhanced markup format inspired by Markdown."
+authors:
+  - name: "patientduck394"
+repository-code: "https://github.com/patientduck394/Radii-Office"
+url: "https://radii-office.com"
+license: "Unlicense"
+version: "8.0.6"
+keywords:
+  - office-suite
+  - open-source
+  - productivity
+  - document-editor
+  - markdown
+  - Keydown
+  - Radii Office
+```
