@@ -1,5 +1,5 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261042a';
+var WRITEOUT_CACHE = 'writeout-shell-v20261125a';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
@@ -14,12 +14,15 @@ var WRITEOUT_SHELL = [
   'image-resize.js?v=20261040',
   'office-shell.js?v=20261019',
   'office-shell.css?v=20261019',
-  'writeout-office.js?v=20261028',
+  'writeout-office.js?v=20261125',
+  'writeout-pro.js?v=20261121',
+  'writeout-annotator.js?v=20261122',
+  'annotate-hl.css?v=20261123',
   'writeout-office.css?v=20261019',
   'radii-images.js?v=20261019',
   'images-glue.js?v=20261019',
   'radii-file.js?v=20261042',
-  'radii-collab.js?v=20261052',
+  'radii-collab.js?v=20261120',
   'radii-collab.css?v=20261042',
   'collab-kd.js?v=20261021',
   'manifest.json',

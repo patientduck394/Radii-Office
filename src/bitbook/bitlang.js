@@ -68,6 +68,11 @@
                     i += w.length;
                     continue;
                 }
+                if (c === '"' && line[i + 1] === '>' && tokens.length && tokens[tokens.length - 1].t === 'OP' && tokens[tokens.length - 1].v === ']' && tokens[tokens.length - 1].line === lineNo) {
+                    tokens.push({ t: 'OP', v: '">', line: lineNo }); // the mouse operator: matc Name ["old" ~> "x"] "> ["new" ~> "y"]
+                    i += 2;
+                    continue;
+                }
                 if (c === '"' || c === "'") {
                     let j = i + 1, out = '';
                     while (j < line.length && line[j] !== c) {
@@ -83,7 +88,7 @@
                     continue;
                 }
                 const two = line.slice(i, i + 2);
-                if (two === '<|' || two === '|>' || two === '**' || two === '==' || two === '!=' || two === '<=' || two === '>=' || two === '+=' || two === '-=' || two === '*=' || two === '/=') { tokens.push({ t: 'OP', v: two, line: lineNo }); i += 2; continue; }
+                if (two === '~>' || two === '<|' || two === '|>' || two === '**' || two === '==' || two === '!=' || two === '<=' || two === '>=' || two === '+=' || two === '-=' || two === '*=' || two === '/=') { tokens.push({ t: 'OP', v: two, line: lineNo }); i += 2; continue; }
                 if ('+-*/%<>=()[]{},.:&;'.indexOf(c) !== -1) {
                     if ('([{'.indexOf(c) !== -1) depth++;
                     if (')]}'.indexOf(c) !== -1) depth = Math.max(0, depth - 1);
@@ -112,6 +117,7 @@
         let depth = 0;
         for (; i < src.length; i++) {
             const c = src[i];
+            if (c === '"' && src[i + 1] === '>' && /\]\s*$/.test(src.slice(Math.max(0, i - 40), i))) { i++; continue; }
             if (c === '"' || c === "'") { const q = c; i++; while (i < src.length && src[i] !== q && src[i] !== '\n') { if (src[i] === '\\') i++; i++; } continue; }
             if (c === '#') { while (i < src.length && src[i] !== '\n') i++; continue; }
             if (c === 'h' && /^https?:\/\//.test(src.slice(i, i + 8)) && !/\w/.test(src[i - 1] || ' ')) { const m = /^https?:\/\/[^\s,)\]}]*/.exec(src.slice(i)); i += m[0].length - 1; continue; }
@@ -125,6 +131,7 @@
         let start = 0, depth = 0;
         for (let i = 0; i < inner.length; i++) {
             const c = inner[i];
+            if (c === '"' && inner[i + 1] === '>' && /\]\s*$/.test(inner.slice(Math.max(0, i - 40), i))) { i++; continue; }
             if (c === '"' || c === "'") { const q = c; i++; while (i < inner.length && inner[i] !== q && inner[i] !== '\n') { if (inner[i] === '\\') i++; i++; } continue; }
             if (c === '#') { while (i < inner.length && inner[i] !== '\n') i++; continue; }
             if (c === 'h' && /^https?:\/\//.test(inner.slice(i, i + 8)) && !/\w/.test(inner[i - 1] || ' ')) { const m = /^https?:\/\/[^\s,)\]}]*/.exec(inner.slice(i)); i += m[0].length - 1; continue; }
@@ -140,6 +147,7 @@
         for (let i = 0; i < text.length; i++) {
             const c = text[i];
             if (q) { if (c === '\\') i++; else if (c === q) q = ''; }
+            else if (c === '"' && text[i + 1] === '>' && /\]\s*$/.test(text.slice(0, i))) i++;
             else if (c === '"' || c === "'") q = c;
             else if (c === '#') return true;
         }
@@ -205,11 +213,50 @@
         function statement() {
             const t = peek();
             const line = t.line;
+            if (t.t === 'NAME' && t.v === 'matc' && toks[p + 1].t === 'NAME' && toks[p + 2].t === 'OP' && toks[p + 2].v === '[') {
+                // matc Name ["old key" ~> old value] "> ["new key" ~> new value]   - changes one pair of a matcher
+                p++;
+                const name = next().v;
+                const pairIn = function () {
+                    expectOp('[');
+                    const k = expr();
+                    if (!isOp('~>')) fail(peek().line, 'matc reads: matc Name ["old" ~> "old value"] "> ["new" ~> "new value"]!');
+                    p++;
+                    const v = expr();
+                    expectOp(']');
+                    return { k: k, v: v };
+                };
+                const from = pairIn();
+                if (!isOp('">')) fail(peek().line, 'matc needs the mouse operator "> between the old pair and the new one!');
+                p++;
+                const to = pairIn();
+                expectNL();
+                return { k: 'matc', name: name, from: from, to: to, line: line };
+            }
+            if (t.t === 'NAME' && t.v === 'mat' && toks[p + 1].t === 'NAME' && toks[p + 2].t === 'OP' && toks[p + 2].v === ':') {
+                // mat Name: ( "key" ~> value   "other" ~> value ... )  - a matcher
+                p++;
+                const name = next().v;
+                p++; // the ":"
+                expectOp('(');
+                const pairs = [];
+                while (!isOp(')')) {
+                    if (peek().t === 'EOF') fail(line, 'This matcher is missing its closing )!');
+                    if (isOp(',')) { p++; continue; }
+                    const key = expr();
+                    if (!isOp('~>')) fail(peek().line, 'A matcher line reads: "what to find" ~> what it becomes!');
+                    p++;
+                    pairs.push({ k: key, v: expr() });
+                }
+                expectOp(')');
+                expectNL();
+                return { k: 'matcher', name: name, pairs: pairs, line: line };
+            }
             if (t.t === 'NAME' && t.v === 'use' && toks[p + 1].t === 'NAME' && (toks[p + 2].t === 'NL' || toks[p + 2].t === 'EOF' || toks[p + 2].t === 'DEDENT' || toks[p + 2].t === 'NAME' || (toks[p + 2].t === 'OP' && toks[p + 2].v === ','))) {
                 // use python / use sqlite / use julia   (python can name extra packages: use python numpy, pandas)
                 p++;
                 const lib = next().v;
-                if (['python', 'sqlite', 'julia'].indexOf(lib) < 0) fail(line, 'I do not know the library "' + lib + '" (try: use python, use sqlite or use julia)!');
+                if (['python', 'sqlite', 'julia', 'lua'].indexOf(lib) < 0) fail(line, 'I do not know the library "' + lib + '" (try: use python, use sqlite, use julia or use lua)!');
                 const pkgs = [];
                 while (peek().t === 'NAME' || isOp(',')) { if (isOp(',')) { p++; continue; } pkgs.push(next().v); }
                 expectNL();
@@ -398,6 +445,7 @@
     function Signal(kind, v) { this.kind = kind; this.v = v; }
     function BitFn(def, closure) { this.def = def; this.closure = closure; }
     // vectors <| 1, 2, 3 |> and matrices [1 2; 3 4] (numbers only)
+    function BitMatcher(name, pairs, scope) { this.name = name; this.pairs = pairs; this.scope = scope; }
     function BitVec(a) { this.a = a; }
     function BitMat(r) { this.r = r; }
     function anyValues(list, line, what) { list.forEach(function (x) { if (x instanceof BitFn || typeof x === 'function') fail(line, what + ' cannot hold a function!'); }); return list; }
@@ -504,6 +552,7 @@
         if (typeof v === 'number') return Number.isInteger(v) ? String(v) : String(Math.round(v * 1e6) / 1e6);
         if (Array.isArray(v)) return '[' + v.map(function (x) { return typeof x === 'string' ? JSON.stringify(x) : show(x); }).join(', ') + ']';
         if (v instanceof BitFn) return '<fn ' + v.def.name + '>';
+        if (v instanceof BitMatcher) return '<matcher ' + v.name + '>';
         if (v instanceof BitVec) return '<| ' + v.a.map(function (x) { return typeof x === 'string' ? JSON.stringify(x) : show(x); }).join(', ') + ' |>';
         if (v instanceof BitMat) return '[' + v.r.map(function (r) { return r.map(show).join(' '); }).join('; ') + ']';
         if (v === INHERIT) return 'inherit';
@@ -703,6 +752,18 @@
                 if (s.temp) { const hs = scope; (hs.temps = hs.temps || {})[s.name] = true; }
                 return;
             }
+            case 'matcher': scope.vars[s.name] = new BitMatcher(s.name, s.pairs, scope); return;
+            case 'matc': {
+                const sc = scope.find(s.name);
+                const m = sc ? sc.vars[s.name] : null;
+                if (!(m instanceof BitMatcher)) fail(s.line, '"' + s.name + '" is not a matcher (make one with: mat ' + s.name + ': ( "find" ~> "becomes" ))!');
+                const oldK = this.evalE(s.from.k, scope), oldV = this.evalE(s.from.v, scope);
+                const i = m.pairs.findIndex(function (pr) { return same(this.evalE(pr.k, m.scope), oldK) && same(this.evalE(pr.v, m.scope), oldV); }, this);
+                if (i < 0) fail(s.line, s.name + ' has no pair ' + show(oldK) + ' ~> ' + show(oldV) + ' to change!');
+                // the new pair is worked out now, so it keeps the values it has at this moment
+                m.pairs[i] = { k: { k: 'lit', v: this.evalE(s.to.k, scope), line: s.line }, v: { k: 'lit', v: this.evalE(s.to.v, scope), line: s.line } };
+                return;
+            }
             case 'use': return; // (the libraries are loaded before the program starts)
             case 'fn': scope.vars[s.name] = new BitFn(s, scope); this.fns[s.name] = scope.vars[s.name]; return;
             case 'assign': return this.assign(s, scope);
@@ -853,19 +914,19 @@
             return null;
         });
         // ---- skills: skill(skill="beepbox", get=link, content=inherit) -> text you can show with renderRT ----
-        const AN_TYPES = { highlight: 'hl', hl: 'hl', underline: 'ul', ul: 'ul', strikethrough: 'st', strike: 'st', st: 'st', box: 'bx', bx: 'bx', halo: 'ha', ha: 'ha', brackets: 'cb', corners: 'cb', cb: 'cb', spotlight: 'gf', gf: 'gf', accent: 'ga', ga: 'ga', bubble: 'gb', gb: 'gb', dusk: 'dk', dk: 'dk', prism: 'pr', pr: 'pr', complement: 'cm', cm: 'cm', ticket: 'tk', tk: 'tk', neon: 'nn', nn: 'nn', stamp: 'sm', sm: 'sm', tape: 'tp', tp: 'tp', checker: 'ck', ck: 'ck', halftone: 'ht', ht: 'ht', aurora: 'au', au: 'au', mild: 'ml', ml: 'ml', wrap: 'gw', gelwrap: 'gw', gw: 'gw', belt: 'bt', bt: 'bt', bucket: 'bk', bk: 'bk', torpedo: 'tr', tr: 'tr', bottle: 'bo', bo: 'bo', packet: 'pk', pk: 'pk', select: 'sl', sl: 'sl' };
+        const AN_TYPES = { highlight: 'hl', hl: 'hl', underline: 'ul', ul: 'ul', strikethrough: 'st', strike: 'st', st: 'st', box: 'bx', bx: 'bx', halo: 'ha', ha: 'ha', brackets: 'cb', corners: 'cb', cb: 'cb', spotlight: 'gf', gf: 'gf', accent: 'ga', ga: 'ga', bubble: 'gb', gb: 'gb', dusk: 'dk', dk: 'dk', prism: 'pr', pr: 'pr', complement: 'cm', cm: 'cm', ticket: 'tk', tk: 'tk', neon: 'nn', nn: 'nn', stamp: 'sm', sm: 'sm', tape: 'tp', tp: 'tp', checker: 'ck', ck: 'ck', halftone: 'ht', ht: 'ht', aurora: 'au', au: 'au', mild: 'ml', ml: 'ml', wrap: 'gw', gelwrap: 'gw', gw: 'gw', belt: 'bt', bt: 'bt', bucket: 'bk', bk: 'bk', torpedo: 'tr', tr: 'tr', bottle: 'bo', bo: 'bo', packet: 'pk', pk: 'pk', select: 'sl', sl: 'sl', capsule: 'cs', cs: 'cs', frost: 'fr', fr: 'fr', pixel: 'px', px: 'px', flag: 'fl', fl: 'fl', gem: 'gm', gm: 'gm' };
         const AN_COLORS = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate'];
         // color can be a name ("pink") or a number (1 = red ... 13 = slate)
         const annotateToken = function (line, type, color, content) {
             const ty = String(type).toLowerCase();
-            if (!AN_TYPES[ty]) fail(line, 'The annotate type "' + ty + '" is not known! Try highlight, underline, strikethrough, box, halo, brackets, spotlight, accent, bubble, dusk, prism, complement, ticket, neon, stamp, tape, checker, halftone, aurora, mild, wrap, belt, bucket, torpedo, bottle, packet or select.');
+            if (!AN_TYPES[ty]) fail(line, 'The annotate type "' + ty + '" is not known! Try highlight, underline, strikethrough, box, halo, brackets, spotlight, accent, bubble, dusk, prism, complement, ticket, neon, stamp, tape, checker, halftone, aurora, mild, wrap, belt, bucket, torpedo, bottle, packet, select, capsule, frost, pixel, flag or gem.');
             let col = color === undefined || color === null ? 'yellow' : (typeof color === 'number' ? AN_COLORS[Math.round(color) - 1] : String(color).toLowerCase());
             if (AN_COLORS.indexOf(col) < 0) fail(line, 'The annotate color "' + color + '" is not known! Use 1 to 13 or one of: ' + AN_COLORS.join(', ') + '.');
             rt.skills.push({ skill: 'annotate', style: AN_TYPES[ty], color: col, content: show0(content) });
             return '⁣skill:' + (rt.skills.length - 1) + '⁣';
         };
         // quick commands: annotate_bubble("text", color=1), annotate_box("text", "blue")...
-        ['highlight', 'underline', 'strikethrough', 'box', 'halo', 'brackets', 'spotlight', 'accent', 'bubble', 'dusk', 'prism', 'complement', 'ticket', 'neon', 'stamp', 'tape', 'checker', 'halftone', 'aurora', 'mild', 'wrap', 'belt', 'bucket', 'torpedo', 'bottle', 'packet', 'select'].forEach(function (t) {
+        ['highlight', 'underline', 'strikethrough', 'box', 'halo', 'brackets', 'spotlight', 'accent', 'bubble', 'dusk', 'prism', 'complement', 'ticket', 'neon', 'stamp', 'tape', 'checker', 'halftone', 'aurora', 'mild', 'wrap', 'belt', 'bucket', 'torpedo', 'bottle', 'packet', 'select', 'capsule', 'frost', 'pixel', 'flag', 'gem'].forEach(function (t) {
             def('annotate_' + t, function (a, k, line) {
                 if (!a.length && k.content === undefined && k.text === undefined) fail(line, 'annotate_' + t + ' needs the text to mark, like annotate_' + t + '("Some **text**")!');
                 return annotateToken(line, t, k.color !== undefined ? k.color : a[1], a.length ? a[0] : (k.content !== undefined ? k.content : k.text));
@@ -1042,7 +1103,7 @@
         // ---- libraries (use python / use sqlite / use julia) ----
         const L = function (name, line) {
             const lib = host.libs && host.libs[name];
-            if (!lib) fail(line, 'Add "use ' + name + '" at the top of your program before using ' + ({ python: 'python()', sqlite: 'sql()', julia: 'julia()' }[name]) + '!');
+            if (!lib) fail(line, 'Add "use ' + name + '" at the top of your program before using ' + ({ python: 'python()', sqlite: 'sql()', julia: 'julia()', lua: 'lua()' }[name]) + '!');
             return lib;
         };
         const fromJs = function (v) {
@@ -1067,7 +1128,10 @@
         // python(code, name=value, ...): runs Python (Pyodide) and gives back the last expression's value
         def('python', function (a, k, line) {
             const lib = L('python', line), py = lib.py;
-            const code = show0(a.length ? a[0] : k.code);
+            const raw = a.length ? a[0] : k.code;
+            // python(print("hi")) runs BitLang's print first and hands Python its result (null): the code has to be text in quotes
+            if (typeof raw !== 'string') fail(line, 'python() needs Python code as text in quotes, like python("print(\'Hello!\')"); it got ' + show(raw) + ' instead!');
+            const code = raw;
             if (code.length > 100000) fail(line, 'That Python code is too long!');
             try {
                 const vars = kwVars(k, ['code']);
@@ -1119,10 +1183,76 @@
             if (!t) return false;
             try { const bin = atob(t), bytes = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i); lib.db.close(); lib.db = new lib.SQL.Database(bytes); return true; } catch (e) { fail(line, 'That saved database could not be opened!'); }
         });
+        // lua(code, name=value, ...): runs Lua (Fengari) in its own sealed box and gives back the result
+        def('lua', function (a, k, line) {
+            const lib = L('lua', line), fg = lib.fg, lua = fg.lua, la = fg.lauxlib, S = fg.to_luastring, Ls = lib.L;
+            const raw = a.length ? a[0] : k.code;
+            if (typeof raw !== 'string') fail(line, 'lua() needs Lua code as text in quotes, like lua("print(\'Hello!\')"); it got ' + show(raw) + ' instead!');
+            if (raw.length > 100000) fail(line, 'That Lua code is too long!');
+            lib.out = function (t) { if (host.print) host.print(t); };
+            const pushLua = function (v, d) {
+                if (v === null || v === undefined || d > 20) lua.lua_pushnil(Ls);
+                else if (typeof v === 'boolean') lua.lua_pushboolean(Ls, v);
+                else if (typeof v === 'number') lua.lua_pushnumber(Ls, v);
+                else if (typeof v === 'string') lua.lua_pushstring(Ls, S(v));
+                else if (Array.isArray(v)) { lua.lua_createtable(Ls, v.length, 0); v.forEach(function (x, i) { pushLua(x, d + 1); lua.lua_rawseti(Ls, -2, i + 1); }); }
+                else if (typeof v === 'object') { lua.lua_createtable(Ls, 0, 0); Object.keys(v).forEach(function (kk) { pushLua(v[kk], d + 1); lua.lua_setfield(Ls, -2, S(kk)); }); }
+                else lua.lua_pushnil(Ls);
+            };
+            const readLua = function (idx, d) {
+                const t = lua.lua_type(Ls, idx);
+                if (t === lua.LUA_TNIL || t === lua.LUA_TNONE) return null;
+                if (t === lua.LUA_TBOOLEAN) return lua.lua_toboolean(Ls, idx);
+                if (t === lua.LUA_TNUMBER) return lua.lua_tonumber(Ls, idx);
+                if (t === lua.LUA_TSTRING) return lua.lua_tojsstring(Ls, idx);
+                if (t === lua.LUA_TTABLE) {
+                    if (d > 20) return null;
+                    const abs = lua.lua_absindex(Ls, idx), keys = [], vals = [];
+                    lua.lua_pushnil(Ls);
+                    while (lua.lua_next(Ls, abs) !== 0) {
+                        const kt = lua.lua_type(Ls, -2);
+                        keys.push(kt === lua.LUA_TNUMBER ? lua.lua_tonumber(Ls, -2) : kt === lua.LUA_TSTRING ? lua.lua_tojsstring(Ls, -2) : null);
+                        vals.push(readLua(-1, d + 1));
+                        lua.lua_pop(Ls, 1);
+                        if (keys.length > 100000) { lua.lua_pop(Ls, 1); break; }
+                    }
+                    // 1, 2, 3 ... with nothing else is a list; anything else is a map
+                    const isList = keys.every(function (kk) { return typeof kk === 'number' && kk >= 1 && kk === Math.floor(kk) && kk <= keys.length; });
+                    if (isList) { const arr = new Array(keys.length); keys.forEach(function (kk, i) { arr[kk - 1] = vals[i]; }); return arr; }
+                    const o = {}; keys.forEach(function (kk, i) { if (kk !== null) o[String(kk)] = vals[i]; }); return o;
+                }
+                return '<lua value>'; // (functions and other Lua-only things)
+            };
+            const clean = function (m) { return String(m || 'something went wrong').replace(/^lua:(\d+):\s*/, 'line $1: '); };
+            const top = lua.lua_gettop(Ls);
+            try {
+                const vars = kwVars(k, ['code']);
+                Object.keys(vars).forEach(function (n) { pushLua(vars[n], 0); lua.lua_setglobal(Ls, S(n)); });
+                // like python(), a lone expression gives its value back: try "return <code>" first
+                let buf = S('return ' + raw);
+                let st = la.luaL_loadbufferx(Ls, buf, buf.length, S('=lua'), null);
+                if (st !== lua.LUA_OK) { lua.lua_settop(Ls, top); buf = S(raw); st = la.luaL_loadbufferx(Ls, buf, buf.length, S('=lua'), null); }
+                if (st !== lua.LUA_OK) { const msg = lua.lua_tojsstring(Ls, -1); lua.lua_settop(Ls, top); fail(line, 'Lua: ' + clean(msg) + '!'); }
+                let ticks = 0;
+                lua.lua_sethook(Ls, function (L2) { if (++ticks > 3000) la.luaL_error(L2, S('this Lua code took too long (an endless loop?), so it was stopped')); }, lua.LUA_MASKCOUNT, 1000);
+                st = lua.lua_pcall(Ls, 0, lua.LUA_MULTRET, 0);
+                lua.lua_sethook(Ls, null, 0, 0);
+                if (st !== lua.LUA_OK) { const msg = lua.lua_tojsstring(Ls, -1); lua.lua_settop(Ls, top); fail(line, 'Lua: ' + clean(msg) + '!'); }
+                const v = lua.lua_gettop(Ls) > top ? readLua(top + 1, 0) : null;
+                lua.lua_settop(Ls, top);
+                return v;
+            } catch (e) {
+                try { lua.lua_settop(Ls, top); } catch (er) {}
+                if (e instanceof BitError) throw e;
+                fail(line, 'Lua: ' + String(e && e.message || e) + '!');
+            }
+        });
         // julia(code, name=value, ...): sends the code to your Julia server (Oxygen.jl) and gives back the result
         def('julia', function (a, k, line) {
             const lib = L('julia', line);
-            const code = show0(a.length ? a[0] : k.code);
+            const raw = a.length ? a[0] : k.code;
+            if (typeof raw !== 'string') fail(line, 'julia() needs Julia code as text in quotes, like julia("println(\\"Hello!\\")"); it got ' + show(raw) + ' instead!');
+            const code = raw;
             if (code.length > 100000) fail(line, 'That Julia code is too long!');
             let res;
             try {
@@ -1130,16 +1260,55 @@
                 x.open('POST', lib.url.replace(/\/+$/, '') + '/julia', false);
                 x.setRequestHeader('Content-Type', 'application/json');
                 x.send(JSON.stringify({ token: lib.token, code: code, vars: kwVars(k, ['code']) }));
-                if (x.status === 401) fail(line, 'Julia: the server did not accept the token (check it, or restart the server and copy its token)!');
+                if (x.status === 401) {
+                    try { localStorage.setItem('bitlang_julia', JSON.stringify({ url: lib.url, token: '' })); } catch (e) {}
+                    fail(line, 'Julia: the server did not accept the token (it prints a new one each time it starts). Play the program again to paste the new token!');
+                }
                 res = JSON.parse(x.responseText);
             } catch (e) {
                 if (e instanceof BitError) throw e;
                 fail(line, 'I could not reach your Julia server at ' + lib.url + ' (is bitlang_julia_server.jl running?)!');
             }
             (String(res.stdout || '').split('\n')).forEach(function (t) { if (t && host.print) host.print(t); });
-            if (!res.ok) fail(line, 'Julia: ' + String(res.error || 'something went wrong').split('\n')[0].replace(/^LoadError: /, '') + '!');
+            if (!res.ok) {
+                // Julia's parse errors put the real reason on a later line (after "──"): show it too
+                const el = String(res.error || 'something went wrong').split('\n');
+                const why = el.find(function (t) { return t.indexOf('──') >= 0; });
+                fail(line, 'Julia: ' + el[0].replace(/^LoadError: /, '').replace(/:\s*$/, '') + (why ? ': ' + why.split('──').pop().trim() : '') + '!');
+            }
             return fromJs(res.result);
         });
+        // ---- matchers: mat Name: ( "find" ~> "becomes" ... ) ----
+        const pairsOf = function (m, line, who) {
+            if (!(m instanceof BitMatcher)) fail(line, who + ' needs a matcher (made with: mat Name: ( "find" ~> "becomes" ))!');
+            // keys and values are read now, so they always use the variables' current values
+            return m.pairs.map(function (pr) { return { k: rt.evalE(pr.k, m.scope), v: rt.evalE(pr.v, m.scope) }; });
+        };
+        const matchOne = function (input, pairs) {
+            for (let i = 0; i < pairs.length; i++) if (same(input, pairs[i].k)) return { hit: true, v: pairs[i].v };
+            if (typeof input === 'string') {
+                // inside text: every key is found and swapped in ONE pass (left to right, longest key first),
+                // so a replacement is never matched again (no endless chains like a -> b -> a)
+                const keys = pairs.filter(function (pr) { return typeof pr.k === 'string' && pr.k.length; }).sort(function (x, y) { return y.k.length - x.k.length; });
+                if (!keys.length) return { hit: false, v: input };
+                let out = '', i = 0, hit = false;
+                while (i < input.length) {
+                    const pr = keys.find(function (x) { return input.startsWith(x.k, i); });
+                    if (pr) { out += show0(pr.v); i += pr.k.length; hit = true; } else { out += input[i]; i++; }
+                }
+                return { hit: hit, v: out };
+            }
+            return { hit: false, v: input };
+        };
+        def('mat_match', function (a, k, line) {
+            const pairs = pairsOf(a[1], line, 'mat_match');
+            const input = a[0];
+            if (Array.isArray(input)) return input.map(function (x) { return matchOne(x, pairs).v; });
+            if (input instanceof BitVec) return new BitVec(input.a.map(function (x) { return matchOne(x, pairs).v; }));
+            return matchOne(input, pairs).v;
+        });
+        def('mat_has', function (a, k, line) { return matchOne(a[0], pairsOf(a[1], line, 'mat_has')).hit; });
+        def('mat_keys', function (a, k, line) { return pairsOf(a[0], line, 'mat_keys').map(function (pr) { return pr.k; }); });
         def('stop', function () { rt.stopped = true; return null; });
     }
 
@@ -1190,9 +1359,9 @@ fn guess(n):
     function newId() { return 'bl' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
     // Syntax colors (editor + guide)!
-    const HL_BUILTINS = ('pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print renderRT skill btn remvar key beep stop floor ceil round abs sqrt sin cos tan atan2 PI inherit textbox counter beepbox annotate_highlight annotate_underline annotate_strikethrough annotate_box annotate_halo annotate_brackets annotate_spotlight annotate_accent annotate_bubble annotate_dusk annotate_prism annotate_complement annotate_ticket annotate_neon annotate_stamp annotate_tape annotate_checker annotate_halftone annotate_aurora annotate_mild annotate_wrap annotate_belt annotate_bucket annotate_torpedo annotate_bottle annotate_packet annotate_select renderPT python julia sql sql_save sql_load lam vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split').split(' ');
+    const HL_BUILTINS = ('pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print renderRT skill btn remvar key beep stop floor ceil round abs sqrt sin cos tan atan2 PI inherit textbox counter beepbox annotate_highlight annotate_underline annotate_strikethrough annotate_box annotate_halo annotate_brackets annotate_spotlight annotate_accent annotate_bubble annotate_dusk annotate_prism annotate_complement annotate_ticket annotate_neon annotate_stamp annotate_tape annotate_checker annotate_halftone annotate_aurora annotate_mild annotate_wrap annotate_belt annotate_bucket annotate_torpedo annotate_bottle annotate_packet annotate_select annotate_capsule annotate_frost annotate_pixel annotate_flag annotate_gem lua mat_match mat_has mat_keys renderPT python julia sql sql_save sql_load lam vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split').split(' ');
     const HL_EVENTS = ['onstart', 'onkey', 'onkeyup', 'onend'];
-    const HL_RE = /(#[^\n]*)|(https?:\/\/[^\s"'\)\],]+)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_][A-Za-z0-9_]*\b)/g;
+    const HL_RE = /(#[^\n]*)|(https?:\/\/[^\s"'\)\],]+)|((?<=\][ \t]*)">|~>)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_][A-Za-z0-9_]*\b)/g;
     function highlight(code) {
         let out = '', last = 0, prevKw = '', m;
         HL_RE.lastIndex = 0;
@@ -1200,24 +1369,219 @@ fn guess(n):
             out += esc(code.slice(last, m.index));
             last = m.index + m[0].length;
             let c = '';
-            if (m[1]) c = 'c'; else if (m[2] || m[3]) c = 's'; else if (m[4]) c = 'n';
+            if (m[1]) c = 'c'; else if (m[3]) c = 'k'; /* the mouse operator "> and the matcher arrow ~> */ else if (m[2] || m[4]) c = 's'; else if (m[5]) c = 'n';
             else {
-                const w = m[5];
-                if (KEYWORDS[w] || (w === 'use' && /^\s*use\s+(python|sqlite|julia)\b/.test(code.slice(Math.max(0, code.lastIndexOf('\n', m.index) + 1))))) c = 'k';
+                const w = m[6];
+                if (KEYWORDS[w] || ((w === 'mat' || w === 'matc') && /^\s*(mat\s+\w+\s*:|matc\s+\w+\s*\[)/.test(code.slice(Math.max(0, code.lastIndexOf('\n', m.index) + 1)))) || (w === 'use' && /^\s*use\s+(python|sqlite|julia|lua)\b/.test(code.slice(Math.max(0, code.lastIndexOf('\n', m.index) + 1))))) c = 'k';
                 else if (prevKw === 'fn') c = HL_EVENTS.indexOf(w) >= 0 ? 'e' : 'f';
                 else if (HL_EVENTS.indexOf(w) >= 0) c = 'e';
                 else if (HL_BUILTINS.indexOf(w) >= 0) c = 'b';
                 prevKw = w === 'fn' ? 'fn' : '';
             }
-            if (!m[5]) prevKw = '';
+            if (!m[6]) prevKw = '';
             out += c ? '<span class="bl-t-' + c + '">' + esc(m[0]) + '</span>' : esc(m[0]);
         }
         return out + esc(code.slice(last));
     }
 
+    /* ================= BBML: a little markup that sets up the page before onstart ================= */
+    // <line>Hello **{name}**</line>  <btn do="go">#G#Go#</btn>  <textbox var="name">Your name</textbox> ...
+    // It is turned into BitLang (renderRT lines) and runs right after the program's top-level code, before onstart.
+    const BB_LINE = 100000; // (BBML line numbers ride along as 100000 + n, so errors can say "BBML line n")
+    function parseBBML(src) {
+        const root = { name: '#root', kids: [], line: 1 }, stack = [root];
+        let i = 0, line = 1, text = '', textLine = 1;
+        const flush = function () { if (text) { stack[stack.length - 1].kids.push({ t: 'text', v: text, line: textLine }); text = ''; } };
+        const bad = function (msg, ln) { throw new BitError(msg, BB_LINE + (ln || line)); };
+        while (i < src.length) {
+            const c = src[i];
+            if (c === '\\' && (src[i + 1] === '<' || src[i + 1] === '{' || src[i + 1] === '}' || src[i + 1] === '\\')) { if (!text) textLine = line; text += c + src[i + 1]; i += 2; continue; }
+            if (src.startsWith('<!--', i)) { const e = src.indexOf('-->', i + 4); const end = e < 0 ? src.length : e + 3; line += (src.slice(i, end).match(/\n/g) || []).length; i = end; continue; }
+            if (c === '<' && /[A-Za-z\/]/.test(src[i + 1] || '')) {
+                flush();
+                const startLine = line;
+                if (src[i + 1] === '/') {
+                    const m = /^<\/([A-Za-z][\w-]*)\s*>/.exec(src.slice(i));
+                    if (!m) bad('A closing tag should look like </line>!');
+                    const top = stack[stack.length - 1];
+                    if (stack.length < 2 || top.name !== m[1].toLowerCase()) bad('</' + m[1] + '> closes ' + (stack.length < 2 ? 'nothing' : 'the wrong tag (the open one is <' + top.name + '>)') + '!');
+                    stack.pop();
+                    i += m[0].length;
+                    continue;
+                }
+                const nm = /^<([A-Za-z][\w-]*)/.exec(src.slice(i));
+                const el = { t: 'el', name: nm[1].toLowerCase(), attrs: {}, kids: [], line: startLine };
+                i += nm[0].length;
+                let closed = false;
+                for (;;) {
+                    while (i < src.length && /\s/.test(src[i])) { if (src[i] === '\n') line++; i++; }
+                    if (i >= src.length) bad('The <' + el.name + '> tag is missing its closing >!', startLine);
+                    if (src.startsWith('/>', i)) { i += 2; closed = true; break; }
+                    if (src[i] === '>') { i++; break; }
+                    const an = /^[A-Za-z_][\w:-]*/.exec(src.slice(i));
+                    if (!an) bad('I do not understand this part of the <' + el.name + '> tag!', line);
+                    i += an[0].length;
+                    let val = true;
+                    if (src[i] === '=') {
+                        i++;
+                        const q = src[i];
+                        if (q === '"' || q === "'") { const e = src.indexOf(q, i + 1); if (e < 0) bad('An attribute value is missing its closing quote!'); val = { s: src.slice(i + 1, e) }; line += (val.s.match(/\n/g) || []).length; i = e + 1; }
+                        else if (q === '{') { let d = 0, j = i; for (; j < src.length; j++) { if (src[j] === '{') d++; else if (src[j] === '}' && --d === 0) break; } val = { x: src.slice(i + 1, j) }; i = j + 1; }
+                        else { const bw = /^[^\s>]+/.exec(src.slice(i)); val = { s: bw ? bw[0].replace(/\/$/, '') : '' }; i += bw ? bw[0].length - (/\/$/.test(bw[0]) ? 1 : 0) : 0; }
+                    }
+                    el.attrs[an[0].toLowerCase()] = val;
+                }
+                stack[stack.length - 1].kids.push(el);
+                if (!closed && el.name !== 'br') stack.push(el);
+                continue;
+            }
+            if (!text) textLine = line;
+            if (c === '\n') line++;
+            text += c;
+            i++;
+        }
+        flush();
+        if (stack.length > 1) bad('<' + stack[stack.length - 1].name + '> is never closed (add </' + stack[stack.length - 1].name + '>)!', stack[stack.length - 1].line);
+        return root;
+    }
+    function bbStr(t) { return '"' + String(t).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n') + '"'; }
+    // text with {expressions}: "Hi " & (name) & "!"
+    function bbText(t) {
+        const parts = [];
+        let i = 0, buf = '';
+        while (i < t.length) {
+            if (t[i] === '\\' && i + 1 < t.length && '<{}\\'.indexOf(t[i + 1]) >= 0) { buf += t[i + 1]; i += 2; continue; }
+            if (t[i] === '{') {
+                let d = 0, j = i;
+                for (; j < t.length; j++) { if (t[j] === '{') d++; else if (t[j] === '}' && --d === 0) break; }
+                if (j >= t.length) { buf += t.slice(i); break; }
+                if (buf) { parts.push(bbStr(buf)); buf = ''; }
+                const ex = t.slice(i + 1, j);
+                // a # outside quotes would start a BitLang comment and swallow the rest: that's almost always text missing its quotes
+                let q = '';
+                for (let x = 0; x < ex.length; x++) { const ch = ex[x]; if (q) { if (ch === '\\') x++; else if (ch === q) q = ''; } else if (ch === '"' || ch === "'") q = ch; else if (ch === '#') throw new BitError('Inside {...} is BitLang code, so text needs "quotes" (a # there starts a comment), like {mat_match("#O#Mango#", Mango)}!', BB_LINE + (bbText.line || 0)); }
+                parts.push('(' + ex + ')');
+                i = j + 1;
+                continue;
+            }
+            buf += t[i++];
+        }
+        if (buf) parts.push(bbStr(buf));
+        return parts;
+    }
+    function bbAttr(el, name, kind) {
+        const a = el.attrs[name];
+        if (a === undefined) return null;
+        if (a === true) return kind === 'code' ? null : 'true';
+        if (a.x !== undefined) return '(' + a.x + ')';
+        if (kind === 'code') return a.s; // do="go", var="name", n="5", min="0": BitLang itself
+        if (kind === 'num') return /^-?\d+(\.\d+)?$/.test(a.s) ? a.s : bbStr(a.s);
+        return bbStr(a.s);
+    }
+    function bbContent(kids, inline) {
+        // joins every child into one BitLang expression (pieces joined with &)
+        const parts = [];
+        kids.forEach(function (k, idx) {
+            if (k.t === 'text') {
+                let v = k.v.replace(/\s*\n\s*/g, ' ');
+                if (idx === 0) v = v.replace(/^\s+/, '');
+                if (idx === kids.length - 1) v = v.replace(/\s+$/, '');
+                bbText.line = k.line;
+                if (v) parts.push.apply(parts, bbText(v));
+            } else parts.push(bbElement(k));
+        });
+        return parts.length ? parts.join(' & ') : '""';
+    }
+    function bbElement(el) {
+        const bad = function (msg) { throw new BitError(msg, BB_LINE + el.line); };
+        const content = function () { return bbContent(el.kids, true); };
+        switch (el.name) {
+            case 'line': case 'row': case 'span': return content();
+            case 'br': return '"<br>"';
+            case 'pt': return 'renderPT(' + content() + ')';
+            case 'btn': case 'button': {
+                const d = bbAttr(el, 'do', 'code') || bbAttr(el, 'onclick', 'code');
+                if (!d) bad('<btn> needs do="the function to run", like <btn do="start">Start</btn>!');
+                return 'btn(' + d + ', ' + content() + ')';
+            }
+            case 'textbox': case 'counter': {
+                const v = bbAttr(el, 'var', 'code');
+                if (v !== null && !/^[A-Za-z_]\w*$/.test(v)) bad('<' + el.name + ' var="..."> needs the name of a variable!');
+                const args = [content()];
+                if (v) args.push('variable=' + v);
+                ['min', 'max'].forEach(function (n) { const x = bbAttr(el, n, 'code'); if (x !== null) args.push(n + '=' + x); });
+                const val = bbAttr(el, 'value', 'text'); if (val !== null) args.push('value=' + val);
+                return el.name + '(' + args.join(', ') + ')';
+            }
+            case 'annotate': case 'mark': {
+                const ty = bbAttr(el, 'type', 'text') || '"highlight"', co = bbAttr(el, 'color', 'num');
+                return 'skill(skill="annotate", type=' + ty + (co !== null ? ', color=' + co : '') + ', content=' + content() + ')';
+            }
+            case 'beepbox': case 'song': {
+                const src = el.attrs.src || el.attrs.href || el.attrs.get;
+                if (!src) bad('<beepbox> needs src="the song link"!');
+                const link = src.x !== undefined ? '(' + src.x + ')' : bbStr(src.s);
+                const lb = bbAttr(el, 'label', 'text');
+                return 'beepbox(' + link + (lb !== null ? ', label=' + lb : '') + ')';
+            }
+            default: {
+                // anything else is plain HTML (like <b> or <i>), passed through as it is
+                let open = '<' + el.name;
+                Object.keys(el.attrs).forEach(function (n) { const a = el.attrs[n]; open += a === true ? ' ' + n : ' ' + n + '="' + String(a.s !== undefined ? a.s : '').replace(/"/g, '&quot;') + '"'; });
+                return bbStr(open + '>') + ' & ' + content() + ' & ' + bbStr('</' + el.name + '>');
+            }
+        }
+    }
+    function compileBBML(src) {
+        const root = parseBBML(String(src || ''));
+        const code = [], map = [];
+        const emit = function (stmt, ln) { code.push(stmt); map.push(BB_LINE + ln); };
+        root.kids.forEach(function (k) {
+            if (k.t === 'text') {
+                // loose text: every non-empty line becomes its own line on the page
+                k.v.split('\n').forEach(function (ln, j) { const t = ln.trim(); bbText.line = k.line + j; if (t) emit('renderRT(' + bbText(t).join(' & ') + ')', k.line + j); });
+                return;
+            }
+            if (k.name === 'line' || k.name === 'row') {
+                const n = bbAttr(k, 'n', 'code') || bbAttr(k, 'line', 'code');
+                emit('renderRT(' + bbContent(k.kids) + (n ? ', line=' + n : '') + ')', k.line);
+                return;
+            }
+            if (k.name === 'pt') { emit('renderPT(' + bbContent(k.kids) + ')', k.line); return; }
+            emit('renderRT(' + bbElement(k) + ')', k.line);
+        });
+        return { code: code.join('\n'), map: map };
+    }
+    function highlightBBML(src) {
+        let out = '', i = 0;
+        const plain = function (t) { out += esc(t); };
+        const expr = function (t) { out += '{' + highlight(t) + '}'; };
+        while (i < src.length) {
+            if (src.startsWith('<!--', i)) { const e = src.indexOf('-->', i + 4); const end = e < 0 ? src.length : e + 3; out += '<span class="bl-t-c">' + esc(src.slice(i, end)) + '</span>'; i = end; continue; }
+            const tag = /^<(\/?)([A-Za-z][\w-]*)/.exec(src.slice(i, i + 64));
+            if (tag) {
+                plain('<' + tag[1]); out += '<span class="bl-t-tag">' + esc(tag[2]) + '</span>';
+                i += tag[0].length;
+                while (i < src.length && src[i] !== '>') {
+                    const c = src[i];
+                    if (c === '"' || c === "'") { const e = src.indexOf(c, i + 1); const end = e < 0 ? src.length : e + 1; out += '<span class="bl-t-s">' + esc(src.slice(i, end)) + '</span>'; i = end; continue; }
+                    if (c === '{') { let d = 0, j = i; for (; j < src.length; j++) { if (src[j] === '{') d++; else if (src[j] === '}' && --d === 0) break; } expr(src.slice(i + 1, j)); i = j + 1; continue; }
+                    const an = /^[A-Za-z_][\w:-]*/.exec(src.slice(i));
+                    if (an) { out += '<span class="bl-t-b">' + esc(an[0]) + '</span>'; i += an[0].length; continue; }
+                    plain(c); i++;
+                }
+                if (src[i] === '>') { plain('>'); i++; }
+                continue;
+            }
+            if (src[i] === '{') { let d = 0, j = i; for (; j < src.length; j++) { if (src[j] === '{') d++; else if (src[j] === '}' && --d === 0) break; } if (j < src.length) { expr(src.slice(i + 1, j)); i = j + 1; continue; } }
+            plain(src[i]); i++;
+        }
+        return out;
+    }
+
     // The markup of a program block (static, so notes + exports keep it and Omicron can run it too)!
     function blockHTML(code, id, title) {
-        return '<span class="bl-prog" contenteditable="false" data-bl-id="' + esc(id || newId()) + '" data-bl-title="' + esc(title || 'Program') + '" title="Click to play the program"><span class="bl-chip-icon" aria-hidden="true"></span><span class="bl-chip-text">' + esc(title || 'Program') + '</span><button type="button" class="bl-chip-edit" title="Edit the code" aria-label="Edit program">✎</button><textarea class="bl-code" hidden spellcheck="false">' + esc(code == null ? SAMPLE : code) + '</textarea></span>';
+        return '<span class="bl-prog" contenteditable="false" data-bl-id="' + esc(id || newId()) + '" data-bl-title="' + esc(title || 'Program') + '" title="Click to play the program"><span class="bl-chip-icon" aria-hidden="true"></span><span class="bl-chip-text">' + esc(title || 'Program') + '</span><button type="button" class="bl-chip-edit" title="Edit the code" aria-label="Edit program">✎</button><textarea class="bl-code" hidden spellcheck="false">\n' + esc(code == null ? SAMPLE : code) + '</textarea><textarea class="bl-bbml" hidden spellcheck="false">\n' + esc(arguments[3] || '') + '</textarea></span>';
     }
 
     const live = new WeakMap(); // prog element -> running state
@@ -1256,6 +1620,25 @@ fn guess(n):
     /* ================= Libraries: sqlite (sql.js), python (Pyodide), julia (your Oxygen.jl server) ================= */
     const SQLJS = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/';
     const PYODIDE = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/';
+    const FENGARI = 'https://cdn.jsdelivr.net/npm/fengari-web@0.1.4/dist/fengari-web.js';
+    let luaP = null;
+    function loadLua() { if (!luaP) luaP = (window.fengari ? Promise.resolve() : loadScript(FENGARI)).then(function () { if (!window.fengari) throw new Error('Lua did not load'); return window.fengari; }).catch(function (e) { luaP = null; throw e; }); return luaP; }
+    // A fresh Lua world for each run, with only the safe standard libraries (no files, no page, no JavaScript)
+    function newLua(fg, lib) {
+        const lua = fg.lua, la = fg.lauxlib, S = fg.to_luastring;
+        const Ls = la.luaL_newstate();
+        fg.lualib.luaL_openlibs(Ls);
+        lua.lua_pushcfunction(Ls, function (L2) {
+            const n = lua.lua_gettop(L2), parts = [];
+            for (let i = 1; i <= n; i++) { la.luaL_tolstring(L2, i); parts.push(lua.lua_tojsstring(L2, -1)); lua.lua_pop(L2, 1); }
+            if (lib.out) lib.out(parts.join('\t'));
+            return 0;
+        });
+        lua.lua_setglobal(Ls, S('print'));
+        const seal = S('io = nil; dofile = nil; loadfile = nil; require = nil; package = nil; if os then os.exit = nil; os.execute = nil; os.remove = nil; os.rename = nil; os.tmpname = nil; os.getenv = nil end');
+        if (la.luaL_loadbufferx(Ls, seal, seal.length, S('=seal'), null) === lua.LUA_OK) lua.lua_pcall(Ls, 0, 0, 0); else lua.lua_settop(Ls, 0);
+        return Ls;
+    }
     let sqlP = null, pyP = null;
     function loadScript(src) { return new Promise(function (res, rej) { const sc = document.createElement('script'); sc.src = src; sc.onload = res; sc.onerror = function () { sc.remove(); rej(new Error('Could not load ' + src + ' (are you online?)')); }; document.head.appendChild(sc); }); }
     function loadSQL() { if (!sqlP) sqlP = (window.initSqlJs ? Promise.resolve() : loadScript(SQLJS + 'sql-wasm.js')).then(function () { return window.initSqlJs({ locateFile: function (f) { return SQLJS + f; } }); }).catch(function (e) { sqlP = null; throw e; }); return sqlP; }
@@ -1292,9 +1675,16 @@ fn guess(n):
         });
     }
     function julia_settings() { try { const o = JSON.parse(localStorage.getItem('bitlang_julia') || 'null'); if (o && o.url && o.token) return o; } catch (e) {} return null; }
-    function askJulia() {
-        const cur = julia_settings() || { url: 'http://127.0.0.1:8080', token: '' };
-        return dialog('<div class="bl-docs-head"><b>Your Julia server</b></div><div class="bl-edit-body"><p style="margin:0;line-height:1.5;font-size:13px">Start <code>bitlang_julia_server.jl</code> (see the BitLang Guide), then copy the address and token it prints.</p><label class="bl-edit-lbl">Server address<input class="bl-edit-name bl-j-url" type="text" spellcheck="false"></label><label class="bl-edit-lbl">Token<input class="bl-edit-name bl-j-token" type="text" spellcheck="false" autocomplete="off"></label></div><div class="bl-edit-foot"><span class="bl-sp"></span><button type="button" class="bl-btn bl-cancel" data-a="no">Cancel</button><button type="button" class="bl-btn bl-run" data-a="yes">Save</button></div>', function (back, done) {
+    function julia_saved() { try { const o = JSON.parse(localStorage.getItem('bitlang_julia') || 'null'); if (o && o.url) return o; } catch (e) {} return null; }
+    // Is the server there, and does it take this token? 'ok', 'token' (refused) or 'down'
+    function checkJulia(cfg) {
+        if (typeof fetch !== 'function') return Promise.resolve('ok');
+        return fetch(cfg.url.replace(/\/+$/, '') + '/julia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: cfg.token, code: 'nothing' }) })
+            .then(function (r) { return r.status === 401 ? 'token' : 'ok'; }, function () { return 'down'; });
+    }
+    function askJulia(why) {
+        const cur = julia_saved() || { url: 'http://127.0.0.1:8080', token: '' };
+        return dialog('<div class="bl-docs-head"><b>Your Julia server</b></div><div class="bl-edit-body">' + (why ? '<p style="margin:0;padding:8px 10px;border-radius:8px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:13px">' + esc(why) + '</p>' : '') + '<p style="margin:0;line-height:1.5;font-size:13px">Start <code>bitlang_julia_server.jl</code> (see the BitLang Guide), then copy the address and token it prints.</p><label class="bl-edit-lbl">Server address<input class="bl-edit-name bl-j-url" type="text" spellcheck="false"></label><label class="bl-edit-lbl">Token<input class="bl-edit-name bl-j-token" type="text" spellcheck="false" autocomplete="off"></label></div><div class="bl-edit-foot"><span class="bl-sp"></span><button type="button" class="bl-btn bl-cancel" data-a="no">Cancel</button><button type="button" class="bl-btn bl-run" data-a="yes">Save</button></div>', function (back, done) {
             back.querySelector('.bl-j-url').value = cur.url; back.querySelector('.bl-j-token').value = cur.token;
             back.addEventListener('click', function (e) {
                 const b = e.target.closest && e.target.closest('[data-a]');
@@ -1315,6 +1705,7 @@ fn guess(n):
         let chain = Promise.resolve();
         libs.forEach(function (l) {
             chain = chain.then(function () {
+                if (l.lib === 'lua') { note('Loading Lua (Fengari)…'); return loadLua().then(function (fg) { const lib = { fg: fg, out: null }; lib.L = newLua(fg, lib); out.lua = lib; }); }
                 if (l.lib === 'sqlite') { note('Loading SQLite…'); return loadSQL().then(function (SQL) { out.sqlite = { SQL: SQL, db: new SQL.Database() }; }); }
                 if (l.lib === 'python') {
                     return askTrust('python', code).then(function (ok) {
@@ -1324,7 +1715,17 @@ fn guess(n):
                     });
                 }
                 if (l.lib === 'julia') {
-                    return (julia_settings() ? Promise.resolve(julia_settings()) : askJulia()).then(function (cfg) {
+                    const settle = function (cfg) {
+                        if (!cfg) return null;
+                        note('Checking your Julia server…');
+                        return checkJulia(cfg).then(function (r) {
+                            if (r === 'ok') return cfg;
+                            return askJulia(r === 'token'
+                                ? 'The server did not accept that token. Paste the token it printed when it started (a restarted server prints a new one)!'
+                                : 'I could not reach a Julia server at ' + cfg.url + '. Start bitlang_julia_server.jl (or check the address), then press Save!').then(settle);
+                        });
+                    };
+                    return (julia_settings() ? Promise.resolve(julia_settings()) : askJulia(julia_saved() ? 'Paste the token your Julia server printed when it started!' : '')).then(settle).then(function (cfg) {
                         if (!cfg) throw new Error('No Julia server was set up, so the program did not start');
                         return askTrust('julia', code, cfg.url).then(function (ok) {
                             if (!ok) throw new Error('Julia was not allowed, so the program did not start');
@@ -1419,7 +1820,7 @@ fn guess(n):
         const showError = function (err) {
             const l = lineEl('error');
             l.className = 'bl-line bl-error';
-            l.textContent = (err instanceof BitError ? (err.line ? 'Line ' + err.line + ': ' : '') : 'Oops: ') + (err && err.message || err);
+            l.textContent = (err instanceof BitError ? (err.line ? (err.line > BB_LINE ? 'BBML line ' + (err.line - BB_LINE) : 'Line ' + err.line) + ': ' : '') : 'Oops: ') + (err && err.message || err);
             halt();
         };
         const host = {
@@ -1584,6 +1985,12 @@ fn guess(n):
             if (live.get(prog) !== st || st.dead) return;
             try {
                 rt.start();
+                const bbEl = prog.querySelector('.bl-bbml');
+                if (bbEl && bbEl.value.trim()) {
+                    // BBML: the page's starting lines, set up before onstart runs
+                    const comp = compileBBML(bbEl.value);
+                    rt.execBlock(parse(comp.code, { lams: rt.lams }, comp.map), rt.globals);
+                }
                 if (rt.has('onclick')) fail(0, 'onclick is gone: programs only change the document now (use btn to make something clickable)!');
                 rt.call('onstart');
             } catch (err) { showError(err); return; }
@@ -1635,7 +2042,42 @@ fn guess(n):
     function codeKeys(ta) {
         ta.addEventListener('keydown', function (e) {
             e.stopPropagation();
-            if (e.key === 'Tab') { e.preventDefault(); const s = ta.selectionStart; ta.setRangeText('    ', s, ta.selectionEnd, 'end'); ta.dispatchEvent(new Event('input', { bubbles: true })); }
+            // A "tab" is 4 spaces of indentation: Tab, Backspace, Delete and the arrow keys treat it as ONE piece
+            const v = ta.value, a = ta.selectionStart, z = ta.selectionEnd;
+            const lineStart = v.lastIndexOf('\n', a - 1) + 1;
+            const indentEnd = lineStart + /^ */.exec(v.slice(lineStart))[0].length; // end of this line's leading spaces
+            const changed = function () { ta.dispatchEvent(new Event('input', { bubbles: true })); };
+            const prevStop = function (pos) { const col = pos - lineStart; return pos - (col % 4 || 4); };
+            const nextStop = function (pos) { const col = pos - lineStart; return Math.min(indentEnd, pos + (4 - col % 4)); };
+            if (e.key === 'Tab' && e.shiftKey) {
+                // Shift+Tab: one tab less on this line
+                e.preventDefault();
+                const cut = Math.min(4, indentEnd - lineStart) && ((indentEnd - lineStart) % 4 || 4);
+                if (cut) { ta.setRangeText('', lineStart, lineStart + cut, 'preserve'); ta.setSelectionRange(Math.max(lineStart, a - cut), Math.max(lineStart, z - cut)); changed(); }
+            }
+            else if (e.key === 'Tab') { e.preventDefault(); const col = a - lineStart; ta.setRangeText('    '.slice(0, 4 - col % 4), a, z, 'end'); changed(); }
+            else if (e.key === 'Backspace' && a === z && a > lineStart && a <= indentEnd && !e.altKey && !e.metaKey && !e.ctrlKey) {
+                e.preventDefault();
+                ta.setRangeText('', prevStop(a), a, 'end'); changed();
+            }
+            else if (e.key === 'Delete' && a === z && a >= lineStart && a < indentEnd && !e.altKey && !e.metaKey && !e.ctrlKey) {
+                e.preventDefault();
+                ta.setRangeText('', a, nextStop(a), 'start'); changed();
+            }
+            else if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !e.altKey && !e.metaKey && !e.ctrlKey) {
+                // the moving end of the selection (the caret) jumps a whole tab inside the indentation
+                const back = ta.selectionDirection === 'backward';
+                const caret = e.shiftKey ? (back ? a : z) : (e.key === 'ArrowLeft' ? a : z);
+                if (!e.shiftKey && a !== z) return; // (a plain arrow with a selection just collapses it, as usual)
+                const cs = v.lastIndexOf('\n', caret - 1) + 1, ce = cs + /^ */.exec(v.slice(cs))[0].length;
+                let to = null;
+                if (e.key === 'ArrowLeft' && caret > cs && caret <= ce) { const col = caret - cs; to = caret - (col % 4 || 4); }
+                if (e.key === 'ArrowRight' && caret >= cs && caret < ce) { const col = caret - cs; to = Math.min(ce, caret + (4 - col % 4)); }
+                if (to === null) return;
+                e.preventDefault();
+                if (!e.shiftKey) ta.setSelectionRange(to, to);
+                else { const anchor = back ? z : a; ta.setSelectionRange(Math.min(anchor, to), Math.max(anchor, to), to < anchor ? 'backward' : 'forward'); }
+            }
             else if (e.key === 'Enter') {
                 const s = ta.selectionStart;
                 const before = ta.value.slice(0, s);
@@ -1656,15 +2098,32 @@ fn guess(n):
         const back = document.createElement('div');
         back.className = 'bl-edit-back';
         back.innerHTML = '<div class="bl-edit-dlg" role="dialog" aria-label="Edit program"><div class="bl-docs-head"><b>Edit program</b><button type="button" class="bl-docs-x" title="Close">✕</button></div>' +
-            '<div class="bl-edit-body"><label class="bl-edit-lbl">Name<input class="bl-edit-name" type="text" maxlength="40" spellcheck="false"></label><label class="bl-edit-lbl">BitLang code<span class="bl-edit-wrap"><pre class="bl-hl" aria-hidden="true"></pre><textarea class="bl-edit-code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></span></label></div>' +
+            '<div class="bl-edit-body"><label class="bl-edit-lbl">Name<input class="bl-edit-name" type="text" maxlength="40" spellcheck="false"></label><div class="bl-edit-lbl">Code<span class="bl-seg" role="tablist" aria-label="Code language"><button type="button" class="bl-seg-b on" data-mode="bitlang" role="tab" aria-selected="true">BitLang</button><button type="button" class="bl-seg-b" data-mode="bbml" role="tab" aria-selected="false">BBML</button></span><span class="bl-edit-wrap"><pre class="bl-hl" aria-hidden="true"></pre><textarea class="bl-edit-code" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></span><span class="bl-seg-note" hidden>BBML sets up the page before <b>onstart</b> runs: <code>&lt;line&gt;</code>, <code>&lt;btn do="fn"&gt;</code>, <code>&lt;textbox var="x"&gt;</code>, <code>{expressions}</code>… (see the Guide)</span></div></div>' +
             '<div class="bl-edit-foot"><button type="button" class="bl-btn bl-docs" data-a="docs" title="BitLang guide">? Guide</button><span class="bl-sp"></span><button type="button" class="bl-btn bl-cancel" data-a="cancel">Cancel</button><button type="button" class="bl-btn" data-a="save">Save</button><button type="button" class="bl-btn bl-run" data-a="play">Save &amp; ▶ Play</button></div></div>';
         document.body.appendChild(back);
         const name = back.querySelector('.bl-edit-name'), code = back.querySelector('.bl-edit-code');
         name.value = prog.getAttribute('data-bl-title') || 'Program';
         code.value = ta ? ta.value : '';
         codeKeys(code);
+        const bbTa = prog.querySelector('.bl-bbml');
+        const bufs = { bitlang: code.value, bbml: bbTa ? bbTa.value : '' };
+        let mode = 'bitlang';
         const hlEl = back.querySelector('.bl-hl');
-        const paint = function () { hlEl.innerHTML = highlight(code.value) + '\n'; hlEl.scrollTop = code.scrollTop; hlEl.scrollLeft = code.scrollLeft; };
+        const paint = function () { hlEl.innerHTML = (mode === 'bbml' ? highlightBBML(code.value) : highlight(code.value)) + '\n'; hlEl.scrollTop = code.scrollTop; hlEl.scrollLeft = code.scrollLeft; };
+        back.querySelectorAll('.bl-seg-b').forEach(function (b) {
+            b.addEventListener('click', function () {
+                const to = b.getAttribute('data-mode');
+                if (to === mode) return;
+                bufs[mode] = code.value;
+                mode = to;
+                code.value = bufs[mode];
+                back.querySelectorAll('.bl-seg-b').forEach(function (x) { const on = x === b; x.classList.toggle('on', on); x.setAttribute('aria-selected', on ? 'true' : 'false'); });
+                back.querySelector('.bl-seg-note').hidden = mode !== 'bbml';
+                code.setAttribute('aria-label', mode === 'bbml' ? 'BBML markup' : 'BitLang code');
+                code.focus(); code.setSelectionRange(0, 0); code.scrollTop = 0; code.scrollLeft = 0;
+                paint();
+            });
+        });
         code.addEventListener('input', paint);
         code.addEventListener('scroll', function () { hlEl.scrollTop = code.scrollTop; hlEl.scrollLeft = code.scrollLeft; });
         paint();
@@ -1676,7 +2135,12 @@ fn guess(n):
             const t = (name.value || 'Program').trim().slice(0, 40) || 'Program';
             prog.setAttribute('data-bl-title', t);
             const tx = prog.querySelector('.bl-chip-text'); if (tx) tx.textContent = t;
-            if (ta) { ta.value = code.value; ta.textContent = code.value; ta.dispatchEvent(new Event('input', { bubbles: true })); }
+            bufs[mode] = code.value;
+            let bbBox = prog.querySelector('.bl-bbml');
+            if (!bbBox && bufs.bbml) { bbBox = document.createElement('textarea'); bbBox.className = 'bl-bbml'; bbBox.hidden = true; bbBox.setAttribute('spellcheck', 'false'); prog.appendChild(bbBox); }
+            // (HTML drops the first newline inside a <textarea>, so the saved copy gets one extra in front)
+            if (bbBox) { bbBox.textContent = '\n' + bufs.bbml; bbBox.value = bufs.bbml; }
+            if (ta) { ta.textContent = '\n' + bufs.bitlang; ta.value = bufs.bitlang; ta.dispatchEvent(new Event('input', { bubbles: true })); }
         };
         back.addEventListener('mousedown', function (e) { if (e.target === back) close(); });
         back.querySelector('.bl-docs-x').addEventListener('click', close);
@@ -1710,7 +2174,7 @@ fn guess(n):
             wired.add(prog); // (tracked here, never in the note's saved HTML)
             if (!prog.getAttribute('data-bl-id')) prog.setAttribute('data-bl-id', newId());
             const ta = prog.querySelector('.bl-code');
-            if (ta) ta.addEventListener('input', function () { ta.textContent = ta.value; });
+            if (ta) ta.addEventListener('input', function () { const v = ta.value; ta.textContent = '\n' + v; ta.value = v; });
             prog.addEventListener('mousedown', function (e) { e.preventDefault(); e.stopPropagation(); });
             prog.addEventListener('click', function (e) {
                 e.preventDefault(); e.stopPropagation();
@@ -1749,6 +2213,7 @@ fn onframe(dt):   # about 60 times a second while it plays; dt = seconds since t
 fn onkey(k):      # a key goes down ("a", "arrowleft", "space"...)
 fn onkeyup(k):    # a key goes up
 fn onend():       # when the program stops</pre>
+<p>In the code editor, <b>Tab</b> indents to the next step of 4 spaces, <b>Shift+Tab</b> takes one step away, and inside the indentation <b>Backspace</b>, <b>Delete</b> and the <b>arrow keys</b> treat each 4 spaces as one tab.</p>
 <p>Call a function with <code>add(2, 3)</code> or by name: <code>add(2, b=5)</code>.</p>
 
 <p><code>onframe</code> only changes the document (<code>renderRT</code>, <code>print</code>, buttons...). Rewriting the same text is free, so a clock or a counter can update every frame:</p>
@@ -1792,6 +2257,31 @@ for item in items:
 <tr><td><code>renderPT(text, line="1")</code></td><td>Like <code>renderRT</code>, but <b>plain text</b>: no Keydown, no HTML, shown exactly as written (<code>**stars**</code> stay as stars). Same line rules: <code>line=N</code> takes over line N, no <code>line</code> adds the next free line, and inside another call or a <code>&amp;</code> row it just hands back its text.</td></tr>
 <tr><td><code>btn(function, contents)</code></td><td>A clickable button! The <b>function</b> runs when it is clicked; the <b>contents</b> can be anything <code>renderRT</code> understands. A button has <b>no style of its own</b>, so whatever you put inside becomes the button: a Keydown chip (<code>#C#Play#</code>), an Annotate highlight, an image, plain text… Show it with <code>renderRT(btn(restart, "↻ Again") + "", line="2")</code>. You can mix buttons, text and skills in one line.</td></tr>
 </table>
+
+<h2>BBML: set up the page without renderRT</h2>
+<p>BBML is a little markup (it looks like HTML) for a program's <b>starting page</b>. In the ✎ editor, switch the <b>BitLang | BBML</b> button to write it. When the program plays, the BBML lines appear first (right after your top-level code), then <code>onstart</code> runs and keeps adding lines after them.</p>
+<pre class="bbml">&lt;!-- comments look like this --&gt;
+&lt;line&gt;Welcome, **{name}**! Next year you are {age + 1}.&lt;/line&gt;
+A loose line of text becomes its own line too.
+&lt;row&gt;
+    &lt;btn do="start"&gt;#G#Start#&lt;/btn&gt;
+    &lt;btn do="stop"&gt;#R#Exit#&lt;/btn&gt;
+&lt;/row&gt;
+&lt;line&gt;Name: &lt;textbox var="name"&gt;Your name&lt;/textbox&gt; Age: &lt;counter var="age" min="0" max="120"/&gt;&lt;/line&gt;
+&lt;line n="9"&gt;&lt;annotate type="bubble" color="pink"&gt;Line 9, in a bubble&lt;/annotate&gt;&lt;/line&gt;
+&lt;pt&gt;Plain text: **these stars stay**&lt;/pt&gt;</pre>
+<table>
+<tr><td><code>&lt;line&gt;…&lt;/line&gt;</code> <code>&lt;row&gt;</code></td><td>One line of rich text (Keydown works). <code>n="9"</code> puts it on line 9. Everything inside, buttons included, sits on that one line.</td></tr>
+<tr><td><code>{expression}</code></td><td>Any BitLang expression, worked out when the page is set up: <code>{name}</code>, <code>{age + 1}</code>, <code>{upper(name)}</code>. Write <code>\{</code> for a real brace and <code>\&lt;</code> for a real &lt;.</td></tr>
+<tr><td><code>&lt;btn do="fn"&gt;…&lt;/btn&gt;</code></td><td>A button that runs a function (or <code>stop</code>, or <code>do="lam(...)"</code>). Its contents are what it looks like.</td></tr>
+<tr><td><code>&lt;textbox var="x"&gt;hint&lt;/textbox&gt;</code></td><td>A textbox tied to a variable (<code>value="..."</code> to start with text).</td></tr>
+<tr><td><code>&lt;counter var="x" min="0" max="9"/&gt;</code></td><td>A number box tied to a variable.</td></tr>
+<tr><td><code>&lt;annotate type="box" color="3"&gt;…&lt;/annotate&gt;</code></td><td>An Annotate highlight (any type, color by number or name).</td></tr>
+<tr><td><code>&lt;beepbox src="link" label="Song"/&gt;</code></td><td>A BeepBox song chip.</td></tr>
+<tr><td><code>&lt;pt&gt;…&lt;/pt&gt;</code></td><td>Plain text (no Keydown).</td></tr>
+<tr><td><code>&lt;b&gt;</code> <code>&lt;i&gt;</code> <code>&lt;br&gt;</code>…</td><td>Any other tag is passed through as HTML.</td></tr>
+</table>
+<p>Variables and functions come from your BitLang code, so declare them there (<code>var name = ""</code>, <code>fn start():</code>). Mistakes show as <b>BBML line N</b>. In the editor, BBML tag names are bright green, attribute names blue, values and text in quotes green, and <code>{expressions}</code> are colored like BitLang.</p>
 
 <h2>Lines: writing and overwriting</h2>
 <pre>fn onstart():
@@ -1976,12 +2466,12 @@ fn onstart():
 
 <h2>Annotate: highlights in your text</h2>
 <pre>renderRT("Look: " + skill(skill="annotate", type="bubble", color="pink", content=renderRT("Some **totally random** text here")), line="1")</pre>
-<p><code>skill(skill="annotate", type=..., color=..., content=...)</code> wraps text in one of Bitbook's Annotate highlights. <code>content</code> can be <code>renderRT("...")</code>: used inside another call, <code>renderRT</code> just hands back its rich text instead of showing it. <b>type</b> is <code>highlight</code>, <code>underline</code>, <code>strikethrough</code>, <code>box</code>, <code>halo</code>, <code>brackets</code>, <code>spotlight</code>, <code>accent</code>, <code>bubble</code> or one of the colorful ones: <code>dusk</code> <code>prism</code> <code>complement</code> <code>ticket</code> <code>neon</code> <code>stamp</code> <code>tape</code> <code>checker</code> <code>halftone</code> <code>aurora</code> <code>mild</code> (pale versions of every color) <code>wrap</code> <code>belt</code> <code>bucket</code> <code>torpedo</code> <code>bottle</code> <code>packet</code> <code>select</code>. <b>color</b> (default <code>yellow</code>) is red, orange, gold, yellow, lime, green, turquoise, teal, cyan, blue, purple, pink or slate. Annotate highlights make great <code>btn</code> contents!</p>
+<p><code>skill(skill="annotate", type=..., color=..., content=...)</code> wraps text in one of Bitbook's Annotate highlights. <code>content</code> can be <code>renderRT("...")</code>: used inside another call, <code>renderRT</code> just hands back its rich text instead of showing it. <b>type</b> is <code>highlight</code>, <code>underline</code>, <code>strikethrough</code>, <code>box</code>, <code>halo</code>, <code>brackets</code>, <code>spotlight</code>, <code>accent</code>, <code>bubble</code> or one of the colorful ones: <code>dusk</code> <code>prism</code> <code>complement</code> <code>ticket</code> <code>neon</code> <code>stamp</code> <code>tape</code> <code>checker</code> <code>halftone</code> <code>aurora</code> <code>mild</code> (pale versions of every color) <code>wrap</code> <code>belt</code> <code>bucket</code> <code>torpedo</code> <code>bottle</code> <code>packet</code> <code>select</code> <code>capsule</code> <code>frost</code> <code>pixel</code> <code>flag</code> <code>gem</code>. <b>color</b> (default <code>yellow</code>) is red, orange, gold, yellow, lime, green, turquoise, teal, cyan, blue, purple, pink or slate. Annotate highlights make great <code>btn</code> contents!</p>
 
 <h2>Quick commands</h2>
 <p>The long <code>skill(...)</code> forms have short versions:</p>
 <table>
-<tr><td><code>annotate_bubble("Some **totally cool** text here", color=1)</code></td><td>The same as <code>skill(skill="annotate", type="bubble", color=..., content=...)</code>. There is one for every type: <code>annotate_highlight</code> <code>annotate_underline</code> <code>annotate_strikethrough</code> <code>annotate_box</code> <code>annotate_halo</code> <code>annotate_brackets</code> <code>annotate_spotlight</code> <code>annotate_accent</code> <code>annotate_bubble</code> and <code>annotate_dusk</code> <code>annotate_prism</code> <code>annotate_complement</code> <code>annotate_ticket</code> <code>annotate_neon</code> <code>annotate_stamp</code> <code>annotate_tape</code> <code>annotate_checker</code> <code>annotate_halftone</code> <code>annotate_aurora</code> <code>annotate_mild</code> <code>annotate_wrap</code> <code>annotate_belt</code> <code>annotate_bucket</code> <code>annotate_torpedo</code> <code>annotate_bottle</code> <code>annotate_packet</code> <code>annotate_select</code></td></tr>
+<tr><td><code>annotate_bubble("Some **totally cool** text here", color=1)</code></td><td>The same as <code>skill(skill="annotate", type="bubble", color=..., content=...)</code>. There is one for every type: <code>annotate_highlight</code> <code>annotate_underline</code> <code>annotate_strikethrough</code> <code>annotate_box</code> <code>annotate_halo</code> <code>annotate_brackets</code> <code>annotate_spotlight</code> <code>annotate_accent</code> <code>annotate_bubble</code> and <code>annotate_dusk</code> <code>annotate_prism</code> <code>annotate_complement</code> <code>annotate_ticket</code> <code>annotate_neon</code> <code>annotate_stamp</code> <code>annotate_tape</code> <code>annotate_checker</code> <code>annotate_halftone</code> <code>annotate_aurora</code> <code>annotate_mild</code> <code>annotate_wrap</code> <code>annotate_belt</code> <code>annotate_bucket</code> <code>annotate_torpedo</code> <code>annotate_bottle</code> <code>annotate_packet</code> <code>annotate_select</code> <code>annotate_capsule</code> <code>annotate_frost</code> <code>annotate_pixel</code> <code>annotate_flag</code> <code>annotate_gem</code></td></tr>
 <tr><td><code>color=1</code> … <code>color=13</code></td><td>Colors by number: 1 red, 2 orange, 3 gold, 4 yellow, 5 lime, 6 green, 7 turquoise, 8 teal, 9 cyan, 10 blue, 11 purple, 12 pink, 13 slate. Names work too: <code>color="pink"</code>, or put it second: <code>annotate_box("text", "blue")</code></td></tr>
 <tr><td><code>beepbox(link, label="My song")</code></td><td>The same as <code>skill(skill="beepbox", get=link, content=inherit)</code></td></tr>
 </table>
@@ -1997,6 +2487,34 @@ renderRT("Hi " + annotate_box("there", "blue") + " " + beepbox(song), line="9")<
 <tr><td><code>range(n)</code> <code>range(a, b)</code> <code>range(a, b, step)</code></td><td>Lists of numbers</td></tr>
 <tr><td><code>str(x)</code> <code>num(x)</code> <code>join(list, sep)</code> <code>split(text, sep)</code> <code>upper</code> <code>lower</code> <code>contains</code> <code>keys</code></td><td>Handy tools</td></tr>
 </table>
+
+<h2>Matchers: find and swap</h2>
+<pre>var who = "Text"
+
+mat Censor: (
+    "badword"        ~> "*******"
+    "just some text" ~> 1
+)
+
+mat Swap: (
+    "matchme"    ~> "replaceme"
+    "a_variable" ~> who          # a value can be a variable
+    who          ~> "a_variable" # and so can what you look for
+)
+
+fn onstart():
+    renderRT(mat_match("a_variable", Swap), line=1)          # Text
+    renderRT(mat_match("no badword here", Censor), line=2)   # no ******* here
+    renderPT(mat_match("just some text", Censor), line=3)    # 1</pre>
+<ul>
+<li><code>mat Name: ( ... )</code> makes a matcher: one <code>"what to find" ~&gt; what it becomes</code> per line (commas are fine too, and <code>#</code> comments work inside).</li>
+<li><code>mat_match(x, Name)</code>: if <code>x</code> <b>is exactly</b> one of the keys, you get its value (any kind: text, a number, a list...). Otherwise, if <code>x</code> is text, every key found <b>inside</b> it is swapped (longest first).</li>
+<li>Swapping happens <b>once</b>: a replacement is never matched again, so <code>"a_variable"</code> becomes <code>"Text"</code> and stays <code>"Text"</code> even though <code>"Text"</code> is also a key.</li>
+<li>Keys and values are read when you match, so they always use the variables' current values.</li>
+<li><code>mat_match(list, Name)</code> matches every item. <code>mat_has(x, Name)</code> is <code>true</code> when anything matched, and <code>mat_keys(Name)</code> lists the keys.</li>
+<li><b>Change a pair</b> with <code>matc</code> and the mouse operator <code>"&gt;</code>: <code>matc Censor ["badword" ~&gt; "*******"] "&gt; ["badword" ~&gt; "(oops)"]</code>. The first <code>[...]</code> is the pair as it is now (key and value), the second is what it becomes. The new key and value are read right then.</li>
+<li>Not to be confused with <code>mat(...)</code>, which makes a matrix: a matcher is <code>mat</code>, a name, then a colon.</li>
+</ul>
 
 <h2>Vectors and matrices</h2>
 <pre>var v = &lt;| 1, 2, 3 |&gt;        # a vector: &lt;| numbers, separated by commas |&gt;
@@ -2023,12 +2541,13 @@ fn onstart():
     renderPT("m * &lt;| 1, 3 |&gt; = " + str(m * &lt;| 1, 3 |&gt;), line=1)     # &lt;| 2, 6 |&gt;</pre>
 <p>They show up as <code>&lt;| 1, 2, 3 |&gt;</code> and <code>[1 2; 3 4]</code> in text. Saved <code>var</code>s and <code>ls_set</code> keep them. A <b>matrix</b> only holds numbers. A <b>vector</b> can hold numbers, text, true/false and variables, like a list that also does vector math: <code>&lt;| name, "hi", 3, ok |&gt;</code> (the variables <code>name</code> and <code>ok</code> are read when the vector is made). <code>+</code> <code>*</code> still work slot by slot on text (<code>+</code> joins, <code>* 3</code> repeats); the number-only tools (<code>dot</code>, <code>cross</code>, <code>norm</code>, <code>normalize</code>, matrix products) ask for numbers.</p>
 
-<h2>Libraries: use python, use sqlite, use julia</h2>
+<h2>Libraries: use python, use sqlite, use julia, use lua</h2>
 <p>Put <code>use</code> lines at the very top of your program to load a library. They load before the program starts (you will see a loading message the first time).</p>
 <pre>use sqlite
 use python
 use python numpy, pandas      # extra Python packages from Pyodide's list
-use julia</pre>
+use julia
+use lua</pre>
 
 <h3>python(code)  (Pyodide)</h3>
 <pre>use python
@@ -2060,6 +2579,20 @@ fn onstart():
 <li><code>sql(query)</code> gives a <b>list of maps</b> for a SELECT (one map per row, columns as names) and the number of changed rows for anything else. Put <code>?</code> in the query and a list as the second value to fill them safely.</li>
 <li>The database starts empty each time the program plays (it lives in memory). <code>sql_save()</code> stores it (up to 3 MB) and <code>sql_load()</code> returns <code>true</code> when it found a saved one. Use <code>name="other"</code> for more than one.</li>
 <li>SQLite runs in a sealed box (sql.js), so it needs no permission.</li>
+</ul>
+
+<h3>lua(code)  (Fengari)</h3>
+<pre>use lua
+
+fn onstart():
+    renderPT("sum = " + lua("local t = 0 for i = 1, n do t = t + i end return t", n=5), line=1)   # 15
+    renderPT(lua("string.upper('hi')"), line=2)        # a single expression gives its value back
+    lua("print('Hello from Lua!')")                     # prints show up as lines</pre>
+<ul>
+<li><code>lua("code")</code> runs Lua 5.3 (Fengari, a Lua written in JavaScript). Use <code>return</code> to give a value back, or pass just an expression. Tables like <code>{1, 2, 3}</code> become lists and <code>{name = "Ann"}</code> becomes a map; <code>nil</code> is <code>null</code>.</li>
+<li><code>name=value</code> pieces become Lua variables first, and Lua's own variables stay between calls while the program runs.</li>
+<li>Lua runs in a <b>sealed box</b>: no files, no <code>require</code>, and no way into the page or JavaScript, so it needs no permission. An endless loop is stopped for you.</li>
+<li>Strings in Lua can use single quotes, which is handy inside BitLang's double quotes: <code>lua("print('hi')")</code>.</li>
 </ul>
 
 <h3>julia(code)  (your own Julia, through Oxygen.jl)</h3>
@@ -2097,7 +2630,7 @@ fn onstart():
         docsEl.className = 'bl-docs-back';
         docsEl.innerHTML = '<div class="bl-docs-dlg" role="dialog" aria-label="BitLang guide"><div class="bl-docs-head"><b>BitLang Guide</b><button type="button" class="bl-docs-x" title="Close">✕</button></div><div class="bl-docs-body">' + DOCS + '</div></div>';
         document.body.appendChild(docsEl);
-        docsEl.querySelectorAll('.bl-docs-body pre').forEach(function (pr) { pr.innerHTML = highlight(pr.textContent); });
+        docsEl.querySelectorAll('.bl-docs-body pre').forEach(function (pr) { pr.innerHTML = pr.classList.contains('bbml') ? highlightBBML(pr.textContent) : highlight(pr.textContent); });
         const close = function () { if (docsEl) { docsEl.remove(); docsEl = null; } document.removeEventListener('keydown', onKey, true); };
         const onKey = function (e) { if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); } };
         document.addEventListener('keydown', onKey, true);
@@ -2105,7 +2638,7 @@ fn onstart():
         docsEl.querySelector('.bl-docs-x').addEventListener('click', close);
     }
 
-    const BL_CSS = "\n.bl-prog { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; margin: 2px 3px; padding: 3px 5px 3px 4px; border-radius: 7px; border: 1px solid #3b4a63; border-bottom-color: #0b1220; background: linear-gradient(180deg, #243247 0%, #111b2c 55%, #0b1220 100%); color: #e2e8f0; font: 700 13px/1.3 'JetBrains Mono', monospace; box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(56,189,248,0.1), 0 2px 6px rgba(2,6,23,0.4); cursor: pointer; user-select: none; white-space: nowrap; transition: filter 0.15s, box-shadow 0.15s; }\n.bl-prog:hover { filter: brightness(1.18); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 0 0 1px rgba(74,222,128,0.35), 0 2px 10px rgba(74,222,128,0.25); }\n.bl-prog.bl-playing { border-color: #f87171; box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 0 0 2px rgba(248,113,113,0.35), 0 2px 10px rgba(248,113,113,0.4); }\n.bl-chip-icon { width: 20px; height: 20px; border-radius: 5px; display: inline-grid; place-items: center; background: linear-gradient(180deg, #86efac 0%, #16a34a 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px rgba(0,0,0,0.4); }\n.bl-chip-icon::before { content: \"\u25b6\"; color: #052e16; font-size: 9px; margin-left: 1px; }\n.bl-prog.bl-playing .bl-chip-icon { background: linear-gradient(180deg, #fca5a5 0%, #dc2626 100%); }\n.bl-prog.bl-playing .bl-chip-icon::before { content: \"\u25a0\"; color: #450a0a; margin-left: 0; }\n.bl-chip-text { padding: 0 1px; }\n.bl-chip-text::before { content: \"</> \"; color: #38bdf8; font-weight: 800; }\n.bl-chip-text::after { content: \"\u258d\"; color: #4ade80; margin-left: 2px; animation: bl-blink 1.1s steps(1) infinite; }\n@keyframes bl-blink { 50% { opacity: 0; } }\n.bl-chip-edit { width: 21px; height: 21px; padding: 0; border-radius: 5px; border: 1px solid #475569; background: linear-gradient(180deg, #334155, #1e293b); color: #cbd5e1; font-size: 12px; line-height: 1; cursor: pointer; }\n.bl-chip-edit:hover { color: #fff; border-color: #38bdf8; }\n.bl-prog .bl-code { display: none; }\n.bl-view { position: relative; display: block; width: 100%; flex: 1 1 100%; box-sizing: border-box; min-height: 120px; }\n.bl-over-stop { position: absolute; top: 4px; right: 4px; z-index: 3; font: 800 12px 'JetBrains Mono', monospace; color: #fff; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.8); background: linear-gradient(180deg, #fca5a5 0%, #dc2626 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.35); box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 8px rgba(0,0,0,0.35); cursor: pointer; }\n.bl-over-stop:hover { filter: brightness(1.1); }\n.bl-out { font-size: 15px; line-height: 1.6; }\n.bl-line { margin: 4px 0; }\n.bl-print { font-family: 'JetBrains Mono', monospace; opacity: 0.85; }\n.bl-error { color: #b91c1c; font-weight: 700; background: #fee2e2; border-radius: 6px; padding: 4px 8px; }\n.bl-skill-wait { opacity: 0.6; }\n.bl-btn { font: 800 13px 'JetBrains Mono', monospace; color: #fff; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.75); background: linear-gradient(180deg, #86efac 0%, #16a34a 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.3); box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; transition: transform 0.12s, filter 0.15s; }\n.bl-ubtn { all: unset; display: inline; cursor: pointer; -webkit-tap-highlight-color: transparent; }\n.bl-ubtn:focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; border-radius: 4px; }\n.bl-ubtn:hover { filter: brightness(1.08); }\n.bl-ubtn:active { filter: brightness(0.92); }\n.bl-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }\n.bl-btn:active { transform: translateY(1px); }\n.bl-cancel { background: linear-gradient(180deg, #fca5a5 0%, #dc2626 100%); }\n.bl-docs { background: linear-gradient(180deg, #ffffff 0%, #bae6fd 100%); color: #075985; text-shadow: none; }\n.bl-sp { flex: 1; }\n.bl-edit-back { position: fixed; inset: 0; z-index: 2147483000; background: rgba(15,23,42,0.6); display: grid; place-items: center; padding: 16px; backdrop-filter: blur(3px); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }\n.bl-edit-dlg { width: min(760px, 100%); max-height: 94vh; display: flex; flex-direction: column; background: #fff; color: #1e293b; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.4); }\n.bl-edit-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; overflow: auto; }\n.bl-edit-lbl { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 800; color: #075985; }\n.bl-edit-name { font: 14px system-ui, sans-serif; padding: 7px 10px; border: 1px solid #94a3b8; border-radius: 8px; }\n.bl-edit-foot { display: flex; gap: 8px; align-items: center; padding: 10px 16px; border-top: 1px solid #e2e8f0; background: #f1f5f9; }\n.bl-docs { background: linear-gradient(180deg, #ffffff 0%, #bae6fd 100%); color: #075985; text-shadow: none; padding: 5px 10px; }\n.bl-docs-back { position: fixed; inset: 0; z-index: 2147483000; background: rgba(15, 23, 42, 0.6); display: grid; place-items: center; padding: 16px; backdrop-filter: blur(3px); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }\n.bl-docs-dlg { width: min(860px, 100%); max-height: 92vh; display: flex; flex-direction: column; background: #fff; color: #1e293b; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.4); }\n.bl-docs-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; color: #fff; font-weight: 800; background: linear-gradient(180deg, #38bdf8, #0369a1); }\n.bl-docs-x { border: 0; background: rgba(255,255,255,0.22); color: #fff; width: 28px; height: 28px; border-radius: 6px; font-size: 15px; cursor: pointer; }\n.bl-docs-body { padding: 6px 22px 22px; overflow: auto; line-height: 1.55; font-size: 14px; }\n.bl-docs-body h1 { margin: 14px 0 6px; font-size: 26px; color: #0369a1; }\n.bl-docs-body h2 { margin: 22px 0 6px; font-size: 17px; color: #075985; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }\n.bl-docs-body pre { background: #0b1220; color: #e2e8f0; padding: 12px 14px; border-radius: 10px; overflow: auto; font: 12.5px/1.55 'JetBrains Mono', monospace; }\n.bl-docs-body code { font-family: 'JetBrains Mono', monospace; background: #e0f2fe; color: #075985; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }\n.bl-docs-body pre code { background: transparent; color: inherit; padding: 0; }\n.bl-docs-body table { border-collapse: collapse; width: 100%; margin: 8px 0; }\n.bl-docs-body td { border-bottom: 1px solid #e2e8f0; padding: 6px 8px; vertical-align: top; }\n.bl-docs-body td:first-child { white-space: nowrap; }\n\n.bl-edit-wrap { position: relative; display: block; background: #0b1220; border: 1px solid #1d4f7a; border-radius: 10px; overflow: hidden; }\n.bl-hl, .bl-edit-code { margin: 0; border: 0; padding: 12px 14px; font: 12.5px/1.6 'JetBrains Mono', monospace; tab-size: 4; white-space: pre; letter-spacing: 0; box-sizing: border-box; width: 100%; height: 340px; }\n.bl-hl { position: absolute; inset: 0; overflow: hidden; pointer-events: none; color: #e2e8f0; }\n.bl-edit-code { position: relative; display: block; background: transparent !important; color: transparent !important; caret-color: #e2e8f0; resize: none; outline: none; overflow: auto; min-height: 0; border: 0 !important; border-radius: 0 !important; }\n.bl-edit-code::selection { background: rgba(56,189,248,0.35); color: transparent; }\n.bl-t-k { color: #f472b6; font-weight: 700; }\n.bl-t-s { color: #86efac; }\n.bl-t-n { color: #fbbf24; }\n.bl-t-c { color: #64748b; font-style: italic; }\n.bl-t-b { color: #38bdf8; }\n.bl-t-f { color: #c4b5fd; font-weight: 700; }\n.bl-t-e { color: #fde68a; font-weight: 700; }\n.bl-view { user-select: text; }\n.bl-tb { position: relative; display: inline-block; vertical-align: middle; min-width: 12em; margin: 2px 4px; }\n.bl-in { font: inherit; color: inherit; width: 100%; box-sizing: border-box; padding: 5px 10px; border: 1.5px solid rgba(100,116,139,0.55); border-radius: 8px; background: rgba(255,255,255,0.65); box-shadow: inset 0 1px 3px rgba(0,0,0,0.12); outline: none; position: relative; z-index: 1; }\n.bl-in:focus { border-color: #0284c7; box-shadow: inset 0 1px 3px rgba(0,0,0,0.12), 0 0 0 3px rgba(2,132,199,0.25); }\n.bl-ph { position: absolute; left: 11px; right: 8px; top: 50%; transform: translateY(-50%); z-index: 2; pointer-events: none; opacity: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }\n.bl-tb.bl-empty .bl-ph { opacity: 0.45; }\n.bl-tb.bl-empty .bl-in:focus + .bl-ph, .bl-tb.bl-empty:focus-within .bl-ph { opacity: 0.3; }\n.bl-ct { min-width: 0; width: 6.5em; }\n.bl-ct .bl-in { padding: 2px 6px; font-size: 0.9em; text-align: right; border-radius: 6px; }\n.bl-ct .bl-ph { left: 7px; right: 7px; text-align: right; font-size: 0.9em; }\n.bl-pt { white-space: pre-wrap; }\n";
+    const BL_CSS = "\n.bl-prog { display: inline-flex; align-items: center; gap: 7px; vertical-align: middle; margin: 2px 3px; padding: 3px 5px 3px 4px; border-radius: 7px; border: 1px solid #3b4a63; border-bottom-color: #0b1220; background: linear-gradient(180deg, #243247 0%, #111b2c 55%, #0b1220 100%); color: #e2e8f0; font: 700 13px/1.3 'JetBrains Mono', monospace; box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), inset 0 0 0 1px rgba(56,189,248,0.1), 0 2px 6px rgba(2,6,23,0.4); cursor: pointer; user-select: none; white-space: nowrap; transition: filter 0.15s, box-shadow 0.15s; }\n.bl-prog:hover { filter: brightness(1.18); box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), inset 0 0 0 1px rgba(74,222,128,0.35), 0 2px 10px rgba(74,222,128,0.25); }\n.bl-prog.bl-playing { border-color: #f87171; box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 0 0 2px rgba(248,113,113,0.35), 0 2px 10px rgba(248,113,113,0.4); }\n.bl-chip-icon { width: 20px; height: 20px; border-radius: 5px; display: inline-grid; place-items: center; background: linear-gradient(180deg, #86efac 0%, #16a34a 100%); box-shadow: inset 0 1px 0 rgba(255,255,255,0.7), 0 1px 2px rgba(0,0,0,0.4); }\n.bl-chip-icon::before { content: \"\u25b6\"; color: #052e16; font-size: 9px; margin-left: 1px; }\n.bl-prog.bl-playing .bl-chip-icon { background: linear-gradient(180deg, #fca5a5 0%, #dc2626 100%); }\n.bl-prog.bl-playing .bl-chip-icon::before { content: \"\u25a0\"; color: #450a0a; margin-left: 0; }\n.bl-chip-text { padding: 0 1px; }\n.bl-chip-text::before { content: \"</> \"; color: #38bdf8; font-weight: 800; }\n.bl-chip-text::after { content: \"\u258d\"; color: #4ade80; margin-left: 2px; animation: bl-blink 1.1s steps(1) infinite; }\n@keyframes bl-blink { 50% { opacity: 0; } }\n.bl-chip-edit { width: 21px; height: 21px; padding: 0; border-radius: 5px; border: 1px solid #475569; background: linear-gradient(180deg, #334155, #1e293b); color: #cbd5e1; font-size: 12px; line-height: 1; cursor: pointer; }\n.bl-chip-edit:hover { color: #fff; border-color: #38bdf8; }\n.bl-prog .bl-code { display: none; }\n.bl-view { position: relative; display: block; width: 100%; flex: 1 1 100%; box-sizing: border-box; min-height: 120px; }\n.bl-over-stop { position: absolute; top: 4px; right: 4px; z-index: 3; font: 800 12px 'JetBrains Mono', monospace; color: #fff; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.8); background: linear-gradient(180deg, #fca5a5 0%, #dc2626 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.35); box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 8px rgba(0,0,0,0.35); cursor: pointer; }\n.bl-over-stop:hover { filter: brightness(1.1); }\n.bl-out { font-size: 15px; line-height: 1.6; }\n.bl-line { margin: 4px 0; }\n.bl-print { font-family: 'JetBrains Mono', monospace; opacity: 0.85; }\n.bl-error { color: #b91c1c; font-weight: 700; background: #fee2e2; border-radius: 6px; padding: 4px 8px; }\n.bl-skill-wait { opacity: 0.6; }\n.bl-btn { font: 800 13px 'JetBrains Mono', monospace; color: #fff; padding: 6px 14px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.75); background: linear-gradient(180deg, #86efac 0%, #16a34a 100%); text-shadow: 0 1px 2px rgba(0,0,0,0.3); box-shadow: inset 0 1px 1px rgba(255,255,255,0.8), 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; transition: transform 0.12s, filter 0.15s; }\n.bl-ubtn { all: unset; display: inline; cursor: pointer; -webkit-tap-highlight-color: transparent; }\n.bl-ubtn:focus-visible { outline: 2px solid #0284c7; outline-offset: 2px; border-radius: 4px; }\n.bl-ubtn:hover { filter: brightness(1.08); }\n.bl-ubtn:active { filter: brightness(0.92); }\n.bl-btn:hover { transform: translateY(-1px); filter: brightness(1.08); }\n.bl-btn:active { transform: translateY(1px); }\n.bl-cancel { background: linear-gradient(180deg, #fca5a5 0%, #dc2626 100%); }\n.bl-docs { background: linear-gradient(180deg, #ffffff 0%, #bae6fd 100%); color: #075985; text-shadow: none; }\n.bl-sp { flex: 1; }\n.bl-edit-back { position: fixed; inset: 0; z-index: 2147483000; background: rgba(15,23,42,0.6); display: grid; place-items: center; padding: 16px; backdrop-filter: blur(3px); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }\n.bl-edit-dlg { width: min(760px, 100%); max-height: 94vh; display: flex; flex-direction: column; background: #fff; color: #1e293b; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.4); }\n.bl-edit-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 10px; overflow: auto; }\n.bl-edit-lbl { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 800; color: #075985; }\n.bl-edit-name { font: 14px system-ui, sans-serif; padding: 7px 10px; border: 1px solid #94a3b8; border-radius: 8px; }\n.bl-edit-foot { display: flex; gap: 8px; align-items: center; padding: 10px 16px; border-top: 1px solid #e2e8f0; background: #f1f5f9; }\n.bl-docs { background: linear-gradient(180deg, #ffffff 0%, #bae6fd 100%); color: #075985; text-shadow: none; padding: 5px 10px; }\n.bl-docs-back { position: fixed; inset: 0; z-index: 2147483000; background: rgba(15, 23, 42, 0.6); display: grid; place-items: center; padding: 16px; backdrop-filter: blur(3px); font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; }\n.bl-docs-dlg { width: min(860px, 100%); max-height: 92vh; display: flex; flex-direction: column; background: #fff; color: #1e293b; border-radius: 14px; overflow: hidden; box-shadow: 0 24px 70px rgba(0,0,0,0.4); }\n.bl-docs-head { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; color: #fff; font-weight: 800; background: linear-gradient(180deg, #38bdf8, #0369a1); }\n.bl-docs-x { border: 0; background: rgba(255,255,255,0.22); color: #fff; width: 28px; height: 28px; border-radius: 6px; font-size: 15px; cursor: pointer; }\n.bl-docs-body { padding: 6px 22px 22px; overflow: auto; line-height: 1.55; font-size: 14px; }\n.bl-docs-body h1 { margin: 14px 0 6px; font-size: 26px; color: #0369a1; }\n.bl-docs-body h2 { margin: 22px 0 6px; font-size: 17px; color: #075985; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }\n.bl-docs-body pre { background: #0b1220; color: #e2e8f0; padding: 12px 14px; border-radius: 10px; overflow: auto; font: 12.5px/1.55 'JetBrains Mono', monospace; }\n.bl-docs-body code { font-family: 'JetBrains Mono', monospace; background: #e0f2fe; color: #075985; padding: 1px 5px; border-radius: 4px; font-size: 12.5px; }\n.bl-docs-body pre code { background: transparent; color: inherit; padding: 0; }\n.bl-docs-body table { border-collapse: collapse; width: 100%; margin: 8px 0; }\n.bl-docs-body td { border-bottom: 1px solid #e2e8f0; padding: 6px 8px; vertical-align: top; }\n.bl-docs-body td:first-child { white-space: nowrap; }\n\n.bl-edit-wrap { position: relative; display: block; background: #0b1220; border: 1px solid #1d4f7a; border-radius: 10px; overflow: hidden; }\n.bl-hl, .bl-edit-code { margin: 0; border: 0; padding: 12px 14px; font: 12.5px/1.6 'JetBrains Mono', monospace; tab-size: 4; white-space: pre; letter-spacing: 0; box-sizing: border-box; width: 100%; height: 340px; }\n.bl-hl { position: absolute; inset: 0; overflow: hidden; pointer-events: none; color: #e2e8f0; }\n.bl-edit-code { position: relative; display: block; background: transparent !important; color: transparent !important; caret-color: #e2e8f0; resize: none; outline: none; overflow: auto; min-height: 0; border: 0 !important; border-radius: 0 !important; }\n.bl-edit-code::selection { background: rgba(56,189,248,0.35); color: transparent; }\n.bl-t-k { color: #f472b6; font-weight: 700; }\n.bl-t-s { color: #86efac; }\n.bl-t-n { color: #fbbf24; }\n.bl-t-c { color: #64748b; font-style: italic; }\n.bl-t-b { color: #38bdf8; }\n.bl-t-f { color: #c4b5fd; font-weight: 700; }\n.bl-t-e { color: #fde68a; font-weight: 700; }\n.bl-view { user-select: text; }\n.bl-tb { position: relative; display: inline-block; vertical-align: middle; min-width: 12em; margin: 2px 4px; }\n.bl-in { font: inherit; color: inherit; width: 100%; box-sizing: border-box; padding: 5px 10px; border: 1.5px solid rgba(100,116,139,0.55); border-radius: 8px; background: rgba(255,255,255,0.65); box-shadow: inset 0 1px 3px rgba(0,0,0,0.12); outline: none; position: relative; z-index: 1; }\n.bl-in:focus { border-color: #0284c7; box-shadow: inset 0 1px 3px rgba(0,0,0,0.12), 0 0 0 3px rgba(2,132,199,0.25); }\n.bl-ph { position: absolute; left: 11px; right: 8px; top: 50%; transform: translateY(-50%); z-index: 2; pointer-events: none; opacity: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }\n.bl-tb.bl-empty .bl-ph { opacity: 0.45; }\n.bl-tb.bl-empty .bl-in:focus + .bl-ph, .bl-tb.bl-empty:focus-within .bl-ph { opacity: 0.3; }\n.bl-ct { min-width: 0; width: 6.5em; }\n.bl-ct .bl-in { padding: 2px 6px; font-size: 0.9em; text-align: right; border-radius: 6px; }\n.bl-ct .bl-ph { left: 7px; right: 7px; text-align: right; font-size: 0.9em; }\n.bl-pt { white-space: pre-wrap; }\n.bl-prog .bl-bbml { display: none; }\n.bl-t-tag { color: #abff04; font-weight: 700; }\n.bl-seg { display: inline-flex; align-self: flex-start; margin: 2px 0 2px; vertical-align: middle; border: 1px solid #0369a1; border-radius: 999px; overflow: hidden; box-shadow: inset 0 1px 1px rgba(255,255,255,0.7); }\n.bl-seg-b { font: 800 11px 'JetBrains Mono', monospace; padding: 3px 12px; border: 0; background: linear-gradient(180deg, #ffffff, #e0f2fe); color: #075985; cursor: pointer; }\n.bl-seg-b + .bl-seg-b { border-left: 1px solid #0369a1; }\n.bl-seg-b.on { background: linear-gradient(180deg, #38bdf8, #0369a1); color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }\n.bl-seg-note { font-size: 12px; font-weight: 500; color: #334155; }\n.bl-seg-note[hidden] { display: none; }\n";
     (function () { if (document.getElementById('bitlang-style')) return; const st = document.createElement('style'); st.id = 'bitlang-style'; st.textContent = BL_CSS; document.head.appendChild(st); })();
 
     const BitLang = {
@@ -2115,6 +2648,8 @@ fn onstart():
         sample: SAMPLE,
         blockHTML: blockHTML,
         hydrate: hydrate,
+        compileBBML: compileBBML,
+        highlightBBML: highlightBBML,
         play: play,
         stop: stop,
         docs: DOCS,

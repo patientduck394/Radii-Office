@@ -150,10 +150,12 @@
     <!-- Shared floating color popup: body-level so EVERY modal can use it! -->
     <div id="event-color-popup" class="swatch-popup" style="display:none;"></div>
 
-    <script src="app.js?v=20261036"></script>
     <script src="office-shell.js?v=20261019"></script>
-    <script src="hexa-office.js?v=20261037"></script>
-    <script src="radii-collab.js?v=20261052"></script>
-    <script src="collab-hexa.js?v=20261036"></script>
+    <script src="radii-collab.js?v=20261120"></script>
+    <!-- Hexa itself is ClojureScript! Scittle runs these files right in the browser, in order! -->
+    <script src="https://cdn.jsdelivr.net/npm/scittle@0.7.28/dist/scittle.js"></script>
+    <script type="application/x-scittle" src="app.cljs?v=20261125"></script>
+    <script type="application/x-scittle" src="office.cljs?v=20261125"></script>
+    <script type="application/x-scittle" src="collab.cljs?v=20261125"></script>
 </body>
 </html>

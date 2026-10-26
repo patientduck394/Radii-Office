@@ -16,7 +16,7 @@
 
     <nav class="aero-sidebar">
         <div class="sidebar-brand">
-            <h2>Mainkey</h2>
+            <h2><img class="brand-logo" src="favicon-96.png" alt="" style="width:30px;height:30px;border-radius:8px;vertical-align:-7px;margin-right:9px;filter:drop-shadow(0 2px 5px rgba(0,0,0,0.35))">Mainkey</h2>
         </div>
 
         <div class="pad-selection-stack">
@@ -33,6 +33,7 @@
             <button class="action-btn" onclick="exportCSV()">📊 Export .CSV</button>
             <button class="action-btn" onclick="document.getElementById('file-kb').click()">📂 Import .KB</button>
             <button class="action-btn" id="btn-website-kit" onclick="openKitModal()">🌐 Website Kit</button>
+            <button class="action-btn" id="btn-host" onclick="openHostModal()">📡 Host</button>
             <button class="action-btn" onclick="clearDatabase()" style="border-color:#ef4444; color:#fca5a5;">🗑️ Clear Base</button>
             <button class="action-btn" onclick="resetDemo()">↩️ Reset Demo</button>
             
@@ -142,7 +143,37 @@
         </div>
     </div>
 
+    <div id="host-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-card kit-card">
+            <div class="modal-title">📡 Host this database</div>
+            <p class="kit-intro">Turn this tab into the database's server! Everyone who opens your page sees the same live data, and their changes land here. No cloud server of your own: visitors reach this tab through public relays, and every message is locked with a key only your snippet knows!</p>
+            <div class="kit-step">
+                <strong>1. Put the snippet on your page</strong>
+                <span>Upload it next to database.kb and mainkey-live.js (the Website Kit has both). When this tab is closed, visitors see the last shared copy!</span>
+                <pre class="kit-code" id="host-snippet"></pre>
+                <div class="kit-row">
+                    <button class="action-btn" onclick="copyHostSnippet()">📋 Copy snippet</button>
+                    <button class="action-btn" onclick="hostNewRoom()">🔑 New room link</button>
+                </div>
+            </div>
+            <div class="kit-step">
+                <strong>2. Start hosting</strong>
+                <label class="kit-row" style="gap:8px;align-items:center"><input type="checkbox" id="host-edit" onchange="hostEditToggle()" checked> Visitors can add and change records</label>
+                <div class="kit-row">
+                    <button class="action-btn" id="host-start" onclick="startHosting()">▶ Start hosting</button>
+                    <button class="action-btn" id="host-stop" onclick="stopHosting()" hidden>■ Stop hosting</button>
+                </div>
+                <span class="kit-status" id="host-status" aria-live="polite"></span>
+            </div>
+            <p class="kit-note">Anyone with your page can read the data (and change it, if you allow that), so don't host anything secret. Keep this tab open while people use your site!</p>
+            <div class="modal-actions">
+                <button class="action-btn cancel-btn" onclick="closeHostModal()">Close</button>
+            </div>
+        </div>
+    </div>
     <script src="app.js"></script>
+    <script src="live/mainkey-live.js"></script>
+    <script src="mainkey-host-ui.js"></script>
     <script src="../py_silent.js"></script>
 </body>
 </html>

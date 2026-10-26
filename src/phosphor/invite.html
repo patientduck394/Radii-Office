@@ -80,8 +80,17 @@
             big.innerText = code;
             sub.innerText = 'You are invited to join Space #' + code + '!';
             try {
+                var nets = { emqx: 'EMQX', rabbitmq: 'RabbitMQ', webrtc: 'WebRTC (browser to browser)' };
+                var n = nets[new URLSearchParams(location.search).get('net')];
+                if (n) sub.innerText += ' It runs on ' + n + '!';
+            } catch (e) {}
+            try {
                 var u = new URL('index.html', location.href);
                 u.searchParams.set('code', code);
+                // The Space's network (EMQX, RabbitMQ, WebRTC) and a RabbitMQ login in the #part travel along!
+                var net = new URLSearchParams(location.search).get('net');
+                if (net) u.searchParams.set('net', net);
+                if (/^#rmq=/.test(location.hash || '')) u.hash = location.hash;
                 join.href = u.toString();
             } catch (e) {
                 join.href = 'index.html?code=' + encodeURIComponent(code);

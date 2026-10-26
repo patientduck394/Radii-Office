@@ -31,6 +31,7 @@ That's it! Visitors can search, sort, switch between table and cards, add, edit,
 | `data-mainkey-height` | Max height before scrolling, e.g. `400` or `60vh` | none |
 | `data-mainkey-key` | Storage name (handy for inline data) | the file's URL |
 | `data-mainkey-persist` | `false` forgets edits on reload | `true` |
+| `data-mainkey-host` | A host room (`id.key`): the database becomes **shared** and follows a Mainkey tab that is hosting it (see below) | none |
 
 Several widgets pointing at the same file share **one** live database, so editing one updates the others instantly!
 
@@ -81,7 +82,34 @@ Mainkey.scan();                   // mount any [data-mainkey] added later!
 - Edits are saved in each visitor's browser (localStorage) and survive reloads!
 - Open tabs of the same site stay in sync automatically!
 - Upload a new `database.kb` and every visitor gets it: their old local edits are replaced by your new version!
-- Visitors **don't** see each other's edits, because a static site has nowhere to store them! For a shared database, send changes to your own server with `onChange` or `db.subscribe()`!
+- On their own, visitors **don't** see each other's edits, because a static site has nowhere to store them! For a shared database, **host it** (next section), or send changes to your own server with `onChange` or `db.subscribe()`!
+
+## Hosting: a browser tab is the server
+
+Make the database **shared**, with no server of your own:
+
+1. Open it in Mainkey and click **📡 Host**, then **Start hosting**. Keep that tab open!
+2. Paste the snippet it gives you into your page (next to `database.kb` and `mainkey-live.js`):
+
+```html
+<div data-mainkey="database.kb" data-mainkey-host="ROOM-ID.ROOM-KEY"></div>
+<script src="mainkey-live.js"></script>
+```
+
+Now every visitor reads and changes the **same live data**: their changes go to your Mainkey tab, which saves them and sends the new version to everyone, and your own edits in Mainkey reach them too!
+
+- **How it travels:** through the same public relays Radii's live collaboration uses (MQTT over WebSocket). Every message is sealed with AES-GCM using the key in the room code, so the relays only carry locked boxes!
+- **When your tab is closed,** visitors see the last shared copy (the relays keep it) and the widget says the host is away. Changes made meanwhile only show for that visitor until the host is back!
+- **Read-only:** untick "Visitors can add and change records" and visitors can only look (the host refuses changes).
+- **Mind this:** the room code is in your page, so anyone who can open your page can read the data (and change it, if you allow that). Don't host secrets! Clicking **New room link** makes a fresh code (the old snippet stops working). Keep the database under about 1 MB.
+
+From code:
+
+```js
+const h = Mainkey.host(db, { room: Mainkey.makeRoom(), readOnly: false, onStatus: info => console.log(info.visitors) });
+const shared = await Mainkey.load('database.kb', { host: h.room });   // on a visitor's page
+shared.remote.state;   // 'live', 'away', 'waiting' or 'offline'
+```
 
 ## Notes
 

@@ -723,7 +723,7 @@
                     { label: 'Open a .ka file', hint: 'Import an Amber deck!', icon: 'folder', run: openKa },
                     { label: 'Marketplace', hint: 'Themes, templates and shape packs!', icon: 'store', run: function () { if (window.AmberMarketplace) window.AmberMarketplace.open(); } }
                 ]));
-                b.insertAdjacentHTML('beforeend', '<h2>This presentation</h2><div class="am-bs-doc"><img src="favicon.svg" alt=""><div><b>' + OS.esc(slides[0].title || 'Presentation') + '</b><span>' + slides.length + ' slide' + (slides.length === 1 ? '' : 's') + ' · ' + slides.reduce(function (n, s) { return n + SHOW.entries(s).length; }, 0) + ' animations · saves automatically in this browser!</span></div></div>');
+                b.insertAdjacentHTML('beforeend', '<h2>This presentation</h2><div class="am-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc(slides[0].title || 'Presentation') + '</b><span>' + slides.length + ' slide' + (slides.length === 1 ? '' : 's') + ' · ' + slides.reduce(function (n, s) { return n + SHOW.entries(s).length; }, 0) + ' animations · saves automatically in this browser!</span></div></div>');
             }
         },
         {
@@ -737,7 +737,7 @@
         { id: 'open', label: 'Open', icon: 'folder', render: function (b) { b.innerHTML = '<h1>Open</h1>'; b.appendChild(OS.bsCards([{ label: 'Browse…', hint: 'Open an Amber .ka deck!', icon: 'folder', run: openKa }])); b.insertAdjacentHTML('beforeend', '<p class="os-note">Your deck also saves automatically in this browser!</p>'); } },
         { id: 'save', label: 'Save a Copy', icon: 'save', action: function () { exportKaFile(); OS.flashSaved('Saved!'); } },
         { id: 'present', label: 'Present', icon: 'play', action: function () { SHOW.start(0); } },
-        { id: 'about', label: 'About', icon: 'info', render: function (b) { b.innerHTML = '<h1>About Amber</h1><div class="am-bs-doc"><img src="favicon.svg" alt=""><div><b>Amber</b><span>Radii Office\'s slides app: glossy vector shapes, ' + (Object.keys(TR).length - 1) + ' transitions (including Morph), ' + Object.keys(FX).length + ' animation effects and a full-screen slide show!</span></div></div>'; } }
+        { id: 'about', label: 'About', icon: 'info', render: function (b) { b.innerHTML = '<h1>About Amber</h1><div class="am-bs-doc"><img src="favicon-96.png" alt=""><div><b>Amber</b><span>Radii Office\'s slides app: glossy vector shapes, ' + (Object.keys(TR).length - 1) + ' transitions (including Morph), ' + Object.keys(FX).length + ' animation effects and a full-screen slide show!</span></div></div>'; } }
     ];
 
     function settingsExtra(b) {
@@ -937,7 +937,7 @@
         officeName: 'PowerPoint',
         kind: 'ppt',
         key: 'amber',
-        icon: 'favicon.svg',
+        icon: 'favicon-96.png',
         officeHint: 'A ribbon with Transitions and Animations, a Notes pane and a Slide Sorter, like PowerPoint!',
         classicHint: 'The original Amber: a glass sidebar, gel tool buttons and a golden toolbar!',
         theme: { accent: '#d97706', 'accent-d': '#b45309', 'accent-l': '#fef3c7', title: '#d97706', gel1: '#fbbf24', gel2: '#d97706', 'gel-border': '#fde68a', 'gel-glow': 'rgba(217, 119, 6, 0.35)', glow: 'rgba(253, 230, 138, 0.9)', 'thumb-bg': '#0f172a' },

@@ -35,11 +35,17 @@ export function buildConnect(opts) {
     const header = [0x00, 0x04, 0x4d, 0x51, 0x54, 0x54, 0x04];
     let flags = 0x02; // clean session!
     if (opts.will) flags |= 0x04 | (opts.will.retain ? 0x20 : 0);
+    // Logins (RabbitMQ wants one!): a password is only allowed with a username!
+    if (opts.username) flags |= 0x80 | (opts.password ? 0x40 : 0);
     const keep = new Uint8Array([(opts.keepalive || 60) >> 8, (opts.keepalive || 60) & 0xff]);
     const parts = [new Uint8Array(header.concat([flags])), keep, encodeString(opts.clientId)];
     if (opts.will) {
         parts.push(encodeString(opts.will.topic));
         parts.push(encodeString(opts.will.message));
+    }
+    if (opts.username) {
+        parts.push(encodeString(opts.username));
+        if (opts.password) parts.push(encodeString(opts.password));
     }
     const body = concat(parts);
     return concat([new Uint8Array([0x10]), encodeRemaining(body.length), body]);
@@ -136,6 +142,8 @@ export class MiniMqtt {
                 clientId: this.opts.clientId || ('mini_' + Math.random().toString(36).slice(2, 14)),
                 keepalive: this.opts.keepalive || 60,
                 will: this.opts.will,
+                username: this.opts.username,
+                password: this.opts.password,
             }));
         };
         this.ws.onmessage = (e) => {

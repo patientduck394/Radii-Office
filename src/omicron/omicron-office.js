@@ -237,7 +237,7 @@
     ].map(function (e) { return { cls: e[0], label: e[1] }; });
     /* ---------- Highlighter: Bitbook's Annotate styles, in every color ---------- */
     const HL_COLORS = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate'];
-    const HL_STYLES = [['hl', 'Highlight'], ['ul', 'Gel Underline'], ['st', 'Gel Strikethrough'], ['bx', 'Gel Box'], ['ha', 'Halo'], ['cb', 'Corner Brackets'], ['gf', 'Spotlight'], ['ga', 'Gel Accent'], ['gb', 'Gel Bubble'], ['dk', 'Dusk'], ['pr', 'Prism'], ['cm', 'Complement'], ['tk', 'Ticket'], ['nn', 'Neon'], ['sm', 'Stamp'], ['tp', 'Washi Tape'], ['ck', 'Checker'], ['ht', 'Halftone'], ['au', 'Aurora'], ['ml', 'Mild'], ['gw', 'Gel Wrap'], ['bt', 'Highlight Belt'], ['bk', 'Gel Bucket'], ['tr', 'Gel Torpedo'], ['bo', 'Gel Bottle'], ['pk', 'Gel Packet'], ['sl', 'Gel Select']];
+    const HL_STYLES = [['hl', 'Highlight'], ['ul', 'Gel Underline'], ['st', 'Gel Strikethrough'], ['bx', 'Gel Box'], ['ha', 'Halo'], ['cb', 'Corner Brackets'], ['gf', 'Spotlight'], ['ga', 'Gel Accent'], ['gb', 'Gel Bubble'], ['dk', 'Dusk'], ['pr', 'Prism'], ['cm', 'Complement'], ['tk', 'Ticket'], ['nn', 'Neon'], ['sm', 'Stamp'], ['tp', 'Washi Tape'], ['ck', 'Checker'], ['ht', 'Halftone'], ['au', 'Aurora'], ['ml', 'Mild'], ['gw', 'Gel Wrap'], ['bt', 'Highlight Belt'], ['bk', 'Gel Bucket'], ['tr', 'Gel Torpedo'], ['bo', 'Gel Bottle'], ['pk', 'Gel Packet'], ['sl', 'Gel Select'], ['cs', 'Gel Capsule'], ['fr', 'Frost'], ['px', 'Pixel'], ['fl', 'Gel Flag'], ['gm', 'Gel Gem']];
     function hlClass(c, st) { return 'an-hl an-hl-' + c + (st === 'hl' ? '' : ' an-s-' + st); }
     function unmark() {
         const sel = window.getSelection();

@@ -404,7 +404,7 @@
                     { label: 'Open a .kn file', hint: 'Import a Bitbook note!', icon: 'folder', run: openFile }
                 ]));
                 const s = stats();
-                b.insertAdjacentHTML('beforeend', '<h2>This notebook</h2><div class="bb-bs-doc"><img src="favicon.svg" alt=""><div><b>' + OS.esc((tab() || {}).name || 'Quick Note') + '</b><span>' + kdTabs.length + ' page' + (kdTabs.length === 1 ? '' : 's') + ' · ' + s.words.toLocaleString() + ' words on this page · saves automatically in this browser!</span></div></div>');
+                b.insertAdjacentHTML('beforeend', '<h2>This notebook</h2><div class="bb-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((tab() || {}).name || 'Quick Note') + '</b><span>' + kdTabs.length + ' page' + (kdTabs.length === 1 ? '' : 's') + ' · ' + s.words.toLocaleString() + ' words on this page · saves automatically in this browser!</span></div></div>');
             }
         },
         { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'New page', hint: 'Keeps every other page!', icon: 'newDoc', run: newNote }, { label: 'New notebook', hint: 'Clears every page!', icon: 'notebook', run: newNotebook }])); } },
@@ -595,7 +595,7 @@
         officeName: 'OneNote',
         kind: 'onenote',
         key: 'bitbook',
-        icon: 'favicon.svg',
+        icon: 'favicon-96.png',
         officeHint: 'A purple ribbon, a page list, page titles with dates, tags and rule lines, like OneNote!',
         classicHint: 'The original Bitbook: purple glass sidebars, gel buttons and floating spheres!',
         classicToast: 'Bitbook Classic: purple glass and gel!',

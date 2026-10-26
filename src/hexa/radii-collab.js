@@ -601,6 +601,74 @@
         const m = String(location.hash || '').match(/collab=([a-z0-9]{8,32})\.([A-Za-z0-9_-]{20,64})/);
         return m ? { id: m[1], key: m[2] } : null;
     }
+    /* ---------- Content links: the whole file, packed into a long number after # ----------
+       The number never reaches any server (browsers keep everything after # to themselves),
+       and whoever opens the link gets their own private copy, without downloading a file! */
+    function bytesToDigits(bytes) {
+        const r = bytes.length % 5;
+        let out = '1' + r;
+        for (let i = 0; i < bytes.length; i += 5) {
+            let v = 0;
+            const end = Math.min(bytes.length, i + 5);
+            for (let j = i; j < end; j++) v = v * 256 + bytes[j];
+            out += String(v).padStart(13, '0');
+        }
+        return out;
+    }
+    function digitsToBytes(str) {
+        const s = String(str || '').replace(/\D/g, '');
+        if (!/^1[0-4]/.test(s) || (s.length - 2) % 13) throw new Error('That is not a Radii file number!');
+        const r = +s.charAt(1), groups = (s.length - 2) / 13;
+        const total = groups ? (groups - 1) * 5 + (r || 5) : 0;
+        const out = new Uint8Array(total);
+        for (let g = 0; g < groups; g++) {
+            let v = Number(s.substr(2 + g * 13, 13));
+            const n = g === groups - 1 ? (r || 5) : 5;
+            for (let k = n - 1; k >= 0; k--) { out[g * 5 + k] = v % 256; v = Math.floor(v / 256); }
+        }
+        return out;
+    }
+    async function zip(bytes, inflate) {
+        const stream = new Blob([bytes]).stream().pipeThrough(inflate ? new DecompressionStream('deflate-raw') : new CompressionStream('deflate-raw'));
+        return new Uint8Array(await new Response(stream).arrayBuffer());
+    }
+    async function packDoc() {
+        const json = JSON.stringify({ app: cfg.app, units: readSnapshot() });
+        return bytesToDigits(await zip(enc.encode(json), false));
+    }
+    async function unpackDoc(digits) {
+        const doc = JSON.parse(dec.decode(await zip(digitsToBytes(digits), true)));
+        if (!doc || typeof doc.units !== 'object') throw new Error('That file number is empty!');
+        if (doc.app && doc.app !== cfg.app) throw new Error('That number is a ' + doc.app + ' file: open it in ' + doc.app + '!');
+        return doc.units;
+    }
+    function docLink(digits) { return location.origin + location.pathname + '#doc=' + digits; }
+    function docFromHash() { const m = String(location.hash || '').match(/[#&]doc=(1[0-4]\d*)/); return m ? m[1] : ''; }
+    // Opening a content link: it always becomes a NEW file in this browser, so nothing of yours is replaced
+    async function openDocLink(digits) {
+        const RF = window.RadiiFile;
+        const target = (function () { try { return sessionStorage.getItem('rc_doc_target') || ''; } catch (e) { return ''; } })();
+        if (RF && (!RF.id || RF.id !== target)) {
+            const id = RF.newId();
+            try { sessionStorage.setItem('rc_doc_target', id); } catch (e) {}
+            location.replace(RF.link(id) + '#doc=' + digits);
+            return;
+        }
+        try { sessionStorage.removeItem('rc_doc_target'); } catch (e) {}
+        let units;
+        try { units = await unpackDoc(digits); } catch (e) { ui.toast(String(e && e.message || 'That file link is damaged!')); return; }
+        try { cfg.adapter.begin && cfg.adapter.begin('guest'); } catch (e) { console.error(e); }
+        room.units = new Map();
+        const changed = {};
+        Object.keys(units).forEach(function (k) { const v = units[k] == null ? null : JSON.stringify(units[k]); room.units.set(k, { v: v, c: 1, w: 'link' }); changed[k] = units[k]; });
+        applying = true;
+        try { cfg.adapter.apply(changed, true, {}); } catch (e) { console.error(e); }
+        applying = false;
+        room.units = new Map();
+        try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {}
+        ui.toast('Opened a shared copy! It is your own private file in this browser!');
+    }
+
     // mode: 'host' (fresh session), 'guest' (first join), 'rejoin' (after a reload)!
     async function openRoom(id, keyStr, role, mode) {
         mode = mode || role;
@@ -843,10 +911,11 @@
             const self0 = this;
             let html = '<label class="rc-label">Your name<input class="rc-input rc-name" maxlength="24" placeholder="Pick a display name" value="' + esc(me.name) + '"></label>';
             if (window.RadiiFile) {
-                const RF = window.RadiiFile;
-                html += '<div class="rc-card rc-filecard"><b>This file</b><div class="rc-row"><input class="rc-input rc-fileid" readonly value="' + esc(RF.id || 'main file (no ID)') + '"><button type="button" class="rc-btn rc-copyfile">Copy link</button></div>' +
-                    '<div class="rc-row"><button type="button" class="rc-btn rc-newfile">New file</button><input class="rc-input rc-openid" placeholder="Open an ID…" maxlength="64"><button type="button" class="rc-btn rc-openfile">Open</button></div>' +
-                    '<p class="rc-fine">Every file has its own ID in the link, like <code>?file=' + esc(RF.id || 'k7q2mz9p4x') + '</code>! Open it anywhere to reach the same file in this browser!</p></div>';
+                html += '<div class="rc-card rc-filecard"><b>Share a copy as a link</b>' +
+                    '<p class="rc-fine">The whole ' + esc(cfg.docName) + ' is packed into one long number inside the link (after the #, so it never reaches any server). Whoever opens it gets their own private copy, with no file to download!</p>' +
+                    '<div class="rc-row"><button type="button" class="rc-btn rc-copydoc">Copy link</button><button type="button" class="rc-btn rc-copynum">Copy number</button></div>' +
+                    '<div class="rc-row"><input class="rc-input rc-opennum" placeholder="Paste a file number or link…"><button type="button" class="rc-btn rc-opendoc">Open</button></div>' +
+                    '<div class="rc-row"><button type="button" class="rc-btn rc-newfile">New file</button></div></div>';
             }
             if (!room.on) {
                 html += '<div class="rc-card"><b>Work together, live!</b><p>Start a session and send the link: everyone edits this ' + esc(cfg.docName) + ' at once, with live cursors, comments and chat!</p><button type="button" class="rc-btn rc-gel rc-start">Start live session</button></div>' +
@@ -889,13 +958,23 @@
             on('.rc-start', function () { nm.dispatchEvent(new Event('change')); start(); });
             on('.rc-join', function () { nm.dispatchEvent(new Event('change')); joinFromText(b.querySelector('.rc-paste').value); });
             on('.rc-copy', function () { copyLink(); });
-            on('.rc-copyfile', function () {
-                const url = RadiiFile.id ? RadiiFile.link() : RadiiFile.link(RadiiFile.newId());
-                try { navigator.clipboard.writeText(url); } catch (e) {}
-                self.toast(RadiiFile.id ? 'File link copied!' : 'This is the main file, so I copied a link to a NEW file!');
-            });
+            const copyDoc = function (asLink) {
+                packDoc().then(function (num) {
+                    const text = asLink ? docLink(num) : num;
+                    if (text.length > 1900000) { self.toast('This ' + cfg.docName + ' is too big for a link (pictures take a lot of room)! Use a live session instead!'); return; }
+                    try { navigator.clipboard.writeText(text); } catch (e) {}
+                    self.toast((asLink ? 'Link copied' : 'Number copied') + '! It is ' + num.length.toLocaleString() + ' digits long!');
+                }).catch(function () { self.toast('This browser cannot pack files into links!'); });
+            };
+            on('.rc-copydoc', function () { copyDoc(true); });
+            on('.rc-copynum', function () { copyDoc(false); });
             on('.rc-newfile', function () { RadiiFile.open(); });
-            on('.rc-openfile', function () { const v = (b.querySelector('.rc-openid').value || '').trim().replace(/[^A-Za-z0-9_-]/g, ''); if (v) RadiiFile.open(v); else self.toast('Type a file ID first!'); });
+            on('.rc-opendoc', function () {
+                const raw = (b.querySelector('.rc-opennum').value || '').trim();
+                const m = raw.match(/doc=(1[0-4]\d*)/) || raw.replace(/\s/g, '').match(/^(1[0-4]\d*)$/);
+                if (!m) { self.toast('Paste a file number (it starts with 1) or a link with #doc= in it!'); return; }
+                unpackDoc(m[1]).then(function () { window.open(docLink(m[1]), '_blank', 'noopener'); }, function (e) { self.toast(String(e && e.message || 'That number is damaged!')); });
+            });
             on('.rc-leave', function () { leave(false); });
             on('.rc-restore', function () {
                 if (room.on) leave(true);
@@ -1061,6 +1140,8 @@
         cfg = config;
         ui.build();
         // Rejoin after a reload, or join from an invite link!
+        const docNum = docFromHash();
+        if (docNum) setTimeout(function () { openDocLink(docNum); }, 350);
         const fromLink = parseHash();
         let saved = null;
         try { saved = JSON.parse(sessionStorage.getItem(cfg.app + '_collab_session') || 'null'); } catch (e) {}

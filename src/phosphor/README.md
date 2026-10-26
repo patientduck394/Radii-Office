@@ -24,6 +24,29 @@ and your name, Spaces, and recent messages live in `localStorage`!
 - Public relays: anyone with a Space code can read that Space — it's a
   cozy public park, not a vault! Don't share secrets!
 
+## Space networks!
+
+Every new Space picks how its messages travel:
+
+- **☁ EMQX** — its own link to the public EMQX broker (`broker.emqx.io`)! Zero setup!
+- **🐇 RabbitMQ** — your own RabbitMQ server with the Web MQTT plugin
+  (`rabbitmq-plugins enable rabbitmq_web_mqtt`, then `wss://host:15676/ws`)!
+  Add a username (`vhost:user` for a vhost) and password if the server needs one!
+  Invite links carry the login in their `#` part, which browsers never send to servers!
+- **⇄ WebRTC** — browser to browser over DataChannels! The relays only carry the
+  connection notes, never the messages! Whoever links up later gets the last 60
+  messages handed over directly!
+
+Joining by code? Pick **Auto** and Phosphor asks the Space's directory card which
+network it uses! Older Spaces keep the shared relay network!
+
+## Calls!
+
+Press **Voice** or **Video** in a Space's header! Calls run straight between
+browsers (WebRTC, encrypted with DTLS-SRTP) with mute, camera and screen sharing!
+Everyone links to everyone, so calls shine with up to about 6 people! There is no
+TURN server, so some strict networks can't connect directly!
+
 ## Space owner commands!
 
 The Space creator can moderate from the message bar! Enforcement is

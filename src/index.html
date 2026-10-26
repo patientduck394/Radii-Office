@@ -204,6 +204,17 @@
             filter: drop-shadow(0 0 6px rgba(5, 168, 255, 0.8));
         }
     </style>
+    <style>
+        /* Tip of the day (made in Clojure: /clojure/tips.cljs) */
+        .rt-card { margin-top: 22px; max-width: 560px; padding: 14px 18px; border-radius: 14px; border: 1px solid rgba(56,189,248,.35); background: linear-gradient(180deg, rgba(15,23,42,.75), rgba(2,6,23,.6)); box-shadow: 0 10px 30px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08); color: #e2e8f0; }
+        .rt-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 13px; }
+        .rt-title { font-weight: 800; color: #7dd3fc; }
+        .rt-count { color: #94a3b8; font-variant-numeric: tabular-nums; }
+        .rt-text { margin: 8px 0 10px; line-height: 1.55; min-height: 3.1em; }
+        .rt-nav { display: flex; gap: 8px; }
+        .rt-btn { font: inherit; font-size: 12px; font-weight: 700; padding: 5px 14px; border-radius: 999px; border: 1px solid rgba(56,189,248,.45); background: rgba(15,23,42,.7); color: #bae6fd; cursor: pointer; }
+        .rt-btn:hover { border-color: #38bdf8; color: #fff; }
+    </style>
 </head>
 <body>
 
@@ -301,5 +312,8 @@
         <a href="/code-of-conduct" target="_blank" rel="noopener noreferrer" style="top-margin: 15px;">Code of Conduct</a>
         &nbsp;·&nbsp; <a href="/source">Source Code</a>
     </footer>
+    <!-- Tip of the day: written in Clojure, run in the browser by Scittle (source: /clojure/tips.cljs) -->
+    <script src="https://cdn.jsdelivr.net/npm/scittle@0.7.28/dist/scittle.js" defer></script>
+    <script type="application/x-scittle" src="/clojure/tips.cljs"></script>
 </body>
 </html>

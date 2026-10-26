@@ -544,7 +544,7 @@
         options = options || {};
         var storeKey = storeKeyFor(source, options);
         var persist = options.persist !== false;
-        var regKey = storeKey ? storeKey + (persist ? '' : '#nopersist') : null;
+        var regKey = storeKey ? storeKey + (persist ? '' : '#nopersist') + (options.host ? '#host=' + options.host : '') : null;
         if (regKey && registry[regKey]) return registry[regKey];
 
         var p = readSource(source).then(function (got) {
@@ -566,10 +566,12 @@
                     }
                 } catch (e) {}
             }
-            return new Database(state, {
+            var db = new Database(state, {
                 original: original, base: base, storeKey: storeKey, persist: persist,
                 onChange: options.onChange, source: typeof source === 'string' ? source : null, edited: edited
             });
+            if (options.host) attachRemote(db, options.host); // (a hosted database: the host tab is the server!)
+            return db;
         });
         if (regKey) {
             registry[regKey] = p;
@@ -587,6 +589,7 @@
         'box-shadow:0 10px 30px rgba(40,0,70,.15);padding:12px;display:flex;flex-direction:column;gap:10px;position:relative;text-align:left}',
         '.mk-live *,.mk-live *::before,.mk-live *::after{box-sizing:border-box}',
         '.mk-live [hidden]{display:none!important}',
+        '.mk-live.mk-ro [data-act="add"],.mk-live.mk-ro [data-act="edit"],.mk-live.mk-ro [data-act="del"],.mk-live.mk-ro [data-act="ask-del"],.mk-live.mk-ro [data-act="dup"],.mk-live.mk-ro [data-act="revert"]{display:none!important}',
         '.mk-title{margin:0 2px;font-size:16px;font-weight:800;color:var(--mk-accent)}',
         '.mk-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}',
         '.mk-search{flex:1 1 180px;min-width:0;font:inherit;color:inherit;background:#fff;border:1px solid var(--mk-line);border-radius:8px;padding:7px 10px;outline:none}',
@@ -721,9 +724,10 @@
             this.el.querySelectorAll('[data-act="view"]').forEach(function (b) {
                 b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === self.view));
             });
-            this.$('.mk-count').textContent = rows.length === db.count
+            this.$('.mk-count').textContent = (rows.length === db.count
                 ? db.count + (db.count === 1 ? ' record' : ' records')
-                : rows.length + ' of ' + db.count + ' records';
+                : rows.length + ' of ' + db.count + ' records') + (db.remote ? ' · ' + ({ live: '● live (hosted)', away: 'host away: last shared copy', waiting: 'waiting for the host…', offline: 'host offline: published copy', connecting: 'connecting…' }[db.remote.state] || db.remote.state) + (db.remote.readOnly ? ' · read-only' : '') + (db.remote.error ? ' · ' + db.remote.error : '') : '');
+            this.el.classList.toggle('mk-ro', !!(db.remote && db.remote.readOnly));
 
             var body = this.$('.mk-body');
             if (rows.length === 0) {
@@ -959,6 +963,7 @@
             height: opts.height || d.mainkeyHeight || '',
             key: opts.key || d.mainkeyKey || undefined,
             persist: opts.persist !== undefined ? opts.persist : attrBool(d.mainkeyPersist, true),
+            host: opts.host || d.mainkeyHost || '',
             onChange: opts.onChange
         };
     }
@@ -973,7 +978,7 @@
         var o = widgetOptions(el, opts);
         var src = source !== undefined && source !== null ? source : el.getAttribute('data-mainkey');
         var dbp = src instanceof Database ? Promise.resolve(src)
-            : load(src, { key: o.key, persist: o.persist, onChange: o.onChange });
+            : load(src, { key: o.key, persist: o.persist, onChange: o.onChange, host: o.host || undefined });
         var pending = { widget: null };
         el.mainkey = pending;
         el.classList.add('mk-live');
@@ -1006,8 +1011,370 @@
         });
     }
 
+
+    // ---------- Hosting: a browser tab IS the database server (peer to peer, no cloud server of your own) ----------
+    //
+    // The owner opens the database in Mainkey and clicks Host. Every visitor of a static page with
+    //     <div data-mainkey="database.kb" data-mainkey-host="ROOM"></div>
+    // then reads and changes the SAME live data, through public relays (the same ones Radii's
+    // collaboration uses). Everything sent is sealed with AES-GCM using the key inside ROOM, so the
+    // relays only carry locked boxes. When the host tab is closed, visitors see the last shared copy.
+    var MK_BROKERS = [
+        'wss://mqtt.eclipseprojects.io:443/mqtt',
+        'wss://broker.emqx.io:8084/mqtt',
+        'wss://broker.hivemq.com:8884/mqtt',
+        'wss://test.mosquitto.org:8081/mqtt'
+    ];
+    /* ---------- Tiny MQTT 3.1.1 over WebSocket (a port of Phosphor's mqtt.js!) ---------- */
+    var mkEnc = typeof TextEncoder !== 'undefined' ? new TextEncoder() : null, mkDec = typeof TextDecoder !== 'undefined' ? new TextDecoder() : null;
+    function mStr(s) { const b = mkEnc.encode(s); const o = new Uint8Array(2 + b.length); o[0] = b.length >> 8; o[1] = b.length & 255; o.set(b, 2); return o; }
+    function mLen(n) { const o = []; do { let b = n % 128; n = Math.floor(n / 128); if (n > 0) b |= 128; o.push(b); } while (n > 0); return new Uint8Array(o); }
+    function cat(parts) { let n = 0; parts.forEach(function (p) { n += p.length; }); const o = new Uint8Array(n); let i = 0; parts.forEach(function (p) { o.set(p, i); i += p.length; }); return o; }
+    function pkt(head, body) { return cat([new Uint8Array([head]), mLen(body.length), body]); }
+
+    function MkMqtt(url, clientId, will) {
+        this.url = url; this.clientId = clientId; this.will = will;
+        this.buf = new Uint8Array(0); this.pid = 1; this.connected = false;
+    }
+    MkMqtt.prototype.connect = function () {
+        const self = this;
+        this.ws = new WebSocket(this.url, 'mqtt');
+        this.ws.binaryType = 'arraybuffer';
+        this.ws.onopen = function () {
+            let flags = 0x02;
+            if (self.will) flags |= 0x04 | (self.will.retain ? 0x20 : 0);
+            const parts = [new Uint8Array([0, 4, 77, 81, 84, 84, 4, flags, 0, 60]), mStr(self.clientId)];
+            if (self.will) { parts.push(mStr(self.will.topic)); parts.push(mStr(self.will.message)); }
+            self.ws.send(pkt(0x10, cat(parts)));
+        };
+        this.ws.onmessage = function (e) {
+            const chunk = new Uint8Array(e.data);
+            const j = new Uint8Array(self.buf.length + chunk.length);
+            j.set(self.buf, 0); j.set(chunk, self.buf.length);
+            let o = 0;
+            while (o + 2 <= j.length) {
+                let mult = 1, len = 0, i = 1, b = 0;
+                do { if (o + i >= j.length) { len = -1; break; } b = j[o + i]; len += (b & 127) * mult; mult *= 128; i++; } while (b & 128);
+                if (len < 0 || o + i + len > j.length) break;
+                self.handle(j[o], j.slice(o + i, o + i + len));
+                o += i + len;
+            }
+            self.buf = j.slice(o);
+        };
+        this.ws.onclose = function () { self.connected = false; clearInterval(self.ping); if (self.onclose) self.onclose(); };
+        this.ws.onerror = function () { if (self.onerror) self.onerror(); };
+    };
+    MkMqtt.prototype.handle = function (head, body) {
+        const type = head >> 4;
+        if (type === 2) {
+            if (body[1] === 0) {
+                this.connected = true;
+                const self = this;
+                this.ping = setInterval(function () { try { self.ws.send(new Uint8Array([0xc0, 0])); } catch (e) {} }, 25000);
+                if (this.onopen) this.onopen();
+            } else if (this.onerror) this.onerror();
+        } else if (type === 3) {
+            const qos = (head >> 1) & 3;
+            const tl = (body[0] << 8) | body[1];
+            const topic = mkDec.decode(body.slice(2, 2 + tl));
+            const payload = mkDec.decode(body.slice(2 + tl + (qos ? 2 : 0)));
+            if (this.onmessage) this.onmessage(topic, payload);
+        }
+    };
+    MkMqtt.prototype.subscribe = function (topics) {
+        const id = (this.pid++ % 60000) + 1;
+        const parts = [new Uint8Array([id >> 8, id & 255])];
+        topics.forEach(function (t) { parts.push(mStr(t)); parts.push(new Uint8Array([0])); });
+        this.ws.send(pkt(0x82, cat(parts)));
+    };
+    MkMqtt.prototype.unsubscribe = function (topics) {
+        const id = (this.pid++ % 60000) + 1;
+        const parts = [new Uint8Array([id >> 8, id & 255])];
+        topics.forEach(function (t) { parts.push(mStr(t)); });
+        this.ws.send(pkt(0xa2, cat(parts)));
+    };
+    MkMqtt.prototype.publish = function (topic, payload, retain) {
+        this.ws.send(pkt(0x30 | (retain ? 1 : 0), cat([mStr(topic), mkEnc.encode(payload)])));
+    };
+    MkMqtt.prototype.close = function () {
+        clearInterval(this.ping);
+        try { this.ws.send(new Uint8Array([0xe0, 0])); } catch (e) {}
+        try { this.ws.close(); } catch (e) {}
+    };
+
+    // A link to every relay at once: messages go out on all live ones, and each copy is only used once!
+    function MkRelay() { this.links = []; this.subs = {}; this.handlers = []; this.want = false; this.seen = {}; this.seenN = 0; }
+    MkRelay.prototype = {
+        start: function () {
+            if (this.want) return;
+            this.want = true;
+            var self = this;
+            this.links = MK_BROKERS.map(function (url) { return { url: url, mq: null, live: false, tries: 0, timer: null }; });
+            this.links.forEach(function (L) { self._open(L); });
+        },
+        _open: function (L) {
+            var self = this;
+            clearTimeout(L.timer);
+            if (!this.want) return;
+            var mq;
+            try { mq = new MkMqtt(L.url, 'mk_' + Math.random().toString(36).slice(2, 12), null); mq.connect(); } catch (e) { this._retry(L); return; }
+            L.mq = mq;
+            var giveUp = setTimeout(function () { if (!mq.connected) { try { mq.close(); } catch (e) {} } }, 9000);
+            mq.onopen = function () {
+                clearTimeout(giveUp);
+                L.live = true; L.tries = 0;
+                var t = Object.keys(self.subs);
+                if (t.length) mq.subscribe(t);
+                self.handlers.forEach(function (h) { if (h.open) h.open(); });
+            };
+            mq.onmessage = function (topic, payload) {
+                var k = topic + '|' + payload.slice(0, 48);
+                if (self.seen[k]) return;
+                self.seen[k] = 1;
+                if (++self.seenN > 1500) { self.seen = {}; self.seenN = 0; }
+                self.handlers.forEach(function (h) { if (h.msg) h.msg(topic, payload); });
+            };
+            mq.onclose = function () { clearTimeout(giveUp); L.live = false; if (L.mq === mq) { L.mq = null; self._retry(L); } };
+            mq.onerror = function () {};
+        },
+        _retry: function (L) { if (!this.want) return; L.tries++; var self = this; L.timer = setTimeout(function () { self._open(L); }, Math.min(30000, 1500 * L.tries)); },
+        stop: function () {
+            this.want = false;
+            this.links.forEach(function (L) { clearTimeout(L.timer); if (L.mq) { var m = L.mq; L.mq = null; L.live = false; try { m.close(); } catch (e) {} } });
+        },
+        live: function () { return this.links.filter(function (L) { return L.live && L.mq && L.mq.connected; }); },
+        sub: function (topics) { var self = this; topics.forEach(function (t) { self.subs[t] = 1; }); this.live().forEach(function (L) { try { L.mq.subscribe(topics); } catch (e) {} }); },
+        pub: function (topic, payload, retain) { var ok = false; this.live().forEach(function (L) { try { L.mq.publish(topic, payload, retain); ok = true; } catch (e) {} }); return ok; }
+    };
+
+    function b64uEnc(bytes) { var s = ''; for (var i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000)); return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+    function b64uDec(str) { var s = atob(String(str).replace(/-/g, '+').replace(/_/g, '/')); var o = new Uint8Array(s.length); for (var i = 0; i < s.length; i++) o[i] = s.charCodeAt(i); return o; }
+    function mkGz(bytes, inflate) {
+        if (typeof CompressionStream === 'undefined') return Promise.resolve(null);
+        var stream = new Blob([bytes]).stream().pipeThrough(inflate ? new DecompressionStream('gzip') : new CompressionStream('gzip'));
+        return new Response(stream).arrayBuffer().then(function (b) { return new Uint8Array(b); });
+    }
+    // A room is "id.key": the id names the relay topic, the key (never sent anywhere) locks every message!
+    function parseRoom(spec) {
+        var m = /^([A-Za-z0-9_-]{6,40})\.([A-Za-z0-9_-]{20,44})$/.exec(String(spec || '').trim());
+        if (!m) throw new Error('Mainkey: that host room is not valid (it looks like abc123.XXXXXXXXXXXXXXXXXXXXXX)!');
+        return { id: m[1], rawKey: b64uDec(m[2]) };
+    }
+    function makeRoom() {
+        var id = b64uEnc(crypto.getRandomValues(new Uint8Array(9)));
+        return id + '.' + b64uEnc(crypto.getRandomValues(new Uint8Array(16)));
+    }
+    function Sealer(room) { this.keyP = crypto.subtle.importKey('raw', room.rawKey, 'AES-GCM', false, ['encrypt', 'decrypt']); }
+    Sealer.prototype.seal = function (obj) {
+        var data = mkEnc.encode(JSON.stringify(obj));
+        var zp = data.length > 600 ? mkGz(data) : Promise.resolve(null);
+        var keyP = this.keyP;
+        return zp.then(function (z) {
+            var flag = 0;
+            if (z && z.length < data.length) { data = z; flag = 1; }
+            var iv = crypto.getRandomValues(new Uint8Array(12));
+            return keyP.then(function (key) { return crypto.subtle.encrypt({ name: 'AES-GCM', iv: iv }, key, data); }).then(function (ct) {
+                return flag + '.' + b64uEnc(iv) + '.' + b64uEnc(new Uint8Array(ct));
+            });
+        });
+    };
+    Sealer.prototype.open = function (str) {
+        var p = String(str).split('.');
+        if (p.length !== 3) return Promise.resolve(null);
+        return this.keyP.then(function (key) { return crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64uDec(p[1]) }, key, b64uDec(p[2])); }).then(function (buf) {
+            var data = new Uint8Array(buf);
+            return (p[0] === '1' ? mkGz(data, true) : Promise.resolve(data)).then(function (d) { return JSON.parse(mkDec.decode(d)); });
+        }).catch(function () { return null; }); // (not sealed with our key: ignore it)
+    };
+    function topics(room) { var b = 'rmk1/' + room.id + '/'; return { state: b + 'state', op: b + 'op', beat: b + 'beat', ack: b + 'ack' }; }
+
+    // Cleans what a visitor asks for, so a page can never push junk into the host!
+    function cleanValue(v) {
+        if (typeof v === 'number') return isFinite(v) ? v : '';
+        if (v === null || v === undefined) return '';
+        if (typeof v === 'boolean') return v ? 'true' : 'false';
+        return String(v).slice(0, 4000);
+    }
+    function cleanRecord(r, fieldsList, partial) {
+        var out = {};
+        if (!r || typeof r !== 'object') return out;
+        fieldsList.forEach(function (f) {
+            if (!(f.id in r)) { if (!partial) out[f.id] = ''; return; }
+            var v = cleanValue(r[f.id]);
+            if (f.type === 'number') v = v === '' || isNaN(Number(v)) ? '' : Number(v);
+            out[f.id] = v;
+        });
+        return out;
+    }
+    // Applies one visitor change to a document { fields, records } (returns an error message or null)!
+    function applyOp(doc, op) {
+        if (!op || typeof op !== 'object') return 'That change was empty!';
+        if (doc.records.length > 20000 && op.type === 'insert') return 'The database is full (20000 records)!';
+        var find = function (id) { for (var i = 0; i < doc.records.length; i++) if (String(doc.records[i].id) === String(id)) return i; return -1; };
+        switch (op.type) {
+            case 'insert': {
+                var rec = cleanRecord(op.record, doc.fields, false);
+                var taken = {}; doc.records.forEach(function (r) { taken[String(r.id)] = true; });
+                rec.id = op.record && !isBlank(op.record.id) && !taken[String(op.record.id)] && String(op.record.id).length < 64 ? op.record.id : nextId(taken);
+                doc.records.push(rec);
+                return null;
+            }
+            case 'update': {
+                var i = find(op.id); if (i < 0) return 'That record is gone!';
+                var patch = cleanRecord(op.patch, doc.fields, true);
+                Object.keys(patch).forEach(function (k) { doc.records[i][k] = patch[k]; });
+                return null;
+            }
+            case 'remove': { var j = find(op.id); if (j < 0) return null; doc.records.splice(j, 1); return null; }
+            case 'clear': doc.records = []; return null;
+            case 'addField': {
+                var label = String(op.name || '').trim().slice(0, 60), base = slug(label);
+                if (!base) return 'A field needs a name!';
+                if (doc.fields.length >= 60) return 'Too many fields!';
+                var id = base, n = 2;
+                while (doc.fields.some(function (f) { return f.id === id; })) id = base + '_' + n++;
+                doc.fields.push({ id: id, name: label, type: FIELD_TYPES.indexOf(op.ftype) >= 0 ? op.ftype : 'text' });
+                return null;
+            }
+            case 'removeField': {
+                if (doc.fields.length <= 1) return 'Keep at least one field!';
+                var fid = String(op.id);
+                doc.fields = doc.fields.filter(function (f) { return f.id !== fid; });
+                doc.records.forEach(function (r) { delete r[fid]; });
+                return null;
+            }
+        }
+        return 'Unknown change!';
+    }
+
+    // host(source, options) → Host! source is a Database, or { getDoc, setDoc } for apps with their own data!
+    // options: { room: 'id.key' (or one is made), readOnly: false, onStatus(info), onChange(change) }
+    function host(source, options) {
+        options = options || {};
+        if (!hasDOM || typeof crypto === 'undefined' || !crypto.subtle) throw new Error('Mainkey: hosting needs a modern browser (on https or localhost)!');
+        var spec = options.room || makeRoom();
+        var room = parseRoom(spec), T = topics(room), sealer = new Sealer(room), relay = new MkRelay();
+        var getDoc, setDoc;
+        if (source instanceof Database) {
+            getDoc = function () { return source.toJSON(); };
+            setDoc = function (doc) { source._fields = doc.fields; source._records = doc.records; source._commit({ type: 'replace', fromVisitor: true }); };
+        } else { getDoc = source.getDoc; setDoc = source.setDoc; }
+        var version = 1, visitors = {}, timer = null, beat = null, stopped = false, lastSent = '';
+        var info = function () {
+            var now = Date.now();
+            Object.keys(visitors).forEach(function (k) { if (now - visitors[k] > 70000) delete visitors[k]; });
+            return { room: spec, relays: relay.live().length, visitors: Object.keys(visitors).length, readOnly: !!h.readOnly, version: version };
+        };
+        var status = function () { if (typeof options.onStatus === 'function') { try { options.onStatus(info()); } catch (e) {} } };
+        var broadcast = function () {
+            if (stopped) return;
+            var doc = getDoc();
+            var body = { t: 'state', v: version, ro: !!h.readOnly, doc: { app: doc.app || 'Radii Base', version: doc.version || '1.0', fields: doc.fields, records: doc.records } };
+            sealer.seal(body).then(function (sealed) {
+                if (stopped) return;
+                if (sealed.length > 900000) { if (options.onStatus) options.onStatus(Object.assign(info(), { error: 'This database is too big to host (keep it under about 1 MB)!' })); return; }
+                lastSent = sealed;
+                relay.pub(T.state, sealed, true); // (kept by the relays, so new visitors see it at once, even while you are away)
+            });
+        };
+        var h = {
+            room: spec,
+            readOnly: !!options.readOnly,
+            // tell the host its data changed (call this after your own edits)!
+            changed: function () { version++; clearTimeout(timer); timer = setTimeout(broadcast, 120); },
+            setReadOnly: function (ro) { h.readOnly = !!ro; h.changed(); status(); },
+            info: info,
+            stop: function () { stopped = true; clearInterval(beat); relay.stop(); status(); },
+            link: function (src) { return '<div data-mainkey="' + escapeHtml(src || 'database.kb') + '" data-mainkey-host="' + spec + '"></div>'; }
+        };
+        relay.handlers.push({
+            open: function () { broadcast(); status(); },
+            msg: function (topic, payload) {
+                if (topic !== T.op) return;
+                sealer.open(payload).then(function (m) {
+                    if (!m || stopped) return;
+                    if (m.from) visitors[String(m.from).slice(0, 40)] = Date.now();
+                    if (m.t === 'hello') { relay.pub(T.state, lastSent || '', false); if (!lastSent) broadcast(); status(); return; }
+                    if (m.t !== 'op') return;
+                    var err = h.readOnly ? 'This database is read-only (the host only lets visitors look)!' : null;
+                    if (!err) {
+                        var doc = getDoc();
+                        var work = { fields: clone(doc.fields), records: clone(doc.records), app: doc.app, version: doc.version };
+                        err = applyOp(work, m.op);
+                        if (!err) { setDoc(work); version++; broadcast(); if (typeof options.onChange === 'function') { try { options.onChange(m.op); } catch (e) {} } }
+                    }
+                    sealer.seal({ t: 'ack', to: m.from, rid: m.rid, ok: !err, err: err, v: version }).then(function (x) { relay.pub(T.ack, x, false); });
+                    status();
+                });
+            }
+        });
+        relay.sub([T.op]);
+        relay.start();
+        beat = setInterval(function () { sealer.seal({ t: 'beat', v: version, ro: !!h.readOnly, at: Date.now() }).then(function (x) { relay.pub(T.beat, x, false); }); status(); }, 10000);
+        return h;
+    }
+
+    // A visitor's Database follows the host: reads come from the host's copy, writes are sent to it!
+    function attachRemote(db, spec) {
+        var room = parseRoom(spec), T = topics(room), sealer = new Sealer(room), relay = new MkRelay();
+        var me = 'v' + Math.random().toString(36).slice(2, 10), rid = 0, lastBeat = 0, gotState = false;
+        db._persist = false; // (the host keeps the data; nothing is saved as "my edits")
+        db.remote = { state: 'connecting', readOnly: false, room: room.id, error: '' };
+        var setState = function (st) { if (db.remote.state === st) return; db.remote.state = st; db._emit({ type: 'remote', state: st }, false); };
+        var send = function (op) {
+            if (db.remote.readOnly) { db.remote.error = 'This database is read-only!'; db._emit({ type: 'remote', state: db.remote.state, error: db.remote.error }, false); throw new Error('Mainkey: this hosted database is read-only!'); }
+            sealer.seal({ t: 'op', from: me, rid: ++rid, op: op }).then(function (x) { if (!relay.pub(T.op, x, false)) { db.remote.error = 'Not connected yet: that change only shows here until the host is reachable!'; db._emit({ type: 'remote', state: db.remote.state }, false); } });
+        };
+        // every change is tried here first (so it shows at once), then sent; the host's answer replaces it
+        var wrap = function (name, toOp) {
+            var orig = db[name];
+            db[name] = function () {
+                var args = arguments;
+                if (db.remote.readOnly) send(null); // (throws: read-only)
+                var res = orig.apply(db, args);
+                var op = toOp.apply(null, [res].concat([].slice.call(args)));
+                if (op) send(op);
+                return res;
+            };
+        };
+        wrap('insert', function (res) { return { type: 'insert', record: res }; });
+        wrap('update', function (res, id, patch) { return res ? { type: 'update', id: id, patch: patch } : null; });
+        wrap('remove', function (res, id) { return res ? { type: 'remove', id: id } : null; });
+        wrap('clear', function () { return { type: 'clear' }; });
+        wrap('addField', function (res, name, type) { return { type: 'addField', name: name, ftype: type }; });
+        wrap('removeField', function (res, id) { return res ? { type: 'removeField', id: id } : null; });
+        db.revert = function () { sealer.seal({ t: 'hello', from: me }).then(function (x) { relay.pub(T.op, x, false); }); };
+        relay.handlers.push({
+            open: function () { sealer.seal({ t: 'hello', from: me }).then(function (x) { relay.pub(T.op, x, false); }); },
+            msg: function (topic, payload) {
+                if (topic !== T.state && topic !== T.beat && topic !== T.ack) return;
+                sealer.open(payload).then(function (m) {
+                    if (!m) return;
+                    if (m.t === 'beat') { lastBeat = Date.now(); db.remote.readOnly = !!m.ro; setState('live'); return; }
+                    if (m.t === 'ack') { if (m.to === me && !m.ok) { db.remote.error = m.err || 'The host said no!'; db._emit({ type: 'remote', state: db.remote.state, error: db.remote.error }, false); } return; }
+                    if (m.t === 'state' && m.doc) {
+                        try {
+                            var n = normalize(m.doc);
+                            db._fields = n.fields; db._records = n.records;
+                            db.remote.readOnly = !!m.ro; db.remote.version = m.v; db.remote.error = '';
+                            gotState = true;
+                            if (Date.now() - lastBeat < 30000) setState('live'); else if (db.remote.state === 'connecting') setState('away');
+                            db._emit({ type: 'sync', fromHost: true }, false);
+                        } catch (e) {}
+                    }
+                });
+            }
+        });
+        relay.sub([T.state, T.beat, T.ack]);
+        relay.start();
+        setInterval(function () { if (lastBeat && Date.now() - lastBeat > 30000) setState(gotState ? 'away' : 'offline'); else if (!lastBeat && !gotState && relay.live().length) setState('waiting'); }, 5000);
+        return db;
+    }
+
     var Mainkey = {
         version: VERSION,
+        host: host,
+        makeRoom: function () { return makeRoom(); },
         load: load,
         mount: mount,
         scan: scan,

@@ -463,6 +463,17 @@
         return Math.min(pageCount, Math.max(1, Math.floor(y / (pageDims().h + GAP)) + 1));
     }
 
+    // Which page an element is on (Pages view), for the Table of Contents!
+    window.WriteoutPages = {
+        pageOf: function (el) {
+            if (!pagesOn() || !el || !el.getBoundingClientRect) return 1;
+            const r = el.getBoundingClientRect(), box = ed.getBoundingClientRect();
+            const ratio = (box.height / (ed.offsetHeight || 1)) || 1;
+            return Math.min(pageCount, Math.max(1, Math.floor(((r.top - box.top) / ratio) / (pageDims().h + GAP)) + 1));
+        }
+    };
+    const PRO = function () { return window.WriteoutPro || {}; };
+
     function setPagesView(on) { prefs.pages = !!on; savePrefs(); applyView(); }
     function setMargins(k) { prefs.margins = k; savePrefs(); applyView(); OS.toast(MARGINS[k].label + ' margins!'); }
     function setFocus(on) {
@@ -564,7 +575,7 @@
                     { label: 'New page', hint: 'Add a page tab to this document!', icon: 'newDoc', run: newPage },
                     { label: 'Open a .kd file', hint: 'Import a Writeout document!', icon: 'folder', run: openFile }
                 ]));
-                b.insertAdjacentHTML('beforeend', '<h2>This document</h2><div class="wo-bs-doc"><img src="favicon.svg" alt=""><div><b>' + OS.esc((kdActiveTab() || {}).name || 'Main') + '</b><span>' + OS.esc(statsLine()) + '</span></div></div>');
+                b.insertAdjacentHTML('beforeend', '<h2>This document</h2><div class="wo-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((kdActiveTab() || {}).name || 'Main') + '</b><span>' + OS.esc(statsLine()) + '</span></div></div>');
             }
         },
         { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'Blank document', hint: 'Clears every page!', preview: '<div class="os-card-prev wo-prev-blank"></div>', run: newDocument }, { label: 'New page', hint: 'A fresh page tab, keeping the rest!', icon: 'newDoc', run: newPage }])); } },
@@ -750,10 +761,38 @@
             ]
         },
         {
+            id: 'references', label: 'References', groups: [
+                { label: 'Table of Contents', items: [
+                    { big: true, icon: 'bullets', label: 'Table of\nContents', title: 'Insert a clickable table of contents built from your headings (with page numbers in Pages view)!', run: function () { if (PRO().insertTOC) PRO().insertTOC(); } },
+                    { stack: [{ sm: true, icon: 'reset', label: 'Update Table', run: function () { if (PRO().updateTOCs) PRO().updateTOCs(); } }] }
+                ] },
+                { label: 'Footnotes', items: [
+                    { big: true, icon: 'numbers', label: 'Insert\nFootnote', title: 'Add a numbered note at the caret; the note text goes at the end of the document!', run: function () { if (PRO().insertFootnote) PRO().insertFootnote(); } }
+                ] },
+                { label: 'Mail Merge', items: [
+                    { big: true, icon: 'folder', label: 'Mail\nMerge', title: 'One letter, many copies: fill «fields» from a Mainkey database (.kb), CSV or JSON!', run: function () { if (PRO().mailMerge) PRO().mailMerge(); } },
+                    { big: true, icon: 'attach', label: 'Merge\nField', menu: function () { return PRO().fieldMenu ? PRO().fieldMenu() : []; } }
+                ] }
+            ]
+        },
+        {
             id: 'review', label: 'Review', groups: [
                 { label: 'Proofing', items: [
                     { big: true, icon: 'numbers', label: 'Word\nCount', run: wordCount },
                     { big: true, icon: 'search', label: 'Find &\nReplace', run: function () { findDialog(true); } }
+                ] },
+                { label: 'Annotator', items: [
+                    { big: true, icon: 'annotate', label: 'Annotator', title: 'A pen tray: pick a pen and a color, then select text to mark it! Notes and a list of every mark too!', run: function () { if (window.WriteoutAnnotator) window.WriteoutAnnotator.toggle(); }, checked: function () { return !!(window.WriteoutAnnotator && window.WriteoutAnnotator.isOn()); } },
+                    { stack: [{ sm: true, icon: 'bullets', label: 'All Marks', run: function () { if (window.WriteoutAnnotator) window.WriteoutAnnotator.list(); } }] }
+                ] },
+                { label: 'Writing', items: [
+                    { big: true, icon: 'sparkle', label: 'Readability', title: 'Reading ease, school grade, reading time and your longest sentences!', run: function () { if (PRO().readability) PRO().readability(); } },
+                    { big: true, icon: 'focus', label: 'Word\nGoal', title: 'Set a word goal and watch the progress bar at the bottom!', run: function () { if (PRO().setGoal) PRO().setGoal(); } },
+                    { stack: [{ check: true, label: 'Mark Long Sentences', get: function () { return PRO().longOn ? PRO().longOn() : false; }, set: function (v) { if (PRO().setLong) PRO().setLong(v); } }] }
+                ] },
+                { label: 'History', items: [
+                    { big: true, icon: 'save', label: 'Save\nVersion', title: 'Keep a named copy of this page that you can go back to!', run: function () { if (PRO().saveVersion) PRO().saveVersion(); } },
+                    { big: true, icon: 'clock', label: 'Version\nHistory', title: 'See, preview and restore saved versions!', run: function () { if (PRO().history) PRO().history(); } }
                 ] },
                 { label: 'Protect', items: [{ big: true, icon: 'lock', label: 'Protect\nDocument', title: 'Set a password for this document', run: function () { togglePane('doc'); } }] }
             ]
@@ -803,7 +842,7 @@
         officeName: 'Word',
         kind: 'word',
         key: 'writeout',
-        icon: 'favicon.svg',
+        icon: 'favicon-96.png',
         officeHint: 'A ribbon, a Navigation pane, real Pages and a status bar, like Microsoft Word!',
         classicHint: 'The original Writeout: glass sidebars, gel buttons and floating spheres!',
         theme: { accent: '#0284c7', 'accent-d': '#0369a1', 'accent-l': '#e0f2fe', title: '#0284c7', gel1: '#38bdf8', gel2: '#0284c7', 'gel-border': '#7dd3fc', 'gel-glow': 'rgba(2, 132, 199, 0.35)', glow: 'rgba(125, 211, 252, 0.9)', 'thumb-bg': '#0f172a' },
@@ -821,7 +860,8 @@
         settings: settingsExtra,
         status: function () {
             const s = stats();
-            return ['Page <b>' + currentPage() + '</b> of <b>' + pageCount + '</b>', '<b>' + s.words.toLocaleString() + '</b> word' + (s.words === 1 ? '' : 's'), '<b>' + s.chars.toLocaleString() + '</b> characters', OS.esc((kdActiveTab() || {}).name || '')];
+            const goal = PRO().goalStatus ? PRO().goalStatus() : '';
+            return ['Page <b>' + currentPage() + '</b> of <b>' + pageCount + '</b>'].concat(goal ? [goal] : []).concat([ '<b>' + s.words.toLocaleString() + '</b> word' + (s.words === 1 ? '' : 's'), '<b>' + s.chars.toLocaleString() + '</b> characters', OS.esc((kdActiveTab() || {}).name || '')]);
         },
         views: [
             { icon: 'focus', title: 'Focus', run: function () { setFocus(true); }, active: function () { return prefs.focus; } },

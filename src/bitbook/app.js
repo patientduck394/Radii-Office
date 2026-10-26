@@ -11070,7 +11070,7 @@ function csfEntries() {
             const color = b.getAttribute('data-an-color');
             const style = b.getAttribute('data-an-style');
             if (!color || color === 'erase') return;
-            const kind = { hl: 'Highlighter', ul: 'Gel Underline', st: 'Gel Strikethrough', bx: 'Gel Box', ha: 'Halo', cb: 'Corner Brackets', gf: 'Spotlight', ga: 'Gel Accent', gb: 'Gel Bubble', dk: 'Dusk', pr: 'Prism', cm: 'Complement', tk: 'Ticket', nn: 'Neon', sm: 'Stamp', tp: 'Washi Tape', ck: 'Checker', ht: 'Halftone', au: 'Aurora', ml: 'Mild', gw: 'Gel Wrap', bt: 'Highlight Belt', bk: 'Gel Bucket', tr: 'Gel Torpedo', bo: 'Gel Bottle', pk: 'Gel Packet', sl: 'Gel Select' }[style] || style;
+            const kind = { hl: 'Highlighter', ul: 'Gel Underline', st: 'Gel Strikethrough', bx: 'Gel Box', ha: 'Halo', cb: 'Corner Brackets', gf: 'Spotlight', ga: 'Gel Accent', gb: 'Gel Bubble', dk: 'Dusk', pr: 'Prism', cm: 'Complement', tk: 'Ticket', nn: 'Neon', sm: 'Stamp', tp: 'Washi Tape', ck: 'Checker', ht: 'Halftone', au: 'Aurora', ml: 'Mild', gw: 'Gel Wrap', bt: 'Highlight Belt', bk: 'Gel Bucket', tr: 'Gel Torpedo', bo: 'Gel Bottle', pk: 'Gel Packet', sl: 'Gel Select', cs: 'Gel Capsule', fr: 'Frost', px: 'Pixel', fl: 'Gel Flag', gm: 'Gel Gem' }[style] || style;
             add({ name: (b.getAttribute('aria-label') || color), tag: 'mark', cls: 'an-hl an-hl-' + color + (style !== 'hl' ? ' an-s-' + style : ''), src: 'annotate', where: 'Annotate · ' + kind });
         });
     } catch (e) {}

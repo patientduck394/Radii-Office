@@ -1,3 +1,6 @@
+import { createCalls } from './rtc.js';
+import { mountCallUI } from './call-ui.js';
+import { createNets, NETS } from './nets.js';
 // Phosphor LIVE! Zero-setup chat: public MQTT relays, local identity, no accounts!
 // Open the page, pick a name, create or join a Space with a code. That's it!
 
@@ -1107,6 +1110,7 @@ function loadSpaces() {
 }
 function saveSpaces() {
     storeSet('phosphor_spaces', spaces);
+    try { nets.sync(spaces); } catch (e) {}
 }
 
 function newCode() {
@@ -1126,7 +1130,8 @@ function renderSpaces() {
         row.className = 'space-row';
         const b = document.createElement('button');
         b.className = 'action-btn space-btn' + (s.code === activeCode ? ' active' : '') + (isBanned(s.code) ? ' banned' : '');
-        b.innerHTML = `<span># ${esc(s.name)}<small>${esc(s.code)}</small></span>`;
+        const net = NETS[s.net];
+        b.innerHTML = `<span># ${esc(s.name)}<small>${esc(s.code)}${net ? ` <em class="net-tag net-${s.net}" title="${esc(net.blurb)}">${net.icon} ${net.label}</em>` : ''}</small></span>`;
         if (isBanned(s.code)) b.title = 'Banned from ' + s.name + '!';
         const badgeCount = mentionBadgesEnabled ? (parseInt(mentionBadges[s.code], 10) || 0) : 0;
         if (badgeCount > 0) {
@@ -1179,12 +1184,14 @@ function openSpaceModal() {
     uiSound('open');
     document.getElementById('new-space-name').value = '';
     document.getElementById('new-space-desc').value = '';
+    setNetPick('new', 'emqx');
     document.getElementById('space-modal').style.display = 'flex';
 }
 
 function openJoinModal() {
     uiSound('open');
     document.getElementById('join-code').value = '';
+    setNetPick('join', 'auto');
     document.getElementById('join-modal').style.display = 'flex';
 }
 
@@ -1199,8 +1206,10 @@ function createSpace() {
     const name = document.getElementById('new-space-name').value.trim().slice(0, 40);
     if (name.length < 2) { alert('Name your Space (2+ chars)!'); uiSound('error'); return; }
     const description = document.getElementById('new-space-desc').value.trim().slice(0, 200);
+    const pick = readNetPick('new');
+    if (!pick) return;
     const code = newCode();
-    spaces.push({ code, name, description, mine: true, owner: me.clientId, ownerName: me.name });
+    spaces.push(Object.assign({ code, name, description, mine: true, owner: me.clientId, ownerName: me.name }, pick));
     saveSpaces();
     publishDir(code, name, description);
     closeModals();
@@ -1213,6 +1222,10 @@ function inviteUrl(code) {
     try {
         const u = new URL('invite.html', location.href);
         u.searchParams.set('code', code);
+        const s = spaces.find(x => x.code === code);
+        if (s && NETS[s.net]) u.searchParams.set('net', s.net);
+        // RabbitMQ logins ride in the #hash, which browsers never send to any server!
+        if (s && s.net === 'rabbitmq' && s.rmq) u.hash = 'rmq=' + btoa(unescape(encodeURIComponent(JSON.stringify(s.rmq))));
         return u.toString();
     } catch (e) {
         return 'invite.html?code=' + encodeURIComponent(code);
@@ -1238,6 +1251,7 @@ function clearInviteCodeFromUrl() {
         u.searchParams.delete('code');
         u.searchParams.delete('invite');
         u.searchParams.delete('space');
+        u.searchParams.delete('net');
         u.hash = '';
         history.replaceState(null, '', u.toString());
     } catch (e) {}
@@ -1245,10 +1259,126 @@ function clearInviteCodeFromUrl() {
 
 function joinSpace() {
     const code = document.getElementById('join-code').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-    joinSpaceByCode(code);
+    const pick = readNetPick('join');
+    if (pick === null) return;
+    joinSpaceByCode(code, pick);
 }
 
-function joinSpaceByCode(rawCode) {
+// ---------- Space networks (EMQX, RabbitMQ, WebRTC) ----------
+const RMQ_LAST = 'phosphor_rmq_last';
+function setNetPick(which, net) {
+    const box = document.getElementById(which + '-space-net');
+    if (!box) return;
+    box.querySelectorAll('[data-net]').forEach(b => b.classList.toggle('on', b.getAttribute('data-net') === net));
+    const rf = document.getElementById(which + '-rmq');
+    rf.hidden = net !== 'rabbitmq';
+    if (net === 'rabbitmq') {
+        const last = storeGet(RMQ_LAST, {}) || {};
+        const u = document.getElementById(which + '-rmq-url');
+        if (!u.value) u.value = last.url || '';
+        const n = document.getElementById(which + '-rmq-user');
+        if (!n.value) n.value = last.user || '';
+    }
+    const hint = document.getElementById(which + '-net-hint');
+    if (hint) hint.innerText = NETS[net] ? NETS[net].blurb : 'Phosphor asks the Space which network it uses!';
+}
+function wireNetPickers() {
+    ['new', 'join'].forEach(which => {
+        const box = document.getElementById(which + '-space-net');
+        if (!box || box.dataset.wired) return;
+        box.dataset.wired = '1';
+        box.addEventListener('click', (e) => {
+            const b = e.target.closest('[data-net]');
+            if (b) { uiSound('click'); setNetPick(which, b.getAttribute('data-net')); }
+        });
+    });
+}
+// {net, rmq?} for the picked network, {} for auto, null when the RabbitMQ form is not ready!
+function readNetPick(which) {
+    const on = document.querySelector('#' + which + '-space-net .on');
+    const net = on ? on.getAttribute('data-net') : 'emqx';
+    if (net === 'auto') return {};
+    if (net !== 'rabbitmq') return { net };
+    const url = document.getElementById(which + '-rmq-url').value.trim();
+    const user = document.getElementById(which + '-rmq-user').value.trim();
+    const pass = document.getElementById(which + '-rmq-pass').value;
+    if (!/^wss?:\/\/.+/i.test(url)) { alert('Give the RabbitMQ Web MQTT address, like wss://rabbit.example.com:15676/ws!'); uiSound('error'); return null; }
+    storeSet(RMQ_LAST, { url, user });
+    return { net, rmq: { url: url.slice(0, 300), user: user.slice(0, 120), pass: pass.slice(0, 200) } };
+}
+// Move a Space to another network, carrying its subscriptions along!
+function setSpaceNet(s, net, rmq) {
+    const topics = [topicMsg(s.code)];
+    if (s.code === activeCode) topics.push(ROOT + '/presence/' + s.code + '/+');
+    const watching = s.code === activeCode;
+    try { if (watching) calls.watch(null); } catch (e) {}
+    try { mesh.unsubscribe(topics); } catch (e) {}
+    s.net = net;
+    if (rmq) s.rmq = rmq;
+    delete s.netAuto;
+    saveSpaces();
+    try { mesh.subscribe(topics); } catch (e) {}
+    try { if (watching) calls.watch(s.code); } catch (e) {}
+    renderSpaces();
+    updateNetChip();
+    if (watching) heartbeat();
+}
+// The chip in the chat header: which road this Space's messages take!
+function updateNetChip() {
+    const chip = document.getElementById('net-chip');
+    if (!chip) return;
+    if (!activeCode) { chip.hidden = true; return; }
+    const st = nets.status(activeCode);
+    chip.hidden = false;
+    const n = NETS[st.net];
+    chip.className = 'net-chip' + (st.net ? ' net-' + st.net : '') + (st.ok ? ' ok' : ' bad');
+    chip.innerHTML = '<i></i>' + esc((n ? n.icon + ' ' : '') + st.label) + (st.net === 'webrtc' ? ' · ' + (st.peers || 0) : '');
+    chip.title = st.detail + (st.net === 'rabbitmq' ? ' Click to change the server or login!' : '');
+}
+function editSpaceNet() {
+    const s = spaces.find(x => x.code === activeCode);
+    if (!s) return;
+    const st = nets.status(s.code);
+    if (s.net !== 'rabbitmq') { phToast(st.label + ': ' + st.detail); return; }
+    const cur = s.rmq || {};
+    const url = prompt('RabbitMQ Web MQTT address (wss://host:15676/ws)!', cur.url || '');
+    if (url === null) return;
+    if (!/^wss?:\/\/.+/i.test(url.trim())) { phToast('That address needs to start with wss://!'); return; }
+    const user = prompt('Username (leave empty for none, use vhost:user for a vhost)!', cur.user || '');
+    if (user === null) return;
+    const pass = user.trim() ? prompt('Password!', cur.pass || '') : '';
+    if (pass === null) return;
+    nets.resetLink(s.code);
+    setSpaceNet(s, 'rabbitmq', { url: url.trim().slice(0, 300), user: user.trim().slice(0, 120), pass: String(pass).slice(0, 200) });
+    phToast('Reconnecting to RabbitMQ!');
+}
+// A WebRTC peer handed over its recent history: merge what we missed!
+function mergeSyncedHistory(code, items) {
+    if (!spaces.some(s => s.code === code)) return;
+    const hist = loadHist(code);
+    const have = new Set(hist.map(m => m.id));
+    let added = 0;
+    for (const it of items) {
+        if (!it || typeof it.id !== 'string' || have.has(it.id) || typeof it.body !== 'string' || typeof it.from !== 'string') continue;
+        const clean = { id: it.id.slice(0, 64), from: it.from.slice(0, 64), name: String(it.name || '?').slice(0, 24), body: it.body.slice(0, 2000), at: Number(it.at) || Date.now(), mentions: Array.isArray(it.mentions) ? it.mentions.slice(0, 20) : [] };
+        if (it.kind === 'file' && it.file && typeof it.file === 'object') {
+            const f = it.file;
+            clean.kind = 'file';
+            clean.file = { name: String(f.name || 'file').slice(0, 120), size: f.size, type: String(f.type || '').slice(0, 80) };
+            if (typeof f.data === 'string' && f.data.startsWith('data:') && f.data.length <= MAX_FILE_DATA_CHARS) clean.file.data = f.data;
+            else clean.file.expired = true;
+        }
+        hist.push(clean);
+        have.add(clean.id);
+        added++;
+    }
+    if (!added) return;
+    hist.sort((a, b) => (a.at || 0) - (b.at || 0));
+    saveHist(code, hist);
+    if (code === activeCode) renderHistory();
+}
+
+function joinSpaceByCode(rawCode, pick) {
     const code = String(rawCode || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (code.length < 4) { alert('That code looks too short!'); uiSound('error'); return false; }
     if (isBanned(code)) {
@@ -1257,7 +1387,10 @@ function joinSpaceByCode(rawCode) {
         return false;
     }
     if (!spaces.some(s => s.code === code)) {
-        spaces.push({ code, name: code, description: 'Resolving…', mine: false });
+        const base = { code, name: code, description: 'Resolving…', mine: false };
+        // A picked network (or one from the invite link) wins, otherwise the directory tells us!
+        if (pick && NETS[pick.net]) Object.assign(base, pick); else base.netAuto = true;
+        spaces.push(base);
         saveSpaces();
     }
     closeModals();
@@ -1268,15 +1401,28 @@ function joinSpaceByCode(rawCode) {
     return true;
 }
 
+function invitePickFromUrl() {
+    try {
+        const net = new URLSearchParams(location.search).get('net');
+        if (!NETS[net]) return {};
+        if (net !== 'rabbitmq') return { net };
+        const m = /rmq=([^&]+)/.exec(location.hash || '');
+        const r = m ? JSON.parse(decodeURIComponent(escape(atob(m[1])))) : {};
+        const url = typeof r.url === 'string' && /^wss?:\/\//i.test(r.url) ? r.url.slice(0, 300) : '';
+        return { net, rmq: { url, user: String(r.user || '').slice(0, 120), pass: String(r.pass || '').slice(0, 200) } };
+    } catch (e) { return {}; }
+}
+
 function consumePendingInvite() {
     const code = getInviteCodeFromUrl();
     if (!code) return;
+    const pick = invitePickFromUrl();
     if (isBanned(code)) {
         alert('You are banned from this Space!');
         clearInviteCodeFromUrl();
         return;
     }
-    if (joinSpaceByCode(code)) clearInviteCodeFromUrl();
+    if (joinSpaceByCode(code, pick)) clearInviteCodeFromUrl();
     else {
         try {
             document.getElementById('join-code').value = code;
@@ -1287,7 +1433,14 @@ function consumePendingInvite() {
 
 function publishDir(code, name, description) {
     if (!mesh.connected || !me) return;
-    mesh.publish(ROOT + '/dir/' + code, JSON.stringify({ name, description, at: Date.now(), owner: me.clientId, ownerName: me.name }), true);
+    mesh.publish(ROOT + '/dir/' + code, JSON.stringify(Object.assign({ name, description, at: Date.now(), owner: me.clientId, ownerName: me.name }, dirNet(code))), true);
+}
+
+// The directory says which network a Space uses (never a password)!
+function dirNet(code) {
+    const s = spaces.find(x => x.code === code);
+    if (!s || !NETS[s.net]) return {};
+    return s.net === 'rabbitmq' ? { net: s.net, rmq: { url: (s.rmq && s.rmq.url) || '' } } : { net: s.net };
 }
 
 // ---------- Chat ----------
@@ -1339,6 +1492,9 @@ function openSpace(code) {
     renderHistory();
     subscribeAllSpaceMsgs();
     mesh.subscribe([topicDir(code), ROOT + '/presence/' + code + '/+']);
+    { const c = calls.state(); if (c && c.code !== code) { calls.leave(true); phToast('You left the call in the other Space!'); } }
+    calls.watch(code);
+    renderCalls();
     heartbeat();
     // Blind joins show "Resolving…" until the retained directory lands!
     // The global nudger keeps re-asking while it stays unresolved!
@@ -1354,6 +1510,7 @@ function leaveView(clearActive = true) {
         } catch (e) {}
     }
     if (clearActive) {
+        try { calls.leave(true); } catch (e) {}
         activeCode = null;
         renderSpaces();
         document.getElementById('empty-chat').style.display = 'block';
@@ -1396,6 +1553,40 @@ function updateMeta() {
         try { bar.title = 'My relays: ' + myRelayHosts().join(', ') + '!'; } catch (e) {}
     } else bar.style.display = 'none';
     try { if (isMentionMenuOpen()) refreshMentionMenu(); } catch (e) {}
+    updateMembersPanel();
+    updateNetChip();
+}
+
+// The people panel: who is online here, and who is in the call!
+function updateMembersPanel() {
+    const chat = document.getElementById('chat-view');
+    if (!chat) return;
+    let panel = document.getElementById('member-panel');
+    if (!panel) {
+        panel = document.createElement('aside');
+        panel.id = 'member-panel';
+        panel.className = 'member-panel';
+        chat.appendChild(panel);
+    }
+    const inCall = new Set(activeCode ? calls.inCallHere(activeCode).map(p => p.id) : []);
+    const c = calls.state();
+    if (c && c.code === activeCode && me) inCall.add(me.clientId);
+    const list = [...members.entries()].filter(([, m]) => m.online).map(([id, m]) => ({ id, name: m.name }));
+    if (me && !list.some(x => x.id === me.clientId)) list.unshift({ id: me.clientId, name: me.name });
+    list.sort((a, b) => (inCall.has(b.id) - inCall.has(a.id)) || String(a.name).localeCompare(String(b.name)));
+    const html = '<div class="mp-head">Online — ' + list.length + '</div>' + list.map(x =>
+        `<div class="mp-row${inCall.has(x.id) ? ' calling' : ''}"><span class="av" style="--h:${avatarHue(x.id)}">${esc((String(x.name || '?').trim().charAt(0) || '?').toUpperCase())}</span><span class="mp-name">${esc(x.name)}${me && x.id === me.clientId ? ' (you)' : ''}</span>${inCall.has(x.id) ? '<span class="mp-call" title="In the call">🔊</span>' : ''}</div>`).join('');
+    if (panel._html !== html) { panel._html = html; panel.innerHTML = html; }
+}
+
+// Little pop-up notes!
+function phToast(msg) {
+    let t = document.getElementById('ph-toast');
+    if (!t) { t = document.createElement('div'); t.id = 'ph-toast'; t.className = 'ph-toast'; document.body.appendChild(t); }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(phToast.timer);
+    phToast.timer = setTimeout(() => t.classList.remove('show'), 3200);
 }
 
 function histKey(code) { return 'phosphor_hist_' + code; }
@@ -2061,6 +2252,8 @@ function kdBody(raw) {
     return esc(text);
 }
 
+function avatarHue(s) { let x = 0; for (const ch of String(s || '')) x = (x * 31 + ch.charCodeAt(0)) % 360; return x; }
+
 function renderMessage(m) {
     const div = document.createElement('div');
     try { if (m && m.id) div.dataset.mid = String(m.id); } catch (e) {}
@@ -2083,7 +2276,8 @@ function renderMessage(m) {
     }
     div.className = 'msg' + (me && m.from === me.clientId ? ' me' : '');
     if (isMentioned(m)) div.classList.add('mentions-me');
-    div.innerHTML = `<span class="who">${esc(m.name)}</span>`
+    div.innerHTML = `<span class="av" style="--h:${avatarHue(m.from || m.name)}">${esc((String(m.name || '?').trim().charAt(0) || '?').toUpperCase())}</span>`
+        + `<span class="who">${esc(m.name)}</span>`
         + `<span class="when">${fmtTime(m.at)}</span>`;
     if (m.kind === 'file' && m.file) {
         div.appendChild(document.createElement('br'));
@@ -2152,6 +2346,15 @@ function onDirMessage(code, payload) {
     try { d = JSON.parse(payload); } catch (e) { return; }
     if (!d || !d.name) return;
     const s = spaces.find(x => x.code === code);
+    // Blind joins (code only) learn the Space's network from the directory!
+    if (s && !s.mine && s.netAuto && NETS[d.net]) {
+        let rmq = null;
+        if (d.net === 'rabbitmq') {
+            const url = d.rmq && typeof d.rmq.url === 'string' ? d.rmq.url.slice(0, 300) : '';
+            rmq = { url: /^wss?:\/\//i.test(url) ? url : '', user: '', pass: '' };
+        }
+        setSpaceNet(s, d.net, rmq);
+    }
     if (s && !s.mine) {
         s.name = String(d.name).slice(0, 40);
         s.description = String(d.description || '').slice(0, 200);
@@ -2237,7 +2440,7 @@ function queueMessage(code, body, mentions) {
     saveOutbox(o);
 }
 function flushOutbox() {
-    if (!me || !mesh.connected) return false;
+    if (!me) return false;
     const o = loadOutbox();
     const codes = Object.keys(o);
     if (!codes.length) return false;
@@ -2246,6 +2449,7 @@ function flushOutbox() {
         const list = o[code];
         if (!Array.isArray(list) || !list.length) { delete o[code]; continue; }
         if (isBanned(code) || !spaces.some(s => s.code === code)) { delete o[code]; continue; }
+        if (!spaceLive(code)) continue;
         while (list.length) {
             const entry = list[0];
             const msg = {
@@ -2320,16 +2524,36 @@ function preferredRelay() {
     return null;
 }
 
+// Hands Space-network topics to their own road, returns the shared-relay rest!
+function splitRoutes(topics, op) {
+    const rest = [];
+    for (const t of (Array.isArray(topics) ? topics : [topics])) {
+        const own = nets.route(t);
+        if (own) own[op]([t]); else rest.push(t);
+    }
+    return rest;
+}
+
+// Can this Space send right now? (WebRTC Spaces always can: history syncs to whoever links later!)
+function spaceLive(code) {
+    const st = nets.status(code);
+    if (!st.net) return mesh.connected;
+    return st.net === 'webrtc' ? true : st.ok;
+}
+
 const mesh = {
     get connected() { return !!preferredRelay(); },
     get via() { const p = preferredRelay(); return p ? p.host : null; },
     publish(topic, payload, retain) {
+        // EMQX, RabbitMQ and WebRTC Spaces take their own road!
+        const own = nets.route(topic);
+        if (own) { own.publish(topic, payload, retain); return; }
         const p = preferredRelay();
         if (!p) throw new Error('No relay!');
         p.mqtt.publish(topic, payload, retain);
     },
     subscribe(topics) {
-        const list = Array.isArray(topics) ? topics : [topics];
+        const list = splitRoutes(topics, 'subscribe');
         for (const t of list) wantedSubs.add(t);
         const p = preferredRelay();
         if (p) {
@@ -2337,7 +2561,7 @@ const mesh = {
         }
     },
     unsubscribe(topics) {
-        const list = Array.isArray(topics) ? topics : [topics];
+        const list = splitRoutes(topics, 'unsubscribe');
         for (const t of list) wantedSubs.delete(t);
         const p = preferredRelay();
         if (p) {
@@ -2355,6 +2579,8 @@ function syncSubscription() {
 }
 
 function meshRoute(topic, payload, fromEntry) {
+    if (topic.startsWith(ROOT + '/p2p/')) { nets.onSignal(topic.slice((ROOT + '/p2p/').length), payload); return; }
+    if (topic.startsWith(ROOT + '/rtc/')) { calls.onSignal(topic.slice((ROOT + '/rtc/').length), payload); return; }
     if (topic.startsWith(ROOT + '/msg/')) {
         onChatMessage(topic.slice((ROOT + '/msg/').length), payload);
         bridgePacket(topic, payload, fromEntry, false);
@@ -2465,7 +2691,7 @@ function publishAllMyDirs() {
     for (const s of spaces) {
         if (!s || !s.mine || !s.name || s.name === s.code) continue;
         try {
-            mesh.publish(ROOT + '/dir/' + s.code, JSON.stringify({ name: s.name, description: s.description || '', at: Date.now(), owner: me.clientId, ownerName: me.name }), true);
+            mesh.publish(ROOT + '/dir/' + s.code, JSON.stringify(Object.assign({ name: s.name, description: s.description || '', at: Date.now(), owner: me.clientId, ownerName: me.name }, dirNet(s.code))), true);
         } catch (e) {}
     }
     gossipKnownDirs();
@@ -2482,7 +2708,7 @@ function gossipKnownDirs() {
     for (const s of spaces) {
         if (!s || !s.name || s.name === s.code) continue;
         try {
-            const payload = { name: s.name, description: s.description || '', at: Date.now() };
+            const payload = Object.assign({ name: s.name, description: s.description || '', at: Date.now() }, dirNet(s.code));
             if (s.owner) {
                 payload.owner = String(s.owner).slice(0, 32);
                 payload.ownerName = String(s.ownerName || '').slice(0, 24);
@@ -2661,6 +2887,7 @@ function dialRelay(entry) {
             if (subs.length) m.subscribe(subs);
         } catch (e) {}
         publishAllMyDirs();
+        try { nets.sync(spaces); nets.rehello(); } catch (e) {}
         if (first) uiSound('connect');
         refreshConn();
         renderSpaces();
@@ -2756,7 +2983,7 @@ function sendMessage(e) {
         uiSound('click');
         return false;
     }
-    if (!mesh.connected || !activeCode) {
+    if (!activeCode || !spaceLive(activeCode)) {
         if (!activeCode) return false;
         // Offline? Queue it instead of dropping it! Flushes on reconnect!
         const mentions = buildMentionsForSend(body);
@@ -2839,13 +3066,49 @@ function enterApp() {
     initMentions();
     initFilter();
     loadBans();
+    wireNetPickers();
     try { consumePendingInvite(); } catch (e) {}
+    if (!enterApp.callsMounted) { enterApp.callsMounted = true; renderCalls = mountCallUI(calls, { me: () => me, activeCode: () => activeCode, esc }); }
 }
+
+// ---------- Calls (WebRTC voice, video and screen sharing) ----------
+let renderCalls = () => {};
+const calls = createCalls({
+    root: ROOT,
+    publish: (t, p) => mesh.publish(t, p, false),
+    subscribe: (t) => mesh.subscribe(t),
+    unsubscribe: (t) => mesh.unsubscribe(t),
+    me: () => me,
+    activeCode: () => activeCode,
+    spaceName: (c) => (spaces.find(s => s.code === c) || { name: c }).name,
+    toast: (m) => phToast(m),
+    sound: (n) => uiSound(n),
+    onChange: () => { try { renderCalls(); updateMembersPanel(); } catch (e) {} },
+});
+
+// ---------- Space networks ----------
+let netChangeQueued = false;
+const nets = createNets({
+    root: ROOT,
+    me: () => me,
+    spaceOf: (c) => spaces.find(s => s.code === c),
+    deliver: (t, p) => meshRoute(t, p, null),
+    // Signaling for WebRTC Spaces rides the shared relay (p2p topics never route elsewhere)!
+    sig: { publish: (t, p) => mesh.publish(t, p, false), subscribe: (t) => mesh.subscribe(t), unsubscribe: (t) => mesh.unsubscribe(t) },
+    history: (c) => loadHist(c),
+    onSync: (c, items) => mergeSyncedHistory(c, items),
+    toast: (m) => phToast(m),
+    onChange: () => {
+        if (netChangeQueued) return;
+        netChangeQueued = true;
+        setTimeout(() => { netChangeQueued = false; try { updateNetChip(); flushOutbox(); } catch (e) {} }, 120);
+    },
+});
 
 // Inline handlers (the page uses onclick)!
 Object.assign(window, {
     enterName, switchName, openSpaceModal, openJoinModal, closeModals,
-    createSpace, joinSpace, joinSpaceByCode, inviteUrl, getInviteCodeFromUrl, retryResolving, reconnectNow, sendMessage, shareFile, shareFolder, askLeaveSpace, leaveSpace, toggleTheme,
+    createSpace, joinSpace, joinSpaceByCode, editSpaceNet, inviteUrl, getInviteCodeFromUrl, retryResolving, reconnectNow, sendMessage, shareFile, shareFolder, askLeaveSpace, leaveSpace, toggleTheme,
     toggleMentionBadges, pickMention, unstageMention, openFilterModal, clearKnownUsers,
 });
 

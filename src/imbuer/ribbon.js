@@ -2633,7 +2633,7 @@ function showBackstagePage(page) {
         html = `<h1>${page === 'home' ? greet + '!' : 'New'}</h1><div class="tpl-row">${blank}${tplCards}</div>`;
         if (page === 'home') {
             const s = book.sheets.reduce((n, x) => n + Object.keys(x.data).length, 0);
-            html += `<h2>This workbook</h2><div class="bs-card"><img src="favicon.svg" alt=""><div><b>${escapeHtml(book.name)}</b><span>${book.sheets.length} sheet${book.sheets.length > 1 ? 's' : ''} · ${s} filled cell${s === 1 ? '' : 's'} · saves automatically in this browser!</span></div></div>`;
+            html += `<h2>This workbook</h2><div class="bs-card"><img src="favicon-96.png" alt=""><div><b>${escapeHtml(book.name)}</b><span>${book.sheets.length} sheet${book.sheets.length > 1 ? 's' : ''} · ${s} filled cell${s === 1 ? '' : 's'} · saves automatically in this browser!</span></div></div>`;
         }
     } else if (page === 'open') {
         html = `<h1>Open</h1><div class="bs-actions"><button class="bs-big" data-act="browse">${ico('folder')}<b>Browse…</b><span>Open an Imbuer .ks workbook (old and new), or a CSV/TSV file as a new sheet!</span></button></div><p class="bs-note">Tip: you can also drag a .ks or .csv file anywhere onto Imbuer!</p>`;
@@ -2666,7 +2666,7 @@ function showBackstagePage(page) {
             ${opt('showFormulas', 'Show Formulas', 'Cells show formulas instead of results!')}
         </div><h2>Danger zone</h2><button class="bs-danger" data-act="reset">${ico('trash')} Erase this workbook</button>`;
     } else if (page === 'about') {
-        html = `<h1>About Imbuer</h1><div class="bs-about"><img src="favicon.svg" alt=""><div><b>Imbuer</b><span>Radii Office's spreadsheet, now with ${FormulaEngine.functionList().length} functions, charts, sparklines, conditional formatting, filters, multiple sheets and Keydown styles!</span><span>Formulas run in a TypeScript engine (with a silent Lua cross-check)!</span></div></div>`;
+        html = `<h1>About Imbuer</h1><div class="bs-about"><img src="favicon-96.png" alt=""><div><b>Imbuer</b><span>Radii Office's spreadsheet, now with ${FormulaEngine.functionList().length} functions, charts, sparklines, conditional formatting, filters, multiple sheets and Keydown styles!</span><span>Formulas run in a TypeScript engine (with a silent Lua cross-check)!</span></div></div>`;
     }
     body.innerHTML = html;
     restartAnim(body, 'panel-in');

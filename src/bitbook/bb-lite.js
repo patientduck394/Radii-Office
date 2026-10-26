@@ -7,7 +7,7 @@
 (function () {
     'use strict';
     if (typeof window.bbToggleChip === 'function') return;
-    const SRC = window.BB_SYNTH_URL || 'abyssbox_synth.min.js?v=20261105';
+    const SRC = window.BB_SYNTH_URL || 'abyssbox_synth.min.js?v=20261118';
     let lib = null, loading = null, synth = null, owner = null, token = 0;
 
     function loadSynth() {

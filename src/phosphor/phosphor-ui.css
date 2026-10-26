@@ -1,0 +1,254 @@
+/* =====================================================================
+   Phosphor's new look! A calm night-glass layout with phosphor-green glow:
+   avatars on every message, a people panel on the right, call buttons in
+   the header and a video stage for WebRTC calls. Loaded after styles.css.
+   ===================================================================== */
+:root {
+    --ph-bg: #050b14;
+    --ph-panel: rgba(13, 25, 40, 0.78);
+    --ph-panel-2: rgba(19, 36, 56, 0.85);
+    --ph-line: rgba(61, 255, 155, 0.18);
+    --ph-glow: #3dff9b;
+    --ph-ink: #e6fff3;
+    --ph-dim: #8fb8a6;
+    --ph-me: rgba(61, 255, 155, 0.09);
+}
+body {
+    background:
+        radial-gradient(900px 500px at 12% -10%, rgba(61, 255, 155, 0.16), transparent 60%),
+        radial-gradient(700px 500px at 110% 110%, rgba(56, 189, 248, 0.14), transparent 60%),
+        var(--ph-bg) !important;
+    color: var(--ph-ink);
+}
+
+/* ---------- Sidebar ---------- */
+.aero-sidebar {
+    background: var(--ph-panel) !important;
+    border-right: 1px solid var(--ph-line) !important;
+    box-shadow: none !important;
+    width: 250px !important;
+    min-width: 250px !important;
+}
+.sidebar-brand h2 { letter-spacing: 0.02em; text-shadow: 0 0 18px rgba(61, 255, 155, 0.75) !important; }
+.section-label { color: var(--ph-dim) !important; letter-spacing: 0.08em; font-size: 10px !important; }
+.space-btn {
+    border-radius: 12px !important;
+    background: transparent !important;
+    border: 1px solid transparent !important;
+    color: var(--ph-ink) !important;
+    text-align: left;
+}
+.space-btn:hover { background: rgba(255, 255, 255, 0.05) !important; border-color: var(--ph-line) !important; }
+.space-btn.active {
+    background: linear-gradient(90deg, rgba(61, 255, 155, 0.18), rgba(61, 255, 155, 0.04)) !important;
+    border-color: rgba(61, 255, 155, 0.45) !important;
+    box-shadow: inset 3px 0 0 var(--ph-glow) !important;
+}
+
+/* ---------- Chat area: messages + a people panel ---------- */
+.workspace-viewport-wrapper { padding: 14px !important; }
+.chat-view {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 230px;
+    /* fixed rows (head, banner, stage, members, messages, hint, composer) so hidden pieces never shift the list! */
+    grid-template-rows: auto auto auto auto minmax(0, 1fr) auto auto;
+    column-gap: 10px;
+    row-gap: 0;
+}
+.chat-view[style*="display: none"] { display: none !important; }
+.chat-head { grid-column: 1 / -1; grid-row: 1; }
+#call-banner { grid-column: 1; grid-row: 2; margin-top: 10px; }
+#call-stage { grid-column: 1; grid-row: 3; margin-top: 10px; }
+.members-bar { grid-column: 1; grid-row: 4; }
+.messages { grid-column: 1; grid-row: 5; margin-top: 10px; min-height: 0; }
+.kd-hint { grid-column: 1; grid-row: 6; margin-top: 6px; }
+.composer-anchor { grid-column: 1; grid-row: 7; margin-top: 6px; }
+.member-panel { grid-column: 2; grid-row: 2 / -1; margin-top: 10px; }
+.members-bar { display: none !important; }
+@media (max-width: 860px) {
+    .chat-view { grid-template-columns: minmax(0, 1fr); }
+    .member-panel { display: none; }
+}
+.chat-head {
+    background: var(--ph-panel) !important;
+    border: 1px solid var(--ph-line) !important;
+    border-radius: 14px !important;
+    backdrop-filter: blur(14px);
+}
+.chat-name { font-size: 16px !important; }
+.messages {
+    background: var(--ph-panel) !important;
+    border: 1px solid var(--ph-line) !important;
+    border-radius: 14px !important;
+    padding: 14px 16px !important;
+    gap: 4px !important;
+}
+.msg:not(.sys):not(.warn) {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    grid-template-areas: "av who when" "av body body";
+    column-gap: 10px;
+    align-items: baseline;
+    padding: 6px 8px;
+    border-radius: 10px;
+}
+.msg:not(.sys):not(.warn):hover { background: rgba(255, 255, 255, 0.035); }
+.msg.me { background: var(--ph-me); }
+.msg > br { display: none; }
+.msg .av { grid-area: av; align-self: start; }
+.msg .who { grid-area: who; color: #7dffc0 !important; }
+.msg .when { grid-area: when; margin-left: 0; opacity: 0.6; font-size: 11px; }
+.msg > .msg-body, .msg > .file-slot { grid-area: body; min-width: 0; }
+.msg.me .who { color: #fde68a !important; }
+.msg.sys { text-align: center; opacity: 0.75; font-size: 12px; }
+.av {
+    width: 34px; height: 34px; border-radius: 50%;
+    display: inline-grid; place-items: center;
+    font-weight: 900; font-size: 14px; color: #fff;
+    background: hsl(var(--h, 150) 65% 42%);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.35), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.member-panel {
+    background: var(--ph-panel);
+    border: 1px solid var(--ph-line);
+    border-radius: 14px;
+    padding: 12px;
+    overflow-y: auto;
+    min-height: 0;
+}
+.mp-head { font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--ph-dim); margin-bottom: 8px; font-weight: 800; }
+.mp-row { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 9px; font-size: 13px; }
+.mp-row .av { width: 26px; height: 26px; font-size: 11px; }
+.mp-row.calling { background: rgba(61, 255, 155, 0.08); }
+.mp-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mp-call { font-size: 12px; }
+
+/* ---------- Composer ---------- */
+.send-row {
+    background: var(--ph-panel-2);
+    border: 1px solid var(--ph-line);
+    border-radius: 999px;
+    padding: 6px 6px 6px 10px;
+    align-items: center;
+}
+.send-row #send-input { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+.send-row .go-btn { border-radius: 999px !important; padding: 9px 18px !important; }
+.kd-hint { opacity: 0.6; font-size: 11px; }
+
+/* ---------- Call buttons + banner ---------- */
+.call-btns { display: inline-flex; gap: 6px; }
+.call-btns[hidden] { display: none; }
+.call-btn {
+    font: inherit; font-size: 12px; font-weight: 800;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 6px 12px; border-radius: 999px; cursor: pointer;
+    color: var(--ph-ink); background: rgba(255, 255, 255, 0.06); border: 1px solid var(--ph-line);
+}
+.call-btn:hover { border-color: var(--ph-glow); }
+.call-btn.on { background: linear-gradient(180deg, #3dff9b, #0ea56b); color: #02150c; border-color: transparent; }
+.call-banner {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 9px 14px; border-radius: 12px; font-size: 13px;
+    background: linear-gradient(90deg, rgba(61, 255, 155, 0.16), rgba(56, 189, 248, 0.1));
+    border: 1px solid rgba(61, 255, 155, 0.4);
+}
+.call-banner[hidden] { display: none; }
+.call-banner .who { color: var(--ph-dim); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.call-banner button { font: inherit; font-weight: 800; font-size: 12px; padding: 5px 12px; border-radius: 999px; border: 0; cursor: pointer; background: #3dff9b; color: #02150c; }
+.call-banner button + button { background: #38bdf8; }
+.pulse { width: 10px; height: 10px; border-radius: 50%; background: #3dff9b; box-shadow: 0 0 0 0 rgba(61, 255, 155, 0.7); animation: phPulse 1.6s infinite; }
+@keyframes phPulse { 70% { box-shadow: 0 0 0 10px rgba(61, 255, 155, 0); } 100% { box-shadow: 0 0 0 0 rgba(61, 255, 155, 0); } }
+
+/* ---------- Call stage ---------- */
+.call-stage {
+    background: rgba(2, 8, 15, 0.85);
+    border: 1px solid var(--ph-line);
+    border-radius: 16px;
+    padding: 10px;
+    display: flex; flex-direction: column; gap: 10px;
+}
+.call-stage[hidden] { display: none; }
+.call-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); max-height: 46vh; overflow: auto; }
+.call-grid[data-count="1"] { grid-template-columns: minmax(0, 420px); justify-content: center; }
+.call-tile {
+    position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden;
+    background: radial-gradient(circle at 50% 40%, #13243a, #050b14);
+    outline: 2px solid transparent; transition: outline-color 0.15s, box-shadow 0.15s;
+}
+.call-tile video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; }
+.call-tile.me video { transform: scaleX(-1); }
+.call-tile.has-video video { opacity: 1; }
+.call-avatar {
+    position: absolute; left: 50%; top: 46%; transform: translate(-50%, -50%);
+    width: 64px; height: 64px; border-radius: 50%; display: grid; place-items: center;
+    font-size: 26px; font-weight: 900; color: #fff; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+}
+.call-tile.has-video .call-avatar { display: none; }
+.call-tile.talking { outline-color: #3dff9b; box-shadow: 0 0 18px rgba(61, 255, 155, 0.55); }
+.call-tile.connecting { opacity: 0.7; }
+.call-name {
+    position: absolute; left: 8px; bottom: 8px; max-width: calc(100% - 16px);
+    padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 800;
+    background: rgba(0, 0, 0, 0.55); color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.call-controls { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.ctl {
+    font: inherit; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 999px; cursor: pointer;
+    background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid rgba(255, 255, 255, 0.15);
+}
+.ctl:hover { background: rgba(255, 255, 255, 0.14); }
+.ctl.off { background: rgba(239, 68, 68, 0.2); border-color: rgba(239, 68, 68, 0.5); }
+.ctl[data-ctl="screen"].off, .ctl[data-ctl="cam"].off { background: rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.15); }
+.ctl.leave { background: linear-gradient(180deg, #f87171, #dc2626); border-color: transparent; }
+
+/* ---------- Toast ---------- */
+.ph-toast {
+    position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+    padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 700; z-index: 9999;
+    background: rgba(5, 11, 20, 0.92); color: #e6fff3; border: 1px solid rgba(61, 255, 155, 0.45);
+    transition: opacity 0.2s, transform 0.2s;
+}
+.ph-toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+/* ---------- Light mode ---------- */
+body.light-theme {
+    --ph-bg: #eefbf4; --ph-panel: rgba(255, 255, 255, 0.82); --ph-panel-2: rgba(255, 255, 255, 0.95);
+    --ph-line: rgba(5, 150, 105, 0.22); --ph-ink: #02241a; --ph-dim: #047857; --ph-me: rgba(16, 185, 129, 0.09);
+}
+body.light-theme .msg .who { color: #047857 !important; }
+body.light-theme .msg.me .who { color: #b45309 !important; }
+body.light-theme .call-btn { color: #02241a; }
+
+/* ---------- Space networks: the picker, sidebar tags and header chip ---------- */
+.net-pick { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.net-pick.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.net-opt {
+    font: inherit; text-align: left; cursor: pointer; padding: 9px 10px; border-radius: 12px;
+    display: flex; flex-direction: column; gap: 2px;
+    background: rgba(255, 255, 255, 0.05); color: var(--ph-ink); border: 1px solid var(--ph-line);
+}
+.net-opt b { font-size: 13px; }
+.net-opt span { font-size: 11px; color: var(--ph-dim); }
+.net-opt:hover { border-color: var(--ph-glow); }
+.net-opt.on { background: linear-gradient(180deg, rgba(61, 255, 155, 0.22), rgba(61, 255, 155, 0.07)); border-color: var(--ph-glow); box-shadow: 0 0 12px rgba(61, 255, 155, 0.25); }
+.net-hint { font-size: 11px; color: var(--ph-dim); margin-top: 6px; }
+.rmq-fields { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.rmq-fields[hidden] { display: none; }
+.rmq-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.rmq-fields input { width: 100%; box-sizing: border-box; }
+.net-tag { font-style: normal; font-size: 9px; font-weight: 800; padding: 1px 6px; border-radius: 999px; margin-left: 4px; vertical-align: 1px; background: rgba(255, 255, 255, 0.08); }
+.net-tag.net-emqx { color: #7dd3fc; }
+.net-tag.net-rabbitmq { color: #fdba74; }
+.net-tag.net-webrtc { color: #c4b5fd; }
+.net-chip {
+    font: inherit; font-size: 11px; font-weight: 800; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px; border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06); color: var(--ph-ink); border: 1px solid var(--ph-line);
+}
+.net-chip[hidden] { display: none; }
+.net-chip i { width: 7px; height: 7px; border-radius: 50%; background: #f59e0b; }
+.net-chip.ok i { background: #3dff9b; box-shadow: 0 0 6px #3dff9b; }
+.net-chip.bad i { background: #f87171; }
+.net-chip.net-webrtc.ok i { background: #c4b5fd; box-shadow: 0 0 6px #c4b5fd; }
