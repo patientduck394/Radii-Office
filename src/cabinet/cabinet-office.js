@@ -69,7 +69,7 @@
                     { label: 'Open a drawer file', hint: 'A .kc, or a legacy .drawer!', icon: 'folder', run: function () { OS.closeBackstage(); openDrawerFile(); } }
                 ]));
                 const s = stats();
-                b.insertAdjacentHTML('beforeend', '<h2>This drawer</h2><div class="bb-bs-doc cb-bs-doc"><img src="favicon.svg" alt=""><div><b>' + OS.esc(s.name) + '</b><span>' + OS.esc(s.files) + ' · ' + OS.esc(s.size) + ' · saved in this browser!</span></div></div>');
+                b.insertAdjacentHTML('beforeend', '<h2>This drawer</h2><div class="bb-bs-doc cb-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc(s.name) + '</b><span>' + OS.esc(s.files) + ' · ' + OS.esc(s.size) + ' · saved in this browser!</span></div></div>');
             }
         },
         { id: 'drawers', label: 'Drawers', icon: 'folder', render: drawersPage },
@@ -150,7 +150,7 @@
         officeName: 'Explorer',
         kind: 'onenote',
         key: 'cabinet',
-        icon: 'favicon.svg',
+        icon: 'favicon-96.png',
         officeHint: 'A coral ribbon, a drawer list, a File screen and a status bar, like a file explorer!',
         classicHint: 'The original Cabinet: coral glass sidebar and gel buttons!',
         classicToast: 'Cabinet Classic: coral glass and gel!',
