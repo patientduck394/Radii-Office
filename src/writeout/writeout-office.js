@@ -726,7 +726,7 @@
                 ] }] },
                 { label: 'Styles', items: [
                     { gallery: true, items: styleGallery, noIndex: false },
-                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'Keydown Styles: the styles pane with every Keydown chip!', run: function () { togglePane('style'); }, checked: function () { return prefs.pane; } }
+                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'Every Keydown style, by category: pick one to style the selection!', menu: function (b) { return window.kdDoc ? kdDoc.styleMenu(OS, b, function () { togglePane('style'); }) : null; } }
                 ] },
                 { label: 'Editing', items: [{ stack: [
                     { sm: true, icon: 'search', label: 'Find', kbd: '⌘F', run: function () { findDialog(false); } },

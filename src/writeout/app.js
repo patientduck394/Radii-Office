@@ -188,9 +188,11 @@ if (canvas) {
             // --- FOOTNOTES: "[^1]: text" + Enter becomes the definition block! ---
             if (!inField && kdTryFootnoteEnter(e, selection, range)) return;
             // --- ENTER AT THE END OF A LINE: every Keydown tag on the line turns into its formatting, right where it is! ---
-            if (!inField && window.kdDoc && kdDoc.formatLine(canvas)) {
+            const kdLineDone = !inField && window.kdDoc ? kdDoc.formatLine(canvas) : false;
+            if (kdLineDone) {
                 e.preventDefault();
-                try { if (typeof window.kdSplitBlock === 'function') window.kdSplitBlock(); else document.execCommand('insertParagraph'); } catch (err) {}
+                // ('line' means a whole block was made and a fresh line already waits below it)
+                if (kdLineDone !== 'line') { try { if (typeof window.kdSplitBlock === 'function') window.kdSplitBlock(); else document.execCommand('insertParagraph'); } catch (err) {} }
                 if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
                 return;
             }
@@ -284,6 +286,8 @@ if (canvas) {
         // Unifying all line tracking under your exact variable name match
         const currentLineText = rawNodeTextValue.substring(0, currentCaretOffset);
         
+        // Keydown never formats on Space: tags, headings, bullets, math and blocks format on Enter (or with Re-format)!
+        if (e.key === ' ') return;
         if (e.key === ' ') {
             // --- Double Colon Visual Component Injections ---
             // --- QUICK BLOCKS: "> " becomes a blockquote, "* " a bulleted list! ---
@@ -6229,6 +6233,12 @@ function fmtExitRemoveSelectedStyles() {
 }
 function fmtExitFormattingNow() {
     if (typeof canvas === 'undefined' || !canvas) return false;
+    // Only the selection (or the caret's spot) leaves its formatting: the chip is split there, never wiped out!
+    if (window.kdDoc && kdDoc.exitFormatting) {
+        let done = false;
+        try { done = kdDoc.exitFormatting(canvas); } catch (err) { done = false; }
+        if (done) { playAeroClickSound(450, 0.08); if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); return true; }
+    }
     const selection = window.getSelection();
     if (!selection.rangeCount) return false;
     // Text selected? Strip its styles instead of hopping!

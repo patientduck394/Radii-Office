@@ -2176,3 +2176,9 @@ body.format-collapsed #format-toggle-zone svg {
 .hl-chip-duo .fmt-hl-btn.hl-chevron {
     width: 28px;
 }
+
+/* Printing: no scrollbars on paper (the custom gel scrollbar used to print along with the page)! */
+@media print {
+    ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
+    html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
+}

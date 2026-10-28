@@ -544,7 +544,7 @@
                 { label: 'Styles', items: [{ gallery: true, cls: 'bb-style-gal', items: styleGallery }] },
                 { label: 'Tags', items: [
                     { gallery: true, cls: 'bb-tag-gal', items: tagGallery },
-                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'The styles pane with every Keydown chip!', run: function () { togglePane('style'); }, checked: function () { return prefs.pane; } }
+                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'Every Keydown style, by category: pick one to style the selection!', menu: function (b) { return window.kdDoc ? kdDoc.styleMenu(OS, b, function () { togglePane('style'); }) : null; } }
                 ] },
                 { label: 'Find', items: [{ stack: [
                     { sm: true, icon: 'search', label: 'Find', kbd: '⌘F', run: function () { findDialog(false); } },

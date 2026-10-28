@@ -1,10 +1,10 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261131d';
+var BITBOOK_CACHE = 'bitbook-shell-v20261131e';
 var BITBOOK_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261131d',
-  'style.css?v=20261123',
+  'app.js?v=20261131e',
+  'style.css?v=20261131e',
   'keydown.css?v=20261131d',
   'marketplace.js?v=20261009',
   'marketplace.css?v=20261007',
@@ -16,7 +16,7 @@ var BITBOOK_SHELL = [
   'image-resize.js?v=20261040',
   'office-shell.js?v=20261128',
   'office-shell.css?v=20261019',
-  'bitbook-office.js?v=20261131',
+  'bitbook-office.js?v=20261131e',
   'bitbook-office.css?v=20261020',
   'radii-images.js?v=20261019',
   'images-glue.js?v=20261019',
@@ -26,7 +26,7 @@ var BITBOOK_SHELL = [
   'collab-kd.js?v=20261021',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261131d',
+  'keydown-doc.js?v=20261131e',
   'favicon.svg',
   'favicon-96.png',
   'apple-touch-icon.png',

@@ -425,6 +425,22 @@
         rest.setStart(r.startContainer, r.startOffset);
         rest.setEndAfter(nodes[nodes.length - 1]);
         if (rest.toString().replace(/[\s\u200B\u00A0]/g, '') !== '') return false;
+        // the line itself first: "# Title", "* item", "> quote", ::block{...}, $$math$$... becomes what it says
+        let lineEl2 = null;
+        const runText = nodes.map((n) => n.textContent).join('').replace(/\u200B/g, '');
+        if (/^\s*(#{1,4}\s+\S|\*\s+\S|>\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
+            if (block === canvas) {
+                // text sitting right in the canvas gets a line of its own first
+                const d = document.createElement('div');
+                nodes[0].before(d);
+                nodes.forEach((n) => d.appendChild(n));
+                block = d;
+            }
+            if (/^(DIV|P)$/.test(block.tagName)) {
+                lineEl2 = lineToBlock(block);
+                if (lineEl2) { block = lineEl2; nodes = Array.from(lineEl2.childNodes); }
+            }
+        }
         const texts = [];
         nodes.forEach((n) => {
             if (n.nodeType === 3) texts.push(n);
@@ -444,14 +460,28 @@
             t.parentNode.replaceChild(tpl.content, t);
             changed = true;
         });
-        if (!changed) return false;
-        // the caret goes after the line's last piece (outside any new chip), ready for the new line
-        const lastNode = block === canvas ? nodes.filter((n) => n.isConnected).pop() || null : block.lastChild;
-        const holder = document.createTextNode('');
+        if (!changed && !lineEl2) return false;
+        // the caret goes after the line's last piece (outside any new chip), ready for the new line;
+        // a whole block (a panel, a picture, centered math) gets the caret right after it
+        const whole = lineEl2 && (lineEl2.matches(BLOCK_SEL) || lineEl2.matches('.kd-math, figure, .kd-tpl') || lineEl2.querySelector('.kd-footnote-def'));
+        if (whole) {
+            // a whole block gets a fresh line right below it, with the caret in it (the Enter is already done)
+            const next = document.createElement('div');
+            if (canvas.getAttribute('contenteditable') === 'false') next.setAttribute('contenteditable', 'true');
+            next.appendChild(document.createTextNode('\u200B'));
+            lineEl2.after(next);
+            const c2 = document.createRange();
+            c2.setStart(next.firstChild, 1); c2.collapse(true);
+            sel.removeAllRanges(); sel.addRange(c2);
+            try { next.focus({ preventScroll: true }); sel.removeAllRanges(); sel.addRange(c2); } catch (e) {}
+            return 'line';
+        }
+        const lastNode = whole ? lineEl2 : block === canvas ? nodes.filter((n) => n.isConnected).pop() || null : block.lastChild;
+        const holder = document.createTextNode(lastNode && lastNode.nodeType === 1 ? '\u200B' : '');
         if (lastNode && lastNode.parentNode) lastNode.parentNode.insertBefore(holder, lastNode.nextSibling);
         else block.appendChild(holder);
         const caret = document.createRange();
-        caret.setStart(holder, 0);
+        caret.setStart(holder, holder.nodeValue.length);
         caret.collapse(true);
         sel.removeAllRanges();
         sel.addRange(caret);
@@ -514,8 +544,19 @@
     // Un-format turns every piece of Keydown formatting back into the tags that make it, so mistakes are easy to see.
     // Anything that isn't Keydown (pictures, tables, colors from the toolbar) stays exactly as it is!
     const INLINE_KD = 'mark.an-hl, strong, b, em, i, code, .kd-math, a.kd-footnote-ref, a.kd-link, .kd-tpl, span[class]';
-    function isKeydownInline(el) {
-        if (el.closest('pre')) return false;
+    // Skills and other app pieces are never touched: BeepBox chips, Bitbook tags, dice, file chips... Anything locked
+    // against editing (except plain lists, tables and Keydown's own blocks), or carrying its own data, is left alone!
+    const KD_DATA = /^data-(kd|tex|display|label|text)/;
+    function isProtected(el, root) {
+        for (let n = el; n && n !== root && n.nodeType === 1; n = n.parentElement) {
+            if (Array.from(n.attributes).some((a) => a.name.startsWith('data-') && !KD_DATA.test(a.name))) return true;
+            if (n.getAttribute('contenteditable') === 'false' && !/^(UL|OL|TABLE|TBODY|THEAD|TR)$/.test(n.tagName) &&
+                !n.classList.contains('kd-math') && !n.classList.contains('kd-tpl') && !n.matches(BLOCK_SEL) && !n.hasAttribute('data-kd-media')) return true;
+        }
+        return false;
+    }
+    function isKeydownInline(el, root) {
+        if (el.closest('pre') || isProtected(el, root)) return false;
         if (/^(STRONG|B|EM|I|CODE)$/.test(el.tagName) || el.classList.contains('kd-math') || el.classList.contains('kd-tpl')) return true;
         if (el.tagName === 'MARK') return el.classList.contains('an-hl');
         if (el.tagName === 'A') return el.classList.contains('kd-footnote-ref') || el.hasAttribute('data-kd-link');
@@ -533,13 +574,13 @@
         root.querySelectorAll('a.kd-footnote-back').forEach((a) => a.remove());
         // blocks become ::name{their text} lines (a live sketchpad stays as it is)
         Array.from(root.querySelectorAll(BLOCK_SEL)).forEach((el) => {
-            if (!root.contains(el) || (el.parentElement && el.parentElement.closest(BLOCK_SEL)) || el.querySelector('canvas')) return;
+            if (!root.contains(el) || (el.parentElement && el.parentElement.closest(BLOCK_SEL)) || el.querySelector('canvas') || isProtected(el.parentElement, root)) return;
             const bk = blockOf(el);
             if (bk) { el.replaceWith(lineEl(blockLine(bk), el.closest('[contenteditable]') || el)); n++; }
         });
         // whole lines first: headings, bullets, quotes, footnote texts, centered math, notices and media
         root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
-            if (!root.contains(h) || h.closest('pre')) return;
+            if (!root.contains(h) || h.closest('pre') || isProtected(h, root)) return;
             const level = h.classList.contains('mega-header') ? 4 : Math.min(3, +h.tagName[1]);
             h.replaceWith(lineEl('#'.repeat(level) + ' ' + kidsText(h).replace(/\n+/g, ' ').trim(), h)); n++;
         });
@@ -554,11 +595,11 @@
             return out;
         };
         root.querySelectorAll('ul.bulleted-list').forEach((ul) => {
-            if (!root.contains(ul)) return;
+            if (!root.contains(ul) || isProtected(ul.parentElement, root)) return;
             const lines = listLines(ul);
             ul.replaceWith(...lines); n += lines.length;
         });
-        root.querySelectorAll('blockquote.blockquote-list').forEach((q) => { if (root.contains(q)) { q.replaceWith(lineEl('> ' + kidsText(q).replace(/[\n​]+/g, ' ').trim(), q)); n++; } });
+        root.querySelectorAll('blockquote.blockquote-list').forEach((q) => { if (root.contains(q) && !isProtected(q, root)) { q.replaceWith(lineEl('> ' + kidsText(q).replace(/[\n​]+/g, ' ').trim(), q)); n++; } });
         root.querySelectorAll('.kd-footnote-def').forEach((d) => {
             if (!root.contains(d)) return;
             const tag = d.querySelector('.kd-footnote-tag'), text = d.querySelector('.kd-footnote-text');
@@ -577,7 +618,7 @@
         while (again) {
             again = false;
             Array.from(root.querySelectorAll(INLINE_KD)).forEach((el) => {
-                if (!root.contains(el) || !isKeydownInline(el)) return;
+                if (!root.contains(el) || !isKeydownInline(el, root)) return;
                 el.replaceWith(document.createTextNode(inlineText(el)));
                 n++; again = true;
             });
@@ -586,66 +627,72 @@
         return n;
     }
 
+    // One line becomes what it says: "# " a heading, "* " a bullet, "> " a quote, ::block{...}, $$math$$, a footnote,
+    // a {{notice}} or a picture. Returns the new element (null when it is plain text). Enter and Re-format both use it!
+    function lineToBlock(b) {
+        const text = b.textContent.replace(/​/g, '');
+        let m;
+        const make = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; if (b.hasAttribute('contenteditable')) el.setAttribute('contenteditable', 'true'); return el; };
+        // move the line's own nodes in, dropping the "# " / "* " / "> " in front
+        const takeRest = (el, prefixLen) => {
+            let skip = prefixLen;
+            Array.from(b.childNodes).forEach((c) => {
+                if (skip > 0 && c.nodeType === 3) {
+                    const v = c.nodeValue.replace(/\u200B/g, '');
+                    if (v.length <= skip) { skip -= v.length; return; }
+                    c.nodeValue = v.slice(skip); skip = 0;
+                }
+                el.appendChild(c);
+            });
+            return el;
+        };
+        const lead = text.length - text.replace(/^\s+/, '').length;
+        if ((m = /^\s*(#{1,4})\s+\S/.exec(text))) {
+            const lvl = m[1].length;
+            const h = takeRest(make(lvl === 4 ? 'h1' : 'h' + lvl, lvl === 4 ? 'mega-header' : 'header-' + lvl), lead + lvl + 1);
+            b.replaceWith(h);
+            return h;
+        }
+        if (/^\s*\*\s+\S/.test(text)) {
+            const li = takeRest(make('li'), lead + 2);
+            const prev = b.previousElementSibling;
+            if (prev && prev.tagName === 'UL' && prev.classList.contains('bulleted-list')) { prev.appendChild(li); b.remove(); }
+            else { const ul = document.createElement('ul'); ul.className = 'bulleted-list'; ul.appendChild(li); b.replaceWith(ul); }
+            return li;
+        }
+        if (/^\s*>\s+\S/.test(text)) { const q = takeRest(make('blockquote', 'blockquote-list'), lead + 2); b.replaceWith(q); return q; }
+        if ((m = /^\s*\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(text)) && !b.children.length) {
+            const d = document.createElement('div');
+            d.innerHTML = '<div class="kd-footnote-def" id="fn-' + slug(m[1]) + '"><span class="kd-footnote-tag">' + esc(m[1]) + '</span> <span class="kd-footnote-text">' + inline(m[2], { notes: {} }) + '</span></div>';
+            if (b.hasAttribute('contenteditable')) d.setAttribute('contenteditable', 'true');
+            b.replaceWith(d);
+            return d;
+        }
+        let html = null;
+        if (!b.children.length && /^\s*::[a-z]+(\{[^}]*\})?\s*$/.test(text)) html = blockFromLine(text);
+        else if (!b.children.length && (/^\s*\$\$([\s\S]+)\$\$\s*$/.test(text) || ((m = /^\s*\{\{([^{}]+)\}\}\s*$/.exec(text)) && !INLINE_TAGS[tplName(m[1])]) || /^\s*!\[([^\]]*)\]\(([^)\s]+)\)\s*$/.test(text))) html = textToHtml(text.trim(), { notes: {} });
+        if (html) {
+            const tpl = document.createElement('template');
+            tpl.innerHTML = html;
+            const first = tpl.content.firstElementChild;
+            b.replaceWith(tpl.content);
+            return first;
+        }
+        return null;
+    }
+
     // Re-format: format the whole document again, then check it for tags that could not be formatted
     const LEFTOVER = /!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
     function reformat(root) {
         let n = 0;
-        const blocks = Array.from(root.querySelectorAll('div, p')).filter((b) => !b.closest('pre, code, figure, [contenteditable="false"] [contenteditable="false"], .kd-math, .kd-tpl') &&
+        const blocks = Array.from(root.querySelectorAll('div, p')).filter((b) => !b.closest('pre, code, figure, [contenteditable="false"] [contenteditable="false"], .kd-math, .kd-tpl') && !isProtected(b, root) && !b.closest(BLOCK_SEL) &&
             !Array.from(b.children).some((c) => LINE_BLOCK.test(c.tagName) || c.tagName === 'BR' && b.childNodes.length > 1 && c !== b.lastChild));
-        let list = null;
-        blocks.forEach((b) => {
-            const text = b.textContent.replace(/​/g, '');
-            let m;
-            const make = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; if (b.hasAttribute('contenteditable')) el.setAttribute('contenteditable', 'true'); return el; };
-            const takeRest = (el, prefixLen) => {
-                // move the line's own nodes in, dropping the "# " / "* " / "> " in front
-                let skip = prefixLen;
-                Array.from(b.childNodes).forEach((c) => {
-                    if (skip > 0 && c.nodeType === 3) {
-                        const v = c.nodeValue.replace(/^​+/, '');
-                        if (v.length <= skip) { skip -= v.length; return; }
-                        c.nodeValue = v.slice(skip); skip = 0;
-                    }
-                    el.appendChild(c);
-                });
-                return el;
-            };
-            if ((m = /^\s*(#{1,4})\s+\S/.exec(text))) {
-                const lvl = m[1].length;
-                b.replaceWith(takeRest(make(lvl === 4 ? 'h1' : 'h' + lvl, lvl === 4 ? 'mega-header' : 'header-' + lvl), text.indexOf(m[1]) + m[1].length + 1));
-                list = null; n++; return;
-            }
-            if ((m = /^\s*\*\s+\S/.exec(text))) {
-                const li = takeRest(make('li'), text.indexOf('*') + 2);
-                const prev = b.previousElementSibling;
-                if (list && prev === list) { list.appendChild(li); b.remove(); }
-                else { list = document.createElement('ul'); list.className = 'bulleted-list'; list.appendChild(li); b.replaceWith(list); }
-                n++; return;
-            }
-            list = null;
-            if ((m = /^\s*>\s+\S/.exec(text))) { b.replaceWith(takeRest(make('blockquote', 'blockquote-list'), text.indexOf('>') + 2)); n++; return; }
-            if ((m = /^\s*\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(text)) && !b.children.length) {
-                const d = document.createElement('div');
-                d.innerHTML = '<div class="kd-footnote-def" id="fn-' + slug(m[1]) + '"><span class="kd-footnote-tag">' + esc(m[1]) + '</span> <span class="kd-footnote-text">' + inline(m[2], { notes: {} }) + '</span></div>';
-                if (b.hasAttribute('contenteditable')) d.setAttribute('contenteditable', 'true');
-                b.replaceWith(d); n++; return;
-            }
-            if (!b.children.length && /^\s*::[a-z]+(\{[^}]*\})?\s*$/.test(text) && blockFromLine(text)) {
-                const tpl = document.createElement('template');
-                tpl.innerHTML = blockFromLine(text);
-                b.replaceWith(tpl.content); n++; return;
-            }
-            if (!b.children.length && ((m = /^\s*\$\$([\s\S]+)\$\$\s*$/.exec(text)) || (m = /^\s*\{\{([^{}]+)\}\}\s*$/.exec(text)) && !INLINE_TAGS[tplName(m[1])] || (m = /^\s*!\[([^\]]*)\]\(([^)\s]+)\)\s*$/.exec(text)))) {
-                const tpl = document.createElement('template');
-                tpl.innerHTML = textToHtml(text.trim(), { notes: {} });
-                b.replaceWith(tpl.content); n++; return;
-            }
-        });
+        blocks.forEach((b) => { if (lineToBlock(b)) n++; });
         // every text piece left: chips, highlights, bold, math, footnotes...
         const SKIP_RE = 'code, pre, a, .kd-math, .kd-tpl, figure, [contenteditable="false"] [contenteditable="false"]';
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
         const texts = [];
-        for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!(t.parentElement && t.parentElement.closest(SKIP_RE))) texts.push(t);
+        for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!(t.parentElement && (t.parentElement.closest(SKIP_RE) || isProtected(t.parentElement, root)))) texts.push(t);
         texts.forEach((t) => {
             const text = t.nodeValue;
             if (!/[#*=~`&$[{!]/.test(text)) return;
@@ -663,7 +710,7 @@
         const problems = [];
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
         for (let t = walker.nextNode(); t; t = walker.nextNode()) {
-            if (t.parentElement && t.parentElement.closest('code, pre, .kd-math')) continue;
+            if (t.parentElement && (t.parentElement.closest('code, pre, .kd-math') || isProtected(t.parentElement, root))) continue;
             const re = new RegExp(LEFTOVER);
             let m;
             while ((m = re.exec(t.nodeValue))) {
@@ -683,15 +730,149 @@
         return problems.map((p) => ({ tag: p.tag, line: p.line }));
     }
 
+    /* ---------- Exit Formatting: only the selected text (or the caret's spot) leaves its formatting ---------- */
+    // The chip is split there, so the parts before and after keep their style, and you keep typing in plain text!
+    const FMT_SEL = 'mark, span[class], span[style], b, strong, i, em, u, s, strike, code, font';
+    function exitFormatting(canvas) {
+        const sel = window.getSelection();
+        if (!canvas || !sel || !sel.rangeCount) return false;
+        const range = sel.getRangeAt(0);
+        if (!canvas.contains(range.commonAncestorContainer)) return false;
+        const lineOf = (n) => { let b = n.nodeType === 1 ? n : n.parentElement; while (b && b !== canvas && !LINE_BLOCK.test(b.tagName)) b = b.parentElement; return b || canvas; };
+        const fmt = (el) => el && el.nodeType === 1 && el.matches(FMT_SEL) && !isProtected(el, canvas) && !el.classList.contains('kd-math') && !el.classList.contains('kd-tpl');
+        const outermost = (node) => {
+            const stop = lineOf(node);
+            let top = null;
+            for (let n = node.parentElement; n && n !== stop && n !== canvas; n = n.parentElement) if (fmt(n)) top = n;
+            return top;
+        };
+        // split the formatting around a marker: everything after it moves into a copy of the chip, and the marker steps out between them
+        const splitAt = (marker) => {
+            const top = outermost(marker);
+            if (!top) return false;
+            const rest = document.createRange();
+            rest.setStartAfter(marker);
+            rest.setEnd(top, top.childNodes.length);
+            const copy = top.cloneNode(false);
+            copy.appendChild(rest.extractContents());
+            top.after(copy);
+            top.after(marker);
+            [top, copy].forEach((el) => { if (!el.textContent.replace(/​/g, '') && !el.querySelector('img, br, [contenteditable="false"]')) el.remove(); });
+            return true;
+        };
+        const mStart = document.createTextNode(''), mEnd = document.createTextNode('');
+        const collapsed = range.collapsed;
+        if (!collapsed) { const e = range.cloneRange(); e.collapse(false); e.insertNode(mEnd); }
+        const st = range.cloneRange(); st.collapse(true); st.insertNode(mStart);
+        let changed = false;
+        if (collapsed) {
+            changed = splitAt(mStart);
+            if (!changed) { mStart.remove(); return false; }
+            // a zero-width space holds the caret outside both halves, so typing is plain
+            const hold = document.createTextNode('​');
+            mStart.replaceWith(hold);
+            const r = document.createRange();
+            r.setStart(hold, 1); r.collapse(true);
+            sel.removeAllRanges(); sel.addRange(r);
+            return true;
+        }
+        changed = splitAt(mEnd) | splitAt(mStart);
+        // now every formatting piece between the markers is fully selected: unwrap them (innermost first)
+        const between = document.createRange();
+        between.setStartAfter(mStart); between.setEndBefore(mEnd);
+        const host = between.commonAncestorContainer.nodeType === 1 ? between.commonAncestorContainer : between.commonAncestorContainer.parentElement;
+        Array.from(host.querySelectorAll(FMT_SEL)).filter((el) => fmt(el) && between.comparePoint(el, 0) === 0 && between.comparePoint(el, el.childNodes.length) === 0)
+            .reverse().forEach((el) => { el.replaceWith(...el.childNodes); changed = true; });
+        const r = document.createRange();
+        r.setStartAfter(mStart); r.setEndBefore(mEnd);
+        sel.removeAllRanges(); sel.addRange(r);
+        const p1 = mStart.parentNode, p2 = mEnd.parentNode;
+        mStart.remove(); mEnd.remove();
+        if (p1) p1.normalize(); if (p2 && p2 !== p1) p2.normalize();
+        return !!changed;
+    }
+
+    /* ---------- The Keydown Styles menu (Writeout and Bitbook's ribbon): every style, by category ---------- */
+    const COLOR_WORD = { r: 'Red', o: 'Orange', gl: 'Gold', y: 'Yellow', l: 'Lime', g: 'Green', tu: 'Turquoise', t: 'Teal', c: 'Cyan', b: 'Blue', pr: 'Purple', pk: 'Pink',
+        w: 'White', fg: 'Fog', sl: 'Slate', bk: 'Black', v: 'Violet', p: 'Pink', mg: 'Magenta', lm: 'Lime', aq: 'Aqua' };
+    const NEEDS_TYPING = /^(applet-|aero-duplex|megachip-circuit-node|dev-chip-hex|av-chip-signal|jr-chip-voice-tag|jr-chip-wax-stamp|jr-progress-capsule|jr-dot-matrix|jr-latch-lock|reflected-text-block|kinetic-wave-text|header-|mega-header|bulleted-list|blockquote-list)/;
+    function styleName(d) {
+        const cls = d[3];
+        const last = cls.split(/\s+/).pop();
+        const color = (m) => m.charAt(0).toUpperCase() + m.slice(1);
+        if (/^an-hl/.test(cls)) return color(cls.split(/\s+/)[1].slice(6));
+        if (/^(gel-bubble-chip|gel-pill-chip|gel-flag-chip)/.test(cls)) return color(last.split('-').pop());
+        if (/^aero-tag-chip/.test(cls)) return COLOR_WORD[last.replace('tag-chip-', '')] || last;
+        if (/^gel-orb/.test(cls)) return COLOR_WORD[last.replace('gel-', '')] || last;
+        const main = cls.split(/\s+/)[0].replace(/^(effect-|megachip-|gel-chip-|jr-chip-|jr-|dev-chip-|av-chip-|aero-)/, '').replace(/-/g, ' ');
+        const variant = cls.split(/\s+/)[1];
+        return color(main) + (variant && variant.split('-').pop() !== main.split(' ').pop() ? ' (' + variant.split('-').pop() + ')' : '');
+    }
+    function styleCategories() {
+        const all = HIGHLIGHTS.concat(TRIGGERS).filter((d) => d[3] && !NEEDS_TYPING.test(d[3]) && d[0] !== '!#A#');
+        const pick = (re) => all.filter((d) => re.test(d[3]));
+        const cats = [
+            ['Highlights', pick(/^an-hl an-hl-\w+$/)], ['Gel Underlines', pick(/an-s-ul$/)], ['Gel Strikes', pick(/an-s-st$/)],
+            ['Bubble Chips', pick(/^gel-bubble-chip/)], ['Gloss Pills', pick(/^gel-pill-chip/)], ['Gel Flags', pick(/^gel-flag-chip/)], ['Tag Chips', pick(/^aero-tag-chip/)],
+            ['Gel Orbs', pick(/^gel-orb/)], ['Text Effects', pick(/^(spark-text|gel-green-flash|liquid-underline|glossy-border-badge|cyber-glow-spark|liquid-text-glow|embossed-glass-text)$/)],
+            ['Effects', pick(/^effect-/)], ['Megachips & Badges', pick(/^(megachip-|aero-glass-badge|gel-chip-|droplet-)/)], ['Dev & Journal', pick(/^(dev-|av-|jr-)/)],
+        ];
+        const ORDER = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'white', 'fog', 'slate', 'black'];
+        return cats.filter((c) => c[1].length).map(([name, list]) => ({ name, styles: list.map((d) => ({ tag: d[2], cls: d[3], open: d[0], close: d[1], label: styleName(d) }))
+            .sort((x, y) => { const a = ORDER.indexOf(x.label.toLowerCase()), b = ORDER.indexOf(y.label.toLowerCase()); return a >= 0 && b >= 0 ? a - b : 0; }) }));
+    }
+    // Wrap the selection (or drop a "Text" placeholder at the caret) in a style
+    function applyStyle(range, tag, cls) {
+        const sel = window.getSelection();
+        const el = document.createElement(tag === 'span' || tag === 'mark' ? tag : tag || 'span');
+        if (cls) el.className = cls;
+        el.setAttribute('spellcheck', 'false');
+        if (range.collapsed) el.textContent = 'Text'; else el.appendChild(range.extractContents());
+        range.insertNode(el);
+        const r = document.createRange();
+        r.selectNodeContents(el);
+        sel.removeAllRanges();
+        sel.addRange(r);
+        try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {}
+    }
+    // The ribbon menu: categories first, then that category's styles drawn as live previews
+    function styleMenu(OS, anchor, openPane) {
+        const cv = document.getElementById('wysiwyg-canvas');
+        const sel = window.getSelection();
+        const saved = sel.rangeCount && cv && cv.contains(sel.anchorNode) ? sel.getRangeAt(0).cloneRange() : null;
+        const showCat = (cat) => {
+            const items = [{ header: cat.name + ' (' + cat.styles.length + ')' }];
+            cat.styles.forEach((st) => {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'os-mitem kd-style-pick';
+                b.title = st.open + 'text' + st.close;
+                b.innerHTML = '<span class="os-mlabel"><' + (st.tag === 'mark' ? 'mark' : st.tag) + (st.cls ? ' class="' + st.cls + '"' : '') + '>' + esc(st.label) + '</' + (st.tag === 'mark' ? 'mark' : st.tag) + '></span><span class="os-mkbd">' + esc(st.open + '…' + st.close) + '</span>';
+                b.addEventListener('mousedown', (e) => e.preventDefault());
+                b.addEventListener('click', () => {
+                    OS.closeMenu();
+                    if (!saved) { OS.toast('Click in the page (or select some text) first, then pick a style!'); return; }
+                    applyStyle(saved, st.tag, st.cls);
+                });
+                items.push({ node: b });
+            });
+            items.push({ sep: true }, { label: '← All categories', icon: 'chevLeft', run: () => setTimeout(() => OS.openMenu(anchor, cats(), { cls: 'kd-style-menu' }), 0) });
+            setTimeout(() => OS.openMenu(anchor, items, { cls: 'kd-style-menu' }), 0);
+        };
+        const cats = () => styleCategories().map((c) => ({ label: c.name, hint: c.styles.length + ' styles', icon: 'sparkle', run: () => showCat(c) }))
+            .concat([{ sep: true }, { label: 'Open the Format pane', icon: 'layout', run: () => { if (openPane) openPane(); } }]);
+        return cats();
+    }
+
     // How OpenDB's pieces look inside Writeout and Bitbook's editor
     if (typeof document !== 'undefined' && document.head && !document.getElementById('kd-doc-style')) {
         const st = document.createElement('style');
         st.id = 'kd-doc-style';
         st.textContent = '.kd-tpl{display:inline-block;padding:0 6px;border-radius:999px;font-size:.8em;font-style:italic;background:rgba(56,189,248,.14);color:#0369a1;user-select:none}' +
             '.kd-tpl-block{display:block;margin:6px 0;padding:8px 12px;border-radius:10px;border-left:6px solid #f28500;background:#fff9f2;color:#5b3a00;font-style:normal;font-size:.95em}' +
-            '.kd-figure{margin:10px 0;text-align:center}.kd-figure img,.kd-figure video{max-width:100%;border-radius:10px}.kd-figure audio{width:min(480px,100%)}::highlight(kd-problem){background-color:rgba(239,68,68,.25);text-decoration:wavy underline #dc2626}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:4px}';
+            '.kd-figure{margin:10px 0;text-align:center}.kd-figure img,.kd-figure video{max-width:100%;border-radius:10px}.kd-figure audio{width:min(480px,100%)}.kd-style-menu{max-height:min(70vh,560px);overflow:auto}.kd-style-pick .os-mlabel{line-height:2}::highlight(kd-problem){background-color:rgba(239,68,68,.25);text-decoration:wavy underline #dc2626}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:4px}';
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { parse, isKeydownText, formatLine, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
+    root.kdDoc = { parse, isKeydownText, formatLine, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);
