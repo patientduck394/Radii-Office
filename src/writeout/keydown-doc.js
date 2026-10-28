@@ -170,7 +170,10 @@
             if ((m = /^!\[([^\]]*)\]\(([^)\s]+)\)$/.exec(t))) {
                 const target = m[2];
                 const src2 = target.startsWith('media:') ? (opts.media && opts.media(target.slice(6))) : (/^https:\/\//.test(target) ? target : null);
-                out.push('<figure class="kd-figure" data-kd-media="' + esc(target) + '" contenteditable="false">' + (src2 ? '<img src="' + esc(src2) + '" alt="' + esc(m[1]) + '">' : '') +
+                // pictures, music (MP3, OGG, WAV) and videos (MP4, MOV, MKV) each get the right player
+                const player = !src2 ? '' : /\.(mp3|ogg|oga|wav)(\?|#|$)/i.test(src2) ? '<audio controls preload="metadata" src="' + esc(src2) + '"></audio>'
+                    : /\.(mp4|m4v|mov|mkv)(\?|#|$)/i.test(src2) ? '<video controls playsinline preload="metadata" src="' + esc(src2) + '"></video>' : '<img src="' + esc(src2) + '" alt="' + esc(m[1]) + '">';
+                out.push('<figure class="kd-figure" data-kd-media="' + esc(target) + '" contenteditable="false">' + player +
                     '<figcaption>' + esc(m[1] || target) + '</figcaption></figure>');
                 continue;
             }
@@ -450,7 +453,7 @@
         st.id = 'kd-doc-style';
         st.textContent = '.kd-tpl{display:inline-block;padding:0 6px;border-radius:999px;font-size:.8em;font-style:italic;background:rgba(56,189,248,.14);color:#0369a1;user-select:none}' +
             '.kd-tpl-block{display:block;margin:6px 0;padding:8px 12px;border-radius:10px;border-left:6px solid #f28500;background:#fff9f2;color:#5b3a00;font-style:normal;font-size:.95em}' +
-            '.kd-figure{margin:10px 0;text-align:center}.kd-figure img{max-width:100%;border-radius:10px}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:4px}';
+            '.kd-figure{margin:10px 0;text-align:center}.kd-figure img,.kd-figure video{max-width:100%;border-radius:10px}.kd-figure audio{width:min(480px,100%)}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:4px}';
         document.head.appendChild(st);
     }
 

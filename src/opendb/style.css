@@ -214,3 +214,14 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .tpl-pick { display: flex; flex-direction: column; gap: 2px; text-align: left; font: 13px var(--sans); color: var(--ink-2); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fbfdff; cursor: pointer; }
 .tpl-pick:hover { border-color: var(--blue); background: #f1f8ff; }
 .tpl-pick code { font: 13px var(--mono); color: var(--ink); }
+
+/* music and videos */
+.figure audio, .kd-doc figure audio { width: min(520px, 100%); display: block; margin: 0 auto; }
+.figure video, .kd-doc figure video { max-width: 100%; max-height: 520px; border-radius: 12px; background: #000; display: block; margin: 0 auto; }
+.audio-thumb, .video-thumb { position: relative; display: grid; place-items: center; overflow: hidden; }
+.audio-thumb { font-size: 30px; background: linear-gradient(180deg, #e0f2fe, #bae6fd); }
+.video-thumb { background: #0f2236; }
+.video-thumb video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.video-thumb .play { position: relative; color: #fff; font-size: 22px; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.6); }
+.audio-thumb small, .video-thumb small { position: absolute; right: 6px; bottom: 4px; font: 700 11px var(--sans); color: #fff; background: rgba(15, 34, 54, 0.7); padding: 1px 6px; border-radius: 999px; }
+.tile .tile-media { width: 100%; height: 140px; object-fit: contain; background: #eef6fd; border-radius: 10px; }

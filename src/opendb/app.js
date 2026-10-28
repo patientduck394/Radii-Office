@@ -57,6 +57,32 @@
         if (e.dataUrl) return e.dataUrl;
         return 'data/' + e.file;
     }
+    // Media can be pictures, music (MP3, OGG, WAV) or videos (MP4, MOV, MKV)!
+    const MEDIA_EXT = { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/svg+xml': '.svg', 'image/webp': '.webp', 'image/gif': '.gif',
+        'audio/mpeg': '.mp3', 'audio/mp3': '.mp3', 'audio/ogg': '.ogg', 'audio/wav': '.wav', 'audio/x-wav': '.wav', 'audio/wave': '.wav',
+        'video/mp4': '.mp4', 'video/quicktime': '.mov', 'video/x-matroska': '.mkv', 'video/matroska': '.mkv', 'video/mkv': '.mkv', 'audio/x-matroska': '.mkv' };
+    const EXT_MIME = { mp3: 'audio/mpeg', ogg: 'audio/ogg', oga: 'audio/ogg', wav: 'audio/wav', mp4: 'video/mp4', m4v: 'video/mp4', mov: 'video/quicktime', mkv: 'video/x-matroska' };
+    function mediaKind(e) {
+        const m = String((e && e.mime) || ''), f = String((e && e.file) || '');
+        if (/^audio\//.test(m) || /\.(mp3|ogg|oga|wav)$/i.test(f)) return 'audio';
+        if (/^video\//.test(m) || /\.(mp4|m4v|mov|mkv)$/i.test(f)) return 'video';
+        return 'image';
+    }
+    const clock = (sec) => { sec = Math.round(Number(sec) || 0); return Math.floor(sec / 60) + ':' + String(sec % 60).padStart(2, '0'); };
+    // The right player for a media entry: a picture, an audio player or a video player
+    function mediaTag(e, src, alt, lazy) {
+        const k = mediaKind(e);
+        if (k === 'audio') return '<audio controls preload="metadata" src="' + esc(src) + '" aria-label="' + esc(alt) + '"></audio>';
+        if (k === 'video') return '<video controls playsinline preload="metadata" src="' + esc(src) + '" aria-label="' + esc(alt) + '"></video>';
+        return '<img src="' + esc(src) + '" alt="' + esc(alt) + '"' + (lazy ? ' loading="lazy"' : '') + '>';
+    }
+    // Small previews for lists and the media grid: a still from a video, a note for music
+    function mediaThumb(e, cls) {
+        const k = mediaKind(e);
+        if (k === 'audio') return '<span class="' + cls + ' audio-thumb" aria-hidden="true">🎵' + (e.duration ? '<small>' + clock(e.duration) + '</small>' : '') + '</span>';
+        if (k === 'video') return '<span class="' + cls + ' video-thumb"><video muted preload="metadata" src="' + esc(mediaSrc(e)) + '#t=0.5" aria-hidden="true"></video><span class="play">▶</span>' + (e.duration ? '<small>' + clock(e.duration) + '</small>' : '') + '</span>';
+        return '<img class="' + cls + '" src="' + esc(mediaSrc(e)) + '" alt="' + esc(cls === 'thumb' ? '' : e.title) + '" loading="lazy">';
+    }
 
     /* ---------- Keydown (the Radii Office formatting language) + LaTeX + OpenDB links ---------- */
     // LaTeX: $inline$ and $$display$$ math, drawn by KaTeX (or shown as source until it loads)
@@ -126,10 +152,14 @@
             if ((m = /^!\[([^\]]*)\]\(([^)\s]+)\)$/.exec(t))) {
                 flush();
                 const alt = m[1], target = m[2];
-                let src = null, link = null;
-                if (target.startsWith('media:')) { const e = byId.get(target.slice(6)); if (e && e.type === 'media') { src = mediaSrc(e); link = '#/e/' + e.id; } }
+                let src = null, link = null, ent = { file: target };
+                if (target.startsWith('media:')) { const e = byId.get(target.slice(6)); if (e && e.type === 'media') { src = mediaSrc(e); link = '#/e/' + e.id; ent = e; } }
                 else if (/^https:\/\//.test(target)) src = target;
-                out.push(src ? '<figure>' + (link ? '<a href="' + link + '">' : '') + '<img src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy">' + (link ? '</a>' : '') + (alt ? '<figcaption>' + inline(alt, notes) + '</figcaption>' : '') + '</figure>' : '<p class="muted">[missing image: ' + esc(target) + ']</p>');
+                // pictures link to their page; players stay clickable, so the caption links instead
+                const still = mediaKind(ent) === 'image';
+                const cap = alt ? inline(alt, notes) : '';
+                out.push(src ? '<figure>' + (link && still ? '<a href="' + link + '">' : '') + mediaTag(ent, src, alt, true) + (link && still ? '</a>' : '') +
+                    (cap || (link && !still) ? '<figcaption>' + (link && !still ? '<a href="' + link + '">' + (cap || 'About this file') + '</a>' : cap) + '</figcaption>' : '') + '</figure>' : '<p class="muted">[missing media: ' + esc(target) + ']</p>');
                 continue;
             }
             if (/^\$\$[\s\S]*\$\$$/.test(t)) { flush(); out.push('<div class="tex-block">' + inline(t, notes) + '</div>'); continue; }
@@ -299,11 +329,11 @@
     const badge = (e) => '<span class="badge ' + e.type + '">' + TYPES[e.type] + '</span>' + (e.local ? '<span class="badge local" title="Saved on this device only, not published yet">On this device</span>' : '');
     const tagLinks = (tags) => '<div class="tags">' + (tags || []).map((t) => '<a class="tag" href="#/tag/' + encodeURIComponent(t) + '">' + esc(t) + '</a>').join('') + '</div>';
     function itemRow(e, q) {
-        const thumb = e.type === 'media' ? '<img class="thumb" src="' + esc(mediaSrc(e)) + '" alt="" loading="lazy">' : '';
+        const thumb = e.type === 'media' ? mediaThumb(e, 'thumb') : '';
         return '<a class="item" href="#/e/' + e.id + '">' + thumb + '<div><span class="item-title">' + esc(e.title) + '</span>' + badge(e) +
             '<p>' + (q ? snippet(e, q) : esc(e.summary)) + '</p><div class="meta">' + (e.type === 'paper' ? esc((e.authors || []).join(', ')) + ' · ' + esc((e.categories || []).join(', ')) + ' · ' : '') + 'Updated ' + esc(e.updated || e.created) + '</div></div></a>';
     }
-    function tile(e) { return '<a class="tile" href="#/e/' + e.id + '"><img src="' + esc(mediaSrc(e)) + '" alt="' + esc(e.title) + '" loading="lazy"><b>' + esc(e.title) + '</b>' + (e.local ? badge(e) : '') + '</a>'; }
+    function tile(e) { return '<a class="tile" href="#/e/' + e.id + '">' + mediaThumb(e, 'tile-media') + '<b>' + esc(e.title) + '</b>' + (e.local ? badge(e) : '') + '</a>'; }
     const byUpdated = (a, b) => String(b.updated || b.created).localeCompare(String(a.updated || a.created)) || a.title.localeCompare(b.title);
 
     /* ---------- Pages ---------- */
@@ -320,7 +350,7 @@
         const section = (type, icon) => {
             const items = list.filter((e) => e.type === type).sort(byUpdated).slice(0, 4);
             return '<div class="card collection"><h2>' + icon + ' <a href="#/browse/' + type + '">' + PLURAL[type] + '</a></h2><p class="muted">' +
-                { article: 'Encyclopedia entries that explain a topic!', media: 'Images, diagrams and files that are free to reuse!', paper: 'Research papers and preprints, ready to cite!' }[type] +
+                { article: 'Encyclopedia entries that explain a topic!', media: 'Pictures, music and videos that are free to reuse!', paper: 'Research papers and preprints, ready to cite!' }[type] +
                 '</p><div class="list">' + (items.length ? items.map((e) => itemRow(e)).join('') : '<div class="empty">Nothing here yet!</div>') + '</div><a href="#/browse/' + type + '">See all ' + counts[type] + ' →</a></div>';
         };
         view.innerHTML =
@@ -371,7 +401,9 @@
         } else {
             head = '<p class="lead">' + esc(e.summary) + '</p>';
             if (e.type === 'media') {
-                head += '<figure class="figure"><a href="' + esc(mediaSrc(e)) + '" target="_blank" rel="noopener"><img src="' + esc(mediaSrc(e)) + '" alt="' + esc(e.title) + '"></a><figcaption>' + esc(e.mime || '') + (e.width ? ' · ' + e.width + ' × ' + e.height : '') + ' · click to open full size</figcaption></figure>';
+                const still = mediaKind(e) === 'image';
+                head += '<figure class="figure">' + (still ? '<a href="' + esc(mediaSrc(e)) + '" target="_blank" rel="noopener">' : '') + mediaTag(e, mediaSrc(e), e.title) + (still ? '</a>' : '') +
+                    '<figcaption>' + esc(e.mime || '') + (e.width ? ' · ' + e.width + ' × ' + e.height : '') + (e.duration ? ' · ' + clock(e.duration) : '') + (still ? ' · click to open full size' : '') + '</figcaption></figure>';
             }
         }
         const info = e.infobox && Object.keys(e.infobox).length ? '<div class="side-box infobox"><h2>' + esc(e.title) + '</h2><table>' + Object.entries(e.infobox).map(([k, v]) => '<tr><th>' + esc(k) + '</th><td>' + inline(v, { order: [] }) + '</td></tr>').join('') + '</table></div>' : '';
@@ -398,7 +430,7 @@
             location.hash = '#/mine';
         };
     }
-    function extOf(e) { const m = /\.([a-z0-9]+)$/i.exec(e.file || ''); return m ? '.' + m[1] : { 'image/png': '.png', 'image/jpeg': '.jpg', 'image/svg+xml': '.svg', 'image/webp': '.webp', 'image/gif': '.gif' }[e.mime] || ''; }
+    function extOf(e) { const m = /\.([a-z0-9]+)$/i.exec(e.file || ''); return m ? '.' + m[1] : e.ext ? '.' + e.ext : MEDIA_EXT[e.mime] || ''; }
     function clean(e) { const o = Object.assign({}, e); delete o.local; delete o.dataUrl; return o; }
 
     function showCite(e) {
@@ -464,7 +496,7 @@
         h.push('tags: ' + yamlList(e.tags));
         if (e.type === 'paper') h.push('categories: ' + yamlList(e.categories));
         h.push('created: ' + e.created, 'updated: ' + (e.updated || e.created), 'authors: ' + yamlList(e.authors), 'license: CC0-1.0');
-        if (e.type === 'media') { h.push('file: media/' + e.id + extOf(e), 'mime: ' + (e.mime || '')); if (e.width) h.push('width: ' + e.width, 'height: ' + e.height); }
+        if (e.type === 'media') { h.push('file: media/' + e.id + extOf(e), 'mime: ' + (e.mime || '')); if (e.width) h.push('width: ' + e.width, 'height: ' + e.height); if (e.duration) h.push('duration: ' + Math.round(e.duration * 10) / 10); }
         Object.entries(e.infobox || {}).forEach(([k, v]) => h.push('infobox.' + String(k).replace(/[:\n]/g, ' ').trim() + ': ' + yamlStr(String(v).replace(/\n/g, ' '))));
         h.push('---');
         return h.join('\n') + '\n' + String(e.body || '').trim() + '\n';
@@ -486,7 +518,7 @@
             '<label class="field">Title<input id="f-title" maxlength="140" value="' + esc(d.title) + '"></label>' +
             '<label class="field">Address <small>(lowercase letters, numbers and dashes; this becomes the link #/e/…)</small><input id="f-id" maxlength="60" value="' + esc(d.id) + '"' + (base ? ' disabled' : '') + '></label>' +
             '<label class="field">One-sentence summary<input id="f-summary" maxlength="300" value="' + esc(d.summary) + '"></label>' +
-            '<div id="media-fields" hidden><label class="field">File <small>(images work best: PNG, JPEG, SVG, WebP or GIF, up to 2 MB)</small><input id="f-file" type="file" accept="image/*"></label><p class="hint" id="file-info"></p></div>' +
+            '<div id="media-fields" hidden><label class="field">File <small>(pictures: PNG, JPEG, SVG, WebP or GIF up to 2 MB; music: MP3, OGG or WAV; videos: MP4, MOV or MKV, up to 20 MB)</small><input id="f-file" type="file" accept="image/*,audio/*,video/*,.mp3,.ogg,.wav,.mp4,.mov,.mkv"></label><p class="hint" id="file-info"></p></div>' +
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
             '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1], <a href="#/templates" target="_blank">templates</a> like {{stub}})</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
@@ -502,7 +534,7 @@
 
         const get = (id) => $(id).value;
         const list = (id) => get(id).split(',').map((s) => s.trim()).filter(Boolean);
-        let file = base && base.type === 'media' ? { dataUrl: base.dataUrl || null, mime: base.mime, width: base.width, height: base.height, file: base.file } : null;
+        let file = base && base.type === 'media' ? { dataUrl: base.dataUrl || null, mime: base.mime, width: base.width, height: base.height, duration: base.duration, ext: base.ext, file: base.file } : null;
         function current() {
             const info = {};
             get('f-infobox').split('\n').forEach((l) => { const m = /^\s*([^:]+):\s*(.+)$/.exec(l); if (m) info[m[1].trim()] = m[2].trim(); });
@@ -512,7 +544,7 @@
                 created: d.created || today(), updated: today(), license: 'CC0-1.0',
             };
             if (type === 'paper') { e.abstract = get('f-abstract').trim(); e.categories = list('f-categories'); }
-            if (type === 'media' && file) Object.assign(e, { mime: file.mime, width: file.width, height: file.height }, file.dataUrl ? { dataUrl: file.dataUrl } : {}, file.file ? { file: file.file } : {});
+            if (type === 'media' && file) Object.assign(e, { mime: file.mime, width: file.width, height: file.height }, file.duration ? { duration: file.duration } : {}, file.ext ? { ext: file.ext } : {}, file.dataUrl ? { dataUrl: file.dataUrl } : {}, file.file ? { file: file.file } : {});
             return e;
         }
         function problems(e, publishing) {
@@ -531,7 +563,7 @@
         function preview() {
             const e = current();
             const fake = Object.assign({}, e, { local: true });
-            const img = type === 'media' && (e.dataUrl || e.file) ? '<figure class="figure"><img src="' + esc(e.dataUrl || mediaSrc(e)) + '" alt=""></figure>' : '';
+            const img = type === 'media' && (e.dataUrl || e.file) ? '<figure class="figure">' + mediaTag(e, e.dataUrl || mediaSrc(e), e.title || '') + '</figure>' : '';
             const head = type === 'paper' ? '<p class="authors">' + esc(e.authors.join(', ')) + '</p>' + (e.abstract ? '<div class="abstract"><b>Abstract</b>' + esc(e.abstract) + '</div>' : '') : '<p class="lead">' + esc(e.summary) + '</p>';
             $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(e.body, e) + '</div>';
         }
@@ -558,18 +590,40 @@
         $('f-file').onchange = (ev) => {
             const f = ev.target.files[0];
             if (!f) return;
-            if (f.size > 2 * 1024 * 1024) { toast('That file is over 2 MB! Try a smaller one!'); ev.target.value = ''; return; }
+            const ext = (/\.([a-z0-9]+)$/i.exec(f.name) || [])[1] || '';
+            const mime = f.type || EXT_MIME[ext.toLowerCase()] || 'application/octet-stream';
+            const kind = mediaKind({ mime: mime, file: f.name });
+            if (kind === 'image' && !/^image\//.test(mime)) { toast('Pick a picture, a song (MP3, OGG, WAV) or a video (MP4, MOV, MKV)!'); ev.target.value = ''; return; }
+            const limit = kind === 'image' ? 2 : 20;
+            if (f.size > limit * 1024 * 1024) { toast('That file is over ' + limit + ' MB! Try a smaller one!'); ev.target.value = ''; return; }
+            const done = (extra, info) => {
+                file = Object.assign({ dataUrl: playable(r.result), mime: mime, ext: ext.toLowerCase() || undefined }, extra);
+                $('file-info').textContent = f.name + ' · ' + (f.size > 1024 * 1024 ? (f.size / 1048576).toFixed(1) + ' MB' : Math.round(f.size / 1024) + ' KB') + (info ? ' · ' + info : '');
+                if (!get('f-title')) { $('f-title').value = f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '); if (!idTouched) $('f-id').value = slug(get('f-title')); }
+                preview();
+            };
+            // a .mov is usually MP4 inside: Chrome only plays it when it is called MP4 (the file keeps its .mov name)
+            const playable = (url) => (mime === 'video/quicktime' ? url.replace(/^data:video\/quicktime/, 'data:video/mp4') : url);
             const r = new FileReader();
             r.onload = () => {
-                const img = new Image();
-                img.onload = () => {
-                    file = { dataUrl: r.result, mime: f.type || 'application/octet-stream', width: img.naturalWidth, height: img.naturalHeight };
-                    $('file-info').textContent = f.name + ' · ' + Math.round(f.size / 1024) + ' KB · ' + img.naturalWidth + ' × ' + img.naturalHeight;
-                    if (!get('f-title')) { $('f-title').value = f.name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '); if (!idTouched) $('f-id').value = slug(get('f-title')); }
-                    preview();
+                if (kind === 'image') {
+                    const img = new Image();
+                    img.onload = () => done({ width: img.naturalWidth, height: img.naturalHeight }, img.naturalWidth + ' × ' + img.naturalHeight);
+                    img.onerror = () => { toast('That file could not be read as an image!'); };
+                    img.src = r.result;
+                    return;
+                }
+                // music and videos: read the length (and a video's size) from the file itself
+                const el = document.createElement(kind);
+                el.preload = 'metadata';
+                el.onloadedmetadata = () => {
+                    const extra = { duration: isFinite(el.duration) ? Math.round(el.duration * 10) / 10 : undefined };
+                    if (kind === 'video' && el.videoWidth) { extra.width = el.videoWidth; extra.height = el.videoHeight; }
+                    done(extra, (extra.duration ? clock(extra.duration) : '') + (extra.width ? ' · ' + extra.width + ' × ' + extra.height : ''));
                 };
-                img.onerror = () => { toast('That file could not be read as an image!'); };
-                img.src = r.result;
+                // some browsers cannot play every format (Safari and MKV, for example): it is still shared, just without its length
+                el.onerror = () => { done({}, 'this browser cannot play it, but it can still be shared'); };
+                el.src = playable(r.result);
             };
             r.readAsDataURL(f);
         };
@@ -645,6 +699,7 @@
         $('save-local').onclick = () => {
             const e = current();
             if (!showProblems(problems(e, false))) return;
+            if (e.dataUrl && e.dataUrl.length > 3500000) { toast('That file is too big to keep on this device! Publish it or download it instead!'); return; }
             local = local.filter((x) => x.id !== e.id).concat([e]);
             if (!saveLocal()) return;
             reindex();

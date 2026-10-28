@@ -13,7 +13,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 await import('./build_opendb.mjs').then((m) => m.build());
 const OUT = path.join(ROOT, 'downloads');
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'downloads', 'target', '.claude', '.idea', '.vscode']);
-const SKIP_FILES = /^(\.DS_Store|Thumbs\.db)$|\.(dmg|exe|msi|zip|kc)$/i;
+// (music and videos stay out too: the download has to fit the host's 25 MiB limit per file!)
+const SKIP_FILES = /^(\.DS_Store|Thumbs\.db)$|\.(dmg|exe|msi|zip|kc|mp3|ogg|oga|wav|mp4|m4v|mov|mkv)$/i;
 const TEXT = /\.(html?|js|mjs|ts|css|scss|json|md|txt|svg|xml|yml|yaml|toml|rs|jl|lua|py|cljs|clj|scala|d\.ts)$/i;
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', ico: 'image/x-icon', svg: 'image/svg+xml', html: 'text/html', htm: 'text/html', js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', md: 'text/markdown', txt: 'text/plain', xml: 'application/xml', ts: 'text/typescript', scss: 'text/x-scss' };
 const KC_IMAGE_MAX = 50 * 1024;
