@@ -1,0 +1,17 @@
+---
+format: keydown-text
+id: venn-diagram
+type: media
+title: Venn diagram of two sets
+summary: A Venn diagram of the sets A = {1, 2, 3, 4} and B = {3, 4, 5, 6} inside a universal set U, with their union, intersection and difference.
+tags: [mathematics, set theory, diagram]
+created: 2026-10-28
+updated: 2026-10-28
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/venn-diagram.svg
+mime: image/svg+xml
+width: 480
+height: 330
+---
+Illustrates [[set-mathematics|sets]]: the overlap of the two circles is the intersection $A \cap B = \{3, 4\}$, both circles together are the union, and 7 is in the universal set $U$ but in neither $A$ nor $B$.

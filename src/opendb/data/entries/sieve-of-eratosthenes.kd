@@ -1,0 +1,17 @@
+---
+format: keydown-text
+id: sieve-of-eratosthenes
+type: media
+title: Sieve of Eratosthenes, 1 to 50
+summary: The numbers 1 to 50 with the 15 primes highlighted and every composite number crossed out.
+tags: [mathematics, number theory, diagram]
+created: 2026-10-28
+updated: 2026-10-28
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/sieve-of-eratosthenes.svg
+mime: image/svg+xml
+width: 484
+height: 330
+---
+The result of the sieve of Eratosthenes for the numbers up to 50, as described in [[prime-number|Prime number]]. The 15 primes are highlighted; 1 is neither prime nor composite.

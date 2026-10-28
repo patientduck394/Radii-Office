@@ -1,0 +1,49 @@
+---
+format: keydown-text
+id: set-mathematics
+type: article
+title: Set (mathematics)
+summary: A set is a collection of distinct objects, called its elements, considered as a single object.
+tags: [mathematics, set theory, logic]
+created: 2026-10-28
+updated: 2026-10-28
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Field: Set theory
+infobox.Notation: Curly braces, like {1, 2, 3}
+infobox.Empty set: ∅ or {}
+---
+{{unreferenced}}
+
+A **set** is a collection of distinct objects, called its **elements** or **members**. A set is defined only by what it contains: the order of the elements does not matter, and listing an element twice does not change the set. Sets are one of the most basic ideas in mathematics, and almost every other mathematical object can be built from them.
+
+![Two overlapping sets, A and B, inside a universal set U](media:venn-diagram)
+
+## Writing sets
+
+A small set can be written by listing its elements between curly braces, such as $A = \{1, 2, 3, 4\}$. Because order and repetition do not matter, $\{1, 2, 3\}$, $\{3, 1, 2\}$ and $\{1, 1, 2, 3\}$ are all the same set.
+
+Larger sets are often described by a rule instead, using **set-builder notation**: $\{x \mid x \text{ is an even number}\}$ is read "the set of all $x$ such that $x$ is even".
+
+* $x \in A$ means "$x$ is an element of $A$", and $x \notin A$ means it is not.
+* The **empty set**, written $\varnothing$ or $\{\}$, has no elements at all.
+* The **cardinality** of a finite set, written $|A|$, is how many elements it has. For example, $|\{1, 2, 3, 4\}| = 4$.
+
+## Subsets
+
+A set $A$ is a **subset** of $B$, written $A \subseteq B$, when every element of $A$ is also in $B$. Every set is a subset of itself, and the empty set is a subset of every set. The **power set** of $A$ is the set of all of its subsets; a set with $n$ elements has $2^n$ subsets.
+
+## Operations
+
+For the sets $A = \{1, 2, 3, 4\}$ and $B = \{3, 4, 5, 6\}$ shown in the diagram:
+
+* **Union**: $A \cup B = \{1, 2, 3, 4, 5, 6\}$, everything in $A$, in $B$, or in both.
+* **Intersection**: $A \cap B = \{3, 4\}$, only what both sets share.
+* **Difference**: $A \setminus B = \{1, 2\}$, what is in $A$ but not in $B$.
+* **Complement**: everything in the universal set $U$ that is not in $A$.
+
+Two sets with no elements in common, so that $A \cap B = \varnothing$, are called **disjoint**. Drawings like the one above are called **Venn diagrams**.
+
+## Common number sets
+
+Some sets are used so often that they have their own symbols: $\mathbb{N}$ for the natural numbers, $\mathbb{Z}$ for the integers, $\mathbb{Q}$ for the rational numbers and $\mathbb{R}$ for the real numbers. The [[prime-number|prime numbers]] also form a set, and it is infinite.

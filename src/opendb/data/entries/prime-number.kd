@@ -5,7 +5,7 @@ title: Prime number
 summary: A prime number is a whole number greater than 1 whose only divisors are 1 and itself.
 tags: [mathematics, number theory]
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-28
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Field: Number theory
@@ -31,5 +31,7 @@ Around 300 BC, the Greek mathematician Euclid proved that the primes never run o
 ## Finding primes
 
 A simple way to list primes is the **sieve of Eratosthenes**: write the numbers from 2 upward, then repeatedly circle the next uncrossed number and cross out all of its multiples. The circled numbers are the primes.
+
+![The sieve of Eratosthenes for the numbers 1 to 50](media:sieve-of-eratosthenes)
 
 Primes are used in modern cryptography, because multiplying two large primes is easy while recovering them from the product is extremely hard. See also the [[pythagorean-theorem|Pythagorean theorem]].
