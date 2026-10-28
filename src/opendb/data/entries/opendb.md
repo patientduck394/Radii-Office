@@ -1,0 +1,38 @@
+---
+id: opendb
+type: article
+title: OpenDB
+summary: OpenDB is an open-access database of articles, media and papers, all dedicated to the public domain under CC0.
+tags: [opendb, open access, public domain]
+created: 2026-10-27
+updated: 2026-10-27
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Type: Open-access knowledge base
+infobox.License: CC0 1.0 (public domain)
+infobox.Collections: Articles, Media, Papers
+infobox.Part of: Radii Office
+---
+**OpenDB** is a free, open-access database of knowledge. Everything in it, from encyclopedia articles to pictures and research papers, is dedicated to the [[public-domain|public domain]] under [[cc0|CC0]]. That means anyone can copy, change, translate, sell or build on any entry, for any purpose, without asking and without giving credit.[^1]
+
+## Collections
+
+OpenDB has three collections:
+
+- **Articles**: encyclopedia entries that explain a topic, like [[photosynthesis]] or the [[pythagorean-theorem|Pythagorean theorem]].
+- **Media**: images, diagrams, sounds and other files that are free to reuse, each with a description.
+- **Papers**: research papers and preprints with an abstract, authors and categories, ready to cite.
+
+## How it works
+
+Every entry is a small text file with a few facts at the top (its title, summary, tags and dates) and the content below. The files live in a public repository, so every change is recorded and reviewable. When you contribute, OpenDB prepares the file for you and you submit it as a proposal, which a maintainer reviews before it appears for everyone.
+
+Entries link to each other with double square brackets, so writing `[[water-cycle]]` creates a link to the [[water-cycle|water cycle]] article, and each entry shows what links to it.
+
+## Why CC0?
+
+Many open projects use licenses that require attribution or require that changes be shared under the same license. Those rules are useful, but they also make reuse harder: a teacher, a game maker or a researcher has to track credits and license versions. CC0 removes those steps. Anything in OpenDB can be used anywhere, in any way, forever.
+
+## References
+
+[^1]: Creative Commons, "CC0 1.0 Universal Public Domain Dedication", https://creativecommons.org/publicdomain/zero/1.0/

@@ -1,0 +1,32 @@
+---
+id: frutiger-aero
+type: article
+title: Frutiger Aero
+summary: Frutiger Aero is a design style from the mid-2000s to early 2010s known for glossy surfaces, glass, bubbles, water and bright nature imagery.
+tags: [design, aesthetics, technology, culture]
+created: 2026-10-27
+updated: 2026-10-27
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Era: About 2004 to 2013
+infobox.Typical colors: Sky blue, aqua, grass green, white
+infobox.Typical motifs: Gloss, glass, bubbles, water, sky, leaves
+---
+**Frutiger Aero** is a name for a visual style that was common in technology products, advertising and websites from roughly the mid-2000s to the early 2010s. It mixes glossy, glass-like interface elements with optimistic images of nature and technology.
+
+![Glossy bubbles over a blue sky](media:aero-bubbles)
+
+## Features
+
+- **Gloss and glass**: buttons and panels with bright highlights, reflections and see-through blurred backgrounds.
+- **Nature**: blue skies, green fields, water drops, bubbles, fish and leaves.
+- **Bright, clean colors**: especially sky blue, aqua, green and white.
+- **Skeuomorphism**: interface parts that look like real, shiny physical objects.
+
+## The name
+
+The name combines **Frutiger**, a family of clean sans-serif typefaces designed by Adrian Frutiger that is often associated with the look, and **Aero**, the glassy interface theme of Windows Vista and Windows 7. The label itself was created years after the style's peak, when people began collecting and discussing these visuals online.
+
+## Legacy
+
+Flat design largely replaced glossy interfaces in the 2010s, but Frutiger Aero later became popular again as a nostalgic aesthetic. Apps such as those in Radii Office use its gel buttons and glass panels on purpose.

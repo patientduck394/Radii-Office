@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenDB - Radii Office</title>
+    <meta name="description" content="OpenDB: a free, open-access database of articles, media and papers. Everything is public domain (CC0)!">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="style.css?v=20261027">
+</head>
+<body>
+    <header class="top">
+        <a class="brand" href="#/" title="OpenDB home">
+            <img src="favicon.svg" alt="" class="logo">
+            <span><b>OpenDB</b><small>The free database anyone can reuse</small></span>
+        </a>
+        <form class="search" id="search-form" role="search">
+            <input type="search" id="q" placeholder="Search articles, media and papers…" autocomplete="off" aria-label="Search OpenDB">
+            <button class="gel" type="submit">Search</button>
+        </form>
+        <nav class="nav" aria-label="Collections">
+            <a href="#/browse/article">Articles</a>
+            <a href="#/browse/media">Media</a>
+            <a href="#/browse/paper">Papers</a>
+            <a href="#/random">Random</a>
+            <a href="#/new/article" class="gel green">＋ Contribute</a>
+        </nav>
+    </header>
+
+    <main id="view" class="view" tabindex="-1"></main>
+
+    <footer class="foot">
+        <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer" class="cc0">CC0</a>
+        Everything in OpenDB is dedicated to the public domain: copy, change and reuse it for anything, no credit needed!
+        &nbsp;·&nbsp; <a href="#/e/opendb">About</a>
+        &nbsp;·&nbsp; <a href="#/mine">On this device</a>
+        &nbsp;·&nbsp; <a href="data/index.json" download>Download everything (JSON)</a>
+        &nbsp;·&nbsp; <a href="/">Radii Office</a>
+    </footer>
+
+    <div class="modal" id="modal" hidden><div class="modal-card"><div class="modal-head"><b id="modal-title"></b><button class="x" id="modal-x" aria-label="Close">✕</button></div><div id="modal-body" class="modal-body"></div></div></div>
+    <div class="toast" id="toast" role="status"></div>
+    <script src="app.js?v=20261027"></script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+---
+id: water-cycle
+type: article
+title: Water cycle
+summary: The water cycle is the continuous movement of water between the oceans, the air and the land.
+tags: [earth science, water, weather]
+created: 2026-10-27
+updated: 2026-10-27
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Also called: Hydrologic cycle
+infobox.Powered by: Sunlight and gravity
+---
+The **water cycle**, or hydrologic cycle, describes how water moves around Earth. The total amount of water stays almost the same, but it constantly changes between liquid, vapor and ice as it travels between the oceans, the atmosphere and the land.
+
+![The water cycle](media:water-cycle-diagram)
+
+## Main stages
+
+- **Evaporation**: the Sun heats water in oceans, lakes and rivers, turning some of it into water vapor.
+- **Transpiration**: plants release water vapor through tiny pores in their leaves. Together with evaporation this is called evapotranspiration.
+- **Condensation**: as moist air rises it cools, and the vapor condenses into tiny droplets that form clouds.
+- **Precipitation**: droplets join into larger drops and fall as rain, snow, sleet or hail.
+- **Runoff and infiltration**: water flows over the ground into streams and back to the sea, or soaks into the soil to become groundwater.
+
+## Why it matters
+
+The water cycle delivers fresh water to land, shapes weather and climate, and carries heat around the planet. Plants depend on it for the water they use in [[photosynthesis]].

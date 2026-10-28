@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" font-family="Helvetica, Arial, sans-serif">
+  <title>The water cycle (OpenDB, CC0)</title>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7cc8f8"/><stop offset="1" stop-color="#d9f1ff"/></linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3b9be0"/><stop offset="1" stop-color="#155d9c"/></linearGradient>
+    <linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7bd65a"/><stop offset="1" stop-color="#3f9a2f"/></linearGradient>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#0b3d66"/></marker>
+  </defs>
+  <rect width="640" height="400" fill="url(#sky)"/>
+  <circle cx="70" cy="70" r="34" fill="#ffe066" stroke="#ffcc00" stroke-width="4"/>
+  <path d="M0 300 C120 290 200 300 300 305 L300 400 L0 400z" fill="url(#sea)"/>
+  <path d="M300 305 C360 250 420 170 470 150 C520 135 560 190 640 210 L640 400 L300 400z" fill="url(#land)"/>
+  <path d="M470 150 L500 175 L455 175z" fill="#fff"/>
+  <g fill="#fff" stroke="#b9d9f0" stroke-width="2">
+    <ellipse cx="300" cy="80" rx="70" ry="28"/><ellipse cx="350" cy="70" rx="50" ry="26"/><ellipse cx="260" cy="72" rx="40" ry="22"/>
+  </g>
+  <g stroke="#3b82f6" stroke-width="3" stroke-linecap="round"><path d="M430 120 l-8 22"/><path d="M450 118 l-8 22"/><path d="M470 122 l-8 22"/><path d="M410 124 l-8 22"/></g>
+  <g fill="#ffffff" opacity=".85"><ellipse cx="450" cy="95" rx="60" ry="24"/><ellipse cx="490" cy="88" rx="40" ry="20"/></g>
+  <g fill="none" stroke="#0b3d66" stroke-width="3" marker-end="url(#ar)">
+    <path d="M150 285 C160 220 200 150 235 110"/>
+    <path d="M370 70 C400 66 420 70 438 80"/>
+    <path d="M560 215 C520 260 420 300 320 312"/>
+    <path d="M520 205 C540 170 520 140 500 120"/>
+  </g>
+  <g font-size="17" font-weight="bold" fill="#0b2e4d">
+    <text x="110" y="200">Evaporation</text>
+    <text x="330" y="40">Condensation</text>
+    <text x="490" y="60">Precipitation</text>
+    <text x="410" y="345">Runoff</text>
+    <text x="520" y="140">Transpiration</text>
+    <text x="40" y="360" fill="#fff">Ocean</text>
+  </g>
+</svg>

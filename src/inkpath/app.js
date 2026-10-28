@@ -1204,14 +1204,16 @@ function buildFxFilterInto(defsEl, id, blurVal, fx) {
 
 // Gradient angle helpers. Angle convention: 0 = left-to-right (matches the
 // classic SVG default look), 90 = top-to-bottom, clockwise positive.
-function linearGradientVector(angleDeg) {
+// scale (optional, default 1) stretches the vector, so CSS-converted gradients can span the box like CSS does!
+function linearGradientVector(angleDeg, scale) {
     const a = ((parseFloat(angleDeg) || 0) * Math.PI) / 180;
-    const dx = Math.cos(a), dy = Math.sin(a);
+    const k = parseFloat(scale) > 0 ? parseFloat(scale) : 1;
+    const dx = Math.cos(a) * k, dy = Math.sin(a) * k;
     const r = (n) => Math.round(n * 1000) / 1000;
     return { x1: r(0.5 - dx / 2), y1: r(0.5 - dy / 2), x2: r(0.5 + dx / 2), y2: r(0.5 + dy / 2) };
 }
-function applyGradientAngle(gradEl, angleDeg) {
-    const v = linearGradientVector(angleDeg);
+function applyGradientAngle(gradEl, angleDeg, scale) {
+    const v = linearGradientVector(angleDeg, scale);
     gradEl.setAttribute('x1', v.x1); gradEl.setAttribute('y1', v.y1);
     gradEl.setAttribute('x2', v.x2); gradEl.setAttribute('y2', v.y2);
 }
@@ -1225,10 +1227,10 @@ function leafPaintFor(obj, idp, mode) {
         const gradId = `grad-${idp}`;
         const grad = document.createElementNS('http://www.w3.org/2000/svg', obj.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
         grad.setAttribute('id', gradId);
-        if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle);
+        if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle, obj.fillScale);
         grad.innerHTML = getFillStops(obj).map(s => {
             const st = stopStyle(s.c, activePrimaryColor);
-            return `<stop offset="${Math.round(clampNum(s.o, 0, 1) * 100)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
+            return `<stop offset="${+(clampNum(s.o, 0, 1) * 100).toFixed(3)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
         }).join('');
         defs.appendChild(grad);
         fillAttr = `url(#${gradId})`;
@@ -1244,7 +1246,7 @@ function leafPaintFor(obj, idp, mode) {
         if (strokeType === 'linear') applyGradientAngle(sgrad, obj.strokeAngle);
         sgrad.innerHTML = getStrokeStops(obj).map(s => {
             const st = stopStyle(s.c, '#ffffffff');
-            return `<stop offset="${Math.round(clampNum(s.o, 0, 1) * 100)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
+            return `<stop offset="${+(clampNum(s.o, 0, 1) * 100).toFixed(3)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
         }).join('');
         defs.appendChild(sgrad);
         strokeAttr = `url(#${sgradId})`;
@@ -1535,10 +1537,10 @@ function render() {
             const gradId = `grad-${idx}`;
             const grad = document.createElementNS('http://www.w3.org/2000/svg', obj.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
             grad.setAttribute('id', gradId);
-            if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle);
+            if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle, obj.fillScale);
             grad.innerHTML = getFillStops(obj).map(s => {
                 const st = stopStyle(s.c, activePrimaryColor);
-                return `<stop offset="${Math.round(clampNum(s.o, 0, 1) * 100)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
+                return `<stop offset="${+(clampNum(s.o, 0, 1) * 100).toFixed(3)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
             }).join('');
             defs.appendChild(grad);
             fillAttr = `url(#${gradId})`;
@@ -1553,7 +1555,7 @@ function render() {
             if (strokeType === 'linear') applyGradientAngle(sgrad, obj.strokeAngle);
             sgrad.innerHTML = getStrokeStops(obj).map(s => {
                 const st = stopStyle(s.c, '#ffffffff');
-                return `<stop offset="${Math.round(clampNum(s.o, 0, 1) * 100)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
+                return `<stop offset="${+(clampNum(s.o, 0, 1) * 100).toFixed(3)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
             }).join('');
             defs.appendChild(sgrad);
             strokeAttr = `url(#${sgradId})`;

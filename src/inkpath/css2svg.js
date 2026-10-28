@@ -16,6 +16,7 @@
         ['Glossy pill', 'background: linear-gradient(180deg, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0.1) 50%, transparent 51%), linear-gradient(180deg, #7dd3fc 0%, #0284c7 100%);\nborder: 2px solid #e0f2fe;\nborder-radius: 999px;\nbox-shadow: 0 6px 18px rgba(2, 132, 199, 0.45);\ncolor: #fff;\nfont: 800 16px "JetBrains Mono";\npadding: 12px 30px;', 'Gel Pill'],
         ['Glass card', 'background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(240,249,255,0.75) 100%);\nborder: 2px solid rgba(255,255,255,0.95);\nborder-radius: 16px;\nbox-shadow: 0 15px 45px rgba(0,0,0,0.25), inset 0 1px 2px #fff;\ncolor: #334155;\nfont: 600 15px "JetBrains Mono";\nwidth: 220px;\nheight: 120px;', 'Glass Card'],
         ['Lime chip', 'background: linear-gradient(180deg, #98f838 0%, #54c702 100%);\nborder: 1px solid #b2fc7d;\nborder-radius: 6px;\nbox-shadow: 0 4px 12px rgba(104, 199, 2, 0.35), inset 0 1px 2px #fff;\ncolor: #fff;\nfont: bold 13px "JetBrains Mono";\npadding: 6px 12px;\ntext-shadow: 0 1px 2px rgba(0,0,0,0.3);', 'chip'],
+        ['Candy stripe pill', 'display: inline-block;\nborder: 3px solid transparent;\nbackground: linear-gradient(var(--mx), var(--mx)) padding-box, repeating-linear-gradient(45deg, var(--m) 0 4px, var(--ml) 4px 8px) border-box;\ncolor: var(--mk);\nborder-radius: 999px;\npadding: 0px 12px;\nfont-weight: 900;\nline-height: 1.45;\n--m: #22d3ee;\n--ml: #a5f3fc;\n--mx: #f0fdff;\n--mk: #0a3a4a;', 'Inkpath!'],
         ['Sunset orb', 'background: radial-gradient(circle at 35% 30%, #fff7ed 0%, #fb923c 45%, #c2410c 100%);\nborder-radius: 50%;\nbox-shadow: 0 10px 30px rgba(194, 65, 12, 0.5), inset 0 -6px 14px rgba(0,0,0,0.25);\nwidth: 140px;\nheight: 140px;', '']
     ];
 
@@ -43,35 +44,74 @@
         return null;
     }
     function alphaOf(c) { const h = toHex8(c); return h ? parseInt(h.slice(7, 9), 16) / 255 : 0; }
-    // "linear-gradient(90deg, rgb(..) 0%, rgb(..) 100%)" -> {type, angle, stops}!
-    function parseGradient(g) {
+    // The color at position o along a sorted stop list!
+    function colorAt(stops, o) {
+        if (o <= stops[0].o) return stops[0].c;
+        for (let i = 1; i < stops.length; i++) {
+            const a = stops[i - 1], b = stops[i];
+            if (o <= b.o) {
+                const t = b.o === a.o ? 1 : (o - a.o) / (b.o - a.o);
+                let out = '#';
+                for (let k = 1; k < 9; k += 2) out += hex2(parseInt(a.c.substr(k, 2), 16) * (1 - t) + parseInt(b.c.substr(k, 2), 16) * t);
+                return out;
+            }
+        }
+        return stops[stops.length - 1].c;
+    }
+    // Keeps only the 0..1 part of a stop list, adding exact edge colors!
+    function clipStops(stops) {
+        const out = [{ c: colorAt(stops, 0), o: 0 }];
+        stops.forEach(function (st) { if (st.o > 0 && st.o < 1) out.push({ c: st.c, o: st.o }); });
+        out.push({ c: colorAt(stops, 1), o: 1 });
+        return out;
+    }
+    // "repeating-linear-gradient(45deg, rgb(..) 0px, rgb(..) 4px, ...)" (from the browser, so px, %,
+    // var() and shorthand stops are already resolved) -> {type, angle, scale, stops}!
+    // w x h is the box the gradient paints, so px stops and angles come out exactly like CSS!
+    function parseGradient(g, w, h) {
+        w = w || 100; h = h || 100;
         const m = g.match(/^(repeating-)?(linear|radial)-gradient\((.*)\)$/s);
         if (!m) return null;
+        const repeating = !!m[1];
         const parts = splitTop(m[3]);
         let angle = 180;
         if (m[2] === 'linear' && parts.length && !/^(rgb|#|hsl|transparent)/i.test(parts[0])) {
             const head = parts.shift();
             const deg = head.match(/(-?[\d.]+)deg/);
             const turn = head.match(/(-?[\d.]+)turn/);
+            const rad = head.match(/(-?[\d.]+)rad/);
             if (deg) angle = parseFloat(deg[1]);
             else if (turn) angle = parseFloat(turn[1]) * 360;
+            else if (rad) angle = parseFloat(rad[1]) * 180 / Math.PI;
             else if (/to /.test(head)) {
-                const map = { 'to top': 0, 'to right': 90, 'to bottom': 180, 'to left': 270, 'to top right': 45, 'to right top': 45, 'to bottom right': 135, 'to right bottom': 135, 'to bottom left': 225, 'to left bottom': 225, 'to top left': 315, 'to left top': 315 };
-                angle = map[head.trim()] !== undefined ? map[head.trim()] : 180;
+                // corner directions: CSS tilts the line so its middle runs between the OTHER two corners!
+                const t = head.trim();
+                const map = { 'to top': 0, 'to right': 90, 'to bottom': 180, 'to left': 270 };
+                if (map[t] !== undefined) angle = map[t];
+                else {
+                    const up = /top/.test(t), right = /right/.test(t);
+                    const corner = Math.atan2(h, w) * 180 / Math.PI;
+                    angle = up ? (right ? corner : 360 - corner) : (right ? 180 - corner : 180 + corner);
+                }
             }
         } else if (m[2] === 'radial' && parts.length && !/^(rgb|#|hsl|transparent)/i.test(parts[0])) parts.shift();
-        const stops = [];
+        // the length of the gradient line, so px positions turn into fractions
+        const th = angle * Math.PI / 180;
+        const ux = Math.sin(th), uy = -Math.cos(th);
+        const L = m[2] === 'linear' ? (Math.abs(w * ux) + Math.abs(h * uy)) || 1 : Math.hypot(w, h) / 2 || 1;
+        const pos = function (v) { if (v === undefined) return null; const n = parseFloat(v); return /%$/.test(v) ? n / 100 : n / L; };
+        let stops = [];
         parts.forEach(function (p) {
-            const cm = p.match(/^(rgba?\([^)]*\)|#[0-9a-f]{3,8}|transparent)\s*(-?[\d.]+%)?(?:\s+(-?[\d.]+%))?/i);
+            const cm = p.match(/^(rgba?\([^)]*\)|#[0-9a-f]{3,8}|transparent)\s*(-?[\d.]+(?:%|px))?(?:\s+(-?[\d.]+(?:%|px)))?/i);
             if (!cm) return;
-            const col = cm[1] === 'transparent' ? 'rgba(0, 0, 0, 0)' : cm[1];
-            stops.push({ c: toHex8(col), o: cm[2] !== undefined ? parseFloat(cm[2]) / 100 : null });
-            if (cm[3] !== undefined) stops.push({ c: toHex8(col), o: parseFloat(cm[3]) / 100 });
+            const col = toHex8(cm[1] === 'transparent' ? 'rgba(0, 0, 0, 0)' : cm[1]);
+            stops.push({ c: col, o: pos(cm[2]) });
+            if (cm[3] !== undefined) stops.push({ c: col, o: pos(cm[3]) });
         });
         if (stops.length < 2) return null;
         // Missing positions spread evenly between their neighbors, like CSS does!
         if (stops[0].o === null) stops[0].o = 0;
-        if (stops[stops.length - 1].o === null) stops[stops.length - 1].o = 1;
+        if (stops[stops.length - 1].o === null) stops[stops.length - 1].o = repeating ? stops[0].o + 1 : 1;
         for (let i = 1; i < stops.length; i++) {
             if (stops[i].o !== null) continue;
             let j = i;
@@ -79,9 +119,26 @@
             const a = stops[i - 1].o, b = stops[j].o;
             for (let k = i; k < j; k++) stops[k].o = a + (b - a) * (k - i + 1) / (j - i + 1);
         }
-        stops.forEach(function (s) { s.o = Math.max(0, Math.min(1, s.o)); });
-        // Inkpath angles: 0 = left-to-right, 90 = top-to-bottom (CSS 90deg = to right)!
-        return { type: m[2], angle: ((angle - 90) % 360 + 360) % 360, stops: stops };
+        // a stop can't sit before the one in front of it
+        for (let i = 1; i < stops.length; i++) if (stops[i].o < stops[i - 1].o) stops[i].o = stops[i - 1].o;
+        // repeating gradients: tile the pattern across the whole box!
+        const period = stops[stops.length - 1].o - stops[0].o;
+        if (repeating && period > 0.0005) {
+            const tiled = [];
+            const first = Math.floor((0 - stops[0].o) / period);
+            for (let k = first; stops[0].o + k * period < 1 && tiled.length < 1200; k++) {
+                stops.forEach(function (st) { tiled.push({ c: st.c, o: st.o + k * period }); });
+            }
+            stops = tiled;
+        }
+        stops = clipStops(stops);
+        if (m[2] === 'radial') return { type: 'radial', angle: 0, scale: 1, stops: stops };
+        // Inkpath gradients run in box units (0 = left-to-right, 90 = top-to-bottom), so the
+        // direction is corrected for the box shape and the vector stretched to match CSS!
+        const ex = w * ux / L, ey = h * uy / L;
+        const len = Math.hypot(ex, ey) || 1;
+        const inkAngle = ((Math.atan2(ey, ex) * 180 / Math.PI) % 360 + 360) % 360;
+        return { type: 'linear', angle: Math.round(inkAngle * 1000) / 1000, scale: Math.round(1000 / len) / 1000, stops: stops };
     }
     function parseShadows(s) {
         if (!s || s === 'none') return [];
@@ -110,11 +167,26 @@
         document.body.appendChild(host);
         const r = el.getBoundingClientRect();
         const cs = getComputedStyle(el);
+        // where the browser really put the text (flex centering, padding, text-align all included)
+        let textLeft = null, textWidth = 0;
+        if (el.firstChild) {
+            const range = document.createRange();
+            range.selectNodeContents(el);
+            const tr = range.getBoundingClientRect();
+            if (tr.width) { textLeft = tr.left - r.left; textWidth = tr.width; }
+        }
+        // border-radius: 50% means half the box, not 50px!
+        const rawR = String(cs.borderTopLeftRadius).split(' ')[0];
+        const radiusPx = /%$/.test(rawR) ? parseFloat(rawR) / 100 * Math.min(r.width, r.height) : parseFloat(rawR) || 0;
         const out = {
             w: Math.max(4, r.width), h: Math.max(4, r.height),
-            radius: Math.min(parseFloat(cs.borderTopLeftRadius) || 0, Math.min(r.width, r.height) / 2),
+            radius: Math.min(radiusPx, Math.min(r.width, r.height) / 2), textLeft: textLeft, textWidth: textWidth,
             bgColor: cs.backgroundColor, bgImage: cs.backgroundImage,
             borderW: cs.borderTopStyle === 'none' ? 0 : (parseFloat(cs.borderTopWidth) || 0), borderColor: cs.borderTopColor,
+            bw: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return cs['border' + k + 'Style'] === 'none' ? 0 : (parseFloat(cs['border' + k + 'Width']) || 0); }),
+            pad: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return parseFloat(cs['padding' + k]) || 0; }),
+            clips: splitTop(cs.backgroundClip || 'border-box'),
+            outlineW: cs.outlineStyle === 'none' ? 0 : (parseFloat(cs.outlineWidth) || 0), outlineColor: cs.outlineColor, outlineOffset: parseFloat(cs.outlineOffset) || 0,
             shadows: parseShadows(cs.boxShadow), textShadows: parseShadows(cs.textShadow),
             opacity: parseFloat(cs.opacity), color: cs.color, fontSize: parseFloat(cs.fontSize) || 16,
             fontFamily: cs.fontFamily.split(',')[0].replace(/["']/g, '').trim(), fontWeight: cs.fontWeight, textAlign: cs.textAlign,
@@ -129,15 +201,28 @@
         const M = measure(css, text);
         const shapes = [];
         const base = { type: 'rect', x: x0, y: y0, width: M.w, height: M.h, rx: M.radius, strokeType: 'none', stroke: '#ffffff00', stroke2: '#38bdf8ff', strokeAngle: 0, strokeWidth: 0, opacity: 1, blur: 0, rotation: 0, fill2: '#38bdf8ff', fillAngle: 0 };
-        // Bottom layer first: the background color, then images from back to front!
-        if (alphaOf(M.bgColor) > 0) shapes.push(Object.assign({}, base, { fillType: 'color', fill: toHex8(M.bgColor), name: 'Background' }));
-        const layers = (M.bgImage && M.bgImage !== 'none') ? splitTop(M.bgImage).reverse() : [];
-        layers.forEach(function (layer, i) {
-            const g = parseGradient(layer);
+        // Each background layer paints only inside its background-clip box (border-box,
+        // padding-box or content-box), with the corners rounded to match!
+        function clipBox(clip) {
+            const b = M.bw, p = M.pad;
+            const ins = clip === 'content-box' ? [b[0] + p[0], b[1] + p[1], b[2] + p[2], b[3] + p[3]] : clip === 'padding-box' ? b : [0, 0, 0, 0];
+            const w = Math.max(1, M.w - ins[1] - ins[3]), h = Math.max(1, M.h - ins[0] - ins[2]);
+            return { x: x0 + ins[3], y: y0 + ins[0], width: w, height: h, rx: Math.max(0, Math.min(M.radius - Math.max(ins[0], ins[3]), Math.min(w, h) / 2)) };
+        }
+        const layers = (M.bgImage && M.bgImage !== 'none') ? splitTop(M.bgImage) : [];
+        const clipOf = function (i) { return M.clips[Math.min(i, M.clips.length - 1)] || 'border-box'; };
+        // Bottom layer first: the background color (it uses the LAST clip), then images from back to front!
+        if (alphaOf(M.bgColor) > 0) shapes.push(Object.assign({}, base, clipBox(clipOf(layers.length ? layers.length - 1 : 0)), { fillType: 'color', fill: toHex8(M.bgColor), name: 'Background' }));
+        layers.map(function (layer, i) { return { layer: layer, clip: clipOf(i) }; }).reverse().forEach(function (L, i, all) {
+            const box = clipBox(L.clip);
+            const g = parseGradient(L.layer, box.width, box.height);
             if (!g) return;
-            shapes.push(Object.assign({}, base, {
-                fillType: g.type, fill: g.stops[0].c, fill2: g.stops[g.stops.length - 1].c, fillStops: g.stops, fillAngle: g.angle,
-                name: layers.length > 1 ? (i === layers.length - 1 ? 'Gloss' : 'Gradient ' + (i + 1)) : 'Gradient'
+            // a flat gradient (one color, like linear-gradient(white, white)) is just a color!
+            const flat = g.stops.every(function (st) { return st.c === g.stops[0].c; });
+            shapes.push(Object.assign({}, base, box, flat ? { fillType: 'color', fill: g.stops[0].c } : {
+                fillType: g.type, fill: g.stops[0].c, fill2: g.stops[g.stops.length - 1].c, fillStops: g.stops, fillAngle: g.angle, fillScale: g.scale
+            }, {
+                name: (all.length > 1 ? (i === all.length - 1 ? 'Gloss' : 'Gradient ' + (i + 1)) : 'Gradient') + (L.clip !== 'border-box' ? ' (' + L.clip.replace('-box', '') + ')' : '')
             }));
         });
         if (!shapes.length) shapes.push(Object.assign({}, base, { fillType: 'none', fill: '#00000000', name: 'Box' }));
@@ -153,14 +238,19 @@
             const ring = Object.assign({}, base, { x: x0 + bw / 2, y: y0 + bw / 2, width: Math.max(1, M.w - bw), height: Math.max(1, M.h - bw), rx: Math.max(0, M.radius - bw / 2), fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.borderColor), strokeWidth: bw, name: 'Border' });
             if (top.fillType === 'none') Object.assign(top, ring); else shapes.push(ring);
         }
+        if (M.outlineW > 0 && alphaOf(M.outlineColor) > 0) {
+            const ow = M.outlineW, out = M.outlineOffset + ow / 2;
+            shapes.push(Object.assign({}, base, { x: x0 - out, y: y0 - out, width: M.w + out * 2, height: M.h + out * 2, rx: M.radius > 0 ? M.radius + out : 0, fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.outlineColor), strokeWidth: ow, name: 'Outline' }));
+        }
         shapes.forEach(function (s) {
             if (M.opacity < 1) s.opacity = M.opacity;
             if (+M.blur) s.blur = +M.blur;
         });
         if (text) {
             const ts = M.textShadows[0];
-            const anchor = M.textAlign === 'left' || M.textAlign === 'start' ? 'start' : M.textAlign === 'right' || M.textAlign === 'end' ? 'end' : 'middle';
-            const tx = anchor === 'middle' ? x0 + M.w / 2 : anchor === 'start' ? x0 + Math.max(8, M.borderW + 8) : x0 + M.w - 8;
+            // the label's middle goes exactly where the browser put the text's middle!
+            const anchor = 'middle';
+            const tx = M.textLeft !== null ? x0 + M.textLeft + M.textWidth / 2 : x0 + M.w / 2;
             const t = { type: 'text', text: text, fontSize: M.fontSize, fontFamily: M.fontFamily || 'JetBrains Mono', fontWeight: M.fontWeight, textAlign: anchor, x: tx, y: y0 + M.h / 2 + M.fontSize * 0.35, fill: toHex8(M.color) || '#000000ff', fillType: 'color', stroke: '#ffffff00', strokeType: 'none', strokeWidth: 0, opacity: M.opacity < 1 ? M.opacity : 1, blur: 0, rotation: 0, name: 'Label' };
             if (ts) t.effects = { drop: { dx: ts.dx, dy: ts.dy, blur: ts.blur, color: ts.color } };
             shapes.push(t);
@@ -180,7 +270,7 @@
             else if (s.fillType === 'linear' || s.fillType === 'radial') {
                 const g = document.createElementNS(NS, s.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
                 g.id = 'c2s-g' + i;
-                if (s.fillType === 'linear' && typeof applyGradientAngle === 'function') applyGradientAngle(g, s.fillAngle);
+                if (s.fillType === 'linear' && typeof applyGradientAngle === 'function') applyGradientAngle(g, s.fillAngle, s.fillScale);
                 s.fillStops.forEach(function (st) {
                     const stop = document.createElementNS(NS, 'stop');
                     stop.setAttribute('offset', st.o);

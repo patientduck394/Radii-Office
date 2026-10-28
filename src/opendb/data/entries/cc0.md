@@ -1,0 +1,37 @@
+---
+id: cc0
+type: article
+title: CC0
+summary: CC0 is a public domain dedication from Creative Commons that lets creators give up their copyright as fully as the law allows.
+tags: [law, copyright, creative commons]
+created: 2026-10-27
+updated: 2026-10-27
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Full name: CC0 1.0 Universal
+infobox.Publisher: Creative Commons
+infobox.Released: 2009
+infobox.Attribution required: No
+---
+**CC0** (read "C C zero") is a legal tool published by Creative Commons in 2009. With it, a creator waives all of their copyright and related rights in a work, placing it as completely as possible in the [[public-domain|public domain]].[^1]
+
+## How it works
+
+Not every country lets people simply give away their copyright, so CC0 works in layers:
+
+1. **Waiver**: the creator gives up all of their rights in the work, worldwide.
+2. **Fallback license**: where a full waiver is not legally possible, CC0 grants everyone a license to use the work for any purpose, with no conditions.
+
+Because of this design, a CC0 work can be used without attribution, without sharing changes, and for commercial purposes.
+
+## What CC0 does not cover
+
+CC0 only covers rights held by the person applying it. It does not affect trademarks or patents, and it does not grant rights that other people may hold, such as the privacy rights of a person shown in a photograph.
+
+## Uses
+
+CC0 is widely used for scientific data, museum collections, software, and open knowledge projects such as [[opendb|OpenDB]], where removing every barrier to reuse is the goal.
+
+## References
+
+[^1]: Creative Commons, "CC0 1.0 Universal Public Domain Dedication", https://creativecommons.org/publicdomain/zero/1.0/

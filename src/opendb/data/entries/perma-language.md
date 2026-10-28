@@ -1,0 +1,40 @@
+---
+id: perma-language
+type: paper
+title: "Perma: a small language with permanent, changeable and kept bindings"
+summary: We describe Perma, a beginner-friendly language whose bindings are permanent (let), changeable (var) or kept across runs (keep), running both on its own and inside web pages.
+abstract: Beginner languages usually offer one kind of variable, leaving learners to discover by accident which values are meant to change and which values should survive after a program ends. Perma makes both choices explicit in the syntax. A let binding can never be reassigned, a var binding can, and a keep binding is automatically saved and restored between runs, in a file on the command line and in browser storage on the web. We describe the language, its tree-walking interpreter, the rules that make kept values persist even when they are changed in place, and a runtime that lets Perma run from script tags in ordinary web pages. A test suite of 66 cases covers the language and its command-line tool.
+tags: [programming languages, education, web]
+categories: [cs.PL, cs.CY]
+created: 2026-10-27
+updated: 2026-10-27
+authors: [Radii Office contributors]
+license: CC0-1.0
+---
+## 1. Introduction
+
+New programmers meet variables early, but most languages treat every variable the same way. Two important questions stay hidden: *is this value supposed to change?* and *should this value still be here next time?* Perma answers both in the syntax with three keywords: `let`, `var` and `keep`.
+
+## 2. Three kinds of bindings
+
+- `let name = value` creates a **permanent** binding. Assigning to it again is an error that explains how to make the value changeable.
+- `var name = value` creates a **changeable** binding.
+- `keep name = value` creates a **kept** binding. The first run stores the starting value; later runs load the stored value instead.
+
+A permanent binding still refers to the same list or map, but the contents of that list or map can change. This mirrors how many languages treat constants and keeps simple programs such as to-do lists natural to write.
+
+## 3. Keeping changes that happen in place
+
+Saving a kept value on assignment is not enough, because programs often change kept data in place, for example `push(todos, "milk")`. Perma therefore saves every kept binding after each program run and after each event handler or timer callback finishes. Assignments through fields and indexes, such as `todos[0].done = true`, also save the kept value at the root of the expression.
+
+## 4. Running on its own and on the web
+
+The interpreter is a single dependency-free file. On the command line, kept values are stored per program in the user's home folder. In a browser, programs written in `<script type="text/perma">` tags run automatically, share one global environment like ordinary scripts, and store kept values in local storage. A small page interface (`page.find`, `el.on`, `el.text`) lets programs build interfaces without HTML knowledge.
+
+## 5. Friendly failure
+
+Errors name the line and suggest fixes, such as a misspelled name (*did you mean count?*). A step limit stops endless loops, and runaway recursion becomes a readable error instead of a crash.
+
+## 6. Conclusion
+
+Making permanence and persistence visible in the syntax costs only two extra keywords, yet it lets beginners express intent and build small useful programs, like counters and to-do lists that remember their data, in a few lines.

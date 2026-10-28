@@ -1,0 +1,33 @@
+---
+id: prime-number
+type: article
+title: Prime number
+summary: A prime number is a whole number greater than 1 whose only divisors are 1 and itself.
+tags: [mathematics, number theory]
+created: 2026-10-27
+updated: 2026-10-27
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Field: Number theory
+infobox.First primes: 2, 3, 5, 7, 11, 13
+infobox.How many: Infinitely many
+---
+A **prime number** is a whole number greater than 1 that can only be divided evenly by 1 and by itself. Numbers greater than 1 that are not prime are called **composite**.
+
+## Examples
+
+The first prime numbers are 2, 3, 5, 7, 11, 13, 17, 19, 23 and 29. The number 2 is the only even prime, because every other even number can be divided by 2. The number 1 is not considered prime.
+
+## Building blocks of numbers
+
+The **fundamental theorem of arithmetic** says every whole number greater than 1 can be written as a product of primes in exactly one way, apart from the order. For example, 60 = 2 × 2 × 3 × 5.
+
+## Infinitely many primes
+
+Around 300 BC, the Greek mathematician Euclid proved that the primes never run out. If there were only finitely many, you could multiply them all together and add 1. The result would leave remainder 1 when divided by every prime on the list, so it would need a prime factor that was missing from the list.
+
+## Finding primes
+
+A simple way to list primes is the **sieve of Eratosthenes**: write the numbers from 2 upward, then repeatedly circle the next uncrossed number and cross out all of its multiples. The circled numbers are the primes.
+
+Primes are used in modern cryptography, because multiplying two large primes is easy while recovering them from the product is extremely hard. See also the [[pythagorean-theorem|Pythagorean theorem]].

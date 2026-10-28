@@ -1,0 +1,37 @@
+---
+id: solar-system
+type: article
+title: Solar System
+summary: The Solar System is the Sun and everything that orbits it, including eight planets and their moons.
+tags: [astronomy, space, planets]
+created: 2026-10-27
+updated: 2026-10-27
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Age: About 4.6 billion years
+infobox.Star: The Sun
+infobox.Planets: 8
+infobox.Dwarf planets: 5 recognized (including Pluto)
+---
+The **Solar System** is made up of the Sun and everything bound to it by gravity: eight planets, their moons, dwarf planets, asteroids, comets and dust. It formed about 4.6 billion years ago from a collapsing cloud of gas and dust.
+
+![The planets in order (not to scale)](media:solar-system-diagram)
+
+## The planets
+
+In order from the Sun, the planets are:
+
+1. **Mercury**: the smallest planet and the closest to the Sun.
+2. **Venus**: the hottest planet, wrapped in thick clouds.
+3. **Earth**: the only planet known to have life.
+4. **Mars**: a cold, red, rocky planet.
+5. **Jupiter**: the largest planet, a gas giant.
+6. **Saturn**: a gas giant famous for its bright rings.
+7. **Uranus**: an ice giant that spins tipped on its side.
+8. **Neptune**: the windiest and most distant planet.
+
+The first four are small and rocky; the outer four are giants. Between Mars and Jupiter lies the **asteroid belt**, and beyond Neptune is the **Kuiper belt**, home to Pluto and many icy bodies.
+
+## The Sun
+
+The Sun holds more than 99.8% of the Solar System's mass. Its light powers Earth's weather, the [[water-cycle|water cycle]] and [[photosynthesis]].

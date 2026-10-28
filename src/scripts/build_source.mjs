@@ -8,6 +8,9 @@ import zlib from 'node:zlib';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+
+// OpenDB's index is built from its entry files first, so the download always matches!
+await import('./build_opendb.mjs').then((m) => m.build());
 const OUT = path.join(ROOT, 'downloads');
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'downloads', 'target', '.claude', '.idea', '.vscode']);
 const SKIP_FILES = /^(\.DS_Store|Thumbs\.db)$|\.(dmg|exe|msi|zip|kc)$/i;
