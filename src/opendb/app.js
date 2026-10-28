@@ -75,6 +75,7 @@
         s = s.replace(/\\\$/g, () => stash('$'));
         s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => stash(tex(t.trim(), true)));
         s = s.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (_, pre, t) => pre + stash(tex(t, false)));
+        s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplInline(raw)));
         s = s.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, label) => {
             const e = byId.get(id);
             const text = esc(label || (e ? e.title : id));
@@ -90,7 +91,8 @@
         const html = typeof window.kdRender === 'function' ? window.kdRender(s) : esc(s);
         return html.replace(/\u0001(\d+)\u0001/g, (_, i) => store[+i]);
     }
-    function renderKd(src) {
+    function renderKd(src, entry) {
+        tplCtx = entry || null;
         const lines = String(src || '').replace(/\r/g, '').split('\n');
         const notes = { order: [], defs: {} };
         const out = [];
@@ -107,11 +109,17 @@
                 continue;
             }
             if (!t) { flush(); continue; }
+            // a template alone on its line: a notice box, a hatnote or the stub note
+            if ((m = /^\{\{([^{}]+)\}\}$/.exec(t)) && findTpl(m[1]) && findTpl(m[1]).kind !== 'inline') { flush(); out.push(tplBlock(m[1])); continue; }
             // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
+            // (the text inside is drawn like any other line, so **bold**, links and math work in it too)
             const ls = /^(#{1,4}|\*)\s+(\S.*)$/.exec(t);
             if (ls) {
-                const mark = ls[1] === '*' ? '~BUL~' : ['~H1~', '~H2~', '~H3~', '~MH~'][ls[1].length - 1];
-                t = mark + ls[2] + mark;
+                flush();
+                const cls = ls[1] === '*' ? 'bulleted-list' : ['header-1', 'header-2', 'header-3', 'mega-header'][ls[1].length - 1];
+                const anchor = ls[1] === '*' ? '' : ' id="s-' + ls[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '"';
+                out.push('<div class="kd-line"' + anchor + '><span class="' + cls + '">' + inline(ls[2], notes) + '</span></div>');
+                continue;
             }
             if ((m = /^\[\^([\w-]+)\]:\s*(.*)$/.exec(t))) { flush(); notes.defs[m[1]] = m[2]; continue; }
             if ((m = /^!\[([^\]]*)\]\(([^)\s]+)\)$/.exec(t))) {
@@ -146,8 +154,110 @@
             .replace(/```[\s\S]*?```/g, ' ').replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
             .replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, '$2').replace(/\[\[([a-z0-9-]+)\]\]/g, '$1')
             .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\[\^[\w-]+\]:?/g, '')
+            .replace(/\{\{[^{}]*\}\}/g, ' ')
             .replace(/::[a-z]+/g, ' ').replace(/~[A-Z0-9-]+~|=[A-Z]+=|!?#[A-Z]+#|&&/g, ' ')
             .replace(/[*`$\\]/g, '').replace(/\s+/g, ' ');
+    }
+
+    /* ---------- Templates: little Wikipedia-style notices, written {{name}} or {{name|detail}} ---------- */
+    // Boxes and hatnotes go on a line of their own; tags like {{citation needed}} sit inside a sentence.
+    // c is what a template knows: the entry's noun ("article", "file", "paper"), its edit link and the details.
+    const TEMPLATES = [
+        // maintenance boxes
+        { name: 'stub', kind: 'stub', group: 'Maintenance', icon: '🌱', where: 'end', hint: 'A short entry that should grow. Put it at the very bottom!',
+            text: (c) => 'This ' + c.noun + ' is a <b>stub</b>. You can help OpenDB by ' + c.edit('expanding it') + '!' },
+        { name: 'more citations', aliases: ['citations needed', 'refimprove', 'more sources'], kind: 'content', group: 'Maintenance', icon: '📚', hint: 'Some claims have no source yet.',
+            text: (c) => 'This ' + c.noun + ' <b>needs more sources</b>. Please help by ' + c.edit('adding footnotes') + ' that point to reliable sources! Claims without a source may be challenged and removed.' + c.reason() },
+        { name: 'unreferenced', aliases: ['no sources'], kind: 'content', group: 'Maintenance', icon: '❓', hint: 'Nothing in the entry has a source.',
+            text: (c) => 'This ' + c.noun + ' <b>does not cite any sources</b>. Please help by ' + c.edit('adding footnotes') + ' that point to reliable sources!' },
+        { name: 'file improvement', aliases: ['image improvement', 'improve file'], kind: 'file', group: 'Maintenance', icon: '🖼️', example: '{{file improvement|the text is blurry}}', hint: 'A media file that someone could redraw, sharpen or replace. Add what is wrong after a |!',
+            text: (c) => 'This ' + (c.type === 'media' ? 'file' : c.noun + '’s image') + ' <b>could be improved</b>' + (c.arg ? ': ' + c.argHtml : '') + '! If you can make a better version (sharper, larger, cleaner, or as an SVG), please ' + c.edit('upload it') + '!' },
+        { name: 'cleanup', kind: 'style', group: 'Maintenance', icon: '🧹', example: '{{cleanup|the sections repeat each other}}', hint: 'The entry needs tidying. Add the reason after a |!',
+            text: (c) => 'This ' + c.noun + ' <b>may need cleanup</b> to meet OpenDB’s standards.' + c.reason() + ' You can help by ' + c.edit('improving it') + '!' },
+        { name: 'copy edit', aliases: ['copyedit'], kind: 'style', group: 'Maintenance', icon: '✏️', hint: 'Grammar, spelling or wording need a pass.',
+            text: (c) => 'This ' + c.noun + ' <b>may need copy editing</b> for grammar, style, clarity or spelling. You can help by ' + c.edit('editing it') + '!' },
+        { name: 'too technical', aliases: ['technical'], kind: 'style', group: 'Maintenance', icon: '🔬', hint: 'Hard to follow for someone new to the topic.',
+            text: (c) => 'This ' + c.noun + ' <b>may be too technical</b> for most readers. Please help ' + c.edit('make it easier to understand') + ', without removing the details!' },
+        { name: 'outdated', aliases: ['update'], kind: 'content', group: 'Maintenance', icon: '⏳', example: '{{outdated|date=2026}}', hint: 'Facts that may have changed. Add date=… for when it was last right!',
+            text: (c) => 'Parts of this ' + c.noun + ' <b>may be out of date</b>' + (c.named.date ? ' (as of ' + esc(c.named.date) + ')' : '') + '. Please help ' + c.edit('update it') + ' with newer information!' },
+        { name: 'disputed', aliases: ['dubious entry'], kind: 'content', group: 'Maintenance', icon: '⚠️', hint: 'Someone thinks a fact here is wrong.',
+            text: (c) => 'The <b>accuracy of this ' + c.noun + ' is disputed</b>.' + c.reason() + ' Check its sources, and ' + c.edit('fix any mistakes') + ' you can prove!' },
+        { name: 'expand', aliases: ['expand section'], kind: 'notice', group: 'Maintenance', icon: '➕', hint: 'Put it under a heading that is empty or too thin.',
+            text: (c) => 'This section <b>needs more detail</b>. You can help by ' + c.edit('adding to it') + '!' },
+        { name: 'orphan', kind: 'notice', group: 'Maintenance', icon: '🔗', hint: 'No other entry links here yet.',
+            text: (c) => '<b>No other entries link to this ' + c.noun + '</b>. Please add [[links]] to it from related entries!' + (c.linkedFrom ? ' <i>(' + c.linkedFrom + ' now link here, so this notice can be removed!)</i>' : '') },
+        { name: 'in use', aliases: ['under construction', 'in progress'], kind: 'notice', group: 'Maintenance', icon: '🚧', hint: 'Someone is writing it right now.',
+            text: (c) => 'This ' + c.noun + ' is <b>being written right now</b>, so it may change a lot soon. Please be patient!' },
+        { name: 'merge', aliases: ['merge with'], kind: 'move', group: 'Maintenance', icon: '🔀', example: '{{merge|other-entry}}', hint: 'Two entries cover the same thing. Name the other one after a |!',
+            text: (c) => 'It has been suggested that this ' + c.noun + ' be <b>merged</b> with ' + (c.args.length ? c.links() : 'another entry') + '.' },
+        // hatnotes: one italic line at the top that points somewhere else
+        { name: 'main', aliases: ['main article'], kind: 'hatnote', group: 'Hatnotes', example: '{{main|public-domain}}', hint: 'Put it under a heading that summarizes a bigger entry.',
+            text: (c) => 'Main ' + (c.args.length > 1 ? 'entries' : 'entry') + ': ' + c.links() },
+        { name: 'see also', kind: 'hatnote', group: 'Hatnotes', example: '{{see also|cc0|public-domain}}', hint: 'Related entries, separated by |.',
+            text: (c) => 'See also: ' + c.links() },
+        { name: 'further', aliases: ['further information'], kind: 'hatnote', group: 'Hatnotes', example: '{{further|opendb}}', hint: 'Where to read more.',
+            text: (c) => 'Further information: ' + c.links() },
+        { name: 'distinguish', kind: 'hatnote', group: 'Hatnotes', example: '{{distinguish|creative-commons}}', hint: 'An entry people often mix this one up with.',
+            text: (c) => 'Not to be confused with ' + c.links() + '.' },
+        { name: 'about', kind: 'hatnote', group: 'Hatnotes', example: '{{about|the license|the idea|public-domain}}', hint: 'What this entry is about, then another use and where to find it.',
+            text: (c) => 'This ' + c.noun + ' is about ' + (c.args[0] ? esc(c.args[0]) : 'its title') + '.' + (c.args[2] ? ' For ' + esc(c.args[1] || 'other uses') + ', see ' + c.links(c.args.slice(2)) + '.' : '') },
+        // tags inside a sentence
+        { name: 'citation needed', aliases: ['cn', 'fact'], kind: 'inline', group: 'Inline tags', tag: 'citation needed', hint: 'Right after a claim that needs a source.' },
+        { name: 'clarify', kind: 'inline', group: 'Inline tags', tag: 'clarification needed', hint: 'After a sentence that is hard to understand.' },
+        { name: 'dubious', kind: 'inline', group: 'Inline tags', tag: 'dubious', hint: 'After a claim that looks wrong.' },
+        { name: 'vague', kind: 'inline', group: 'Inline tags', tag: 'vague', hint: 'After wording that is too fuzzy to check.' },
+        { name: 'when', kind: 'inline', group: 'Inline tags', tag: 'when?', hint: 'A time is missing.' },
+        { name: 'who', kind: 'inline', group: 'Inline tags', tag: 'who?', hint: 'A person or group is missing.' },
+        { name: 'which', kind: 'inline', group: 'Inline tags', tag: 'which?', hint: 'Something is too unspecific.' },
+        { name: 'page needed', kind: 'inline', group: 'Inline tags', tag: 'page needed', hint: 'A source is cited without a page number.' },
+    ];
+    const tplSlug = (name) => name.replace(/\s+/g, '-');
+    const tplKey = (s) => String(s).trim().toLowerCase().replace(/[\s_-]+/g, ' ');
+    const TPL_BY = new Map();
+    TEMPLATES.forEach((t) => [t.name].concat(t.aliases || []).forEach((n) => TPL_BY.set(tplKey(n), t)));
+    const findTpl = (raw) => TPL_BY.get(tplKey(String(raw).split('|')[0])) || null;
+    let tplCtx = null; // the entry being drawn, so notices can say "file" or "paper" and link to its editor
+
+    function tplContext(raw) {
+        const parts = String(raw).split('|').slice(1).map((s) => s.trim());
+        const named = {};
+        const args = [];
+        parts.forEach((p) => { const m = /^([a-z]+)\s*=\s*(.*)$/i.exec(p); if (m) named[m[1].toLowerCase()] = m[2]; else if (p) args.push(p); });
+        const e = tplCtx || {};
+        const n = e.id ? (backlinks.get(e.id) || new Set()).size : 0;
+        const arg = named.reason || args[0] || '';
+        return {
+            type: e.type, noun: { article: 'article', media: 'file', paper: 'paper' }[e.type] || 'entry',
+            args, named, arg, argHtml: esc(arg),
+            edit: (text) => (e.id ? '<a href="#/edit/' + esc(e.id) + '">' + text + '</a>' : text),
+            reason: () => (arg ? ' <i>Reason: ' + esc(arg) + '</i>' : ''),
+            links: (list) => (list || args).map((a) => { const id = byId.has(a) ? a : slug(a); return inline('[[' + id + (byId.has(id) || id === a ? '' : '|' + a) + ']]', { order: [] }); }).join(', '),
+            linkedFrom: n ? n + ' entr' + (n === 1 ? 'y' : 'ies') : '',
+        };
+    }
+    // A template on its own line: a message box, a hatnote or the stub note
+    function tplBlock(raw) {
+        const t = findTpl(raw);
+        const c = tplContext(raw);
+        const more = ' <a class="tpl-more" href="#/template/' + tplSlug(t.name) + '" title="About this notice, and every entry that has it">ⓘ</a>';
+        if (t.kind === 'hatnote') return '<div class="tpl-hatnote" role="note">' + t.text(c) + '</div>';
+        if (t.kind === 'stub') return '<p class="tpl-stub" role="note"><span class="tpl-icon" aria-hidden="true">' + t.icon + '</span> <i>' + t.text(c) + '</i>' + more + '</p>';
+        return '<div class="tpl tpl-' + t.kind + '" role="note"><span class="tpl-icon" aria-hidden="true">' + t.icon + '</span><div>' + t.text(c) + more + '</div></div>';
+    }
+    // A template inside a sentence: a [tag], or a little chip for a box that was put mid-line
+    function tplInline(raw) {
+        const t = findTpl(raw);
+        if (!t) return '<span class="tpl-unknown" title="There is no template with this name!">{{' + esc(raw) + '}}</span>';
+        if (t.kind === 'inline') return '<sup class="tpl-tag">[<a href="#/template/' + tplSlug(t.name) + '">' + esc(t.tag) + '</a>]</sup>';
+        return '<a class="tpl-chip" href="#/template/' + tplSlug(t.name) + '">' + (t.icon || '↪') + ' ' + esc(t.name) + '</a>';
+    }
+    // Which templates an entry uses (aliases count as their template)
+    function templatesIn(e) {
+        const out = new Set();
+        const re = /\{\{([^{}]+)\}\}/g;
+        let m;
+        while ((m = re.exec(e.body || ''))) { const t = findTpl(m[1]); if (t) out.add(t); }
+        return out;
     }
 
     /* ---------- Search ---------- */
@@ -273,7 +383,7 @@
             '</div></div>' +
             '<div class="side-box"><h2>Tags</h2>' + tagLinks(e.tags) + '<p class="hint" style="margin-top:10px">Created ' + esc(e.created) + (e.updated && e.updated !== e.created ? ' · updated ' + esc(e.updated) : '') + (e.authors && e.type !== 'paper' ? '<br>By ' + esc(e.authors.join(', ')) : '') + '</p></div>' +
             (links.length ? '<div class="side-box"><h2>What links here</h2><ul>' + links.map((l) => '<li><a href="#/e/' + l.id + '">' + esc(l.title) + '</a></li>').join('') + '</ul></div>' : '');
-        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(e.body) + '</div></article><aside class="side">' + side + '</aside></div>';
+        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(e.body, e) + '</div></article><aside class="side">' + side + '</aside></div>';
         $('cite').onclick = () => showCite(e);
         $('dl-md').onclick = () => download(e.id + '.kd', toKdFile(e), 'text/plain');
         $('dl-json').onclick = () => download(e.id + '.json', JSON.stringify(clean(e), null, 2), 'application/json');
@@ -295,6 +405,36 @@
         const bib = '@' + (e.type === 'paper' ? 'misc' : 'misc') + '{opendb_' + e.id.replace(/-/g, '_') + ',\n  title = {' + e.title + '},\n  author = {' + authors.join(' and ') + '},\n  year = {' + year + '},\n  howpublished = {OpenDB},\n  url = {' + url + '},\n  note = {Public domain (CC0 1.0)' + (e.type === 'paper' ? ', ' + (e.categories || []).join(', ') : '') + '}\n}';
         const apa = authors.join(', ') + ' (' + year + '). ' + e.title + (e.type === 'paper' ? ' [Preprint]' : e.type === 'media' ? ' [' + (e.mime || 'File') + ']' : '') + '. OpenDB. ' + url;
         modal('Cite “' + e.title + '”', '<p class="hint">Citing is a kindness, not a rule: CC0 means no credit is required!</p><b>BibTeX</b><pre id="bib">' + esc(bib) + '</pre><button class="gel small plain" data-copy="bib">Copy BibTeX</button><b>APA style</b><pre id="apa">' + esc(apa) + '</pre><button class="gel small plain" data-copy="apa">Copy APA</button>');
+    }
+
+    // Every template, like Wikipedia's template pages, with how many entries use each one
+    const TPL_GROUPS = ['Maintenance', 'Hatnotes', 'Inline tags'];
+    const tplUsers = (t) => all().filter((e) => templatesIn(e).has(t)).sort((a, b) => a.title.localeCompare(b.title));
+    const tplUsage = (t) => t.example || '{{' + t.name + '}}';
+    function pageTemplates() {
+        document.title = 'Templates - OpenDB';
+        view.innerHTML = '<div class="card"><h1 class="page">Templates</h1><p class="muted">Little notices you can add to any entry, like on Wikipedia! Write the name in double curly braces on a line of its own, like <code>{{stub}}</code>, or right after a sentence for the inline tags! Click one to see every entry that has it!</p>' +
+            TPL_GROUPS.map((g) => '<h2 class="tpl-group">' + g + '</h2><div class="tpl-list">' + TEMPLATES.filter((t) => t.group === g).map((t) => {
+                const n = tplUsers(t).length;
+                return '<a class="tpl-row" href="#/template/' + tplSlug(t.name) + '"><code>' + esc(tplUsage(t)) + '</code><span>' + esc(t.hint) + '</span><small>' + n + ' entr' + (n === 1 ? 'y' : 'ies') + '</small></a>';
+            }).join('') + '</div>').join('') + '</div>';
+    }
+    function pageTemplate(name) {
+        const t = findTpl(name);
+        if (!t) {
+            view.innerHTML = '<div class="card empty"><h1 class="page">No template called “' + esc(name) + '”!</h1><p><a href="#/templates">See every template</a>!</p></div>';
+            return;
+        }
+        document.title = '{{' + t.name + '}} - OpenDB';
+        const users = tplUsers(t);
+        const demo = t.kind === 'inline' ? 'The library holds over a million books.' + tplUsage(t) : tplUsage(t);
+        view.innerHTML = '<div class="card"><div class="crumbs"><a href="#/templates">Templates</a> › ' + esc(t.name) + '</div>' +
+            '<h1 class="page">{{' + esc(t.name) + '}}</h1><p class="lead">' + esc(t.hint) + '</p>' +
+            '<h2 class="tpl-group">How to use it</h2><pre class="tpl-code"><code>' + esc(tplUsage(t)) + '</code></pre>' +
+            (t.aliases ? '<p class="hint">These names work too: ' + t.aliases.map((a) => '<code>{{' + esc(a) + '}}</code>').join(' ') + '</p>' : '') +
+            '<h2 class="tpl-group">What it looks like</h2><div class="kd-doc tpl-demo">' + renderKd(demo, { type: 'article' }) + '</div>' +
+            '<h2 class="tpl-group">Entries with this template (' + users.length + ')</h2>' +
+            (users.length ? '<div class="list">' + users.map((e) => itemRow(e)).join('') + '</div>' : '<div class="empty">No entries have it right now!</div>') + '</div>';
     }
 
     function pageMine() {
@@ -338,8 +478,8 @@
             '<div id="media-fields" hidden><label class="field">File <small>(images work best: PNG, JPEG, SVG, WebP or GIF, up to 2 MB)</small><input id="f-file" type="file" accept="image/*"></label><p class="hint" id="file-info"></p></div>' +
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
-            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1])</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
-            '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button></div>' +
+            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1], <a href="#/templates" target="_blank">templates</a> like {{stub}})</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
+            '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button><button type="button" class="gel small plain" id="add-tpl" title="Stub notices, citation needed, file improvement and more!">⚑ Add a template</button></div>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
             '<label class="field">Infobox <small>(optional, one “Label: value” per line)</small><textarea id="f-infobox" style="min-height:70px">' + esc(infoboxText) + '</textarea></label>' +
@@ -382,7 +522,7 @@
             const fake = Object.assign({}, e, { local: true });
             const img = type === 'media' && (e.dataUrl || e.file) ? '<figure class="figure"><img src="' + esc(e.dataUrl || mediaSrc(e)) + '" alt=""></figure>' : '';
             const head = type === 'paper' ? '<p class="authors">' + esc(e.authors.join(', ')) + '</p>' + (e.abstract ? '<div class="abstract"><b>Abstract</b>' + esc(e.abstract) + '</div>' : '') : '<p class="lead">' + esc(e.summary) + '</p>';
-            $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(e.body) + '</div>';
+            $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(e.body, e) + '</div>';
         }
         function syncType() {
             $('media-fields').hidden = type !== 'media';
@@ -433,6 +573,34 @@
                 box.focus();
                 preview();
             } });
+        };
+        // Templates: maintenance boxes go at the top, the stub note at the bottom, the rest where the cursor is
+        $('add-tpl').onclick = () => {
+            const box = $('f-body');
+            const s0 = box.selectionStart, s1 = box.selectionEnd;
+            modal('Add a template', '<p class="hint">Pick a notice to add to this ' + ({ article: 'article', media: 'file', paper: 'paper' }[type]) + '! Things after a <code>|</code> are details you can change!</p>' +
+                TPL_GROUPS.map((g) => '<b class="tpl-pick-group">' + g + '</b><div class="tpl-picks">' + TEMPLATES.filter((t) => t.group === g).map((t) =>
+                    '<button type="button" class="tpl-pick" data-tpl="' + esc(t.name) + '"><code>' + esc(tplUsage(t)) + '</code><span>' + esc(t.hint) + '</span></button>').join('') + '</div>').join(''));
+            $('modal-body').onclick = (ev) => {
+                const b = ev.target.closest('[data-tpl]');
+                if (!b) return;
+                const t = findTpl(b.dataset.tpl);
+                const text = tplUsage(t);
+                const v = box.value;
+                if (t.kind === 'inline') {
+                    box.setRangeText(text, s0, s1, 'end');
+                } else if (t.where === 'end') {
+                    box.value = v.replace(/\s+$/, '') + (v.trim() ? '\n\n' : '') + text + '\n';
+                } else if (t.kind === 'hatnote' || t.name === 'expand') {
+                    const before = v.slice(0, s0), after = v.slice(s1);
+                    box.setRangeText((before && !before.endsWith('\n') ? '\n' : '') + text + (after.startsWith('\n') ? '' : '\n'), s0, s1, 'end');
+                } else {
+                    box.value = text + '\n' + (v && !/^\{\{/.test(v) ? '\n' : '') + v;
+                }
+                $('modal').hidden = true;
+                box.focus();
+                preview();
+            };
         };
         $('kd-guide').onclick = (ev) => {
             ev.preventDefault();
@@ -535,6 +703,8 @@
             case 'new': pageEditor(parts[1], params, null); break;
             case 'edit': pageEditor(null, params, parts[1]); break;
             case 'mine': pageMine(); break;
+            case 'templates': pageTemplates(); break;
+            case 'template': pageTemplate(parts[1] || ''); break;
             case 'random': {
                 const list = all();
                 if (list.length) location.replace('#/e/' + list[Math.floor(Math.random() * list.length)].id);

@@ -1,7 +1,5 @@
 "use strict";
-// app.ts — TypeScript source of Mainkey (incremental typing pilot)!
-// Compiles to app.js (committed, browsers run the output as-is)!
-// Recompile with: npx -y -p typescript tsc --project tsconfig.dom.json
+// app.js — Mainkey itself! Plain JavaScript, browsers run it as-is!
 let fields = [
     { id: 'title', name: 'Title', type: 'text' },
     { id: 'status', name: 'Status', type: 'tag' },
@@ -124,10 +122,10 @@ function renderStatsBar(data) {
     bar.innerText = parts.join('  •  ');
     renderStatsMedians(bar, data, numericFields);
 }
-// Per-field medians, silently Python-backed (JS fallback, no branding)!
+// Per-field medians!
 // Field names only ever enter via textContent, so custom names stay safe!
 function renderStatsMedians(bar, data, numericFields) {
-    if (typeof PySilent === "undefined")
+    if (typeof RadiiStats === "undefined")
         return;
     const jobs = numericFields.map(f => ({
         name: f.name,
@@ -135,29 +133,10 @@ function renderStatsMedians(bar, data, numericFields) {
     })).filter(j => j.vals.length > 0);
     if (jobs.length === 0)
         return;
-    const meds = {};
-    jobs.forEach(j => {
-        meds[j.name] = Math.round(PySilent.fallback(j.vals).median * 100) / 100;
-    });
-    const paint = (engine) => {
-        const el = document.getElementById("stats-py-meds");
-        if (!el)
-            return;
-        el.textContent = "medians: " + jobs.map(j => `${j.name} ${meds[j.name]}`).join(" / ");
-        try {
-            el.dataset.engine = engine;
-        }
-        catch (e) { }
-    };
-    bar.innerHTML += '  •  <span id="stats-py-meds"></span>';
-    paint("js-fallback");
-    jobs.forEach(j => {
-        PySilent.run(j.vals, (r) => {
-            const src = r || PySilent.fallback(j.vals);
-            meds[j.name] = Math.round(src.median * 100) / 100;
-            paint(r ? "pyodide" : "js-fallback");
-        });
-    });
+    bar.innerHTML += '  •  <span id="stats-meds"></span>';
+    const el = document.getElementById("stats-meds");
+    if (el)
+        el.textContent = "medians: " + jobs.map(j => `${j.name} ${Math.round(RadiiStats.summary(j.vals).median * 100) / 100}`).join(" / ");
 }
 function renderTable(data) {
     const headerRow = document.getElementById('table-header-row');

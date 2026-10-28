@@ -5,7 +5,7 @@ and in Node for verification — giving the site a second executing language!
 
 Files:
 - `bezmath/` — tiny `cdylib` crate with `cubic_len` (same 32-sample loop as
-  `scripts/engines/inkpath.mjs`)!
+  `scripts/engines/inkpath.js`)!
 - `../inkpath/bezmath.wasm` — committed 592-byte build output, served statically!
 - `../inkpath/bezmath.js` — loader with a JS fallback (`window.BezMath`)!
 

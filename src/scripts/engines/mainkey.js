@@ -1,6 +1,4 @@
-// engines/mainkey.ts — TypeScript source of the build-time database engine!
-// Compiles to mainkey.js (committed, Node runs the output as-is)!
-// Recompile with: npx -y -p typescript tsc --project tsconfig.json
+// engines/mainkey.js — the build-time database engine! Plain JavaScript, Node runs it as-is!
 // Substring filter, sort, numeric aggregation, search index and histograms!
 // Deterministic lowercase text: id, then title, status, value!
 export function rowText(rec) {

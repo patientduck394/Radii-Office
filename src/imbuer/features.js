@@ -705,21 +705,17 @@ function wireCharts() {
     });
 }
 
-// Median, stdev and trend of the first series (Python via Pyodide when it loads, JS until then)!
+// Median, stdev and trend of the first series!
 function renderChartStats(ch, el) {
-    if (typeof PySilent === 'undefined') { el.hidden = true; return; }
+    if (typeof RadiiStats === 'undefined') { el.hidden = true; return; }
     const data = chartData(ch);
     const nums = (data.series[0] ? data.series[0].vals : []).filter(v => v !== null);
     const sig = nums.join(',');
     if (el._sig === sig) return;
     el._sig = sig;
     const fmt = (v) => (v === null || v === undefined ? 'n/a' : shortNum(Math.round(v * 10000) / 10000));
-    const show = (r, engine) => {
-        el.textContent = `median ${fmt(r.median)} · stdev ${fmt(r.stdev)} · trend ${fmt(r.slope)}/pt + ${fmt(r.intercept)}`;
-        el.dataset.engine = engine;
-    };
-    show(PySilent.fallback(nums), 'js-fallback');
-    PySilent.run(nums, (r) => { if (el._sig === sig) show(r || PySilent.fallback(nums), r ? 'pyodide' : 'js-fallback'); });
+    const r = RadiiStats.summary(nums);
+    el.textContent = `median ${fmt(r.median)} · stdev ${fmt(r.stdev)} · trend ${fmt(r.slope)}/pt + ${fmt(r.intercept)}`;
 }
 
 async function editChartTitle(ch) {

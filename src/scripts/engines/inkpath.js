@@ -1,6 +1,4 @@
-// engines/inkpath.ts — TypeScript source of the build-time vector geometry!
-// Compiles to inkpath.js (committed, Node runs the output as-is)!
-// Recompile with: npx -y -p typescript tsc --project tsconfig.json
+// engines/inkpath.js — the build-time vector geometry! Plain JavaScript, Node runs it as-is!
 // Cubic Bezier eval, length, bbox, flatten, and SVG path builder!
 export function node(x, y, cx1, cy1, cx2, cy2) {
     return {

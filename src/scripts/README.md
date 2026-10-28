@@ -9,7 +9,7 @@ Why: Imbuer (29 defs) and Formly (135 defs) each hand-carry a
 One truth here rebuilds both per-app bundles!
 
 Files:
-- `keydown.ts → keydown.js` — every definition once, built from shared chunks (`CORE_ORBS`,
+- `keydown.js` — every definition once, built from shared chunks (`CORE_ORBS`,
   `FLASHES`, `FX_CORE`, ...) so common entries stay in sync by construction!
 - `build_keydown.mjs` — builder, Node stdlib only!
 
@@ -26,9 +26,9 @@ Why: Python is gone — JavaScript now generates the same sample-data artifacts
 from identical inputs, verified value-identical!
 
 Files:
-- `engines/imbuer.ts → imbuer.js` — SUM, AVG, MIN, MAX, COUNT plus dependency ordering and cycle detection!
-- `engines/mainkey.ts → mainkey.js` — substring filter, sort, numeric aggregation, search index and histograms!
-- `engines/inkpath.ts → inkpath.js` — cubic Bezier eval, length, bbox, flatten, and SVG path builder matching the apps!
+- `engines/imbuer.js` — SUM, AVG, MIN, MAX, COUNT plus dependency ordering and cycle detection!
+- `engines/mainkey.js` — substring filter, sort, numeric aggregation, search index and histograms!
+- `engines/inkpath.js` — cubic Bezier eval, length, bbox, flatten, and SVG path builder matching the apps!
 - `build_data.mjs` — entry point, Node stdlib only!
 
 ```sh

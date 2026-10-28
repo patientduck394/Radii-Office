@@ -1226,14 +1226,6 @@ function recalc() {
         calc = { values: book.sheets.map(() => ({})), hints: book.sheets.map(() => ({})) };
     }
     if (typeof cfPrepare === 'function') cfPrepare();
-    if (typeof FengariFormula !== 'undefined') {
-        try {
-            const plain = {};
-            const vals = calc.values[book.active] || {};
-            for (const k of Object.keys(vals)) plain[k] = plainValue(vals[k]);
-            FengariFormula.verifyAsync(sh().data, plain);
-        } catch (e) {}
-    }
 }
 
 function evaluateFormulas() {

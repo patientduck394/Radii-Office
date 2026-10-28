@@ -656,7 +656,7 @@ function exportBodyHTML() {
 
 // Pages holding BitLang programs carry the tiny runtime so they play when exported!
 let blSrc = '', bbSrc = '';
-fetch('bitlang.js?v=20261118').then(r => r.text()).then(t => { blSrc = t; }).catch(() => {});
+fetch('bitlang.js?v=20261130').then(r => r.text()).then(t => { blSrc = t; }).catch(() => {});
 fetch('bb-lite.js?v=20261118').then(r => r.text()).then(t => { bbSrc = t; }).catch(() => {});
 function blExportScript() {
   const body = exportBodyHTML();

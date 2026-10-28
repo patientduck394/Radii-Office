@@ -253,10 +253,10 @@
                 return { k: 'matcher', name: name, pairs: pairs, line: line };
             }
             if (t.t === 'NAME' && t.v === 'use' && toks[p + 1].t === 'NAME' && (toks[p + 2].t === 'NL' || toks[p + 2].t === 'EOF' || toks[p + 2].t === 'DEDENT' || toks[p + 2].t === 'NAME' || (toks[p + 2].t === 'OP' && toks[p + 2].v === ','))) {
-                // use python / use sqlite / use julia   (python can name extra packages: use python numpy, pandas)
+                // use python / use sqlite / use lua   (python can name extra packages: use python numpy, pandas)
                 p++;
                 const lib = next().v;
-                if (['python', 'sqlite', 'julia', 'lua'].indexOf(lib) < 0) fail(line, 'I do not know the library "' + lib + '" (try: use python, use sqlite, use julia or use lua)!');
+                if (['python', 'sqlite', 'lua'].indexOf(lib) < 0) fail(line, 'I do not know the library "' + lib + '" (try: use python, use sqlite or use lua)!');
                 const pkgs = [];
                 while (peek().t === 'NAME' || isOp(',')) { if (isOp(',')) { p++; continue; } pkgs.push(next().v); }
                 expectNL();
@@ -1100,10 +1100,10 @@
         def('rows', function (a, k, line) { return asMat(a[0], line, 'rows').r.length; });
         def('cols', function (a, k, line) { return asMat(a[0], line, 'cols').r[0].length; });
         def('to_list', function (a, k, line) { const v = a[0]; if (v instanceof BitVec) return v.a.slice(); if (v instanceof BitMat) return v.r.map(function (r) { return r.slice(); }); fail(line, 'to_list needs a vector or a matrix!'); });
-        // ---- libraries (use python / use sqlite / use julia) ----
+        // ---- libraries (use python / use sqlite / use lua) ----
         const L = function (name, line) {
             const lib = host.libs && host.libs[name];
-            if (!lib) fail(line, 'Add "use ' + name + '" at the top of your program before using ' + ({ python: 'python()', sqlite: 'sql()', julia: 'julia()', lua: 'lua()' }[name]) + '!');
+            if (!lib) fail(line, 'Add "use ' + name + '" at the top of your program before using ' + ({ python: 'python()', sqlite: 'sql()', lua: 'lua()' }[name]) + '!');
             return lib;
         };
         const fromJs = function (v) {
@@ -1247,37 +1247,6 @@
                 fail(line, 'Lua: ' + String(e && e.message || e) + '!');
             }
         });
-        // julia(code, name=value, ...): sends the code to your Julia server (Oxygen.jl) and gives back the result
-        def('julia', function (a, k, line) {
-            const lib = L('julia', line);
-            const raw = a.length ? a[0] : k.code;
-            if (typeof raw !== 'string') fail(line, 'julia() needs Julia code as text in quotes, like julia("println(\\"Hello!\\")"); it got ' + show(raw) + ' instead!');
-            const code = raw;
-            if (code.length > 100000) fail(line, 'That Julia code is too long!');
-            let res;
-            try {
-                const x = new XMLHttpRequest();
-                x.open('POST', lib.url.replace(/\/+$/, '') + '/julia', false);
-                x.setRequestHeader('Content-Type', 'application/json');
-                x.send(JSON.stringify({ token: lib.token, code: code, vars: kwVars(k, ['code']) }));
-                if (x.status === 401) {
-                    try { localStorage.setItem('bitlang_julia', JSON.stringify({ url: lib.url, token: '' })); } catch (e) {}
-                    fail(line, 'Julia: the server did not accept the token (it prints a new one each time it starts). Play the program again to paste the new token!');
-                }
-                res = JSON.parse(x.responseText);
-            } catch (e) {
-                if (e instanceof BitError) throw e;
-                fail(line, 'I could not reach your Julia server at ' + lib.url + ' (is bitlang_julia_server.jl running?)!');
-            }
-            (String(res.stdout || '').split('\n')).forEach(function (t) { if (t && host.print) host.print(t); });
-            if (!res.ok) {
-                // Julia's parse errors put the real reason on a later line (after "──"): show it too
-                const el = String(res.error || 'something went wrong').split('\n');
-                const why = el.find(function (t) { return t.indexOf('──') >= 0; });
-                fail(line, 'Julia: ' + el[0].replace(/^LoadError: /, '').replace(/:\s*$/, '') + (why ? ': ' + why.split('──').pop().trim() : '') + '!');
-            }
-            return fromJs(res.result);
-        });
         // ---- matchers: mat Name: ( "find" ~> "becomes" ... ) ----
         const pairsOf = function (m, line, who) {
             if (!(m instanceof BitMatcher)) fail(line, who + ' needs a matcher (made with: mat Name: ( "find" ~> "becomes" ))!');
@@ -1359,7 +1328,7 @@ fn guess(n):
     function newId() { return 'bl' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
     // Syntax colors (editor + guide)!
-    const HL_BUILTINS = ('pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print renderRT skill btn remvar key beep stop floor ceil round abs sqrt sin cos tan atan2 PI inherit textbox counter beepbox annotate_highlight annotate_underline annotate_strikethrough annotate_box annotate_halo annotate_brackets annotate_spotlight annotate_accent annotate_bubble annotate_dusk annotate_prism annotate_complement annotate_ticket annotate_neon annotate_stamp annotate_tape annotate_checker annotate_halftone annotate_aurora annotate_mild annotate_wrap annotate_belt annotate_bucket annotate_torpedo annotate_bottle annotate_packet annotate_select annotate_capsule annotate_frost annotate_pixel annotate_flag annotate_gem lua mat_match mat_has mat_keys renderPT python julia sql sql_save sql_load lam vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split').split(' ');
+    const HL_BUILTINS = ('pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print renderRT skill btn remvar key beep stop floor ceil round abs sqrt sin cos tan atan2 PI inherit textbox counter beepbox annotate_highlight annotate_underline annotate_strikethrough annotate_box annotate_halo annotate_brackets annotate_spotlight annotate_accent annotate_bubble annotate_dusk annotate_prism annotate_complement annotate_ticket annotate_neon annotate_stamp annotate_tape annotate_checker annotate_halftone annotate_aurora annotate_mild annotate_wrap annotate_belt annotate_bucket annotate_torpedo annotate_bottle annotate_packet annotate_select annotate_capsule annotate_frost annotate_pixel annotate_flag annotate_gem lua mat_match mat_has mat_keys renderPT python sql sql_save sql_load lam vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split').split(' ');
     const HL_EVENTS = ['onstart', 'onkey', 'onkeyup', 'onend'];
     const HL_RE = /(#[^\n]*)|(https?:\/\/[^\s"'\)\],]+)|((?<=\][ \t]*)">|~>)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_][A-Za-z0-9_]*\b)/g;
     function highlight(code) {
@@ -1372,7 +1341,7 @@ fn guess(n):
             if (m[1]) c = 'c'; else if (m[3]) c = 'k'; /* the mouse operator "> and the matcher arrow ~> */ else if (m[2] || m[4]) c = 's'; else if (m[5]) c = 'n';
             else {
                 const w = m[6];
-                if (KEYWORDS[w] || ((w === 'mat' || w === 'matc') && /^\s*(mat\s+\w+\s*:|matc\s+\w+\s*\[)/.test(code.slice(Math.max(0, code.lastIndexOf('\n', m.index) + 1)))) || (w === 'use' && /^\s*use\s+(python|sqlite|julia|lua)\b/.test(code.slice(Math.max(0, code.lastIndexOf('\n', m.index) + 1))))) c = 'k';
+                if (KEYWORDS[w] || ((w === 'mat' || w === 'matc') && /^\s*(mat\s+\w+\s*:|matc\s+\w+\s*\[)/.test(code.slice(Math.max(0, code.lastIndexOf('\n', m.index) + 1)))) || (w === 'use' && /^\s*use\s+(python|sqlite|lua)\b/.test(code.slice(Math.max(0, code.lastIndexOf('\n', m.index) + 1))))) c = 'k';
                 else if (prevKw === 'fn') c = HL_EVENTS.indexOf(w) >= 0 ? 'e' : 'f';
                 else if (HL_EVENTS.indexOf(w) >= 0) c = 'e';
                 else if (HL_BUILTINS.indexOf(w) >= 0) c = 'b';
@@ -1617,7 +1586,7 @@ fn guess(n):
         return d.body.innerHTML;
     }
 
-    /* ================= Libraries: sqlite (sql.js), python (Pyodide), julia (your Oxygen.jl server) ================= */
+    /* ================= Libraries: sqlite (sql.js), python (Pyodide), lua (Fengari) ================= */
     const SQLJS = 'https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/';
     const PYODIDE = 'https://cdn.jsdelivr.net/pyodide/v0.26.4/full/';
     const FENGARI = 'https://cdn.jsdelivr.net/npm/fengari-web@0.1.4/dist/fengari-web.js';
@@ -1659,14 +1628,12 @@ fn guess(n):
             back.addEventListener('keydown', function (e) { e.stopPropagation(); if (e.key === 'Escape') done(null); });
         });
     }
-    // Python (and Julia) can reach beyond the program, so the person is asked first (remembered for this exact program)
-    function askTrust(kind, code, detail) {
+    // Python can reach beyond the program, so the person is asked first (remembered for this exact program)
+    function askTrust(kind, code) {
         const key = 'bitlang_trust:' + kind + ':' + hashOf(code);
         try { if (localStorage.getItem(key)) return Promise.resolve(true); } catch (e) {}
-        const msg = kind === 'python'
-            ? 'This program uses <b>Python</b>. Python runs inside this page with much more freedom than BitLang itself, so only allow programs you trust (for example, one you wrote or read).'
-            : 'This program wants to run <b>Julia</b> code on your Julia server (' + esc(detail) + '). That code can do anything your Julia can, so only allow programs you trust.';
-        return dialog('<div class="bl-docs-head"><b>Allow ' + (kind === 'python' ? 'Python' : 'Julia') + '?</b></div><div class="bl-edit-body"><p style="margin:0;line-height:1.5">' + msg + '</p><label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" class="bl-trust-always"> Always allow this exact program</label></div><div class="bl-edit-foot"><span class="bl-sp"></span><button type="button" class="bl-btn bl-cancel" data-a="no">Cancel</button><button type="button" class="bl-btn bl-run" data-a="yes">Allow</button></div>', function (back, done) {
+        const msg = 'This program uses <b>Python</b>. Python runs inside this page with much more freedom than BitLang itself, so only allow programs you trust (for example, one you wrote or read).';
+        return dialog('<div class="bl-docs-head"><b>Allow Python?</b></div><div class="bl-edit-body"><p style="margin:0;line-height:1.5">' + msg + '</p><label style="display:flex;gap:8px;align-items:center;font-size:13px"><input type="checkbox" class="bl-trust-always"> Always allow this exact program</label></div><div class="bl-edit-foot"><span class="bl-sp"></span><button type="button" class="bl-btn bl-cancel" data-a="no">Cancel</button><button type="button" class="bl-btn bl-run" data-a="yes">Allow</button></div>', function (back, done) {
             back.addEventListener('click', function (e) {
                 const b = e.target.closest && e.target.closest('[data-a]');
                 if (!b) return;
@@ -1674,32 +1641,7 @@ fn guess(n):
             });
         });
     }
-    function julia_settings() { try { const o = JSON.parse(localStorage.getItem('bitlang_julia') || 'null'); if (o && o.url && o.token) return o; } catch (e) {} return null; }
-    function julia_saved() { try { const o = JSON.parse(localStorage.getItem('bitlang_julia') || 'null'); if (o && o.url) return o; } catch (e) {} return null; }
-    // Is the server there, and does it take this token? 'ok', 'token' (refused) or 'down'
-    function checkJulia(cfg) {
-        if (typeof fetch !== 'function') return Promise.resolve('ok');
-        return fetch(cfg.url.replace(/\/+$/, '') + '/julia', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: cfg.token, code: 'nothing' }) })
-            .then(function (r) { return r.status === 401 ? 'token' : 'ok'; }, function () { return 'down'; });
-    }
-    function askJulia(why) {
-        const cur = julia_saved() || { url: 'http://127.0.0.1:8080', token: '' };
-        return dialog('<div class="bl-docs-head"><b>Your Julia server</b></div><div class="bl-edit-body">' + (why ? '<p style="margin:0;padding:8px 10px;border-radius:8px;background:#fee2e2;color:#b91c1c;font-weight:700;font-size:13px">' + esc(why) + '</p>' : '') + '<p style="margin:0;line-height:1.5;font-size:13px">Start <code>bitlang_julia_server.jl</code> (see the BitLang Guide), then copy the address and token it prints.</p><label class="bl-edit-lbl">Server address<input class="bl-edit-name bl-j-url" type="text" spellcheck="false"></label><label class="bl-edit-lbl">Token<input class="bl-edit-name bl-j-token" type="text" spellcheck="false" autocomplete="off"></label></div><div class="bl-edit-foot"><span class="bl-sp"></span><button type="button" class="bl-btn bl-cancel" data-a="no">Cancel</button><button type="button" class="bl-btn bl-run" data-a="yes">Save</button></div>', function (back, done) {
-            back.querySelector('.bl-j-url').value = cur.url; back.querySelector('.bl-j-token').value = cur.token;
-            back.addEventListener('click', function (e) {
-                const b = e.target.closest && e.target.closest('[data-a]');
-                if (!b) return;
-                if (b.getAttribute('data-a') === 'no') { done(null); return; }
-                const url = back.querySelector('.bl-j-url').value.trim(), token = back.querySelector('.bl-j-token').value.trim();
-                if (!/^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?\/?$/i.test(url)) { back.querySelector('.bl-j-url').style.borderColor = '#dc2626'; return; }
-                if (!token) { back.querySelector('.bl-j-token').style.borderColor = '#dc2626'; return; }
-                const o = { url: url.replace(/\/+$/, ''), token: token };
-                try { localStorage.setItem('bitlang_julia', JSON.stringify(o)); } catch (er) {}
-                done(o);
-            });
-        });
-    }
-    // loads what the program asked for with "use ..."; resolves to { python: {...}, sqlite: {...}, julia: {...} }
+    // loads what the program asked for with "use ..."; resolves to { python: {...}, sqlite: {...}, lua: {...} }
     function loadLibs(prog, code, libs, note) {
         const out = {};
         let chain = Promise.resolve();
@@ -1712,25 +1654,6 @@ fn guess(n):
                         if (!ok) throw new Error('Python was not allowed, so the program did not start');
                         note('Loading Python… (about 10 MB the first time)');
                         return loadPy(l.pkgs).then(function (py) { out.python = { py: py, ns: py.globals.get('dict')() }; });
-                    });
-                }
-                if (l.lib === 'julia') {
-                    const settle = function (cfg) {
-                        if (!cfg) return null;
-                        note('Checking your Julia server…');
-                        return checkJulia(cfg).then(function (r) {
-                            if (r === 'ok') return cfg;
-                            return askJulia(r === 'token'
-                                ? 'The server did not accept that token. Paste the token it printed when it started (a restarted server prints a new one)!'
-                                : 'I could not reach a Julia server at ' + cfg.url + '. Start bitlang_julia_server.jl (or check the address), then press Save!').then(settle);
-                        });
-                    };
-                    return (julia_settings() ? Promise.resolve(julia_settings()) : askJulia(julia_saved() ? 'Paste the token your Julia server printed when it started!' : '')).then(settle).then(function (cfg) {
-                        if (!cfg) throw new Error('No Julia server was set up, so the program did not start');
-                        return askTrust('julia', code, cfg.url).then(function (ok) {
-                            if (!ok) throw new Error('Julia was not allowed, so the program did not start');
-                            out.julia = cfg;
-                        });
                     });
                 }
             });
@@ -2541,12 +2464,11 @@ fn onstart():
     renderPT("m * &lt;| 1, 3 |&gt; = " + str(m * &lt;| 1, 3 |&gt;), line=1)     # &lt;| 2, 6 |&gt;</pre>
 <p>They show up as <code>&lt;| 1, 2, 3 |&gt;</code> and <code>[1 2; 3 4]</code> in text. Saved <code>var</code>s and <code>ls_set</code> keep them. A <b>matrix</b> only holds numbers. A <b>vector</b> can hold numbers, text, true/false and variables, like a list that also does vector math: <code>&lt;| name, "hi", 3, ok |&gt;</code> (the variables <code>name</code> and <code>ok</code> are read when the vector is made). <code>+</code> <code>*</code> still work slot by slot on text (<code>+</code> joins, <code>* 3</code> repeats); the number-only tools (<code>dot</code>, <code>cross</code>, <code>norm</code>, <code>normalize</code>, matrix products) ask for numbers.</p>
 
-<h2>Libraries: use python, use sqlite, use julia, use lua</h2>
+<h2>Libraries: use python, use sqlite, use lua</h2>
 <p>Put <code>use</code> lines at the very top of your program to load a library. They load before the program starts (you will see a loading message the first time).</p>
 <pre>use sqlite
 use python
 use python numpy, pandas      # extra Python packages from Pyodide's list
-use julia
 use lua</pre>
 
 <h3>python(code)  (Pyodide)</h3>
@@ -2593,25 +2515,6 @@ fn onstart():
 <li><code>name=value</code> pieces become Lua variables first, and Lua's own variables stay between calls while the program runs.</li>
 <li>Lua runs in a <b>sealed box</b>: no files, no <code>require</code>, and no way into the page or JavaScript, so it needs no permission. An endless loop is stopped for you.</li>
 <li>Strings in Lua can use single quotes, which is handy inside BitLang's double quotes: <code>lua("print('hi')")</code>.</li>
-</ul>
-
-<h3>julia(code)  (your own Julia, through Oxygen.jl)</h3>
-<pre>use julia
-
-fn onstart():
-    renderPT("sum = " + julia("sum(1:10) * k", k=2), line=1)           # 110
-    renderPT(to_json(julia("Dict(\\"a\\" => [1, 2], \\"m\\" => [1 2; 3 4])")), line=2)</pre>
-<p>Julia cannot run inside a web page, so BitLang talks to a small server on <b>your own computer</b> that uses <b>Oxygen.jl</b>:</p>
-<ol>
-<li>Download <a href="bitlang_julia_server.jl" download>bitlang_julia_server.jl</a>.</li>
-<li>Once: <code>julia -e 'using Pkg; Pkg.add(["Oxygen", "HTTP", "JSON3"])'</code></li>
-<li>Start it: <code>julia bitlang_julia_server.jl</code>. It prints an <b>address</b> and a <b>token</b>.</li>
-<li>Play a program with <code>use julia</code>. BitLang asks for the address and token once and remembers them in this browser.</li>
-</ol>
-<ul>
-<li>The server only listens on your computer (127.0.0.1) and refuses anything without the token. BitLang only accepts <code>127.0.0.1</code> or <code>localhost</code> addresses.</li>
-<li><code>julia("code")</code> gives back the last value (numbers, text, true/false, <code>nothing</code> = <code>null</code>, arrays, dicts; matrices become lists of lists). <code>println</code> output shows up as lines, <code>name=value</code> pieces become Julia variables, and the variables of earlier calls stay in the server's <code>BitLangUser</code> module. Code that runs longer than 20 seconds gets an error back.</li>
-<li><b>Julia code can do anything your Julia can</b> (read files, run programs). You are asked to Allow each program the first time, and anyone with the token can run code on your computer, so keep the token private and only allow programs you trust.</li>
 </ul>
 
 <h2>Math</h2>

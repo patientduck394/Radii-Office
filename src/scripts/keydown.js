@@ -1,6 +1,4 @@
-// keydown.ts — TypeScript source of the Keydown markup truth!
-// Compiles to keydown.js (committed, Node runs the output as-is)!
-// Recompile with: npx -y -p typescript tsc --project tsconfig.json
+// keydown.js — the Keydown markup truth! Plain JavaScript, Node runs it as-is!
 // Imbuer (29 defs) and Formly (135 defs) share chunks here to prevent drift!
 function cls(open, close, className) {
     return { open, close, className };

@@ -1,7 +1,5 @@
 "use strict";
-// formula_engine.ts — TypeScript source of the live Imbuer formula engine!
-// Compiles to formula_engine.js (committed, browsers run the output as-is)!
-// Recompile with: npx -y -p typescript tsc --project tsconfig.json
+// formula_engine.js — the live Imbuer formula engine! Plain JavaScript, browsers run it as-is!
 // Excel-style formulas: + - * / ^ & % and comparisons, strings, booleans,
 // $absolute refs, ranges (A1:B5, A:A, 1:1), cross-sheet refs (Sheet2!A1,
 // 'My Sheet'!A1:B2) and ~100 functions (math, stats, logic, text, lookup, date)!

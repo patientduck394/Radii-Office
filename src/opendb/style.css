@@ -182,3 +182,35 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .modal-body .kd-guide-row code { flex: 0 0 42%; font: 12px var(--mono); color: var(--ink-2); word-break: break-all; }
 .modal-body .kd-guide-title { font-weight: 800; margin: 14px 0 6px; color: var(--blue); }
 .kd-doc .bulleted-list::before { content: none; }
+
+/* Templates: Wikipedia-style notices ({{stub}}, {{more citations}}, {{file improvement}}, ...) */
+.tpl { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 14px; padding: 10px 14px; border: 1px solid #c8ccd1; border-left: 8px solid #36c; border-radius: 10px; background: #fbfbfb; font-family: var(--sans); font-size: 14px; line-height: 1.5; }
+.tpl-icon { flex: none; font-size: 22px; line-height: 1.1; }
+.tpl-content { border-left-color: #f28500; background: #fff9f2; }
+.tpl-style { border-left-color: #fc3; background: #fffdf2; }
+.tpl-notice { border-left-color: #36c; background: #f5f8ff; }
+.tpl-move { border-left-color: #9932cc; background: #fbf5ff; }
+.tpl-file { border-left-color: #0f9b8c; background: #f1fbf9; }
+.tpl-more { text-decoration: none; margin-left: 2px; font-size: 13px; }
+.tpl-stub { font-family: var(--sans); font-size: 13.5px; color: var(--ink-2); padding-top: 10px; border-top: 1px solid var(--line); }
+.tpl-stub .tpl-icon { font-size: 16px; }
+.tpl-hatnote { font-family: var(--sans); font-style: italic; font-size: 14px; color: var(--ink-2); margin: -4px 0 12px; padding-left: 26px; }
+.tpl-tag { font-family: var(--sans); font-size: 11px; font-style: italic; white-space: nowrap; }
+.tpl-tag a { text-decoration: none; }
+.tpl-chip { display: inline-block; font: 600 12px var(--sans); padding: 0 8px; border-radius: 999px; background: #eef4fa; border: 1px solid #dbe7f2; text-decoration: none; }
+.tpl-unknown { font-family: var(--mono); font-size: 0.86em; color: #b91c1c; background: #fee2e2; border-radius: 6px; padding: 1px 5px; }
+.tpl-group { font-family: var(--serif); font-size: 19px; font-weight: 600; margin: 22px 0 8px; }
+.tpl-list { display: flex; flex-direction: column; }
+.tpl-row { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr) auto; gap: 14px; align-items: center; padding: 9px 4px; border-bottom: 1px solid var(--line); text-decoration: none; color: inherit; font-size: 14px; }
+.tpl-row:last-child { border-bottom: 0; }
+.tpl-row code { font: 13px var(--mono); color: var(--blue); }
+.tpl-row small { color: #6a8299; white-space: nowrap; }
+.tpl-row:hover code { text-decoration: underline; }
+@media (max-width: 700px) { .tpl-row { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.tpl-code { background: #0f2236; color: #dff1ff; padding: 10px 14px; border-radius: 12px; font: 13px var(--mono); overflow: auto; }
+.tpl-demo { padding: 14px; border: 1px dashed #b9d5ec; border-radius: 12px; background: #fff; }
+.tpl-pick-group { display: block; margin-top: 6px; color: var(--blue); }
+.tpl-picks { display: flex; flex-direction: column; gap: 6px; }
+.tpl-pick { display: flex; flex-direction: column; gap: 2px; text-align: left; font: 13px var(--sans); color: var(--ink-2); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--line); background: #fbfdff; cursor: pointer; }
+.tpl-pick:hover { border-color: var(--blue); background: #f1f8ff; }
+.tpl-pick code { font: 13px var(--mono); color: var(--ink); }

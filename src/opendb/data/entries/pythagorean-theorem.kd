@@ -12,6 +12,8 @@ infobox.Field: Geometry
 infobox.Statement: a² + b² = c²
 infobox.Named after: Pythagoras of Samos
 ---
+{{unreferenced}}
+
 The **Pythagorean theorem** is a basic fact of geometry about right triangles, the triangles with one 90° angle. It says that the area of the square on the longest side (the **hypotenuse**) equals the total area of the squares on the other two sides.
 
 ![Squares on the sides of a 3-4-5 triangle](media:pythagoras-diagram)

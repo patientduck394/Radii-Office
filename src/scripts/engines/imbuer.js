@@ -1,6 +1,4 @@
-// engines/imbuer.ts — TypeScript source of the build-time spreadsheet engine!
-// Compiles to imbuer.js (committed, Node runs the output as-is)!
-// Recompile with: npx -y -p typescript tsc --project tsconfig.json
+// engines/imbuer.js — the build-time spreadsheet engine! Plain JavaScript, Node runs it as-is!
 // SUM, AVG, MIN, MAX, COUNT over ranges PLUS arithmetic: cell refs,
 // +-*/ parentheses and unary minus (e.g. =A1*2, =(A1+A2)/2, =SUM(A1:A3)*2)!
 export function colToIndex(col) {
