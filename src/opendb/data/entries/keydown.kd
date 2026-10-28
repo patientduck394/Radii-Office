@@ -1,0 +1,270 @@
+---
+format: keydown-text
+id: keydown
+type: article
+title: Keydown
+summary: Keydown is the formatting language of Radii Office, where short tags typed around text turn it into glossy chips, highlights, headings and more.
+tags: [radii office, formatting, markup language, software]
+created: 2026-10-28
+updated: 2026-10-28
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Used in: Writeout, Bitbook, OpenDB, Phosphor, Imbuer, Formly and more
+infobox.Kind: Lightweight markup language
+infobox.File extensions: .kd and .kn
+infobox.Style: Frutiger Aero
+---
+**Keydown** is the formatting language of [[radii-office|Radii Office]]. Instead of clicking buttons, you type short **tags** around your text, and the text turns into formatting: #G#glossy chips#, =B=gel orbs=B=, #Y#gel highlights##, **bold**, headings, lists and dozens of interactive "applets". Many of its looks come from the [[frutiger-aero|Frutiger Aero]] style.
+
+## How it works
+
+In Writeout and Bitbook, a tag turns into its formatting the moment you press **Space** after it, and pressing **Enter** at the end of a line formats every tag left on that line. In OpenDB, Phosphor and other apps, tags are drawn whenever the text is shown. Most tags wrap your text in an opening and a closing tag, such as `#R#` and `#`. Typing `\\` at the end of a formatted piece steps back out of it.
+
+Keydown text is saved in `.kd` files (Writeout documents and OpenDB entries) and `.kn` files (Bitbook notes), and those apps can open each other's files.
+
+## Lines
+
+Start a line with one of these and a space:
+
+* `# Heading` makes a big heading, `## Heading` a smaller one and `### Heading` a third level.
+* `#### Heading` makes the extra large **mega header**.
+* `* item` makes a bullet point, and `> text` a quote.
+
+## Basics
+
+* `**bold**` gives **bold**, and `*italic*` gives *italic*.
+* Backticks around a word show it in a `code` font.
+* `&&spark&&` gives &&spark&&.
+
+## Gel highlights
+
+The first three tools of the Annotator, as tags: `#R#text##` is a highlight strip, `#R#text#_` a gel underline and `#R#text#~` a gel strike. They come in 13 colors:
+
+
+* `#R#` red: #R#highlight## #R#underline#_ #R#strike#~
+* `#O#` orange: #O#highlight## #O#underline#_ #O#strike#~
+* `#GL#` gold: #GL#highlight## #GL#underline#_ #GL#strike#~
+* `#Y#` yellow: #Y#highlight## #Y#underline#_ #Y#strike#~
+* `#L#` lime: #L#highlight## #L#underline#_ #L#strike#~
+* `#G#` green: #G#highlight## #G#underline#_ #G#strike#~
+* `#TU#` turquoise: #TU#highlight## #TU#underline#_ #TU#strike#~
+* `#T#` teal: #T#highlight## #T#underline#_ #T#strike#~
+* `#C#` cyan: #C#highlight## #C#underline#_ #C#strike#~
+* `#B#` blue: #B#highlight## #B#underline#_ #B#strike#~
+* `#PR#` purple: #PR#highlight## #PR#underline#_ #PR#strike#~
+* `#PK#` pink: #PK#highlight## #PK#underline#_ #PK#strike#~
+* `#SL#` slate: #SL#highlight## #SL#underline#_ #SL#strike#~
+
+## Bubble chips
+
+Glossy rounded chips, written `#color#text#`:
+
+* `#C#text#` #C#cyan#
+* `#O#text#` #O#orange#
+* `#G#text#` #G#green#
+* `#R#text#` #R#red#
+* `#PR#text#` #PR#purple#
+* `#PK#text#` #PK#pink#
+* `#Y#text#` #Y#yellow#
+* `#B#text#` #B#blue#
+* `#L#text#` #L#lime#
+* `#T#text#` #T#teal#
+* `#GL#text#` #GL#gold#
+* `#SL#text#` #SL#slate#
+* `#W#text#` #W#white#
+* `#BK#text#` #BK#black#
+* `#FG#text#` #FG#fog#
+* `#TU#text#` #TU#turquoise#
+
+## Gel orbs
+
+Round glossy orbs, written `=color=text=color=`:
+
+* `=Y=text=Y=` =Y=yellow=Y=
+* `=R=text=R=` =R=red=R=
+* `=G=text=G=` =G=green=G=
+* `=C=text=C=` =C=cyan=C=
+* `=B=text=B=` =B=blue=B=
+* `=V=text=V=` =V=violet=V=
+* `=P=text=P=` =P=pink=P=
+* `=O=text=O=` =O=orange=O=
+* `=MG=text=MG=` =MG=magenta=MG=
+* `=LM=text=LM=` =LM=lime=LM=
+* `=AQ=text=AQ=` =AQ=aqua=AQ=
+* `=SL=text=SL=` =SL=slate=SL=
+
+## Prefix tags
+
+Tag chips with an exclamation mark in front, written `!#color#text#`:
+
+* `!#A#text#` !#A#aqua#
+* `!#G#text#` !#G#green#
+* `!#O#text#` !#O#orange#
+* `!#R#text#` !#R#red#
+* `!#PR#text#` !#PR#purple#
+* `!#PK#text#` !#PK#pink#
+* `!#Y#text#` !#Y#yellow#
+* `!#SL#text#` !#SL#slate#
+
+## Text effects
+
+* `~G~text~G~` Gel green flash
+* `~U~text~U~` Liquid underline
+* `~B~text~B~` Glossy border badge
+* `~S~text~S~` Cyber glow spark
+* `~L~text~L~` Liquid text glow
+* `~M~text~M~` Reflected text block
+* `~E~text~E~` Embossed glass text
+* `~W~text~W~` Kinetic wave text
+
+The older line tags `~H1~`, `~H2~`, `~H3~`, `~MH~`, `~BQ~` and `~BUL~` still work, but the line shortcuts above are easier.
+
+## Applets
+
+Applets are small interactive widgets that you can click, like switches, dials and counters. Wrap a label in the tag:
+
+* `~FN~label~FN~` Foldout tab
+* `~TS~label~TS~` Aqua switch
+* `~SM~label~SM~` Glass stamp
+* `~TB~label~TB~` State button (green)
+* `~VD~label~VD~` Volume dial
+* `~BC~label~BC~` Battery cell
+* `~CD~label~CD~` Calendar desk
+* `~SR~label~SR~` Star rating
+* `~CC~label~CC~` Counter badge
+* `~LK~label~LK~` Security latch
+* `~PR~label~PR~` Playback ribbon
+* `~CR~label~CR~` CPU gauge
+* `~SI~label~SI~` Stepper mesh
+* `~ORB~label~ORB~` Hydro orb (blue)
+* `~SLS~label~SLS~` Lock slider
+* `~VM~label~VM~` Gadget clock
+* `~MT~label~MT~` Metal trigger
+* `~IC~label~IC~` Inset check
+* `~NO~label~NO~` Neon node (cyan)
+* `~LS~label~LS~` Latch toggle
+* `~TIM~label~TIM~` Gadget system clock
+
+## Effects
+
+* `~MP~text~MP~` Mercury pearl
+* `~PG~text~PG~` Prism refract
+* `~CB~text~CB~` Screen cavity
+* `~SR~text~SR~` Sunlight ray
+* `~OA~text~OA~` Abyssal plate
+* `~MM~text~MM~` Metallic mesh
+* `~FE~text~FE~` Fluid expand
+* `~MR~text~MR~` Metric cavity
+* `~PO~text~PO~` Pearl orb
+* `~LF~text~LF~` Lens flare
+* `~DS~text~DS~` Drop shadow window
+* `~GL~text~GL~` Glow tube
+* `~HB~text~HB~` Hardware bevel
+* `~IS~text~IS~` Screen segment
+* `~GC~text~GC~` Gel capsule
+* `~KO~text~KO~` Fluid orbit
+* `~XG~text~XG~` Xray glass
+* `~WL~text~WL~` Waveform line
+* `~PM~text~PM~` Plasma gel
+* `~WB~text~WB~` Water bubble
+* `~GLO~text~GLO~` Glow tracer
+* `~ST~text~ST~` Shimmer title
+* `~TL~text~TL~` Tinted lens
+* `~SL~text~SL~` Audio stream loop
+* `~BG~text~BG~` Biogel capsule
+* `~WR~text~WR~` Neon ribbon
+
+## Megachips, badges and droplets
+
+Tags that end with a single `~` come in color variants:
+
+* `~WD~text~WD~` Waterdrop
+* `~SF~text~SF~` Solarflare
+* `~AW~text~AW~` Aurorawave
+* `~WD-Y~text~` Droplet (amber)
+* `~WD-R~text~` Droplet (crimson)
+* `~WD-PK~text~` Droplet (fuchsia)
+* `~WD-PR~text~` Droplet (amethyst)
+* `~WD-O~text~` Droplet (tangerine)
+* `~WD-SL~text~` Droplet (slate)
+* `~PP-C~text~` Plasma (cyan)
+* `~PP-O~text~` Plasma (orange)
+* `~PP-R~text~` Plasma (crimson)
+* `~PP-L~text~` Plasma (lime)
+* `~GB-B~text~` Glass bracket (blue)
+* `~GB-PR~text~` Glass bracket (amethyst)
+* `~GB-PK~text~` Glass bracket (fuchsia)
+* `~GB-Y~text~` Glass bracket (amber)
+* `~CN-SL~text~` Circuit node (slate)
+* `~CN-T~text~` Circuit node (teal)
+* `~CN-GL~text~` Circuit node (gold)
+* `~CN-R~text~` Circuit node (ruby)
+* `~B-B~text~` Glass badge chip (sky)
+* `~B-G~text~` Glass badge chip (emerald)
+* `~B-O~text~` Glass badge chip (orange)
+* `~B-R~text~` Glass badge chip (crimson)
+* `~B-PR~text~` Glass badge chip (amethyst)
+* `~B-Y~text~` Glass badge chip (gold)
+* `~DH-B~text~` Duplex input chassis (sky)
+* `~DH-G~text~` Duplex input chassis (emerald)
+* `~DH-O~text~` Duplex input chassis (orange)
+* `~DH-PR~text~` Duplex input chassis (amethyst)
+* `~SH-B~text~` Swayed (sky)
+* `~SH-G~text~` Swayed (emerald)
+* `~SH-O~text~` Swayed (orange)
+* `~SH-PR~text~` Swayed (amethyst)
+* `~PH-B~text~` Pill variant (sky)
+* `~PH-G~text~` Pill variant (emerald)
+* `~PH-O~text~` Pill variant (orange)
+* `~PH-PR~text~` Pill variant (amethyst)
+* `~PC-Y~text~` Pastel (yellow)
+* `~PC-B~text~` Pastel (blue)
+* `~PC-G~text~` Pastel (green)
+* `~PC-PK~text~` Pastel (pink)
+* `~PC-PR~text~` Pastel (purple)
+* `~PC-O~text~` Pastel (orange)
+* `~DR-O~text~` Droplet ribbon (tangerine)
+* `~DR-Y~text~` Droplet ribbon (citrus)
+* `~DR-G~text~` Droplet ribbon (emerald)
+* `~DR-B~text~` Droplet ribbon (sapphire)
+* `~DR-PR~text~` Droplet ribbon (amethyst)
+* `~DR-PK~text~` Droplet ribbon (fuchsia)
+* `~DR-R~text~` Droplet ribbon (crimson)
+* `~DR-SL~text~` Droplet ribbon (slate)
+* `~MH~text~MH~` Mega header
+
+## Developer, avionics and journal chips
+
+* `~FUNC~text~FUNC~` Function
+* `~VAR~text~VAR~` Variable
+* `~HEX~text~HEX~` Hex
+* `~STR~text~STR~` String
+* `~RS~text~RS~` Radar sweep
+* `~HD~text~HD~` Heading
+* `~AL~text~AL~` Altimeter
+* `~SG~text~SG~` Signal
+* `~DR~text~DR~` Date plate
+* `~MD~text~MD~` Mood
+* `~VO~text~VO~` Voice tag
+* `~WX~text~WX~` Weather
+* `~WS~text~WS~` Wax stamp
+* `~FT~text~FT~` Folder tab
+* `~PT~text~PT~` Progress capsule
+* `~MC~text~MC~` Digital counter
+* `~RD~text~RD~` Dot matrix
+* `~LL~text~ST~` Latch lock
+
+## Blocks
+
+A line that is only `::name` becomes a whole block, such as a glass panel, a code box or a divider. There are 22: `::glass`, `::bubble`, `::alert`, `::media`, `::aqua`, `::code`, `::emerald`, `::amber`, `::crimson`, `::amethyst`, `::gsky`, `::gemerald`, `::gamber`, `::gcrimson`, `::foldout`, `::divider`, `::console`, `::diff`, `::horizon`, `::waypoint`, `::entry`, `::draw`.
+
+## Marketplace packs
+
+Writeout and Bitbook have a Marketplace where extra packs can be installed. Together they add 412 more styles, such as seasonal and themed chips.
+
+## Extras in Writeout, Bitbook and OpenDB
+
+* **Math**: `$x^2$` writes math in a line, like $x^2 + y^2 = r^2$, and `$$ ... $$` gives a centered equation. An equation box with buttons helps you build it without knowing LaTeX.
+* **Footnotes**: `[^1]` adds a numbered note, and a line starting with `[^1]:` gives its text.
+* **Links**: in OpenDB, `[[entry-name]]` links to another entry, and `[[entry-name|other words]]` changes the words shown.
+* **Templates**: in OpenDB, notices like `{{stub}}` and `{{citation needed}}` mark entries that need work. See the [Templates](#/templates) page.

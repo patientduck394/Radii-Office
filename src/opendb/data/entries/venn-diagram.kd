@@ -11,9 +11,7 @@ authors: [OpenDB contributors]
 license: CC0-1.0
 file: media/venn-diagram.svg
 mime: image/svg+xml
-width: 300
-height: 206
+width: 480
+height: 330
 ---
-{{file improvement|math at the bottom looks off}}
-
 Illustrates [[set-mathematics|sets]]: the overlap of the two circles is the intersection $A \cap B = \{3, 4\}$, both circles together are the union, and 7 is in the universal set $U$ but in neither $A$ nor $B$.

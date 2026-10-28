@@ -1,171 +1,24 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<svg
-   viewBox="0 0 420 420"
-   font-family="Helvetica, Arial, sans-serif"
-   version="1.1"
-   id="svg10"
-   sodipodi:docname="pythagoras.svg"
-   inkscape:version="1.4.2 (ebf0e940, 2025-05-08)"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg">
-  <defs
-     id="defs10" />
-  <sodipodi:namedview
-     id="namedview10"
-     pagecolor="#ffffff"
-     bordercolor="#000000"
-     borderopacity="0.25"
-     inkscape:showpageshadow="2"
-     inkscape:pageopacity="0.0"
-     inkscape:pagecheckerboard="0"
-     inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="0.69544943"
-     inkscape:cx="133.00752"
-     inkscape:cy="145.22983"
-     inkscape:window-width="1408"
-     inkscape:window-height="881"
-     inkscape:window-x="0"
-     inkscape:window-y="0"
-     inkscape:window-maximized="0"
-     inkscape:current-layer="svg10" />
-  <title
-     id="title1">Squares on a 3-4-5 right triangle (OpenDB, CC0)</title>
-  <rect
-     width="420"
-     height="420"
-     fill="#f8fbff"
-     id="rect1" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 420" font-family="Helvetica, Arial, sans-serif">
+  <title>Squares on a 3-4-5 right triangle (OpenDB, CC0)</title>
+  <rect width="420" height="420" fill="#f8fbff"/>
   <!-- triangle with legs 3 (vertical) and 4 (horizontal), 30px per unit -->
-  <g
-     transform="translate(150 210)"
-     id="g10">
-    <polygon
-       points="0,0 120,0 0,-90"
-       fill="#fde68a"
-       stroke="#92400e"
-       stroke-width="3"
-       id="polygon1" />
-    <rect
-       x="0"
-       y="-10"
-       width="10"
-       height="10"
-       fill="none"
-       stroke="#92400e"
-       stroke-width="2"
-       id="rect2" />
+  <g transform="translate(150 210)">
+    <polygon points="0,0 120,0 0,-90" fill="#fde68a" stroke="#92400e" stroke-width="3"/>
+    <rect x="0" y="-10" width="10" height="10" fill="none" stroke="#92400e" stroke-width="2"/>
     <!-- square on a = 3 (left of vertical leg) -->
-    <rect
-       x="-90"
-       y="-90"
-       width="90"
-       height="90"
-       fill="#93c5fd"
-       stroke="#1e3a8a"
-       stroke-width="3"
-       id="rect3" />
+    <rect x="-90" y="-90" width="90" height="90" fill="#93c5fd" stroke="#1e3a8a" stroke-width="3"/>
     <!-- square on b = 4 (below horizontal leg) -->
-    <rect
-       x="0"
-       y="0"
-       width="120"
-       height="120"
-       fill="#86efac"
-       stroke="#14532d"
-       stroke-width="3"
-       id="rect4" />
+    <rect x="0" y="0" width="120" height="120" fill="#86efac" stroke="#14532d" stroke-width="3"/>
     <!-- square on c = 5 on the hypotenuse -->
-    <polygon
-       points="0,-90 120,0 210,-120 90,-210"
-       fill="#f9a8d4"
-       stroke="#831843"
-       stroke-width="3"
-       id="polygon4" />
-    <g
-       font-size="22"
-       font-weight="bold"
-       text-anchor="middle"
-       id="g9">
-      <text
-         x="-45"
-         y="-38"
-         fill="#1e3a8a"
-         id="text4">9</text>
-      <text
-         x="60"
-         y="68"
-         fill="#14532d"
-         id="text5">16</text>
-      <text
-         x="105"
-         y="-98"
-         fill="#831843"
-         id="text6">25</text>
-      <text
-         x="10"
-         y="-28"
-         fill="#92400e"
-         font-size="18px"
-         id="text7">3</text>
-      <text
-         x="30"
-         y="-4"
-         fill="#92400e"
-         font-size="18px"
-         id="text8">4</text>
-      <text
-         x="46"
-         y="-32"
-         fill="#92400e"
-         font-size="18px"
-         id="text9">5</text>
+    <polygon points="0,-90 120,0 210,-120 90,-210" fill="#f9a8d4" stroke="#831843" stroke-width="3"/>
+    <g font-size="22" font-weight="bold" text-anchor="middle">
+      <text x="-45" y="-38" fill="#1e3a8a">9</text>
+      <text x="60" y="68" fill="#14532d">16</text>
+      <text x="105" y="-98" fill="#831843">25</text>
+      <text x="-14" y="-40" fill="#92400e" font-size="18">3</text>
+      <text x="60" y="-8" fill="#92400e" font-size="18">4</text>
+      <text x="52" y="-52" fill="#92400e" font-size="18">5</text>
     </g>
   </g>
-  <text
-     x="250"
-     y="400"
-     text-anchor="middle"
-     font-size="20px"
-     font-weight="bold"
-     fill="#0f172a"
-     id="text11"
-     style="fill:#ed4a9f;fill-opacity:1">25</text>
-  <text
-     x="166"
-     y="400"
-     text-anchor="middle"
-     font-size="20px"
-     font-weight="bold"
-     fill="#0f172a"
-     id="text12"
-     style="fill:#305ad2;fill-opacity:1"><tspan
-       style="fill:#305ad2;fill-opacity:1"
-       id="tspan12">9</tspan></text>
-  <text
-     x="182"
-     y="398"
-     text-anchor="middle"
-     font-size="20px"
-     font-weight="bold"
-     fill="#0f172a"
-     id="text13">+</text>
-  <text
-     x="204"
-     y="400"
-     text-anchor="middle"
-     font-size="20px"
-     font-weight="bold"
-     fill="#0f172a"
-     id="text14"
-     style="fill:#34be66;fill-opacity:1">16</text>
-  <text
-     x="226"
-     y="400"
-     text-anchor="middle"
-     font-size="20px"
-     font-weight="bold"
-     fill="#0f172a"
-     id="text15">=</text>
+  <text x="210" y="400" text-anchor="middle" font-size="20" font-weight="bold" fill="#0f172a">9 + 16 = 25</text>
 </svg>

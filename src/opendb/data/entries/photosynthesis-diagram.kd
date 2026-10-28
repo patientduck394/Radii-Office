@@ -11,9 +11,7 @@ authors: [OpenDB contributors]
 license: CC0-1.0
 file: media/photosynthesis-diagram.svg
 mime: image/svg+xml
-width: 300
-height: 208
+width: 520
+height: 360
 ---
-{{file improvement|text and arrows don't have enough spacing}}
-
 Shows the inputs and outputs of [[photosynthesis]]: sunlight, water from the roots and carbon dioxide from the air go into the leaf's chloroplasts, which make glucose and release oxygen.

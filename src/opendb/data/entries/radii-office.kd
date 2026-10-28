@@ -1,0 +1,77 @@
+---
+format: keydown-text
+id: radii-office
+type: article
+title: Radii Office
+summary: Radii Office is a free, open-source suite of web apps for documents, spreadsheets, slides, notes, files and more, styled after the Frutiger Aero look.
+tags: [radii office, software, productivity, web apps]
+created: 2026-10-28
+updated: 2026-10-28
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Type: Office suite of web apps
+infobox.Runs in: Any modern web browser
+infobox.Formatting language: Keydown
+infobox.License: CC0, MIT and the Unlicense
+infobox.Source code: [Radii-Office on GitHub](https://github.com/patientduck394/Radii-Office)
+---
+**Radii Office** is a free suite of web apps for writing, calculating, presenting, taking notes, building websites and handling files. Every app runs right in the web browser, with nothing to install, and keeps your work in the browser on your own device. The apps share a glossy look inspired by [[frutiger-aero|Frutiger Aero]] and a formatting language called [[keydown|Keydown]].
+
+## Shared features
+
+* **Two layouts**: each app can switch between an Office-style **ribbon** layout and its original **Classic** layout, with glass sidebars and gel buttons.
+* **Keydown**: the same short tags, like #G#chips# and #Y#highlights##, format text across the apps.
+* **Share & Chat**: many apps let people edit the same file together in real time, with chat.
+* **Open source**: the code is published on GitHub, and the suite is licensed under CC0 and the MIT License or the Unlicense.
+
+## Writeout
+
+#B#Documents#
+
+**Writeout** is a rich-text writing tool for focused document writing. Its ribbon layout works like Microsoft Word, with a Navigation pane, real pages and a status bar. It supports Keydown, an Annotator for highlighting, equations, footnotes and several pages in one document. Documents are saved as `.kd` files and can be exported as PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB. Writeout also has a downloadable desktop app.
+
+## Imbuer
+
+#G#Spreadsheet#
+
+**Imbuer** is a spreadsheet: a grid calculator for mathematical analysis, cell formatting and quick data layouts. Its Excel-style ribbon includes formulas, charts and number formats, and its cells understand Keydown text styles. Sheets can be imported and exported as CSV.
+
+## Amber
+
+#GL#Presentation#
+
+**Amber** is a slide presentation studio with glossy 3D shapes, spring-animated menus and a fullscreen presentation mode. Its ribbon layout works like PowerPoint, with Transitions, Animations, a Notes pane and a Slide Sorter. Presentations are saved as `.ka` files.
+
+## Cabinet
+
+#R#Drive#
+
+**Cabinet** is a drive app for keeping files organized in drawers, in a layout like a file explorer. It is designed to be easy to use and quick, and it can download a whole drive at once as a ZIP file. Drives are saved as `.kc` files.
+
+## Mainkey
+
+#PR#Database#
+
+**Mainkey** is a database for keeping records. You build your own fields, then search, filter and sort the records in a table or browse them in a gallery view, with live statistics. A database can even be hosted straight from your browser tab and shared. Databases are saved as `.kb` files and can be imported or exported as CSV.
+
+## Omicron
+
+#O#Web Builder#
+
+**Omicron** is a visual builder for laying out web pages, crafting templates and creating HTML. Its ribbon layout works like Microsoft Sway, with cards, styles, tags and skills. A page can be exported as a website ZIP or as a single HTML file with every style built in, and Bitbook notes can be inserted into it.
+
+## Inkpath
+
+#PK#Vector Studio#
+
+**Inkpath** is a vector graphics editor. It has box selection for picking several shapes at once, real-time dragging of Bézier curve points, and panning and zooming around the canvas. Its curve math runs in WebAssembly built from Rust. Drawings are saved as `.kv` files and can be exported as SVG.
+
+## Peeker
+
+#O#PDF#
+
+**Peeker** is a PDF editor that runs entirely in the browser, so files are never uploaded anywhere. You can add text, highlights, drawings, boxes, whiteout, pictures and signatures; rotate, reorder, duplicate and delete pages; merge PDFs; fill in forms; and search the text. It uses the open-source pdf.js and pdf-lib libraries.
+
+## Other apps
+
+The suite also includes **Bitbook** for notes, **Waterflow** for fun notes, **Formly** for forms, **Hexa** for calendars and boards, **Taskra** for to-do lists, **Phosphor** for team messaging and [[opendb|OpenDB]], the free database this article is part of.
