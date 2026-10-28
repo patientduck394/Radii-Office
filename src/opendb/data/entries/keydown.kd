@@ -14,7 +14,7 @@ infobox.Kind: Lightweight markup language
 infobox.File extensions: .kd and .kn
 infobox.Style: Frutiger Aero
 ---
-**Keydown** is the formatting language of [[radii-office|Radii Office]]. Instead of clicking buttons, you type short **tags** around your text, and the text turns into formatting: #G#glossy chips#, %B%gloss pills%, =B=gel orbs=B=, #Y#gel highlights##, **bold**, headings, lists and dozens of interactive "applets". Many of its looks come from the [[frutiger-aero|Frutiger Aero]] style. Every example below is drawn live, right on this page.
+**Keydown** is the formatting language of [[radii-office|Radii Office]]. Instead of clicking buttons, you type short **tags** around your text, and the text turns into formatting: #G#glossy chips#, %B%gloss pills%, #%O%gel flags%, =B=gel orbs=B=, #Y#gel highlights##, **bold**, headings, lists and dozens of interactive "applets". Many of its looks come from the [[frutiger-aero|Frutiger Aero]] style. Every example below is drawn live, right on this page.
 
 ## How it works
 
@@ -97,6 +97,27 @@ The Bubble Chips' pill-shaped sibling, with a glassy shine across the top, in th
 * `%FG%text%` %FG%fog%
 * `%SL%text%` %SL%slate%
 * `%BK%text%` %BK%black%
+
+## Gel flags
+
+Another Bubble Chip cousin: the same gel, flowing sideways from a thick colored edge. Written `#%color%text%`:
+
+* `#%R%text%` #%R%red%
+* `#%O%text%` #%O%orange%
+* `#%GL%text%` #%GL%gold%
+* `#%Y%text%` #%Y%yellow%
+* `#%L%text%` #%L%lime%
+* `#%G%text%` #%G%green%
+* `#%TU%text%` #%TU%turquoise%
+* `#%T%text%` #%T%teal%
+* `#%C%text%` #%C%cyan%
+* `#%B%text%` #%B%blue%
+* `#%PR%text%` #%PR%purple%
+* `#%PK%text%` #%PK%pink%
+* `#%W%text%` #%W%white%
+* `#%FG%text%` #%FG%fog%
+* `#%SL%text%` #%SL%slate%
+* `#%BK%text%` #%BK%black%
 
 ## Gel orbs
 

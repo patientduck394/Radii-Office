@@ -4472,3 +4472,44 @@
 .gel-pill-black { --pill-c: #919191; --pill-edge: #454545; --pill-ink: #222222; }
 .gel-pill-fog { --pill-c: #d9d9d9; --pill-edge: #808080; --pill-ink: #404040; }
 .gel-pill-turquoise { --pill-c: #30e5cd; --pill-edge: #26b1a5; --pill-ink: #044439; }
+
+/* ========================================================
+   GEL FLAGS (#%R%text%): another Bubble Chip cousin, in the same 16 colors!
+   The same color-to-clear gel, crisp edge and ink, but the gel flows sideways
+   from a thick colored "flagpole" edge, with tighter corners.
+   ======================================================== */
+.gel-flag-chip {
+  --flag-c: #3b82f6; --flag-edge: #2563eb; --flag-ink: #172554;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px 2px 9px;
+  border-radius: 5px;
+  border: 2px solid var(--flag-edge);
+  border-left-width: 6px;
+  color: var(--flag-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px;
+  vertical-align: middle;
+  background: linear-gradient(90deg, var(--flag-c) 0%, transparent 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-flag-red { --flag-c: #ef4444; --flag-edge: #dc2626; --flag-ink: #450a0a; }
+.gel-flag-orange { --flag-c: #f97316; --flag-edge: #ea580c; --flag-ink: #431407; }
+.gel-flag-gold { --flag-c: #ea9f08; --flag-edge: #ca8a04; --flag-ink: #451a03; }
+.gel-flag-yellow { --flag-c: #ead708; --flag-edge: #caa604; --flag-ink: #452b03; }
+.gel-flag-lime { --flag-c: #84cc16; --flag-edge: #65a30d; --flag-ink: #1a2e05; }
+.gel-flag-green { --flag-c: #10b981; --flag-edge: #059669; --flag-ink: #022c22; }
+.gel-flag-turquoise { --flag-c: #30e5cd; --flag-edge: #26b1a5; --flag-ink: #044439; }
+.gel-flag-teal { --flag-c: #06b6d4; --flag-edge: #0891b2; --flag-ink: #083344; }
+.gel-flag-cyan { --flag-c: #30d3e5; --flag-edge: #26a3b1; --flag-ink: #043e44; }
+.gel-flag-blue { --flag-c: #3b82f6; --flag-edge: #2563eb; --flag-ink: #172554; }
+.gel-flag-purple { --flag-c: #a855f7; --flag-edge: #9333ea; --flag-ink: #2e1065; }
+.gel-flag-pink { --flag-c: #ec4899; --flag-edge: #db2777; --flag-ink: #4c0519; }
+.gel-flag-white { --flag-c: #f3f3f3; --flag-edge: #b3b3b3; --flag-ink: #7a7a7a; }
+.gel-flag-fog { --flag-c: #d9d9d9; --flag-edge: #808080; --flag-ink: #404040; }
+.gel-flag-slate { --flag-c: #b4b4b4; --flag-edge: #6f6f6f; --flag-ink: #363636; }
+.gel-flag-black { --flag-c: #919191; --flag-edge: #454545; --flag-ink: #222222; }
