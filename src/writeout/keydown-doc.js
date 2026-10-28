@@ -460,7 +460,7 @@
         let changed = false;
         texts.forEach((t) => {
             const text = t.nodeValue;
-            if (!/[#*=~`&$[{!]/.test(text)) return;
+            if (!/[#*=~`&$[{!@%]/.test(text)) return;
             const html = inline(text, { notes: {} });
             if (html === esc(text)) return;
             const tpl = document.createElement('template');
@@ -704,7 +704,7 @@
         for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!(t.parentElement && (t.parentElement.closest(SKIP_RE) || isProtected(t.parentElement, root)))) texts.push(t);
         texts.forEach((t) => {
             const text = t.nodeValue;
-            if (!/[#*=~`&$[{!]/.test(text)) return;
+            if (!/[#*=~`&$[{!@%]/.test(text)) return;
             const html = inline(text, { notes: {} });
             if (html === esc(text)) return;
             const tpl = document.createElement('template');

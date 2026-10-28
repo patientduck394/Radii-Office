@@ -14,7 +14,7 @@ infobox.Kind: Lightweight markup language
 infobox.File extensions: .kd and .kn
 infobox.Style: Frutiger Aero
 ---
-**Keydown** is the formatting language of [[radii-office|Radii Office]]. Instead of clicking buttons, you type short **tags** around your text, and the text turns into formatting: #G#glossy chips#, %B%gloss pills%, #%O%gel flags%, =B=gel orbs=B=, #Y#gel highlights##, **bold**, headings, lists and dozens of interactive "applets". Many of its looks come from the [[frutiger-aero|Frutiger Aero]] style. Every example below is drawn live, right on this page.
+**Keydown** is the formatting language of [[radii-office|Radii Office]]. Instead of clicking buttons, you type short **tags** around your text, and the text turns into formatting: #G#glossy chips#, %B%gloss pills%, #%O%gel flags%, @neontube-2@unique styles@, =B=gel orbs=B=, #Y#gel highlights##, **bold**, headings, lists and dozens of interactive "applets". Many of its looks come from the [[frutiger-aero|Frutiger Aero]] style. Every example below is drawn live, right on this page.
 
 ## How it works
 
@@ -224,6 +224,661 @@ Applets are small interactive widgets: click the ones below to try them. Wrap a 
 * `~SL~text~SL~` Audio stream loop: ~SL~Sample~SL~
 * `~BG~text~BG~` Biogel capsule: ~BG~Sample~BG~
 * `~WR~text~WR~` Neon ribbon: ~WR~Sample~WR~
+
+## Unique Styles
+
+All 3,150 styles from Bitbook's Unique Styles Gallery are Keydown tags too: 630 designs in 7 collections, each in 5 colorways. Write `@family-N@text@`, where N is the colorway from 1 to 5, like `@neontube-2@Hello@`. Leave the number out for the first colorway: `@neontube@Hello@`.
+
+### Regular (90 designs)
+
+* `@neontube-N@text@` Neon Tube: @neontube-1@Cyber Pink@ @neontube-2@Laser Lime@ @neontube-3@Ice Blue@ @neontube-4@Sunset Orange@ @neontube-5@Ultraviolet@
+* `@lava-N@text@` Lava Lamp: @lava-1@Molten@ @lava-2@Deep Ocean@ @lava-3@Toxic@ @lava-4@Grape Soda@ @lava-5@Cola@
+* `@holo-N@text@` Holo Foil: @holo-1@Prism@ @holo-2@Opal@ @holo-3@Oil Slick@ @holo-4@Pearl@ @holo-5@Dragonfly@
+* `@retrosun-N@text@` Retro Sun: @retrosun-1@Outrun@ @retrosun-2@Miami@ @retrosun-3@Desert@ @retrosun-4@Mint Dusk@ @retrosun-5@Cherry@
+* `@vapor-N@text@` Vaporwave: @vapor-1@Classic@ @vapor-2@Peach Mall@ @vapor-3@Seafoam@ @vapor-4@Dusk@ @vapor-5@Food Court@
+* `@sprinkles-N@text@` Sprinkles: @sprinkles-1@Strawberry@ @sprinkles-2@Vanilla@ @sprinkles-3@Mint Choc@ @sprinkles-4@Blueberry@ @sprinkles-5@Lemon@
+* `@jelly-N@text@` Jelly: @jelly-1@Grape@ @jelly-2@Lime@ @jelly-3@Cherry@ @jelly-4@Blue Raspberry@ @jelly-5@Peach@
+* `@puffy-N@text@` Puffy: @puffy-1@Bubblegum@ @puffy-2@Sky@ @puffy-3@Mint@ @puffy-4@Sunny@ @puffy-5@Lilac@
+* `@comic-N@text@` Comic Pop: @comic-1@Pow@ @comic-2@Zap@ @comic-3@Bam@ @comic-4@Kaboom@ @comic-5@Whoosh@
+* `@graffiti-N@text@` Graffiti: @graffiti-1@Street@ @graffiti-2@Bubble@ @graffiti-3@Toxic Tag@ @graffiti-4@Candy Tag@ @graffiti-5@Chrome Tag@
+* `@circuit-N@text@` Circuit Board: @circuit-1@PCB Green@ @circuit-2@Navy Board@ @circuit-3@Black Board@ @circuit-4@Purple Board@ @circuit-5@Red Board@
+* `@blueprint-N@text@` Blueprint: @blueprint-1@Classic@ @blueprint-2@Cyanotype@ @blueprint-3@Midnight@ @blueprint-4@Graphite@ @blueprint-5@Redline@
+* `@led-N@text@` LED Matrix: @led-1@Amber@ @led-2@Red@ @led-3@Green@ @led-4@Blue@ @led-5@White@
+* `@crt-N@text@` CRT Screen: @crt-1@Phosphor@ @crt-2@Amber Terminal@ @crt-3@Ice@ @crt-4@Mono@ @crt-5@Pinkwave@
+* `@pixel-N@text@` 8-Bit Button: @pixel-1@Hero Red@ @pixel-2@Slime@ @pixel-3@Coin@ @pixel-4@Water@ @pixel-5@Ghost@
+* `@aurora-N@text@` Aurora: @aurora-1@Borealis@ @aurora-2@Australis@ @aurora-3@Glacier@ @aurora-4@Ember@ @aurora-5@Nebula@
+* `@galaxy-N@text@` Galaxy: @galaxy-1@Andromeda@ @galaxy-2@Milky Way@ @galaxy-3@Supernova@ @galaxy-4@Emerald Nebula@ @galaxy-5@Crimson Void@
+* `@gem-N@text@` Gemstone: @gem-1@Ruby@ @gem-2@Sapphire@ @gem-3@Emerald@ @gem-4@Amethyst@ @gem-5@Topaz@
+* `@foil-N@text@` Luxe Foil: @foil-1@Gold@ @foil-2@Rose Gold@ @foil-3@Silver@ @foil-4@Bronze@ @foil-5@Platinum@
+* `@marble-N@text@` Marble: @marble-1@Carrara@ @marble-2@Nero@ @marble-3@Verde@ @marble-4@Rosa@ @marble-5@Lapis@
+* `@wood-N@text@` Wood Plank: @wood-1@Oak@ @wood-2@Walnut@ @wood-3@Birch@ @wood-4@Cherrywood@ @wood-5@Driftwood@
+* `@washi-N@text@` Washi Tape: @washi-1@Sakura@ @washi-2@Matcha@ @washi-3@Sky@ @washi-4@Kraft@ @washi-5@Lavender@
+* `@postit-N@text@` Sticky Note: @postit-1@Canary@ @postit-2@Pink@ @postit-3@Mint@ @postit-4@Blue@ @postit-5@Orange@
+* `@dymo-N@text@` Label Maker: @dymo-1@Classic Red@ @dymo-2@Black@ @dymo-3@Blue@ @dymo-4@Green@ @dymo-5@Yellow@
+* `@enamel-N@text@` Enamel Pin: @enamel-1@Gold & Red@ @enamel-2@Silver & Blue@ @enamel-3@Gold & Black@ @enamel-4@Copper & Teal@ @enamel-5@Silver & Pink@
+* `@neumorph-N@text@` Soft UI: @neumorph-1@Cloud@ @neumorph-2@Sand@ @neumorph-3@Sage@ @neumorph-4@Blush@ @neumorph-5@Slate@
+* `@glassblob-N@text@` Glass Blob: @glassblob-1@Peach Sky@ @glassblob-2@Lime Berry@ @glassblob-3@Ocean Coral@ @glassblob-4@Violet Sun@ @glassblob-5@Mint Rose@
+* `@ring-N@text@` Spectrum Ring: @ring-1@Rainbow@ @ring-2@Night Rainbow@ @ring-3@Fire Ring@ @ring-4@Ice Ring@ @ring-5@Toxic Ring@
+* `@element-N@text@` Elemental Text: @element-1@Fire@ @element-2@Ice@ @element-3@Poison@ @element-4@Lightning@ @element-5@Shadow@
+* `@origami-N@text@` Origami: @origami-1@Crane Red@ @origami-2@Paper Blue@ @origami-3@Leaf@ @origami-4@Fox@ @origami-5@Plum@
+* `@bubblewrap-N@text@` Bubble Wrap: @bubblewrap-1@Clear Blue@ @bubblewrap-2@Mint@ @bubblewrap-3@Pink@ @bubblewrap-4@Lemon@ @bubblewrap-5@Smoke@
+* `@denim-N@text@` Denim: @denim-1@Indigo@ @denim-2@Stonewash@ @denim-3@Black Denim@ @denim-4@Pink Denim@ @denim-5@Olive Canvas@
+* `@leather-N@text@` Leather: @leather-1@Saddle@ @leather-2@Black@ @leather-3@Oxblood@ @leather-4@Tan@ @leather-5@Forest@
+* `@chrome-N@text@` Chrome: @chrome-1@Mirror@ @chrome-2@Blue Steel@ @chrome-3@Gunmetal@ @chrome-4@Rose Chrome@ @chrome-5@Gold Chrome@
+* `@window-N@text@` App Window: @window-1@Light@ @window-2@Dark@ @window-3@Purple@ @window-4@Teal@ @window-5@Retro Blue@
+* `@receipt-N@text@` Receipt: @receipt-1@Thermal@ @receipt-2@Yellowed@ @receipt-3@Pink Slip@ @receipt-4@Blue Carbon@ @receipt-5@Mint Copy@
+* `@brick-N@text@` Toy Brick: @brick-1@Red@ @brick-2@Yellow@ @brick-3@Blue@ @brick-4@Green@ @brick-5@White@
+* `@scales-N@text@` Mermaid Scales: @scales-1@Lagoon@ @scales-2@Coral Reef@ @scales-3@Deep Sea@ @scales-4@Pearl Shell@ @scales-5@Seaweed@
+* `@plaid-N@text@` Plaid: @plaid-1@Tartan Red@ @plaid-2@Flannel Blue@ @plaid-3@Highland Green@ @plaid-4@Buffalo Check@ @plaid-5@Cozy Beige@
+* `@gingham-N@text@` Gingham: @gingham-1@Picnic Red@ @gingham-2@Sky Blue@ @gingham-3@Kelly Green@ @gingham-4@Butter@ @gingham-5@Lavender@
+* `@chevron-N@text@` Chevron: @chevron-1@Coral@ @chevron-2@Navy@ @chevron-3@Mint@ @chevron-4@Mustard@ @chevron-5@Gray@
+* `@cyber-N@text@` Cyber Panel: @cyber-1@Netrunner@ @cyber-2@Ghost@ @cyber-3@Corpo@ @cyber-4@Redline@ @cyber-5@Toxin@
+* `@camo-N@text@` Camo: @camo-1@Woodland@ @camo-2@Desert@ @camo-3@Urban@ @camo-4@Arctic@ @camo-5@Pink Camo@
+* `@barber-N@text@` Barber Pole: @barber-1@Classic@ @barber-2@Candy Cane@ @barber-3@Mint Swirl@ @barber-4@Grape Swirl@ @barber-5@Lemon Swirl@
+* `@sunburst-N@text@` Sunburst: @sunburst-1@Sunshine@ @sunburst-2@Rising Sun@ @sunburst-3@Circus@ @sunburst-4@Ocean Burst@ @sunburst-5@Retro Teal@
+* `@topo-N@text@` Topo Map: @topo-1@Trail@ @topo-2@Alpine@ @topo-3@Forest@ @topo-4@Night Map@ @topo-5@Canyon@
+* `@glitch-N@text@` Glitch: @glitch-1@RGB@ @glitch-2@Acid@ @glitch-3@Gold Bug@ @glitch-4@Mint Bug@ @glitch-5@Mono Bug@
+* `@hud-N@text@` Sci-Fi HUD: @hud-1@Cyan@ @hud-2@Amber@ @hud-3@Lime@ @hud-4@Red Alert@ @hud-5@Violet@
+* `@hazard-N@text@` Hazard Tape: @hazard-1@Caution@ @hazard-2@Danger@ @hazard-3@Construction@ @hazard-4@Biohazard@ @hazard-5@Cold Zone@
+* `@typewriter-N@text@` Typewriter: @typewriter-1@Black Ribbon@ @typewriter-2@Red Ribbon@ @typewriter-3@Blue Ribbon@ @typewriter-4@Green Ribbon@ @typewriter-5@Purple Ribbon@
+* `@crayon-N@text@` Crayon: @crayon-1@Red@ @crayon-2@Blue@ @crayon-3@Green@ @crayon-4@Orange@ @crayon-5@Violet@
+* `@brickneon-N@text@` Neon on Brick: @brickneon-1@Pink Bar@ @brickneon-2@Blue Diner@ @brickneon-3@Lime Club@ @brickneon-4@Open Late@ @brickneon-5@Gold Lounge@
+* `@marquee-N@text@` Marquee: @marquee-1@Broadway@ @marquee-2@Arcade@ @marquee-3@Casino@ @marquee-4@Carnival@ @marquee-5@Cinema@
+* `@polaroid-N@text@` Polaroid: @polaroid-1@Beach@ @polaroid-2@Sunset@ @polaroid-3@Forest@ @polaroid-4@Lilac@ @polaroid-5@Night@
+* `@film-N@text@` Film Strip: @film-1@Classic@ @film-2@Sepia@ @film-3@Technicolor@ @film-4@Cyan Print@ @film-5@Gold Reel@
+* `@brush-N@text@` Brush Stroke: @brush-1@Crimson@ @brush-2@Ink Blue@ @brush-3@Matcha@ @brush-4@Saffron@ @brush-5@Charcoal@
+* `@watercolor-N@text@` Watercolor: @watercolor-1@Spring@ @watercolor-2@Seaside@ @watercolor-3@Autumn@ @watercolor-4@Lavender Field@ @watercolor-5@Moss@
+* `@stained-N@text@` Stained Glass: @stained-1@Cathedral@ @stained-2@Garden@ @stained-3@Ocean@ @stained-4@Ember@ @stained-5@Twilight@
+* `@tiedye-N@text@` Tie-Dye: @tiedye-1@Groovy@ @tiedye-2@Ocean Swirl@ @tiedye-3@Sherbet@ @tiedye-4@Galaxy Dye@ @tiedye-5@Earthy@
+* `@popart-N@text@` Pop Art: @popart-1@Lichtenstein@ @popart-2@Blue Dots@ @popart-3@Pink Dots@ @popart-4@Mint Dots@ @popart-5@Orange Dots@
+* `@riso-N@text@` Risograph: @riso-1@Pink & Blue@ @riso-2@Teal & Orange@ @riso-3@Purple & Yellow@ @riso-4@Red & Green@ @riso-5@Navy & Coral@
+* `@scroll-N@text@` Parchment Scroll: @scroll-1@Ancient@ @scroll-2@Royal@ @scroll-3@Elven@ @scroll-4@Dragon@ @scroll-5@Frost@
+* `@wax-N@text@` Wax Seal: @wax-1@Royal Red@ @wax-2@Navy@ @wax-3@Forest@ @wax-4@Gold@ @wax-5@Black@
+* `@banner-N@text@` Ribbon Banner: @banner-1@Red@ @banner-2@Royal Blue@ @banner-3@Emerald@ @banner-4@Gold@ @banner-5@Purple@
+* `@notebook-N@text@` Notebook: @notebook-1@College Ruled@ @notebook-2@Legal Pad@ @notebook-3@Kraft Journal@ @notebook-4@Night Notes@ @notebook-5@Mint Page@
+* `@capsule-N@text@` Medicine Capsule: @capsule-1@Classic@ @capsule-2@Blue & White@ @capsule-3@Yellow & Black@ @capsule-4@Mint & Pink@ @capsule-5@Purple & Teal@
+* `@battery-N@text@` Battery: @battery-1@Full@ @battery-2@Good@ @battery-3@Half@ @battery-4@Low@ @battery-5@Critical@
+* `@loading-N@text@` Loading Bar: @loading-1@Progress Blue@ @loading-2@Success Green@ @loading-3@Warning Orange@ @loading-4@Error Red@ @loading-5@Busy Purple@
+* `@cloud-N@text@` Fluffy Cloud: @cloud-1@Fair Weather@ @cloud-2@Cotton Candy@ @cloud-3@Storm@ @cloud-4@Sunrise@ @cloud-5@Dreamy@
+* `@glowtext-N@text@` Glow Text: @glowtext-1@Hot Pink@ @glowtext-2@Electric Blue@ @glowtext-3@Radioactive@ @glowtext-4@Blaze@ @glowtext-5@Royal Violet@
+* `@patch-N@text@` Embroidered Patch: @patch-1@Scout@ @patch-2@Biker@ @patch-3@Varsity@ @patch-4@Space Camp@ @patch-5@Kawaii@
+* `@softinset-N@text@` Soft Inset: @softinset-1@Cloud@ @softinset-2@Peach@ @softinset-3@Mint@ @softinset-4@Lavender@ @softinset-5@Midnight@
+* `@clay-N@text@` Clay: @clay-1@Bubblegum@ @clay-2@Sky@ @clay-3@Lime@ @clay-4@Tangerine@ @clay-5@Grape@
+* `@layers-N@text@` Paper Layers: @layers-1@Sunset Stack@ @layers-2@Ocean Stack@ @layers-3@Forest Stack@ @layers-4@Berry Stack@ @layers-5@Mono Stack@
+* `@longshadow-N@text@` Long Shadow: @longshadow-1@Flat Red@ @longshadow-2@Flat Blue@ @longshadow-3@Flat Green@ @longshadow-4@Flat Orange@ @longshadow-5@Flat Purple@
+* `@engraved-N@text@` Engraved Plate: @engraved-1@Brass@ @engraved-2@Steel@ @engraved-3@Copper@ @engraved-4@Pewter@ @engraved-5@Silver@
+* `@webtwo-N@text@` Web 2.0: @webtwo-1@Beta Orange@ @webtwo-2@Social Blue@ @webtwo-3@Lime Launch@ @webtwo-4@Hot Pink@ @webtwo-5@Glossy Black@
+* `@retrodesk-N@text@` Retro Desktop: @retrodesk-1@Classic Gray@ @retrodesk-2@Desert@ @retrodesk-3@Lilac@ @retrodesk-4@Teal Desktop@ @retrodesk-5@Rainy Day@
+* `@coderain-N@text@` Code Rain: @coderain-1@Green@ @coderain-2@Blue@ @coderain-3@Red@ @coderain-4@Gold@ @coderain-5@Violet@
+* `@bokeh-N@text@` Bokeh: @bokeh-1@City Lights@ @bokeh-2@Fairy Lights@ @bokeh-3@Neon Night@ @bokeh-4@Forest Glow@ @bokeh-5@Ice Lights@
+* `@ombre-N@text@` Ombre: @ombre-1@Peach Fuzz@ @ombre-2@Northern@ @ombre-3@Citrus@ @ombre-4@Lagoon@ @ombre-5@Royal@
+* `@mesh-N@text@` Mesh Gradient: @mesh-1@Candy@ @mesh-2@Spring@ @mesh-3@Dusk@ @mesh-4@Seafoam@ @mesh-5@Ember@
+* `@swoosh-N@text@` Swoosh: @swoosh-1@Red@ @swoosh-2@Blue@ @swoosh-3@Gold@ @swoosh-4@Green@ @swoosh-5@Purple@
+* `@circled-N@text@` Circled: @circled-1@Red Pen@ @circled-2@Blue Pen@ @circled-3@Green Pen@ @circled-4@Highlighter@ @circled-5@Pencil@
+* `@spoiler-N@text@` Spoiler: @spoiler-1@Blackout@ @spoiler-2@Redacted@ @spoiler-3@Purple Haze@ @spoiler-4@Deep Blue@ @spoiler-5@Gray Matter@
+* `@gradtext-N@text@` Gradient Text: @gradtext-1@Rainbow@ @gradtext-2@Pastel@ @gradtext-3@Sunset@ @gradtext-4@Ocean@ @gradtext-5@Forest@
+* `@shimmer-N@text@` Shimmer: @shimmer-1@Silver@ @shimmer-2@Gold@ @shimmer-3@Rose@ @shimmer-4@Ice@ @shimmer-5@Emerald@
+* `@extruded-N@text@` Extruded: @extruded-1@Retro Red@ @extruded-2@Cool Blue@ @extruded-3@Lemon Lime@ @extruded-4@Hot Pink@ @extruded-5@Gold Block@
+* `@diecut-N@text@` Die-Cut Text: @diecut-1@Cherry@ @diecut-2@Ocean@ @diecut-3@Grass@ @diecut-4@Tangerine@ @diecut-5@Grape@
+* `@letterpress-N@text@` Letterpress: @letterpress-1@Ink Black@ @letterpress-2@Oxblood@ @letterpress-3@Navy@ @letterpress-4@Sage@ @letterpress-5@Plum@
+
+### Frutiger Aero 1 (90 designs)
+
+* `@faaqua-N@text@` Aqua Gel: @faaqua-1@Aqua Blue@ @faaqua-2@Graphite@ @faaqua-3@Lime@ @faaqua-4@Tangerine@ @faaqua-5@Grape@
+* `@fabubble-N@text@` Soap Bubble: @fabubble-1@Rainbow Film@ @fabubble-2@Mint Film@ @fabubble-3@Sunny Film@ @fabubble-4@Rose Film@ @fabubble-5@Lilac Film@
+* `@faglass-N@text@` Aero Glass: @faglass-1@Sky@ @faglass-2@Emerald@ @faglass-3@Twilight@ @faglass-4@Ruby@ @faglass-5@Slate@
+* `@fameadow-N@text@` Bliss Hill: @fameadow-1@Spring@ @fameadow-2@Summer@ @fameadow-3@Dusk@ @fameadow-4@Highland@ @fameadow-5@Lavender Sky@
+* `@fawater-N@text@` Water Surface: @fawater-1@Lagoon@ @fawater-2@Pool@ @fawater-3@Tropical@ @fawater-4@Deep Blue@ @fawater-5@Glacier@
+* `@faleaf-N@text@` Glossy Leaf: @faleaf-1@Fresh Green@ @faleaf-2@Lime Leaf@ @faleaf-3@Teal Leaf@ @faleaf-4@Autumn Leaf@ @faleaf-5@Fern@
+* `@faflare-N@text@` Lens Flare: @faflare-1@Sunbeam@ @faflare-2@Azure@ @faflare-3@Emerald Ray@ @faflare-4@Magenta Ray@ @faflare-5@Cyan Ray@
+* `@faswoosh-N@text@` Vista Swoosh: @faswoosh-1@Aurora@ @faswoosh-2@Ocean@ @faswoosh-3@Emerald@ @faswoosh-4@Violet@ @faswoosh-5@Sunset@
+* `@facrystal-N@text@` Crystal: @facrystal-1@Ice@ @facrystal-2@Quartz@ @facrystal-3@Peridot@ @facrystal-4@Citrine@ @facrystal-5@Sapphire@
+* `@faunderwater-N@text@` Bubble Stream: @faunderwater-1@Reef@ @faunderwater-2@Kelp@ @faunderwater-3@Abyss@ @faunderwater-4@Lagoon@ @faunderwater-5@Fizz@
+* `@faorb-N@text@` Glossy Orb: @faorb-1@Start Blue@ @faorb-2@Start Green@ @faorb-3@Start Orange@ @faorb-4@Start Red@ @faorb-5@Start Black@
+* `@fafrost-N@text@` Frosted Pane: @fafrost-1@Sky@ @fafrost-2@Mint@ @fafrost-3@Lime@ @fafrost-4@Peach@ @fafrost-5@Iris@
+* `@fadew-N@text@` Dewdrop: @fadew-1@Morning Leaf@ @fadew-2@Petal@ @fadew-3@Sky Drop@ @fadew-4@Lemon Drop@ @fadew-5@Teal Drop@
+* `@faeco-N@text@` Eco Tech: @faeco-1@Green Energy@ @faeco-2@Clean Water@ @faeco-3@Solar@ @faeco-4@Fresh Air@ @faeco-5@Bloom@
+* `@fasunrise-N@text@` Sunrise Glow: @fasunrise-1@Dawn@ @fasunrise-2@Golden Hour@ @fasunrise-3@Pink Sky@ @fasunrise-4@Mint Morning@ @fasunrise-5@Lilac Dawn@
+* `@fapinstripe-N@text@` Aqua Pinstripe: @fapinstripe-1@Aqua@ @fapinstripe-2@Lime@ @fapinstripe-3@Strawberry@ @fapinstripe-4@Grape@ @fapinstripe-5@Tangerine@
+* `@faclouds-N@text@` Cloud Sky: @faclouds-1@Blue Sky@ @faclouds-2@Noon@ @faclouds-3@Cotton@ @faclouds-4@Mint Sky@ @faclouds-5@Evening@
+* `@fataskbar-N@text@` Glass Taskbar: @fataskbar-1@Cyan Glow@ @fataskbar-2@Green Glow@ @fataskbar-3@Amber Glow@ @fataskbar-4@Pink Glow@ @fataskbar-5@Violet Glow@
+* `@faaquarium-N@text@` Aquarium: @faaquarium-1@Tropical Tank@ @faaquarium-2@Reef Tank@ @faaquarium-3@Night Tank@ @faaquarium-4@Koi Pond@ @faaquarium-5@Lagoon Tank@
+* `@faribbon-N@text@` Gloss Ribbon: @faribbon-1@Nature@ @faribbon-2@Ocean@ @faribbon-3@Citrus@ @faribbon-4@Berry@ @faribbon-5@Mint@
+* `@faluna-N@text@` Luna Button: @faluna-1@Start Green@ @faluna-2@Royal Blue@ @faluna-3@Olive@ @faluna-4@Silver@ @faluna-5@Sunset@
+* `@fataskband-N@text@` Luna Taskbar: @fataskband-1@Classic Blue@ @fataskband-2@Olive Green@ @fataskband-3@Metallic@ @fataskband-4@Royale@ @fataskband-5@Zune@
+* `@fagadget-N@text@` Sidebar Gadget: @fagadget-1@Clock Blue@ @fagadget-2@Weather Gold@ @fagadget-3@CPU Green@ @fagadget-4@Feed Orange@ @fagadget-5@Notes Pink@
+* `@fachannel-N@text@` Console Channel: @fachannel-1@Sky Blue@ @fachannel-2@Mii Gray@ @fachannel-3@Shop Teal@ @fachannel-4@Photo Green@ @fachannel-5@Weather Orange@
+* `@famediawave-N@text@` Media Wave: @famediawave-1@January Blue@ @famediawave-2@May Green@ @famediawave-3@July Teal@ @famediawave-4@October Gold@ @famediawave-5@December Purple@
+* `@fablade-N@text@` Dashboard Blade: @fablade-1@Games Green@ @fablade-2@Media Pink@ @fablade-3@Market Blue@ @fablade-4@System Silver@ @fablade-5@Friends Orange@
+* `@fapocket-N@text@` Pocket Player: @fapocket-1@Silver Blue@ @fapocket-2@Lime Nano@ @fapocket-3@Pink Nano@ @fapocket-4@Orange Nano@ @fapocket-5@Graphite@
+* `@fablackglass-N@text@` Black Glass Button: @fablackglass-1@Blue Reflection@ @fablackglass-2@Green Reflection@ @fablackglass-3@Red Reflection@ @fablackglass-4@Gold Reflection@ @fablackglass-5@Violet Reflection@
+* `@fatoolbar-N@text@` Toolbar Gel: @fatoolbar-1@Explorer Blue@ @fatoolbar-2@Office Silver@ @fatoolbar-3@Media Green@ @fatoolbar-4@Mail Orange@ @fatoolbar-5@Calendar Red@
+* `@faprogress-N@text@` Progress Gel: @faprogress-1@Copy Green@ @faprogress-2@Paused Yellow@ @faprogress-3@Error Red@ @faprogress-4@Install Blue@ @faprogress-5@Defrag Teal@
+* `@fasearch-N@text@` Search Field: @fasearch-1@Focus Blue@ @fasearch-2@Focus Green@ @fasearch-3@Focus Orange@ @fasearch-4@Focus Pink@ @fasearch-5@Focus Violet@
+* `@fagltab-N@text@` Glass Tab: @fagltab-1@Browser Blue@ @fagltab-2@Mint Tab@ @fagltab-3@Peach Tab@ @fagltab-4@Lilac Tab@ @fagltab-5@Lemon Tab@
+* `@faballoon-N@text@` Tray Balloon: @faballoon-1@Info Cream@ @faballoon-2@Update Blue@ @faballoon-3@Secure Green@ @faballoon-4@Warning Amber@ @faballoon-5@Alert Rose@
+* `@fagrass-N@text@` Grass Field: @fagrass-1@Meadow@ @fagrass-2@Golf Course@ @fagrass-3@Spring Lawn@ @fagrass-4@Evening Field@ @fagrass-5@Prairie@
+* `@fahorizon-N@text@` Ocean Horizon: @fahorizon-1@Midday@ @fahorizon-2@Tropic@ @fahorizon-3@Golden Sea@ @fahorizon-4@Calm Mint@ @fahorizon-5@Twilight Sea@
+* `@farainbow-N@text@` Rainbow Arc: @farainbow-1@Clear Sky@ @farainbow-2@After Rain@ @farainbow-3@Sunny@ @farainbow-4@Pastel@ @farainbow-5@Mint Sky@
+* `@fasunbeam-N@text@` Sunbeams: @fasunbeam-1@Morning Sky@ @fasunbeam-2@Golden Rays@ @fasunbeam-3@Forest Rays@ @fasunbeam-4@Rose Rays@ @fasunbeam-5@Aqua Rays@
+* `@fapetals-N@text@` Blossom Petals: @fapetals-1@Sakura@ @fapetals-2@Plum Blossom@ @fapetals-3@Orange Blossom@ @fapetals-4@Apple Blossom@ @fapetals-5@Jasmine@
+* `@fawavecrest-N@text@` Wave Crest: @fawavecrest-1@Surf@ @fawavecrest-2@Tide Pool@ @fawavecrest-3@Sunset Surf@ @fawavecrest-4@Deep Swell@ @fawavecrest-5@Lagoon Swell@
+* `@faripples-N@text@` Pond Ripples: @faripples-1@Koi Pond@ @faripples-2@Lily Pond@ @faripples-3@Spring Pool@ @faripples-4@Sunset Pond@ @faripples-5@Moon Pond@
+* `@farainglass-N@text@` Rain on Glass: @farainglass-1@Window Blue@ @farainglass-2@Green Glass@ @farainglass-3@Storm Gray@ @farainglass-4@Violet Glass@ @farainglass-5@Teal Glass@
+* `@faicecube-N@text@` Ice Cube: @faicecube-1@Clear Ice@ @faicecube-2@Mint Ice@ @faicecube-3@Berry Ice@ @faicecube-4@Lemon Ice@ @faicecube-5@Grape Ice@
+* `@fasnowglobe-N@text@` Snow Globe: @fasnowglobe-1@Winter Blue@ @fasnowglobe-2@Pine Green@ @fasnowglobe-3@Holiday Red@ @fasnowglobe-4@Night Sky@ @fasnowglobe-5@Lavender Snow@
+* `@fashafts-N@text@` Forest Light: @fashafts-1@Fern Glade@ @fashafts-2@Misty Pine@ @fashafts-3@Autumn Wood@ @fashafts-4@Bluebell Wood@ @fashafts-5@Jungle@
+* `@faglobe-N@text@` Earth Globe: @faglobe-1@Blue Planet@ @faglobe-2@Ocean World@ @faglobe-3@Night Earth@ @faglobe-4@Dawn Earth@ @faglobe-5@Eco World@
+* `@faveins-N@text@` Leaf Vein: @faveins-1@Spring Leaf@ @faveins-2@Lime Leaf@ @faveins-3@Teal Leaf@ @faveins-4@Maple@ @faveins-5@Gold Leaf@
+* `@fabamboo-N@text@` Bamboo: @fabamboo-1@Fresh Bamboo@ @fabamboo-2@Young Shoot@ @fabamboo-3@Jade@ @fabamboo-4@Dry Cane@ @fabamboo-5@Black Bamboo@
+* `@faskytext-N@text@` Sky Text: @faskytext-1@Blue Sky@ @faskytext-2@Sunrise@ @faskytext-3@Spring@ @faskytext-4@Lagoon@ @faskytext-5@Dusk@
+* `@faliquidchrome-N@text@` Liquid Chrome: @faliquidchrome-1@Aqua Chrome@ @faliquidchrome-2@Mint Chrome@ @faliquidchrome-3@Rose Chrome@ @faliquidchrome-4@Lime Chrome@ @faliquidchrome-5@Indigo Chrome@
+* `@faliquid-N@text@` Liquid Fill: @faliquid-1@Water@ @faliquid-2@Lime Soda@ @faliquid-3@Orange Juice@ @faliquid-4@Berry Smoothie@ @faliquid-5@Grape Soda@
+* `@faprism-N@text@` Glass Prism: @faprism-1@Crystal Clear@ @faprism-2@Sky Prism@ @faprism-3@Mint Prism@ @faprism-4@Rose Prism@ @faprism-5@Amber Prism@
+* `@fasmoked-N@text@` Smoked Frost: @fasmoked-1@Graphite@ @fasmoked-2@Night Blue@ @fasmoked-3@Forest Smoke@ @fasmoked-4@Plum Smoke@ @fasmoked-5@Ember Smoke@
+* `@faneonedge-N@text@` Neon Glass Edge: @faneonedge-1@Cyan Pink@ @faneonedge-2@Lime Blue@ @faneonedge-3@Sunset Edge@ @faneonedge-4@Aqua Mint@ @faneonedge-5@Violet Edge@
+* `@fahologlass-N@text@` Holo Glass: @fahologlass-1@Opal Glass@ @fahologlass-2@Seafoam Glass@ @fahologlass-3@Peach Glass@ @fahologlass-4@Iris Glass@ @fahologlass-5@Citrus Glass@
+* `@fagelring-N@text@` Gel Ring: @fagelring-1@Aqua Ring@ @fagelring-2@Lime Ring@ @fagelring-3@Pink Ring@ @fagelring-4@Orange Ring@ @fagelring-5@Purple Ring@
+* `@fajellybean-N@text@` Jelly Bean: @fajellybean-1@Cherry Bean@ @fajellybean-2@Lime Bean@ @fajellybean-3@Blueberry Bean@ @fajellybean-4@Tangerine Bean@ @fajellybean-5@Grape Bean@
+* `@facandygloss-N@text@` Candy Gloss: @facandygloss-1@Strawberry@ @facandygloss-2@Spearmint@ @facandygloss-3@Blue Raspberry@ @facandygloss-4@Orange Fizz@ @facandygloss-5@Grape Twist@
+* `@famarble-N@text@` Glass Marble: @famarble-1@Cat Eye@ @famarble-2@Swirl Green@ @famarble-3@Fireball@ @famarble-4@Ocean Swirl@ @famarble-5@Candy Swirl@
+* `@fawaterdrop-N@text@` Water Drop: @fawaterdrop-1@Clear Drop@ @fawaterdrop-2@Lime Drop@ @fawaterdrop-3@Rose Drop@ @fawaterdrop-4@Teal Drop@ @fawaterdrop-5@Violet Drop@
+* `@fareflect-N@text@` Mirror Floor: @fareflect-1@Aqua@ @fareflect-2@Leaf@ @fareflect-3@Coral@ @fareflect-4@Orchid@ @fareflect-5@Graphite@
+* `@faorbs-N@text@` Light Orbs: @faorbs-1@Sky Orbs@ @faorbs-2@Spring Orbs@ @faorbs-3@Blossom Orbs@ @faorbs-4@Ocean Orbs@ @faorbs-5@Sunny Orbs@
+* `@fabrightribbon-N@text@` Light Ribbons: @fabrightribbon-1@Aqua Flow@ @fabrightribbon-2@Spring Flow@ @fabrightribbon-3@Rose Flow@ @fabrightribbon-4@Ocean Flow@ @fabrightribbon-5@Sunset Flow@
+* `@faswirl-N@text@` Swirl Wallpaper: @faswirl-1@Blue Swirl@ @faswirl-2@Green Swirl@ @faswirl-3@Pink Swirl@ @faswirl-4@Teal Swirl@ @faswirl-5@Lilac Swirl@
+* `@fabanner-N@text@` Web Banner: @fabanner-1@Portal Blue@ @fabanner-2@Eco Green@ @fabanner-3@Promo Orange@ @fabanner-4@Music Pink@ @fabanner-5@Tech Steel@
+* `@fabadge-N@text@` Glossy Badge: @fabadge-1@New Blue@ @fabadge-2@Fresh Green@ @fabadge-3@Hot Red@ @fabadge-4@Sale Orange@ @fabadge-5@Beta Purple@
+* `@fatoggle-N@text@` Glass Toggle: @fatoggle-1@On Green@ @fatoggle-2@On Blue@ @fatoggle-3@On Orange@ @fatoggle-4@On Pink@ @fatoggle-5@On Teal@
+* `@faicontile-N@text@` Icon Tile: @faicontile-1@Mail Blue@ @faicontile-2@Messages Green@ @faicontile-3@Music Red@ @faicontile-4@Photos Sun@ @faicontile-5@Store Purple@
+* `@fadunes-N@text@` Rolling Dunes: @fadunes-1@Pastel Dunes@ @fadunes-2@Mint Hills@ @fadunes-3@Lavender Dunes@ @fadunes-4@Peach Hills@ @fadunes-5@Sky Hills@
+* `@fasunsetsea-N@text@` Sunset Sea: @fasunsetsea-1@Tropical Sunset@ @fasunsetsea-2@Pink Dusk@ @fasunsetsea-3@Golden Bay@ @fasunsetsea-4@Coral Evening@ @fasunsetsea-5@Lilac Bay@
+* `@fatropical-N@text@` Tropical Leaves: @fatropical-1@Palm@ @fatropical-2@Monstera@ @fatropical-3@Banana Leaf@ @fatropical-4@Fern Grotto@ @fatropical-5@Sunlit Jungle@
+* `@fawaterfall-N@text@` Waterfall: @fawaterfall-1@Cascade@ @fawaterfall-2@Rainforest Falls@ @fawaterfall-3@Glacier Falls@ @fawaterfall-4@Lagoon Falls@ @fawaterfall-5@Twilight Falls@
+* `@facluster-N@text@` Bubble Cluster: @facluster-1@Aqua Fizz@ @facluster-2@Lime Fizz@ @facluster-3@Berry Fizz@ @facluster-4@Mint Fizz@ @facluster-5@Grape Fizz@
+* `@fawaveline-N@text@` Glass Wave Line: @fawaveline-1@Blue Wave@ @fawaveline-2@Green Wave@ @fawaveline-3@Coral Wave@ @fawaveline-4@Teal Wave@ @fawaveline-5@Violet Wave@
+* `@faecoleaf-N@text@` Eco Leaf Badge: @faecoleaf-1@Leaf Green@ @faecoleaf-2@Sea Green@ @faecoleaf-3@Sky Leaf@ @faecoleaf-4@Sun Leaf@ @faecoleaf-5@Bloom Leaf@
+* `@farecycle-N@text@` Recycle Swirl: @farecycle-1@Green Blue@ @farecycle-2@Lime Teal@ @farecycle-3@Sky Mint@ @farecycle-4@Sun Leaf@ @farecycle-5@Aqua Violet@
+* `@fasolar-N@text@` Solar Panel: @fasolar-1@Mono Blue@ @fasolar-2@Poly Blue@ @fasolar-3@Night Cell@ @fasolar-4@Teal Cell@ @fasolar-5@Violet Cell@
+* `@faenergy-N@text@` Energy Bars: @faenergy-1@Charge@ @faenergy-2@Signal@ @faenergy-3@Heat@ @faenergy-4@Calm@ @faenergy-5@Boost@
+* `@fapebble-N@text@` Wet Pebble: @fapebble-1@River Stone@ @fapebble-2@Jade Stone@ @fapebble-3@Sea Glass@ @fapebble-4@Sandstone@ @fapebble-5@Slate Pebble@
+* `@fashard-N@text@` Glass Shard: @fashard-1@Ice Shard@ @fashard-2@Emerald Shard@ @fashard-3@Ruby Shard@ @fashard-4@Amethyst Shard@ @fashard-5@Citrine Shard@
+* `@faripplering-N@text@` Halo Ring: @faripplering-1@Sky Halo@ @faripplering-2@Leaf Halo@ @faripplering-3@Sun Halo@ @faripplering-4@Rose Halo@ @faripplering-5@Iris Halo@
+* `@falightleak-N@text@` Light Leak: @falightleak-1@Warm Leak@ @falightleak-2@Cool Leak@ @falightleak-3@Fresh Leak@ @falightleak-4@Golden Leak@ @falightleak-5@Dream Leak@
+* `@faicetext-N@text@` Ice Glaze Text: @faicetext-1@Frost Blue@ @faicetext-2@Mint Frost@ @faicetext-3@Lilac Frost@ @faicetext-4@Rose Frost@ @faicetext-5@Silver Frost@
+* `@fawatertext-N@text@` Water Text: @fawatertext-1@Ocean@ @fawatertext-2@Lagoon@ @fawatertext-3@Spring@ @fawatertext-4@Lilac@ @fawatertext-5@Coral@
+* `@faglosstext-N@text@` Gel Text: @faglosstext-1@Aqua@ @faglosstext-2@Lime@ @faglosstext-3@Cherry@ @faglosstext-4@Tangerine@ @faglosstext-5@Grape@
+* `@fachrometext-N@text@` Aqua Chrome Text: @fachrometext-1@Blue Chrome@ @fachrometext-2@Teal Chrome@ @fachrometext-3@Silver Chrome@ @fachrometext-4@Gold Chrome@ @fachrometext-5@Rose Chrome@
+* `@faleaftext-N@text@` Leaf Text: @faleaftext-1@Fresh Leaf@ @faleaftext-2@Lime Sprout@ @faleaftext-3@Sea Leaf@ @faleaftext-4@Autumn@ @faleaftext-5@Golden Leaf@
+* `@faskypill-N@text@` Sky Pill: @faskypill-1@Clear Day@ @faskypill-2@Mint Day@ @faskypill-3@Peach Day@ @faskypill-4@Lilac Day@ @faskypill-5@Lemon Day@
+* `@famusicnote-N@text@` Glossy Sticker: @famusicnote-1@Aqua Sticker@ @famusicnote-2@Lime Sticker@ @famusicnote-3@Pink Sticker@ @famusicnote-4@Orange Sticker@ @famusicnote-5@Purple Sticker@
+* `@faflowcard-N@text@` Flow Card: @faflowcard-1@Blue Flow@ @faflowcard-2@Green Flow@ @faflowcard-3@Sunset Flow@ @faflowcard-4@Berry Flow@ @faflowcard-5@Ocean Flow@
+* `@faslider-N@text@` Aqua Slider: @faslider-1@Volume Blue@ @faslider-2@Brightness Gold@ @faslider-3@Balance Green@ @faslider-4@Bass Purple@ @faslider-5@Treble Teal@
+
+### Frutiger Aero 2 (90 designs)
+
+* `@fbcapsule-N@text@` Gel Capsule: @fbcapsule-1@Aqua Capsule@ @fbcapsule-2@Lime Capsule@ @fbcapsule-3@Orange Capsule@ @fbcapsule-4@Grape Capsule@ @fbcapsule-5@Graphite Capsule@
+* `@fbwand-N@text@` Bubble Wand: @fbwand-1@Rainbow Wand@ @fbwand-2@Mint Wand@ @fbwand-3@Sunny Wand@ @fbwand-4@Rose Wand@ @fbwand-5@Lilac Wand@
+* `@fbtitlebar-N@text@` Aero Title Bar: @fbtitlebar-1@Sky Caption@ @fbtitlebar-2@Emerald Caption@ @fbtitlebar-3@Twilight Caption@ @fbtitlebar-4@Teal Caption@ @fbtitlebar-5@Slate Caption@
+* `@fbvalley-N@text@` Bliss Valley: @fbvalley-1@Green Valley@ @fbvalley-2@Deep Valley@ @fbvalley-3@Golden Valley@ @fbvalley-4@Misty Valley@ @fbvalley-5@Violet Valley@
+* `@fbcaustic-N@text@` Sunlit Caustics: @fbcaustic-1@Pool Floor@ @fbcaustic-2@Shallows@ @fbcaustic-3@Reef Floor@ @fbcaustic-4@Deep End@ @fbcaustic-5@Ice Floor@
+* `@fbpetal-N@text@` Glossy Petal: @fbpetal-1@Rose Petal@ @fbpetal-2@Orchid Petal@ @fbpetal-3@Sky Petal@ @fbpetal-4@Marigold Petal@ @fbpetal-5@Mint Petal@
+* `@fbstreak-N@text@` Flare Streak: @fbstreak-1@Gold Streak@ @fbstreak-2@Blue Streak@ @fbstreak-3@Green Streak@ @fbstreak-4@Pink Streak@ @fbstreak-5@Cyan Streak@
+* `@fbtwinswoosh-N@text@` Twin Swoosh: @fbtwinswoosh-1@Northern Lights@ @fbtwinswoosh-2@Deep Ocean@ @fbtwinswoosh-3@Forest Night@ @fbtwinswoosh-4@Royal Night@ @fbtwinswoosh-5@Ember Night@
+* `@fbfacet-N@text@` Diamond Facet: @fbfacet-1@Diamond@ @fbfacet-2@Rose Quartz@ @fbfacet-3@Emerald Cut@ @fbfacet-4@Topaz@ @fbfacet-5@Tanzanite@
+* `@fbsoda-N@text@` Soda Fizz: @fbsoda-1@Lemon Soda@ @fbsoda-2@Lime Soda@ @fbsoda-3@Orange Soda@ @fbsoda-4@Berry Soda@ @fbsoda-5@Blue Soda@
+* `@fbpearl-N@text@` Glossy Pearl: @fbpearl-1@Blue Pearl@ @fbpearl-2@Green Pearl@ @fbpearl-3@Peach Pearl@ @fbpearl-4@Pink Pearl@ @fbpearl-5@Lilac Pearl@
+* `@fbstacked-N@text@` Stacked Panes: @fbstacked-1@Sky Panes@ @fbstacked-2@Mint Panes@ @fbstacked-3@Lime Panes@ @fbstacked-4@Coral Panes@ @fbstacked-5@Iris Panes@
+* `@fbdewbeads-N@text@` Dew Beads: @fbdewbeads-1@Leaf Beads@ @fbdewbeads-2@Rose Beads@ @fbdewbeads-3@Sky Beads@ @fbdewbeads-4@Honey Beads@ @fbdewbeads-5@Teal Beads@
+* `@fbstatus-N@text@` Eco Status: @fbstatus-1@Online Green@ @fbstatus-2@Synced Blue@ @fbstatus-3@Charging Amber@ @fbstatus-4@Fresh Mint@ @fbstatus-5@Bloom Pink@
+* `@fbsundisc-N@text@` Sun Disc: @fbsundisc-1@Midday Sun@ @fbsundisc-2@Warm Sun@ @fbsundisc-3@Pink Sun@ @fbsundisc-4@Mint Sun@ @fbsundisc-5@Lilac Sun@
+* `@fbbrushed-N@text@` Brushed Aluminum: @fbbrushed-1@Blue LED@ @fbbrushed-2@Green LED@ @fbbrushed-3@Red LED@ @fbbrushed-4@Amber LED@ @fbbrushed-5@Violet LED@
+* `@fbcloudbank-N@text@` Cloud Bank: @fbcloudbank-1@Fair Weather@ @fbcloudbank-2@High Noon@ @fbcloudbank-3@Candy Sky@ @fbcloudbank-4@Mint Air@ @fbcloudbank-5@Late Sky@
+* `@fbdockitem-N@text@` Glass Dock Item: @fbdockitem-1@Cyan Active@ @fbdockitem-2@Green Active@ @fbdockitem-3@Amber Active@ @fbdockitem-4@Pink Active@ @fbdockitem-5@Violet Active@
+* `@fbtank-N@text@` Planted Tank: @fbtank-1@Fresh Tank@ @fbtank-2@Jungle Tank@ @fbtank-3@Moon Tank@ @fbtank-4@Pond Tank@ @fbtank-5@Coral Tank@
+* `@fbsash-N@text@` Gloss Sash: @fbsash-1@Nature Sash@ @fbsash-2@Ocean Sash@ @fbsash-3@Citrus Sash@ @fbsash-4@Berry Sash@ @fbsash-5@Mint Sash@
+* `@fbtaskpane-N@text@` Task Pane Header: @fbtaskpane-1@Luna Pane@ @fbtaskpane-2@Olive Pane@ @fbtaskpane-3@Silver Pane@ @fbtaskpane-4@Royale Pane@ @fbtaskpane-5@Sunset Pane@
+* `@fbtray-N@text@` System Tray: @fbtray-1@Tray Blue@ @fbtray-2@Tray Olive@ @fbtray-3@Tray Silver@ @fbtray-4@Tray Royale@ @fbtray-5@Tray Black@
+* `@fbgauge-N@text@` Gauge Gadget: @fbgauge-1@CPU Meter@ @fbgauge-2@RAM Meter@ @fbgauge-3@Battery Meter@ @fbgauge-4@Heat Meter@ @fbgauge-5@Network Meter@
+* `@fbmenububble-N@text@` Menu Bubble: @fbmenububble-1@Start Blue@ @fbmenububble-2@Disc Gray@ @fbmenububble-3@Shop Aqua@ @fbmenububble-4@Play Green@ @fbmenububble-5@News Orange@
+* `@fbvisualizer-N@text@` Visualizer: @fbvisualizer-1@Spring Mix@ @fbvisualizer-2@Blue Mix@ @fbvisualizer-3@Teal Mix@ @fbvisualizer-4@Amber Mix@ @fbvisualizer-5@Violet Mix@
+* `@fbhubtile-N@text@` Hub Tile: @fbhubtile-1@Games Tile@ @fbhubtile-2@Media Tile@ @fbhubtile-3@Market Tile@ @fbhubtile-4@Settings Tile@ @fbhubtile-5@Social Tile@
+* `@fbclickwheel-N@text@` Click Wheel: @fbclickwheel-1@Classic White@ @fbclickwheel-2@Blue Mini@ @fbclickwheel-3@Green Mini@ @fbclickwheel-4@Pink Mini@ @fbclickwheel-5@Gold Mini@
+* `@fbpiano-N@text@` Piano Black Strip: @fbpiano-1@Blue LED Strip@ @fbpiano-2@Green LED Strip@ @fbpiano-3@Red LED Strip@ @fbpiano-4@Gold LED Strip@ @fbpiano-5@Violet LED Strip@
+* `@fbribbongroup-N@text@` Ribbon Group: @fbribbongroup-1@Word Blue@ @fbribbongroup-2@Sheet Green@ @fbribbongroup-3@Slides Orange@ @fbribbongroup-4@Notes Purple@ @fbribbongroup-5@Mail Teal@
+* `@fbmarquee-N@text@` Busy Marquee: @fbmarquee-1@Working Green@ @fbmarquee-2@Syncing Blue@ @fbmarquee-3@Waiting Amber@ @fbmarquee-4@Updating Teal@ @fbmarquee-5@Loading Violet@
+* `@fbaddress-N@text@` Address Bar: @fbaddress-1@Go Blue@ @fbaddress-2@Go Green@ @fbaddress-3@Go Orange@ @fbaddress-4@Go Pink@ @fbaddress-5@Go Violet@
+* `@fbdocktab-N@text@` Dock Tab: @fbdocktab-1@Blue Dock Tab@ @fbdocktab-2@Mint Dock Tab@ @fbdocktab-3@Peach Dock Tab@ @fbdocktab-4@Lilac Dock Tab@ @fbdocktab-5@Lemon Dock Tab@
+* `@fbtooltip-N@text@` Glass Tooltip: @fbtooltip-1@Help Blue@ @fbtooltip-2@Tip Cream@ @fbtooltip-3@Done Green@ @fbtooltip-4@Note Lilac@ @fbtooltip-5@Hint Peach@
+* `@fbflowers-N@text@` Flower Meadow: @fbflowers-1@Daisy Hill@ @fbflowers-2@Poppy Hill@ @fbflowers-3@Bluebell Hill@ @fbflowers-4@Evening Hill@ @fbflowers-5@Lavender Hill@
+* `@fbisland-N@text@` Desert Island: @fbisland-1@Palm Isle@ @fbisland-2@Sandbar@ @fbisland-3@Golden Isle@ @fbisland-4@Lagoon Isle@ @fbisland-5@Dusk Isle@
+* `@fbrainstreak-N@text@` Rainbow Streak: @fbrainstreak-1@Bright Day@ @fbrainstreak-2@Soft Rain@ @fbrainstreak-3@Sun Shower@ @fbrainstreak-4@Cotton Candy@ @fbrainstreak-5@Fresh Mint@
+* `@fbskybeams-N@text@` Sky Beams: @fbskybeams-1@Heaven Blue@ @fbskybeams-2@Golden Beams@ @fbskybeams-3@Glade Beams@ @fbskybeams-4@Rose Beams@ @fbskybeams-5@Lagoon Beams@
+* `@fbdaisy-N@text@` Daisy Pill: @fbdaisy-1@Lawn Daisy@ @fbdaisy-2@Sky Daisy@ @fbdaisy-3@Pink Daisy@ @fbdaisy-4@Lilac Daisy@ @fbdaisy-5@Mint Daisy@
+* `@fbsurf-N@text@` Rolling Surf: @fbsurf-1@Blue Surf@ @fbsurf-2@Tide Surf@ @fbsurf-3@Sunset Surf@ @fbsurf-4@Storm Surf@ @fbsurf-5@Lagoon Surf@
+* `@fbpuddle-N@text@` Rain Puddle: @fbpuddle-1@Rainy Day@ @fbpuddle-2@Garden Puddle@ @fbpuddle-3@Blue Puddle@ @fbpuddle-4@Dusk Puddle@ @fbpuddle-5@Night Puddle@
+* `@fbmisted-N@text@` Misted Window: @fbmisted-1@Misty Blue@ @fbmisted-2@Misty Green@ @fbmisted-3@Misty Gray@ @fbmisted-4@Misty Violet@ @fbmisted-5@Misty Teal@
+* `@fbfrostcorner-N@text@` Frost Corners: @fbfrostcorner-1@Window Frost@ @fbfrostcorner-2@Mint Frost@ @fbfrostcorner-3@Pink Frost@ @fbfrostcorner-4@Lemon Frost@ @fbfrostcorner-5@Lilac Frost@
+* `@fbsnowcap-N@text@` Snow Cap: @fbsnowcap-1@Frozen Blue@ @fbsnowcap-2@Snowy Pine@ @fbsnowcap-3@Berry Snow@ @fbsnowcap-4@Midnight Snow@ @fbsnowcap-5@Violet Snow@
+* `@fbdappled-N@text@` Dappled Light: @fbdappled-1@Fern Shade@ @fbdappled-2@Pine Shade@ @fbdappled-3@Autumn Shade@ @fbdappled-4@Bluebell Shade@ @fbdappled-5@Rainforest Shade@
+* `@fbplanet-N@text@` Ringed Planet: @fbplanet-1@Ice Giant@ @fbplanet-2@Gas Giant@ @fbplanet-3@Jade Planet@ @fbplanet-4@Rose Planet@ @fbplanet-5@Violet Planet@
+* `@fbfern-N@text@` Fern Frond: @fbfern-1@Spring Fern@ @fbfern-2@Lime Fern@ @fbfern-3@Sea Fern@ @fbfern-4@Rust Fern@ @fbfern-5@Shade Fern@
+* `@fbmat-N@text@` Bamboo Mat: @fbmat-1@Green Mat@ @fbmat-2@Straw Mat@ @fbmat-3@Jade Mat@ @fbmat-4@Honey Mat@ @fbmat-5@Dark Mat@
+* `@fbcloudtext-N@text@` Cloud Text: @fbcloudtext-1@Cloudy Blue@ @fbcloudtext-2@Cloudy Dawn@ @fbcloudtext-3@Cloudy Meadow@ @fbcloudtext-4@Cloudy Lagoon@ @fbcloudtext-5@Cloudy Dusk@
+* `@fbchromerim-N@text@` Chrome Rim: @fbchromerim-1@Aqua Rim@ @fbchromerim-2@Mint Rim@ @fbchromerim-3@Rose Rim@ @fbchromerim-4@Lime Rim@ @fbchromerim-5@Indigo Rim@
+* `@fbleveltube-N@text@` Level Tube: @fbleveltube-1@Water Level@ @fbleveltube-2@Lime Level@ @fbleveltube-3@Juice Level@ @fbleveltube-4@Berry Level@ @fbleveltube-5@Grape Level@
+* `@fbprismedge-N@text@` Prism Edge: @fbprismedge-1@Clear Edge@ @fbprismedge-2@Sky Edge@ @fbprismedge-3@Mint Edge@ @fbprismedge-4@Rose Edge@ @fbprismedge-5@Amber Edge@
+* `@fbgrille-N@text@` Speaker Grille: @fbgrille-1@Blue Glow Grille@ @fbgrille-2@Green Glow Grille@ @fbgrille-3@Red Glow Grille@ @fbgrille-4@Amber Glow Grille@ @fbgrille-5@Violet Glow Grille@
+* `@fbneonring-N@text@` Neon Ring Glass: @fbneonring-1@Cyan Pink Ring@ @fbneonring-2@Lime Blue Ring@ @fbneonring-3@Sunset Ring@ @fbneonring-4@Aqua Mint Ring@ @fbneonring-5@Violet Ring@
+* `@fbiridescent-N@text@` Iridescent Glass: @fbiridescent-1@Opal Sheen@ @fbiridescent-2@Seafoam Sheen@ @fbiridescent-3@Peach Sheen@ @fbiridescent-4@Iris Sheen@ @fbiridescent-5@Citrus Sheen@
+* `@fbtwinring-N@text@` Twin Ring: @fbtwinring-1@Aqua Twin@ @fbtwinring-2@Lime Twin@ @fbtwinring-3@Pink Twin@ @fbtwinring-4@Orange Twin@ @fbtwinring-5@Purple Twin@
+* `@fbgummy-N@text@` Sugar Gummy: @fbgummy-1@Cherry Gummy@ @fbgummy-2@Apple Gummy@ @fbgummy-3@Blue Gummy@ @fbgummy-4@Orange Gummy@ @fbgummy-5@Grape Gummy@
+* `@fbpeppermint-N@text@` Peppermint Stick: @fbpeppermint-1@Classic Mint@ @fbpeppermint-2@Spearmint Stick@ @fbpeppermint-3@Blue Mint@ @fbpeppermint-4@Orange Mint@ @fbpeppermint-5@Grape Mint@
+* `@fbsuperball-N@text@` Super Ball: @fbsuperball-1@Blue Bounce@ @fbsuperball-2@Green Bounce@ @fbsuperball-3@Red Bounce@ @fbsuperball-4@Teal Bounce@ @fbsuperball-5@Purple Bounce@
+* `@fbwaterbead-N@text@` Water Bead: @fbwaterbead-1@Clear Bead@ @fbwaterbead-2@Lime Bead@ @fbwaterbead-3@Rose Bead@ @fbwaterbead-4@Teal Bead@ @fbwaterbead-5@Violet Bead@
+* `@fbmirrorpill-N@text@` Mirror Pill: @fbmirrorpill-1@Aqua Mirror@ @fbmirrorpill-2@Leaf Mirror@ @fbmirrorpill-3@Coral Mirror@ @fbmirrorpill-4@Orchid Mirror@ @fbmirrorpill-5@Graphite Mirror@
+* `@fbbokeh-N@text@` Night Bokeh: @fbbokeh-1@City Bokeh@ @fbbokeh-2@Spring Bokeh@ @fbbokeh-3@Blossom Bokeh@ @fbbokeh-4@Ocean Bokeh@ @fbbokeh-5@Ember Bokeh@
+* `@fbsilk-N@text@` Silk Streams: @fbsilk-1@Aqua Silk@ @fbsilk-2@Spring Silk@ @fbsilk-3@Rose Silk@ @fbsilk-4@Ocean Silk@ @fbsilk-5@Sunset Silk@
+* `@fbflourish-N@text@` Vector Flourish: @fbflourish-1@Blue Flourish@ @fbflourish-2@Green Flourish@ @fbflourish-3@Pink Flourish@ @fbflourish-4@Teal Flourish@ @fbflourish-5@Lilac Flourish@
+* `@fbweb2-N@text@` Web 2.0 Button: @fbweb2-1@Sign Up Blue@ @fbweb2-2@Download Green@ @fbweb2-3@Buy Now Orange@ @fbweb2-4@Join Pink@ @fbweb2-5@Learn Teal@
+* `@fbstarburst-N@text@` Starburst Sticker: @fbstarburst-1@Hot Deal Red@ @fbstarburst-2@New Burst Blue@ @fbstarburst-3@Eco Burst Green@ @fbstarburst-4@Sale Burst Orange@ @fbstarburst-5@Bonus Burst Purple@
+* `@fbradio-N@text@` Radio Button: @fbradio-1@Radio Green@ @fbradio-2@Radio Blue@ @fbradio-3@Radio Orange@ @fbradio-4@Radio Pink@ @fbradio-5@Radio Teal@
+* `@fbrunapp-N@text@` Running App: @fbrunapp-1@Browser Blue@ @fbrunapp-2@Chat Green@ @fbrunapp-3@Video Red@ @fbrunapp-4@Camera Sun@ @fbrunapp-5@Game Purple@
+* `@fbpastellayers-N@text@` Pastel Layers: @fbpastellayers-1@Peach Layers@ @fbpastellayers-2@Mint Layers@ @fbpastellayers-3@Lavender Layers@ @fbpastellayers-4@Coral Layers@ @fbpastellayers-5@Sky Layers@
+* `@fbmoonpath-N@text@` Moon Path: @fbmoonpath-1@Midnight Bay@ @fbmoonpath-2@Purple Night@ @fbmoonpath-3@Teal Night@ @fbmoonpath-4@Harvest Moon@ @fbmoonpath-5@Blue Hour@
+* `@fbpalmshade-N@text@` Palm Shade: @fbpalmshade-1@Beach Palm@ @fbpalmshade-2@Lagoon Palm@ @fbpalmshade-3@Sunset Palm@ @fbpalmshade-4@Jungle Palm@ @fbpalmshade-5@Dusk Palm@
+* `@fbrainshower-N@text@` Rain Shower: @fbrainshower-1@Spring Rain@ @fbrainshower-2@Forest Rain@ @fbrainshower-3@Silver Rain@ @fbrainshower-4@Tropic Rain@ @fbrainshower-5@Purple Rain@
+* `@fbfizztrail-N@text@` Fizz Trail: @fbfizztrail-1@Aqua Trail@ @fbfizztrail-2@Lime Trail@ @fbfizztrail-3@Berry Trail@ @fbfizztrail-4@Mint Trail@ @fbfizztrail-5@Grape Trail@
+* `@fbsignalwave-N@text@` Signal Wave: @fbsignalwave-1@Blue Signal@ @fbsignalwave-2@Green Signal@ @fbsignalwave-3@Coral Signal@ @fbsignalwave-4@Teal Signal@ @fbsignalwave-5@Violet Signal@
+* `@fbdropbadge-N@text@` Water Saver Badge: @fbdropbadge-1@Rain Drop Badge@ @fbdropbadge-2@River Drop Badge@ @fbdropbadge-3@Leaf Drop Badge@ @fbdropbadge-4@Sea Drop Badge@ @fbdropbadge-5@Lilac Drop Badge@
+* `@fbcycle-N@text@` Cycle Badge: @fbcycle-1@Green Cycle@ @fbcycle-2@Teal Cycle@ @fbcycle-3@Sky Cycle@ @fbcycle-4@Sun Cycle@ @fbcycle-5@Violet Cycle@
+* `@fbbattery-N@text@` Glossy Battery: @fbbattery-1@Full Green@ @fbbattery-2@Charging Blue@ @fbbattery-3@Saver Amber@ @fbbattery-4@Low Red@ @fbbattery-5@Boost Violet@
+* `@fbsignalbars-N@text@` Signal Strength: @fbsignalbars-1@Full Signal@ @fbsignalbars-2@Wi-Fi Blue@ @fbsignalbars-3@Warm Signal@ @fbsignalbars-4@Calm Signal@ @fbsignalbars-5@Boost Signal@
+* `@fbfroststone-N@text@` Frosted Stone: @fbfroststone-1@Sea Glass Stone@ @fbfroststone-2@Cobalt Stone@ @fbfroststone-3@Amber Stone@ @fbfroststone-4@Jade Stone Glass@ @fbfroststone-5@Lavender Stone@
+* `@fbbevel-N@text@` Beveled Glass: @fbbevel-1@Ice Bevel@ @fbbevel-2@Emerald Bevel@ @fbbevel-3@Ruby Bevel@ @fbbevel-4@Amethyst Bevel@ @fbbevel-5@Citrine Bevel@
+* `@fbbreathe-N@text@` Breathing Halo: @fbbreathe-1@Sky Breath@ @fbbreathe-2@Leaf Breath@ @fbbreathe-3@Sun Breath@ @fbbreathe-4@Rose Breath@ @fbbreathe-5@Iris Breath@
+* `@fbbloom-N@text@` Center Bloom: @fbbloom-1@Warm Bloom@ @fbbloom-2@Cool Bloom@ @fbbloom-3@Fresh Bloom@ @fbbloom-4@Rose Bloom@ @fbbloom-5@Dream Bloom@
+* `@fbfroststroke-N@text@` Frost Stroke Text: @fbfroststroke-1@Frost Blue Stroke@ @fbfroststroke-2@Mint Stroke@ @fbfroststroke-3@Lilac Stroke@ @fbfroststroke-4@Rose Stroke@ @fbfroststroke-5@Silver Stroke@
+* `@fbbubbletext-N@text@` Bubbly Text: @fbbubbletext-1@Ocean Bubbles@ @fbbubbletext-2@Lagoon Bubbles@ @fbbubbletext-3@Spring Bubbles@ @fbbubbletext-4@Lilac Bubbles@ @fbbubbletext-5@Coral Bubbles@
+* `@fbstickertext-N@text@` Sticker Text: @fbstickertext-1@Aqua Sticker Text@ @fbstickertext-2@Lime Sticker Text@ @fbstickertext-3@Cherry Sticker Text@ @fbstickertext-4@Orange Sticker Text@ @fbstickertext-5@Grape Sticker Text@
+* `@fbglasstext-N@text@` Glass Text: @fbglasstext-1@Blue Glass Text@ @fbglasstext-2@Teal Glass Text@ @fbglasstext-3@Smoke Glass Text@ @fbglasstext-4@Amber Glass Text@ @fbglasstext-5@Rose Glass Text@
+* `@fbmeadowtext-N@text@` Meadow Text: @fbmeadowtext-1@Grass and Sky@ @fbmeadowtext-2@Lime and Sun@ @fbmeadowtext-3@Sea and Sky@ @fbmeadowtext-4@Field and Dusk@ @fbmeadowtext-5@Fern and Mist@
+* `@fbskywindow-N@text@` Sky Window: @fbskywindow-1@Clear Window@ @fbskywindow-2@Mint Window@ @fbskywindow-3@Peach Window@ @fbskywindow-4@Lilac Window@ @fbskywindow-5@Lemon Window@
+* `@fbpeel-N@text@` Peeling Sticker: @fbpeel-1@Aqua Peel@ @fbpeel-2@Lime Peel@ @fbpeel-3@Pink Peel@ @fbpeel-4@Orange Peel@ @fbpeel-5@Purple Peel@
+* `@fbsideflow-N@text@` Side Flow Card: @fbsideflow-1@Blue Side Flow@ @fbsideflow-2@Green Side Flow@ @fbsideflow-3@Sunset Side Flow@ @fbsideflow-4@Berry Side Flow@ @fbsideflow-5@Ocean Side Flow@
+* `@fbcheckbox-N@text@` Aqua Checkbox: @fbcheckbox-1@Check Blue@ @fbcheckbox-2@Check Gold@ @fbcheckbox-3@Check Green@ @fbcheckbox-4@Check Purple@ @fbcheckbox-5@Check Teal@
+
+### Frutiger Aero 3 (90 designs)
+
+* `@fckeycap-N@text@` Gel Keycap: @fckeycap-1@Aqua Key@ @fckeycap-2@Lime Key@ @fckeycap-3@Tangerine Key@ @fckeycap-4@Grape Key@ @fckeycap-5@Graphite Key@
+* `@fctwinbubble-N@text@` Bubble Twins: @fctwinbubble-1@Rainbow Twins@ @fctwinbubble-2@Mint Twins@ @fctwinbubble-3@Sunny Twins@ @fctwinbubble-4@Rose Twins@ @fctwinbubble-5@Lilac Twins@
+* `@fcthumb-N@text@` Glass Thumbnail: @fcthumb-1@Sky Thumb@ @fcthumb-2@Emerald Thumb@ @fcthumb-3@Twilight Thumb@ @fcthumb-4@Ruby Thumb@ @fcthumb-5@Slate Thumb@
+* `@fchillsil-N@text@` Hill Silhouette: @fchillsil-1@Dusk Hill@ @fchillsil-2@Twilight Hill@ @fchillsil-3@Golden Hill@ @fchillsil-4@Night Hill@ @fchillsil-5@Rose Hill@
+* `@fcbelow-N@text@` Surface From Below: @fcbelow-1@Sunny Shallows@ @fcbelow-2@Blue Lagoon@ @fcbelow-3@Green Cove@ @fcbelow-4@Deep Sea@ @fcbelow-5@Arctic Water@
+* `@fcwillow-N@text@` Willow Leaf: @fcwillow-1@Willow Green@ @fcwillow-2@Olive Willow@ @fcwillow-3@Sea Willow@ @fcwillow-4@Amber Willow@ @fcwillow-5@Blue Willow@
+* `@fcsparkle-N@text@` Sparkle Glint: @fcsparkle-1@Gold Glint@ @fcsparkle-2@Azure Glint@ @fcsparkle-3@Jade Glint@ @fcsparkle-4@Magenta Glint@ @fcsparkle-5@Cyan Glint@
+* `@fcvistaglow-N@text@` Vista Glow: @fcvistaglow-1@Aurora Glow@ @fcvistaglow-2@Ocean Glow@ @fcvistaglow-3@Forest Glow@ @fcvistaglow-4@Violet Glow@ @fcvistaglow-5@Ember Glow@
+* `@fccolumn-N@text@` Faceted Column: @fccolumn-1@Ice Column@ @fccolumn-2@Quartz Column@ @fccolumn-3@Peridot Column@ @fccolumn-4@Citrine Column@ @fccolumn-5@Sapphire Column@
+* `@fccurtain-N@text@` Bubble Curtain: @fccurtain-1@Reef Curtain@ @fccurtain-2@Kelp Curtain@ @fccurtain-3@Abyss Curtain@ @fccurtain-4@Lagoon Curtain@ @fccurtain-5@Fizz Curtain@
+* `@fcjewel-N@text@` Jewel Orb: @fcjewel-1@Sapphire Orb@ @fcjewel-2@Emerald Orb@ @fcjewel-3@Ruby Orb@ @fcjewel-4@Amethyst Orb@ @fcjewel-5@Topaz Orb@
+* `@fcfrostheader-N@text@` Frosted Header: @fcfrostheader-1@Sky Header@ @fcfrostheader-2@Mint Header@ @fcfrostheader-3@Lime Header@ @fcfrostheader-4@Peach Header@ @fcfrostheader-5@Iris Header@
+* `@fcdewcorner-N@text@` Dew Corner: @fcdewcorner-1@Leaf Corner@ @fcdewcorner-2@Petal Corner@ @fcdewcorner-3@Sky Corner@ @fcdewcorner-4@Lemon Corner@ @fcdewcorner-5@Teal Corner@
+* `@fcecocap-N@text@` Eco Tab Pill: @fcecocap-1@Green Cap@ @fcecocap-2@Water Cap@ @fcecocap-3@Solar Cap@ @fcecocap-4@Air Cap@ @fcecocap-5@Bloom Cap@
+* `@fcdawnbands-N@text@` Dawn Bands: @fcdawnbands-1@Early Dawn@ @fcdawnbands-2@Golden Dawn@ @fcdawnbands-3@Pink Dawn@ @fcdawnbands-4@Mint Dawn@ @fcdawnbands-5@Lilac Dawn Bands@
+* `@fcgraph-N@text@` Aqua Graph Paper: @fcgraph-1@Aqua Grid@ @fcgraph-2@Lime Grid@ @fcgraph-3@Strawberry Grid@ @fcgraph-4@Grape Grid@ @fcgraph-5@Tangerine Grid@
+* `@fccotton-N@text@` Cotton Cloud: @fccotton-1@Blue Cotton@ @fccotton-2@Noon Cotton@ @fccotton-3@Pink Cotton@ @fccotton-4@Mint Cotton@ @fccotton-5@Evening Cotton@
+* `@fcstartbar-N@text@` Start Orb Bar: @fcstartbar-1@Blue Orb Bar@ @fcstartbar-2@Green Orb Bar@ @fcstartbar-3@Amber Orb Bar@ @fcstartbar-4@Pink Orb Bar@ @fcstartbar-5@Violet Orb Bar@
+* `@fcfishbowl-N@text@` Fish Bowl: @fcfishbowl-1@Goldfish Bowl@ @fcfishbowl-2@Guppy Bowl@ @fcfishbowl-3@Betta Bowl@ @fcfishbowl-4@Tetra Bowl@ @fcfishbowl-5@Koi Bowl@
+* `@fccornerribbon-N@text@` Corner Ribbon: @fccornerribbon-1@Nature Corner@ @fccornerribbon-2@Ocean Corner@ @fccornerribbon-3@Citrus Corner@ @fccornerribbon-4@Berry Corner@ @fccornerribbon-5@Mint Corner@
+* `@fclunawindow-N@text@` Luna Window: @fclunawindow-1@Luna Blue@ @fclunawindow-2@Luna Olive@ @fclunawindow-3@Luna Silver@ @fclunawindow-4@Luna Royale@ @fclunawindow-5@Luna Black@
+* `@fcquicklaunch-N@text@` Quick Launch: @fcquicklaunch-1@Launch Blue@ @fcquicklaunch-2@Launch Olive@ @fcquicklaunch-3@Launch Silver@ @fcquicklaunch-4@Launch Royale@ @fcquicklaunch-5@Launch Black@
+* `@fcweather-N@text@` Weather Gadget: @fcweather-1@Sunny Day@ @fcweather-2@Clear Evening@ @fcweather-3@Spring Weather@ @fcweather-4@Hazy Weather@ @fcweather-5@Night Weather@
+* `@fcconsolecard-N@text@` Console Card: @fcconsolecard-1@Card Blue@ @fcconsolecard-2@Card Gray@ @fcconsolecard-3@Card Teal@ @fcconsolecard-4@Card Green@ @fcconsolecard-5@Card Orange@
+* `@fclightbars-N@text@` Light Bars: @fclightbars-1@February Blue@ @fclightbars-2@April Green@ @fclightbars-3@August Teal@ @fclightbars-4@September Gold@ @fclightbars-5@November Plum@
+* `@fcarrow-N@text@` Arrow Blade: @fcarrow-1@Go Green Blade@ @fcarrow-2@Media Blade@ @fcarrow-3@Store Blade@ @fcarrow-4@System Blade@ @fcarrow-5@Party Blade@
+* `@fcminiscreen-N@text@` Mini Player Screen: @fcminiscreen-1@Screen Blue@ @fcminiscreen-2@Screen Lime@ @fcminiscreen-3@Screen Pink@ @fcminiscreen-4@Screen Orange@ @fcminiscreen-5@Screen Graphite@
+* `@fcblackpearl-N@text@` Black Pearl: @fcblackpearl-1@Blue Pearl Rim@ @fcblackpearl-2@Green Pearl Rim@ @fcblackpearl-3@Red Pearl Rim@ @fcblackpearl-4@Gold Pearl Rim@ @fcblackpearl-5@Violet Pearl Rim@
+* `@fcsplit-N@text@` Split Button: @fcsplit-1@Split Blue@ @fcsplit-2@Split Silver@ @fcsplit-3@Split Green@ @fcsplit-4@Split Orange@ @fcsplit-5@Split Red@
+* `@fcblocks-N@text@` Block Progress: @fcblocks-1@Block Green@ @fcblocks-2@Block Blue@ @fcblocks-3@Block Amber@ @fcblocks-4@Block Red@ @fcblocks-5@Block Teal@
+* `@fclens-N@text@` Lens Search: @fclens-1@Lens Blue@ @fclens-2@Lens Green@ @fclens-3@Lens Orange@ @fclens-4@Lens Pink@ @fclens-5@Lens Violet@
+* `@fcfoldertab-N@text@` Folder Tab: @fcfoldertab-1@Manila Tab@ @fcfoldertab-2@Blue Folder@ @fcfoldertab-3@Green Folder@ @fcfoldertab-4@Pink Folder@ @fcfoldertab-5@Purple Folder@
+* `@fcchat-N@text@` Chat Bubble: @fcchat-1@Chat Blue@ @fcchat-2@Chat Green@ @fcchat-3@Chat Pink@ @fcchat-4@Chat Orange@ @fcchat-5@Chat Gray@
+* `@fclawn-N@text@` Mown Lawn: @fclawn-1@Park Lawn@ @fclawn-2@Stadium Lawn@ @fclawn-3@Spring Lawn Stripes@ @fclawn-4@Sunset Lawn@ @fclawn-5@Garden Lawn@
+* `@fcsail-N@text@` Sailing Day: @fcsail-1@Blue Sail@ @fcsail-2@Tropic Sail@ @fcsail-3@Golden Sail@ @fcsail-4@Mint Sail@ @fcsail-5@Dusk Sail@
+* `@fcrainbowrim-N@text@` Rainbow Rim: @fcrainbowrim-1@Sky Rim@ @fcrainbowrim-2@Cloud Rim@ @fcrainbowrim-3@Sunny Rim@ @fcrainbowrim-4@Candy Rim@ @fcrainbowrim-5@Mint Rim Glow@
+* `@fcsunburst-N@text@` Glossy Sunburst: @fcsunburst-1@Blue Burst@ @fcsunburst-2@Gold Burst@ @fcsunburst-3@Green Burst@ @fcsunburst-4@Rose Burst@ @fcsunburst-5@Aqua Burst@
+* `@fcblossomrow-N@text@` Blossom Border: @fcblossomrow-1@Sakura Border@ @fcblossomrow-2@Plum Border@ @fcblossomrow-3@Orange Border@ @fcblossomrow-4@Apple Border@ @fcblossomrow-5@Forget-Me-Not@
+* `@fcoceanbands-N@text@` Ocean Bands: @fcoceanbands-1@Surf Bands@ @fcoceanbands-2@Tide Bands@ @fcoceanbands-3@Sunset Bands@ @fcoceanbands-4@Deep Bands@ @fcoceanbands-5@Lagoon Bands@
+* `@fclilypad-N@text@` Lily Pad: @fclilypad-1@Pond Pad@ @fclilypad-2@Lake Pad@ @fclilypad-3@Garden Pad@ @fclilypad-4@Sunset Pad@ @fclilypad-5@Moon Pad@
+* `@fcdrips-N@text@` Dripping Glass: @fcdrips-1@Drip Blue@ @fcdrips-2@Drip Green@ @fcdrips-3@Drip Gray@ @fcdrips-4@Drip Violet@ @fcdrips-5@Drip Teal@
+* `@fcicicle-N@text@` Icicle Ledge: @fcicicle-1@Clear Icicle@ @fcicicle-2@Mint Icicle@ @fcicicle-3@Berry Icicle@ @fcicicle-4@Lemon Icicle@ @fcicicle-5@Grape Icicle@
+* `@fcsnowflake-N@text@` Snowflake Tag: @fcsnowflake-1@Winter Flake@ @fcsnowflake-2@Pine Flake@ @fcsnowflake-3@Holly Flake@ @fcsnowflake-4@Midnight Flake@ @fcsnowflake-5@Lavender Flake@
+* `@fcpines-N@text@` Pine Ridge: @fcpines-1@Alpine Ridge@ @fcpines-2@Misty Ridge@ @fcpines-3@Autumn Ridge@ @fcpines-4@Dusk Ridge@ @fcpines-5@Spring Ridge@
+* `@fcmoon-N@text@` Glossy Moon: @fcmoon-1@Silver Moon@ @fcmoon-2@Harvest Moon Orb@ @fcmoon-3@Blue Moon@ @fcmoon-4@Mint Moon@ @fcmoon-5@Rose Moon@
+* `@fcleaffan-N@text@` Leaf Fan: @fcleaffan-1@Fan Green@ @fcleaffan-2@Fan Lime@ @fcleaffan-3@Fan Teal@ @fcleaffan-4@Fan Maple@ @fcleaffan-5@Fan Gold@
+* `@fcgrove-N@text@` Bamboo Grove: @fcgrove-1@Fresh Grove@ @fcgrove-2@Young Grove@ @fcgrove-3@Jade Grove@ @fcgrove-4@Golden Grove@ @fcgrove-5@Misty Grove@
+* `@fchorizontext-N@text@` Horizon Text: @fchorizontext-1@Sea Horizon@ @fchorizontext-2@Sunset Horizon@ @fchorizontext-3@Field Horizon@ @fchorizontext-4@Lagoon Horizon@ @fchorizontext-5@Dusk Horizon@
+* `@fcsilver-N@text@` Silver Chrome Pill: @fcsilver-1@Chrome Aqua@ @fcsilver-2@Chrome Mint@ @fcsilver-3@Chrome Rose@ @fcsilver-4@Chrome Lime@ @fcsilver-5@Chrome Indigo@
+* `@fcwavefill-N@text@` Wave Fill: @fcwavefill-1@Sea Fill@ @fcwavefill-2@Lime Fill@ @fcwavefill-3@Mango Fill@ @fcwavefill-4@Cherry Fill@ @fcwavefill-5@Plum Fill@
+* `@fcprismfan-N@text@` Prism Fan: @fcprismfan-1@Clear Fan@ @fcprismfan-2@Sky Fan@ @fcprismfan-3@Mint Fan@ @fcprismfan-4@Rose Fan@ @fcprismfan-5@Amber Fan@
+* `@fcvisor-N@text@` Smoked Visor: @fcvisor-1@Visor Graphite@ @fcvisor-2@Visor Blue@ @fcvisor-3@Visor Green@ @fcvisor-4@Visor Plum@ @fcvisor-5@Visor Amber@
+* `@fcunderglow-N@text@` Underglow Glass: @fcunderglow-1@Cyan Underglow@ @fcunderglow-2@Lime Underglow@ @fcunderglow-3@Sunset Underglow@ @fcunderglow-4@Aqua Underglow@ @fcunderglow-5@Violet Underglow@
+* `@fcfoil-N@text@` Hologram Foil: @fcfoil-1@Opal Foil@ @fcfoil-2@Seafoam Foil@ @fcfoil-3@Peach Foil@ @fcfoil-4@Iris Foil@ @fcfoil-5@Citrus Foil@
+* `@fcbrackets-N@text@` Gel Brackets: @fcbrackets-1@Aqua Brackets@ @fcbrackets-2@Lime Brackets@ @fcbrackets-3@Pink Brackets@ @fcbrackets-4@Orange Brackets@ @fcbrackets-5@Purple Brackets@
+* `@fcjellycube-N@text@` Jelly Cube: @fcjellycube-1@Cherry Cube@ @fcjellycube-2@Lime Cube@ @fcjellycube-3@Blueberry Cube@ @fcjellycube-4@Orange Cube@ @fcjellycube-5@Grape Cube@
+* `@fcwrapper-N@text@` Candy Wrapper: @fcwrapper-1@Strawberry Wrap@ @fcwrapper-2@Mint Wrap@ @fcwrapper-3@Blue Wrap@ @fcwrapper-4@Orange Wrap@ @fcwrapper-5@Grape Wrap@
+* `@fcgumball-N@text@` Gumball Mix: @fcgumball-1@Classic Gumballs@ @fcgumball-2@Sour Gumballs@ @fcgumball-3@Berry Gumballs@ @fcgumball-4@Ocean Gumballs@ @fcgumball-5@Pastel Gumballs@
+* `@fcsplash-N@text@` Splash Pill: @fcsplash-1@Splash Blue@ @fcsplash-2@Splash Lime@ @fcsplash-3@Splash Rose@ @fcsplash-4@Splash Teal@ @fcsplash-5@Splash Violet@
+* `@fcshelf-N@text@` Glass Shelf: @fcshelf-1@Shelf Aqua@ @fcshelf-2@Shelf Leaf@ @fcshelf-3@Shelf Coral@ @fcshelf-4@Shelf Orchid@ @fcshelf-5@Shelf Graphite@
+* `@fcspheres-N@text@` Floating Spheres: @fcspheres-1@Sky Spheres@ @fcspheres-2@Spring Spheres@ @fcspheres-3@Blossom Spheres@ @fcspheres-4@Ocean Spheres@ @fcspheres-5@Sunny Spheres@
+* `@fctwist-N@text@` Twisted Ribbons: @fctwist-1@Aqua Twist@ @fctwist-2@Spring Twist@ @fctwist-3@Rose Twist@ @fctwist-4@Ocean Twist@ @fctwist-5@Sunset Twist@
+* `@fcrings-N@text@` Ring Wallpaper: @fcrings-1@Blue Rings@ @fcrings-2@Green Rings@ @fcrings-3@Pink Rings@ @fcrings-4@Teal Rings@ @fcrings-5@Lilac Rings@
+* `@fcpricetag-N@text@` Web Price Tag: @fcpricetag-1@Tag Blue@ @fcpricetag-2@Tag Green@ @fcpricetag-3@Tag Orange@ @fcpricetag-4@Tag Pink@ @fcpricetag-5@Tag Steel@
+* `@fcaward-N@text@` Award Ribbon: @fcaward-1@Blue Award@ @fcaward-2@Green Award@ @fcaward-3@Red Award@ @fcaward-4@Orange Award@ @fcaward-5@Purple Award@
+* `@fcstepper-N@text@` Glass Stepper: @fcstepper-1@Stepper Green@ @fcstepper-2@Stepper Blue@ @fcstepper-3@Stepper Orange@ @fcstepper-4@Stepper Pink@ @fcstepper-5@Stepper Teal@
+* `@fcnotify-N@text@` Notification Badge: @fcnotify-1@Inbox Blue@ @fcnotify-2@Chat Green Tile@ @fcnotify-3@Maps Tile@ @fcnotify-4@Photos Tile@ @fcnotify-5@Store Tile@
+* `@fcwindripple-N@text@` Wind Ripples: @fcwindripple-1@Peach Ripples@ @fcwindripple-2@Mint Ripples@ @fcwindripple-3@Lavender Ripples@ @fcwindripple-4@Sand Ripples@ @fcwindripple-5@Sky Ripples@
+* `@fcretrosun-N@text@` Retro Sunset: @fcretrosun-1@Tropic Retro@ @fcretrosun-2@Pink Retro@ @fcretrosun-3@Purple Retro@ @fcretrosun-4@Ocean Retro@ @fcretrosun-5@Teal Retro@
+* `@fcvines-N@text@` Hanging Vines: @fcvines-1@Jungle Vines@ @fcvines-2@Rain Vines@ @fcvines-3@Lime Vines@ @fcvines-4@Grotto Vines@ @fcvines-5@Sunset Vines@
+* `@fccurrent-N@text@` River Current: @fccurrent-1@Blue Current@ @fccurrent-2@Forest Current@ @fccurrent-3@Glacier Current@ @fccurrent-4@Lagoon Current@ @fccurrent-5@Twilight Current@
+* `@fcfoam-N@text@` Bubble Bath: @fcfoam-1@Aqua Bath@ @fcfoam-2@Lime Bath@ @fcfoam-3@Berry Bath@ @fcfoam-4@Mint Bath@ @fcfoam-5@Lavender Bath@
+* `@fcarc-N@text@` Glass Arc: @fcarc-1@Blue Arc@ @fcarc-2@Green Arc@ @fcarc-3@Coral Arc@ @fcarc-4@Teal Arc@ @fcarc-5@Violet Arc@
+* `@fcsprout-N@text@` Sprout Badge: @fcsprout-1@Sprout Green@ @fcsprout-2@Sprout Sea@ @fcsprout-3@Sprout Sky@ @fcsprout-4@Sprout Sun@ @fcsprout-5@Sprout Bloom@
+* `@fcloop-N@text@` Loop Ring: @fcloop-1@Green Loop@ @fcloop-2@Teal Loop@ @fcloop-3@Sky Loop@ @fcloop-4@Sun Loop@ @fcloop-5@Violet Loop@
+* `@fcplug-N@text@` Power Plug: @fcplug-1@Plug Green@ @fcplug-2@Plug Blue@ @fcplug-3@Plug Amber@ @fcplug-4@Plug Teal@ @fcplug-5@Plug Violet@
+* `@fcbarchart-N@text@` Bar Chart: @fcbarchart-1@Growth Chart@ @fcbarchart-2@Blue Chart@ @fcbarchart-3@Warm Chart@ @fcbarchart-4@Teal Chart@ @fcbarchart-5@Violet Chart@
+* `@fcstonestack-N@text@` Stone Stack: @fcstonestack-1@River Stack@ @fcstonestack-2@Jade Stack@ @fcstonestack-3@Sea Glass Stack@ @fcstonestack-4@Sand Stack@ @fcstonestack-5@Slate Stack@
+* `@fcbrick-N@text@` Glass Brick: @fcbrick-1@Ice Brick@ @fcbrick-2@Emerald Brick@ @fcbrick-3@Ruby Brick@ @fcbrick-4@Amethyst Brick@ @fcbrick-5@Citrine Brick@
+* `@fccorona-N@text@` Corona Glow: @fccorona-1@Sky Corona@ @fccorona-2@Leaf Corona@ @fccorona-3@Sun Corona@ @fccorona-4@Rose Corona@ @fccorona-5@Iris Corona@
+* `@fcstreak-N@text@` Light Streak: @fcstreak-1@Warm Streak@ @fcstreak-2@Cool Streak@ @fcstreak-3@Fresh Streak@ @fcstreak-4@Golden Streak@ @fcstreak-5@Dream Streak@
+* `@fcglaciertext-N@text@` Glacier Text: @fcglaciertext-1@Glacier Blue@ @fcglaciertext-2@Glacier Mint@ @fcglaciertext-3@Glacier Lilac@ @fcglaciertext-4@Glacier Rose@ @fcglaciertext-5@Glacier Steel@
+* `@fcrippletext-N@text@` Rippling Text: @fcrippletext-1@Ocean Ripple@ @fcrippletext-2@Lagoon Ripple@ @fcrippletext-3@Spring Ripple@ @fcrippletext-4@Lilac Ripple@ @fcrippletext-5@Coral Ripple@
+* `@fccandytext-N@text@` Candy Text: @fccandytext-1@Cherry Candy Text@ @fccandytext-2@Mint Candy Text@ @fccandytext-3@Blue Candy Text@ @fccandytext-4@Orange Candy Text@ @fccandytext-5@Grape Candy Text@
+* `@fcmetaltext-N@text@` Metal Text: @fcmetaltext-1@Blue Metal@ @fcmetaltext-2@Green Metal@ @fcmetaltext-3@Red Metal@ @fcmetaltext-4@Gold Metal@ @fcmetaltext-5@Violet Metal@
+* `@fcspringtext-N@text@` Spring Text: @fcspringtext-1@Meadow Spring@ @fcspringtext-2@Lime Spring@ @fcspringtext-3@Sea Spring@ @fcspringtext-4@Blossom Spring@ @fcspringtext-5@Sun Spring@
+* `@fccontrail-N@text@` Contrail Pill: @fccontrail-1@Blue Contrail@ @fccontrail-2@Mint Contrail@ @fccontrail-3@Peach Contrail@ @fccontrail-4@Lilac Contrail@ @fccontrail-5@Lemon Contrail@
+* `@fcpatch-N@text@` Stitched Patch: @fcpatch-1@Aqua Patch@ @fcpatch-2@Lime Patch@ @fcpatch-3@Pink Patch@ @fcpatch-4@Orange Patch@ @fcpatch-5@Purple Patch@
+* `@fcheadercard-N@text@` Header Card: @fcheadercard-1@Blue Header Card@ @fcheadercard-2@Green Header Card@ @fcheadercard-3@Sunset Header Card@ @fcheadercard-4@Berry Header Card@ @fcheadercard-5@Ocean Header Card@
+* `@fcrange-N@text@` Aqua Range: @fcrange-1@Range Blue@ @fcrange-2@Range Gold@ @fcrange-3@Range Green@ @fcrange-4@Range Purple@ @fcrange-5@Range Teal@
+
+### Poolside 1 (90 designs)
+
+* `@plripple-N@text@` Pool Ripples: @plripple-1@Lifeguard@ @plripple-2@Popsicle@ @plripple-3@Sunset Swim@ @plripple-4@Deep End@ @plripple-5@Marigold Lane@
+* `@plcaustic-N@text@` Caustic Light: @plcaustic-1@Tangerine Tile@ @plcaustic-2@Lifeguard@ @plcaustic-3@Popsicle@ @plcaustic-4@Sunset Swim@ @plcaustic-5@Deep End@
+* `@plsurface-N@text@` Water Surface: @plsurface-1@Cabana@ @plsurface-2@Tangerine Tile@ @plsurface-3@Lifeguard@ @plsurface-4@Popsicle@ @plsurface-5@Sunset Swim@
+* `@plscallop-N@text@` Scalloped Waves: @plscallop-1@Copacabana@ @plscallop-2@Cabana@ @plscallop-3@Tangerine Tile@ @plscallop-4@Lifeguard@ @plscallop-5@Popsicle@
+* `@plsplash-N@text@` Splash: @plsplash-1@Shallow End@ @plsplash-2@Copacabana@ @plsplash-3@Cabana@ @plsplash-4@Tangerine Tile@ @plsplash-5@Lifeguard@
+* `@plbubbles-N@text@` Rising Bubbles: @plbubbles-1@Night Swim@ @plbubbles-2@Shallow End@ @plbubbles-3@Copacabana@ @plbubbles-4@Cabana@ @plbubbles-5@Tangerine Tile@
+* `@pldeep-N@text@` Deep End: @pldeep-1@Marigold Lane@ @pldeep-2@Night Swim@ @pldeep-3@Shallow End@ @pldeep-4@Copacabana@ @pldeep-5@Cabana@
+* `@plshimmer-N@text@` Sun Shimmer: @plshimmer-1@Deep End@ @plshimmer-2@Marigold Lane@ @plshimmer-3@Night Swim@ @plshimmer-4@Shallow End@ @plshimmer-5@Copacabana@
+* `@plclear-N@text@` Clear Water: @plclear-1@Sunset Swim@ @plclear-2@Deep End@ @plclear-3@Marigold Lane@ @plclear-4@Night Swim@ @plclear-5@Shallow End@
+* `@plrays-N@text@` Underwater Rays: @plrays-1@Popsicle@ @plrays-2@Sunset Swim@ @plrays-3@Deep End@ @plrays-4@Marigold Lane@ @plrays-5@Night Swim@
+* `@pldrop-N@text@` Water Drop: @pldrop-1@Lifeguard@ @pldrop-2@Popsicle@ @pldrop-3@Sunset Swim@ @pldrop-4@Deep End@ @pldrop-5@Marigold Lane@
+* `@plshore-N@text@` Shoreline: @plshore-1@Tangerine Tile@ @plshore-2@Lifeguard@ @plshore-3@Popsicle@ @plshore-4@Sunset Swim@ @plshore-5@Deep End@
+* `@plwake-N@text@` Swimmer's Wake: @plwake-1@Cabana@ @plwake-2@Tangerine Tile@ @plwake-3@Lifeguard@ @plwake-4@Popsicle@ @plwake-5@Sunset Swim@
+* `@plmist-N@text@` Sprinkler Mist: @plmist-1@Copacabana@ @plmist-2@Cabana@ @plmist-3@Tangerine Tile@ @plmist-4@Lifeguard@ @plmist-5@Popsicle@
+* `@plsunref-N@text@` Sun Reflection: @plsunref-1@Shallow End@ @plsunref-2@Copacabana@ @plsunref-3@Cabana@ @plsunref-4@Tangerine Tile@ @plsunref-5@Lifeguard@
+* `@pltiles-N@text@` Pool Tiles: @pltiles-1@Night Swim@ @pltiles-2@Shallow End@ @pltiles-3@Copacabana@ @pltiles-4@Cabana@ @pltiles-5@Tangerine Tile@
+* `@plmosaic-N@text@` Mosaic: @plmosaic-1@Marigold Lane@ @plmosaic-2@Night Swim@ @plmosaic-3@Shallow End@ @plmosaic-4@Copacabana@ @plmosaic-5@Cabana@
+* `@pllane-N@text@` Lane Line: @pllane-1@Deep End@ @pllane-2@Marigold Lane@ @pllane-3@Night Swim@ @pllane-4@Shallow End@ @pllane-5@Copacabana@
+* `@plrope-N@text@` Lane Rope: @plrope-1@Sunset Swim@ @plrope-2@Deep End@ @plrope-3@Marigold Lane@ @plrope-4@Night Swim@ @plrope-5@Shallow End@
+* `@plbuoy-N@text@` Buoy Ring: @plbuoy-1@Popsicle@ @plbuoy-2@Sunset Swim@ @plbuoy-3@Deep End@ @plbuoy-4@Marigold Lane@ @plbuoy-5@Night Swim@
+* `@pldepth-N@text@` Depth Marker: @pldepth-1@Lifeguard@ @pldepth-2@Popsicle@ @pldepth-3@Sunset Swim@ @pldepth-4@Deep End@ @pldepth-5@Marigold Lane@
+* `@plnodive-N@text@` No Diving: @plnodive-1@Tangerine Tile@ @plnodive-2@Lifeguard@ @plnodive-3@Popsicle@ @plnodive-4@Sunset Swim@ @plnodive-5@Deep End@
+* `@plcoping-N@text@` Pool Coping: @plcoping-1@Cabana@ @plcoping-2@Tangerine Tile@ @plcoping-3@Lifeguard@ @plcoping-4@Popsicle@ @plcoping-5@Sunset Swim@
+* `@plgutter-N@text@` Overflow Gutter: @plgutter-1@Copacabana@ @plgutter-2@Cabana@ @plgutter-3@Tangerine Tile@ @plgutter-4@Lifeguard@ @plgutter-5@Popsicle@
+* `@pldrain-N@text@` Drain Grate: @pldrain-1@Shallow End@ @pldrain-2@Copacabana@ @pldrain-3@Cabana@ @pldrain-4@Tangerine Tile@ @pldrain-5@Lifeguard@
+* `@plladder-N@text@` Pool Ladder: @plladder-1@Night Swim@ @plladder-2@Shallow End@ @plladder-3@Copacabana@ @plladder-4@Cabana@ @plladder-5@Tangerine Tile@
+* `@plboard-N@text@` Diving Board: @plboard-1@Marigold Lane@ @plboard-2@Night Swim@ @plboard-3@Shallow End@ @plboard-4@Copacabana@ @plboard-5@Cabana@
+* `@plblock-N@text@` Starting Block: @plblock-1@Deep End@ @plblock-2@Marigold Lane@ @plblock-3@Night Swim@ @plblock-4@Shallow End@ @plblock-5@Copacabana@
+* `@pllight-N@text@` Pool Light: @pllight-1@Sunset Swim@ @pllight-2@Deep End@ @pllight-3@Marigold Lane@ @pllight-4@Night Swim@ @pllight-5@Shallow End@
+* `@plskimmer-N@text@` Skimmer Lid: @plskimmer-1@Popsicle@ @plskimmer-2@Sunset Swim@ @plskimmer-3@Deep End@ @plskimmer-4@Marigold Lane@ @plskimmer-5@Night Swim@
+* `@pldeck-N@text@` Pool Deck: @pldeck-1@Lifeguard@ @pldeck-2@Popsicle@ @pldeck-3@Sunset Swim@ @pldeck-4@Deep End@ @pldeck-5@Marigold Lane@
+* `@plterrazzo-N@text@` Terrazzo: @plterrazzo-1@Tangerine Tile@ @plterrazzo-2@Lifeguard@ @plterrazzo-3@Popsicle@ @plterrazzo-4@Sunset Swim@ @plterrazzo-5@Deep End@
+* `@plwaterline-N@text@` Waterline Tile: @plwaterline-1@Cabana@ @plwaterline-2@Tangerine Tile@ @plwaterline-3@Lifeguard@ @plwaterline-4@Popsicle@ @plwaterline-5@Sunset Swim@
+* `@plnighttile-N@text@` Night Tiles: @plnighttile-1@Copacabana@ @plnighttile-2@Cabana@ @plnighttile-3@Tangerine Tile@ @plnighttile-4@Lifeguard@ @plnighttile-5@Popsicle@
+* `@plpenny-N@text@` Penny Tile: @plpenny-1@Shallow End@ @plpenny-2@Copacabana@ @plpenny-3@Cabana@ @plpenny-4@Tangerine Tile@ @plpenny-5@Lifeguard@
+* `@plring-N@text@` Life Ring: @plring-1@Night Swim@ @plring-2@Shallow End@ @plring-3@Copacabana@ @plring-4@Cabana@ @plring-5@Tangerine Tile@
+* `@plbeachball-N@text@` Beach Ball: @plbeachball-1@Marigold Lane@ @plbeachball-2@Night Swim@ @plbeachball-3@Shallow End@ @plbeachball-4@Copacabana@ @plbeachball-5@Cabana@
+* `@plnoodle-N@text@` Pool Noodle: @plnoodle-1@Deep End@ @plnoodle-2@Marigold Lane@ @plnoodle-3@Night Swim@ @plnoodle-4@Shallow End@ @plnoodle-5@Copacabana@
+* `@pltube-N@text@` Inner Tube: @pltube-1@Sunset Swim@ @pltube-2@Deep End@ @pltube-3@Marigold Lane@ @pltube-4@Night Swim@ @pltube-5@Shallow End@
+* `@plkick-N@text@` Kickboard: @plkick-1@Popsicle@ @plkick-2@Sunset Swim@ @plkick-3@Deep End@ @plkick-4@Marigold Lane@ @plkick-5@Night Swim@
+* `@plgoggles-N@text@` Goggles: @plgoggles-1@Lifeguard@ @plgoggles-2@Popsicle@ @plgoggles-3@Sunset Swim@ @plgoggles-4@Deep End@ @plgoggles-5@Marigold Lane@
+* `@plcap-N@text@` Swim Cap: @plcap-1@Tangerine Tile@ @plcap-2@Lifeguard@ @plcap-3@Popsicle@ @plcap-4@Sunset Swim@ @plcap-5@Deep End@
+* `@plfloatie-N@text@` Arm Floatie: @plfloatie-1@Cabana@ @plfloatie-2@Tangerine Tile@ @plfloatie-3@Lifeguard@ @plfloatie-4@Popsicle@ @plfloatie-5@Sunset Swim@
+* `@plraft-N@text@` Pool Raft: @plraft-1@Copacabana@ @plraft-2@Cabana@ @plraft-3@Tangerine Tile@ @plraft-4@Lifeguard@ @plraft-5@Popsicle@
+* `@plwhistle-N@text@` Whistle: @plwhistle-1@Shallow End@ @plwhistle-2@Copacabana@ @plwhistle-3@Cabana@ @plwhistle-4@Tangerine Tile@ @plwhistle-5@Lifeguard@
+* `@plrescue-N@text@` Rescue Tube: @plrescue-1@Night Swim@ @plrescue-2@Shallow End@ @plrescue-3@Copacabana@ @plrescue-4@Cabana@ @plrescue-5@Tangerine Tile@
+* `@pltower-N@text@` Guard Tower: @pltower-1@Marigold Lane@ @pltower-2@Night Swim@ @pltower-3@Shallow End@ @pltower-4@Copacabana@ @pltower-5@Cabana@
+* `@plflags-N@text@` Backstroke Flags: @plflags-1@Deep End@ @plflags-2@Marigold Lane@ @plflags-3@Night Swim@ @plflags-4@Shallow End@ @plflags-5@Copacabana@
+* `@plumbrella-N@text@` Sun Umbrella: @plumbrella-1@Sunset Swim@ @plumbrella-2@Deep End@ @plumbrella-3@Marigold Lane@ @plumbrella-4@Night Swim@ @plumbrella-5@Shallow End@
+* `@plcabana-N@text@` Cabana Stripes: @plcabana-1@Popsicle@ @plcabana-2@Sunset Swim@ @plcabana-3@Deep End@ @plcabana-4@Marigold Lane@ @plcabana-5@Night Swim@
+* `@pltowel-N@text@` Pool Towel: @pltowel-1@Lifeguard@ @pltowel-2@Popsicle@ @pltowel-3@Sunset Swim@ @pltowel-4@Deep End@ @pltowel-5@Marigold Lane@
+* `@plweave-N@text@` Lounger Weave: @plweave-1@Tangerine Tile@ @plweave-2@Lifeguard@ @plweave-3@Popsicle@ @plweave-4@Sunset Swim@ @plweave-5@Deep End@
+* `@plflipflop-N@text@` Flip-Flops: @plflipflop-1@Cabana@ @plflipflop-2@Tangerine Tile@ @plflipflop-3@Lifeguard@ @plflipflop-4@Popsicle@ @plflipflop-5@Sunset Swim@
+* `@plsunscreen-N@text@` Sunscreen: @plsunscreen-1@Copacabana@ @plsunscreen-2@Cabana@ @plsunscreen-3@Tangerine Tile@ @plsunscreen-4@Lifeguard@ @plsunscreen-5@Popsicle@
+* `@plshades-N@text@` Mirror Shades: @plshades-1@Shallow End@ @plshades-2@Copacabana@ @plshades-3@Cabana@ @plshades-4@Tangerine Tile@ @plshades-5@Lifeguard@
+* `@plicepop-N@text@` Ice Pop: @plicepop-1@Night Swim@ @plicepop-2@Shallow End@ @plicepop-3@Copacabana@ @plicepop-4@Cabana@ @plicepop-5@Tangerine Tile@
+* `@plsoda-N@text@` Orange Soda: @plsoda-1@Marigold Lane@ @plsoda-2@Night Swim@ @plsoda-3@Shallow End@ @plsoda-4@Copacabana@ @plsoda-5@Cabana@
+* `@plslush-N@text@` Blue Slush: @plslush-1@Deep End@ @plslush-2@Marigold Lane@ @plslush-3@Night Swim@ @plslush-4@Shallow End@ @plslush-5@Copacabana@
+* `@plcitrus-N@text@` Orange Slice: @plcitrus-1@Sunset Swim@ @plcitrus-2@Deep End@ @plcitrus-3@Marigold Lane@ @plcitrus-4@Night Swim@ @plcitrus-5@Shallow End@
+* `@plcocktail-N@text@` Drink Umbrella: @plcocktail-1@Popsicle@ @plcocktail-2@Sunset Swim@ @plcocktail-3@Deep End@ @plcocktail-4@Marigold Lane@ @plcocktail-5@Night Swim@
+* `@plmotel-N@text@` Motel Pool Sign: @plmotel-1@Lifeguard@ @plmotel-2@Popsicle@ @plmotel-3@Sunset Swim@ @plmotel-4@Deep End@ @plmotel-5@Marigold Lane@
+* `@plneon-N@text@` Neon Night Swim: @plneon-1@Tangerine Tile@ @plneon-2@Lifeguard@ @plneon-3@Popsicle@ @plneon-4@Sunset Swim@ @plneon-5@Deep End@
+* `@plpalms-N@text@` Palm Springs: @plpalms-1@Cabana@ @plpalms-2@Tangerine Tile@ @plpalms-3@Lifeguard@ @plpalms-4@Popsicle@ @plpalms-5@Sunset Swim@
+* `@platomic-N@text@` Atomic Starburst: @platomic-1@Copacabana@ @platomic-2@Cabana@ @platomic-3@Tangerine Tile@ @platomic-4@Lifeguard@ @platomic-5@Popsicle@
+* `@plpostcard-N@text@` Retro Postcard: @plpostcard-1@Shallow End@ @plpostcard-2@Copacabana@ @plpostcard-3@Cabana@ @plpostcard-4@Tangerine Tile@ @plpostcard-5@Lifeguard@
+* `@plsunset-N@text@` Poolside Sunset: @plsunset-1@Night Swim@ @plsunset-2@Shallow End@ @plsunset-3@Copacabana@ @plsunset-4@Cabana@ @plsunset-5@Tangerine Tile@
+* `@plmorning-N@text@` Morning Swim: @plmorning-1@Marigold Lane@ @plmorning-2@Night Swim@ @plmorning-3@Shallow End@ @plmorning-4@Copacabana@ @plmorning-5@Cabana@
+* `@plheat-N@text@` Heat Wave: @plheat-1@Deep End@ @plheat-2@Marigold Lane@ @plheat-3@Night Swim@ @plheat-4@Shallow End@ @plheat-5@Copacabana@
+* `@plchlorine-N@text@` Chlorine Fresh: @plchlorine-1@Sunset Swim@ @plchlorine-2@Deep End@ @plchlorine-3@Marigold Lane@ @plchlorine-4@Night Swim@ @plchlorine-5@Shallow End@
+* `@plscore-N@text@` Scoreboard: @plscore-1@Popsicle@ @plscore-2@Sunset Swim@ @plscore-3@Deep End@ @plscore-4@Marigold Lane@ @plscore-5@Night Swim@
+* `@plpace-N@text@` Pace Clock: @plpace-1@Lifeguard@ @plpace-2@Popsicle@ @plpace-3@Sunset Swim@ @plpace-4@Deep End@ @plpace-5@Marigold Lane@
+* `@plcaution-N@text@` Splash Zone: @plcaution-1@Tangerine Tile@ @plcaution-2@Lifeguard@ @plcaution-3@Popsicle@ @plcaution-4@Sunset Swim@ @plcaution-5@Deep End@
+* `@plslide-N@text@` Water Slide: @plslide-1@Cabana@ @plslide-2@Tangerine Tile@ @plslide-3@Lifeguard@ @plslide-4@Popsicle@ @plslide-5@Sunset Swim@
+* `@plcannon-N@text@` Cannonball: @plcannon-1@Copacabana@ @plcannon-2@Cabana@ @plcannon-3@Tangerine Tile@ @plcannon-4@Lifeguard@ @plcannon-5@Popsicle@
+* `@plpass-N@text@` Pool Pass: @plpass-1@Shallow End@ @plpass-2@Copacabana@ @plpass-3@Cabana@ @plpass-4@Tangerine Tile@ @plpass-5@Lifeguard@
+* `@plband-N@text@` Wristband: @plband-1@Night Swim@ @plband-2@Shallow End@ @plband-3@Copacabana@ @plband-4@Cabana@ @plband-5@Tangerine Tile@
+* `@plsticker-N@text@` Swim Club Sticker: @plsticker-1@Marigold Lane@ @plsticker-2@Night Swim@ @plsticker-3@Shallow End@ @plsticker-4@Copacabana@ @plsticker-5@Cabana@
+* `@plpatch-N@text@` Lifeguard Patch: @plpatch-1@Deep End@ @plpatch-2@Marigold Lane@ @plpatch-3@Night Swim@ @plpatch-4@Shallow End@ @plpatch-5@Copacabana@
+* `@plpin-N@text@` Pool Club Pin: @plpin-1@Sunset Swim@ @plpin-2@Deep End@ @plpin-3@Marigold Lane@ @plpin-4@Night Swim@ @plpin-5@Shallow End@
+* `@plvarsity-N@text@` Varsity Swim: @plvarsity-1@Popsicle@ @plvarsity-2@Sunset Swim@ @plvarsity-3@Deep End@ @plvarsity-4@Marigold Lane@ @plvarsity-5@Night Swim@
+* `@plstencil-N@text@` Deck Stencil: @plstencil-1@Lifeguard@ @plstencil-2@Popsicle@ @plstencil-3@Sunset Swim@ @plstencil-4@Deep End@ @plstencil-5@Marigold Lane@
+* `@plinflate-N@text@` Inflatable Letters: @plinflate-1@Tangerine Tile@ @plinflate-2@Lifeguard@ @plinflate-3@Popsicle@ @plinflate-4@Sunset Swim@ @plinflate-5@Deep End@
+* `@plgel-N@text@` Aqua Pool Gel: @plgel-1@Cabana@ @plgel-2@Tangerine Tile@ @plgel-3@Lifeguard@ @plgel-4@Popsicle@ @plgel-5@Sunset Swim@
+* `@plfade-N@text@` Sun to Water Text: @plfade-1@Copacabana@ @plfade-2@Cabana@ @plfade-3@Tangerine Tile@ @plfade-4@Lifeguard@ @plfade-5@Popsicle@
+* `@plsplashtext-N@text@` Splash Text: @plsplashtext-1@Shallow End@ @plsplashtext-2@Copacabana@ @plsplashtext-3@Cabana@ @plsplashtext-4@Tangerine Tile@ @plsplashtext-5@Lifeguard@
+* `@plripplet-N@text@` Ripple Text: @plripplet-1@Night Swim@ @plripplet-2@Shallow End@ @plripplet-3@Copacabana@ @plripplet-4@Cabana@ @plripplet-5@Tangerine Tile@
+* `@plpolaroid-N@text@` Pool Polaroid: @plpolaroid-1@Marigold Lane@ @plpolaroid-2@Night Swim@ @plpolaroid-3@Shallow End@ @plpolaroid-4@Copacabana@ @plpolaroid-5@Cabana@
+* `@pltape-N@text@` Summer Tape: @pltape-1@Deep End@ @pltape-2@Marigold Lane@ @pltape-3@Night Swim@ @pltape-4@Shallow End@ @pltape-5@Copacabana@
+* `@plradio-N@text@` Poolside Radio: @plradio-1@Sunset Swim@ @plradio-2@Deep End@ @plradio-3@Marigold Lane@ @plradio-4@Night Swim@ @plradio-5@Shallow End@
+* `@plwaveedge-N@text@` Wave Edge: @plwaveedge-1@Popsicle@ @plwaveedge-2@Sunset Swim@ @plwaveedge-3@Deep End@ @plwaveedge-4@Marigold Lane@ @plwaveedge-5@Night Swim@
+
+### Poolside 2 (90 designs)
+
+* `@pwcrest-N@text@` Wave Crest: @pwcrest-1@Tangerine@ @pwcrest-2@Aqua@ @pwcrest-3@Sunburn@ @pwcrest-4@Lagoon@ @pwcrest-5@Creamsicle@
+* `@pwrefract-N@text@` Refraction: @pwrefract-1@Chlorine@ @pwrefract-2@Tangerine@ @pwrefract-3@Aqua@ @pwrefract-4@Sunburn@ @pwrefract-5@Lagoon@
+* `@pwshallows-N@text@` Sunlit Shallows: @pwshallows-1@Marmalade@ @pwshallows-2@Chlorine@ @pwshallows-3@Tangerine@ @pwshallows-4@Aqua@ @pwshallows-5@Sunburn@
+* `@pwringlet-N@text@` Ripple Ring: @pwringlet-1@Ice@ @pwringlet-2@Marmalade@ @pwringlet-3@Chlorine@ @pwringlet-4@Tangerine@ @pwringlet-5@Aqua@
+* `@pwdroptrail-N@text@` Droplet Trail: @pwdroptrail-1@Apricot@ @pwdroptrail-2@Ice@ @pwdroptrail-3@Marmalade@ @pwdroptrail-4@Chlorine@ @pwdroptrail-5@Tangerine@
+* `@pwfoam-N@text@` Foam Edge: @pwfoam-1@Deep Dive@ @pwfoam-2@Apricot@ @pwfoam-3@Ice@ @pwfoam-4@Marmalade@ @pwfoam-5@Chlorine@
+* `@pwwhirl-N@text@` Whirlpool: @pwwhirl-1@Creamsicle@ @pwwhirl-2@Deep Dive@ @pwwhirl-3@Apricot@ @pwwhirl-4@Ice@ @pwwhirl-5@Marmalade@
+* `@pwjets-N@text@` Jacuzzi Jets: @pwjets-1@Lagoon@ @pwjets-2@Creamsicle@ @pwjets-3@Deep Dive@ @pwjets-4@Apricot@ @pwjets-5@Ice@
+* `@pwburst-N@text@` Splash Burst: @pwburst-1@Sunburn@ @pwburst-2@Lagoon@ @pwburst-3@Creamsicle@ @pwburst-4@Deep Dive@ @pwburst-5@Apricot@
+* `@pwglass-N@text@` Water Glass: @pwglass-1@Aqua@ @pwglass-2@Sunburn@ @pwglass-3@Lagoon@ @pwglass-4@Creamsicle@ @pwglass-5@Deep Dive@
+* `@pwwetglass-N@text@` Wet Glass: @pwwetglass-1@Tangerine@ @pwwetglass-2@Aqua@ @pwwetglass-3@Sunburn@ @pwwetglass-4@Lagoon@ @pwwetglass-5@Creamsicle@
+* `@pwshine-N@text@` Reflection Shine: @pwshine-1@Chlorine@ @pwshine-2@Tangerine@ @pwshine-3@Aqua@ @pwshine-4@Sunburn@ @pwshine-5@Lagoon@
+* `@pwundertow-N@text@` Undertow: @pwundertow-1@Marmalade@ @pwundertow-2@Chlorine@ @pwundertow-3@Tangerine@ @pwundertow-4@Aqua@ @pwundertow-5@Sunburn@
+* `@pwmistglow-N@text@` Mist Glow: @pwmistglow-1@Ice@ @pwmistglow-2@Marmalade@ @pwmistglow-3@Chlorine@ @pwmistglow-4@Tangerine@ @pwmistglow-5@Aqua@
+* `@pwtidegrad-N@text@` Tide Gradient: @pwtidegrad-1@Apricot@ @pwtidegrad-2@Ice@ @pwtidegrad-3@Marmalade@ @pwtidegrad-4@Chlorine@ @pwtidegrad-5@Tangerine@
+* `@pwbigtile-N@text@` Big Tiles: @pwbigtile-1@Deep Dive@ @pwbigtile-2@Apricot@ @pwbigtile-3@Ice@ @pwbigtile-4@Marmalade@ @pwbigtile-5@Chlorine@
+* `@pwsubway-N@text@` Subway Tile: @pwsubway-1@Creamsicle@ @pwsubway-2@Deep Dive@ @pwsubway-3@Apricot@ @pwsubway-4@Ice@ @pwsubway-5@Marmalade@
+* `@pwhexpenny-N@text@` Hex Penny: @pwhexpenny-1@Lagoon@ @pwhexpenny-2@Creamsicle@ @pwhexpenny-3@Deep Dive@ @pwhexpenny-4@Apricot@ @pwhexpenny-5@Ice@
+* `@pwbullnose-N@text@` Bullnose Edge: @pwbullnose-1@Sunburn@ @pwbullnose-2@Lagoon@ @pwbullnose-3@Creamsicle@ @pwbullnose-4@Deep Dive@ @pwbullnose-5@Apricot@
+* `@pwlanenum-N@text@` Lane Number: @pwlanenum-1@Aqua@ @pwlanenum-2@Sunburn@ @pwlanenum-3@Lagoon@ @pwlanenum-4@Creamsicle@ @pwlanenum-5@Deep Dive@
+* `@pwdraincover-N@text@` Drain Cover: @pwdraincover-1@Tangerine@ @pwdraincover-2@Aqua@ @pwdraincover-3@Sunburn@ @pwdraincover-4@Lagoon@ @pwdraincover-5@Creamsicle@
+* `@pwsteps-N@text@` Pool Steps: @pwsteps-1@Chlorine@ @pwsteps-2@Tangerine@ @pwsteps-3@Aqua@ @pwsteps-4@Sunburn@ @pwsteps-5@Lagoon@
+* `@pwhandrail-N@text@` Handrail: @pwhandrail-1@Marmalade@ @pwhandrail-2@Chlorine@ @pwhandrail-3@Tangerine@ @pwhandrail-4@Aqua@ @pwhandrail-5@Sunburn@
+* `@pwchevron-N@text@` Lane Chevrons: @pwchevron-1@Ice@ @pwchevron-2@Marmalade@ @pwchevron-3@Chlorine@ @pwchevron-4@Tangerine@ @pwchevron-5@Aqua@
+* `@pwdashrope-N@text@` Dashed Rope: @pwdashrope-1@Apricot@ @pwdashrope-2@Ice@ @pwdashrope-3@Marmalade@ @pwdashrope-4@Chlorine@ @pwdashrope-5@Tangerine@
+* `@pwplanks-N@text@` Deck Planks: @pwplanks-1@Deep Dive@ @pwplanks-2@Apricot@ @pwplanks-3@Ice@ @pwplanks-4@Marmalade@ @pwplanks-5@Chlorine@
+* `@pwconcrete-N@text@` Concrete Deck: @pwconcrete-1@Creamsicle@ @pwconcrete-2@Deep Dive@ @pwconcrete-3@Apricot@ @pwconcrete-4@Ice@ @pwconcrete-5@Marmalade@
+* `@pwgate-N@text@` Pool Gate: @pwgate-1@Lagoon@ @pwgate-2@Creamsicle@ @pwgate-3@Deep Dive@ @pwgate-4@Apricot@ @pwgate-5@Ice@
+* `@pwlattice-N@text@` Fence Lattice: @pwlattice-1@Sunburn@ @pwlattice-2@Lagoon@ @pwlattice-3@Creamsicle@ @pwlattice-4@Deep Dive@ @pwlattice-5@Apricot@
+* `@pwgauge-N@text@` Pump Gauge: @pwgauge-1@Aqua@ @pwgauge-2@Sunburn@ @pwgauge-3@Lagoon@ @pwgauge-4@Creamsicle@ @pwgauge-5@Deep Dive@
+* `@pwpleats-N@text@` Filter Pleats: @pwpleats-1@Tangerine@ @pwpleats-2@Aqua@ @pwpleats-3@Sunburn@ @pwpleats-4@Lagoon@ @pwpleats-5@Creamsicle@
+* `@pwthermo-N@text@` Thermometer: @pwthermo-1@Chlorine@ @pwthermo-2@Tangerine@ @pwthermo-3@Aqua@ @pwthermo-4@Sunburn@ @pwthermo-5@Lagoon@
+* `@pwcover-N@text@` Pool Cover: @pwcover-1@Marmalade@ @pwcover-2@Chlorine@ @pwcover-3@Tangerine@ @pwcover-4@Aqua@ @pwcover-5@Sunburn@
+* `@pwinfinity-N@text@` Infinity Edge: @pwinfinity-1@Ice@ @pwinfinity-2@Marmalade@ @pwinfinity-3@Chlorine@ @pwinfinity-4@Tangerine@ @pwinfinity-5@Aqua@
+* `@pwarc-N@text@` Water Arc: @pwarc-1@Apricot@ @pwarc-2@Ice@ @pwarc-3@Marmalade@ @pwarc-4@Chlorine@ @pwarc-5@Tangerine@
+* `@pwdivering-N@text@` Dive Ring Toy: @pwdivering-1@Deep Dive@ @pwdivering-2@Apricot@ @pwdivering-3@Ice@ @pwdivering-4@Marmalade@ @pwdivering-5@Chlorine@
+* `@pwdivestick-N@text@` Dive Stick: @pwdivestick-1@Creamsicle@ @pwdivestick-2@Deep Dive@ @pwdivestick-3@Apricot@ @pwdivestick-4@Ice@ @pwdivestick-5@Marmalade@
+* `@pwsquirt-N@text@` Squirt Gun: @pwsquirt-1@Lagoon@ @pwsquirt-2@Creamsicle@ @pwsquirt-3@Deep Dive@ @pwsquirt-4@Apricot@ @pwsquirt-5@Ice@
+* `@pwballoon-N@text@` Water Balloon: @pwballoon-1@Sunburn@ @pwballoon-2@Lagoon@ @pwballoon-3@Creamsicle@ @pwballoon-4@Deep Dive@ @pwballoon-5@Apricot@
+* `@pwsnorkel-N@text@` Snorkel: @pwsnorkel-1@Aqua@ @pwsnorkel-2@Sunburn@ @pwsnorkel-3@Lagoon@ @pwsnorkel-4@Creamsicle@ @pwsnorkel-5@Deep Dive@
+* `@pwflippers-N@text@` Flippers: @pwflippers-1@Tangerine@ @pwflippers-2@Aqua@ @pwflippers-3@Sunburn@ @pwflippers-4@Lagoon@ @pwflippers-5@Creamsicle@
+* `@pwdonut-N@text@` Swim Donut: @pwdonut-1@Chlorine@ @pwdonut-2@Tangerine@ @pwdonut-3@Aqua@ @pwdonut-4@Sunburn@ @pwdonut-5@Lagoon@
+* `@pwmattress-N@text@` Float Mattress: @pwmattress-1@Marmalade@ @pwmattress-2@Chlorine@ @pwmattress-3@Tangerine@ @pwmattress-4@Aqua@ @pwmattress-5@Sunburn@
+* `@pwducky-N@text@` Rubber Ducky: @pwducky-1@Ice@ @pwducky-2@Marmalade@ @pwducky-3@Chlorine@ @pwducky-4@Tangerine@ @pwducky-5@Aqua@
+* `@pwbuckethat-N@text@` Bucket Hat: @pwbuckethat-1@Apricot@ @pwbuckethat-2@Ice@ @pwbuckethat-3@Marmalade@ @pwbuckethat-4@Chlorine@ @pwbuckethat-5@Tangerine@
+* `@pwvisor-N@text@` Sun Visor: @pwvisor-1@Deep Dive@ @pwvisor-2@Apricot@ @pwvisor-3@Ice@ @pwvisor-4@Marmalade@ @pwvisor-5@Chlorine@
+* `@pwtowelroll-N@text@` Rolled Towel: @pwtowelroll-1@Creamsicle@ @pwtowelroll-2@Deep Dive@ @pwtowelroll-3@Apricot@ @pwtowelroll-4@Ice@ @pwtowelroll-5@Marmalade@
+* `@pwbagweave-N@text@` Beach Bag Weave: @pwbagweave-1@Lagoon@ @pwbagweave-2@Creamsicle@ @pwbagweave-3@Deep Dive@ @pwbagweave-4@Apricot@ @pwbagweave-5@Ice@
+* `@pwcooler-N@text@` Cooler Box: @pwcooler-1@Sunburn@ @pwcooler-2@Lagoon@ @pwcooler-3@Creamsicle@ @pwcooler-4@Deep Dive@ @pwcooler-5@Apricot@
+* `@pwstraw-N@text@` Cup & Straw: @pwstraw-1@Aqua@ @pwstraw-2@Sunburn@ @pwstraw-3@Lagoon@ @pwstraw-4@Creamsicle@ @pwstraw-5@Deep Dive@
+* `@pwsmoothie-N@text@` Smoothie Swirl: @pwsmoothie-1@Tangerine@ @pwsmoothie-2@Aqua@ @pwsmoothie-3@Sunburn@ @pwsmoothie-4@Lagoon@ @pwsmoothie-5@Creamsicle@
+* `@pwfreezepop-N@text@` Freeze Pop: @pwfreezepop-1@Chlorine@ @pwfreezepop-2@Tangerine@ @pwfreezepop-3@Aqua@ @pwfreezepop-4@Sunburn@ @pwfreezepop-5@Lagoon@
+* `@pwsnowcone-N@text@` Snow Cone: @pwsnowcone-1@Marmalade@ @pwsnowcone-2@Chlorine@ @pwsnowcone-3@Tangerine@ @pwsnowcone-4@Aqua@ @pwsnowcone-5@Sunburn@
+* `@pwtwistrim-N@text@` Candy Twist Rim: @pwtwistrim-1@Ice@ @pwtwistrim-2@Marmalade@ @pwtwistrim-3@Chlorine@ @pwtwistrim-4@Tangerine@ @pwtwistrim-5@Aqua@
+* `@pwsunhat-N@text@` Sun Hat: @pwsunhat-1@Apricot@ @pwsunhat-2@Ice@ @pwsunhat-3@Marmalade@ @pwsunhat-4@Chlorine@ @pwsunhat-5@Tangerine@
+* `@pwsandal-N@text@` Sandal Straps: @pwsandal-1@Deep Dive@ @pwsandal-2@Apricot@ @pwsandal-3@Ice@ @pwsandal-4@Marmalade@ @pwsandal-5@Chlorine@
+* `@pwroundshades-N@text@` Round Shades: @pwroundshades-1@Creamsicle@ @pwroundshades-2@Deep Dive@ @pwroundshades-3@Apricot@ @pwroundshades-4@Ice@ @pwroundshades-5@Marmalade@
+* `@pwdrip-N@text@` Lotion Drip: @pwdrip-1@Lagoon@ @pwdrip-2@Creamsicle@ @pwdrip-3@Deep Dive@ @pwdrip-4@Apricot@ @pwdrip-5@Ice@
+* `@pwwatch-N@text@` Swim Watch: @pwwatch-1@Sunburn@ @pwwatch-2@Lagoon@ @pwwatch-3@Creamsicle@ @pwwatch-4@Deep Dive@ @pwwatch-5@Apricot@
+* `@pwmegaphone-N@text@` Megaphone: @pwmegaphone-1@Aqua@ @pwmegaphone-2@Sunburn@ @pwmegaphone-3@Lagoon@ @pwmegaphone-4@Creamsicle@ @pwmegaphone-5@Deep Dive@
+* `@pwneontube-N@text@` Neon Pool Tube: @pwneontube-1@Tangerine@ @pwneontube-2@Aqua@ @pwneontube-3@Sunburn@ @pwneontube-4@Lagoon@ @pwneontube-5@Creamsicle@
+* `@pwarrowsign-N@text@` Motel Arrow: @pwarrowsign-1@Chlorine@ @pwarrowsign-2@Tangerine@ @pwarrowsign-3@Aqua@ @pwarrowsign-4@Sunburn@ @pwarrowsign-5@Lagoon@
+* `@pwmarquee-N@text@` Marquee Bulbs: @pwmarquee-1@Marmalade@ @pwmarquee-2@Chlorine@ @pwmarquee-3@Tangerine@ @pwmarquee-4@Aqua@ @pwmarquee-5@Sunburn@
+* `@pwsnackbar-N@text@` Snack Bar Board: @pwsnackbar-1@Ice@ @pwsnackbar-2@Marmalade@ @pwsnackbar-3@Chlorine@ @pwsnackbar-4@Tangerine@ @pwsnackbar-5@Aqua@
+* `@pwpolka-N@text@` Polka Swimsuit: @pwpolka-1@Apricot@ @pwpolka-2@Ice@ @pwpolka-3@Marmalade@ @pwpolka-4@Chlorine@ @pwpolka-5@Tangerine@
+* `@pwstripesuit-N@text@` Striped Suit: @pwstripesuit-1@Deep Dive@ @pwstripesuit-2@Apricot@ @pwstripesuit-3@Ice@ @pwstripesuit-4@Marmalade@ @pwstripesuit-5@Chlorine@
+* `@pwgingham-N@text@` Gingham Picnic: @pwgingham-1@Creamsicle@ @pwgingham-2@Deep Dive@ @pwgingham-3@Apricot@ @pwgingham-4@Ice@ @pwgingham-5@Marmalade@
+* `@pwhalfsun-N@text@` Halftone Sun: @pwhalfsun-1@Lagoon@ @pwhalfsun-2@Creamsicle@ @pwhalfsun-3@Deep Dive@ @pwhalfsun-4@Apricot@ @pwhalfsun-5@Ice@
+* `@pwriso-N@text@` Riso Print: @pwriso-1@Sunburn@ @pwriso-2@Lagoon@ @pwriso-3@Creamsicle@ @pwriso-4@Deep Dive@ @pwriso-5@Apricot@
+* `@pwbadge-N@text@` Vintage Badge: @pwbadge-1@Aqua@ @pwbadge-2@Sunburn@ @pwbadge-3@Lagoon@ @pwbadge-4@Creamsicle@ @pwbadge-5@Deep Dive@
+* `@pwribbon-N@text@` Ribbon Banner: @pwribbon-1@Tangerine@ @pwribbon-2@Aqua@ @pwribbon-3@Sunburn@ @pwribbon-4@Lagoon@ @pwribbon-5@Creamsicle@
+* `@pwpennant-N@text@` Swim Pennant: @pwpennant-1@Chlorine@ @pwpennant-2@Tangerine@ @pwpennant-3@Aqua@ @pwpennant-4@Sunburn@ @pwpennant-5@Lagoon@
+* `@pwstamp-N@text@` Pool Stamp: @pwstamp-1@Marmalade@ @pwstamp-2@Chlorine@ @pwstamp-3@Tangerine@ @pwstamp-4@Aqua@ @pwstamp-5@Sunburn@
+* `@pwmedal-N@text@` Swim Medal: @pwmedal-1@Ice@ @pwmedal-2@Marmalade@ @pwmedal-3@Chlorine@ @pwmedal-4@Tangerine@ @pwmedal-5@Aqua@
+* `@pwtrophy-N@text@` Trophy Plate: @pwtrophy-1@Apricot@ @pwtrophy-2@Ice@ @pwtrophy-3@Marmalade@ @pwtrophy-4@Chlorine@ @pwtrophy-5@Tangerine@
+* `@pwlcd-N@text@` Stopwatch LCD: @pwlcd-1@Deep Dive@ @pwlcd-2@Apricot@ @pwlcd-3@Ice@ @pwlcd-4@Marmalade@ @pwlcd-5@Chlorine@
+* `@pwlapcount-N@text@` Lap Counter: @pwlapcount-1@Creamsicle@ @pwlapcount-2@Deep Dive@ @pwlapcount-3@Apricot@ @pwlapcount-4@Ice@ @pwlapcount-5@Marmalade@
+* `@pwpixelwave-N@text@` Pixel Wave: @pwpixelwave-1@Lagoon@ @pwpixelwave-2@Creamsicle@ @pwpixelwave-3@Deep Dive@ @pwpixelwave-4@Apricot@ @pwpixelwave-5@Ice@
+* `@pwglitch-N@text@` Glitch Splash: @pwglitch-1@Sunburn@ @pwglitch-2@Lagoon@ @pwglitch-3@Creamsicle@ @pwglitch-4@Deep Dive@ @pwglitch-5@Apricot@
+* `@pwholo-N@text@` Holo Water: @pwholo-1@Aqua@ @pwholo-2@Sunburn@ @pwholo-3@Lagoon@ @pwholo-4@Creamsicle@ @pwholo-5@Deep Dive@
+* `@pwjelly-N@text@` Jelly Float: @pwjelly-1@Tangerine@ @pwjelly-2@Aqua@ @pwjelly-3@Sunburn@ @pwjelly-4@Lagoon@ @pwjelly-5@Creamsicle@
+* `@pwmarble-N@text@` Glass Marble: @pwmarble-1@Chlorine@ @pwmarble-2@Tangerine@ @pwmarble-3@Aqua@ @pwmarble-4@Sunburn@ @pwmarble-5@Lagoon@
+* `@pwbubble-N@text@` Bubble Letters: @pwbubble-1@Marmalade@ @pwbubble-2@Chlorine@ @pwbubble-3@Tangerine@ @pwbubble-4@Aqua@ @pwbubble-5@Sunburn@
+* `@pwlongshadow-N@text@` Long Shadow: @pwlongshadow-1@Ice@ @pwlongshadow-2@Marmalade@ @pwlongshadow-3@Chlorine@ @pwlongshadow-4@Tangerine@ @pwlongshadow-5@Aqua@
+* `@pwoutline-N@text@` Outline Pill: @pwoutline-1@Apricot@ @pwoutline-2@Ice@ @pwoutline-3@Marmalade@ @pwoutline-4@Chlorine@ @pwoutline-5@Tangerine@
+* `@pwdotted-N@text@` Dotted Float: @pwdotted-1@Deep Dive@ @pwdotted-2@Apricot@ @pwdotted-3@Ice@ @pwdotted-4@Marmalade@ @pwdotted-5@Chlorine@
+* `@pwwavyline-N@text@` Wavy Underline: @pwwavyline-1@Creamsicle@ @pwwavyline-2@Deep Dive@ @pwwavyline-3@Apricot@ @pwwavyline-4@Ice@ @pwwavyline-5@Marmalade@
+* `@pwhighlight-N@text@` Highlighter Swipe: @pwhighlight-1@Lagoon@ @pwhighlight-2@Creamsicle@ @pwhighlight-3@Deep Dive@ @pwhighlight-4@Apricot@ @pwhighlight-5@Ice@
+* `@pwduo-N@text@` Duotone Split: @pwduo-1@Sunburn@ @pwduo-2@Lagoon@ @pwduo-3@Creamsicle@ @pwduo-4@Deep Dive@ @pwduo-5@Apricot@
+* `@pwsunsetmono-N@text@` Mono Sunset: @pwsunsetmono-1@Aqua@ @pwsunsetmono-2@Sunburn@ @pwsunsetmono-3@Lagoon@ @pwsunsetmono-4@Creamsicle@ @pwsunsetmono-5@Deep Dive@
+
+### Poolside 3 (90 designs)
+
+* `@ptglitter-N@text@` Glitter Water: @ptglitter-1@Lido@ @ptglitter-2@Orangeade@ @ptglitter-3@High Dive@ @ptglitter-4@Deep Lane@ @ptglitter-5@Chlorine Blue@
+* `@ptdapple-N@text@` Sun Dapples: @ptdapple-1@Riviera@ @ptdapple-2@Sunset Deck@ @ptdapple-3@Swim Meet@ @ptdapple-4@Chlorine Blue@ @ptdapple-5@Mango Float@
+* `@ptcrown-N@text@` Splash Crown: @ptcrown-1@High Dive@ @ptcrown-2@Mango Float@ @ptcrown-3@Lido@ @ptcrown-4@Splash Pad@ @ptcrown-5@Deep Lane@
+* `@ptcolumn-N@text@` Bubble Column: @ptcolumn-1@Swim Meet@ @ptcolumn-2@Orangeade@ @ptcolumn-3@Riviera@ @ptcolumn-4@Deep Lane@ @ptcolumn-5@Sunset Deck@
+* `@pttarget-N@text@` Ripple Target: @pttarget-1@Lido@ @pttarget-2@Sunset Deck@ @pttarget-3@High Dive@ @pttarget-4@Chlorine Blue@ @pttarget-5@Splash Pad@
+* `@ptwaveunder-N@text@` Wave Underline: @ptwaveunder-1@Riviera@ @ptwaveunder-2@Mango Float@ @ptwaveunder-3@Swim Meet@ @ptwaveunder-4@Splash Pad@ @ptwaveunder-5@Orangeade@
+* `@ptombre-N@text@` Pool Ombre: @ptombre-1@High Dive@ @ptombre-2@Orangeade@ @ptombre-3@Lido@ @ptombre-4@Deep Lane@ @ptombre-5@Chlorine Blue@
+* `@ptrain-N@text@` Rain on the Pool: @ptrain-1@Swim Meet@ @ptrain-2@Sunset Deck@ @ptrain-3@Riviera@ @ptrain-4@Chlorine Blue@ @ptrain-5@Mango Float@
+* `@ptnightglow-N@text@` Night Pool Glow: @ptnightglow-1@Lido@ @ptnightglow-2@Mango Float@ @ptnightglow-3@High Dive@ @ptnightglow-4@Splash Pad@ @ptnightglow-5@Deep Lane@
+* `@ptsunbeam-N@text@` Sunbeam Rays: @ptsunbeam-1@Riviera@ @ptsunbeam-2@Orangeade@ @ptsunbeam-3@Swim Meet@ @ptsunbeam-4@Deep Lane@ @ptsunbeam-5@Sunset Deck@
+* `@pthorizon-N@text@` Horizon Split: @pthorizon-1@High Dive@ @pthorizon-2@Sunset Deck@ @pthorizon-3@Lido@ @pthorizon-4@Chlorine Blue@ @pthorizon-5@Splash Pad@
+* `@pticecube-N@text@` Ice Cube: @pticecube-1@Swim Meet@ @pticecube-2@Mango Float@ @pticecube-3@Riviera@ @pticecube-4@Splash Pad@ @pticecube-5@Orangeade@
+* `@ptsteam-N@text@` Hot Tub Steam: @ptsteam-1@Lido@ @ptsteam-2@Orangeade@ @ptsteam-3@High Dive@ @ptsteam-4@Deep Lane@ @ptsteam-5@Chlorine Blue@
+* `@ptfizz-N@text@` Fizzy Splash: @ptfizz-1@Riviera@ @ptfizz-2@Sunset Deck@ @ptfizz-3@Swim Meet@ @ptfizz-4@Chlorine Blue@ @ptfizz-5@Mango Float@
+* `@ptwavegloss-N@text@` Wave Gloss: @ptwavegloss-1@High Dive@ @ptwavegloss-2@Mango Float@ @ptwavegloss-3@Lido@ @ptwavegloss-4@Splash Pad@ @ptwavegloss-5@Deep Lane@
+* `@ptkidney-N@text@` Kidney Pool: @ptkidney-1@Swim Meet@ @ptkidney-2@Orangeade@ @ptkidney-3@Riviera@ @ptkidney-4@Deep Lane@ @ptkidney-5@Sunset Deck@
+* `@ptlapfloats-N@text@` Lap Pool Floats: @ptlapfloats-1@Lido@ @ptlapfloats-2@Sunset Deck@ @ptlapfloats-3@High Dive@ @ptlapfloats-4@Chlorine Blue@ @ptlapfloats-5@Splash Pad@
+* `@ptdivewell-N@text@` Diving Well: @ptdivewell-1@Riviera@ @ptdivewell-2@Mango Float@ @ptdivewell-3@Swim Meet@ @ptdivewell-4@Splash Pad@ @ptdivewell-5@Orangeade@
+* `@ptspajets-N@text@` Spa Jet Ring: @ptspajets-1@High Dive@ @ptspajets-2@Orangeade@ @ptspajets-3@Lido@ @ptspajets-4@Deep Lane@ @ptspajets-5@Chlorine Blue@
+* `@ptchecker-N@text@` Checker Border: @ptchecker-1@Swim Meet@ @ptchecker-2@Sunset Deck@ @ptchecker-3@Riviera@ @ptchecker-4@Chlorine Blue@ @ptchecker-5@Mango Float@
+* `@ptorangegrout-N@text@` Orange Grout: @ptorangegrout-1@Lido@ @ptorangegrout-2@Mango Float@ @ptorangegrout-3@High Dive@ @ptorangegrout-4@Splash Pad@ @ptorangegrout-5@Deep Lane@
+* `@ptmosaicstrip-N@text@` Mosaic Strip: @ptmosaicstrip-1@Riviera@ @ptmosaicstrip-2@Orangeade@ @ptmosaicstrip-3@Swim Meet@ @ptmosaicstrip-4@Deep Lane@ @ptmosaicstrip-5@Sunset Deck@
+* `@ptdepthtile-N@text@` Depth Tile: @ptdepthtile-1@High Dive@ @ptdepthtile-2@Sunset Deck@ @ptdepthtile-3@Lido@ @ptdepthtile-4@Chlorine Blue@ @ptdepthtile-5@Splash Pad@
+* `@ptstones-N@text@` Coping Stones: @ptstones-1@Swim Meet@ @ptstones-2@Mango Float@ @ptstones-3@Riviera@ @ptstones-4@Splash Pad@ @ptstones-5@Orangeade@
+* `@ptswag-N@text@` Rope Swag: @ptswag-1@Lido@ @ptswag-2@Orangeade@ @ptswag-3@High Dive@ @ptswag-4@Deep Lane@ @ptswag-5@Chlorine Blue@
+* `@ptdeckdiag-N@text@` Diagonal Deck: @ptdeckdiag-1@Riviera@ @ptdeckdiag-2@Sunset Deck@ @ptdeckdiag-3@Swim Meet@ @ptdeckdiag-4@Chlorine Blue@ @ptdeckdiag-5@Mango Float@
+* `@ptpickets-N@text@` Picket Fence: @ptpickets-1@High Dive@ @ptpickets-2@Mango Float@ @ptpickets-3@Lido@ @ptpickets-4@Splash Pad@ @ptpickets-5@Deep Lane@
+* `@ptwaterfall-N@text@` Waterfall Wall: @ptwaterfall-1@Swim Meet@ @ptwaterfall-2@Orangeade@ @ptwaterfall-3@Riviera@ @ptwaterfall-4@Deep Lane@ @ptwaterfall-5@Sunset Deck@
+* `@ptguardseat-N@text@` Guard Seat: @ptguardseat-1@Lido@ @ptguardseat-2@Sunset Deck@ @ptguardseat-3@High Dive@ @ptguardseat-4@Chlorine Blue@ @ptguardseat-5@Splash Pad@
+* `@ptbeacon-N@text@` Pool Alarm Beacon: @ptbeacon-1@Riviera@ @ptbeacon-2@Mango Float@ @ptbeacon-3@Swim Meet@ @ptbeacon-4@Splash Pad@ @ptbeacon-5@Orangeade@
+* `@ptpipes-N@text@` Pump Room Pipes: @ptpipes-1@High Dive@ @ptpipes-2@Orangeade@ @ptpipes-3@Lido@ @ptpipes-4@Deep Lane@ @ptpipes-5@Chlorine Blue@
+* `@ptporthole-N@text@` Underwater Window: @ptporthole-1@Swim Meet@ @ptporthole-2@Sunset Deck@ @ptporthole-3@Riviera@ @ptporthole-4@Chlorine Blue@ @ptporthole-5@Mango Float@
+* `@ptshower-N@text@` Poolside Shower: @ptshower-1@Lido@ @ptshower-2@Mango Float@ @ptshower-3@High Dive@ @ptshower-4@Splash Pad@ @ptshower-5@Deep Lane@
+* `@ptrules-N@text@` Pool Rules Sign: @ptrules-1@Riviera@ @ptrules-2@Orangeade@ @ptrules-3@Swim Meet@ @ptrules-4@Deep Lane@ @ptrules-5@Sunset Deck@
+* `@ptstripering-N@text@` Striped Inflatable: @ptstripering-1@High Dive@ @ptstripering-2@Sunset Deck@ @ptstripering-3@Lido@ @ptstripering-4@Chlorine Blue@ @ptstripering-5@Splash Pad@
+* `@ptwings-N@text@` Water Wings: @ptwings-1@Swim Meet@ @ptwings-2@Mango Float@ @ptwings-3@Riviera@ @ptwings-4@Splash Pad@ @ptwings-5@Orangeade@
+* `@ptvolley-N@text@` Pool Volleyball: @ptvolley-1@Lido@ @ptvolley-2@Orangeade@ @ptvolley-3@High Dive@ @ptvolley-4@Deep Lane@ @ptvolley-5@Chlorine Blue@
+* `@ptpolocap-N@text@` Water Polo Cap: @ptpolocap-1@Riviera@ @ptpolocap-2@Sunset Deck@ @ptpolocap-3@Swim Meet@ @ptpolocap-4@Chlorine Blue@ @ptpolocap-5@Mango Float@
+* `@ptpaddles-N@text@` Hand Paddles: @ptpaddles-1@High Dive@ @ptpaddles-2@Mango Float@ @ptpaddles-3@Lido@ @ptpaddles-4@Splash Pad@ @ptpaddles-5@Deep Lane@
+* `@pttorpedo-N@text@` Dive Torpedo: @pttorpedo-1@Swim Meet@ @pttorpedo-2@Orangeade@ @pttorpedo-3@Riviera@ @pttorpedo-4@Deep Lane@ @pttorpedo-5@Sunset Deck@
+* `@pthoop-N@text@` Pool Hoop: @pthoop-1@Lido@ @pthoop-2@Sunset Deck@ @pthoop-3@High Dive@ @pthoop-4@Chlorine Blue@ @pthoop-5@Splash Pad@
+* `@ptlounge-N@text@` Lounge Float: @ptlounge-1@Riviera@ @ptlounge-2@Mango Float@ @ptlounge-3@Swim Meet@ @ptlounge-4@Splash Pad@ @ptlounge-5@Orangeade@
+* `@ptbucket-N@text@` Splash Bucket: @ptbucket-1@High Dive@ @ptbucket-2@Orangeade@ @ptbucket-3@Lido@ @ptbucket-4@Deep Lane@ @ptbucket-5@Chlorine Blue@
+* `@ptmask-N@text@` Snorkel Mask: @ptmask-1@Swim Meet@ @ptmask-2@Sunset Deck@ @ptmask-3@Riviera@ @ptmask-4@Chlorine Blue@ @ptmask-5@Mango Float@
+* `@ptstrap-N@text@` Goggle Strap: @ptstrap-1@Lido@ @ptstrap-2@Mango Float@ @ptstrap-3@High Dive@ @ptstrap-4@Splash Pad@ @ptstrap-5@Deep Lane@
+* `@ptvtowel-N@text@` Vertical Towel: @ptvtowel-1@Riviera@ @ptvtowel-2@Orangeade@ @ptvtowel-3@Swim Meet@ @ptvtowel-4@Deep Lane@ @ptvtowel-5@Sunset Deck@
+* `@ptaviator-N@text@` Aviator Shades: @ptaviator-1@High Dive@ @ptaviator-2@Sunset Deck@ @ptaviator-3@Lido@ @ptaviator-4@Chlorine Blue@ @ptaviator-5@Splash Pad@
+* `@ptsqueeze-N@text@` Squeeze Tube: @ptsqueeze-1@Swim Meet@ @ptsqueeze-2@Mango Float@ @ptsqueeze-3@Riviera@ @ptsqueeze-4@Splash Pad@ @ptsqueeze-5@Orangeade@
+* `@ptorangeade-N@text@` Orangeade Glass: @ptorangeade-1@Lido@ @ptorangeade-2@Orangeade@ @ptorangeade-3@High Dive@ @ptorangeade-4@Deep Lane@ @ptorangeade-5@Chlorine Blue@
+* `@ptlolly-N@text@` Swirl Lolly: @ptlolly-1@Riviera@ @ptlolly-2@Sunset Deck@ @ptlolly-3@Swim Meet@ @ptlolly-4@Chlorine Blue@ @ptlolly-5@Mango Float@
+* `@ptfloat-N@text@` Soda Float: @ptfloat-1@High Dive@ @ptfloat-2@Mango Float@ @ptfloat-3@Lido@ @ptfloat-4@Splash Pad@ @ptfloat-5@Deep Lane@
+* `@ptshaved-N@text@` Shaved Ice: @ptshaved-1@Swim Meet@ @ptshaved-2@Orangeade@ @ptshaved-3@Riviera@ @ptshaved-4@Deep Lane@ @ptshaved-5@Sunset Deck@
+* `@ptjuicebox-N@text@` Juice Box: @ptjuicebox-1@Lido@ @ptjuicebox-2@Sunset Deck@ @ptjuicebox-3@High Dive@ @ptjuicebox-4@Chlorine Blue@ @ptjuicebox-5@Splash Pad@
+* `@ptbitten-N@text@` Bitten Pop: @ptbitten-1@Riviera@ @ptbitten-2@Mango Float@ @ptbitten-3@Swim Meet@ @ptbitten-4@Splash Pad@ @ptbitten-5@Orangeade@
+* `@ptlanyard-N@text@` Pool Pass Lanyard: @ptlanyard-1@High Dive@ @ptlanyard-2@Orangeade@ @ptlanyard-3@Lido@ @ptlanyard-4@Deep Lane@ @ptlanyard-5@Chlorine Blue@
+* `@ptziplock-N@text@` Dry Pouch: @ptziplock-1@Swim Meet@ @ptziplock-2@Sunset Deck@ @ptziplock-3@Riviera@ @ptziplock-4@Chlorine Blue@ @ptziplock-5@Mango Float@
+* `@ptbagtag-N@text@` Bag Tag: @ptbagtag-1@Lido@ @ptbagtag-2@Mango Float@ @ptbagtag-3@High Dive@ @ptbagtag-4@Splash Pad@ @ptbagtag-5@Deep Lane@
+* `@ptcap-N@text@` Swim Team Cap: @ptcap-1@Riviera@ @ptcap-2@Orangeade@ @ptcap-3@Swim Meet@ @ptcap-4@Deep Lane@ @ptcap-5@Sunset Deck@
+* `@ptrescueboard-N@text@` Rescue Board: @ptrescueboard-1@High Dive@ @ptrescueboard-2@Sunset Deck@ @ptrescueboard-3@Lido@ @ptrescueboard-4@Chlorine Blue@ @ptrescueboard-5@Splash Pad@
+* `@ptnoodles-N@text@` Noodle Twins: @ptnoodles-1@Swim Meet@ @ptnoodles-2@Mango Float@ @ptnoodles-3@Riviera@ @ptnoodles-4@Splash Pad@ @ptnoodles-5@Orangeade@
+* `@ptfirstaid-N@text@` First Aid Cross: @ptfirstaid-1@Lido@ @ptfirstaid-2@Orangeade@ @ptfirstaid-3@High Dive@ @ptfirstaid-4@Deep Lane@ @ptfirstaid-5@Chlorine Blue@
+* `@ptscript-N@text@` Swim Club Script: @ptscript-1@Riviera@ @ptscript-2@Sunset Deck@ @ptscript-3@Swim Meet@ @ptscript-4@Chlorine Blue@ @ptscript-5@Mango Float@
+* `@ptinvite-N@text@` Party Invite: @ptinvite-1@High Dive@ @ptinvite-2@Mango Float@ @ptinvite-3@Lido@ @ptinvite-4@Splash Pad@ @ptinvite-5@Deep Lane@
+* `@ptneonwave-N@text@` Neon Wave Sign: @ptneonwave-1@Swim Meet@ @ptneonwave-2@Orangeade@ @ptneonwave-3@Riviera@ @ptneonwave-4@Deep Lane@ @ptneonwave-5@Sunset Deck@
+* `@ptboomerang-N@text@` Boomerang Sign: @ptboomerang-1@Lido@ @ptboomerang-2@Sunset Deck@ @ptboomerang-3@High Dive@ @ptboomerang-4@Chlorine Blue@ @ptboomerang-5@Splash Pad@
+* `@ptgoogie-N@text@` Googie Sparkles: @ptgoogie-1@Riviera@ @ptgoogie-2@Mango Float@ @ptgoogie-3@Swim Meet@ @ptgoogie-4@Splash Pad@ @ptgoogie-5@Orangeade@
+* `@ptboomprint-N@text@` Boomerang Print: @ptboomprint-1@High Dive@ @ptboomprint-2@Orangeade@ @ptboomprint-3@Lido@ @ptboomprint-4@Deep Lane@ @ptboomprint-5@Chlorine Blue@
+* `@pttileletters-N@text@` Tile Letters: @pttileletters-1@Swim Meet@ @pttileletters-2@Sunset Deck@ @pttileletters-3@Riviera@ @pttileletters-4@Chlorine Blue@ @pttileletters-5@Mango Float@
+* `@ptsleeve-N@text@` Varsity Sleeve: @ptsleeve-1@Lido@ @ptsleeve-2@Mango Float@ @ptsleeve-3@High Dive@ @ptsleeve-4@Splash Pad@ @ptsleeve-5@Deep Lane@
+* `@ptjersey-N@text@` Swim Team Jersey: @ptjersey-1@Riviera@ @ptjersey-2@Orangeade@ @ptjersey-3@Swim Meet@ @ptjersey-4@Deep Lane@ @ptjersey-5@Sunset Deck@
+* `@ptsplitflap-N@text@` Split-Flap Board: @ptsplitflap-1@High Dive@ @ptsplitflap-2@Sunset Deck@ @ptsplitflap-3@Lido@ @ptsplitflap-4@Chlorine Blue@ @ptsplitflap-5@Splash Pad@
+* `@ptadmit-N@text@` Admit One: @ptadmit-1@Swim Meet@ @ptadmit-2@Mango Float@ @ptadmit-3@Riviera@ @ptadmit-4@Splash Pad@ @ptadmit-5@Orangeade@
+* `@ptbooth-N@text@` Photo Booth Strip: @ptbooth-1@Lido@ @ptbooth-2@Orangeade@ @ptbooth-3@High Dive@ @ptbooth-4@Deep Lane@ @ptbooth-5@Chlorine Blue@
+* `@ptslide-N@text@` Film Slide: @ptslide-1@Riviera@ @ptslide-2@Sunset Deck@ @ptslide-3@Swim Meet@ @ptslide-4@Chlorine Blue@ @ptslide-5@Mango Float@
+* `@ptwavestamp-N@text@` Wave Postage: @ptwavestamp-1@High Dive@ @ptwavestamp-2@Mango Float@ @ptwavestamp-3@Lido@ @ptwavestamp-4@Splash Pad@ @ptwavestamp-5@Deep Lane@
+* `@ptcalendar-N@text@` Summer Calendar: @ptcalendar-1@Swim Meet@ @ptcalendar-2@Orangeade@ @ptcalendar-3@Riviera@ @ptcalendar-4@Deep Lane@ @ptcalendar-5@Sunset Deck@
+* `@ptmixtape-N@text@` Summer Mixtape: @ptmixtape-1@Lido@ @ptmixtape-2@Sunset Deck@ @ptmixtape-3@High Dive@ @ptmixtape-4@Chlorine Blue@ @ptmixtape-5@Splash Pad@
+* `@ptspeakers-N@text@` Boombox Speakers: @ptspeakers-1@Riviera@ @ptspeakers-2@Mango Float@ @ptspeakers-3@Swim Meet@ @ptspeakers-4@Splash Pad@ @ptspeakers-5@Orangeade@
+* `@ptsurf-N@text@` Surf Sticker: @ptsurf-1@High Dive@ @ptsurf-2@Orangeade@ @ptsurf-3@Lido@ @ptsurf-4@Deep Lane@ @ptsurf-5@Chlorine Blue@
+* `@ptgumbubble-N@text@` Gum Bubble: @ptgumbubble-1@Swim Meet@ @ptgumbubble-2@Sunset Deck@ @ptgumbubble-3@Riviera@ @ptgumbubble-4@Chlorine Blue@ @ptgumbubble-5@Mango Float@
+* `@ptpopdots-N@text@` Pop Art Dots: @ptpopdots-1@Lido@ @ptpopdots-2@Mango Float@ @ptpopdots-3@High Dive@ @ptpopdots-4@Splash Pad@ @ptpopdots-5@Deep Lane@
+* `@ptcomicburst-N@text@` Comic Splash: @ptcomicburst-1@Riviera@ @ptcomicburst-2@Orangeade@ @ptcomicburst-3@Swim Meet@ @ptcomicburst-4@Deep Lane@ @ptcomicburst-5@Sunset Deck@
+* `@ptextrude-N@text@` 3D Extrude Text: @ptextrude-1@High Dive@ @ptextrude-2@Sunset Deck@ @ptextrude-3@Lido@ @ptextrude-4@Chlorine Blue@ @ptextrude-5@Splash Pad@
+* `@ptoutlineduo-N@text@` Outline Duo Text: @ptoutlineduo-1@Swim Meet@ @ptoutlineduo-2@Mango Float@ @ptoutlineduo-3@Riviera@ @ptoutlineduo-4@Splash Pad@ @ptoutlineduo-5@Orangeade@
+* `@ptvgrad-N@text@` Dive Gradient Text: @ptvgrad-1@Lido@ @ptvgrad-2@Orangeade@ @ptvgrad-3@High Dive@ @ptvgrad-4@Deep Lane@ @ptvgrad-5@Chlorine Blue@
+* `@ptchrome-N@text@` Chrome Pool Text: @ptchrome-1@Riviera@ @ptchrome-2@Sunset Deck@ @ptchrome-3@Swim Meet@ @ptchrome-4@Chlorine Blue@ @ptchrome-5@Mango Float@
+* `@ptfrosted-N@text@` Frosted Cabana: @ptfrosted-1@High Dive@ @ptfrosted-2@Mango Float@ @ptfrosted-3@Lido@ @ptfrosted-4@Splash Pad@ @ptfrosted-5@Deep Lane@
+* `@ptcapsule-N@text@` Duo Capsule: @ptcapsule-1@Swim Meet@ @ptcapsule-2@Orangeade@ @ptcapsule-3@Riviera@ @ptcapsule-4@Deep Lane@ @ptcapsule-5@Sunset Deck@
+* `@pttoggle-N@text@` Pool Toggle: @pttoggle-1@Lido@ @pttoggle-2@Sunset Deck@ @pttoggle-3@High Dive@ @pttoggle-4@Chlorine Blue@ @pttoggle-5@Splash Pad@
+* `@ptsunring-N@text@` Sunset Ring: @ptsunring-1@Riviera@ @ptsunring-2@Mango Float@ @ptsunring-3@Swim Meet@ @ptsunring-4@Splash Pad@ @ptsunring-5@Orangeade@
 
 ## Megachips, badges and droplets
 
