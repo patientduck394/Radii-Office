@@ -2,7 +2,8 @@
    LaTeX math for Writeout, Bitbook and OpenDB! (Same file in each.)
    - No LaTeX needed: Insert > Equation opens a friendly box with buttons
      for fractions, powers, roots, Greek letters, ℝ ℕ ℤ, integrals and
-     more, plus a live preview. Click a button, fill in the boxes, done!
+     more (every Greek letter, Cyrillic, Hebrew, Arabic, LaTeX's own
+     letterlike symbols and fonts), plus a live preview. Click, fill in, done!
    - Know LaTeX already? Type $x^2$ then Space for inline math, or
      $$...$$ then Space for a centered equation.
    - Double-click an equation to edit it in the same box.
@@ -108,8 +109,21 @@
         'Hebrew': [['\\aleph', '\\aleph ', 'Aleph (infinite sizes)'], ['\\beth', '\\beth ', 'Beth'], ['\\gimel', '\\gimel ', 'Gimel'], ['\\daleth', '\\daleth ', 'Daleth']]
             .concat(alphabet([[0x05D0, 0x05EA]])),
         'Arabic': alphabet([[0x0621, 0x063A], [0x0641, 0x064A]]),
-        'Armenian': alphabet([[0x0531, 0x0556], [0x0561, 0x0586]]),
-        'Devanagari': alphabet([[0x0905, 0x0914], [0x0915, 0x0939], [0x0966, 0x096F]]),
+        // Built-in LaTeX letters (real commands, so they work in any LaTeX document too!)
+        'Letterlike': [
+            ['\\ell', '\\ell ', 'Script l (\\ell)'], ['\\hbar', '\\hbar ', 'Reduced Planck constant (\\hbar)'], ['\\hslash', '\\hslash ', 'h-slash (\\hslash)'],
+            ['\\wp', '\\wp ', 'Weierstrass p (\\wp)'], ['\\eth', '\\eth ', 'Eth (\\eth)'], ['\\mho', '\\mho ', 'Mho, the unit siemens (\\mho)'],
+            ['\\Bbbk', '\\Bbbk ', 'Blackboard k, a field (\\Bbbk)'], ['\\imath', '\\imath ', 'Dotless i (\\imath)'], ['\\jmath', '\\jmath ', 'Dotless j (\\jmath)'],
+            ['\\Re', '\\Re ', 'Real part (\\Re)'], ['\\Im', '\\Im ', 'Imaginary part (\\Im)'], ['\\complement', '\\complement ', 'Complement (\\complement)'],
+            ['\\Finv', '\\Finv ', 'Turned F (\\Finv)'], ['\\Game', '\\Game ', 'Turned G (\\Game)'], ['\\partial', '\\partial ', 'Partial (\\partial)'],
+            ['\\nabla', '\\nabla ', 'Nabla (\\nabla)'], ['\\backprime', '\\backprime ', 'Back prime (\\backprime)'],
+        ],
+        'Latin extras': [
+            ['\\text{\\ss}', '\\text{\\ss}', 'Sharp s (\\ss)'], ['\\text{\\ae}', '\\text{\\ae}', 'ae (\\ae)'], ['\\text{\\AE}', '\\text{\\AE}', 'AE (\\AE)'],
+            ['\\text{\\oe}', '\\text{\\oe}', 'oe (\\oe)'], ['\\text{\\OE}', '\\text{\\OE}', 'OE (\\OE)'], ['\\text{\\o}', '\\text{\\o}', 'Slashed o (\\o)'],
+            ['\\text{\\O}', '\\text{\\O}', 'Slashed O (\\O)'], ['\\text{\\aa}', '\\text{\\aa}', 'Ring a (\\aa)'], ['\\text{\\AA}', '\\text{\\AA}', 'Ring A, angstrom (\\AA)'],
+            ['\\text{\\i}', '\\text{\\i}', 'Dotless i in text (\\i)'], ['\\text{\\j}', '\\text{\\j}', 'Dotless j in text (\\j)'],
+        ],
         'Sets': [
             ['\\mathbb{R}', '\\mathbb{R}', 'Real numbers'], ['\\mathbb{N}', '\\mathbb{N}', 'Natural numbers'], ['\\mathbb{Z}', '\\mathbb{Z}', 'Integers'],
             ['\\mathbb{Q}', '\\mathbb{Q}', 'Rational numbers'], ['\\mathbb{C}', '\\mathbb{C}', 'Complex numbers'], ['\\{x\\}', '\\{|\\}', 'A set'],
