@@ -7,9 +7,9 @@
     --card: rgba(255, 255, 255, 0.92);
     --blue: #1478c8;
     --green: #2e9a1c;
-    --serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+    --serif: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace; /* headings + article text */
     --sans: "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
-    --mono: ui-monospace, Menlo, Consolas, monospace;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, Consolas, monospace;
 }
 body {
     min-height: 100vh; display: flex; flex-direction: column; color: var(--ink); font-family: var(--sans);
@@ -105,7 +105,7 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .figure { margin: 6px 0 18px; text-align: center; }
 .figure img { max-width: 100%; max-height: 520px; border-radius: 12px; background: #eef6fd; border: 1px solid var(--line); }
 .figure figcaption, .kd-doc figcaption { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
-.kd-doc { font-family: var(--serif); font-size: 17.5px; line-height: 1.7; }
+.kd-doc { font-family: var(--serif); font-size: 15.5px; line-height: 1.75; }
 .kd-doc h2 { font-size: 24px; font-weight: 600; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
 .kd-doc h3 { font-size: 19px; margin: 20px 0 6px; }
 .kd-doc p, .kd-doc ul, .kd-doc ol, .kd-doc blockquote, .kd-doc pre, .kd-doc figure { margin: 0 0 14px; }
