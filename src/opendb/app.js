@@ -72,6 +72,7 @@
         const store = [];
         const stash = (html) => { store.push(html); return '\u0001' + (store.length - 1) + '\u0001'; };
         let s = String(text);
+        s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code class="kd-code">' + esc(t) + '</code>'));
         s = s.replace(/\\\$/g, () => stash('$'));
         s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => stash(tex(t.trim(), true)));
         s = s.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (_, pre, t) => pre + stash(tex(t, false)));
@@ -455,7 +456,8 @@
     function yamlStr(v) { const s = String(v); return /^[\[\]"#]|:\s|^\s|\s$/.test(s) || s === '' ? '"' + s.replace(/"/g, '\\"') + '"' : s; }
     function yamlList(a) { return '[' + (a || []).map((x) => String(x).replace(/[,\[\]]/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean).join(', ') + ']'; }
     function toKdFile(e) {
-        const h = ['---', 'id: ' + e.id, 'type: ' + e.type, 'title: ' + yamlStr(e.title), 'summary: ' + yamlStr(e.summary)];
+        // format: keydown-text tells Writeout and Bitbook this body is Keydown text (their own files hold HTML)!
+        const h = ['---', 'format: keydown-text', 'id: ' + e.id, 'type: ' + e.type, 'title: ' + yamlStr(e.title), 'summary: ' + yamlStr(e.summary)];
         if (e.type === 'paper') h.push('abstract: ' + yamlStr(String(e.abstract || '').replace(/\s*\n\s*/g, ' ')));
         h.push('tags: ' + yamlList(e.tags));
         if (e.type === 'paper') h.push('categories: ' + yamlList(e.categories));
@@ -486,7 +488,7 @@
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
             '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1], <a href="#/templates" target="_blank">templates</a> like {{stub}})</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
-            '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button><button type="button" class="gel small plain" id="add-tpl" title="Stub notices, citation needed, file improvement and more!">⚑ Add a template</button></div>' +
+            '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button><button type="button" class="gel small plain" id="add-tpl" title="Stub notices, citation needed, file improvement and more!">⚑ Add a template</button><button type="button" class="gel small plain" id="open-file" title="An OpenDB entry, a Writeout document or a Bitbook note!">📂 Open .kd / .kn</button><input type="file" id="f-open" accept=".kd,.kn,.md,.txt" hidden></div>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
             '<label class="field">Infobox <small>(optional, one “Label: value” per line)</small><textarea id="f-infobox" style="min-height:70px">' + esc(infoboxText) + '</textarea></label>' +
@@ -580,6 +582,31 @@
                 box.focus();
                 preview();
             } });
+        };
+        // Open any .kd or .kn file: OpenDB entries, Writeout documents and Bitbook notes all fill the form!
+        $('open-file').onclick = () => $('f-open').click();
+        $('f-open').onchange = (ev) => {
+            const f = ev.target.files[0];
+            ev.target.value = '';
+            if (!f) return;
+            if (!window.kdDoc) { toast('The file reader could not load!'); return; }
+            f.text().then((text) => {
+                const x = window.kdDoc.toEntry(text);
+                if (!base && TYPES[x.type] && x.type !== type && $('types')) $('types').querySelector('[data-type="' + x.type + '"]').click();
+                const set = (id, v) => { if (v !== undefined && v !== null && v !== '') $(id).value = Array.isArray(v) ? v.join(', ') : String(v); };
+                set('f-title', x.title);
+                if (!base && /^[a-z0-9]+(-[a-z0-9]+)*$/.test(String(x.id || ''))) { $('f-id').value = x.id; idTouched = true; }
+                else if (!base && !idTouched && x.title) $('f-id').value = slug(x.title);
+                set('f-summary', x.summary);
+                set('f-body', x.body);
+                set('f-tags', x.tags);
+                set('f-authors', x.authors);
+                if (type === 'paper') { set('f-abstract', x.abstract); set('f-categories', x.categories); }
+                if (x.infobox && Object.keys(x.infobox).length) $('f-infobox').value = Object.entries(x.infobox).map(([k, v]) => k + ': ' + v).join('\n');
+                $('problems').innerHTML = '';
+                preview();
+                toast('Opened ' + f.name + '!');
+            }, () => toast('That file could not be read!'));
         };
         // Templates: maintenance boxes go at the top, the stub note at the bottom, the rest where the cursor is
         $('add-tpl').onclick = () => {

@@ -797,6 +797,14 @@ if (canvas) {
         }
         // --- SECTION B: Inline Saturated Formatting Definition Matrix ---
         const definitions = [
+            // Gel highlights, the Annotator's first three tools, in its 13 colors: #R#text## highlights,
+            // #R#text#_ is the gel underline and #R#text#~ the gel strike (checked before the #R#chip# ones)!
+            ...[['R', 'red'], ['O', 'orange'], ['GL', 'gold'], ['Y', 'yellow'], ['L', 'lime'], ['G', 'green'], ['TU', 'turquoise'],
+                ['T', 'teal'], ['C', 'cyan'], ['B', 'blue'], ['PR', 'purple'], ['PK', 'pink'], ['SL', 'slate']].flatMap(([k, c]) => [
+                { open: '#' + k + '#', close: '##', tagName: 'mark', className: 'an-hl an-hl-' + c },
+                { open: '#' + k + '#', close: '#_', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-ul' },
+                { open: '#' + k + '#', close: '#~', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-st' },
+            ]),
             { open: '=Y=',  close: '=Y=',  className: 'gel-orb gel-y' },
             { open: '=R=',  close: '=R=',  className: 'gel-orb gel-r' },
             { open: '=G=',  close: '=G=',  className: 'gel-orb gel-g' },
@@ -1008,6 +1016,8 @@ if (canvas) {
         for (let def of definitions) {
             let openIdx = currentLineText.indexOf(def.open);
             if (openIdx === -1) continue;
+            // a #R#chip# waits while you type the second #, the _ or the ~ of a gel highlight (#R#text## #_ #~)!
+            if (def.close === '#' && (e.key === '#' || e.key === '_' || e.key === '~')) continue;
 
             let closeIdx = currentLineText.indexOf(def.close, openIdx + def.open.length);
             if (closeIdx === -1) continue;
@@ -1022,11 +1032,14 @@ if (canvas) {
 
             // 1. Shrink the primary text node up to your starting token boundary marker
             textNode.nodeValue = beforeText;
+            // (Setting the text collapses the caret to offset 0, which put the chip BEFORE the text in front of it!)
+            range.setStart(textNode, beforeText.length);
+            range.collapse(true);
 
             // 2. Build out the replacement node element using the single correct variable name
             let newNode;
             if (def.className) {
-                newNode = document.createElement('span');
+                newNode = document.createElement(def.tagName || 'span');
                 newNode.className = def.className;
                 newNode.innerText = targetText;
                 playAeroClickSound(850, 0.12);
@@ -1040,7 +1053,8 @@ if (canvas) {
             range.insertNode(newNode);
 
             // 4. Reconstruct your trailing content stream bounds to anchor your blinking caret
-            const trailingText = afterText + (e.key === ' ' ? ' ' : '\n');
+            // (a non-breaking space: a plain one at the end of the line collapses, and the caret slips back inside the chip!)
+            const trailingText = afterText + (e.key === ' ' ? '\u00A0' : '\n');
             const trailingNode = document.createTextNode(trailingText);
             newNode.parentNode.insertBefore(trailingNode, newNode.nextSibling);
 
@@ -1557,6 +1571,14 @@ function importKeydownFile(inputEvent) {
     const fileReaderInstance = new FileReader();
     fileReaderInstance.onload = function(readEvent) {
         const fullFileStringContent = readEvent.target.result;
+        // OpenDB entries are Keydown text: draw them as a document (title, summary, math, links and all)!
+        if (window.kdDoc && kdDoc.isKeydownText(fullFileStringContent)) {
+            kdDoc.toEditorHtml(fullFileStringContent).then(function (html) {
+                canvasViewport.innerHTML = html;
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            });
+            return;
+        }
         
         if (fullFileStringContent.startsWith("---")) {
             const closingGateIndexValue = fullFileStringContent.indexOf("---", 3);
