@@ -1,5 +1,5 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261128a';
+var WRITEOUT_CACHE = 'writeout-shell-v20261128b';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
@@ -12,9 +12,9 @@ var WRITEOUT_SHELL = [
   'settings.css?v=20260928',
   'block-editor.js?v=20261049',
   'image-resize.js?v=20261040',
-  'office-shell.js?v=20261019',
+  'office-shell.js?v=20261128',
   'office-shell.css?v=20261019',
-  'writeout-office.js?v=20261125',
+  'writeout-office.js?v=20261128',
   'writeout-pro.js?v=20261121',
   'writeout-annotator.js?v=20261122',
   'annotate-hl.css?v=20261123',
@@ -26,6 +26,7 @@ var WRITEOUT_SHELL = [
   'radii-collab.css?v=20261042',
   'collab-kd.js?v=20261021',
   'manifest.json',
+  'latex.js?v=20261128',
   'favicon.svg',
   'favicon-96.png',
   'apple-touch-icon.png',

@@ -210,6 +210,8 @@ if (canvas) {
                 if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
                 return;
             }
+            // --- LaTeX: "$x^2$" or "$$...$$" then Space becomes typeset math (latex.js)! ---
+            if (typeof window.kdMathTryConvert === 'function' && window.kdMathTryConvert(e, currentLineText, textNode, range, selection)) return;
             // --- FOOTNOTES: "[^1] " becomes a linkable chip, "[^1]: text " a definition! ---
             if (kdTryFootnoteSpace(e, currentLineText, textNode, range, selection)) return;
             if (currentLineText === '::glass') {

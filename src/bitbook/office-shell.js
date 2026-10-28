@@ -36,6 +36,7 @@
         numbers: '<text x="1.5" y="8.5" font-size="7" font-weight="700" fill="currentColor" stroke="none">1</text><text x="1.5" y="14.5" font-size="7" font-weight="700" fill="currentColor" stroke="none">2</text><text x="1.5" y="20.5" font-size="7" font-weight="700" fill="currentColor" stroke="none">3</text><path d="M9 6h12M9 12h12M9 18h12"/>',
         quote: '<path d="M4 11h5v6H4zM4 11c0-3 1.5-5 4-6M14 11h5v6h-5zM14 11c0-3 1.5-5 4-6"/>',
         code: '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M13.5 4l-3 16"/>',
+        sigma: '<path d="M18 5H6l6 7-6 7h12"/>',
         clearFormat: '<path d="M5 5h12M11 5l-3 14M15 13l6 6M21 13l-6 6"/>',
         highlighter: '<path d="M14.5 4.5l5 5-8 8H6.5v-5z"/><path d="M4 21h16" stroke-width="3"/>',
         fontColor: '<path d="M6 17L12 3l6 14M8.3 12h7.4"/>',

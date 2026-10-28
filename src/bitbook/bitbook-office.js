@@ -539,6 +539,7 @@
                     { big: true, icon: 'search', label: 'Online\nPictures', title: 'Search free CC0 / CC BY / CC BY-SA pictures!', run: function () { window.openOnlinePictures(); } }
                 ] },
                 { label: 'Links', items: [{ big: true, icon: 'link', label: 'Link', run: insertLink }] },
+                { label: 'Math', items: [{ big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } }] },
                 { label: 'Time Stamp', items: [{ stack: [
                     { sm: true, icon: 'calendar', label: 'Date', run: function () { insertKind('date'); } },
                     { sm: true, icon: 'clock', label: 'Date & Time', run: function () { insertKind('timestamp'); } },
