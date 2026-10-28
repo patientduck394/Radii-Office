@@ -26,7 +26,7 @@
         '.kdm-seg button,.kdm-tabs button{font:700 12.5px "Segoe UI",system-ui,sans-serif;border:0;background:none;padding:5px 12px;border-radius:999px;cursor:pointer;color:#3c5670}' +
         '.kdm-seg button.on,.kdm-tabs button.on{color:#fff;background:linear-gradient(180deg,#8fd0ff,#1e8fe0 55%,#0b66b5)}' +
         '.kdm-tabs{display:flex;flex-wrap:wrap;gap:4px}' +
-        '.kdm-pad{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px}' +
+        '.kdm-pad{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;max-height:232px;overflow-y:auto;padding:2px 4px 2px 0;align-content:start}' +
         '.kdm-pad button{min-height:42px;border-radius:10px;border:1px solid #b9d5ec;background:linear-gradient(180deg,#fff,#eaf4fc);cursor:pointer;font-size:15px;color:#10243a;box-shadow:inset 0 1px 0 #fff}' +
         '.kdm-pad button:hover{border-color:#1e8fe0;background:#fff}' +
         '.kdm-tex{width:100%;box-sizing:border-box;min-height:58px;resize:vertical;font:14px ui-monospace,Menlo,monospace;padding:8px 10px;border-radius:10px;border:1px solid #9cc9ec;background:#fff;color:#10243a}' +
@@ -67,6 +67,24 @@
     function sound(f, d) { try { if (typeof playAeroClickSound === 'function') playAeroClickSound(f, d); } catch (e) {} }
 
     /* ---------- The equation box: buttons for everything, so no LaTeX is needed ---------- */
+    // Every Greek letter: lowercase, uppercase and the variant forms mathematicians use!
+    const GREEK = ['alpha', 'beta', 'gamma', 'delta', 'epsilon', 'varepsilon', 'zeta', 'eta', 'theta', 'vartheta', 'iota', 'kappa', 'varkappa',
+        'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'varpi', 'rho', 'varrho', 'sigma', 'varsigma', 'tau', 'upsilon', 'phi', 'varphi', 'chi', 'psi', 'omega', 'digamma',
+        'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi',
+        'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega']
+        .map(function (n) { return ['\\' + n, '\\' + n + ' ', n]; });
+    // Whole alphabets from Unicode ranges, so no letter is missed! (Written as \text{…} so any font can draw them.)
+    function alphabet(ranges) {
+        const out = [];
+        ranges.forEach(function (r) {
+            for (let c = r[0]; c <= r[1]; c++) {
+                const ch = String.fromCodePoint(c);
+                if (!/\p{L}|\p{N}/u.test(ch)) continue;
+                out.push(['\\text{' + ch + '}', '\\text{' + ch + '}', 'U+' + c.toString(16).toUpperCase().padStart(4, '0')]);
+            }
+        });
+        return out;
+    }
     // [what the button shows (LaTeX), what it writes ("|" is where the cursor lands), tooltip]
     const PAD = {
         'Basics': [
@@ -76,11 +94,22 @@
             ['\\neq', '\\neq ', 'Not equal'], ['\\approx', '\\approx ', 'About equal'], ['\\le', '\\le ', 'Less than or equal'], ['\\ge', '\\ge ', 'Greater than or equal'],
             ['\\infty', '\\infty ', 'Infinity'], ['\\%', '\\% ', 'Percent'], ['\\degree', '^{\\circ}', 'Degrees'], ['|x|', '\\left|{|}\\right|', 'Absolute value'],
         ],
-        'Greek': [
-            ['\\alpha', '\\alpha '], ['\\beta', '\\beta '], ['\\gamma', '\\gamma '], ['\\delta', '\\delta '], ['\\epsilon', '\\epsilon '], ['\\theta', '\\theta '],
-            ['\\lambda', '\\lambda '], ['\\mu', '\\mu '], ['\\pi', '\\pi '], ['\\rho', '\\rho '], ['\\sigma', '\\sigma '], ['\\tau', '\\tau '],
-            ['\\phi', '\\phi '], ['\\omega', '\\omega '], ['\\Delta', '\\Delta '], ['\\Sigma', '\\Sigma '], ['\\Pi', '\\Pi '], ['\\Omega', '\\Omega '],
+        'Fonts': [
+            ['\\mathbb{A}', '\\mathbb{|}', 'Blackboard bold (select R first to make the real numbers!)'],
+            ['\\mathfrak{A}', '\\mathfrak{|}', 'Fraktur'],
+            ['\\mathrm{A}', '\\mathrm{|}', 'Roman (upright)'],
+            ['\\mathcal{A}', '\\mathcal{|}', 'Calligraphic'],
+            ['\\mathscr{A}', '\\mathscr{|}', 'Script'],
+            ['\\text{Aa}', '\\text{|}', 'Plain text'],
+            ['\\mathbf{A}', '\\mathbf{|}', 'Bold'],
         ],
+        'Greek': GREEK,
+        'Cyrillic': alphabet([[0x0410, 0x0415], [0x0401, 0x0401], [0x0416, 0x042F], [0x0430, 0x0435], [0x0451, 0x0451], [0x0436, 0x044F]]),
+        'Hebrew': [['\\aleph', '\\aleph ', 'Aleph (infinite sizes)'], ['\\beth', '\\beth ', 'Beth'], ['\\gimel', '\\gimel ', 'Gimel'], ['\\daleth', '\\daleth ', 'Daleth']]
+            .concat(alphabet([[0x05D0, 0x05EA]])),
+        'Arabic': alphabet([[0x0621, 0x063A], [0x0641, 0x064A]]),
+        'Armenian': alphabet([[0x0531, 0x0556], [0x0561, 0x0586]]),
+        'Devanagari': alphabet([[0x0905, 0x0914], [0x0915, 0x0939], [0x0966, 0x096F]]),
         'Sets': [
             ['\\mathbb{R}', '\\mathbb{R}', 'Real numbers'], ['\\mathbb{N}', '\\mathbb{N}', 'Natural numbers'], ['\\mathbb{Z}', '\\mathbb{Z}', 'Integers'],
             ['\\mathbb{Q}', '\\mathbb{Q}', 'Rational numbers'], ['\\mathbb{C}', '\\mathbb{C}', 'Complex numbers'], ['\\{x\\}', '\\{|\\}', 'A set'],
