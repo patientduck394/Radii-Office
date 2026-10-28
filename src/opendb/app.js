@@ -173,6 +173,8 @@
             text: (c) => 'This ' + c.noun + ' <b>does not cite any sources</b>. Please help by ' + c.edit('adding footnotes') + ' that point to reliable sources!' },
         { name: 'file improvement', aliases: ['image improvement', 'improve file'], kind: 'file', group: 'Maintenance', icon: '🖼️', example: '{{file improvement|the text is blurry}}', hint: 'A media file that someone could redraw, sharpen or replace. Add what is wrong after a |!',
             text: (c) => 'This ' + (c.type === 'media' ? 'file' : c.noun + '’s image') + ' <b>could be improved</b>' + (c.arg ? ': ' + c.argHtml : '') + '! If you can make a better version (sharper, larger, cleaner, or as an SVG), please ' + c.edit('upload it') + '!' },
+        { name: 'images needed', aliases: ['image needed', 'image requested', 'needs images', 'needs image'], kind: 'file', group: 'Maintenance', icon: '📷', example: '{{images needed|a photo of a leaf}}', hint: 'An entry that would be clearer with a picture. Say what would help after a |!',
+            text: (c) => 'This ' + c.noun + ' <b>needs images</b>' + (c.arg ? ': ' + c.argHtml : '') + '! If you can draw, photograph or find a public domain picture, please <a href="#/new/media">upload it</a> and ' + c.edit('add it here') + '!' },
         { name: 'cleanup', kind: 'style', group: 'Maintenance', icon: '🧹', example: '{{cleanup|the sections repeat each other}}', hint: 'The entry needs tidying. Add the reason after a |!',
             text: (c) => 'This ' + c.noun + ' <b>may need cleanup</b> to meet OpenDB’s standards.' + c.reason() + ' You can help by ' + c.edit('improving it') + '!' },
         { name: 'copy edit', aliases: ['copyedit'], kind: 'style', group: 'Maintenance', icon: '✏️', hint: 'Grammar, spelling or wording need a pass.',

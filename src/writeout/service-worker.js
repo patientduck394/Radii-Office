@@ -1,5 +1,5 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261130d';
+var WRITEOUT_CACHE = 'writeout-shell-v20261130e';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
@@ -27,7 +27,7 @@ var WRITEOUT_SHELL = [
   'collab-kd.js?v=20261021',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261130b',
+  'keydown-doc.js?v=20261130c',
   'favicon.svg',
   'favicon-96.png',
   'apple-touch-icon.png',

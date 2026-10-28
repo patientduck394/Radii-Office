@@ -66,7 +66,7 @@
     // Short notices for OpenDB's {{templates}}, so Writeout and Bitbook show what they mean!
     const NOTICES = {
         'stub': '🌱 This is a stub: it could be expanded!', 'more citations': '📚 This needs more sources!', 'unreferenced': '❓ This does not cite any sources yet!',
-        'file improvement': '🖼️ This file could be improved!', 'cleanup': '🧹 This may need cleanup!', 'copy edit': '✏️ This may need copy editing!',
+        'file improvement': '🖼️ This file could be improved!', 'images needed': '📷 This needs images!', 'image needed': '📷 This needs images!', 'cleanup': '🧹 This may need cleanup!', 'copy edit': '✏️ This may need copy editing!',
         'too technical': '🔬 This may be too technical for most readers!', 'outdated': '⏳ Parts of this may be out of date!', 'disputed': '⚠️ The accuracy of this is disputed!',
         'expand': '➕ This section needs more detail!', 'orphan': '🔗 No other entries link here yet!', 'in use': '🚧 This is being written right now!',
         'merge': '🔀 It has been suggested that this be merged with another entry!',
