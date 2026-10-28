@@ -296,6 +296,28 @@
         const paras = [].filter.call(ed.childNodes, function (n) { return (n.textContent || '').trim(); }).length;
         return { words: words, chars: chars, charsNoSpace: charsNoSpace, paras: paras, read: Math.max(1, Math.round(words / 230)) };
     }
+    // --- Keydown: Un-format shows every tag as plain text, so formatting mistakes are easy to spot;
+    // Re-format formats the whole page again and checks it for tags that could not be formatted! ---
+    function kdCanvas() { return document.getElementById('wysiwyg-canvas'); }
+    function kdAfterChange() {
+        try { if (typeof kdHydrateInteractions === 'function') kdHydrateInteractions(); } catch (e) {}
+        try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {}
+        try { if (typeof kdRenderOutline === 'function') kdRenderOutline(); } catch (e) {}
+    }
+    function unformatDoc() {
+        if (!window.kdDoc || !kdCanvas()) return;
+        const n = kdDoc.unformat(kdCanvas());
+        kdAfterChange();
+        OS.toast(n ? 'Un-formatted ' + n + ' piece' + (n === 1 ? '' : 's') + '! Fix any mistakes, then press Re-format!' : 'There is no Keydown formatting on this page!');
+    }
+    function reformatDoc() {
+        if (!window.kdDoc || !kdCanvas()) return;
+        const r = kdDoc.reformat(kdCanvas());
+        kdAfterChange();
+        if (!r.problems.length) { OS.toast('Formatted the whole page, and every Keydown tag checks out!'); return; }
+        OS.dialog('Keydown check', '<p class="os-dlg-text">' + r.problems.length + ' tag' + (r.problems.length === 1 ? ' could' : 's could') + ' not be formatted! They are underlined in red on the page. A closing tag may be missing or mistyped:</p><ul class="os-dlg-text" style="max-height:260px;overflow:auto;margin:0;padding-left:20px">' +
+            r.problems.slice(0, 50).map(function (p) { return '<li><code>' + OS.esc(p.tag) + '</code> in “' + OS.esc(p.line) + '”</li>'; }).join('') + '</ul>', [{ label: 'Got it!', primary: true, value: true }]);
+    }
     function wordCount() {
         const s = stats();
         const row = function (a, b) { return '<tr><td>' + a + '</td><td><b>' + b.toLocaleString() + '</b></td></tr>'; };
@@ -781,6 +803,10 @@
                 { label: 'Proofing', items: [
                     { big: true, icon: 'numbers', label: 'Word\nCount', run: wordCount },
                     { big: true, icon: 'search', label: 'Find &\nReplace', run: function () { findDialog(true); } }
+                ] },
+                { label: 'Keydown', items: [
+                    { big: true, icon: 'code', label: 'Un-\nformat', title: 'Show every Keydown tag as plain text, so formatting mistakes are easy to spot!', run: unformatDoc },
+                    { big: true, icon: 'check', label: 'Re-\nformat', title: 'Format the whole page again and check it for tags that could not be formatted!', run: reformatDoc }
                 ] },
                 { label: 'Annotator', items: [
                     { big: true, icon: 'annotate', label: 'Annotator', title: 'A pen tray: pick a pen and a color, then select text to mark it! Notes and a list of every mark too!', run: function () { if (window.WriteoutAnnotator) window.WriteoutAnnotator.toggle(); }, checked: function () { return !!(window.WriteoutAnnotator && window.WriteoutAnnotator.isOn()); } },

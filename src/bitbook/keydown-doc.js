@@ -30,7 +30,7 @@
         ['!#A#','#','span','aero-tag-chip tag-chip-a'], ['!#G#','#','span','aero-tag-chip tag-chip-g'], ['!#O#','#','span','aero-tag-chip tag-chip-o'], ['!#R#','#','span','aero-tag-chip tag-chip-r'], ['!#PR#','#','span','aero-tag-chip tag-chip-pr'], ['!#PK#','#','span','aero-tag-chip tag-chip-pk'],
         ['!#Y#','#','span','aero-tag-chip tag-chip-y'], ['!#SL#','#','span','aero-tag-chip tag-chip-sl'], ['#C#','#','span','gel-bubble-chip gel-chip-cyan'], ['#O#','#','span','gel-bubble-chip gel-chip-orange'], ['#G#','#','span','gel-bubble-chip gel-chip-green'], ['#R#','#','span','gel-bubble-chip gel-chip-red'],
         ['#PR#','#','span','gel-bubble-chip gel-chip-purple'], ['#PK#','#','span','gel-bubble-chip gel-chip-pink'], ['#Y#','#','span','gel-bubble-chip gel-chip-yellow'], ['#B#','#','span','gel-bubble-chip gel-chip-blue'], ['#L#','#','span','gel-bubble-chip gel-chip-lime'], ['#T#','#','span','gel-bubble-chip gel-chip-teal'],
-        ['#GL#','#','span','gel-bubble-chip gel-chip-gold'], ['#SL#','#','span','gel-bubble-chip gel-chip-slate'], ['#W#','#','span','gel-bubble-chip gel-chip-white'], ['#BK#','#','span','gel-bubble-chip gel-chip-black'], ['#FG#','#','span','gel-bubble-chip gel-chip-fog'], ['#TU#','#','span','gel-bubble-chip gel-chip-turquoise'],
+        ['#GL#','#','span','gel-bubble-chip gel-chip-gold'], ['#SL#','#','span','gel-bubble-chip gel-chip-slate'], ['#W#','#','span','gel-bubble-chip gel-chip-white'], ['#BK#','#','span','gel-bubble-chip gel-chip-black'], ['#FG#','#','span','gel-bubble-chip gel-chip-fog'], ['#TU#','#','span','gel-bubble-chip gel-chip-turquoise'], ['%C%','%','span','gel-pill-chip gel-pill-cyan'], ['%O%','%','span','gel-pill-chip gel-pill-orange'], ['%G%','%','span','gel-pill-chip gel-pill-green'], ['%R%','%','span','gel-pill-chip gel-pill-red'], ['%PR%','%','span','gel-pill-chip gel-pill-purple'], ['%PK%','%','span','gel-pill-chip gel-pill-pink'], ['%Y%','%','span','gel-pill-chip gel-pill-yellow'], ['%B%','%','span','gel-pill-chip gel-pill-blue'], ['%L%','%','span','gel-pill-chip gel-pill-lime'], ['%T%','%','span','gel-pill-chip gel-pill-teal'], ['%GL%','%','span','gel-pill-chip gel-pill-gold'], ['%SL%','%','span','gel-pill-chip gel-pill-slate'], ['%W%','%','span','gel-pill-chip gel-pill-white'], ['%BK%','%','span','gel-pill-chip gel-pill-black'], ['%FG%','%','span','gel-pill-chip gel-pill-fog'], ['%TU%','%','span','gel-pill-chip gel-pill-turquoise'],
         ['~WD~','~WD~','span','gel-chip-waterdrop'], ['~SF~','~SF~','span','gel-chip-solarflare'], ['~AW~','~AW~','span','gel-chip-aurorawave'], ['~FN~','~FN~','span','applet-foldout-tab'], ['~TS~','~TS~','span','applet-aqua-switch'], ['~SM~','~SM~','span','applet-glass-stamp'],
         ['~TB~','~TB~','span','applet-state-button state-green'], ['~VD~','~VD~','span','applet-volume-dial'], ['~BC~','~BC~','span','applet-battery-cell'], ['~CD~','~CD~','span','applet-calendar-desk'], ['~SR~','~SR~','span','applet-star-rating'], ['~CC~','~CC~','span','applet-counter-badge'],
         ['~LK~','~LK~','span','applet-security-latch'], ['~PR~','~PR~','span','applet-playback-ribbon'], ['~CR~','~CR~','span','applet-cpu-gauge'], ['~SI~','~SI~','span','applet-stepper-mesh'], ['~MP~','~MP~','span','effect-mercury-pearl'], ['~PG~','~PG~','span','effect-prism-refract'],
@@ -125,7 +125,12 @@
                     if (end === -1) break;
                     const body = str.slice(at + open.length, end).trim();
                     if (!body) { at = str.indexOf(open, at + open.length); continue; }
-                    str = str.slice(0, at) + stash('<' + tag + (cls ? ' class="' + cls + '" spellcheck="false"' : '') + '>\u0002' + triggers(body) + '\u0003</' + tag + '>') + str.slice(end + close.length);
+                    const html = /aero-duplex-input-chassis/.test(cls)
+                        // duplex chips: every | starts another box
+                        ? '<span class="' + cls + '" spellcheck="false">' + (body.split('|').length < 2 ? body.split('|').concat(['']) : body.split('|')).map((t, i, all) =>
+                            '<span class="' + (i < all.length - 1 ? 'input-left' : 'input-right') + '">\u0002' + (triggers(t.trim()) || '\u200B') + '\u0003</span>').join('') + '</span>'
+                        : '<' + tag + (cls ? ' class="' + cls + '" spellcheck="false"' : '') + '>\u0002' + triggers(body) + '\u0003</' + tag + '>';
+                    str = str.slice(0, at) + stash(html) + str.slice(end + close.length);
                     at = str.indexOf(open);
                 }
             });
@@ -178,6 +183,7 @@
                 continue;
             }
             if (/^\$\$[\s\S]*\$\$$/.test(t)) { out.push(mathHtml(t.slice(2, -2).trim(), true)); continue; }
+            if (/^::[a-z]+(\{[^}]*\})?$/.test(t) && blockFromLine(t)) { out.push(blockFromLine(t)); continue; }
             out.push('<div>' + inline(t, opts) + '</div>');
         }
         endList();
@@ -219,7 +225,11 @@
             const style = el.classList.contains('an-s-ul') ? '#_' : el.classList.contains('an-s-st') ? '#~' : (Array.from(el.classList).some((c) => /^an-s-/.test(c)) ? null : '##');
             return code && style ? '#' + code + '#' + kids() + style : kids();
         }
+        // the editor's own line styles (a bullet's or heading's inner span) are part of the line, not a tag
+        if (/^(header-[123]|mega-header|bulleted-list|blockquote-list)$/.test(String(el.className).trim())) return kids();
         const d = el.className ? BY_CLASS.get(classKey(el.className)) : null;
+        // duplex chips come back as ~DH-B~one|two|three~
+        if (d && el.classList.contains('aero-duplex-input-chassis')) return d[0] + Array.from(el.children).map((b) => b.textContent.replace(/\u200B/g, '').trim()).join('|') + d[1];
         if (d && d[2] === 'span') {
             const label = el.getAttribute('data-label') || (el.querySelector('span') && !/^(gel-|aero-tag|spark|liquid|glossy|cyber|embossed)/.test(d[3]) ? el.querySelector('span').textContent : el.textContent);
             return d[0] + String(label).replace(/​/g, '').trim() + d[1];
@@ -247,6 +257,7 @@
             if (node.nodeType !== 1) return;
             const el = node, tag = el.tagName;
             if (el.classList.contains('kd-meta') || /^(SCRIPT|STYLE|TEMPLATE)$/.test(tag)) return;
+            if (el.matches(BLOCK_SEL) && !el.parentElement.closest(BLOCK_SEL)) { const bk = blockOf(el); if (bk) { push(blockLine(bk)); return; } }
             if (el.hasAttribute('data-kd-tpl') && el.classList.contains('kd-tpl-block')) { push('{{' + el.getAttribute('data-kd-tpl') + '}}'); return; }
             if (el.classList.contains('kd-math') && el.getAttribute('data-display') === '1') { push('$$' + (el.getAttribute('data-tex') || '') + '$$'); return; }
             if (el.hasAttribute('data-kd-media')) {
@@ -447,15 +458,240 @@
         return true;
     }
 
+    // ::name{your text}: every block takes your own text (| splits a title from its text, or one line from the next)!
+    const KD_BLOCK_BOXES = { aqua: ['', '🌊 Aqua notes...'], emerald: ['aqua-emerald-box', '🌿 Eco logs...'], amber: ['aqua-amber-box', '☀️ Highlights...'], crimson: ['aqua-crimson-box', '🚨 Urgent tasks...'], amethyst: ['aqua-amethyst-box', '🔮 Creative drafts...'] };
+    const KD_BLOCK_PANELS = { gsky: ['panel-sky', '🔹 SKY COMPONENT', 'Sky log notes...'], gemerald: ['panel-emerald', '🌿 ECO COMPONENT', 'Organic project logs...'], gamber: ['panel-amber', '☀️ AMBER MATRIX', 'Highlights...'], gcrimson: ['panel-crimson', '🚨 ALERT MANIFEST', 'Urgent warnings...'] };
+    function kdBlockMarkup(name, data, fmt) {
+        const parts = data === undefined || data === null ? [] : String(data).split('|');
+        const f = (i, dflt) => fmt(parts[i] !== undefined && parts[i].trim() !== '' ? parts[i].trim() : dflt);
+        const lines = (dflt) => (parts.length ? parts : dflt).map((t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')).join('\n');
+        if (KD_BLOCK_BOXES[name]) return '<div class="aqua-aero-box' + (KD_BLOCK_BOXES[name][0] ? ' ' + KD_BLOCK_BOXES[name][0] : '') + '"><div class="aqua-box-content">' + f(0, KD_BLOCK_BOXES[name][1]) + '</div></div>';
+        if (KD_BLOCK_PANELS[name]) return '<div class="aero-glass-panel ' + KD_BLOCK_PANELS[name][0] + '"><div class="glass-panel-header"><span>' + f(0, KD_BLOCK_PANELS[name][1]) + '</span></div><p class="glass-panel-content">' + f(1, KD_BLOCK_PANELS[name][2]) + '</p></div>';
+        switch (name) {
+            case 'glass': return '<div class="aero-glass-block">' + f(0, 'Glass Header') + '</div>';
+            case 'bubble': return '<span class="aqua-bubble-text">' + f(0, 'Liquid Stream') + '</span>';
+            case 'alert': return '<div class="tactile-alert-plate"><div class="alert-icon-orb">!</div> ' + f(0, '⚠️ CRITICAL WARNING SYSTEM INITIALIZED') + '</div>';
+            case 'media': return '<div class="media-track-wrap"><span class="media-track-text">' + f(0, 'NOW PLAYING: Track_Audio_Stream.wav') + '</span><div class="media-control-orb"></div></div>';
+            case 'foldout': return '<div class="aero-foldout-panel"><div class="foldout-panel-header"><div class="foldout-arrow-orb">▲</div><div class="foldout-panel-title-input">' + f(0, 'TITLE') + '</div></div><div class="foldout-panel-content"><p>' + f(1, 'TEXT') + '</p></div></div>';
+            case 'divider': return '<div class="aero-liquid-divider"></div>';
+            case 'code': return '<div class="writedown-code-block"><div class="code-block-header"><span>CODE SPEC</span></div><pre class="code-block-content">' + lines(['// Write text lines here...']) + '</pre></div>';
+            case 'console': return '<div class="writedown-console-block"><div class="console-block-header"><span>⚠️ SYSTEM DEBUG CONSOLE</span></div><pre class="console-block-content">' + lines(['error: Undefined reference tracking index bounds fault.']) + '</pre></div>';
+            case 'diff': return '<div class="writedown-diff-block"><div class="diff-row-content">' + (parts.length ? parts : ['+ function initializeWorkspace() {', '- function setupOldEngine() {']).map((t) => { t = t.trim(); return '<p' + (t[0] === '+' ? ' class="diff-add"' : t[0] === '-' ? ' class="diff-del"' : '') + '>' + fmt(t) + '</p>'; }).join('') + '</div></div>';
+            case 'horizon': return '<div class="writedown-horizon-block"><div class="horizon-pitch-line"></div></div>';
+            case 'waypoint': return '<div class="writedown-waypoint-block"><div class="waypoint-block-header"><span>🛰️ FLIGHT WAYPOINT MONITOR</span></div><div class="waypoint-block-content">' + f(0, 'NAV: WP_01 // COORD: 34.1803° N, 118.3090° W // ALT: ~2,400 FT') + '</div></div>';
+            case 'entry': return '<div class="writedown-journal-entry"><div class="journal-entry-content"><p>' + f(0, 'Ring binder entry...') + '</p></div></div>';
+            case 'draw': return '<div class="writedown-code-block"><div class="code-block-header"><span>SKETCHPAD</span></div><pre class="code-block-content">🎨 Sketchpad lives in Writeout!</pre></div>';
+            default: return null;
+        }
+    }
+    // The other way: a block on the page -> ['glass', ['My heading']] (null when it is not a block)
+    function blockOf(el) {
+        if (!el || el.nodeType !== 1) return null;
+        const c = el.classList;
+        const txt = (sel) => { const x = el.querySelector(sel); return x ? kidsText(x).replace(/\s+/g, ' ').trim() : ''; };
+        const raw = (sel) => { const x = el.querySelector(sel); return x ? x.textContent.replace(/\n$/, '').split('\n') : []; };
+        if (c.contains('aero-glass-block')) return ['glass', [kidsText(el).replace(/[\s\u200B]+/g, ' ').trim()]];
+        if (c.contains('aqua-bubble-text')) return ['bubble', [kidsText(el).trim()]];
+        if (c.contains('tactile-alert-plate')) { const k = el.cloneNode(true); k.querySelectorAll('.alert-icon-orb').forEach((o) => o.remove()); return ['alert', [kidsText(k).replace(/\s+/g, ' ').trim()]]; }
+        if (c.contains('media-track-wrap')) return ['media', [txt('.media-track-text')]];
+        if (c.contains('aqua-aero-box')) return [Object.keys(KD_BLOCK_BOXES).find((k) => KD_BLOCK_BOXES[k][0] && c.contains(KD_BLOCK_BOXES[k][0])) || 'aqua', [txt('.aqua-box-content')]];
+        if (c.contains('aero-glass-panel')) return [Object.keys(KD_BLOCK_PANELS).find((k) => c.contains(KD_BLOCK_PANELS[k][0])) || 'gsky', [txt('.glass-panel-header'), txt('.glass-panel-content')]];
+        if (c.contains('aero-foldout-panel')) return ['foldout', [txt('.foldout-panel-title-input'), txt('.foldout-panel-content')]];
+        if (c.contains('aero-liquid-divider')) return ['divider', []];
+        if (c.contains('writedown-code-block')) return /SKETCH/i.test(txt('.code-block-header')) ? ['draw', []] : ['code', raw('.code-block-content')];
+        if (c.contains('writedown-console-block')) return ['console', raw('.console-block-content')];
+        if (c.contains('writedown-diff-block')) return ['diff', Array.from(el.querySelectorAll('.diff-row-content p')).map((p) => kidsText(p).trim())];
+        if (c.contains('writedown-horizon-block')) return ['horizon', []];
+        if (c.contains('writedown-waypoint-block')) return ['waypoint', [txt('.waypoint-block-content')]];
+        if (c.contains('writedown-journal-entry')) return ['entry', [txt('.journal-entry-content')]];
+        return null;
+    }
+    const BLOCK_SEL = '.aero-glass-block, .aqua-bubble-text, .tactile-alert-plate, .media-track-wrap, .aqua-aero-box, .aero-glass-panel, .aero-foldout-panel, .aero-liquid-divider, .writedown-code-block, .writedown-console-block, .writedown-diff-block, .writedown-horizon-block, .writedown-waypoint-block, .writedown-journal-entry';
+    const blockLine = (b) => '::' + b[0] + (b[1].length && b[0] !== 'draw' ? '{' + b[1].map((t) => String(t).replace(/[{}|]/g, ' ')).join('|') + '}' : '');
+    const blockFromLine = (line) => { const m = /^\s*::([a-z]+)(?:\{([^}]*)\})?\s*$/.exec(line); return m ? kdBlockMarkup(m[1], m[2], (t) => inline(t, { notes: {} })) : null; };
+
+    /* ---------- Un-format and Re-format a whole document ---------- */
+    // Un-format turns every piece of Keydown formatting back into the tags that make it, so mistakes are easy to see.
+    // Anything that isn't Keydown (pictures, tables, colors from the toolbar) stays exactly as it is!
+    const INLINE_KD = 'mark.an-hl, strong, b, em, i, code, .kd-math, a.kd-footnote-ref, a.kd-link, .kd-tpl, span[class]';
+    function isKeydownInline(el) {
+        if (el.closest('pre')) return false;
+        if (/^(STRONG|B|EM|I|CODE)$/.test(el.tagName) || el.classList.contains('kd-math') || el.classList.contains('kd-tpl')) return true;
+        if (el.tagName === 'MARK') return el.classList.contains('an-hl');
+        if (el.tagName === 'A') return el.classList.contains('kd-footnote-ref') || el.hasAttribute('data-kd-link');
+        return el.tagName === 'SPAN' && BY_CLASS.has(classKey(el.className)) && !/^(header-|mega-header|bulleted-list|blockquote-list)/.test(el.className);
+    }
+    function lineEl(text, like) {
+        const d = document.createElement('div');
+        if (like && like.hasAttribute('contenteditable')) d.setAttribute('contenteditable', 'true');
+        d.textContent = text;
+        if (!text) d.appendChild(document.createElement('br'));
+        return d;
+    }
+    function unformat(root) {
+        let n = 0;
+        root.querySelectorAll('a.kd-footnote-back').forEach((a) => a.remove());
+        // blocks become ::name{their text} lines (a live sketchpad stays as it is)
+        Array.from(root.querySelectorAll(BLOCK_SEL)).forEach((el) => {
+            if (!root.contains(el) || (el.parentElement && el.parentElement.closest(BLOCK_SEL)) || el.querySelector('canvas')) return;
+            const bk = blockOf(el);
+            if (bk) { el.replaceWith(lineEl(blockLine(bk), el.closest('[contenteditable]') || el)); n++; }
+        });
+        // whole lines first: headings, bullets, quotes, footnote texts, centered math, notices and media
+        root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
+            if (!root.contains(h) || h.closest('pre')) return;
+            const level = h.classList.contains('mega-header') ? 4 : Math.min(3, +h.tagName[1]);
+            h.replaceWith(lineEl('#'.repeat(level) + ' ' + kidsText(h).replace(/\n+/g, ' ').trim(), h)); n++;
+        });
+        // (a bullet typed inside a list makes a list inside the item: every item becomes its own "* " line)
+        const listLines = (ul) => {
+            const out = [];
+            Array.from(ul.children).filter((li) => li.tagName === 'LI').forEach((li) => {
+                const own = Array.from(li.childNodes).filter((c) => !(c.nodeType === 1 && /^(UL|OL)$/.test(c.tagName))).map(inlineText).join('').replace(/[\n\u200B]+/g, ' ').trim();
+                if (own) out.push(lineEl('* ' + own, li));
+                Array.from(li.children).filter((c) => /^(UL|OL)$/.test(c.tagName)).forEach((sub) => out.push(...listLines(sub)));
+            });
+            return out;
+        };
+        root.querySelectorAll('ul.bulleted-list').forEach((ul) => {
+            if (!root.contains(ul)) return;
+            const lines = listLines(ul);
+            ul.replaceWith(...lines); n += lines.length;
+        });
+        root.querySelectorAll('blockquote.blockquote-list').forEach((q) => { if (root.contains(q)) { q.replaceWith(lineEl('> ' + kidsText(q).replace(/[\n​]+/g, ' ').trim(), q)); n++; } });
+        root.querySelectorAll('.kd-footnote-def').forEach((d) => {
+            if (!root.contains(d)) return;
+            const tag = d.querySelector('.kd-footnote-tag'), text = d.querySelector('.kd-footnote-text');
+            d.replaceWith(lineEl('[^' + (tag ? tag.textContent.trim() : d.id.replace(/^fn-/, '')) + ']: ' + (text ? kidsText(text).trim() : ''), d.parentElement === root ? d : d.parentElement)); n++;
+        });
+        root.querySelectorAll('.kd-math-display, [data-kd-tpl].kd-tpl-block, figure[data-kd-media]').forEach((el) => {
+            if (!root.contains(el)) return;
+            let t;
+            if (el.classList.contains('kd-math')) t = '$$' + (el.getAttribute('data-tex') || '') + '$$';
+            else if (el.hasAttribute('data-kd-tpl')) t = '{{' + el.getAttribute('data-kd-tpl') + '}}';
+            else { const cap = el.querySelector('figcaption'); const target = el.getAttribute('data-kd-media'); t = '![' + (cap && cap.textContent !== target ? cap.textContent.trim() : '') + '](' + target + ')'; }
+            el.replaceWith(lineEl(t, el)); n++;
+        });
+        // then everything inside the lines: chips, highlights, bold, math, links...
+        let again = true;
+        while (again) {
+            again = false;
+            Array.from(root.querySelectorAll(INLINE_KD)).forEach((el) => {
+                if (!root.contains(el) || !isKeydownInline(el)) return;
+                el.replaceWith(document.createTextNode(inlineText(el)));
+                n++; again = true;
+            });
+        }
+        root.normalize();
+        return n;
+    }
+
+    // Re-format: format the whole document again, then check it for tags that could not be formatted
+    const LEFTOVER = /!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
+    function reformat(root) {
+        let n = 0;
+        const blocks = Array.from(root.querySelectorAll('div, p')).filter((b) => !b.closest('pre, code, figure, [contenteditable="false"] [contenteditable="false"], .kd-math, .kd-tpl') &&
+            !Array.from(b.children).some((c) => LINE_BLOCK.test(c.tagName) || c.tagName === 'BR' && b.childNodes.length > 1 && c !== b.lastChild));
+        let list = null;
+        blocks.forEach((b) => {
+            const text = b.textContent.replace(/​/g, '');
+            let m;
+            const make = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; if (b.hasAttribute('contenteditable')) el.setAttribute('contenteditable', 'true'); return el; };
+            const takeRest = (el, prefixLen) => {
+                // move the line's own nodes in, dropping the "# " / "* " / "> " in front
+                let skip = prefixLen;
+                Array.from(b.childNodes).forEach((c) => {
+                    if (skip > 0 && c.nodeType === 3) {
+                        const v = c.nodeValue.replace(/^​+/, '');
+                        if (v.length <= skip) { skip -= v.length; return; }
+                        c.nodeValue = v.slice(skip); skip = 0;
+                    }
+                    el.appendChild(c);
+                });
+                return el;
+            };
+            if ((m = /^\s*(#{1,4})\s+\S/.exec(text))) {
+                const lvl = m[1].length;
+                b.replaceWith(takeRest(make(lvl === 4 ? 'h1' : 'h' + lvl, lvl === 4 ? 'mega-header' : 'header-' + lvl), text.indexOf(m[1]) + m[1].length + 1));
+                list = null; n++; return;
+            }
+            if ((m = /^\s*\*\s+\S/.exec(text))) {
+                const li = takeRest(make('li'), text.indexOf('*') + 2);
+                const prev = b.previousElementSibling;
+                if (list && prev === list) { list.appendChild(li); b.remove(); }
+                else { list = document.createElement('ul'); list.className = 'bulleted-list'; list.appendChild(li); b.replaceWith(list); }
+                n++; return;
+            }
+            list = null;
+            if ((m = /^\s*>\s+\S/.exec(text))) { b.replaceWith(takeRest(make('blockquote', 'blockquote-list'), text.indexOf('>') + 2)); n++; return; }
+            if ((m = /^\s*\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(text)) && !b.children.length) {
+                const d = document.createElement('div');
+                d.innerHTML = '<div class="kd-footnote-def" id="fn-' + slug(m[1]) + '"><span class="kd-footnote-tag">' + esc(m[1]) + '</span> <span class="kd-footnote-text">' + inline(m[2], { notes: {} }) + '</span></div>';
+                if (b.hasAttribute('contenteditable')) d.setAttribute('contenteditable', 'true');
+                b.replaceWith(d); n++; return;
+            }
+            if (!b.children.length && /^\s*::[a-z]+(\{[^}]*\})?\s*$/.test(text) && blockFromLine(text)) {
+                const tpl = document.createElement('template');
+                tpl.innerHTML = blockFromLine(text);
+                b.replaceWith(tpl.content); n++; return;
+            }
+            if (!b.children.length && ((m = /^\s*\$\$([\s\S]+)\$\$\s*$/.exec(text)) || (m = /^\s*\{\{([^{}]+)\}\}\s*$/.exec(text)) && !INLINE_TAGS[tplName(m[1])] || (m = /^\s*!\[([^\]]*)\]\(([^)\s]+)\)\s*$/.exec(text)))) {
+                const tpl = document.createElement('template');
+                tpl.innerHTML = textToHtml(text.trim(), { notes: {} });
+                b.replaceWith(tpl.content); n++; return;
+            }
+        });
+        // every text piece left: chips, highlights, bold, math, footnotes...
+        const SKIP_RE = 'code, pre, a, .kd-math, .kd-tpl, figure, [contenteditable="false"] [contenteditable="false"]';
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        const texts = [];
+        for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!(t.parentElement && t.parentElement.closest(SKIP_RE))) texts.push(t);
+        texts.forEach((t) => {
+            const text = t.nodeValue;
+            if (!/[#*=~`&$[{!]/.test(text)) return;
+            const html = inline(text, { notes: {} });
+            if (html === esc(text)) return;
+            const tpl = document.createElement('template');
+            tpl.innerHTML = html;
+            n += tpl.content.querySelectorAll('*').length ? 1 : 0;
+            t.parentNode.replaceChild(tpl.content, t);
+        });
+        return { formatted: n, problems: checkKeydown(root) };
+    }
+    // The check: tags still sitting in the text after formatting are mistakes (a missing closing tag, a typo...)
+    function checkKeydown(root) {
+        const problems = [];
+        const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        for (let t = walker.nextNode(); t; t = walker.nextNode()) {
+            if (t.parentElement && t.parentElement.closest('code, pre, .kd-math')) continue;
+            const re = new RegExp(LEFTOVER);
+            let m;
+            while ((m = re.exec(t.nodeValue))) {
+                const line = (t.parentElement && t.parentElement.closest('div, p, li, h1, h2, h3, blockquote') || t.parentElement || t).textContent.replace(/\s+/g, ' ').trim();
+                problems.push({ tag: m[0], line: line.slice(0, 90), node: t, start: m.index, end: m.index + m[0].length });
+            }
+        }
+        // underline them in place (without changing the document), until the next edit
+        try {
+            if (window.CSS && CSS.highlights && window.Highlight) {
+                const ranges = problems.map((p) => { const r = document.createRange(); r.setStart(p.node, p.start); r.setEnd(p.node, p.end); return r; });
+                CSS.highlights.set('kd-problem', new Highlight(...ranges));
+                const clear = () => { CSS.highlights.delete('kd-problem'); root.removeEventListener('input', clear); };
+                root.addEventListener('input', clear);
+            }
+        } catch (e) { /* older browsers just get the list */ }
+        return problems.map((p) => ({ tag: p.tag, line: p.line }));
+    }
+
     // How OpenDB's pieces look inside Writeout and Bitbook's editor
     if (typeof document !== 'undefined' && document.head && !document.getElementById('kd-doc-style')) {
         const st = document.createElement('style');
         st.id = 'kd-doc-style';
         st.textContent = '.kd-tpl{display:inline-block;padding:0 6px;border-radius:999px;font-size:.8em;font-style:italic;background:rgba(56,189,248,.14);color:#0369a1;user-select:none}' +
             '.kd-tpl-block{display:block;margin:6px 0;padding:8px 12px;border-radius:10px;border-left:6px solid #f28500;background:#fff9f2;color:#5b3a00;font-style:normal;font-size:.95em}' +
-            '.kd-figure{margin:10px 0;text-align:center}.kd-figure img,.kd-figure video{max-width:100%;border-radius:10px}.kd-figure audio{width:min(480px,100%)}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:4px}';
+            '.kd-figure{margin:10px 0;text-align:center}.kd-figure img,.kd-figure video{max-width:100%;border-radius:10px}.kd-figure audio{width:min(480px,100%)}::highlight(kd-problem){background-color:rgba(239,68,68,.25);text-decoration:wavy underline #dc2626}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:4px}';
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { parse, isKeydownText, formatLine, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
+    root.kdDoc = { parse, isKeydownText, formatLine, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -165,7 +165,7 @@
             if (/^\$\$[\s\S]*\$\$$/.test(t)) { flush(); out.push('<div class="tex-block">' + inline(t, notes) + '</div>'); continue; }
             // whole-line Keydown pieces stand on their own: ::blocks, headings and list items
             const hm = /^~(MH|H1|H2|H3)~(.*)~\1~$/.exec(t);
-            if (/^::[a-z]+$/.test(t) || hm || /^~(BUL|BQ)~.*~\1~$/.test(t)) {
+            if (/^::[a-z]+(\{[^}]*\})?$/.test(t) || hm || /^~(BUL|BQ)~.*~\1~$/.test(t)) {
                 flush();
                 const anchor = hm ? ' id="s-' + hm[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '"' : '';
                 out.push('<div class="kd-line"' + anchor + '>' + inline(t, notes) + '</div>');

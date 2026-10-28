@@ -14,11 +14,13 @@ infobox.Kind: Lightweight markup language
 infobox.File extensions: .kd and .kn
 infobox.Style: Frutiger Aero
 ---
-**Keydown** is the formatting language of [[radii-office|Radii Office]]. Instead of clicking buttons, you type short **tags** around your text, and the text turns into formatting: #G#glossy chips#, =B=gel orbs=B=, #Y#gel highlights##, **bold**, headings, lists and dozens of interactive "applets". Many of its looks come from the [[frutiger-aero|Frutiger Aero]] style.
+**Keydown** is the formatting language of [[radii-office|Radii Office]]. Instead of clicking buttons, you type short **tags** around your text, and the text turns into formatting: #G#glossy chips#, %B%gloss pills%, =B=gel orbs=B=, #Y#gel highlights##, **bold**, headings, lists and dozens of interactive "applets". Many of its looks come from the [[frutiger-aero|Frutiger Aero]] style. Every example below is drawn live, right on this page.
 
 ## How it works
 
 In Writeout and Bitbook, a tag turns into its formatting the moment you press **Space** after it, and pressing **Enter** at the end of a line formats every tag left on that line. In OpenDB, Phosphor and other apps, tags are drawn whenever the text is shown. Most tags wrap your text in an opening and a closing tag, such as `#R#` and `#`. Typing `\\` at the end of a formatted piece steps back out of it.
+
+Writeout and Bitbook can also **Un-format** a whole page, which turns all of its formatting back into tags so mistakes are easy to spot, and **Re-format** it, which formats everything again and underlines any tag that could not be formatted.
 
 Keydown text is saved in `.kd` files (Writeout documents and OpenDB entries) and `.kn` files (Bitbook notes), and those apps can open each other's files.
 
@@ -39,7 +41,6 @@ Start a line with one of these and a space:
 ## Gel highlights
 
 The first three tools of the Annotator, as tags: `#R#text##` is a highlight strip, `#R#text#_` a gel underline and `#R#text#~` a gel strike. They come in 13 colors:
-
 
 * `#R#` red: #R#highlight## #R#underline#_ #R#strike#~
 * `#O#` orange: #O#highlight## #O#underline#_ #O#strike#~
@@ -76,6 +77,27 @@ Glossy rounded chips, written `#color#text#`:
 * `#FG#text#` #FG#fog#
 * `#TU#text#` #TU#turquoise#
 
+## Gloss pills
+
+The Bubble Chips' pill-shaped sibling, with a glassy shine across the top, in the same 16 colors. Written `%color%text%`:
+
+* `%C%text%` %C%chip %
+* `%O%text%` %O%chip %
+* `%G%text%` %G%chip %
+* `%R%text%` %R%chip %
+* `%PR%text%` %PR%chip %
+* `%PK%text%` %PK%chip %
+* `%Y%text%` %Y%chip %
+* `%B%text%` %B%chip %
+* `%L%text%` %L%chip %
+* `%T%text%` %T%chip %
+* `%GL%text%` %GL%chip %
+* `%SL%text%` %SL%chip %
+* `%W%text%` %W%chip %
+* `%BK%text%` %BK%chip %
+* `%FG%text%` %FG%chip %
+* `%TU%text%` %TU%chip %
+
 ## Gel orbs
 
 Round glossy orbs, written `=color=text=color=`:
@@ -108,159 +130,754 @@ Tag chips with an exclamation mark in front, written `!#color#text#`:
 
 ## Text effects
 
-* `~G~text~G~` Gel green flash
-* `~U~text~U~` Liquid underline
-* `~B~text~B~` Glossy border badge
-* `~S~text~S~` Cyber glow spark
-* `~L~text~L~` Liquid text glow
-* `~M~text~M~` Reflected text block
-* `~E~text~E~` Embossed glass text
-* `~W~text~W~` Kinetic wave text
+* `~G~text~G~` Gel green flash: ~G~Sample~G~
+* `~U~text~U~` Liquid underline: ~U~Sample~U~
+* `~B~text~B~` Glossy border badge: ~B~Sample~B~
+* `~S~text~S~` Cyber glow spark: ~S~Sample~S~
+* `~L~text~L~` Liquid text glow: ~L~Sample~L~
+* `~M~text~M~` Reflected text block: ~M~Sample~M~
+* `~E~text~E~` Embossed glass text: ~E~Sample~E~
+* `~W~text~W~` Kinetic wave text: ~W~Sample~W~
 
 The older line tags `~H1~`, `~H2~`, `~H3~`, `~MH~`, `~BQ~` and `~BUL~` still work, but the line shortcuts above are easier.
 
 ## Applets
 
-Applets are small interactive widgets that you can click, like switches, dials and counters. Wrap a label in the tag:
+Applets are small interactive widgets: click the ones below to try them. Wrap a label in the tag:
 
-* `~FN~label~FN~` Foldout tab
-* `~TS~label~TS~` Aqua switch
-* `~SM~label~SM~` Glass stamp
-* `~TB~label~TB~` State button (green)
-* `~VD~label~VD~` Volume dial
-* `~BC~label~BC~` Battery cell
-* `~CD~label~CD~` Calendar desk
-* `~SR~label~SR~` Star rating
-* `~CC~label~CC~` Counter badge
-* `~LK~label~LK~` Security latch
-* `~PR~label~PR~` Playback ribbon
-* `~CR~label~CR~` CPU gauge
-* `~SI~label~SI~` Stepper mesh
-* `~ORB~label~ORB~` Hydro orb (blue)
-* `~SLS~label~SLS~` Lock slider
-* `~VM~label~VM~` Gadget clock
-* `~MT~label~MT~` Metal trigger
-* `~IC~label~IC~` Inset check
-* `~NO~label~NO~` Neon node (cyan)
-* `~LS~label~LS~` Latch toggle
-* `~TIM~label~TIM~` Gadget system clock
+* `~FN~label~FN~` Foldout tab: ~FN~Demo~FN~
+* `~TS~label~TS~` Aqua switch: ~TS~Demo~TS~
+* `~SM~label~SM~` Glass stamp: ~SM~Demo~SM~
+* `~TB~label~TB~` State button (green): ~TB~Demo~TB~
+* `~VD~label~VD~` Volume dial: ~VD~Demo~VD~
+* `~BC~label~BC~` Battery cell: ~BC~Demo~BC~
+* `~CD~label~CD~` Calendar desk: ~CD~Demo~CD~
+* `~SR~label~SR~` Star rating: ~SR~Demo~SR~
+* `~CC~label~CC~` Counter badge: ~CC~Demo~CC~
+* `~LK~label~LK~` Security latch: ~LK~Demo~LK~
+* `~PR~label~PR~` Playback ribbon: ~PR~Demo~PR~
+* `~CR~label~CR~` CPU gauge: ~CR~Demo~CR~
+* `~SI~label~SI~` Stepper mesh: ~SI~Demo~SI~
+* `~ORB~label~ORB~` Hydro orb (blue): ~ORB~Demo~ORB~
+* `~SLS~label~SLS~` Lock slider: ~SLS~Demo~SLS~
+* `~VM~label~VM~` Gadget clock: ~VM~Demo~VM~
+* `~MT~label~MT~` Metal trigger: ~MT~Demo~MT~
+* `~IC~label~IC~` Inset check: ~IC~Demo~IC~
+* `~NO~label~NO~` Neon node (cyan): ~NO~Demo~NO~
+* `~LS~label~LS~` Latch toggle: ~LS~Demo~LS~
+* `~TIM~label~TIM~` Gadget system clock: ~TIM~Demo~TIM~
 
 ## Effects
 
-* `~MP~text~MP~` Mercury pearl
-* `~PG~text~PG~` Prism refract
-* `~CB~text~CB~` Screen cavity
-* `~SR~text~SR~` Sunlight ray
-* `~OA~text~OA~` Abyssal plate
-* `~MM~text~MM~` Metallic mesh
-* `~FE~text~FE~` Fluid expand
-* `~MR~text~MR~` Metric cavity
-* `~PO~text~PO~` Pearl orb
-* `~LF~text~LF~` Lens flare
-* `~DS~text~DS~` Drop shadow window
-* `~GL~text~GL~` Glow tube
-* `~HB~text~HB~` Hardware bevel
-* `~IS~text~IS~` Screen segment
-* `~GC~text~GC~` Gel capsule
-* `~KO~text~KO~` Fluid orbit
-* `~XG~text~XG~` Xray glass
-* `~WL~text~WL~` Waveform line
-* `~PM~text~PM~` Plasma gel
-* `~WB~text~WB~` Water bubble
-* `~GLO~text~GLO~` Glow tracer
-* `~ST~text~ST~` Shimmer title
-* `~TL~text~TL~` Tinted lens
-* `~SL~text~SL~` Audio stream loop
-* `~BG~text~BG~` Biogel capsule
-* `~WR~text~WR~` Neon ribbon
+* `~MP~text~MP~` Mercury pearl: ~MP~Sample~MP~
+* `~PG~text~PG~` Prism refract: ~PG~Sample~PG~
+* `~CB~text~CB~` Screen cavity: ~CB~Sample~CB~
+* `~SR~text~SR~` Sunlight ray: ~SR~Sample~SR~
+* `~OA~text~OA~` Abyssal plate: ~OA~Sample~OA~
+* `~MM~text~MM~` Metallic mesh: ~MM~Sample~MM~
+* `~FE~text~FE~` Fluid expand: ~FE~Sample~FE~
+* `~MR~text~MR~` Metric cavity: ~MR~Sample~MR~
+* `~PO~text~PO~` Pearl orb: ~PO~Sample~PO~
+* `~LF~text~LF~` Lens flare: ~LF~Sample~LF~
+* `~DS~text~DS~` Drop shadow window: ~DS~Sample~DS~
+* `~GL~text~GL~` Glow tube: ~GL~Sample~GL~
+* `~HB~text~HB~` Hardware bevel: ~HB~Sample~HB~
+* `~IS~text~IS~` Screen segment: ~IS~Sample~IS~
+* `~GC~text~GC~` Gel capsule: ~GC~Sample~GC~
+* `~KO~text~KO~` Fluid orbit: ~KO~Sample~KO~
+* `~XG~text~XG~` Xray glass: ~XG~Sample~XG~
+* `~WL~text~WL~` Waveform line: ~WL~Sample~WL~
+* `~PM~text~PM~` Plasma gel: ~PM~Sample~PM~
+* `~WB~text~WB~` Water bubble: ~WB~Sample~WB~
+* `~GLO~text~GLO~` Glow tracer: ~GLO~Sample~GLO~
+* `~ST~text~ST~` Shimmer title: ~ST~Sample~ST~
+* `~TL~text~TL~` Tinted lens: ~TL~Sample~TL~
+* `~SL~text~SL~` Audio stream loop: ~SL~Sample~SL~
+* `~BG~text~BG~` Biogel capsule: ~BG~Sample~BG~
+* `~WR~text~WR~` Neon ribbon: ~WR~Sample~WR~
 
 ## Megachips, badges and droplets
 
 Tags that end with a single `~` come in color variants:
 
-* `~WD~text~WD~` Waterdrop
-* `~SF~text~SF~` Solarflare
-* `~AW~text~AW~` Aurorawave
-* `~WD-Y~text~` Droplet (amber)
-* `~WD-R~text~` Droplet (crimson)
-* `~WD-PK~text~` Droplet (fuchsia)
-* `~WD-PR~text~` Droplet (amethyst)
-* `~WD-O~text~` Droplet (tangerine)
-* `~WD-SL~text~` Droplet (slate)
-* `~PP-C~text~` Plasma (cyan)
-* `~PP-O~text~` Plasma (orange)
-* `~PP-R~text~` Plasma (crimson)
-* `~PP-L~text~` Plasma (lime)
-* `~GB-B~text~` Glass bracket (blue)
-* `~GB-PR~text~` Glass bracket (amethyst)
-* `~GB-PK~text~` Glass bracket (fuchsia)
-* `~GB-Y~text~` Glass bracket (amber)
-* `~CN-SL~text~` Circuit node (slate)
-* `~CN-T~text~` Circuit node (teal)
-* `~CN-GL~text~` Circuit node (gold)
-* `~CN-R~text~` Circuit node (ruby)
-* `~B-B~text~` Glass badge chip (sky)
-* `~B-G~text~` Glass badge chip (emerald)
-* `~B-O~text~` Glass badge chip (orange)
-* `~B-R~text~` Glass badge chip (crimson)
-* `~B-PR~text~` Glass badge chip (amethyst)
-* `~B-Y~text~` Glass badge chip (gold)
-* `~DH-B~text~` Duplex input chassis (sky)
-* `~DH-G~text~` Duplex input chassis (emerald)
-* `~DH-O~text~` Duplex input chassis (orange)
-* `~DH-PR~text~` Duplex input chassis (amethyst)
-* `~SH-B~text~` Swayed (sky)
-* `~SH-G~text~` Swayed (emerald)
-* `~SH-O~text~` Swayed (orange)
-* `~SH-PR~text~` Swayed (amethyst)
-* `~PH-B~text~` Pill variant (sky)
-* `~PH-G~text~` Pill variant (emerald)
-* `~PH-O~text~` Pill variant (orange)
-* `~PH-PR~text~` Pill variant (amethyst)
-* `~PC-Y~text~` Pastel (yellow)
-* `~PC-B~text~` Pastel (blue)
-* `~PC-G~text~` Pastel (green)
-* `~PC-PK~text~` Pastel (pink)
-* `~PC-PR~text~` Pastel (purple)
-* `~PC-O~text~` Pastel (orange)
-* `~DR-O~text~` Droplet ribbon (tangerine)
-* `~DR-Y~text~` Droplet ribbon (citrus)
-* `~DR-G~text~` Droplet ribbon (emerald)
-* `~DR-B~text~` Droplet ribbon (sapphire)
-* `~DR-PR~text~` Droplet ribbon (amethyst)
-* `~DR-PK~text~` Droplet ribbon (fuchsia)
-* `~DR-R~text~` Droplet ribbon (crimson)
-* `~DR-SL~text~` Droplet ribbon (slate)
-* `~MH~text~MH~` Mega header
+* `~WD~text~WD~` Waterdrop: ~WD~Sample~WD~
+* `~SF~text~SF~` Solarflare: ~SF~Sample~SF~
+* `~AW~text~AW~` Aurorawave: ~AW~Sample~AW~
+* `~WD-Y~text~` Droplet (amber): ~WD-Y~Sample~
+* `~WD-R~text~` Droplet (crimson): ~WD-R~Sample~
+* `~WD-PK~text~` Droplet (fuchsia): ~WD-PK~Sample~
+* `~WD-PR~text~` Droplet (amethyst): ~WD-PR~Sample~
+* `~WD-O~text~` Droplet (tangerine): ~WD-O~Sample~
+* `~WD-SL~text~` Droplet (slate): ~WD-SL~Sample~
+* `~PP-C~text~` Plasma (cyan): ~PP-C~Sample~
+* `~PP-O~text~` Plasma (orange): ~PP-O~Sample~
+* `~PP-R~text~` Plasma (crimson): ~PP-R~Sample~
+* `~PP-L~text~` Plasma (lime): ~PP-L~Sample~
+* `~GB-B~text~` Glass bracket (blue): ~GB-B~Sample~
+* `~GB-PR~text~` Glass bracket (amethyst): ~GB-PR~Sample~
+* `~GB-PK~text~` Glass bracket (fuchsia): ~GB-PK~Sample~
+* `~GB-Y~text~` Glass bracket (amber): ~GB-Y~Sample~
+* `~CN-SL~text~` Circuit node (slate): ~CN-SL~Sample~
+* `~CN-T~text~` Circuit node (teal): ~CN-T~Sample~
+* `~CN-GL~text~` Circuit node (gold): ~CN-GL~Sample~
+* `~CN-R~text~` Circuit node (ruby): ~CN-R~Sample~
+* `~B-B~text~` Glass badge chip (sky): ~B-B~Sample~
+* `~B-G~text~` Glass badge chip (emerald): ~B-G~Sample~
+* `~B-O~text~` Glass badge chip (orange): ~B-O~Sample~
+* `~B-R~text~` Glass badge chip (crimson): ~B-R~Sample~
+* `~B-PR~text~` Glass badge chip (amethyst): ~B-PR~Sample~
+* `~B-Y~text~` Glass badge chip (gold): ~B-Y~Sample~
+* `~SH-B~text~` Swayed (sky): ~SH-B~Sample~
+* `~SH-G~text~` Swayed (emerald): ~SH-G~Sample~
+* `~SH-O~text~` Swayed (orange): ~SH-O~Sample~
+* `~SH-PR~text~` Swayed (amethyst): ~SH-PR~Sample~
+* `~PH-B~text~` Pill variant (sky): ~PH-B~Sample~
+* `~PH-G~text~` Pill variant (emerald): ~PH-G~Sample~
+* `~PH-O~text~` Pill variant (orange): ~PH-O~Sample~
+* `~PH-PR~text~` Pill variant (amethyst): ~PH-PR~Sample~
+* `~PC-Y~text~` Pastel (yellow): ~PC-Y~Sample~
+* `~PC-B~text~` Pastel (blue): ~PC-B~Sample~
+* `~PC-G~text~` Pastel (green): ~PC-G~Sample~
+* `~PC-PK~text~` Pastel (pink): ~PC-PK~Sample~
+* `~PC-PR~text~` Pastel (purple): ~PC-PR~Sample~
+* `~PC-O~text~` Pastel (orange): ~PC-O~Sample~
+* `~DR-O~text~` Droplet ribbon (tangerine): ~DR-O~Sample~
+* `~DR-Y~text~` Droplet ribbon (citrus): ~DR-Y~Sample~
+* `~DR-G~text~` Droplet ribbon (emerald): ~DR-G~Sample~
+* `~DR-B~text~` Droplet ribbon (sapphire): ~DR-B~Sample~
+* `~DR-PR~text~` Droplet ribbon (amethyst): ~DR-PR~Sample~
+* `~DR-PK~text~` Droplet ribbon (fuchsia): ~DR-PK~Sample~
+* `~DR-R~text~` Droplet ribbon (crimson): ~DR-R~Sample~
+* `~DR-SL~text~` Droplet ribbon (slate): ~DR-SL~Sample~
+* `~MH~text~MH~` Mega header: ~MH~Sample~MH~
+
+## Duplex chips
+
+A row of joined boxes. Every `|` starts another box, so a duplex chip can have as many boxes as you like:
+
+* `~DH-B~First|Second|Third~` Duplex input chassis (sky): ~DH-B~First|Second|Third~
+* `~DH-G~First|Second|Third~` Duplex input chassis (emerald): ~DH-G~First|Second|Third~
+* `~DH-O~First|Second|Third~` Duplex input chassis (orange): ~DH-O~First|Second|Third~
+* `~DH-PR~First|Second|Third~` Duplex input chassis (amethyst): ~DH-PR~First|Second|Third~
 
 ## Developer, avionics and journal chips
 
-* `~FUNC~text~FUNC~` Function
-* `~VAR~text~VAR~` Variable
-* `~HEX~text~HEX~` Hex
-* `~STR~text~STR~` String
-* `~RS~text~RS~` Radar sweep
-* `~HD~text~HD~` Heading
-* `~AL~text~AL~` Altimeter
-* `~SG~text~SG~` Signal
-* `~DR~text~DR~` Date plate
-* `~MD~text~MD~` Mood
-* `~VO~text~VO~` Voice tag
-* `~WX~text~WX~` Weather
-* `~WS~text~WS~` Wax stamp
-* `~FT~text~FT~` Folder tab
-* `~PT~text~PT~` Progress capsule
-* `~MC~text~MC~` Digital counter
-* `~RD~text~RD~` Dot matrix
-* `~LL~text~ST~` Latch lock
+* `~FUNC~text~FUNC~` Function: ~FUNC~Sample~FUNC~
+* `~VAR~text~VAR~` Variable: ~VAR~Sample~VAR~
+* `~HEX~text~HEX~` Hex: ~HEX~Sample~HEX~
+* `~STR~text~STR~` String: ~STR~Sample~STR~
+* `~RS~text~RS~` Radar sweep: ~RS~Sample~RS~
+* `~HD~text~HD~` Heading: ~HD~Sample~HD~
+* `~AL~text~AL~` Altimeter: ~AL~Sample~AL~
+* `~SG~text~SG~` Signal: ~SG~Sample~SG~
+* `~DR~text~DR~` Date plate: ~DR~Sample~DR~
+* `~MD~text~MD~` Mood: ~MD~Sample~MD~
+* `~VO~text~VO~` Voice tag: ~VO~Sample~VO~
+* `~WX~text~WX~` Weather: ~WX~Sample~WX~
+* `~WS~text~WS~` Wax stamp: ~WS~Sample~WS~
+* `~FT~text~FT~` Folder tab: ~FT~Sample~FT~
+* `~PT~text~PT~` Progress capsule: ~PT~Sample~PT~
+* `~MC~text~MC~` Digital counter: ~MC~Sample~MC~
+* `~RD~text~RD~` Dot matrix: ~RD~Sample~RD~
+* `~LL~text~ST~` Latch lock: ~LL~Sample~ST~
 
 ## Blocks
 
-A line that is only `::name` becomes a whole block, such as a glass panel, a code box or a divider. There are 22: `::glass`, `::bubble`, `::alert`, `::media`, `::aqua`, `::code`, `::emerald`, `::amber`, `::crimson`, `::amethyst`, `::gsky`, `::gemerald`, `::gamber`, `::gcrimson`, `::foldout`, `::divider`, `::console`, `::diff`, `::horizon`, `::waypoint`, `::entry`, `::draw`.
+A line that is only `::name` becomes a whole block, such as a glass panel, a code box or a divider. Put your own text in curly braces after the name, like `::glass{Welcome aboard}`. Blocks with a title and a body take both, split by `|`, like `::foldout{Packing list|Socks, a map and snacks}`, and in `::code`, `::console` and `::diff` every `|` starts a new line.
+
+`::glass{Welcome aboard}`
+
+::glass{Welcome aboard}
+
+`::bubble{Floating note}`
+
+::bubble{Floating note}
+
+`::alert{Check your spelling!}`
+
+::alert{Check your spelling!}
+
+`::media{NOW PLAYING: Ocean Waves.wav}`
+
+::media{NOW PLAYING: Ocean Waves.wav}
+
+`::aqua{Ideas for the weekend}`
+
+::aqua{Ideas for the weekend}
+
+`::code{let total = 0|total = total + 1}`
+
+::code{let total = 0|total = total + 1}
+
+`::emerald{Garden plans}`
+
+::emerald{Garden plans}
+
+`::amber{Best moments}`
+
+::amber{Best moments}
+
+`::crimson{Due on Friday}`
+
+::crimson{Due on Friday}
+
+`::amethyst{Story drafts}`
+
+::amethyst{Story drafts}
+
+`::gsky{Sky notes|Clear skies all week}`
+
+::gsky{Sky notes|Clear skies all week}
+
+`::gemerald{Eco notes|Plant three trees}`
+
+::gemerald{Eco notes|Plant three trees}
+
+`::gamber{Highlights|The demo went well}`
+
+::gamber{Highlights|The demo went well}
+
+`::gcrimson{Warnings|Back up your files}`
+
+::gcrimson{Warnings|Back up your files}
+
+`::foldout{Packing list|Socks, a map and snacks}`
+
+::foldout{Packing list|Socks, a map and snacks}
+
+`::divider` (no text needed)
+
+::divider
+
+`::console{warning: low battery}`
+
+::console{warning: low battery}
+
+`::diff{+ added a new line|- removed an old one}`
+
+::diff{+ added a new line|- removed an old one}
+
+`::horizon` (no text needed)
+
+::horizon
+
+`::waypoint{NAV: HOME // ALT: 0 FT}`
+
+::waypoint{NAV: HOME // ALT: 0 FT}
+
+`::entry{Today I learned about Keydown.}`
+
+::entry{Today I learned about Keydown.}
+
+`::draw` (a drawing pad in Writeout)
+
+::draw
 
 ## Marketplace packs
 
-Writeout and Bitbook have a Marketplace where extra packs can be installed. Together they add 412 more styles, such as seasonal and themed chips.
+The Marketplace in Writeout and Bitbook adds packs of extra styles. Once a pack is installed, its tags work just like the ones above. OpenDB shows every pack, so here they all are:
+
+### Outline Glow Pack
+
+Six transparent chips with neon outline glows. Clean on any background.
+
+* `~OL~text~OL~` Outline Cyan: ~OL~Outline Cyan~OL~
+* `~OLM~text~OLM~` Outline Magenta: ~OLM~Outline Magenta~OLM~
+* `~OLV~text~OLV~` Outline Violet: ~OLV~Outline Violet~OLV~
+* `~OLE~text~OLE~` Outline Emerald: ~OLE~Outline Emerald~OLE~
+* `~OLA~text~OLA~` Outline Amber: ~OLA~Outline Amber~OLA~
+* `~OLR~text~OLR~` Outline Rose: ~OLR~Outline Rose~OLR~
+
+### Keydown Mega Pack
+
+Fifteen brand-new Keydown styles in one install! Gels, neons, stickers, keycaps and more — use the toolbar chips, the style picker, or type any trigger code!
+
+* `~SUN~text~SUN~` Sunset Gel: ~SUN~Sunset Gel~SUN~
+* `~FOAM~text~FOAM~` Ocean Foam: ~FOAM~Ocean Foam~FOAM~
+* `~GRAPE~text~GRAPE~` Grape Soda: ~GRAPE~Grape Soda~GRAPE~
+* `~MATCHA~text~MATCHA~` Matcha Cream: ~MATCHA~Matcha Cream~MATCHA~
+* `~GUM~text~GUM~` Bubblegum Pop: ~GUM~Bubblegum Pop~GUM~
+* `~LEMON~text~LEMON~` Lemon Drop: ~LEMON~Lemon Drop~LEMON~
+* `~NIGHT~text~NIGHT~` Midnight Neon: ~NIGHT~Midnight Neon~NIGHT~
+* `~CANDY~text~CANDY~` Cotton Candy: ~CANDY~Cotton Candy~CANDY~
+* `~LAVA~text~LAVA~` Lava Alert: ~LAVA~Lava Alert~LAVA~
+* `~FROST~text~FROST~` Frosted Glass: ~FROST~Frosted Glass~FROST~
+* `~GOLD~text~GOLD~` Gold Foil: ~GOLD~Gold Foil~GOLD~
+* `~MINT~text~MINT~` Mint Chip: ~MINT~Mint Chip~MINT~
+* `~UV~text~UV~` Ultraviolet: ~UV~Ultraviolet~UV~
+* `~KEY~text~KEY~` Typewriter Key: ~KEY~Typewriter Key~KEY~
+* `~STICK~text~STICK~` Sticker Peel: ~STICK~Sticker Peel~STICK~
+
+### Orange Ultrapack
+
+Fifty glossy orange highlights in one install! From ember deep to citrus light, plus gradient fusions!
+
+* `~OR1~text~OR1~` Orange 1: ~OR1~Orange 1~OR1~
+* `~OR2~text~OR2~` Orange 2: ~OR2~Orange 2~OR2~
+* `~OR3~text~OR3~` Orange 3: ~OR3~Orange 3~OR3~
+* `~OR4~text~OR4~` Orange 4: ~OR4~Orange 4~OR4~
+* `~OR5~text~OR5~` Orange 5: ~OR5~Orange 5~OR5~
+* `~OR6~text~OR6~` Orange 6: ~OR6~Orange 6~OR6~
+* `~OR7~text~OR7~` Orange 7: ~OR7~Orange 7~OR7~
+* `~OR8~text~OR8~` Orange 8: ~OR8~Orange 8~OR8~
+* `~OR9~text~OR9~` Orange 9: ~OR9~Orange 9~OR9~
+* `~OR10~text~OR10~` Orange 10: ~OR10~Orange 10~OR10~
+* `~OR11~text~OR11~` Orange 11: ~OR11~Orange 11~OR11~
+* `~OR12~text~OR12~` Orange 12: ~OR12~Orange 12~OR12~
+* `~OR13~text~OR13~` Orange 13: ~OR13~Orange 13~OR13~
+* `~OR14~text~OR14~` Orange 14: ~OR14~Orange 14~OR14~
+* `~OR15~text~OR15~` Orange 15: ~OR15~Orange 15~OR15~
+* `~OR16~text~OR16~` Orange 16: ~OR16~Orange 16~OR16~
+* `~OR17~text~OR17~` Orange 17: ~OR17~Orange 17~OR17~
+* `~OR18~text~OR18~` Orange 18: ~OR18~Orange 18~OR18~
+* `~OR19~text~OR19~` Orange 19: ~OR19~Orange 19~OR19~
+* `~OR20~text~OR20~` Orange 20: ~OR20~Orange 20~OR20~
+* `~OR21~text~OR21~` Orange 21: ~OR21~Orange 21~OR21~
+* `~OR22~text~OR22~` Orange 22: ~OR22~Orange 22~OR22~
+* `~OR23~text~OR23~` Orange 23: ~OR23~Orange 23~OR23~
+* `~OR24~text~OR24~` Orange 24: ~OR24~Orange 24~OR24~
+* `~OR25~text~OR25~` Orange 25: ~OR25~Orange 25~OR25~
+* `~OR26~text~OR26~` Orange 26: ~OR26~Orange 26~OR26~
+* `~OR27~text~OR27~` Orange 27: ~OR27~Orange 27~OR27~
+* `~OR28~text~OR28~` Orange 28: ~OR28~Orange 28~OR28~
+* `~OR29~text~OR29~` Orange 29: ~OR29~Orange 29~OR29~
+* `~OR30~text~OR30~` Orange 30: ~OR30~Orange 30~OR30~
+* `~OR31~text~OR31~` Orange 31: ~OR31~Orange 31~OR31~
+* `~OR32~text~OR32~` Orange 32: ~OR32~Orange 32~OR32~
+* `~OR33~text~OR33~` Orange 33: ~OR33~Orange 33~OR33~
+* `~OR34~text~OR34~` Orange 34: ~OR34~Orange 34~OR34~
+* `~OR35~text~OR35~` Orange 35: ~OR35~Orange 35~OR35~
+* `~OR36~text~OR36~` Orange 36: ~OR36~Orange 36~OR36~
+* `~OR37~text~OR37~` Orange 37: ~OR37~Orange 37~OR37~
+* `~OR38~text~OR38~` Orange 38: ~OR38~Orange 38~OR38~
+* `~OR39~text~OR39~` Orange 39: ~OR39~Orange 39~OR39~
+* `~OR40~text~OR40~` Orange 40: ~OR40~Orange 40~OR40~
+* `~OR41~text~OR41~` Orange 41: ~OR41~Orange 41~OR41~
+* `~OR42~text~OR42~` Orange 42: ~OR42~Orange 42~OR42~
+* `~OR43~text~OR43~` Orange 43: ~OR43~Orange 43~OR43~
+* `~OR44~text~OR44~` Orange 44: ~OR44~Orange 44~OR44~
+* `~OR45~text~OR45~` Orange 45: ~OR45~Orange 45~OR45~
+* `~OR46~text~OR46~` Orange 46: ~OR46~Orange 46~OR46~
+* `~OR47~text~OR47~` Orange 47: ~OR47~Orange 47~OR47~
+* `~OR48~text~OR48~` Orange 48: ~OR48~Orange 48~OR48~
+* `~OR49~text~OR49~` Orange 49: ~OR49~Orange 49~OR49~
+* `~OR50~text~OR50~` Orange 50: ~OR50~Orange 50~OR50~
+
+### Green Ultrapack
+
+Fifty glossy green highlights in one install! From neon lime to deep forest, plus gradient fusions!
+
+* `~GR1~text~GR1~` Green 1: ~GR1~Green 1~GR1~
+* `~GR2~text~GR2~` Green 2: ~GR2~Green 2~GR2~
+* `~GR3~text~GR3~` Green 3: ~GR3~Green 3~GR3~
+* `~GR4~text~GR4~` Green 4: ~GR4~Green 4~GR4~
+* `~GR5~text~GR5~` Green 5: ~GR5~Green 5~GR5~
+* `~GR6~text~GR6~` Green 6: ~GR6~Green 6~GR6~
+* `~GR7~text~GR7~` Green 7: ~GR7~Green 7~GR7~
+* `~GR8~text~GR8~` Green 8: ~GR8~Green 8~GR8~
+* `~GR9~text~GR9~` Green 9: ~GR9~Green 9~GR9~
+* `~GR10~text~GR10~` Green 10: ~GR10~Green 10~GR10~
+* `~GR11~text~GR11~` Green 11: ~GR11~Green 11~GR11~
+* `~GR12~text~GR12~` Green 12: ~GR12~Green 12~GR12~
+* `~GR13~text~GR13~` Green 13: ~GR13~Green 13~GR13~
+* `~GR14~text~GR14~` Green 14: ~GR14~Green 14~GR14~
+* `~GR15~text~GR15~` Green 15: ~GR15~Green 15~GR15~
+* `~GR16~text~GR16~` Green 16: ~GR16~Green 16~GR16~
+* `~GR17~text~GR17~` Green 17: ~GR17~Green 17~GR17~
+* `~GR18~text~GR18~` Green 18: ~GR18~Green 18~GR18~
+* `~GR19~text~GR19~` Green 19: ~GR19~Green 19~GR19~
+* `~GR20~text~GR20~` Green 20: ~GR20~Green 20~GR20~
+* `~GR21~text~GR21~` Green 21: ~GR21~Green 21~GR21~
+* `~GR22~text~GR22~` Green 22: ~GR22~Green 22~GR22~
+* `~GR23~text~GR23~` Green 23: ~GR23~Green 23~GR23~
+* `~GR24~text~GR24~` Green 24: ~GR24~Green 24~GR24~
+* `~GR25~text~GR25~` Green 25: ~GR25~Green 25~GR25~
+* `~GR26~text~GR26~` Green 26: ~GR26~Green 26~GR26~
+* `~GR27~text~GR27~` Green 27: ~GR27~Green 27~GR27~
+* `~GR28~text~GR28~` Green 28: ~GR28~Green 28~GR28~
+* `~GR29~text~GR29~` Green 29: ~GR29~Green 29~GR29~
+* `~GR30~text~GR30~` Green 30: ~GR30~Green 30~GR30~
+* `~GR31~text~GR31~` Green 31: ~GR31~Green 31~GR31~
+* `~GR32~text~GR32~` Green 32: ~GR32~Green 32~GR32~
+* `~GR33~text~GR33~` Green 33: ~GR33~Green 33~GR33~
+* `~GR34~text~GR34~` Green 34: ~GR34~Green 34~GR34~
+* `~GR35~text~GR35~` Green 35: ~GR35~Green 35~GR35~
+* `~GR36~text~GR36~` Green 36: ~GR36~Green 36~GR36~
+* `~GR37~text~GR37~` Green 37: ~GR37~Green 37~GR37~
+* `~GR38~text~GR38~` Green 38: ~GR38~Green 38~GR38~
+* `~GR39~text~GR39~` Green 39: ~GR39~Green 39~GR39~
+* `~GR40~text~GR40~` Green 40: ~GR40~Green 40~GR40~
+* `~GR41~text~GR41~` Green 41: ~GR41~Green 41~GR41~
+* `~GR42~text~GR42~` Green 42: ~GR42~Green 42~GR42~
+* `~GR43~text~GR43~` Green 43: ~GR43~Green 43~GR43~
+* `~GR44~text~GR44~` Green 44: ~GR44~Green 44~GR44~
+* `~GR45~text~GR45~` Green 45: ~GR45~Green 45~GR45~
+* `~GR46~text~GR46~` Green 46: ~GR46~Green 46~GR46~
+* `~GR47~text~GR47~` Green 47: ~GR47~Green 47~GR47~
+* `~GR48~text~GR48~` Green 48: ~GR48~Green 48~GR48~
+* `~GR49~text~GR49~` Green 49: ~GR49~Green 49~GR49~
+* `~GR50~text~GR50~` Green 50: ~GR50~Green 50~GR50~
+
+### Blue Ultrapack
+
+Fifty glossy blue highlights in one install! From electric cyan to deep navy, plus gradient fusions!
+
+* `~BL1~text~BL1~` Blue 1: ~BL1~Blue 1~BL1~
+* `~BL2~text~BL2~` Blue 2: ~BL2~Blue 2~BL2~
+* `~BL3~text~BL3~` Blue 3: ~BL3~Blue 3~BL3~
+* `~BL4~text~BL4~` Blue 4: ~BL4~Blue 4~BL4~
+* `~BL5~text~BL5~` Blue 5: ~BL5~Blue 5~BL5~
+* `~BL6~text~BL6~` Blue 6: ~BL6~Blue 6~BL6~
+* `~BL7~text~BL7~` Blue 7: ~BL7~Blue 7~BL7~
+* `~BL8~text~BL8~` Blue 8: ~BL8~Blue 8~BL8~
+* `~BL9~text~BL9~` Blue 9: ~BL9~Blue 9~BL9~
+* `~BL10~text~BL10~` Blue 10: ~BL10~Blue 10~BL10~
+* `~BL11~text~BL11~` Blue 11: ~BL11~Blue 11~BL11~
+* `~BL12~text~BL12~` Blue 12: ~BL12~Blue 12~BL12~
+* `~BL13~text~BL13~` Blue 13: ~BL13~Blue 13~BL13~
+* `~BL14~text~BL14~` Blue 14: ~BL14~Blue 14~BL14~
+* `~BL15~text~BL15~` Blue 15: ~BL15~Blue 15~BL15~
+* `~BL16~text~BL16~` Blue 16: ~BL16~Blue 16~BL16~
+* `~BL17~text~BL17~` Blue 17: ~BL17~Blue 17~BL17~
+* `~BL18~text~BL18~` Blue 18: ~BL18~Blue 18~BL18~
+* `~BL19~text~BL19~` Blue 19: ~BL19~Blue 19~BL19~
+* `~BL20~text~BL20~` Blue 20: ~BL20~Blue 20~BL20~
+* `~BL21~text~BL21~` Blue 21: ~BL21~Blue 21~BL21~
+* `~BL22~text~BL22~` Blue 22: ~BL22~Blue 22~BL22~
+* `~BL23~text~BL23~` Blue 23: ~BL23~Blue 23~BL23~
+* `~BL24~text~BL24~` Blue 24: ~BL24~Blue 24~BL24~
+* `~BL25~text~BL25~` Blue 25: ~BL25~Blue 25~BL25~
+* `~BL26~text~BL26~` Blue 26: ~BL26~Blue 26~BL26~
+* `~BL27~text~BL27~` Blue 27: ~BL27~Blue 27~BL27~
+* `~BL28~text~BL28~` Blue 28: ~BL28~Blue 28~BL28~
+* `~BL29~text~BL29~` Blue 29: ~BL29~Blue 29~BL29~
+* `~BL30~text~BL30~` Blue 30: ~BL30~Blue 30~BL30~
+* `~BL31~text~BL31~` Blue 31: ~BL31~Blue 31~BL31~
+* `~BL32~text~BL32~` Blue 32: ~BL32~Blue 32~BL32~
+* `~BL33~text~BL33~` Blue 33: ~BL33~Blue 33~BL33~
+* `~BL34~text~BL34~` Blue 34: ~BL34~Blue 34~BL34~
+* `~BL35~text~BL35~` Blue 35: ~BL35~Blue 35~BL35~
+* `~BL36~text~BL36~` Blue 36: ~BL36~Blue 36~BL36~
+* `~BL37~text~BL37~` Blue 37: ~BL37~Blue 37~BL37~
+* `~BL38~text~BL38~` Blue 38: ~BL38~Blue 38~BL38~
+* `~BL39~text~BL39~` Blue 39: ~BL39~Blue 39~BL39~
+* `~BL40~text~BL40~` Blue 40: ~BL40~Blue 40~BL40~
+* `~BL41~text~BL41~` Blue 41: ~BL41~Blue 41~BL41~
+* `~BL42~text~BL42~` Blue 42: ~BL42~Blue 42~BL42~
+* `~BL43~text~BL43~` Blue 43: ~BL43~Blue 43~BL43~
+* `~BL44~text~BL44~` Blue 44: ~BL44~Blue 44~BL44~
+* `~BL45~text~BL45~` Blue 45: ~BL45~Blue 45~BL45~
+* `~BL46~text~BL46~` Blue 46: ~BL46~Blue 46~BL46~
+* `~BL47~text~BL47~` Blue 47: ~BL47~Blue 47~BL47~
+* `~BL48~text~BL48~` Blue 48: ~BL48~Blue 48~BL48~
+* `~BL49~text~BL49~` Blue 49: ~BL49~Blue 49~BL49~
+* `~BL50~text~BL50~` Blue 50: ~BL50~Blue 50~BL50~
+
+### Poolside Ultrapack
+
+Fifty one-of-a-kind pool chips! Rings, scales, sails, stripes, seals and splashes — no two alike!
+
+* `~PU1~text~PU1~` Sunrise Frame: ~PU1~Sunrise Frame~PU1~
+* `~PU2~text~PU2~` Sunset Gel: ~PU2~Sunset Gel~PU2~
+* `~PU3~text~PU3~` Chlorine Neon: ~PU3~Chlorine Neon~PU3~
+* `~PU4~text~PU4~` Beach Bands: ~PU4~Beach Bands~PU4~
+* `~PU5~text~PU5~` Breaker Wave: ~PU5~Breaker Wave~PU5~
+* `~PU6~text~PU6~` Sun Pill: ~PU6~Sun Pill~PU6~
+* `~PU7~text~PU7~` Moonlit Abyss: ~PU7~Moonlit Abyss~PU7~
+* `~PU8~text~PU8~` Sea Foam: ~PU8~Sea Foam~PU8~
+* `~PU9~text~PU9~` Cabana Stripes: ~PU9~Cabana Stripes~PU9~
+* `~PU10~text~PU10~` Tideline Fusion: ~PU10~Tideline Fusion~PU10~
+* `~PU11~text~PU11~` Lifebuoy Ring: ~PU11~Lifebuoy Ring~PU11~
+* `~PU12~text~PU12~` Sand Dollar: ~PU12~Sand Dollar~PU12~
+* `~PU13~text~PU13~` Starfish Point: ~PU13~Starfish Point~PU13~
+* `~PU14~text~PU14~` Shell Rings: ~PU14~Shell Rings~PU14~
+* `~PU15~text~PU15~` Lap Lane: ~PU15~Lap Lane~PU15~
+* `~PU16~text~PU16~` Dive Bubbles: ~PU16~Dive Bubbles~PU16~
+* `~PU17~text~PU17~` Cannonball Splash: ~PU17~Cannonball Splash~PU17~
+* `~PU18~text~PU18~` Marco Echo: ~PU18~Marco Echo~PU18~
+* `~PU19~text~PU19~` Polo Seam: ~PU19~Polo Seam~PU19~
+* `~PU20~text~PU20~` Gutter Lip: ~PU20~Gutter Lip~PU20~
+* `~PU21~text~PU21~` Skimmer Mesh: ~PU21~Skimmer Mesh~PU21~
+* `~PU22~text~PU22~` Sunscreen Squeeze: ~PU22~Sunscreen Squeeze~PU22~
+* `~PU23~text~PU23~` Towel Cabana: ~PU23~Towel Cabana~PU23~
+* `~PU24~text~PU24~` Cooler Lid: ~PU24~Cooler Lid~PU24~
+* `~PU25~text~PU25~` Ice Pop Split: ~PU25~Ice Pop Split~PU25~
+* `~PU26~text~PU26~` Boardwalk Planks: ~PU26~Boardwalk Planks~PU26~
+* `~PU27~text~PU27~` Pier Silhouette: ~PU27~Pier Silhouette~PU27~
+* `~PU28~text~PU28~` Sailcloth: ~PU28~Sailcloth~PU28~
+* `~PU29~text~PU29~` Regatta Dots: ~PU29~Regatta Dots~PU29~
+* `~PU30~text~PU30~` Harbor Rope: ~PU30~Harbor Rope~PU30~
+* `~PU31~text~PU31~` Beacon Stripes: ~PU31~Beacon Stripes~PU31~
+* `~PU32~text~PU32~` Sandbar Ripple: ~PU32~Sandbar Ripple~PU32~
+* `~PU33~text~PU33~` Dune Cross: ~PU33~Dune Cross~PU33~
+* `~PU34~text~PU34~` Floatie Ring: ~PU34~Floatie Ring~PU34~
+* `~PU35~text~PU35~` Noodle Roll: ~PU35~Noodle Roll~PU35~
+* `~PU36~text~PU36~` Goggle Lens: ~PU36~Goggle Lens~PU36~
+* `~PU37~text~PU37~` Swim Sheen: ~PU37~Swim Sheen~PU37~
+* `~PU38~text~PU38~` Kickboard Grip: ~PU38~Kickboard Grip~PU38~
+* `~PU39~text~PU39~` Fin Kick: ~PU39~Fin Kick~PU39~
+* `~PU40~text~PU40~` Shoreline: ~PU40~Shoreline~PU40~
+* `~PU41~text~PU41~` Seashell Rays: ~PU41~Seashell Rays~PU41~
+* `~PU42~text~PU42~` Conch Lustre: ~PU42~Conch Lustre~PU42~
+* `~PU43~text~PU43~` Pearl Drop: ~PU43~Pearl Drop~PU43~
+* `~PU44~text~PU44~` Driftwood Grain: ~PU44~Driftwood Grain~PU44~
+* `~PU45~text~PU45~` Sea Glass: ~PU45~Sea Glass~PU45~
+* `~PU46~text~PU46~` Message Bottle: ~PU46~Message Bottle~PU46~
+* `~PU47~text~PU47~` Treasure Gold: ~PU47~Treasure Gold~PU47~
+* `~PU48~text~PU48~` Mermaid Scales: ~PU48~Mermaid Scales~PU48~
+* `~PU49~text~PU49~` Grayfin: ~PU49~Grayfin~PU49~
+* `~PU50~text~PU50~` Tower Stripes: ~PU50~Tower Stripes~PU50~
+
+### Dark Gel Chip Pack
+
+Sixteen midnight neon chips sharing one dark pill design — nothing else looks like these!
+
+* `~CPR~text~CPR~` Chip Red: ~CPR~Chip Red~CPR~
+* `~CPO~text~CPO~` Chip Orange: ~CPO~Chip Orange~CPO~
+* `~CPA~text~CPA~` Chip Amber: ~CPA~Chip Amber~CPA~
+* `~CPY~text~CPY~` Chip Yellow: ~CPY~Chip Yellow~CPY~
+* `~CPL~text~CPL~` Chip Lime: ~CPL~Chip Lime~CPL~
+* `~CPG~text~CPG~` Chip Green: ~CPG~Chip Green~CPG~
+* `~CPE~text~CPE~` Chip Emerald: ~CPE~Chip Emerald~CPE~
+* `~CPT~text~CPT~` Chip Teal: ~CPT~Chip Teal~CPT~
+* `~CPC~text~CPC~` Chip Cyan: ~CPC~Chip Cyan~CPC~
+* `~CPS~text~CPS~` Chip Sky: ~CPS~Chip Sky~CPS~
+* `~CPB~text~CPB~` Chip Blue: ~CPB~Chip Blue~CPB~
+* `~CPI~text~CPI~` Chip Indigo: ~CPI~Chip Indigo~CPI~
+* `~CPV~text~CPV~` Chip Violet: ~CPV~Chip Violet~CPV~
+* `~CPF~text~CPF~` Chip Fuchsia: ~CPF~Chip Fuchsia~CPF~
+* `~CPP~text~CPP~` Chip Pink: ~CPP~Chip Pink~CPP~
+* `~CPQ~text~CPQ~` Chip Slate: ~CPQ~Chip Slate~CPQ~
+
+### Blue Chip Pack
+
+Ten glossy blue highlight chips in ten shades — plus the wild Tideframe and Dotted outliers!
+
+* `~BP1~text~BP1~` Blue Tideframe: ~BP1~Blue Tideframe~BP1~
+* `~BP2~text~BP2~` Blue Highlighter: ~BP2~Blue Highlighter~BP2~
+* `~BP3~text~BP3~` Blue Deep: ~BP3~Blue Deep~BP3~
+* `~BP4~text~BP4~` Blue Light: ~BP4~Blue Light~BP4~
+* `~BP5~text~BP5~` Blue Bright: ~BP5~Blue Bright~BP5~
+* `~BP6~text~BP6~` Blue Ocean: ~BP6~Blue Ocean~BP6~
+* `~BP7~text~BP7~` Blue Sea: ~BP7~Blue Sea~BP7~
+* `~BP8~text~BP8~` Blue Sky: ~BP8~Blue Sky~BP8~
+* `~BP9~text~BP9~` Blue Dotted: ~BP9~Blue Dotted~BP9~
+* `~BP10~text~BP10~` Blue Ice: ~BP10~Blue Ice~BP10~
+
+### Pill Chip Pack
+
+Sixteen fully-rounded glossy highlight pills, spanning the whole rainbow!
+
+* `~PL1~text~PL1~` Pill Red: ~PL1~Pill Red~PL1~
+* `~PL2~text~PL2~` Pill Orange: ~PL2~Pill Orange~PL2~
+* `~PL3~text~PL3~` Pill Amber: ~PL3~Pill Amber~PL3~
+* `~PL4~text~PL4~` Pill Yellow: ~PL4~Pill Yellow~PL4~
+* `~PL5~text~PL5~` Pill Lime: ~PL5~Pill Lime~PL5~
+* `~PL6~text~PL6~` Pill Green: ~PL6~Pill Green~PL6~
+* `~PL7~text~PL7~` Pill Emerald: ~PL7~Pill Emerald~PL7~
+* `~PL8~text~PL8~` Pill Teal: ~PL8~Pill Teal~PL8~
+* `~PL9~text~PL9~` Pill Cyan: ~PL9~Pill Cyan~PL9~
+* `~PL10~text~PL10~` Pill Sky: ~PL10~Pill Sky~PL10~
+* `~PL11~text~PL11~` Pill Blue: ~PL11~Pill Blue~PL11~
+* `~PL12~text~PL12~` Pill Indigo: ~PL12~Pill Indigo~PL12~
+* `~PL13~text~PL13~` Pill Violet: ~PL13~Pill Violet~PL13~
+* `~PL14~text~PL14~` Pill Fuchsia: ~PL14~Pill Fuchsia~PL14~
+* `~PL15~text~PL15~` Pill Pink: ~PL15~Pill Pink~PL15~
+* `~PL16~text~PL16~` Pill Slate: ~PL16~Pill Slate~PL16~
+
+### Poolside Chip Pack
+
+Ten watery pool-party chips! Sunset splashes, chlorine glows, lifeguard stripes and deep-end neons.
+
+* `~PS1~text~PS1~` Poolside Tideframe: ~PS1~Poolside Tideframe~PS1~
+* `~PS2~text~PS2~` Sunset Splash: ~PS2~Sunset Splash~PS2~
+* `~PS3~text~PS3~` Chlorine Glow: ~PS3~Chlorine Glow~PS3~
+* `~PS4~text~PS4~` Beach Ball: ~PS4~Beach Ball~PS4~
+* `~PS5~text~PS5~` Wave Rider: ~PS5~Wave Rider~PS5~
+* `~PS6~text~PS6~` Sun Lounger: ~PS6~Sun Lounger~PS6~
+* `~PS7~text~PS7~` Deep End: ~PS7~Deep End~PS7~
+* `~PS8~text~PS8~` Foam Party: ~PS8~Foam Party~PS8~
+* `~PS9~text~PS9~` Lifeguard Stripes: ~PS9~Lifeguard Stripes~PS9~
+* `~PS10~text~PS10~` Cocktail Fusion: ~PS10~Cocktail Fusion~PS10~
+
+### Autumn Chip Pack
+
+Ten cozy fall chips! Pumpkin spice, cider glows, flannel stripes and bonfire neons.
+
+* `~AU1~text~AU1~` Harvest Frame: ~AU1~Harvest Frame~AU1~
+* `~AU2~text~AU2~` Pumpkin Spice: ~AU2~Pumpkin Spice~AU2~
+* `~AU3~text~AU3~` Cider Glow: ~AU3~Cider Glow~AU3~
+* `~AU4~text~AU4~` Candy Corn: ~AU4~Candy Corn~AU4~
+* `~AU5~text~AU5~` Falling Leaves: ~AU5~Falling Leaves~AU5~
+* `~AU6~text~AU6~` Golden Hour: ~AU6~Golden Hour~AU6~
+* `~AU7~text~AU7~` Bonfire Night: ~AU7~Bonfire Night~AU7~
+* `~AU8~text~AU8~` Morning Frost: ~AU8~Morning Frost~AU8~
+* `~AU9~text~AU9~` Flannel Stripes: ~AU9~Flannel Stripes~AU9~
+* `~AU10~text~AU10~` Orchard Fusion: ~AU10~Orchard Fusion~AU10~
+
+### Winter Chip Pack
+
+Ten frosty originals! Icicle drips, pine stitches, garnet facets and a sliding blizzard.
+
+* `~WN1~text~WN1~` Icicle Drip: ~WN1~Icicle Drip~WN1~
+* `~WN2~text~WN2~` Frost Etch: ~WN2~Frost Etch~WN2~
+* `~WN3~text~WN3~` Pine Stitch: ~WN3~Pine Stitch~WN3~
+* `~WN4~text~WN4~` Garnet Facet: ~WN4~Garnet Facet~WN4~
+* `~WN5~text~WN5~` Snowdrift Pill: ~WN5~Snowdrift Pill~WN5~
+* `~WN6~text~WN6~` Aurora Veil: ~WN6~Aurora Veil~WN6~
+* `~WN7~text~WN7~` Frozen Pond: ~WN7~Frozen Pond~WN7~
+* `~WN8~text~WN8~` Evergreen Seal: ~WN8~Evergreen Seal~WN8~
+* `~WN9~text~WN9~` Blizzard Swirl: ~WN9~Blizzard Swirl~WN9~
+* `~WN10~text~WN10~` Cranberry Frost: ~WN10~Cranberry Frost~WN10~
+
+### Fruit Chip Pack
+
+Twenty juicy fruit chips! Apple, mango, grape, berries, melons and more — fresh from the orchard.
+
+* `~FR1~text~FR1~` Apple Crunch: ~FR1~Apple Crunch~FR1~
+* `~FR2~text~FR2~` Mango Tango: ~FR2~Mango Tango~FR2~
+* `~FR3~text~FR3~` Grape Cluster: ~FR3~Grape Cluster~FR3~
+* `~FR4~text~FR4~` Strawberry Seeds: ~FR4~Strawberry Seeds~FR4~
+* `~FR5~text~FR5~` Blueberry Bloom: ~FR5~Blueberry Bloom~FR5~
+* `~FR6~text~FR6~` Orange Citrus: ~FR6~Orange Citrus~FR6~
+* `~FR7~text~FR7~` Lemon Zest: ~FR7~Lemon Zest~FR7~
+* `~FR8~text~FR8~` Lime Squeeze: ~FR8~Lime Squeeze~FR8~
+* `~FR9~text~FR9~` Cherry Shine: ~FR9~Cherry Shine~FR9~
+* `~FR10~text~FR10~` Peach Fuzz: ~FR10~Peach Fuzz~FR10~
+* `~FR11~text~FR11~` Pear Glow: ~FR11~Pear Glow~FR11~
+* `~FR12~text~FR12~` Plum Jewel: ~FR12~Plum Jewel~FR12~
+* `~FR13~text~FR13~` Kiwi Core: ~FR13~Kiwi Core~FR13~
+* `~FR14~text~FR14~` Pineapple Cross: ~FR14~Pineapple Cross~FR14~
+* `~FR15~text~FR15~` Watermelon Rind: ~FR15~Watermelon Rind~FR15~
+* `~FR16~text~FR16~` Banana Peel: ~FR16~Banana Peel~FR16~
+* `~FR17~text~FR17~` Coconut Split: ~FR17~Coconut Split~FR17~
+* `~FR18~text~FR18~` Raspberry Dot: ~FR18~Raspberry Dot~FR18~
+* `~FR19~text~FR19~` Blackberry Night: ~FR19~Blackberry Night~FR19~
+* `~FR20~text~FR20~` Pomegranate Ruby: ~FR20~Pomegranate Ruby~FR20~
+
+### Hacker Chip Pack
+
+Thirty original terminal chips! Phosphor prompts, matrix rain, CRT scanlines, alerts and mainframes.
+
+* `~HK1~text~HK1~` Phosphor Prompt: ~HK1~Phosphor Prompt~HK1~
+* `~HK2~text~HK2~` Matrix Rain: ~HK2~Matrix Rain~HK2~
+* `~HK3~text~HK3~` Amber Terminal: ~HK3~Amber Terminal~HK3~
+* `~HK4~text~HK4~` CRT Scanlines: ~HK4~CRT Scanlines~HK4~
+* `~HK5~text~HK5~` Red Alert: ~HK5~Red Alert~HK5~
+* `~HK6~text~HK6~` Hex Dump: ~HK6~Hex Dump~HK6~
+* `~HK7~text~HK7~` Root Access: ~HK7~Root Access~HK7~
+* `~HK8~text~HK8~` Ghost Shell: ~HK8~Ghost Shell~HK8~
+* `~HK9~text~HK9~` Cyber Ice: ~HK9~Cyber Ice~HK9~
+* `~HK10~text~HK10~` Kernel Panic: ~HK10~Kernel Panic~HK10~
+* `~HK11~text~HK11~` Null Pointer: ~HK11~Null Pointer~HK11~
+* `~HK12~text~HK12~` Bit Flip: ~HK12~Bit Flip~HK12~
+* `~HK13~text~HK13~` Firewall: ~HK13~Firewall~HK13~
+* `~HK14~text~HK14~` Darknet: ~HK14~Darknet~HK14~
+* `~HK15~text~HK15~` Packet Sniffer: ~HK15~Packet Sniffer~HK15~
+* `~HK16~text~HK16~` Overclock: ~HK16~Overclock~HK16~
+* `~HK17~text~HK17~` Memory Leak: ~HK17~Memory Leak~HK17~
+* `~HK18~text~HK18~` Zero Day: ~HK18~Zero Day~HK18~
+* `~HK19~text~HK19~` Backdoor: ~HK19~Backdoor~HK19~
+* `~HK20~text~HK20~` Cipher: ~HK20~Cipher~HK20~
+* `~HK21~text~HK21~` Daemon: ~HK21~Daemon~HK21~
+* `~HK22~text~HK22~` Fork Bomb: ~HK22~Fork Bomb~HK22~
+* `~HK23~text~HK23~` Segfault: ~HK23~Segfault~HK23~
+* `~HK24~text~HK24~` Uptime: ~HK24~Uptime~HK24~
+* `~HK25~text~HK25~` Latency: ~HK25~Latency~HK25~
+* `~HK26~text~HK26~` Mainframe: ~HK26~Mainframe~HK26~
+* `~HK27~text~HK27~` Punchcard: ~HK27~Punchcard~HK27~
+* `~HK28~text~HK28~` Turing Gold: ~HK28~Turing Gold~HK28~
+* `~HK29~text~HK29~` Quantum: ~HK29~Quantum~HK29~
+* `~HK30~text~HK30~` Sudo Make: ~HK30~Sudo Make~HK30~
+
+### Midnight Glass Chip Pack
+
+Sixteen frosted midnight-glass chips! Same rainbow soul as Dark Gel — all-new glass design with glowing color edges.
+
+* `~MG1~text~MG1~` Midnight Red: ~MG1~Midnight Red~MG1~
+* `~MG2~text~MG2~` Midnight Orange: ~MG2~Midnight Orange~MG2~
+* `~MG3~text~MG3~` Midnight Amber: ~MG3~Midnight Amber~MG3~
+* `~MG4~text~MG4~` Midnight Yellow: ~MG4~Midnight Yellow~MG4~
+* `~MG5~text~MG5~` Midnight Lime: ~MG5~Midnight Lime~MG5~
+* `~MG6~text~MG6~` Midnight Green: ~MG6~Midnight Green~MG6~
+* `~MG7~text~MG7~` Midnight Emerald: ~MG7~Midnight Emerald~MG7~
+* `~MG8~text~MG8~` Midnight Teal: ~MG8~Midnight Teal~MG8~
+* `~MG9~text~MG9~` Midnight Cyan: ~MG9~Midnight Cyan~MG9~
+* `~MG10~text~MG10~` Midnight Sky: ~MG10~Midnight Sky~MG10~
+* `~MG11~text~MG11~` Midnight Blue: ~MG11~Midnight Blue~MG11~
+* `~MG12~text~MG12~` Midnight Indigo: ~MG12~Midnight Indigo~MG12~
+* `~MG13~text~MG13~` Midnight Violet: ~MG13~Midnight Violet~MG13~
+* `~MG14~text~MG14~` Midnight Fuchsia: ~MG14~Midnight Fuchsia~MG14~
+* `~MG15~text~MG15~` Midnight Pink: ~MG15~Midnight Pink~MG15~
+* `~MG16~text~MG16~` Midnight Slate: ~MG16~Midnight Slate~MG16~
+
+### Gel Dewdrop Chip Pack
+
+Sixteen dewdrop gels in the classic bubble rainbow! Same family feel — droplet silhouette, specular dot shine.
+
+* `~DW1~text~DW1~` Dewdrop Cyan: ~DW1~Dewdrop Cyan~DW1~
+* `~DW2~text~DW2~` Dewdrop Orange: ~DW2~Dewdrop Orange~DW2~
+* `~DW3~text~DW3~` Dewdrop Green: ~DW3~Dewdrop Green~DW3~
+* `~DW4~text~DW4~` Dewdrop Red: ~DW4~Dewdrop Red~DW4~
+* `~DW5~text~DW5~` Dewdrop Purple: ~DW5~Dewdrop Purple~DW5~
+* `~DW6~text~DW6~` Dewdrop Pink: ~DW6~Dewdrop Pink~DW6~
+* `~DW7~text~DW7~` Dewdrop Yellow: ~DW7~Dewdrop Yellow~DW7~
+* `~DW8~text~DW8~` Dewdrop Blue: ~DW8~Dewdrop Blue~DW8~
+* `~DW9~text~DW9~` Dewdrop Lime: ~DW9~Dewdrop Lime~DW9~
+* `~DW10~text~DW10~` Dewdrop Teal: ~DW10~Dewdrop Teal~DW10~
+* `~DW11~text~DW11~` Dewdrop Gold: ~DW11~Dewdrop Gold~DW11~
+* `~DW12~text~DW12~` Dewdrop Slate: ~DW12~Dewdrop Slate~DW12~
+* `~DW13~text~DW13~` Dewdrop White: ~DW13~Dewdrop White~DW13~
+* `~DW14~text~DW14~` Dewdrop Black: ~DW14~Dewdrop Black~DW14~
+* `~DW15~text~DW15~` Dewdrop Fog: ~DW15~Dewdrop Fog~DW15~
+* `~DW16~text~DW16~` Dewdrop Turquoise: ~DW16~Dewdrop Turquoise~DW16~
+
+### Gel Bubble Remix Pack
+
+Thirty bubbly gels in rainbow order! Same gradient soul, brand-new shades — every bubble its own personality.
+
+* `~BB1~text~BB1~` Bubble Red: ~BB1~Bubble Red~BB1~
+* `~BB2~text~BB2~` Bubble Coral: ~BB2~Bubble Coral~BB2~
+* `~BB3~text~BB3~` Bubble Orange: ~BB3~Bubble Orange~BB3~
+* `~BB4~text~BB4~` Bubble Amber: ~BB4~Bubble Amber~BB4~
+* `~BB5~text~BB5~` Bubble Gold: ~BB5~Bubble Gold~BB5~
+* `~BB6~text~BB6~` Bubble Yellow: ~BB6~Bubble Yellow~BB6~
+* `~BB7~text~BB7~` Bubble Cream: ~BB7~Bubble Cream~BB7~
+* `~BB8~text~BB8~` Bubble Lime: ~BB8~Bubble Lime~BB8~
+* `~BB9~text~BB9~` Bubble Olive: ~BB9~Bubble Olive~BB9~
+* `~BB10~text~BB10~` Bubble Green: ~BB10~Bubble Green~BB10~
+* `~BB11~text~BB11~` Bubble Emerald: ~BB11~Bubble Emerald~BB11~
+* `~BB12~text~BB12~` Bubble Mint: ~BB12~Bubble Mint~BB12~
+* `~BB13~text~BB13~` Bubble Teal: ~BB13~Bubble Teal~BB13~
+* `~BB14~text~BB14~` Bubble Turquoise: ~BB14~Bubble Turquoise~BB14~
+* `~BB15~text~BB15~` Bubble Cyan: ~BB15~Bubble Cyan~BB15~
+* `~BB16~text~BB16~` Bubble Sky: ~BB16~Bubble Sky~BB16~
+* `~BB17~text~BB17~` Bubble Blue: ~BB17~Bubble Blue~BB17~
+* `~BB18~text~BB18~` Bubble Navy: ~BB18~Bubble Navy~BB18~
+* `~BB19~text~BB19~` Bubble Indigo: ~BB19~Bubble Indigo~BB19~
+* `~BB20~text~BB20~` Bubble Violet: ~BB20~Bubble Violet~BB20~
+* `~BB21~text~BB21~` Bubble Purple: ~BB21~Bubble Purple~BB21~
+* `~BB22~text~BB22~` Bubble Lavender: ~BB22~Bubble Lavender~BB22~
+* `~BB23~text~BB23~` Bubble Fuchsia: ~BB23~Bubble Fuchsia~BB23~
+* `~BB24~text~BB24~` Bubble Pink: ~BB24~Bubble Pink~BB24~
+* `~BB25~text~BB25~` Bubble Rose: ~BB25~Bubble Rose~BB25~
+* `~BB26~text~BB26~` Bubble Brown: ~BB26~Bubble Brown~BB26~
+* `~BB27~text~BB27~` Bubble White: ~BB27~Bubble White~BB27~
+* `~BB28~text~BB28~` Bubble Fog: ~BB28~Bubble Fog~BB28~
+* `~BB29~text~BB29~` Bubble Slate: ~BB29~Bubble Slate~BB29~
+* `~BB30~text~BB30~` Bubble Black: ~BB30~Bubble Black~BB30~
+
+### Single styles
+
+Smaller packs that each add one style:
+
+* `~CHROME~text~CHROME~` Chrome capsule: ~CHROME~Sample~CHROME~
+* `~HOLO~text~HOLO~` Holo chip: ~HOLO~Sample~HOLO~
+* `~NE~text~NE~` Neon ribbon: ~NE~Sample~NE~
+* `~PASTEL~text~PASTEL~` Pastel pop: ~PASTEL~Sample~PASTEL~
+* `~SEAL~text~SEAL~` Crimson seal: ~SEAL~Sample~SEAL~
+* `~SHM~text~SHM~` Shimmer title: ~SHM~Sample~SHM~
+* `~SKY~text~SKY~` Sky tape: ~SKY~Sample~SKY~
 
 ## Extras in Writeout, Bitbook and OpenDB
 

@@ -9280,3 +9280,53 @@
   background: #e0f2fe;
   border-color: #38bdf8;
 }
+
+/* ========================================================
+   GLOSS PILLS (%R%text%): the Bubble Chips' pill-shaped sibling, in the same 16 colors!
+   A full pill, a solid gel body, a glassy shine across the top and a soft glow of its own color.
+   ======================================================== */
+.gel-pill-chip {
+  --pill-c: #3b82f6; --pill-edge: #2563eb; --pill-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 13px;
+  border-radius: 999px;
+  border: 2px solid var(--pill-edge);
+  color: var(--pill-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px;
+  vertical-align: middle;
+  overflow: hidden;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pill-c) 35%, #ffffff) 0%, color-mix(in srgb, var(--pill-c) 70%, #ffffff) 55%, var(--pill-c) 100%);
+  box-shadow: 0 2px 7px color-mix(in srgb, var(--pill-c) 45%, transparent), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-pill-chip::before {
+  content: "";
+  position: absolute;
+  left: 9%; right: 9%; top: 1px;
+  height: 46%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.05));
+  pointer-events: none;
+}
+.gel-pill-cyan { --pill-c: #30d3e5; --pill-edge: #26a3b1; --pill-ink: #043e44; }
+.gel-pill-orange { --pill-c: #f97316; --pill-edge: #ea580c; --pill-ink: #431407; }
+.gel-pill-green { --pill-c: #10b981; --pill-edge: #059669; --pill-ink: #022c22; }
+.gel-pill-red { --pill-c: #ef4444; --pill-edge: #dc2626; --pill-ink: #450a0a; }
+.gel-pill-purple { --pill-c: #a855f7; --pill-edge: #9333ea; --pill-ink: #2e1065; }
+.gel-pill-pink { --pill-c: #ec4899; --pill-edge: #db2777; --pill-ink: #4c0519; }
+.gel-pill-yellow { --pill-c: #ead708; --pill-edge: #caa604; --pill-ink: #452b03; }
+.gel-pill-blue { --pill-c: #3b82f6; --pill-edge: #2563eb; --pill-ink: #172554; }
+.gel-pill-lime { --pill-c: #84cc16; --pill-edge: #65a30d; --pill-ink: #1a2e05; }
+.gel-pill-teal { --pill-c: #06b6d4; --pill-edge: #0891b2; --pill-ink: #083344; }
+.gel-pill-gold { --pill-c: #ea9f08; --pill-edge: #ca8a04; --pill-ink: #451a03; }
+.gel-pill-slate { --pill-c: #b4b4b4; --pill-edge: #6f6f6f; --pill-ink: #363636; }
+.gel-pill-white { --pill-c: #f3f3f3; --pill-edge: #b3b3b3; --pill-ink: #7a7a7a; }
+.gel-pill-black { --pill-c: #919191; --pill-edge: #454545; --pill-ink: #222222; }
+.gel-pill-fog { --pill-c: #d9d9d9; --pill-edge: #808080; --pill-ink: #404040; }
+.gel-pill-turquoise { --pill-c: #30e5cd; --pill-edge: #26b1a5; --pill-ink: #044439; }

@@ -374,6 +374,21 @@ if (canvas) {
             if (typeof window.kdMathTryConvert === 'function' && window.kdMathTryConvert(e, currentLineText, textNode, range, selection)) return;
             // --- FOOTNOTES: "[^1] " becomes a linkable chip, "[^1]: text " a definition! ---
             if (kdTryFootnoteSpace(e, currentLineText, textNode, range, selection)) return;
+            // --- ::name{your text} : a block with your own text in it (| splits a title from its text)! ---
+            if (window.kdDoc && /^::[a-z]+\{[^}]*\}$/.test(currentLineText) && kdDoc.blockFromLine(currentLineText)) {
+                e.preventDefault(); playAeroClickSound(750, 0.12);
+                const blockTpl = document.createElement('template');
+                blockTpl.innerHTML = kdDoc.blockFromLine(currentLineText);
+                const blockEl = blockTpl.content.firstElementChild;
+                range.insertNode(blockEl); textNode.nodeValue = '';
+                const afterBlock = document.createTextNode('\u200B ');
+                blockEl.parentNode.insertBefore(afterBlock, blockEl.nextSibling);
+                range.setStart(afterBlock, 1); range.collapse(true);
+                selection.removeAllRanges(); selection.addRange(range);
+                if (typeof kdHydrateInteractions === 'function') { try { kdHydrateInteractions(); } catch (err) {} }
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                return;
+            }
             if (currentLineText === '::glass') {
                 e.preventDefault(); playAeroClickSound(750, 0.15);
                 const glassBlock = document.createElement('div');
@@ -990,6 +1005,23 @@ if (canvas) {
             { open: '#BK#', close: '#', className: 'gel-bubble-chip gel-chip-black' },
             { open: '#FG#', close: '#', className: 'gel-bubble-chip gel-chip-fog' },
             { open: '#TU#', close: '#', className: 'gel-bubble-chip gel-chip-turquoise' },
+            // Gloss Pills: %R%text% (the Bubble Chips' pill-shaped sibling, same 16 colors)!
+            { open: '%C%', close: '%', className: 'gel-pill-chip gel-pill-cyan' },
+            { open: '%O%', close: '%', className: 'gel-pill-chip gel-pill-orange' },
+            { open: '%G%', close: '%', className: 'gel-pill-chip gel-pill-green' },
+            { open: '%R%', close: '%', className: 'gel-pill-chip gel-pill-red' },
+            { open: '%PR%', close: '%', className: 'gel-pill-chip gel-pill-purple' },
+            { open: '%PK%', close: '%', className: 'gel-pill-chip gel-pill-pink' },
+            { open: '%Y%', close: '%', className: 'gel-pill-chip gel-pill-yellow' },
+            { open: '%B%', close: '%', className: 'gel-pill-chip gel-pill-blue' },
+            { open: '%L%', close: '%', className: 'gel-pill-chip gel-pill-lime' },
+            { open: '%T%', close: '%', className: 'gel-pill-chip gel-pill-teal' },
+            { open: '%GL%', close: '%', className: 'gel-pill-chip gel-pill-gold' },
+            { open: '%SL%', close: '%', className: 'gel-pill-chip gel-pill-slate' },
+            { open: '%W%', close: '%', className: 'gel-pill-chip gel-pill-white' },
+            { open: '%BK%', close: '%', className: 'gel-pill-chip gel-pill-black' },
+            { open: '%FG%', close: '%', className: 'gel-pill-chip gel-pill-fog' },
+            { open: '%TU%', close: '%', className: 'gel-pill-chip gel-pill-turquoise' },
 
             { open: '~WD~', close: '~WD~', className: 'gel-chip-waterdrop' },
             { open: '~SF~', close: '~SF~', className: 'gel-chip-solarflare' },
@@ -1143,6 +1175,8 @@ if (canvas) {
             { open: '~BUL~', close: '~BUL~', className: 'bulleted-list'},
             { open: '~MH~',  close: '~MH~',  className: 'mega-header'},
         ];
+        // inside an unfinished ::block{...} the tags wait: the whole block (tags and all) is made at its closing }
+        if (/^\s*::[a-z]+\{[^}]*$/.test(currentLineText)) return;
         for (let def of definitions) {
             let openIdx = currentLineText.indexOf(def.open);
             if (openIdx === -1) continue;
@@ -1527,12 +1561,16 @@ if (canvas) {
                 newNode.addEventListener('click', function() { playAeroClickSound(700, 0.05); });
             }
             if (def.isMultiDuplex) {
-                const selectRange = document.createRange();
-                selectRange.setStart(textNode, openIdx); selectRange.setEnd(textNode, range.startOffset);
-                selectRange.deleteContents(); newNode.setAttribute('contenteditable', 'true');
-                const leftInput = document.createElement('div'); leftInput.className = 'input-left'; leftInput.setAttribute('contenteditable', 'true'); leftInput.innerText = 'Hello';
-                const rightInput = document.createElement('div'); rightInput.className = 'input-right'; rightInput.setAttribute('contenteditable', 'true'); rightInput.innerText = 'World';
-                const newRange = document.createRange(); newRange.selectNodeContents(leftInput); newRange.collapse(false);
+                // ~DH-B~one|two|three~ : every | starts another box (two boxes at least)!
+                const parts = targetText.split('|').map(function (t) { return t.trim(); });
+                if (parts.length < 2) parts.push('');
+                newNode.textContent = '';
+                parts.forEach(function (t, i) {
+                    const box = document.createElement('span');
+                    box.className = i < parts.length - 1 ? 'input-left' : 'input-right';
+                    box.textContent = t || '\u200B';
+                    newNode.appendChild(box);
+                });
                 break;
             }
             break;

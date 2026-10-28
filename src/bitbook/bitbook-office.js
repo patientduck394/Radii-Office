@@ -20,6 +20,28 @@
     let pageInfo = (function () { try { return JSON.parse(localStorage.getItem(PAGE_KEY) || '{}') || {}; } catch (e) { return {}; } })();
     function savePrefs() { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) {} }
     function savePages() { try { localStorage.setItem(PAGE_KEY, JSON.stringify(pageInfo)); } catch (e) {} }
+    // --- Keydown: Un-format shows every tag as plain text, so formatting mistakes are easy to spot;
+    // Re-format formats the whole page again and checks it for tags that could not be formatted! ---
+    function kdCanvas() { return document.getElementById('wysiwyg-canvas'); }
+    function kdAfterChange() {
+        try { if (typeof kdHydrateInteractions === 'function') kdHydrateInteractions(); } catch (e) {}
+        try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {}
+        try { if (typeof kdRenderOutline === 'function') kdRenderOutline(); } catch (e) {}
+    }
+    function unformatDoc() {
+        if (!window.kdDoc || !kdCanvas()) return;
+        const n = kdDoc.unformat(kdCanvas());
+        kdAfterChange();
+        OS.toast(n ? 'Un-formatted ' + n + ' piece' + (n === 1 ? '' : 's') + '! Fix any mistakes, then press Re-format!' : 'There is no Keydown formatting on this page!');
+    }
+    function reformatDoc() {
+        if (!window.kdDoc || !kdCanvas()) return;
+        const r = kdDoc.reformat(kdCanvas());
+        kdAfterChange();
+        if (!r.problems.length) { OS.toast('Formatted the whole page, and every Keydown tag checks out!'); return; }
+        OS.dialog('Keydown check', '<p class="os-dlg-text">' + r.problems.length + ' tag' + (r.problems.length === 1 ? ' could' : 's could') + ' not be formatted! They are underlined in red on the page. A closing tag may be missing or mistyped:</p><ul class="os-dlg-text" style="max-height:260px;overflow:auto;margin:0;padding-left:20px">' +
+            r.problems.slice(0, 50).map(function (p) { return '<li><code>' + OS.esc(p.tag) + '</code> in “' + OS.esc(p.line) + '”</li>'; }).join('') + '</ul>', [{ label: 'Got it!', primary: true, value: true }]);
+    }
     function office() { return document.body.classList.contains('os-office'); }
     function save() { try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {} }
     function tab() { try { return kdActiveTab(); } catch (e) { return null; } }
@@ -555,7 +577,11 @@
         {
             id: 'skills', label: 'Skills', groups: [
                 { label: 'Chips', items: SKILLS.slice(0, 4).map(function (s) { return { big: true, icon: s[2], label: s[1], run: function () { skill(s[0]); } }; }) },
-                { label: 'Gadgets', items: SKILLS.slice(4).map(function (s) { return { big: true, icon: s[2], label: s[1], run: function () { skill(s[0]); } }; }) }
+                { label: 'Gadgets', items: SKILLS.slice(4).map(function (s) { return { big: true, icon: s[2], label: s[1], run: function () { skill(s[0]); } }; }) },
+                { label: 'Keydown', items: [
+                    { big: true, icon: 'code', label: 'Un-\nformat', title: 'Show every Keydown tag as plain text, so formatting mistakes are easy to spot!', run: unformatDoc },
+                    { big: true, icon: 'check', label: 'Re-\nformat', title: 'Format the whole page again and check it for tags that could not be formatted!', run: reformatDoc }
+                ] }
             ]
         },
         {
