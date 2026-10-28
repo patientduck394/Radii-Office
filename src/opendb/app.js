@@ -339,6 +339,7 @@
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
             '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1])</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
+            '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button></div>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
             '<label class="field">Infobox <small>(optional, one “Label: value” per line)</small><textarea id="f-infobox" style="min-height:70px">' + esc(infoboxText) + '</textarea></label>' +
@@ -422,6 +423,17 @@
             r.readAsDataURL(f);
         };
         function showProblems(p) { $('problems').innerHTML = p.map((x) => '<li>' + esc(x) + '</li>').join(''); if (p.length) $('problems').scrollIntoView({ block: 'center', behavior: 'smooth' }); return !p.length; }
+        $('add-math').onclick = () => {
+            if (typeof window.kdMathBox !== 'function') { toast('The equation box could not load!'); return; }
+            const box = $('f-body');
+            const s0 = box.selectionStart, s1 = box.selectionEnd;
+            window.kdMathBox({ display: false, onDone: (tex, display) => {
+                const piece = display ? '\n$$' + tex + '$$\n' : '$' + tex + '$';
+                box.setRangeText(piece, s0, s1, 'end');
+                box.focus();
+                preview();
+            } });
+        };
         $('kd-guide').onclick = (ev) => {
             ev.preventDefault();
             modal('Keydown guide', typeof window.kdBuildGuideHTML === 'function' ? '<p class="hint">Keydown is the formatting language of Radii Office! Wrap text in a trigger to style it! OpenDB adds $LaTeX$ math, [[wiki links]], media and footnotes on top!</p><div class="kd-doc">' + window.kdBuildGuideHTML() + '</div>' : 'The Keydown guide could not load!');
