@@ -440,7 +440,14 @@
     function pageMine() {
         const list = local.slice().sort(byUpdated);
         view.innerHTML = '<div class="card"><h1 class="page">On this device</h1><p class="muted">Entries you saved here but have not published yet! They show up in OpenDB for you right away, and nobody else can see them until they are published!</p>' +
-            (list.length ? '<div class="list">' + list.map((e) => itemRow(Object.assign({}, e, { local: true }))).join('') + '</div>' : '<div class="empty">Nothing saved on this device! <a href="#/new/article">Write something</a>!</div>') + '</div>';
+            (list.length ? '<div class="filters"><button class="gel small plain" id="del-all">🗑 Delete All</button></div><div class="list">' + list.map((e) => itemRow(Object.assign({}, e, { local: true }))).join('') + '</div>' : '<div class="empty">Nothing saved on this device! <a href="#/new/article">Write something</a>!</div>') + '</div>';
+        if ($('del-all')) $('del-all').onclick = () => {
+            if (!confirm('Delete all ' + list.length + ' entr' + (list.length === 1 ? 'y' : 'ies') + ' saved on this device? Published entries are not affected, but this cannot be undone!')) return;
+            local = [];
+            saveLocal(); reindex();
+            toast('Everything on this device was deleted!');
+            pageMine();
+        };
     }
 
     /* ---------- Contributing ---------- */
