@@ -220,6 +220,13 @@ if (canvas) {
                 (aNodeX && aNodeX.nodeType === 1 && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(aNodeX.tagName));
             // --- FOOTNOTES: "[^1]: text" + Enter becomes the definition block! ---
             if (!inField && kdTryFootnoteEnter(e, selection, range)) return;
+            // --- ENTER AT THE END OF A LINE: every Keydown tag on the line turns into its formatting, right where it is! ---
+            if (!inField && window.kdDoc && kdDoc.formatLine(canvas)) {
+                e.preventDefault();
+                try { if (typeof window.kdSplitBlock === 'function') window.kdSplitBlock(); else document.execCommand('insertParagraph'); } catch (err) {}
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                return;
+            }
             if (!inField && (function () {
                 let startEl = null;
                 if (aNodeX) startEl = (aNodeX.nodeType === Node.TEXT_NODE) ? aNodeX.parentElement : aNodeX;
@@ -1142,6 +1149,8 @@ if (canvas) {
 
             let closeIdx = currentLineText.indexOf(def.close, openIdx + def.open.length);
             if (closeIdx === -1) continue;
+            // a gel highlight ends at ITS nearest ## / #_ / #~ (no # inside), never at a later highlight's ending!
+            if (def.tagName === 'mark' && currentLineText.slice(openIdx + def.open.length, closeIdx).indexOf('#') !== -1) continue;
 
             // Match established across your text nodes. Intercept standard input dump
             e.preventDefault();

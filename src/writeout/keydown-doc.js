@@ -380,6 +380,70 @@
         return entry;
     }
 
+    /* ---------- Enter at the end of a line: every Keydown tag on it becomes its formatting, in place ---------- */
+    const LINE_BLOCK = /^(DIV|P|LI|H1|H2|H3|H4|H5|H6|BLOCKQUOTE|PRE|UL|OL|TABLE|FIGURE)$/;
+    const SKIP = 'code, pre, a, .kd-math, .kd-tpl, [contenteditable="false"]';
+    function formatLine(canvas) {
+        const sel = window.getSelection();
+        if (!canvas || !sel || !sel.rangeCount || !sel.isCollapsed) return false;
+        const r = sel.getRangeAt(0);
+        if (!canvas.contains(r.startContainer)) return false;
+        // the line: the block around the caret, or (text sitting right in the canvas) the run of inline nodes around it
+        let block = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement;
+        while (block && block !== canvas && !LINE_BLOCK.test(block.tagName)) block = block.parentElement;
+        if (!block) return false;
+        let nodes;
+        if (block === canvas) {
+            let top = r.startContainer;
+            while (top.parentNode !== canvas) top = top.parentNode;
+            const inline = (n) => n && !(n.nodeType === 1 && (n.tagName === 'BR' || LINE_BLOCK.test(n.tagName))) && !(n.nodeType === 3 && /\n/.test(n.nodeValue));
+            let first = top, last = top;
+            while (inline(first.previousSibling)) first = first.previousSibling;
+            while (inline(last.nextSibling)) last = last.nextSibling;
+            nodes = [];
+            for (let n = first; n; n = n.nextSibling) { nodes.push(n); if (n === last) break; }
+        } else {
+            nodes = Array.from(block.childNodes);
+        }
+        if (!nodes.length) return false;
+        // only at the END of the line (an Enter in the middle just splits it, like always)
+        const rest = document.createRange();
+        rest.setStart(r.startContainer, r.startOffset);
+        rest.setEndAfter(nodes[nodes.length - 1]);
+        if (rest.toString().replace(/[\s\u200B\u00A0]/g, '') !== '') return false;
+        const texts = [];
+        nodes.forEach((n) => {
+            if (n.nodeType === 3) texts.push(n);
+            else if (n.nodeType === 1 && !n.matches(SKIP)) {
+                const w = document.createTreeWalker(n, NodeFilter.SHOW_TEXT);
+                for (let t = w.nextNode(); t; t = w.nextNode()) if (!(t.parentElement && t.parentElement.closest(SKIP))) texts.push(t);
+            }
+        });
+        let changed = false;
+        texts.forEach((t) => {
+            const text = t.nodeValue;
+            if (!/[#*=~`&$[{!]/.test(text)) return;
+            const html = inline(text, { notes: {} });
+            if (html === esc(text)) return;
+            const tpl = document.createElement('template');
+            tpl.innerHTML = html;
+            t.parentNode.replaceChild(tpl.content, t);
+            changed = true;
+        });
+        if (!changed) return false;
+        // the caret goes after the line's last piece (outside any new chip), ready for the new line
+        const lastNode = block === canvas ? nodes.filter((n) => n.isConnected).pop() || null : block.lastChild;
+        const holder = document.createTextNode('');
+        if (lastNode && lastNode.parentNode) lastNode.parentNode.insertBefore(holder, lastNode.nextSibling);
+        else block.appendChild(holder);
+        const caret = document.createRange();
+        caret.setStart(holder, 0);
+        caret.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(caret);
+        return true;
+    }
+
     // How OpenDB's pieces look inside Writeout and Bitbook's editor
     if (typeof document !== 'undefined' && document.head && !document.getElementById('kd-doc-style')) {
         const st = document.createElement('style');
@@ -390,5 +454,5 @@
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { parse, isKeydownText, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
+    root.kdDoc = { parse, isKeydownText, formatLine, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);

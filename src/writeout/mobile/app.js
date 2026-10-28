@@ -140,6 +140,13 @@ if (canvas) {
             const inField = (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) ||
                 (aNodeX && aNodeX.nodeType === 1 && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(aNodeX.tagName));
             if (!inField && kdTryFootnoteEnter(e, selection, range)) return;
+            // --- ENTER AT THE END OF A LINE: every Keydown tag on the line turns into its formatting, right where it is! ---
+            if (!inField && window.kdDoc && kdDoc.formatLine(canvas)) {
+                e.preventDefault();
+                try { if (typeof window.kdSplitBlock === 'function') window.kdSplitBlock(); else document.execCommand('insertParagraph'); } catch (err) {}
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+                return;
+            }
         }
 
         // --- ESCAPE MECHANIC: Break out cleanly to the right when typing \\ ---
@@ -765,6 +772,8 @@ if (canvas) {
 
         }
         // --- SECTION B: Inline Saturated Formatting Definition Matrix ---
+        // (arrows, Shift, Backspace and friends never compile a tag; phone keyboards that send 'Unidentified' still do!)
+        if (e.key && e.key.length > 1 && e.key !== 'Enter' && e.key !== 'Unidentified') return;
         const definitions = [
             // Gel highlights, the Annotator's first three tools, in its 13 colors: #R#text## highlights,
             // #R#text#_ is the gel underline and #R#text#~ the gel strike (checked before the #R#chip# ones)!
@@ -990,6 +999,8 @@ if (canvas) {
 
             let closeIdx = currentLineText.indexOf(def.close, openIdx + def.open.length);
             if (closeIdx === -1) continue;
+            // a gel highlight ends at ITS nearest ## / #_ / #~ (no # inside), never at a later highlight's ending!
+            if (def.tagName === 'mark' && currentLineText.slice(openIdx + def.open.length, closeIdx).indexOf('#') !== -1) continue;
             if (closeIdx === openIdx + def.open.length) continue; // nothing inside yet (like the ** of **bold**): keep typing!
 
             // Match established across your text nodes. Intercept standard input dump
@@ -1025,15 +1036,18 @@ if (canvas) {
             // 4. Reconstruct your trailing content stream bounds to anchor your blinking caret
             // (a non-breaking space: a plain one at the end of the line collapses, and the caret slips back inside the chip!)
             // (the words after the caret stay where they were: they used to vanish when you formatted mid-line!)
-            const trailingText = afterText + (e.key === ' ' ? '\u00A0' : '\n') + rawNodeTextValue.substring(currentCaretOffset);
+            // (the key you pressed still counts: Space adds a space, a letter is typed, Enter starts a new paragraph just below)
+            const typedText = e.key === ' ' ? '\u00A0' : (e.key && e.key.length === 1 ? e.key : '');
+            const trailingText = afterText + typedText + rawNodeTextValue.substring(currentCaretOffset);
             const trailingNode = document.createTextNode(trailingText);
             newNode.parentNode.insertBefore(trailingNode, newNode.nextSibling);
 
             const newRange = document.createRange();
-            newRange.setStart(trailingNode, afterText.length + 1); // Positions caret directly right after the element
+            newRange.setStart(trailingNode, afterText.length + typedText.length); // Positions caret directly right after the element
             newRange.collapse(true);
             selection.removeAllRanges();
             selection.addRange(newRange);
+            if (e.key === 'Enter') { try { document.execCommand('insertParagraph'); } catch (err) {} }
 
             if (def.isFoldout) {
                 newNode.addEventListener('click', function() { 
