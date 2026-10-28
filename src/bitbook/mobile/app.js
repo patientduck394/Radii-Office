@@ -1021,6 +1021,7 @@ if (canvas) {
 
             let closeIdx = currentLineText.indexOf(def.close, openIdx + def.open.length);
             if (closeIdx === -1) continue;
+            if (closeIdx === openIdx + def.open.length) continue; // nothing inside yet (like the ** of **bold**): keep typing!
 
             // Match established across your text nodes. Intercept standard input dump
             e.preventDefault();
@@ -1054,12 +1055,13 @@ if (canvas) {
 
             // 4. Reconstruct your trailing content stream bounds to anchor your blinking caret
             // (a non-breaking space: a plain one at the end of the line collapses, and the caret slips back inside the chip!)
-            const trailingText = afterText + (e.key === ' ' ? '\u00A0' : '\n');
+            // (the words after the caret stay where they were: they used to vanish when you formatted mid-line!)
+            const trailingText = afterText + (e.key === ' ' ? '\u00A0' : '\n') + rawNodeTextValue.substring(currentCaretOffset);
             const trailingNode = document.createTextNode(trailingText);
             newNode.parentNode.insertBefore(trailingNode, newNode.nextSibling);
 
             const newRange = document.createRange();
-            newRange.setStart(trailingNode, 1); // Positions caret directly right after the element
+            newRange.setStart(trailingNode, afterText.length + 1); // Positions caret directly right after the element
             newRange.collapse(true);
             selection.removeAllRanges();
             selection.addRange(newRange);

@@ -1,9 +1,9 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261130b';
+var WRITEOUT_CACHE = 'writeout-shell-v20261130c';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261130',
+  'app.js?v=20261130b',
   'style.css?v=20260928',
   'keydown.css?v=20260928',
   'marketplace.js?v=20260928',

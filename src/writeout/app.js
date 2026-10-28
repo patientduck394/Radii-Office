@@ -1145,12 +1145,13 @@ if (canvas) {
 
             // 4. Reconstruct your trailing content stream bounds to anchor your blinking caret
             // Enter must really START A NEW LINE (a fake "\n" put the caret back on the old line)!
-            const trailingText = afterText + (e.key === ' ' ? ' ' : '');
+            // (the words after the caret stay where they were: they used to vanish when you formatted mid-line!)
+            const trailingText = afterText + (e.key === ' ' ? ' ' : '') + rawNodeTextValue.substring(currentCaretOffset);
             const trailingNode = document.createTextNode(trailingText);
             newNode.parentNode.insertBefore(trailingNode, newNode.nextSibling);
 
             const newRange = document.createRange();
-            newRange.setStart(trailingNode, e.key === ' ' ? 1 : trailingText.length); // Positions caret directly right after the element
+            newRange.setStart(trailingNode, afterText.length + (e.key === ' ' ? 1 : 0)); // Positions caret directly right after the element
             newRange.collapse(true);
             selection.removeAllRanges();
             selection.addRange(newRange);
