@@ -2882,7 +2882,7 @@ function helpDialog(tab) {
     <div class="help-page" data-hp="functions" ${tab === 'functions' ? '' : 'hidden'}><input class="dlg-input" id="help-fq" placeholder="Search ${fns.length} functions…"><div class="help-fns" id="help-fns"></div></div>
     <div class="help-page" data-hp="keydown" ${tab === 'keydown' ? '' : 'hidden'}>
         <p class="dlg-hint">Type these markers around text in any cell, or select text while editing and pick a style!</p>
-        <table class="help-keys">${[['**bold**', '**'], ['*italic*', '*'], ['`code`', '`'], ['=Y=gel orb=Y=', '=Y='], ['#C#bubble chip#', '#C#'], ['~GL~glow tube~GL~', '~GL~'], ['&&sparkle&&', '&&'], ['~H1~header~H1~', '~H1~']].map(x => `<tr><td><code>${escapeHtml(x[0])}</code></td><td>${applyKeydownFormatting(x[0])}</td></tr>`).join('')}</table>
+        <table class="help-keys">${[['**bold**', '**'], ['*italic*', '*'], ['`code`', '`'], ['=Y=gel orb=Y=', '=Y='], ['#C#bubble chip#', '#C#'], ['~GL~glow tube~GL~', '~GL~'], ['&&sparkle&&', '&&'], ['# heading', '# '], ['* bullet point', '* ']].map(x => `<tr><td><code>${escapeHtml(x[0])}</code></td><td>${applyKeydownFormatting(x[0])}</td></tr>`).join('')}</table>
     </div>`;
     openDialog({
         title: 'Imbuer Help Deck', body, width: 640, buttons: [{ label: 'Dismiss', value: 'ok', primary: true }],

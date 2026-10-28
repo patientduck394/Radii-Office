@@ -18,7 +18,7 @@ OpenDB is a static site with no server or database:
 
 ## Writing entries
 
-Entry bodies use **Keydown** (`~H2~Heading~H2~`, `**bold**`, `*italic*`, `~BUL~list item~BUL~`,
+Entry bodies use **Keydown** (`# Heading`, `## Subheading`, `**bold**`, `*italic*`, `* list item`,
 `#G#chip#`, `=B=gel orb=B=`, `::glass` blocks and hundreds more) plus OpenDB's extras: `$inline$` and
 `$$display$$` LaTeX math, `[[wiki links]]`, `![caption](media:id)` embeds, links and footnotes.
 The editor's Keydown link opens the full guide!
@@ -41,16 +41,16 @@ or [[water-cycle|custom text]], and cite with footnotes.[^1]
 
 ![Caption](media:water-cycle-diagram)
 
-~H2~Math~H2~
+## Math
 
 A bee cell is a hexagon with area $\frac{3\sqrt{3}}{2}s^2$, and display math works too:
 
 $$A = \frac{3\sqrt{3}}{2}s^2$$
 
-~BUL~Queen~BUL~
-~BUL~Workers~BUL~
+* Queen
+* Workers
 
-~H2~References~H2~
+## References
 
 [^1]: A source, https://example.com
 ```

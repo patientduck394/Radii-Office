@@ -11,30 +11,30 @@ updated: 2026-10-27
 authors: [Radii Office contributors]
 license: CC0-1.0
 ---
-~H2~1. Introduction~H2~
+## 1. Introduction
 
 New programmers meet variables early, but most languages treat every variable the same way. Two important questions stay hidden: *is this value supposed to change?* and *should this value still be here next time?* Perma answers both in the syntax with three keywords: `let`, `var` and `keep`.
 
-~H2~2. Three kinds of bindings~H2~
+## 2. Three kinds of bindings
 
-~BUL~`let name = value` creates a **permanent** binding. Assigning to it again is an error that explains how to make the value changeable.~BUL~
-~BUL~`var name = value` creates a **changeable** binding.~BUL~
-~BUL~`keep name = value` creates a **kept** binding. The first run stores the starting value; later runs load the stored value instead.~BUL~
+* `let name = value` creates a **permanent** binding. Assigning to it again is an error that explains how to make the value changeable.
+* `var name = value` creates a **changeable** binding.
+* `keep name = value` creates a **kept** binding. The first run stores the starting value; later runs load the stored value instead.
 
 A permanent binding still refers to the same list or map, but the contents of that list or map can change. This mirrors how many languages treat constants and keeps simple programs such as to-do lists natural to write.
 
-~H2~3. Keeping changes that happen in place~H2~
+## 3. Keeping changes that happen in place
 
 Saving a kept value on assignment is not enough, because programs often change kept data in place, for example `push(todos, "milk")`. Perma therefore saves every kept binding after each program run and after each event handler or timer callback finishes. Assignments through fields and indexes, such as `todos[0].done = true`, also save the kept value at the root of the expression.
 
-~H2~4. Running on its own and on the web~H2~
+## 4. Running on its own and on the web
 
 The interpreter is a single dependency-free file. On the command line, kept values are stored per program in the user's home folder. In a browser, programs written in `<script type="text/perma">` tags run automatically, share one global environment like ordinary scripts, and store kept values in local storage. A small page interface (`page.find`, `el.on`, `el.text`) lets programs build interfaces without HTML knowledge.
 
-~H2~5. Friendly failure~H2~
+## 5. Friendly failure
 
 Errors name the line and suggest fixes, such as a misspelled name (*did you mean count?*). A step limit stops endless loops, and runaway recursion becomes a readable error instead of a crash.
 
-~H2~6. Conclusion~H2~
+## 6. Conclusion
 
 Making permanence and persistence visible in the syntax costs only two extra keywords, yet it lets beginners express intent and build small useful programs, like counters and to-do lists that remember their data, in a few lines.

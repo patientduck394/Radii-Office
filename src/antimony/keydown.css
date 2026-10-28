@@ -4417,3 +4417,6 @@
   border-radius: 0 8px 8px 0;
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
+
+/* "* item" line shortcut: a bullet point */
+.bulleted-list::before { content: "\2022"; margin-right: 6px; color: #0284c7; font-weight: 800; }

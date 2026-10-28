@@ -181,3 +181,4 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .modal-body .kd-guide-row { display: flex; gap: 12px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
 .modal-body .kd-guide-row code { flex: 0 0 42%; font: 12px var(--mono); color: var(--ink-2); word-break: break-all; }
 .modal-body .kd-guide-title { font-weight: 800; margin: 14px 0 6px; color: var(--blue); }
+.kd-doc .bulleted-list::before { content: none; }

@@ -327,8 +327,16 @@ function kdRender(raw) {
     if (raw === undefined || raw === null) return "";
     if (typeof raw === "number") return String(raw);
     const text = String(raw);
+    // Several lines render one by one, so line shortcuts work on each!
+    if (text.indexOf("\n") !== -1) return text.split("\n").map(kdRender).join("\n");
     const trimmed = text.trim();
     if (trimmed.startsWith("::") && KD_BLOCKS.includes(trimmed.slice(2))) return kdRenderBlock(trimmed.slice(2));
+    // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
+    const lp = /^(\s*)(#{1,4}|\*)\s+(\S[\s\S]*)$/.exec(text);
+    if (lp) {
+        const cls = lp[2] === "*" ? "bulleted-list" : ["header-1", "header-2", "header-3", "mega-header"][lp[2].length - 1];
+        return lp[1] + '<span class="' + cls + '">' + kdRender(lp[3]) + "</span>";
+    }
     let s = kdEscapeHtml(text);
     const store = [];
     const stash = (html) => { store.push(html); return "\u0000" + (store.length - 1) + "\u0000"; };
@@ -360,7 +368,9 @@ function kdRender(raw) {
 }
 
 // Guide content builder for the Help Deck modal!
+const KD_OLD_LINE_TRIGGERS = ['~H1~', '~H2~', '~H3~', '~MH~', '~BUL~'];
 function kdGuideSection(title, items) {
+    items = items.filter((d) => !KD_OLD_LINE_TRIGGERS.includes(d.o));
     return "<div class=\"kd-guide-group\"><div class=\"kd-guide-title\">" + title + " (" + items.length + ")" + "</div>" + items.map((d) => {
         const code = kdEscapeHtml(d.o + "text" + (d.c === d.o ? "" : d.c));
         let preview = "";
@@ -377,7 +387,9 @@ function kdBuildGuideHTML() {
     const eff = KD_CORE.filter((d) => (d.cls || "").startsWith("effect-") || (d.cls || "").startsWith("mega") || (d.cls || "").startsWith("aero-glass-badge") || (d.cls || "").startsWith("aero-duplex") || (d.cls || "").startsWith("gel-chip-") || (d.cls || "").startsWith("droplet"));
     const dev = KD_CORE.filter((d) => (d.cls || "").startsWith("dev-") || (d.cls || "").startsWith("av-") || (d.cls || "").startsWith("jr-"));
     const blocks = KD_BLOCKS.map((b) => ({ o: "::" + b, c: "", cls: "" }));
+    const lineRows = [["# ", "Heading 1"], ["## ", "Heading 2"], ["### ", "Heading 3"], ["#### ", "Mega header"], ["* ", "Bullet point"]];
     return '<div class="kd-guide-note">Type any trigger around your text — it renders live in every view! Click applets to play with them!</div>'
+        + '<div class="kd-guide-group"><div class="kd-guide-title">Lines — start a line with these (5)</div>' + lineRows.map((r) => '<div class="kd-guide-row"><code>' + kdEscapeHtml(r[0] + r[1]) + "</code><span>" + kdRender(r[0] + r[1]) + "</span></div>").join("") + "</div>"
         + kdGuideSection("Basics (!! ** * ` &&)", [{o:"**",c:"**"},{o:"*",c:"*"},{o:"`",c:"`",tag:"code"},{o:"&&",c:"&&",cls:"spark-text"}])
         + kdGuideSection("Gel Orbs", gels)
         + kdGuideSection("Bubble Chips", chips)

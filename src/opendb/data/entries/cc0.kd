@@ -15,7 +15,7 @@ infobox.Attribution required: No
 ---
 **CC0** (read "C C zero") is a legal tool published by Creative Commons in 2009. With it, a creator waives all of their copyright and related rights in a work, placing it as completely as possible in the [[public-domain|public domain]].[^1]
 
-~H2~How it works~H2~
+## How it works
 
 Not every country lets people simply give away their copyright, so CC0 works in layers:
 
@@ -24,14 +24,14 @@ Not every country lets people simply give away their copyright, so CC0 works in 
 
 !#G#No attribution needed# Because of this design, a CC0 work can be used without attribution, without sharing changes, and for commercial purposes.
 
-~H2~What CC0 does not cover~H2~
+## What CC0 does not cover
 
 CC0 only covers rights held by the person applying it. It does not affect trademarks or patents, and it does not grant rights that other people may hold, such as the privacy rights of a person shown in a photograph.
 
-~H2~Uses~H2~
+## Uses
 
 CC0 is widely used for scientific data, museum collections, software, and open knowledge projects such as [[opendb|OpenDB]], where removing every barrier to reuse is the goal.
 
-~H2~References~H2~
+## References
 
 [^1]: Creative Commons, "CC0 1.0 Universal Public Domain Dedication", https://creativecommons.org/publicdomain/zero/1.0/

@@ -97,7 +97,7 @@
         const para = [];
         const flush = () => { if (para.length) { out.push('<p>' + para.map((l) => inline(l, notes)).join('<br>') + '</p>'); para.length = 0; } };
         for (let i = 0; i < lines.length; i++) {
-            const t = lines[i].trim();
+            let t = lines[i].trim();
             let m;
             if (/^```/.test(t)) {
                 flush();
@@ -107,6 +107,12 @@
                 continue;
             }
             if (!t) { flush(); continue; }
+            // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
+            const ls = /^(#{1,4}|\*)\s+(\S.*)$/.exec(t);
+            if (ls) {
+                const mark = ls[1] === '*' ? '~BUL~' : ['~H1~', '~H2~', '~H3~', '~MH~'][ls[1].length - 1];
+                t = mark + ls[2] + mark;
+            }
             if ((m = /^\[\^([\w-]+)\]:\s*(.*)$/.exec(t))) { flush(); notes.defs[m[1]] = m[2]; continue; }
             if ((m = /^!\[([^\]]*)\]\(([^)\s]+)\)$/.exec(t))) {
                 flush();
@@ -332,7 +338,7 @@
             '<div id="media-fields" hidden><label class="field">File <small>(images work best: PNG, JPEG, SVG, WebP or GIF, up to 2 MB)</small><input id="f-file" type="file" accept="image/*"></label><p class="hint" id="file-info"></p></div>' +
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
-            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: ~H2~Heading~H2~, **bold**, *italic*, ~BUL~list item~BUL~, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1])</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
+            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1])</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
             '<label class="field">Infobox <small>(optional, one “Label: value” per line)</small><textarea id="f-infobox" style="min-height:70px">' + esc(infoboxText) + '</textarea></label>' +

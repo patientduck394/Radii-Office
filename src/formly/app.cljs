@@ -74,14 +74,26 @@
 ;; Does the text hold BOTH an opening and a closing tag?
 (defn keydown? [text]
   (boolean (and (seq text)
-                (some (fn [[open close]]
-                        (let [i (.indexOf text open)]
-                          (and (>= i 0) (>= (.indexOf text close (+ i (count open))) 0))))
-                      keydown-pairs))))
+                (or (re-find #"^(#{1,4}|\*)\s+\S" text)
+                    (some (fn [[open close]]
+                            (let [i (.indexOf text open)]
+                              (and (>= i 0) (>= (.indexOf text close (+ i (count open))) 0))))
+                          keydown-pairs)))))
+
+(def line-classes {"#" "header-1" "##" "header-2" "###" "header-3" "####" "mega-header" "*" "bulleted-list"})
+
+(declare keydown-html)
+
+;; Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
+(defn line-shortcut [text]
+  (when-let [[_ marker body] (re-matches #"(#{1,4}|\*)\s+(\S[\s\S]*)" text)]
+    (str "<span class=\"" (line-classes marker) "\">" (keydown-html body) "</span>")))
 
 (defn keydown-html [text]
-  (if (str/blank? text)
-    ""
+  (cond
+    (str/blank? text) ""
+    (line-shortcut text) (line-shortcut text)
+    :else
     (reduce (fn [html [re rep]] (str/replace html re rep))
             (-> text (str/replace "&" "&amp;") (str/replace "<" "&lt;") (str/replace ">" "&gt;"))
             [[#"#G#([^#]+)#" "<span class=\"gel-bubble-chip gel-chip-green\">$1</span>"]
