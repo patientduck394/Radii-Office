@@ -1137,85 +1137,55 @@
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 
-/* --- Common Chassis for Custom !# # Tags --- */
+/* --- TAG CHIPS (!#R#text#): a Bubble Chip cousin shaped like a luggage tag, in the 16 Bubble Chip colors! ---
+   The same color-to-clear gel, crisp edge and ink, with a squared left end, a round right end and an eyelet hole. */
 .aero-tag-chip {
+  --tag-c: #3b82f6; --tag-edge: #2563eb; --tag-ink: #172554;
+  position: relative;
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  padding: 2px 10px;
-  border-radius: 6px; /* Matching your custom edge radius guidelines */
+  padding: 2px 10px 2px 19px;
+  border-radius: 3px 11px 11px 3px;
+  border: 2px solid var(--tag-edge);
+  color: var(--tag-ink);
   font-family: inherit;
   font-weight: 800;
   white-space: nowrap;
+  background: linear-gradient(180deg, var(--tag-c) 0%, transparent 100%);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
   margin: 0 3px;
   vertical-align: middle;
-}
-
-/* --- 8 Vibrant Theme Specifications --- */
-/* 1. Aqua Blue (!#AQ#) */
-.tag-chip-a {
-  background: linear-gradient(180deg, #0ea5e9 0%, transparent 100%);
-  border: 2px solid #0284c7;
-  color: #0c4a6e;
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
-
-/* 2. Emerald Green (!#EM#) */
-.tag-chip-g {
-  background: linear-gradient(180deg, #10b981 0%, transparent 100%);
-  border: 2px solid #059669;
-  color: #064e3b;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
+/* the eyelet: a little punched hole near the left end */
+.aero-tag-chip::before {
+  content: "";
+  position: absolute;
+  left: 6px; top: 50%;
+  width: 6px; height: 6px;
+  margin-top: -3px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 0 0 1.5px var(--tag-edge), inset 0 1px 1px rgba(0, 0, 0, 0.2);
 }
-
-/* 3. Sunset Orange (!#OR#) */
-.tag-chip-o {
-  background: linear-gradient(180deg, #f97316 0%, transparent 100%);
-  border: 2px solid #ea580c;
-  color: #431407;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
-
-/* 4. Crimson Red (!#CR#) */
-.tag-chip-r {
-  background: linear-gradient(180deg, #ef4444 0%, transparent 100%);
-  border: 2px solid #dc2626;
-  color: #450a0a;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
-
-/* 5. Royal Purple (!#PR#) */
-.tag-chip-pr {
-  background: linear-gradient(180deg, #a855f7 0%, transparent 100%);
-  border: 2px solid #9333ea;
-  color: #2e1065;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
-
-/* 6. Fuchsia Pink (!#PK#) */
-.tag-chip-pk {
-  background: linear-gradient(180deg, #ec4899 0%, transparent 100%);
-  border: 2px solid #db2777;
-  color: #4c0519;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
-
-/* 7. Amber Yellow (!#YL#) */
-.tag-chip-y {
-  background: linear-gradient(180deg, #eab308 0%, transparent 100%);
-  border: 2px solid #ca8a04;
-  color: #451a03;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
-
-/* 8. Steel Slate (!#SL#) */
-.tag-chip-sl {
-  background: linear-gradient(180deg, #94a3b8 0%, transparent 100%);
-  border: 2px solid #475569;
-  color: #1e293b;
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
+.tag-chip-r { --tag-c: #ef4444; --tag-edge: #dc2626; --tag-ink: #450a0a; }
+.tag-chip-o { --tag-c: #f97316; --tag-edge: #ea580c; --tag-ink: #431407; }
+.tag-chip-gl { --tag-c: #ea9f08; --tag-edge: #ca8a04; --tag-ink: #451a03; }
+.tag-chip-y { --tag-c: #ead708; --tag-edge: #caa604; --tag-ink: #452b03; }
+.tag-chip-l { --tag-c: #84cc16; --tag-edge: #65a30d; --tag-ink: #1a2e05; }
+.tag-chip-g { --tag-c: #10b981; --tag-edge: #059669; --tag-ink: #022c22; }
+.tag-chip-tu { --tag-c: #30e5cd; --tag-edge: #26b1a5; --tag-ink: #044439; }
+.tag-chip-t { --tag-c: #06b6d4; --tag-edge: #0891b2; --tag-ink: #083344; }
+.tag-chip-c { --tag-c: #30d3e5; --tag-edge: #26a3b1; --tag-ink: #043e44; }
+.tag-chip-b { --tag-c: #3b82f6; --tag-edge: #2563eb; --tag-ink: #172554; }
+.tag-chip-pr { --tag-c: #a855f7; --tag-edge: #9333ea; --tag-ink: #2e1065; }
+.tag-chip-pk { --tag-c: #ec4899; --tag-edge: #db2777; --tag-ink: #4c0519; }
+.tag-chip-w { --tag-c: #f3f3f3; --tag-edge: #b3b3b3; --tag-ink: #7a7a7a; }
+.tag-chip-fg { --tag-c: #d9d9d9; --tag-edge: #808080; --tag-ink: #404040; }
+.tag-chip-sl { --tag-c: #b4b4b4; --tag-edge: #6f6f6f; --tag-ink: #363636; }
+.tag-chip-bk { --tag-c: #919191; --tag-edge: #454545; --tag-ink: #222222; }
+.tag-chip-a { --tag-c: #30d3e5; --tag-edge: #26a3b1; --tag-ink: #043e44; } /* the old aqua tag: now a cyan one */
 
 /* --- 1. Tactile Vista Foldout Note Tab (~FN~) --- */
 .applet-foldout-tab {

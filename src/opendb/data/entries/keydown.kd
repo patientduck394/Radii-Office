@@ -136,18 +136,26 @@ Round glossy orbs, written `=color=text=color=`:
 * `=AQ=text=AQ=` =AQ=aqua=AQ=
 * `=SL=text=SL=` =SL=slate=SL=
 
-## Prefix tags
+## Tag chips
 
-Tag chips with an exclamation mark in front, written `!#color#text#`:
+A Bubble Chip cousin shaped like a luggage tag, with a little eyelet hole, in the same 16 colors. Written `!#color#text#`:
 
-* `!#A#text#` !#A#aqua#
-* `!#G#text#` !#G#green#
-* `!#O#text#` !#O#orange#
 * `!#R#text#` !#R#red#
+* `!#O#text#` !#O#orange#
+* `!#GL#text#` !#GL#gold#
+* `!#Y#text#` !#Y#yellow#
+* `!#L#text#` !#L#lime#
+* `!#G#text#` !#G#green#
+* `!#TU#text#` !#TU#turquoise#
+* `!#T#text#` !#T#teal#
+* `!#C#text#` !#C#cyan#
+* `!#B#text#` !#B#blue#
 * `!#PR#text#` !#PR#purple#
 * `!#PK#text#` !#PK#pink#
-* `!#Y#text#` !#Y#yellow#
+* `!#W#text#` !#W#white#
+* `!#FG#text#` !#FG#fog#
 * `!#SL#text#` !#SL#slate#
+* `!#BK#text#` !#BK#black#
 
 ## Text effects
 
