@@ -1,5 +1,5 @@
 // Builds opendb/data/index.json from the entry files in opendb/data/entries (run: node scripts/build_opendb.mjs)!
-// Each entry is Markdown with a small header of facts between --- lines. Every entry must be CC0!
+// Each entry is a Keydown (.kd) file with a small header of facts between --- lines. Every entry must be CC0!
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -36,7 +36,7 @@ export function parseEntry(text, file) {
 
 function check(entry, file) {
     const problems = [];
-    const base = path.basename(file, '.md');
+    const base = path.basename(file, '.kd');
     if (entry.id !== base) problems.push('id "' + entry.id + '" must match the file name "' + base + '"');
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(String(entry.id))) problems.push('id must use lowercase letters, digits and dashes');
     if (!TYPES.has(entry.type)) problems.push('type must be article, media or paper');
@@ -51,7 +51,7 @@ function check(entry, file) {
 }
 
 export function build() {
-    const files = fs.readdirSync(ENTRIES).filter((f) => f.endsWith('.md')).sort();
+    const files = fs.readdirSync(ENTRIES).filter((f) => f.endsWith('.kd')).sort();
     const entries = files.map((f) => {
         const e = parseEntry(fs.readFileSync(path.join(ENTRIES, f), 'utf8'), f);
         check(e, f);

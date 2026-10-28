@@ -104,22 +104,22 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .abstract b { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; color: #6d28d9; margin-bottom: 4px; }
 .figure { margin: 6px 0 18px; text-align: center; }
 .figure img { max-width: 100%; max-height: 520px; border-radius: 12px; background: #eef6fd; border: 1px solid var(--line); }
-.figure figcaption, .md figcaption { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
-.md { font-family: var(--serif); font-size: 17.5px; line-height: 1.7; }
-.md h2 { font-size: 24px; font-weight: 600; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
-.md h3 { font-size: 19px; margin: 20px 0 6px; }
-.md p, .md ul, .md ol, .md blockquote, .md pre, .md figure { margin: 0 0 14px; }
-.md ul, .md ol { padding-left: 26px; }
-.md li { margin: 3px 0; }
-.md blockquote { border-left: 4px solid #9cc9ec; padding: 4px 14px; color: var(--ink-2); background: #f4f9fe; border-radius: 0 10px 10px 0; }
-.md code { font-family: var(--mono); font-size: 0.86em; background: #eef4fa; border: 1px solid #dbe7f2; padding: 1px 5px; border-radius: 6px; }
-.md pre { background: #0f2236; color: #dff1ff; padding: 12px 14px; border-radius: 12px; overflow: auto; }
-.md pre code { background: none; border: 0; padding: 0; color: inherit; }
-.md figure { text-align: center; }
-.md figure img { max-width: 100%; max-height: 420px; border-radius: 12px; background: #eef6fd; border: 1px solid var(--line); }
-.md a.missing { color: #c2410c; }
-.md sup a { text-decoration: none; }
-.md ol.refs { font-size: 15px; }
+.figure figcaption, .kd-doc figcaption { font-size: 13px; color: var(--ink-2); margin-top: 6px; }
+.kd-doc { font-family: var(--serif); font-size: 17.5px; line-height: 1.7; }
+.kd-doc h2 { font-size: 24px; font-weight: 600; margin: 26px 0 8px; padding-bottom: 4px; border-bottom: 1px solid var(--line); }
+.kd-doc h3 { font-size: 19px; margin: 20px 0 6px; }
+.kd-doc p, .kd-doc ul, .kd-doc ol, .kd-doc blockquote, .kd-doc pre, .kd-doc figure { margin: 0 0 14px; }
+.kd-doc ul, .kd-doc ol { padding-left: 26px; }
+.kd-doc li { margin: 3px 0; }
+.kd-doc blockquote { border-left: 4px solid #9cc9ec; padding: 4px 14px; color: var(--ink-2); background: #f4f9fe; border-radius: 0 10px 10px 0; }
+.kd-doc code { font-family: var(--mono); font-size: 0.86em; background: #eef4fa; border: 1px solid #dbe7f2; padding: 1px 5px; border-radius: 6px; }
+.kd-doc pre { background: #0f2236; color: #dff1ff; padding: 12px 14px; border-radius: 12px; overflow: auto; }
+.kd-doc pre code { background: none; border: 0; padding: 0; color: inherit; }
+.kd-doc figure { text-align: center; }
+.kd-doc figure img { max-width: 100%; max-height: 420px; border-radius: 12px; background: #eef6fd; border: 1px solid var(--line); }
+.kd-doc a.missing { color: #c2410c; }
+.kd-doc sup a { text-decoration: none; }
+.kd-doc ol.refs { font-size: 15px; }
 .side { display: flex; flex-direction: column; gap: 14px; }
 .side-box { background: var(--card); border: 1px solid rgba(255,255,255,0.95); border-radius: 16px; padding: 14px 16px; box-shadow: 0 6px 18px rgba(0, 60, 120, 0.12); font-size: 14px; }
 .infobox table { width: 100%; border-collapse: collapse; }
@@ -167,3 +167,17 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 
 .foot { text-align: center; padding: 18px 24px 26px; font-size: 13px; color: var(--ink-2); line-height: 1.8; }
 .empty { padding: 30px; text-align: center; color: var(--ink-2); }
+
+/* Keydown documents: whole-line pieces, bullets and LaTeX */
+.kd-doc .kd-line { margin: 0 0 10px; }
+.kd-doc .kd-line .header-1, .kd-doc .kd-line .header-2, .kd-doc .kd-line .header-3, .kd-doc .kd-line .mega-header { display: block; font-family: var(--serif); }
+.kd-doc .bulleted-list { display: list-item; list-style: disc; margin: 0 0 0 26px; padding-left: 4px; }
+.kd-doc .kd-line + .kd-line .bulleted-list { margin-top: -4px; }
+.kd-doc .blockquote-list { display: block; }
+.kd-doc .tex-block { margin: 6px 0 16px; overflow-x: auto; overflow-y: hidden; }
+.kd-doc .katex { font-size: 1.08em; }
+.kd-doc .katex-display { margin: 0.4em 0; }
+.tex-raw { color: #6d28d9; }
+.modal-body .kd-guide-row { display: flex; gap: 12px; align-items: center; padding: 4px 0; border-bottom: 1px solid var(--line); font-size: 13px; }
+.modal-body .kd-guide-row code { flex: 0 0 42%; font: 12px var(--mono); color: var(--ink-2); word-break: break-all; }
+.modal-body .kd-guide-title { font-weight: 800; margin: 14px 0 6px; color: var(--blue); }

@@ -9,7 +9,8 @@ for any purpose, with no credit needed!
 
 OpenDB is a static site with no server or database:
 
-- Every entry is a Markdown file in `data/entries/`, with a short header of facts between `---` lines.
+- Every entry is a Keydown (`.kd`) file in `data/entries/`, with a short header of facts between `---` lines.
+  Keydown is the formatting language of Radii Office, and entries can also hold LaTeX math.
 - Media files live in `data/media/`.
 - `node scripts/build_opendb.mjs` (from the Radii Office folder) checks every entry and compiles them
   all into `data/index.json`, which the site loads once and searches in the browser.
@@ -17,7 +18,12 @@ OpenDB is a static site with no server or database:
 
 ## Writing entries
 
-```markdown
+Entry bodies use **Keydown** (`~H2~Heading~H2~`, `**bold**`, `*italic*`, `~BUL~list item~BUL~`,
+`#G#chip#`, `=B=gel orb=B=`, `::glass` blocks and hundreds more) plus OpenDB's extras: `$inline$` and
+`$$display$$` LaTeX math, `[[wiki links]]`, `![caption](media:id)` embeds, links and footnotes.
+The editor's Keydown link opens the full guide!
+
+```text
 ---
 id: honey-bee                 # must match the file name, lowercase-with-dashes
 type: article                 # article, media or paper
@@ -30,11 +36,21 @@ authors: [Your Name]
 license: CC0-1.0              # required: OpenDB only accepts CC0
 infobox.Kingdom: Animalia     # optional facts for the side box
 ---
-The **honey bee** lives in colonies. Link other entries with [[photosynthesis]]
-or [[water-cycle|custom text]], embed media with ![Caption](media:water-cycle-diagram),
-and cite with footnotes.[^1]
+The **honey bee** lives in #G#colonies#. Link other entries with [[photosynthesis]]
+or [[water-cycle|custom text]], and cite with footnotes.[^1]
 
-## References
+![Caption](media:water-cycle-diagram)
+
+~H2~Math~H2~
+
+A bee cell is a hexagon with area $\frac{3\sqrt{3}}{2}s^2$, and display math works too:
+
+$$A = \frac{3\sqrt{3}}{2}s^2$$
+
+~BUL~Queen~BUL~
+~BUL~Workers~BUL~
+
+~H2~References~H2~
 
 [^1]: A source, https://example.com
 ```

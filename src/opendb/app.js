@@ -58,91 +58,91 @@
         return 'data/' + e.file;
     }
 
-    /* ---------- Markdown (safe: everything is escaped first) ---------- */
+    /* ---------- Keydown (the Radii Office formatting language) + LaTeX + OpenDB links ---------- */
+    // LaTeX: $inline$ and $$display$$ math, drawn by KaTeX (or shown as source until it loads)
+    function tex(src, display) {
+        if (window.katex) {
+            try { return window.katex.renderToString(src, { displayMode: display, throwOnError: false, output: 'htmlAndMathml' }); }
+            catch (e) { /* fall through to the source */ }
+        }
+        return '<code class="tex-raw">' + esc(display ? '$$' + src + '$$' : '$' + src + '$') + '</code>';
+    }
+    // One line of Keydown: OpenDB's extras are set aside first, so Keydown never touches them
     function inline(text, notes) {
-        let s = esc(text);
-        const codes = [];
-        s = s.replace(/`([^`]+)`/g, (_, c) => { codes.push('<code>' + c + '</code>'); return '\u0000' + (codes.length - 1) + '\u0000'; });
+        const store = [];
+        const stash = (html) => { store.push(html); return '\u0001' + (store.length - 1) + '\u0001'; };
+        let s = String(text);
+        s = s.replace(/\\\$/g, () => stash('$'));
+        s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => stash(tex(t.trim(), true)));
+        s = s.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (_, pre, t) => pre + stash(tex(t, false)));
         s = s.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, label) => {
             const e = byId.get(id);
-            const text = label || (e ? e.title : id);
-            return e ? '<a href="#/e/' + id + '">' + text + '</a>' : '<a class="missing" href="#/new/article?id=' + id + '" title="No entry yet: write it!">' + text + '</a>';
+            const text = esc(label || (e ? e.title : id));
+            return stash(e ? '<a href="#/e/' + id + '">' + text + '</a>' : '<a class="missing" href="#/new/article?id=' + id + '" title="No entry yet: write it!">' + text + '</a>');
         });
-        s = s.replace(/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|#)[^)\s]+)\)/g, (_, t, u) => '<a href="' + u + '"' + (u[0] === '#' ? '' : ' target="_blank" rel="noopener noreferrer"') + '>' + t + '</a>');
-        s = s.replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, (_, pre, u) => pre + '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + u + '</a>');
-        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-        s = s.replace(/(^|[^*\w])\*([^*\s][^*]*?)\*(?!\w)/g, '$1<em>$2</em>');
-        s = s.replace(/\[\^([\w-]+)\]/g, (_, n) => { if (!notes.order.includes(n)) notes.order.push(n); const k = notes.order.indexOf(n) + 1; return '<sup id="ref-' + esc(n) + '"><a href="#fn-' + esc(n) + '" data-scroll>[' + k + ']</a></sup>'; });
-        s = s.replace(/\u0000(\d+)\u0000/g, (_, i) => codes[+i]);
-        return s;
+        s = s.replace(/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|#)[^)\s]+)\)/g, (_, t, u) => stash('<a href="' + esc(u) + '"' + (u[0] === '#' ? '' : ' target="_blank" rel="noopener noreferrer"') + '>' + esc(t) + '</a>'));
+        s = s.replace(/(^|[\s(])(https?:\/\/[^\s<)\u0001]+)/g, (_, pre, u) => pre + stash('<a href="' + esc(u) + '" target="_blank" rel="noopener noreferrer">' + esc(u) + '</a>'));
+        s = s.replace(/\[\^([\w-]+)\]/g, (_, n) => {
+            if (!notes.order.includes(n)) notes.order.push(n);
+            const k = notes.order.indexOf(n) + 1;
+            return stash('<sup id="ref-' + esc(n) + '"><a href="#fn-' + esc(n) + '" data-scroll>[' + k + ']</a></sup>');
+        });
+        const html = typeof window.kdRender === 'function' ? window.kdRender(s) : esc(s);
+        return html.replace(/\u0001(\d+)\u0001/g, (_, i) => store[+i]);
     }
-    function renderMd(src) {
+    function renderKd(src) {
         const lines = String(src || '').replace(/\r/g, '').split('\n');
         const notes = { order: [], defs: {} };
         const out = [];
-        let i = 0;
         const para = [];
-        const flush = () => { if (para.length) { out.push('<p>' + inline(para.join(' '), notes) + '</p>'); para.length = 0; } };
-        while (i < lines.length) {
-            const line = lines[i];
+        const flush = () => { if (para.length) { out.push('<p>' + para.map((l) => inline(l, notes)).join('<br>') + '</p>'); para.length = 0; } };
+        for (let i = 0; i < lines.length; i++) {
+            const t = lines[i].trim();
             let m;
-            if (/^```/.test(line)) {
+            if (/^```/.test(t)) {
                 flush();
                 const body = [];
-                i++;
-                while (i < lines.length && !/^```/.test(lines[i])) body.push(lines[i++]);
-                i++;
+                for (i++; i < lines.length && !/^```/.test(lines[i].trim()); i++) body.push(lines[i]);
                 out.push('<pre><code>' + esc(body.join('\n')) + '</code></pre>');
                 continue;
             }
-            if ((m = /^\[\^([\w-]+)\]:\s*(.*)$/.exec(line))) { flush(); notes.defs[m[1]] = m[2]; i++; continue; }
-            if ((m = /^(#{1,3})\s+(.*)$/.exec(line))) {
-                flush();
-                const level = Math.min(3, m[1].length + 1);
-                const id = m[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
-                out.push('<h' + level + ' id="s-' + id + '">' + inline(m[2], notes) + '</h' + level + '>');
-                i++;
-                continue;
-            }
-            if ((m = /^!\[([^\]]*)\]\(([^)\s]+)\)\s*$/.exec(line))) {
+            if (!t) { flush(); continue; }
+            if ((m = /^\[\^([\w-]+)\]:\s*(.*)$/.exec(t))) { flush(); notes.defs[m[1]] = m[2]; continue; }
+            if ((m = /^!\[([^\]]*)\]\(([^)\s]+)\)$/.exec(t))) {
                 flush();
                 const alt = m[1], target = m[2];
                 let src = null, link = null;
                 if (target.startsWith('media:')) { const e = byId.get(target.slice(6)); if (e && e.type === 'media') { src = mediaSrc(e); link = '#/e/' + e.id; } }
                 else if (/^https:\/\//.test(target)) src = target;
-                if (src) out.push('<figure>' + (link ? '<a href="' + link + '">' : '') + '<img src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy">' + (link ? '</a>' : '') + (alt ? '<figcaption>' + esc(alt) + '</figcaption>' : '') + '</figure>');
-                else out.push('<p class="muted">[missing image: ' + esc(target) + ']</p>');
-                i++;
+                out.push(src ? '<figure>' + (link ? '<a href="' + link + '">' : '') + '<img src="' + esc(src) + '" alt="' + esc(alt) + '" loading="lazy">' + (link ? '</a>' : '') + (alt ? '<figcaption>' + inline(alt, notes) + '</figcaption>' : '') + '</figure>' : '<p class="muted">[missing image: ' + esc(target) + ']</p>');
                 continue;
             }
-            if (/^\s*([-*]|\d+\.)\s+/.test(line)) {
+            if (/^\$\$[\s\S]*\$\$$/.test(t)) { flush(); out.push('<div class="tex-block">' + inline(t, notes) + '</div>'); continue; }
+            // whole-line Keydown pieces stand on their own: ::blocks, headings and list items
+            const hm = /^~(MH|H1|H2|H3)~(.*)~\1~$/.exec(t);
+            if (/^::[a-z]+$/.test(t) || hm || /^~(BUL|BQ)~.*~\1~$/.test(t)) {
                 flush();
-                const ordered = /^\s*\d+\./.test(line);
-                const items = [];
-                while (i < lines.length && /^\s*([-*]|\d+\.)\s+/.test(lines[i])) { items.push(lines[i].replace(/^\s*([-*]|\d+\.)\s+/, '')); i++; }
-                out.push((ordered ? '<ol>' : '<ul>') + items.map((t) => '<li>' + inline(t, notes) + '</li>').join('') + (ordered ? '</ol>' : '</ul>'));
+                const anchor = hm ? ' id="s-' + hm[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '"' : '';
+                out.push('<div class="kd-line"' + anchor + '>' + inline(t, notes) + '</div>');
                 continue;
             }
-            if (/^>\s?/.test(line)) {
-                flush();
-                const q = [];
-                while (i < lines.length && /^>\s?/.test(lines[i])) q.push(lines[i++].replace(/^>\s?/, ''));
-                out.push('<blockquote>' + inline(q.join(' '), notes) + '</blockquote>');
-                continue;
-            }
-            if (!line.trim()) { flush(); i++; continue; }
-            para.push(line.trim());
-            i++;
+            para.push(t);
         }
         flush();
         // footnotes become a numbered list where they were cited from
         const used = notes.order.filter((n) => notes.defs[n] !== undefined);
-        if (used.length) {
-            out.push('<ol class="refs">' + used.map((n) => '<li id="fn-' + esc(n) + '">' + inline(notes.defs[n], { order: [] }) + ' <a href="#ref-' + esc(n) + '" data-scroll title="Back to the text">↩</a></li>').join('') + '</ol>');
-        }
+        if (used.length) out.push('<ol class="refs">' + used.map((n) => '<li id="fn-' + esc(n) + '">' + inline(notes.defs[n], { order: [] }) + ' <a href="#ref-' + esc(n) + '" data-scroll title="Back to the text">↩</a></li>').join('') + '</ol>');
         return out.join('\n');
     }
-    function plain(src) { return String(src || '').replace(/```[\s\S]*?```/g, ' ').replace(/!\[[^\]]*\]\([^)]*\)/g, ' ').replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, '$2').replace(/\[\[([a-z0-9-]+)\]\]/g, '$1').replace(/\[\^[\w-]+\]:?/g, '').replace(/[#*`>]/g, '').replace(/\s+/g, ' '); }
+    // Plain text for search: Keydown triggers, math markers and link syntax are dropped
+    function plain(src) {
+        return String(src || '')
+            .replace(/```[\s\S]*?```/g, ' ').replace(/!\[[^\]]*\]\([^)]*\)/g, ' ')
+            .replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, '$2').replace(/\[\[([a-z0-9-]+)\]\]/g, '$1')
+            .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\[\^[\w-]+\]:?/g, '')
+            .replace(/::[a-z]+/g, ' ').replace(/~[A-Z0-9-]+~|=[A-Z]+=|!?#[A-Z]+#|&&/g, ' ')
+            .replace(/[*`$\\]/g, '').replace(/\s+/g, ' ');
+    }
 
     /* ---------- Search ---------- */
     function search(q) {
@@ -262,14 +262,14 @@
             '<div class="side-box cc0-box"><p><a class="cc0" href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a><b>No rights reserved!</b> Copy, change, translate and use this for anything, even commercially, with no credit needed!</p></div>' +
             '<div class="side-box"><div class="actions">' +
             (e.type === 'media' ? '<a class="gel small" href="' + esc(mediaSrc(e)) + '" download="' + esc(e.id + extOf(e)) + '">⬇ Download file</a>' : '') +
-            '<button class="gel small plain" id="cite">❝ Cite</button><button class="gel small plain" id="dl-md">⬇ .md</button><button class="gel small plain" id="dl-json">⬇ JSON</button><a class="gel small plain" href="#/edit/' + e.id + '">✎ Edit</a>' +
-            (e.local ? '<button class="gel small plain" id="del-local">🗑 Remove</button>' : '<a class="gel small plain" href="https://github.com/' + REPO + '/commits/' + BRANCH + '/' + REPO_DIR + '/entries/' + e.id + '.md" target="_blank" rel="noopener noreferrer">🕘 History</a>') +
+            '<button class="gel small plain" id="cite">❝ Cite</button><button class="gel small plain" id="dl-md">⬇ .kd</button><button class="gel small plain" id="dl-json">⬇ JSON</button><a class="gel small plain" href="#/edit/' + e.id + '">✎ Edit</a>' +
+            (e.local ? '<button class="gel small plain" id="del-local">🗑 Remove</button>' : '<a class="gel small plain" href="https://github.com/' + REPO + '/commits/' + BRANCH + '/' + REPO_DIR + '/entries/' + e.id + '.kd" target="_blank" rel="noopener noreferrer">🕘 History</a>') +
             '</div></div>' +
             '<div class="side-box"><h2>Tags</h2>' + tagLinks(e.tags) + '<p class="hint" style="margin-top:10px">Created ' + esc(e.created) + (e.updated && e.updated !== e.created ? ' · updated ' + esc(e.updated) : '') + (e.authors && e.type !== 'paper' ? '<br>By ' + esc(e.authors.join(', ')) : '') + '</p></div>' +
             (links.length ? '<div class="side-box"><h2>What links here</h2><ul>' + links.map((l) => '<li><a href="#/e/' + l.id + '">' + esc(l.title) + '</a></li>').join('') + '</ul></div>' : '');
-        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="md">' + renderMd(e.body) + '</div></article><aside class="side">' + side + '</aside></div>';
+        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(e.body) + '</div></article><aside class="side">' + side + '</aside></div>';
         $('cite').onclick = () => showCite(e);
-        $('dl-md').onclick = () => download(e.id + '.md', toMarkdownFile(e), 'text/markdown');
+        $('dl-md').onclick = () => download(e.id + '.kd', toKdFile(e), 'text/plain');
         $('dl-json').onclick = () => download(e.id + '.json', JSON.stringify(clean(e), null, 2), 'application/json');
         if ($('del-local')) $('del-local').onclick = () => {
             if (!confirm('Remove "' + e.title + '" from this device?')) return;
@@ -301,7 +301,7 @@
     function slug(s) { return String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60); }
     function yamlStr(v) { const s = String(v); return /^[\[\]"#]|:\s|^\s|\s$/.test(s) || s === '' ? '"' + s.replace(/"/g, '\\"') + '"' : s; }
     function yamlList(a) { return '[' + (a || []).map((x) => String(x).replace(/[,\[\]]/g, ' ').replace(/\s+/g, ' ').trim()).filter(Boolean).join(', ') + ']'; }
-    function toMarkdownFile(e) {
+    function toKdFile(e) {
         const h = ['---', 'id: ' + e.id, 'type: ' + e.type, 'title: ' + yamlStr(e.title), 'summary: ' + yamlStr(e.summary)];
         if (e.type === 'paper') h.push('abstract: ' + yamlStr(String(e.abstract || '').replace(/\s*\n\s*/g, ' ')));
         h.push('tags: ' + yamlList(e.tags));
@@ -332,7 +332,7 @@
             '<div id="media-fields" hidden><label class="field">File <small>(images work best: PNG, JPEG, SVG, WebP or GIF, up to 2 MB)</small><input id="f-file" type="file" accept="image/*"></label><p class="hint" id="file-info"></p></div>' +
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
-            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(Markdown: ## Heading, **bold**, *italic*, - lists, [[other-entry]] links, ![caption](media:file-id), footnotes [^1])</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
+            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: ~H2~Heading~H2~, **bold**, *italic*, ~BUL~list item~BUL~, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1])</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
             '<label class="field">Infobox <small>(optional, one “Label: value” per line)</small><textarea id="f-infobox" style="min-height:70px">' + esc(infoboxText) + '</textarea></label>' +
@@ -375,7 +375,7 @@
             const fake = Object.assign({}, e, { local: true });
             const img = type === 'media' && (e.dataUrl || e.file) ? '<figure class="figure"><img src="' + esc(e.dataUrl || mediaSrc(e)) + '" alt=""></figure>' : '';
             const head = type === 'paper' ? '<p class="authors">' + esc(e.authors.join(', ')) + '</p>' + (e.abstract ? '<div class="abstract"><b>Abstract</b>' + esc(e.abstract) + '</div>' : '') : '<p class="lead">' + esc(e.summary) + '</p>';
-            $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="md">' + renderMd(e.body) + '</div>';
+            $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(e.body) + '</div>';
         }
         function syncType() {
             $('media-fields').hidden = type !== 'media';
@@ -416,6 +416,10 @@
             r.readAsDataURL(f);
         };
         function showProblems(p) { $('problems').innerHTML = p.map((x) => '<li>' + esc(x) + '</li>').join(''); if (p.length) $('problems').scrollIntoView({ block: 'center', behavior: 'smooth' }); return !p.length; }
+        $('kd-guide').onclick = (ev) => {
+            ev.preventDefault();
+            modal('Keydown guide', typeof window.kdBuildGuideHTML === 'function' ? '<p class="hint">Keydown is the formatting language of Radii Office! Wrap text in a trigger to style it! OpenDB adds $LaTeX$ math, [[wiki links]], media and footnotes on top!</p><div class="kd-doc">' + window.kdBuildGuideHTML() + '</div>' : 'The Keydown guide could not load!');
+        };
         $('save-local').onclick = () => {
             const e = current();
             if (!showProblems(problems(e, false))) return;
@@ -428,7 +432,7 @@
         $('dl-file').onclick = () => {
             const e = current();
             if (!showProblems(problems(e, false))) return;
-            download(e.id + '.md', toMarkdownFile(e), 'text/markdown');
+            download(e.id + '.kd', toKdFile(e), 'text/plain');
             if (e.dataUrl) downloadUrl(e.id + extOf(e), e.dataUrl);
         };
         $('publish').onclick = () => {
@@ -441,9 +445,9 @@
 
     // Publishing: GitHub opens with the new file filled in, ready to propose as a change!
     function publish(e, existing) {
-        const md = toMarkdownFile(e);
-        const entriesUrl = 'https://github.com/' + REPO + '/new/' + BRANCH + '/' + REPO_DIR + '/entries?filename=' + encodeURIComponent(e.id + '.md') + '&value=' + encodeURIComponent(md);
-        const editUrl = 'https://github.com/' + REPO + '/edit/' + BRANCH + '/' + REPO_DIR + '/entries/' + e.id + '.md';
+        const md = toKdFile(e);
+        const entriesUrl = 'https://github.com/' + REPO + '/new/' + BRANCH + '/' + REPO_DIR + '/entries?filename=' + encodeURIComponent(e.id + '.kd') + '&value=' + encodeURIComponent(md);
+        const editUrl = 'https://github.com/' + REPO + '/edit/' + BRANCH + '/' + REPO_DIR + '/entries/' + e.id + '.kd';
         const uploadMedia = 'https://github.com/' + REPO + '/upload/' + BRANCH + '/' + REPO_DIR + '/media';
         const uploadEntries = 'https://github.com/' + REPO + '/upload/' + BRANCH + '/' + REPO_DIR + '/entries';
         const short = entriesUrl.length < 7500;
@@ -452,15 +456,15 @@
             steps = '<ol><li>Your new version is copied below (and to your clipboard)!</li><li><a href="' + editUrl + '" target="_blank" rel="noopener noreferrer">Open the entry on GitHub</a>, select everything in the editor and paste!</li><li>Choose “Propose changes”. A maintainer reviews it, and then it is live for everyone!</li></ol>';
             copy(md);
         } else if (e.type === 'media') {
-            download(e.id + '.md', md, 'text/markdown');
+            download(e.id + '.kd', md, 'text/plain');
             downloadUrl(e.id + extOf(e), e.dataUrl);
-            steps = '<ol><li>Two files were downloaded: <b>' + esc(e.id + extOf(e)) + '</b> (the file) and <b>' + esc(e.id) + '.md</b> (its description)!</li><li><a href="' + uploadMedia + '" target="_blank" rel="noopener noreferrer">Upload ' + esc(e.id + extOf(e)) + ' to the media folder</a> and choose “Propose changes”!</li><li>Then <a href="' + uploadEntries + '" target="_blank" rel="noopener noreferrer">upload ' + esc(e.id) + '.md to the entries folder</a> the same way!</li></ol>';
+            steps = '<ol><li>Two files were downloaded: <b>' + esc(e.id + extOf(e)) + '</b> (the file) and <b>' + esc(e.id) + '.kd</b> (its description)!</li><li><a href="' + uploadMedia + '" target="_blank" rel="noopener noreferrer">Upload ' + esc(e.id + extOf(e)) + ' to the media folder</a> and choose “Propose changes”!</li><li>Then <a href="' + uploadEntries + '" target="_blank" rel="noopener noreferrer">upload ' + esc(e.id) + '.kd to the entries folder</a> the same way!</li></ol>';
         } else if (short) {
             window.open(entriesUrl, '_blank', 'noopener');
             steps = '<ol><li>GitHub opened in a new tab with your entry already filled in! (<a href="' + entriesUrl + '" target="_blank" rel="noopener noreferrer">Open it again</a>)</li><li>Sign in if asked, then choose “Propose changes”!</li><li>A maintainer reviews it, and then it is live for everyone!</li></ol>';
         } else {
-            download(e.id + '.md', md, 'text/markdown');
-            steps = '<ol><li>Your entry is long, so it was downloaded as <b>' + esc(e.id) + '.md</b>!</li><li><a href="' + uploadEntries + '" target="_blank" rel="noopener noreferrer">Upload it to the entries folder on GitHub</a> and choose “Propose changes”!</li></ol>';
+            download(e.id + '.kd', md, 'text/plain');
+            steps = '<ol><li>Your entry is long, so it was downloaded as <b>' + esc(e.id) + '.kd</b>!</li><li><a href="' + uploadEntries + '" target="_blank" rel="noopener noreferrer">Upload it to the entries folder on GitHub</a> and choose “Propose changes”!</li></ol>';
         }
         local = local.filter((x) => x.id !== e.id).concat([e]);
         saveLocal();
@@ -551,5 +555,5 @@
         .catch((e) => { loadError = (location.protocol === 'file:' ? 'Browsers block reading files on file:// pages, so open OpenDB through a web server! ' : '') + e.message; })
         .then(() => { reindex(); route(); });
 
-    window.OpenDB = { search: (q) => search(q).map((r) => r.e.id), entries: () => all(), toMarkdownFile, renderMd };
+    window.OpenDB = { search: (q) => search(q).map((r) => r.e.id), entries: () => all(), toKdFile, renderKd };
 })();
