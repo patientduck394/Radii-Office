@@ -869,7 +869,7 @@
             setTimeout(() => OS.openMenu(anchor, items, { cls: 'kd-style-menu' }), 0);
         };
         const cats = () => styleCategories().map((c) => ({ label: c.name, hint: c.styles.length + ' styles', icon: 'sparkle', run: () => showCat(c) }))
-            .concat([{ sep: true }, { label: 'Open the Format pane', icon: 'layout', run: () => { if (openPane) openPane(); } }]);
+            .concat(openPane ? [{ sep: true }, { label: 'Open the Format pane', icon: 'layout', run: () => openPane() }] : []);
         return cats();
     }
 

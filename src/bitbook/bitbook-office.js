@@ -16,6 +16,7 @@
     const prefs = Object.assign({ nav: true, pane: false, zoom: 1, full: false, lines: 'none', color: '' }, (function () {
         try { return JSON.parse(localStorage.getItem(PREF_KEY) || '{}') || {}; } catch (e) { return {}; }
     })());
+    prefs.pane = false; // the Format sidebar is gone from this layout (Protect and Note Info still open their own panel)
     // Per-note page looks + created dates (layout-only, never inside the note text)!
     let pageInfo = (function () { try { return JSON.parse(localStorage.getItem(PAGE_KEY) || '{}') || {}; } catch (e) { return {}; } })();
     function savePrefs() { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) {} }
@@ -358,8 +359,12 @@
         if (on) OS.toast('Full Page View! Press Esc to bring everything back!');
     }
     function togglePane(group) {
-        if (group) { prefs.pane = true; try { fmtSetGroup(group); } catch (e) {} }
-        else prefs.pane = !prefs.pane;
+        // the formatting part of the sidebar is gone; only Protect ('doc') and Note Info ('main') still open the panel
+        if (group === 'doc' || group === 'main') {
+            prefs.pane = !(prefs.pane && prefs.paneGroup === group);
+            prefs.paneGroup = group;
+            try { fmtSetGroup(group); } catch (e) {}
+        } else prefs.pane = false;
         savePrefs();
         applyView();
     }
@@ -544,7 +549,7 @@
                 { label: 'Styles', items: [{ gallery: true, cls: 'bb-style-gal', items: styleGallery }] },
                 { label: 'Tags', items: [
                     { gallery: true, cls: 'bb-tag-gal', items: tagGallery },
-                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'Every Keydown style, by category: pick one to style the selection!', menu: function (b) { return window.kdDoc ? kdDoc.styleMenu(OS, b, function () { togglePane('style'); }) : null; } }
+                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'Every Keydown style, by category: pick one to style the selection!', menu: function (b) { return window.kdDoc ? kdDoc.styleMenu(OS, b, null) : null; } }
                 ] },
                 { label: 'Find', items: [{ stack: [
                     { sm: true, icon: 'search', label: 'Find', kbd: '⌘F', run: function () { findDialog(false); } },
@@ -596,7 +601,6 @@
                 ] },
                 { label: 'Show', items: [{ stack: [
                     { check: true, label: 'Page List', get: function () { return prefs.nav; }, set: function (v) { prefs.nav = v; savePrefs(); applyView(); } },
-                    { check: true, label: 'Format Pane', get: function () { return prefs.pane; }, set: function (v) { prefs.pane = v; savePrefs(); applyView(); } },
                     { check: true, label: 'Floating Spheres', get: function () { return window.WriteoutSettings ? !window.WriteoutSettings.ambientHidden() : true; }, set: function (v) { if (window.WriteoutSettings) window.WriteoutSettings.setAmbientHidden(!v); } }
                 ] }] },
                 { label: 'Zoom', items: [

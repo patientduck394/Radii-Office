@@ -16,6 +16,7 @@
     const prefs = Object.assign({ pages: true, margins: 'normal', numbers: true, nav: true, pane: false, zoom: 1, focus: false }, (function () {
         try { return JSON.parse(localStorage.getItem(PREF_KEY) || '{}') || {}; } catch (e) { return {}; }
     })());
+    prefs.pane = false; // the Format sidebar is gone from this layout (Protect and Note Info still open their own panel)
     function savePrefs() { try { localStorage.setItem(PREF_KEY, JSON.stringify(prefs)); } catch (e) {} }
 
     const MARGINS = {
@@ -547,10 +548,12 @@
 
     /* ---------- Panes ---------- */
     function togglePane(group) {
-        if (group) {
-            prefs.pane = true;
+        // the formatting part of the sidebar is gone; only Protect ('doc') and Note Info ('main') still open the panel
+        if (group === 'doc' || group === 'main') {
+            prefs.pane = !(prefs.pane && prefs.paneGroup === group);
+            prefs.paneGroup = group;
             try { if (typeof fmtSetGroup === 'function') fmtSetGroup(group); } catch (e) {}
-        } else prefs.pane = !prefs.pane;
+        } else prefs.pane = false;
         savePrefs();
         applyView();
     }
@@ -726,12 +729,11 @@
                 ] }] },
                 { label: 'Styles', items: [
                     { gallery: true, items: styleGallery, noIndex: false },
-                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'Every Keydown style, by category: pick one to style the selection!', menu: function (b) { return window.kdDoc ? kdDoc.styleMenu(OS, b, function () { togglePane('style'); }) : null; } }
+                    { big: true, icon: 'sparkle', label: 'Keydown\nStyles', title: 'Every Keydown style, by category: pick one to style the selection!', menu: function (b) { return window.kdDoc ? kdDoc.styleMenu(OS, b, null) : null; } }
                 ] },
                 { label: 'Editing', items: [{ stack: [
                     { sm: true, icon: 'search', label: 'Find', kbd: '⌘F', run: function () { findDialog(false); } },
-                    { sm: true, icon: 'reset', label: 'Replace', run: function () { findDialog(true); } },
-                    { sm: true, icon: 'sidePane', label: 'Format Pane', run: function () { togglePane(); }, checked: function () { return prefs.pane; } }
+                    { sm: true, icon: 'reset', label: 'Replace', run: function () { findDialog(true); } }
                 ] }] }
             ]
         },
@@ -833,7 +835,6 @@
                 ] },
                 { label: 'Show', items: [{ stack: [
                     { check: true, label: 'Navigation Pane', get: function () { return prefs.nav; }, set: function (v) { prefs.nav = v; savePrefs(); applyView(); } },
-                    { check: true, label: 'Format Pane', get: function () { return prefs.pane; }, set: function (v) { prefs.pane = v; savePrefs(); applyView(); } },
                     { check: true, label: 'Floating Spheres', get: function () { return window.WriteoutSettings ? !window.WriteoutSettings.ambientHidden() : true; }, set: function (v) { if (window.WriteoutSettings) window.WriteoutSettings.setAmbientHidden(!v); } }
                 ] }] },
                 { label: 'Zoom', items: [
