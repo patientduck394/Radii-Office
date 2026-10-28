@@ -60,43 +60,43 @@ The first three tools of the Annotator, as tags: `#R#text##` is a highlight stri
 
 Glossy rounded chips, written `#color#text#`:
 
-* `#C#text#` #C#cyan#
-* `#O#text#` #O#orange#
-* `#G#text#` #G#green#
 * `#R#text#` #R#red#
+* `#O#text#` #O#orange#
+* `#GL#text#` #GL#gold#
+* `#Y#text#` #Y#yellow#
+* `#L#text#` #L#lime#
+* `#G#text#` #G#green#
+* `#TU#text#` #TU#turquoise#
+* `#T#text#` #T#teal#
+* `#C#text#` #C#cyan#
+* `#B#text#` #B#blue#
 * `#PR#text#` #PR#purple#
 * `#PK#text#` #PK#pink#
-* `#Y#text#` #Y#yellow#
-* `#B#text#` #B#blue#
-* `#L#text#` #L#lime#
-* `#T#text#` #T#teal#
-* `#GL#text#` #GL#gold#
-* `#SL#text#` #SL#slate#
 * `#W#text#` #W#white#
-* `#BK#text#` #BK#black#
 * `#FG#text#` #FG#fog#
-* `#TU#text#` #TU#turquoise#
+* `#SL#text#` #SL#slate#
+* `#BK#text#` #BK#black#
 
 ## Gloss pills
 
 The Bubble Chips' pill-shaped sibling, with a glassy shine across the top, in the same 16 colors. Written `%color%text%`:
 
-* `%C%text%` %C%chip %
-* `%O%text%` %O%chip %
-* `%G%text%` %G%chip %
-* `%R%text%` %R%chip %
-* `%PR%text%` %PR%chip %
-* `%PK%text%` %PK%chip %
-* `%Y%text%` %Y%chip %
-* `%B%text%` %B%chip %
-* `%L%text%` %L%chip %
-* `%T%text%` %T%chip %
-* `%GL%text%` %GL%chip %
-* `%SL%text%` %SL%chip %
-* `%W%text%` %W%chip %
-* `%BK%text%` %BK%chip %
-* `%FG%text%` %FG%chip %
-* `%TU%text%` %TU%chip %
+* `%R%text%` %R%red%
+* `%O%text%` %O%orange%
+* `%GL%text%` %GL%gold%
+* `%Y%text%` %Y%yellow%
+* `%L%text%` %L%lime%
+* `%G%text%` %G%green%
+* `%TU%text%` %TU%turquoise%
+* `%T%text%` %T%teal%
+* `%C%text%` %C%cyan%
+* `%B%text%` %B%blue%
+* `%PR%text%` %PR%purple%
+* `%PK%text%` %PK%pink%
+* `%W%text%` %W%white%
+* `%FG%text%` %FG%fog%
+* `%SL%text%` %SL%slate%
+* `%BK%text%` %BK%black%
 
 ## Gel orbs
 

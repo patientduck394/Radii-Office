@@ -5039,7 +5039,7 @@
 
 /* ========================================================
    GLOSS PILLS (%R%text%): the Bubble Chips' pill-shaped sibling, in the same 16 colors!
-   A full pill, a solid gel body, a glassy shine across the top and a soft glow of its own color.
+   The same color-to-clear gel, crisp edge and ink, as a pill with the gel poured upward and a glossy top streak.
    ======================================================== */
 .gel-pill-chip {
   --pill-c: #3b82f6; --pill-edge: #2563eb; --pill-ink: #172554;
@@ -5047,7 +5047,7 @@
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  padding: 2px 13px;
+  padding: 2px 12px;
   border-radius: 999px;
   border: 2px solid var(--pill-edge);
   color: var(--pill-ink);
@@ -5057,17 +5057,19 @@
   margin: 0 2px;
   vertical-align: middle;
   overflow: hidden;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--pill-c) 35%, #ffffff) 0%, color-mix(in srgb, var(--pill-c) 70%, #ffffff) 55%, var(--pill-c) 100%);
-  box-shadow: 0 2px 7px color-mix(in srgb, var(--pill-c) 45%, transparent), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+  /* the Bubble Chip's own gel, poured the other way: clear at the top, full color at the bottom */
+  background: linear-gradient(0deg, var(--pill-c) 0%, transparent 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
+/* a thin glossy streak along the top of the pill */
 .gel-pill-chip::before {
   content: "";
   position: absolute;
-  left: 9%; right: 9%; top: 1px;
-  height: 46%;
+  left: 14%; right: 14%; top: 2px;
+  height: 3px;
   border-radius: 999px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.05));
+  background: rgba(255, 255, 255, 0.85);
   pointer-events: none;
 }
 .gel-pill-cyan { --pill-c: #30d3e5; --pill-edge: #26a3b1; --pill-ink: #043e44; }
