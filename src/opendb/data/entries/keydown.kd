@@ -163,7 +163,7 @@ A droplet-shaped Bubble Chip cousin, with the gel pooled at the bottom and a bri
 
 ## Gel splits
 
-A capsule-shaped Bubble Chip cousin: one half full of gel, the other half clear, joined by a soft white seam. Written `#:color:text:`:
+A two-tone capsule Bubble Chip cousin: full gel on the left half, a lighter tint on the right, with little white notches marking the join. Written `#:color:text:`:
 
 * `#:R:text:` #:R:red:
 * `#:O:text:` #:O:orange:
@@ -184,7 +184,7 @@ A capsule-shaped Bubble Chip cousin: one half full of gel, the other half clear,
 
 ## Gel lenses
 
-An oval Bubble Chip cousin, with the gel glowing out from the center and a diagonal shine across it. Written `#;color;text;`:
+A lens-shaped Bubble Chip cousin, with the gel glowing out from the center and a diagonal shine across it. Written `#;color;text;`:
 
 * `#;R;text;` #;R;red;
 * `#;O;text;` #;O;orange;

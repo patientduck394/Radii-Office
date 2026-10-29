@@ -5491,9 +5491,9 @@
 .gel-drop-black { --drop-c: #919191; --drop-edge: #454545; --drop-ink: #222222; }
 
 /* ========================================================
-   GEL SPLITS (#:R:text:): a Bubble Chip cousin shaped like a two-part capsule, in the same 16 colors!
-   The same gel, crisp edge and ink: the left half is full of glossy gel, the right half is clear,
-   and a soft white seam joins them down the middle.
+   GEL SPLITS (#:R:text:): a Bubble Chip cousin shaped like a two-tone capsule, in the same 16 colors!
+   The same gel, crisp edge and ink: the left half holds full gel, the right half a lighter tint,
+   and two little white notches at the top and bottom edges mark the join (nothing crosses the text).
    ======================================================== */
 .gel-split-chip {
   --split-c: #3b82f6; --split-edge: #2563eb; --split-ink: #172554;
@@ -5511,13 +5511,27 @@
   margin: 0 2px;
   vertical-align: middle;
   overflow: hidden;
-  /* gel on the left, a soft white seam, then clear glass on the right */
+  /* a glossy top over two halves: full gel on the left, a soft tint of it on the right */
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 55%),
-    linear-gradient(90deg, var(--split-c) 0%, var(--split-c) calc(50% - 1.5px), rgba(255, 255, 255, 0.95) calc(50% - 1.5px), rgba(255, 255, 255, 0.95) calc(50% + 1.5px), rgba(255, 255, 255, 0.35) calc(50% + 1.5px), transparent 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(90deg, var(--split-c) 0%, var(--split-c) 50%, color-mix(in srgb, var(--split-c) 32%, transparent) 50%, color-mix(in srgb, var(--split-c) 18%, transparent) 100%);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
+/* the join: a short white notch at the top edge and one at the bottom edge */
+.gel-split-chip::before,
+.gel-split-chip::after {
+  content: "";
+  position: absolute;
+  left: calc(50% - 1.5px);
+  width: 3px;
+  height: 5px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.95);
+  pointer-events: none;
+}
+.gel-split-chip::before { top: 0; }
+.gel-split-chip::after { bottom: 0; }
 .gel-split-red { --split-c: #ef4444; --split-edge: #dc2626; --split-ink: #450a0a; }
 .gel-split-orange { --split-c: #f97316; --split-edge: #ea580c; --split-ink: #431407; }
 .gel-split-gold { --split-c: #ea9f08; --split-edge: #ca8a04; --split-ink: #451a03; }
@@ -5546,8 +5560,9 @@
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
-  padding: 2px 15px;
-  border-radius: 50%;
+  padding: 2px 14px;
+  /* rounded lens ends, but the long sides stay flat, so long highlights stay readable */
+  border-radius: 14px / 50%;
   border: 2px solid var(--lens-edge);
   color: var(--lens-ink);
   font-family: inherit;
@@ -5556,7 +5571,7 @@
   margin: 0 2px;
   vertical-align: middle;
   overflow: hidden;
-  background: radial-gradient(ellipse 70% 75% at 50% 50%, var(--lens-c) 0%, var(--lens-c) 18%, transparent 100%);
+  background: radial-gradient(ellipse 75% 85% at 50% 50%, var(--lens-c) 0%, var(--lens-c) 22%, transparent 100%);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.35);
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
