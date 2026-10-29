@@ -13,7 +13,7 @@
     }
 
     const FIELD_KINDS = [['text', 'Short Answer', 'pen'], ['textarea', 'Paragraph', 'page'], ['select', 'Dropdown', 'tag'],
-        ['chip', 'Chip Choice', 'bubble'], ['rating', 'Star Rating', 'star'], ['checkbox', 'Checkbox', 'check']];
+        ['chip', 'Chip Choice', 'bubble'], ['optrow', 'Option Row', 'aCenter'], ['rating', 'Star Rating', 'star'], ['checkbox', 'Checkbox', 'check']];
 
     function stats() {
         const fs = app.fields();
@@ -72,13 +72,14 @@
         { id: 'home', label: 'Home', groups: [
             { label: 'Form', items: [
                 { big: true, icon: 'newDoc', label: 'New\nForm', run: askReset },
-                { big: true, icon: 'plus', label: 'Add\nField', title: 'Short answer, paragraph, dropdown, chips, rating, checkbox!', run: () => addField('text'), menu: fieldMenu },
+                { big: true, icon: 'plus', label: 'Add\nField', title: 'Short answer, paragraph, dropdown, chips, option row, rating, checkbox!', run: () => addField('text'), menu: fieldMenu },
             ] },
             { label: 'Fields', items: [{ rows: [
                 [{ sm: true, icon: 'pen', label: 'Short', run: () => addField('text') },
                  { sm: true, icon: 'page', label: 'Paragraph', run: () => addField('textarea') },
                  { sm: true, icon: 'tag', label: 'Dropdown', run: () => addField('select') }],
                 [{ sm: true, icon: 'bubble', label: 'Chips', run: () => addField('chip') },
+                 { sm: true, icon: 'aCenter', label: 'Option Row', run: () => addField('optrow') },
                  { sm: true, icon: 'star', label: 'Rating', run: () => addField('rating') },
                  { sm: true, icon: 'check', label: 'Checkbox', run: () => addField('checkbox') }],
             ] }] },

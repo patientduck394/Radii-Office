@@ -7,7 +7,11 @@
     const STORAGE_KEY = 'formly_doc_v1';
     // Formly's violet accent
     const ACCENT = '#9D84FF';
-    const FIELD_TYPES = ['text', 'textarea', 'select', 'chip', 'rating', 'checkbox'];
+    const FIELD_TYPES = ['text', 'textarea', 'select', 'chip', 'optrow', 'rating', 'checkbox'];
+    const TYPE_NAMES = { optrow: 'Option Row' };
+    const typeName = (t) => TYPE_NAMES[t] || t[0].toUpperCase() + t.slice(1);
+    // an Option Row has between 2 and 10 buttons
+    const ROW_MIN = 2, ROW_MAX = 10;
 
     const starterForm = () => ({
         title: 'My Awesome Frutiger Aero Form',
@@ -109,6 +113,68 @@
         return chip;
     }
 
+    // --- Option Row: a centered row of buttons; click one to answer, click another to change it ---
+    function optionRow(field, locked) {
+        const row = el('div');
+        row.className = 'fm-optrow';
+        row.setAttribute('role', 'radiogroup');
+        row.setAttribute('aria-label', String(field.label || 'Choices').replace(/<[^>]*>/g, ''));
+        optionsOf(field, 'Option 1, Option 2, Option 3').forEach((o, i) => {
+            const key = field.id + '\u0000' + o;
+            const on = o === field.value;
+            const b = el('button');
+            b.type = 'button';
+            b.className = 'fm-opt' + (on ? ' is-on' : '') + (key === justPicked ? ' fm-pop' : '');
+            b.setAttribute('role', 'radio');
+            b.setAttribute('aria-checked', String(on));
+            b.disabled = locked;
+            b.textContent = o;
+            b.onclick = () => {
+                clickSound(620 + i * 50, 0.06);
+                justPicked = key;
+                updateField(field.id, (f) => Object.assign(f, { value: o }));
+                render();
+            };
+            row.appendChild(b);
+        });
+        justPicked = '';
+        return row;
+    }
+
+    // the builder's "Buttons: − 4 +" stepper: adds "Option N" buttons or drops the last ones
+    function buttonCount(field) {
+        const wrap = el('div');
+        wrap.className = 'fm-count';
+        const names = () => optionsOf(field, '').filter(Boolean);
+        const n = names().length;
+        const step = (d) => {
+            const list = names();
+            const want = Math.min(ROW_MAX, Math.max(ROW_MIN, list.length + d));
+            while (list.length < want) list.push('Option ' + (list.length + 1));
+            list.length = want;
+            clickSound(d > 0 ? 760 : 520, 0.05);
+            updateField(field.id, (f) => Object.assign(f, { options: list.join(', '), value: list.includes(f.value) ? f.value : '' }));
+            render();
+        };
+        const label = el('span');
+        label.textContent = 'Buttons';
+        const minus = el('button');
+        const count = el('output');
+        const plus = el('button');
+        minus.type = plus.type = 'button';
+        minus.textContent = '−';
+        plus.textContent = '+';
+        minus.setAttribute('aria-label', 'Fewer buttons');
+        plus.setAttribute('aria-label', 'More buttons');
+        minus.disabled = n <= ROW_MIN;
+        plus.disabled = n >= ROW_MAX;
+        minus.onclick = () => step(-1);
+        plus.onclick = () => step(1);
+        count.textContent = String(n);
+        [label, minus, count, plus].forEach((x) => wrap.appendChild(x));
+        return wrap;
+    }
+
     // --- One field card ---
     function builderHeader(field) {
         const id = field.id;
@@ -136,7 +202,7 @@
         FIELD_TYPES.forEach((t) => {
             const opt = el('option');
             opt.value = t;
-            opt.textContent = t.toUpperCase();
+            opt.textContent = typeName(t).toUpperCase();
             if (t === field.type) opt.selected = true;
             typeSelect.appendChild(opt);
         });
@@ -224,6 +290,7 @@
                 justPicked = '';
                 return row;
             }
+            case 'optrow': return optionRow(field, locked);
             case 'rating': {
                 const row = el('div', 'display: flex; gap: 6px; align-items: center;');
                 let current = parseInt(field.value, 10);
@@ -261,7 +328,8 @@
         card.className = 'form-field-card';
         if (builder()) {
             card.appendChild(builderHeader(field));
-            if (field.type === 'select' || field.type === 'chip') card.appendChild(optionsInput(field));
+            if (field.type === 'select' || field.type === 'chip' || field.type === 'optrow') card.appendChild(optionsInput(field));
+            if (field.type === 'optrow') card.appendChild(buttonCount(field));
         } else {
             const label = el('div', MONO + 'font-weight: 700; font-size: 0.95rem; color: #1e293b;');
             label.innerHTML = keydownHTML(field.label || 'Untitled Field');
@@ -273,6 +341,11 @@
                 // a chip answer shows as the chip that was picked
                 const opts = optionsOf(field, String(field.value));
                 read.appendChild(chipButton(String(field.value), Math.max(0, opts.indexOf(String(field.value))), true, false, true, null));
+            } else if (field.type === 'optrow') {
+                // an Option Row answer shows the whole row, with the picked button lit
+                read.style.background = 'transparent';
+                read.style.border = 'none';
+                read.appendChild(optionRow(field, true));
             } else read.textContent = filled(field.value) ? String(field.value) : '(No answer provided)';
             wrap.appendChild(read);
         } else {
@@ -336,10 +409,10 @@
             fields: fields().concat([{
                 id: 'f_' + Math.random().toString(36).substring(2, 9),
                 type: type,
-                label: 'New ' + type[0].toUpperCase() + type.slice(1) + ' Field',
+                label: 'New ' + typeName(type) + ' Field',
                 placeholder: '',
                 value: type === 'checkbox' ? false : type === 'rating' ? '5' : '',
-                options: type === 'select' || type === 'chip' ? 'Option 1, Option 2, Option 3' : '',
+                options: type === 'select' || type === 'chip' || type === 'optrow' ? 'Option 1, Option 2, Option 3' : '',
             }]),
         });
         render();
