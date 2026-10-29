@@ -119,6 +119,48 @@ Another Bubble Chip cousin: the same gel, flowing sideways from a thick colored 
 * `#%SL%text%` #%SL%slate%
 * `#%BK%text%` #%BK%black%
 
+## Gel tabs
+
+A Bubble Chip cousin shaped like a folder tab: the same gel, poured down from a thick colored cap. Written `#^color^text^`:
+
+* `#^R^text^` #^R^red^
+* `#^O^text^` #^O^orange^
+* `#^GL^text^` #^GL^gold^
+* `#^Y^text^` #^Y^yellow^
+* `#^L^text^` #^L^lime^
+* `#^G^text^` #^G^green^
+* `#^TU^text^` #^TU^turquoise^
+* `#^T^text^` #^T^teal^
+* `#^C^text^` #^C^cyan^
+* `#^B^text^` #^B^blue^
+* `#^PR^text^` #^PR^purple^
+* `#^PK^text^` #^PK^pink^
+* `#^W^text^` #^W^white^
+* `#^FG^text^` #^FG^fog^
+* `#^SL^text^` #^SL^slate^
+* `#^BK^text^` #^BK^black^
+
+## Gel drops
+
+A droplet-shaped Bubble Chip cousin, with the gel pooled at the bottom and a bright glint in the gel. Written `#+color+text+`:
+
+* `#+R+text+` #+R+red+
+* `#+O+text+` #+O+orange+
+* `#+GL+text+` #+GL+gold+
+* `#+Y+text+` #+Y+yellow+
+* `#+L+text+` #+L+lime+
+* `#+G+text+` #+G+green+
+* `#+TU+text+` #+TU+turquoise+
+* `#+T+text+` #+T+teal+
+* `#+C+text+` #+C+cyan+
+* `#+B+text+` #+B+blue+
+* `#+PR+text+` #+PR+purple+
+* `#+PK+text+` #+PK+pink+
+* `#+W+text+` #+W+white+
+* `#+FG+text+` #+FG+fog+
+* `#+SL+text+` #+SL+slate+
+* `#+BK+text+` #+BK+black+
+
 ## Gel orbs
 
 Round glossy orbs, written `=color=text=color=`:

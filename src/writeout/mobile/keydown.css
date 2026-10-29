@@ -9067,3 +9067,110 @@
 .gel-flag-fog { --flag-c: #d9d9d9; --flag-edge: #808080; --flag-ink: #404040; }
 .gel-flag-slate { --flag-c: #b4b4b4; --flag-edge: #6f6f6f; --flag-ink: #363636; }
 .gel-flag-black { --flag-c: #919191; --flag-edge: #454545; --flag-ink: #222222; }
+
+/* ========================================================
+   GEL TABS (#^R^text^): a Bubble Chip cousin shaped like a folder tab, in the same 16 colors!
+   The same color-to-clear gel, crisp edge and ink, poured down from a thick colored cap,
+   with rounded top corners, a snug flat bottom and a glossy line under the cap.
+   ======================================================== */
+.gel-tab-chip {
+  --tab-c: #3b82f6; --tab-edge: #2563eb; --tab-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 1px 12px 2px;
+  border-radius: 11px 11px 3px 3px;
+  border: 2px solid var(--tab-edge);
+  border-top-width: 5px;
+  color: var(--tab-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px;
+  vertical-align: middle;
+  background: linear-gradient(180deg, var(--tab-c) 0%, transparent 90%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+/* a glossy line just under the cap */
+.gel-tab-chip::before {
+  content: "";
+  position: absolute;
+  left: 4px; right: 4px; top: 1px;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+  pointer-events: none;
+}
+.gel-tab-red { --tab-c: #ef4444; --tab-edge: #dc2626; --tab-ink: #450a0a; }
+.gel-tab-orange { --tab-c: #f97316; --tab-edge: #ea580c; --tab-ink: #431407; }
+.gel-tab-gold { --tab-c: #ea9f08; --tab-edge: #ca8a04; --tab-ink: #451a03; }
+.gel-tab-yellow { --tab-c: #ead708; --tab-edge: #caa604; --tab-ink: #452b03; }
+.gel-tab-lime { --tab-c: #84cc16; --tab-edge: #65a30d; --tab-ink: #1a2e05; }
+.gel-tab-green { --tab-c: #10b981; --tab-edge: #059669; --tab-ink: #022c22; }
+.gel-tab-turquoise { --tab-c: #30e5cd; --tab-edge: #26b1a5; --tab-ink: #044439; }
+.gel-tab-teal { --tab-c: #06b6d4; --tab-edge: #0891b2; --tab-ink: #083344; }
+.gel-tab-cyan { --tab-c: #30d3e5; --tab-edge: #26a3b1; --tab-ink: #043e44; }
+.gel-tab-blue { --tab-c: #3b82f6; --tab-edge: #2563eb; --tab-ink: #172554; }
+.gel-tab-purple { --tab-c: #a855f7; --tab-edge: #9333ea; --tab-ink: #2e1065; }
+.gel-tab-pink { --tab-c: #ec4899; --tab-edge: #db2777; --tab-ink: #4c0519; }
+.gel-tab-white { --tab-c: #f3f3f3; --tab-edge: #b3b3b3; --tab-ink: #7a7a7a; }
+.gel-tab-fog { --tab-c: #d9d9d9; --tab-edge: #808080; --tab-ink: #404040; }
+.gel-tab-slate { --tab-c: #b4b4b4; --tab-edge: #6f6f6f; --tab-ink: #363636; }
+.gel-tab-black { --tab-c: #919191; --tab-edge: #454545; --tab-ink: #222222; }
+
+/* ========================================================
+   GEL DROPS (#+R+text+): a Bubble Chip cousin shaped like a droplet, in the same 16 colors!
+   The same gel, crisp edge and ink, but the gel pools at the bottom like water in a bubble,
+   with one pointed corner and a bright glint in the gel.
+   ======================================================== */
+.gel-drop-chip {
+  --drop-c: #3b82f6; --drop-edge: #2563eb; --drop-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 13px;
+  border-radius: 14px 14px 14px 4px;
+  border: 2px solid var(--drop-edge);
+  color: var(--drop-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px;
+  vertical-align: middle;
+  overflow: hidden;
+  /* the gel settles at the bottom, fading to clear as it rises */
+  background: radial-gradient(ellipse 130% 95% at 50% 120%, var(--drop-c) 0%, var(--drop-c) 22%, transparent 78%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 -2px 4px rgba(255, 255, 255, 0.25);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+/* the glint: a bright little oval sitting in the pooled gel, near the bottom right */
+.gel-drop-chip::after {
+  content: "";
+  position: absolute;
+  right: 7px; bottom: 4px;
+  width: 9px; height: 4px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transform: rotate(-18deg);
+  pointer-events: none;
+}
+.gel-drop-red { --drop-c: #ef4444; --drop-edge: #dc2626; --drop-ink: #450a0a; }
+.gel-drop-orange { --drop-c: #f97316; --drop-edge: #ea580c; --drop-ink: #431407; }
+.gel-drop-gold { --drop-c: #ea9f08; --drop-edge: #ca8a04; --drop-ink: #451a03; }
+.gel-drop-yellow { --drop-c: #ead708; --drop-edge: #caa604; --drop-ink: #452b03; }
+.gel-drop-lime { --drop-c: #84cc16; --drop-edge: #65a30d; --drop-ink: #1a2e05; }
+.gel-drop-green { --drop-c: #10b981; --drop-edge: #059669; --drop-ink: #022c22; }
+.gel-drop-turquoise { --drop-c: #30e5cd; --drop-edge: #26b1a5; --drop-ink: #044439; }
+.gel-drop-teal { --drop-c: #06b6d4; --drop-edge: #0891b2; --drop-ink: #083344; }
+.gel-drop-cyan { --drop-c: #30d3e5; --drop-edge: #26a3b1; --drop-ink: #043e44; }
+.gel-drop-blue { --drop-c: #3b82f6; --drop-edge: #2563eb; --drop-ink: #172554; }
+.gel-drop-purple { --drop-c: #a855f7; --drop-edge: #9333ea; --drop-ink: #2e1065; }
+.gel-drop-pink { --drop-c: #ec4899; --drop-edge: #db2777; --drop-ink: #4c0519; }
+.gel-drop-white { --drop-c: #f3f3f3; --drop-edge: #b3b3b3; --drop-ink: #7a7a7a; }
+.gel-drop-fog { --drop-c: #d9d9d9; --drop-edge: #808080; --drop-ink: #404040; }
+.gel-drop-slate { --drop-c: #b4b4b4; --drop-edge: #6f6f6f; --drop-ink: #363636; }
+.gel-drop-black { --drop-c: #919191; --drop-edge: #454545; --drop-ink: #222222; }
+
