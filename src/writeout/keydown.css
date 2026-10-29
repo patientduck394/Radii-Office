@@ -9305,8 +9305,8 @@
 
 /* ========================================================
    GEL FLAGS (#%R%text%): another Bubble Chip cousin, in the same 16 colors!
-   The same color-to-clear gel, crisp edge and ink, but the gel flows sideways
-   from a thick colored "flagpole" edge, with tighter corners.
+   The same color-to-clear gel, crisp edge and ink, but the gel pours down from the top
+   beside a thick colored "flagpole" edge, with tighter corners.
    ======================================================== */
 .gel-flag-chip {
   --flag-c: #3b82f6; --flag-edge: #2563eb; --flag-ink: #172554;
@@ -9323,7 +9323,7 @@
   white-space: nowrap;
   margin: 0 2px;
   vertical-align: middle;
-  background: linear-gradient(90deg, var(--flag-c) 0%, transparent 100%);
+  background: linear-gradient(180deg, var(--flag-c) 0%, transparent 100%);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
