@@ -1,0 +1,82 @@
+---
+format: keydown-text
+id: julia-programming-language
+type: article
+title: Julia (programming language)
+summary: Julia is a free, open-source, high-level programming language designed for fast numerical and scientific computing, built around multiple dispatch and just-in-time compilation.
+tags: [programming languages, computer science, scientific computing]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Paradigm: Multiple dispatch, functional, procedural
+infobox.Designed by: Jeff Bezanson, Stefan Karpinski, Viral B. Shah, Alan Edelman
+infobox.First appeared: 2012
+infobox.Typing: Dynamic, with optional type annotations
+infobox.License: MIT
+infobox.File extension: .jl
+---
+{{unreferenced}}
+
+**Julia** is a free and open-source, high-level programming language designed for **fast numerical and scientific computing**. It aims to be as easy to write as languages like Python, MATLAB or R, while running at speeds close to compiled languages like C and Fortran. This addresses the "two-language problem", where researchers prototype in a slow, friendly language and then rewrite their code in a fast, harder one.
+
+Julia was created by **Jeff Bezanson**, **Stefan Karpinski**, **Viral B. Shah** and **Alan Edelman**, starting in 2009. It was announced publicly in 2012 in a blog post titled "Why We Created Julia", and version **1.0**, which promised a stable language, was released in August 2018. Julia is released under the **MIT License**, and its source files use the `.jl` extension.
+
+## Design
+
+* **Just-in-time compilation**: Julia compiles each function to fast native machine code (through the LLVM compiler framework) the first time it is called with a given combination of argument types.
+* **Multiple dispatch**: a function can have many **methods**, and Julia picks which one to run from the types of *all* of its arguments, not just the first one. This is the central idea of the language.
+* **Dynamic typing with type inference**: types do not have to be written, but they can be added to methods and structs for clarity and to choose behavior.
+* **Built for maths**: arrays, linear algebra, complex numbers (using `im` for the [[imaginary-number|imaginary unit]]), rational numbers and arbitrary-precision numbers are built in. Arrays are indexed from 1, as in mathematics.
+* **Unicode names**: code can use symbols such as `π`, `α` or `∑` directly, so formulas can look like they do on paper.
+* **Metaprogramming**: Julia code can be treated as data, and **macros** like `@time` transform code before it runs.
+* **Interoperability**: Julia can call C and Fortran libraries directly, and packages connect it to Python, R and other languages.
+
+## Examples
+
+A function that counts the steps of the Collatz sequence:
+
+```
+function collatz(n::Integer)
+    steps = 0
+    while n != 1
+        n = iseven(n) ? n ÷ 2 : 3n + 1
+        steps += 1
+    end
+    return steps
+end
+```
+
+Multiple dispatch, choosing a method by the type of shape:
+
+```
+abstract type Shape end
+struct Circle <: Shape
+    r::Float64
+end
+struct Square <: Shape
+    side::Float64
+end
+
+area(c::Circle) = π * c.r^2
+area(s::Square) = s.side^2
+
+area(Circle(1.0))  # 3.141592653589793
+area(Square(2.0))  # 4.0
+```
+
+Note that `3n` means `3 * n`: Julia allows a number to be written right before a variable, as in mathematical notation.
+
+## Ecosystem
+
+Julia comes with an interactive **REPL** (read–eval–print loop) and a built-in package manager, **Pkg**, which installs packages from a public registry. Well-known packages and tools include:
+
+* **DifferentialEquations.jl** for solving differential equations.
+* **JuMP** for mathematical optimization.
+* **Flux** for machine learning.
+* **Plots.jl** and **Makie** for charts and visualization.
+* **Pluto** and **Jupyter** notebooks for interactive work (the "Ju" in Jupyter stands for Julia, alongside Python and R).
+
+## Uses
+
+Julia is used in science and engineering for simulation, data analysis, climate and physics modeling (including [[quantum-mechanics|quantum mechanics]] simulations), finance, and high-performance computing on supercomputers and GPUs.

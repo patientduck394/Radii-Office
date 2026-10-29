@@ -1,0 +1,55 @@
+---
+format: keydown-text
+id: solenoid
+type: article
+title: Solenoid
+summary: A solenoid is a coil of wire wound into a tight helix, which makes a strong, nearly uniform magnetic field inside it when an electric current flows through it.
+tags: [physics, electromagnetism, engineering]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Type: Electromagnetic coil
+infobox.Field inside: B = μ₀nI (ideal, air core)
+infobox.Named by: André-Marie Ampère (1820s)
+infobox.Uses: Electromagnets, valves, relays, MRI magnets
+---
+{{unreferenced}}
+
+A **solenoid** is a long coil of wire wound into a tightly packed helix. When an electric current flows through the wire, the coil produces a magnetic field. Inside a long solenoid this field is strong and nearly **uniform**, pointing along the coil's axis, while outside it is much weaker. This makes solenoids one of the simplest ways to make a controlled magnetic field, and the basic part inside many electromagnets.
+
+The name comes from the Greek *sōlēn*, meaning "pipe" or "channel", and was introduced by the French physicist André-Marie Ampère in the 1820s.
+
+## The magnetic field
+
+For an ideal solenoid (very long, with closely spaced turns and nothing but air inside), the field inside is
+
+$$B = \mu_0 n I$$
+
+where $\mu_0$ is the magnetic constant (the permeability of free space), $n$ is the number of turns per unit length and $I$ is the current. The field does not depend on the coil's width or on where you are inside it, which is why it is so uniform. The result follows from **Ampère's law** applied to a rectangular loop that passes through the inside of the coil.
+
+The direction of the field follows the **right-hand rule**: if the fingers of your right hand curl the way the current flows around the coil, your thumb points the way the field points inside it, toward the coil's north end.
+
+* More turns per meter, or more current, makes a stronger field.
+* Filling the coil with a **ferromagnetic core**, such as soft iron, multiplies the field by the core's relative permeability $\mu_r$, which can be hundreds or thousands of times stronger, until the core saturates.
+* A real solenoid of finite length has a weaker, spreading field near its ends.
+
+## Inductance
+
+Because a solenoid stores energy in its magnetic field, it resists changes in current. Its **inductance** is about
+
+$$L = \frac{\mu_0 N^2 A}{\ell}$$
+
+for $N$ turns, cross-sectional area $A$ and length $\ell$. This makes solenoids useful as **inductors** in electrical circuits, and explains the spark that can jump when a coil's current is switched off suddenly.
+
+## Uses
+
+* **Solenoid actuators**: a movable iron plunger is pulled into the coil when it is switched on, turning electricity into a short, straight push or pull. These drive door locks, pinball flippers and many machines.
+* **Solenoid valves** open and close the flow of water, gas or fuel, for example in washing machines and irrigation systems.
+* **Relays** and car **starter solenoids** use a small current to switch a much larger one.
+* **MRI scanners** use large superconducting solenoids to make the very strong, very uniform field needed for medical imaging (see [[quantum-mechanics|quantum mechanics]] for the spin physics behind it).
+* Loudspeakers, electric bells and many sensors also rely on coils.
+
+## Not to be confused with
+
+In mathematics, a **solenoid** is also the name of a kind of topological space built from nested, wrapped-around loops. It shares only the name with the electromagnetic coil.

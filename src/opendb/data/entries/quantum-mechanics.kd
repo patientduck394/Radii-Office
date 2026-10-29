@@ -1,0 +1,61 @@
+---
+format: keydown-text
+id: quantum-mechanics
+type: article
+title: Quantum mechanics
+summary: Quantum mechanics is the branch of physics that describes how matter and light behave at the scale of atoms and smaller, where energy comes in discrete amounts and outcomes are described by probabilities.
+tags: [physics, quantum physics, science]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Field: Physics
+infobox.Key equation: Schrödinger equation
+infobox.Key constant: Planck constant, h
+infobox.Developed: 1900–1930s
+---
+{{unreferenced}}
+
+**Quantum mechanics** is the branch of physics that describes the behavior of matter and light at the scale of atoms and subatomic particles. At that scale, nature works very differently from everyday experience: energy often comes in fixed packets called **quanta**, particles behave like waves, and the result of a measurement can usually only be predicted as a **probability**.
+
+Quantum mechanics is one of the most precisely tested theories in science. It explains the structure of atoms, chemical bonding, and how light and matter interact, and it underlies technologies such as transistors, lasers and LEDs.
+
+## Key ideas
+
+* **Quantization**: some quantities, like the energy of an electron in an atom, can only take certain separate values. In a hydrogen atom the allowed energies are about $E_n = -\dfrac{13.6\ \text{eV}}{n^2}$ for $n = 1, 2, 3, \ldots$
+* **Wave–particle duality**: light and matter show both wave-like behavior (such as interference) and particle-like behavior (such as arriving in single lumps).
+* **Superposition**: a system can be in a combination of several states at once, until it is measured.
+* **The uncertainty principle**: some pairs of quantities cannot both be known exactly. For position $x$ and momentum $p$, $\Delta x\,\Delta p \ge \dfrac{\hbar}{2}$.
+* **Spin**: particles carry an intrinsic angular momentum that comes in fixed amounts; the spins of atomic nuclei are what MRI scanners detect inside a [[solenoid|solenoid]] magnet.
+* **Entanglement**: two particles can share one joint state, so that measuring one gives information about the other, however far apart they are.
+
+## The wave function
+
+The state of a quantum system is described by a **wave function**, usually written $\psi$. Its values are complex numbers, built from real and [[imaginary-number|imaginary numbers]]. The wave function changes over time according to the **Schrödinger equation**:
+
+$$i\hbar \frac{\partial \psi}{\partial t} = \hat{H}\psi$$
+
+Here $\hbar$ is the reduced Planck constant ($h / 2\pi$) and $\hat{H}$, the **Hamiltonian**, describes the system's total energy.
+
+The wave function itself cannot be observed directly. By the **Born rule**, the probability of finding a particle at a place is proportional to $|\psi|^2$, the squared size of the wave function there.
+
+## History
+
+* **1900**: Max Planck explained the light given off by hot objects by assuming energy is emitted in packets, $E = hf$.
+* **1905**: Albert Einstein explained the photoelectric effect by treating light itself as made of quanta, later called photons.
+* **1913**: Niels Bohr proposed a model of the hydrogen atom with fixed electron orbits.
+* **1924**: Louis de Broglie suggested that particles such as electrons also behave as waves.
+* **1925–1926**: Werner Heisenberg developed matrix mechanics, Erwin Schrödinger his wave equation, and Max Born the probability interpretation. Wolfgang Pauli stated the exclusion principle.
+* **1927–1930s**: Paul Dirac and others joined quantum mechanics with special relativity, leading toward quantum field theory.
+
+## Interpretations
+
+The mathematics of quantum mechanics is agreed upon, but what it *means* is still debated. The **Copenhagen interpretation** treats the wave function as a tool for predicting measurements; the **many-worlds interpretation** says every possible outcome happens in a branching universe; and other views, such as pilot-wave theory, add hidden details. All of them make the same predictions for ordinary experiments.
+
+## Uses
+
+* **Electronics**: transistors, computer chips, solar cells and LEDs depend on the quantum behavior of electrons in solids.
+* **Lasers** rely on stimulated emission of light from atoms.
+* **Medicine**: MRI scanners use the quantum property of nuclear spin.
+* **Quantum computing** uses superposition and entanglement to process information in new ways.
+* **Particle physics**: quantum field theory describes the fundamental particles; fermions such as electrons are handled mathematically with [[grassmann-number|Grassmann numbers]].

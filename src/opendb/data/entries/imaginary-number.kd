@@ -1,0 +1,69 @@
+---
+format: keydown-text
+id: imaginary-number
+type: article
+title: Imaginary number
+summary: An imaginary number is a real number multiplied by the imaginary unit i, the number whose square is −1.
+tags: [mathematics, complex numbers, algebra]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Field: Algebra, complex analysis
+infobox.Imaginary unit: i, where i² = −1
+infobox.General form: bi (b a real number)
+infobox.Named by: René Descartes (1637)
+---
+{{unreferenced}}
+
+An **imaginary number** is a real number multiplied by the **imaginary unit** $i$, which is defined by the property
+
+$$i^2 = -1$$
+
+No real number has a negative square, so $i$ is a new kind of number. Numbers such as $3i$, $-\tfrac{1}{2}i$ and $\sqrt{2}\,i$ are imaginary. Adding a real number and an imaginary number gives a **complex number**, written $a + bi$, where $a$ is the **real part** and $b$ is the **imaginary part**. Zero is the only number that is both real and imaginary.
+
+Despite the name, imaginary numbers are no less "real" than negative numbers or fractions: they are a precise and very useful part of mathematics, physics and engineering.
+
+## Square roots of negative numbers
+
+With $i$, every negative number has square roots. Because $(2i)^2 = 4i^2 = -4$, the principal square root of $-4$ is $2i$, and in general $\sqrt{-x} = i\sqrt{x}$ for $x > 0$. Every quadratic equation then has solutions: $x^2 + 1 = 0$ is solved by $x = i$ and $x = -i$.
+
+One familiar rule needs care: $\sqrt{a}\sqrt{b} = \sqrt{ab}$ is not true when both numbers are negative. For example, $\sqrt{-1}\sqrt{-1} = i \cdot i = -1$, but $\sqrt{(-1)(-1)} = \sqrt{1} = 1$.
+
+## Powers of i
+
+The powers of $i$ repeat in a cycle of four:
+
+* $i^1 = i$
+* $i^2 = -1$
+* $i^3 = -i$
+* $i^4 = 1$
+
+so $i^5 = i$ again, and $i^{n}$ depends only on the remainder when $n$ is divided by 4.
+
+## The complex plane
+
+Complex numbers can be drawn as points in a plane, with the real part along the horizontal axis and the imaginary part along the vertical axis. Imaginary numbers lie on the vertical axis. In this picture, **multiplying by $i$ rotates a number a quarter turn (90°) counterclockwise** around zero: $1 \to i \to -1 \to -i \to 1$.
+
+This link between multiplication and rotation is captured by **Euler's formula**,
+
+$$e^{i\theta} = \cos\theta + i\sin\theta$$
+
+which, with $\theta = \pi$, gives the famous identity $e^{i\pi} + 1 = 0$.
+
+## History
+
+* In 1545, Gerolamo Cardano met square roots of negative numbers while solving cubic equations, but treated them as useless.
+* In 1572, Rafael Bombelli wrote down the rules for calculating with them, showing they could lead to real answers.
+* In 1637, René Descartes called such numbers "imaginary", meaning it as an insult; the name stuck.
+* Leonhard Euler introduced the symbol $i$ for $\sqrt{-1}$ in 1777.
+* Around 1800, Caspar Wessel and Jean-Robert Argand described the geometric picture of the complex plane, and Carl Friedrich Gauss made it widely accepted.
+
+## Uses
+
+* **Electrical engineering**: alternating currents and voltages are described with complex numbers; engineers often write $j$ instead of $i$, because $i$ already means current.
+* **Signals and waves**: the Fourier transform breaks sounds, images and radio signals into rotating complex waves.
+* **Physics**: the Schrödinger equation of [[quantum-mechanics|quantum mechanics]] contains $i$, and quantum states are described by complex numbers.
+* **Mathematics**: by the fundamental theorem of algebra, every polynomial equation has a solution among the complex numbers.
+
+Other number systems extend the real numbers in different ways, such as the anticommuting [[grassmann-number|Grassmann numbers]]. See also [[set-mathematics|Set (mathematics)]].

@@ -1,0 +1,60 @@
+---
+format: keydown-text
+id: grassmann-number
+type: article
+title: Grassmann number
+summary: A Grassmann number is a number built from generators that anticommute, so that swapping two of them flips the sign and every generator squares to zero.
+tags: [mathematics, physics, algebra, supersymmetry]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Also called: Anticommuting number, supernumber
+infobox.Rule: θᵢθⱼ = −θⱼθᵢ, so θ² = 0
+infobox.Named after: Hermann Grassmann
+infobox.Uses: Fermions in quantum field theory, supersymmetry
+---
+{{unreferenced}}
+
+A **Grassmann number** (also called an **anticommuting number**) is an element of an algebra built from **generators** $\theta_1, \theta_2, \ldots, \theta_n$ that **anticommute**:
+
+$$\theta_i \theta_j = -\theta_j \theta_i$$
+
+Swapping the order of two generators flips the sign. Taking $i = j$ gives $\theta_i^2 = -\theta_i^2$, so
+
+$$\theta_i^2 = 0$$
+
+Every generator squares to zero, even though it is not zero itself. This is very different from ordinary real or [[imaginary-number|imaginary numbers]], and it is exactly what makes Grassmann numbers useful in physics.
+
+They are named after the German mathematician **Hermann Grassmann**, whose 1844 work *Die lineare Ausdehnungslehre* introduced the algebra behind them, known today as the **exterior algebra**.
+
+## Building Grassmann numbers
+
+Because each generator can appear at most once in a product, every Grassmann number is a finite sum. With one generator $\theta$, the most general element is
+
+$$z = a + b\,\theta$$
+
+for ordinary numbers $a$ and $b$. With two generators it is
+
+$$z = a + b\,\theta_1 + c\,\theta_2 + d\,\theta_1\theta_2$$
+
+In general, $n$ generators give $2^n$ independent terms, one for each subset of the generators (compare the power set in [[set-mathematics|set theory]]).
+
+* Terms with an **even** number of generators, like $\theta_1\theta_2$, commute with everything.
+* Terms with an **odd** number of generators anticommute with each other.
+
+Functions are simple too: since $\theta^2 = 0$, any power series stops early. For example, $e^{\theta} = 1 + \theta$.
+
+## Calculus with Grassmann numbers
+
+There is a consistent calculus for these numbers, worked out by the mathematician Felix Berezin, and called **Berezin integration**. For a single generator the rules are
+
+$$\int d\theta \; 1 = 0, \qquad \int d\theta \; \theta = 1$$
+
+so integrating behaves like differentiating. A key result is the Gaussian integral over pairs of Grassmann variables, which (up to sign and ordering conventions) gives a **determinant**, $\det A$, where the same integral over ordinary numbers gives $1/\sqrt{\det A}$.
+
+## Uses in physics
+
+* **Fermions**: particles such as electrons are fermions, and obey the Pauli exclusion principle, so no two can be in the same state. In the path-integral form of [[quantum-mechanics|quantum mechanics]] and quantum field theory, fermion fields are described by Grassmann numbers, and the rule $\theta^2 = 0$ mirrors the exclusion principle.
+* **Supersymmetry**: theories that relate bosons and fermions use **superspace**, which adds Grassmann coordinates to ordinary space and time.
+* **Mathematics**: the exterior algebra is used to describe areas, volumes and orientation, and appears in differential geometry as differential forms.
