@@ -9450,3 +9450,101 @@
 .gel-drop-slate { --drop-c: #b4b4b4; --drop-edge: #6f6f6f; --drop-ink: #363636; }
 .gel-drop-black { --drop-c: #919191; --drop-edge: #454545; --drop-ink: #222222; }
 
+/* ========================================================
+   GEL SPLITS (#:R:text:): a Bubble Chip cousin shaped like a two-part capsule, in the same 16 colors!
+   The same gel, crisp edge and ink: the left half is full of glossy gel, the right half is clear,
+   and a soft white seam joins them down the middle.
+   ======================================================== */
+.gel-split-chip {
+  --split-c: #3b82f6; --split-edge: #2563eb; --split-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 13px;
+  border-radius: 999px;
+  border: 2px solid var(--split-edge);
+  color: var(--split-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px;
+  vertical-align: middle;
+  overflow: hidden;
+  /* gel on the left, a soft white seam, then clear glass on the right */
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(90deg, var(--split-c) 0%, var(--split-c) calc(50% - 1.5px), rgba(255, 255, 255, 0.95) calc(50% - 1.5px), rgba(255, 255, 255, 0.95) calc(50% + 1.5px), rgba(255, 255, 255, 0.35) calc(50% + 1.5px), transparent 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-split-red { --split-c: #ef4444; --split-edge: #dc2626; --split-ink: #450a0a; }
+.gel-split-orange { --split-c: #f97316; --split-edge: #ea580c; --split-ink: #431407; }
+.gel-split-gold { --split-c: #ea9f08; --split-edge: #ca8a04; --split-ink: #451a03; }
+.gel-split-yellow { --split-c: #ead708; --split-edge: #caa604; --split-ink: #452b03; }
+.gel-split-lime { --split-c: #84cc16; --split-edge: #65a30d; --split-ink: #1a2e05; }
+.gel-split-green { --split-c: #10b981; --split-edge: #059669; --split-ink: #022c22; }
+.gel-split-turquoise { --split-c: #30e5cd; --split-edge: #26b1a5; --split-ink: #044439; }
+.gel-split-teal { --split-c: #06b6d4; --split-edge: #0891b2; --split-ink: #083344; }
+.gel-split-cyan { --split-c: #30d3e5; --split-edge: #26a3b1; --split-ink: #043e44; }
+.gel-split-blue { --split-c: #3b82f6; --split-edge: #2563eb; --split-ink: #172554; }
+.gel-split-purple { --split-c: #a855f7; --split-edge: #9333ea; --split-ink: #2e1065; }
+.gel-split-pink { --split-c: #ec4899; --split-edge: #db2777; --split-ink: #4c0519; }
+.gel-split-white { --split-c: #f3f3f3; --split-edge: #b3b3b3; --split-ink: #7a7a7a; }
+.gel-split-fog { --split-c: #d9d9d9; --split-edge: #808080; --split-ink: #404040; }
+.gel-split-slate { --split-c: #b4b4b4; --split-edge: #6f6f6f; --split-ink: #363636; }
+.gel-split-black { --split-c: #919191; --split-edge: #454545; --split-ink: #222222; }
+
+/* ========================================================
+   GEL LENSES (#;R;text;): an oval Bubble Chip cousin, in the same 16 colors!
+   The same gel, crisp edge and ink, but the gel glows out from the center and fades to clear
+   at the rim, with a soft diagonal shine across the glass.
+   ======================================================== */
+.gel-lens-chip {
+  --lens-c: #3b82f6; --lens-edge: #2563eb; --lens-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 15px;
+  border-radius: 50%;
+  border: 2px solid var(--lens-edge);
+  color: var(--lens-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px;
+  vertical-align: middle;
+  overflow: hidden;
+  background: radial-gradient(ellipse 70% 75% at 50% 50%, var(--lens-c) 0%, var(--lens-c) 18%, transparent 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4), inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+/* the shine: a soft diagonal band across the glass */
+.gel-lens-chip::before {
+  content: "";
+  position: absolute;
+  top: -40%; bottom: -40%; left: 18%;
+  width: 7px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.7) 50%, rgba(255, 255, 255, 0) 100%);
+  transform: rotate(28deg);
+  pointer-events: none;
+}
+.gel-lens-red { --lens-c: #ef4444; --lens-edge: #dc2626; --lens-ink: #450a0a; }
+.gel-lens-orange { --lens-c: #f97316; --lens-edge: #ea580c; --lens-ink: #431407; }
+.gel-lens-gold { --lens-c: #ea9f08; --lens-edge: #ca8a04; --lens-ink: #451a03; }
+.gel-lens-yellow { --lens-c: #ead708; --lens-edge: #caa604; --lens-ink: #452b03; }
+.gel-lens-lime { --lens-c: #84cc16; --lens-edge: #65a30d; --lens-ink: #1a2e05; }
+.gel-lens-green { --lens-c: #10b981; --lens-edge: #059669; --lens-ink: #022c22; }
+.gel-lens-turquoise { --lens-c: #30e5cd; --lens-edge: #26b1a5; --lens-ink: #044439; }
+.gel-lens-teal { --lens-c: #06b6d4; --lens-edge: #0891b2; --lens-ink: #083344; }
+.gel-lens-cyan { --lens-c: #30d3e5; --lens-edge: #26a3b1; --lens-ink: #043e44; }
+.gel-lens-blue { --lens-c: #3b82f6; --lens-edge: #2563eb; --lens-ink: #172554; }
+.gel-lens-purple { --lens-c: #a855f7; --lens-edge: #9333ea; --lens-ink: #2e1065; }
+.gel-lens-pink { --lens-c: #ec4899; --lens-edge: #db2777; --lens-ink: #4c0519; }
+.gel-lens-white { --lens-c: #f3f3f3; --lens-edge: #b3b3b3; --lens-ink: #7a7a7a; }
+.gel-lens-fog { --lens-c: #d9d9d9; --lens-edge: #808080; --lens-ink: #404040; }
+.gel-lens-slate { --lens-c: #b4b4b4; --lens-edge: #6f6f6f; --lens-ink: #363636; }
+.gel-lens-black { --lens-c: #919191; --lens-edge: #454545; --lens-ink: #222222; }
+
+

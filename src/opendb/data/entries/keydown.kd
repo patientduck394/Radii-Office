@@ -161,6 +161,48 @@ A droplet-shaped Bubble Chip cousin, with the gel pooled at the bottom and a bri
 * `#+SL+text+` #+SL+slate+
 * `#+BK+text+` #+BK+black+
 
+## Gel splits
+
+A capsule-shaped Bubble Chip cousin: one half full of gel, the other half clear, joined by a soft white seam. Written `#:color:text:`:
+
+* `#:R:text:` #:R:red:
+* `#:O:text:` #:O:orange:
+* `#:GL:text:` #:GL:gold:
+* `#:Y:text:` #:Y:yellow:
+* `#:L:text:` #:L:lime:
+* `#:G:text:` #:G:green:
+* `#:TU:text:` #:TU:turquoise:
+* `#:T:text:` #:T:teal:
+* `#:C:text:` #:C:cyan:
+* `#:B:text:` #:B:blue:
+* `#:PR:text:` #:PR:purple:
+* `#:PK:text:` #:PK:pink:
+* `#:W:text:` #:W:white:
+* `#:FG:text:` #:FG:fog:
+* `#:SL:text:` #:SL:slate:
+* `#:BK:text:` #:BK:black:
+
+## Gel lenses
+
+An oval Bubble Chip cousin, with the gel glowing out from the center and a diagonal shine across it. Written `#;color;text;`:
+
+* `#;R;text;` #;R;red;
+* `#;O;text;` #;O;orange;
+* `#;GL;text;` #;GL;gold;
+* `#;Y;text;` #;Y;yellow;
+* `#;L;text;` #;L;lime;
+* `#;G;text;` #;G;green;
+* `#;TU;text;` #;TU;turquoise;
+* `#;T;text;` #;T;teal;
+* `#;C;text;` #;C;cyan;
+* `#;B;text;` #;B;blue;
+* `#;PR;text;` #;PR;purple;
+* `#;PK;text;` #;PK;pink;
+* `#;W;text;` #;W;white;
+* `#;FG;text;` #;FG;fog;
+* `#;SL;text;` #;SL;slate;
+* `#;BK;text;` #;BK;black;
+
 ## Gel orbs
 
 Round glossy orbs, written `=color=text=color=`:
