@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400..900&display=swap');
 /* =====================================================================
    Radii Office Shell styles! Office chrome with a Radii Office soul:
    gel buttons, a glowing JetBrains Mono brand and springy animations!
@@ -209,7 +210,7 @@ body.os-dark .os-rb:hover, body.os-dark .os-split-arrow:hover, body.os-dark .os-
 .os-rb.ic { width: 28px; height: 26px; justify-content: center; padding: 0; }
 .os-rb.ic .os-ico { width: 17px; height: 17px; }
 .os-caret { font-style: normal; font-size: 9px; opacity: 0.7; }
-.os-glyph { font-family: Georgia, "Times New Roman", serif; font-size: 15px; line-height: 1; min-width: 14px; text-align: center; }
+.os-glyph { font-family: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif; font-weight: 800; font-size: 15px; line-height: 1; min-width: 14px; text-align: center; }
 .os-glyph.it { font-style: italic; }
 .os-glyph.u { text-decoration: underline; }
 .os-glyph.s { text-decoration: line-through; }
