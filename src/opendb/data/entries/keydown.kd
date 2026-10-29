@@ -163,7 +163,7 @@ A droplet-shaped Bubble Chip cousin, with the gel pooled at the bottom and a bri
 
 ## Gel splits
 
-A two-tone capsule Bubble Chip cousin: full gel on the left half, a lighter tint on the right, with little white notches marking the join. Written `#:color:text:`:
+A Bubble Chip cousin where the gel has split from its glass: a clear glass front, with the colored gel slab peeking out behind it. Written `#:color:text:`:
 
 * `#:R:text:` #:R:red:
 * `#:O:text:` #:O:orange:
