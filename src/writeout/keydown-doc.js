@@ -105,6 +105,7 @@
         s = s.replace(/\\\$/g, () => stash('$'));
         s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => stash(mathHtml(t.trim(), true)));
         s = s.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (_, pre, t) => pre + stash(mathHtml(t, false)));
+        s = s.replace(new RegExp(SKILL_RE), (m, name, raw) => { if (!SKILL_NAMES.test(name)) return m; const h = skillHtml(name, parseParams(raw.replace(/\\"/g, '"'))); return h ? stash(h) : m; });
         s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplHtml(raw, false)));
         // [[id]] shows the entry's title; data-kd-auto remembers that, so it saves back as [[id]] (unless you change the words)
         s = s.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, label) => {
@@ -155,6 +156,14 @@
         for (let i = 0; i < lines.length; i++) {
             const t = lines[i].trim();
             let m;
+            if ((m = /^@@program(?:="((?:[^"\\]|\\.)*)")?=```$/.exec(t))) {
+                endList();
+                const body = [];
+                for (i++; i < lines.length && !/^```$/.test(lines[i].trim()); i++) body.push(lines[i]);
+                const h = skillHtml('program', parseParams((m[1] || '').replace(/\\"/g, '"')), body.join('\n'));
+                out.push(h ? '<p>' + h + '</p>' : '<pre><code>' + esc(['@@program=```'].concat(body, ['```']).join('\n')) + '</code></pre>');
+                continue;
+            }
             if (/^```/.test(t)) {
                 endList();
                 const body = [];
@@ -203,6 +212,7 @@
         const kids = () => Array.from(el.childNodes).map(inlineText).join('');
         const tag = el.tagName;
         if (el.hasAttribute('data-kd-tpl')) return '{{' + el.getAttribute('data-kd-tpl') + '}}';
+        if (el.matches(SKILL_SEL) && !el.classList.contains('bl-prog')) return skillToText(el);
         if (el.classList.contains('kd-math')) {
             const tex = el.getAttribute('data-tex') || '';
             return el.getAttribute('data-display') === '1' ? '$$' + tex + '$$' : '$' + tex + '$';
@@ -265,6 +275,7 @@
             if (node.nodeType !== 1) return;
             const el = node, tag = el.tagName;
             if (el.classList.contains('kd-meta') || /^(SCRIPT|STYLE|TEMPLATE)$/.test(tag)) return;
+            if (el.classList.contains('bl-prog')) { push(''); skillToText(el).split('\n').forEach((l) => lines.push(l)); return; }
             if (el.matches(BLOCK_SEL) && !el.parentElement.closest(BLOCK_SEL)) { const bk = blockOf(el); if (bk) { push(blockLine(bk)); return; } }
             if (el.hasAttribute('data-kd-tpl') && el.classList.contains('kd-tpl-block')) { push('{{' + el.getAttribute('data-kd-tpl') + '}}'); return; }
             if (el.classList.contains('kd-math') && el.getAttribute('data-display') === '1') { push('$$' + (el.getAttribute('data-tex') || '') + '$$'); return; }
@@ -739,6 +750,94 @@
         return problems.map((p) => ({ tag: p.tag, line: p.line }));
     }
 
+    /* ---------- Skills as Keydown (Bitbook): @@name="key='value',..." and @@program=``` code ``` ---------- */
+    // BeepBox chips, programs, dice, timers, flashcards, time capsules, sprites, Uni-Chips, Custom Chips, Custom CSS
+    // chips and jumpers all have a Keydown form, so they travel as text and come back as the real, working skill!
+    const SKILL_SEL = '.bb-chip, .bl-prog, .dc-chip, .tc-chip, .pm-chip, .fl-chip, .px-chip, .uni-chip, .cc-chip, .bbcss-chip, .jumper-anchor';
+    const SKILL_RE = /@@([a-z]+)="((?:[^"\\]|\\.)*)"/g;
+    const qv = (v) => String(v == null ? '' : v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    const params = (obj) => Object.keys(obj).filter((k) => obj[k] !== undefined && obj[k] !== null && obj[k] !== '').map((k) => k + "='" + qv(obj[k]) + "'").join(',');
+    function parseParams(str) {
+        const out = {};
+        const re = /([a-z]+)\s*=\s*'((?:[^'\\]|\\.)*)'/gi;
+        let m;
+        while ((m = re.exec(str))) out[m[1].toLowerCase()] = m[2].replace(/\\n/g, '\n').replace(/\\(['"\\])/g, '$1');
+        return out;
+    }
+    const cssVar = (el, name) => (el.style && el.style.getPropertyValue(name) || '').trim();
+    // a skill on the page -> its Keydown text (null when it is not a skill)
+    function skillToText(el) {
+        if (!el || el.nodeType !== 1 || !el.matches(SKILL_SEL)) return null;
+        const c = el.classList;
+        const txt = (sel) => { const x = el.querySelector(sel); return x ? x.textContent : ''; };
+        if (c.contains('bl-prog')) {
+            const code = (el.querySelector('.bl-code') || {}).value || txt('.bl-code');
+            const bbml = (el.querySelector('.bl-bbml') || {}).value || txt('.bl-bbml');
+            const title = el.getAttribute('data-bl-title') || 'Program';
+            const p = params({ title: title === 'Program' ? '' : title, bbml: bbml.replace(/^\n/, '') });
+            return '@@program' + (p ? '="' + p + '"' : '') + '=```\n' + code.replace(/^\n/, '').replace(/\n+$/, '') + '\n```';
+        }
+        if (c.contains('bb-chip')) {
+            const z = el.getAttribute('data-bb-z');
+            const style = (Array.from(c).find((k) => /^bb-st-/.test(k)) || 'bb-st-cartridge').slice(6);
+            return '@@beepbox="' + params({ link: z ? 'z:' + z : el.getAttribute('data-bb-song'), style: style, label: txt('.bb-chip-text') }) + '"';
+        }
+        if (c.contains('dc-chip')) return '@@dice="' + params({ dice: el.getAttribute('data-dc') }) + '"';
+        if (c.contains('tc-chip')) return '@@capsule="' + params({ label: txt('.tc-chip-name'), open: el.getAttribute('data-tc-open'), message: el.getAttribute('data-tc-msg') }) + '"';
+        if (c.contains('pm-chip')) return '@@timer="' + params({ label: txt('.pm-chip-name'), minutes: el.getAttribute('data-pm-min') }) + '"';
+        if (c.contains('fl-chip')) return '@@flashcard="' + params({ front: txt('.fl-front'), back: txt('.fl-back') }) + '"';
+        if (c.contains('px-chip')) return '@@sprite="' + params({ pixels: el.getAttribute('data-px'), size: el.getAttribute('data-px-size') }) + '"';
+        if (c.contains('uni-chip')) return '@@unichip="' + params({ color: el.getAttribute('data-uni-color'), accent: cssVar(el, '--uni-accent'), text: kidsText(el) }) + '"';
+        if (c.contains('cc-chip')) return '@@customchip="' + params({ style: (Array.from(c).find((k) => /^cc-s\d+$/.test(k)) || 'cc-s1').slice(4), color: cssVar(el, '--cc'), ink: cssVar(el, '--cc-ink'), text: kidsText(el) }) + '"';
+        if (c.contains('bbcss-chip')) return '@@customcss="' + params({ id: (Array.from(c).find((k) => /^bbcss-(?!chip)/.test(k)) || '').slice(6), name: el.getAttribute('data-bbcss-name'), css: el.getAttribute('style'), text: kidsText(el) }) + '"';
+        if (c.contains('jumper-anchor')) return '@@jumper="' + params({ id: el.getAttribute('data-jumper-id'), label: el.getAttribute('data-jumper-label') }) + '"';
+        return null;
+    }
+    // Keydown text -> the skill's HTML (built by Bitbook's own builders when they are here; null elsewhere)
+    function skillHtml(name, p, body) {
+        const W = root;
+        const span = (cls, attrs, text) => { const e = document.createElement('span'); e.className = cls; Object.keys(attrs || {}).forEach((k) => { if (attrs[k] !== undefined && attrs[k] !== '') e.setAttribute(k, attrs[k]); }); if (text !== undefined) e.innerHTML = text; return e; };
+        let el = null;
+        try {
+            if (name === 'program' && W.BitLang && W.BitLang.blockHTML) return W.BitLang.blockHTML(body, null, p.title || 'Program', p.bbml || '');
+            if (name === 'beepbox' && typeof W.bbBuildChip === 'function') {
+                let link = p.link || '';
+                const z = /^z:/.test(link);
+                if (!z && /#/.test(link)) link = link.slice(link.indexOf('#') + 1);
+                el = W.bbBuildChip({ attr: z ? 'data-bb-z' : 'data-bb-song', value: z ? link.slice(2) : link }, p.label || 'BeepBox Song', p.style || 'cartridge');
+            } else if (name === 'dice' && typeof W.dcBuildChip === 'function') {
+                const m = /^(\d+)d(\d+)$/i.exec(p.dice || '1d6') || [0, 1, 6];
+                el = W.dcBuildChip(parseInt(m[1], 10), parseInt(m[2], 10));
+            } else if (name === 'capsule' && typeof W.tcBuildChip === 'function') {
+                el = W.tcBuildChip(p.label || 'Time capsule', '', parseInt(p.open, 10) || Date.now());
+                if (p.message) el.setAttribute('data-tc-msg', p.message);
+            } else if (name === 'timer' && typeof W.pmBuildChip === 'function') {
+                el = W.pmBuildChip(p.label || 'Focus', parseFloat(p.minutes) || 25);
+            } else if (name === 'flashcard' && typeof W.flBuildChip === 'function') {
+                el = W.flBuildChip(p.front || '', p.back || '');
+            } else if (name === 'sprite' && typeof W.pxDecode === 'function' && typeof W.pxToDataUrl === 'function') {
+                el = span('px-chip px-' + (p.size || 'md'), { contenteditable: 'false', 'data-px': p.pixels, 'data-px-size': p.size || 'md', title: 'Pixel sprite: click to edit!' });
+                const img = document.createElement('img');
+                img.src = W.pxToDataUrl(W.pxDecode(p.pixels || ''));
+                img.alt = 'Pixel sprite'; img.setAttribute('draggable', 'false');
+                el.appendChild(img);
+            } else if (name === 'unichip' && typeof W.uniApplyStyle === 'function') {
+                el = span('uni-chip', { spellcheck: 'false', 'data-uni-color': p.color }, inline(p.text || 'Text', { notes: {} }));
+                if (p.accent) el.style.setProperty('--uni-accent', p.accent);
+            } else if (name === 'customchip' && typeof W.ccApplyStyle === 'function') {
+                el = span('cc-chip cc-s' + (parseInt(p.style, 10) || 1), { spellcheck: 'false' }, inline(p.text || 'Text', { notes: {} }));
+                if (p.color) el.style.setProperty('--cc', p.color);
+                if (p.ink) el.style.setProperty('--cc-ink', p.ink);
+            } else if (name === 'customcss' && typeof W.cscPaintChip === 'function') {
+                el = span('bbcss-chip' + (p.id ? ' bbcss-' + p.id : ''), { spellcheck: 'false', 'data-bbcss-name': p.name, style: p.css }, inline(p.text || 'Text', { notes: {} }));
+            } else if (name === 'jumper' && typeof W.jumperJumpToId === 'function') {
+                el = span('jumper-anchor', { contenteditable: 'false', 'data-jumper-id': p.id || ('j' + Date.now().toString(36)), 'data-jumper-label': p.label || 'Jump', 'aria-hidden': 'true' }, '\u200B');
+            }
+        } catch (e) { el = null; }
+        return el ? el.outerHTML : null;
+    }
+    const SKILL_NAMES = /^(beepbox|dice|capsule|timer|flashcard|sprite|unichip|customchip|customcss|jumper)$/;
+
     /* ---------- Exit Formatting: only the selected text (or the caret's spot) leaves its formatting ---------- */
     // The chip is split there, so the parts before and after keep their style, and you keep typing in plain text!
     const FMT_SEL = 'mark, span[class], span[style], b, strong, i, em, u, s, strike, code, font';
@@ -883,5 +982,5 @@
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { parse, isKeydownText, formatLine, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
+    root.kdDoc = { parse, isKeydownText, formatLine, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);
