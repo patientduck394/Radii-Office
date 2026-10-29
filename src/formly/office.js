@@ -14,7 +14,6 @@
 
     const FIELD_KINDS = [['text', 'Short Answer', 'pen'], ['textarea', 'Paragraph', 'page'], ['select', 'Dropdown', 'tag'],
         ['chip', 'Chip Choice', 'bubble'], ['rating', 'Star Rating', 'star'], ['checkbox', 'Checkbox', 'check']];
-    const ACCENTS = [['#9D84FF', 'Formly Purple'], ['#6bc702', 'Classic Aero Green'], ['#0284c7', 'Ocean Blue'], ['#ec4899', 'Bubblegum Pink'], ['#f59e0b', 'Amber Glow']];
 
     function stats() {
         const fs = app.fields();
@@ -87,26 +86,6 @@
                 { big: true, icon: 'pen', label: 'Builder', run: () => setMode('builder'), checked: app.builder },
                 { big: true, icon: 'eye', label: 'Preview', title: 'Fill the form out like a visitor!', run: () => setMode('view'), checked: () => app.mode() === 'view' },
             ] },
-            { label: 'Theme', items: [
-                { custom: (c) => {
-                    c.className += ' fm-accents';
-                    ACCENTS.forEach(([color, name]) => {
-                        const b = document.createElement('button');
-                        b.type = 'button';
-                        b.title = name;
-                        b.style.background = color;
-                        b.addEventListener('click', () => app.setThemeColor(color));
-                        c.appendChild(b);
-                    });
-                    const pick = document.createElement('label');
-                    pick.className = 'fm-custom';
-                    pick.title = 'Custom color';
-                    pick.innerHTML = '+<input type="color" value="#9D84FF">';
-                    pick.querySelector('input').addEventListener('input', (e) => app.setThemeColor(e.target.value));
-                    c.appendChild(pick);
-                } },
-                { big: true, icon: 'reset', label: 'Reset\nTheme', run: () => app.setThemeColor(app.DEFAULT_THEME) },
-            ] },
             { label: 'Layout', items: [{ big: true, icon: 'layout', label: 'Layout', menu: () => [
                 { label: 'Forms', checked: true, icon: 'layout', run: () => OS.setLayout('office') },
                 { label: 'Formly Classic', icon: 'sparkle', run: () => OS.setLayout('classic') },
@@ -123,8 +102,10 @@
             { label: 'Open', items: [{ big: true, icon: 'folder', label: 'Open\nFile', run: openFile }] },
         ] },
         { id: 'help', label: 'Help', groups: [
+            { label: 'Keydown', items: [{ big: true, icon: 'sparkle', label: 'Keydown\nGuide', title: 'Every Keydown style you can type in a label!',
+                run: () => OS.dialog('Keydown Guide', '<div class="fm-kd-guide">' + kdBuildGuideHTML() + '</div>', [{ label: 'Done!', primary: true, value: true }]) }] },
             { label: 'Tips', items: [{ big: true, icon: 'help', label: 'Quick\nTips', run: () => OS.dialog('Formly tips',
-                '<p class="os-dlg-text">Add fields, type their questions, and use Keydown like <code>#G#Your Name#</code> for glossy labels! Preview shows what a visitor sees. Share &amp; Chat lets everyone build the form together, and each form has its own ID in the link (<code>?file=…</code>)!</p>',
+                '<p class="os-dlg-text">Add fields, type their questions, and use Keydown like <code>#G#Your Name#</code> or <code>%3%B%Gel Halo%##</code> for glossy labels (Keydown Guide shows them all)! Preview shows what a visitor sees. Share &amp; Chat lets everyone build the form together, and each form has its own ID in the link (<code>?file=…</code>)!</p>',
                 [{ label: 'Got it!', primary: true, value: true }]) }] },
         ] },
     ];
@@ -135,7 +116,7 @@
         kind: 'word',
         key: 'formly',
         icon: 'favicon.svg',
-        officeHint: 'A violet ribbon with fields, preview and theme colors, a File screen and a status bar, like Forms!',
+        officeHint: 'A violet ribbon with fields, preview, a Keydown Guide, a File screen and a status bar, like Forms!',
         classicHint: 'The original Formly: violet glass sidebar and gel buttons!',
         classicToast: 'Formly Classic: violet glass and gel!',
         theme: { accent: '#8b5cf6', 'accent-d': '#6d3fe0', 'accent-l': '#ede9fe', title: '#7c4ff0', gel1: '#c4b5fd', gel2: '#8b5cf6',

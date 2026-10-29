@@ -5,7 +5,8 @@
     'use strict';
 
     const STORAGE_KEY = 'formly_doc_v1';
-    const DEFAULT_THEME = '#9D84FF';
+    // Formly's violet accent
+    const ACCENT = '#9D84FF';
     const FIELD_TYPES = ['text', 'textarea', 'select', 'chip', 'rating', 'checkbox'];
 
     const starterForm = () => ({
@@ -22,7 +23,7 @@
     });
 
     // mode is "builder", "view" or "readonly-answers"
-    const state = { form: starterForm(), theme: DEFAULT_THEME, mode: 'builder' };
+    const state = { form: starterForm(), mode: 'builder' };
 
     // The ribbon and live collaboration hook in here instead of wrapping functions!
     const renderHooks = [];
@@ -58,66 +59,21 @@
         } catch (e) { /* no sound, no problem */ }
     }
 
-    // --- Keydown tags: the little glossy chips you can type in labels ---
-    const keydownPairs = [].concat(
-        [['=Y=', '=Y='], ['=R=', '=R='], ['=G=', '=G='], ['=C=', '=C='], ['=B=', '=B='], ['=V=', '=V='], ['=P=', '=P='], ['=O=', '=O='],
-         ['=MG=', '=MG='], ['=LM=', '=LM='], ['=AQ=', '=AQ='], ['=SL=', '=SL='], ['&&', '&&'], ['`', '`'], ['**', '**'], ['*', '*']],
-        ['G', 'U', 'B', 'S', 'L', 'E', 'WD', 'SF', 'AW', 'SM', 'MP', 'PG', 'CB', 'SR', 'OA', 'MM', 'FE', 'MR', 'PO', 'LF', 'DS', 'GL', 'HB', 'IS', 'GC', 'KO',
-         'XG', 'WL', 'PM', 'WB', 'GLO', 'ST', 'FUNC', 'VAR', 'STR', 'RS', 'HD', 'AL', 'DR', 'MD', 'WX', 'TL', 'SL', 'BG', 'FT', 'MC', 'WR', 'H1', 'H2', 'H3', 'BQ', 'BUL', 'MH']
-            .map((t) => ['~' + t + '~', '~' + t + '~']),
-        ['WD-Y', 'WD-R', 'WD-PK', 'WD-PR', 'WD-O', 'WD-SL', 'PP-C', 'PP-O', 'PP-R', 'PP-L', 'GB-B', 'GB-PR', 'GB-PK', 'GB-Y',
-         'B-B', 'B-G', 'B-O', 'B-R', 'B-PR', 'B-Y', 'SH-B', 'SH-G', 'SH-O', 'SH-PR', 'PH-B', 'PH-G', 'PH-O', 'PH-PR',
-         'PC-Y', 'PC-B', 'PC-G', 'PC-PK', 'PC-PR', 'PC-O', 'DR-O', 'DR-Y', 'DR-G', 'DR-B', 'DR-PR', 'DR-PK', 'DR-R', 'DR-SL']
-            .map((t) => ['~' + t + '~', '~']),
-        ['!#A#', '!#G#', '!#O#', '!#R#', '!#PR#', '!#PK#', '!#Y#', '!#SL#', '#C#', '#O#', '#G#', '#R#', '#PR#', '#PK#', '#Y#', '#B#', '#L#',
-         '#T#', '#GL#', '#SL#', '#W#', '#BK#', '#FG#', '#TU#']
-            .map((t) => [t, '#'])
-    );
-
-    // Does the text hold BOTH an opening and a closing tag?
-    function keydown(text) {
-        if (!text) return false;
-        if (/^(#{1,4}|\*)\s+\S/.test(text)) return true;
-        return keydownPairs.some(([open, close]) => {
-            const i = text.indexOf(open);
-            return i >= 0 && text.indexOf(close, i + open.length) >= 0;
-        });
-    }
-
-    const LINE_CLASSES = { '#': 'header-1', '##': 'header-2', '###': 'header-3', '####': 'mega-header', '*': 'bulleted-list' };
-
-    // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
-    function lineShortcut(text) {
-        const m = /^(#{1,4}|\*)\s+(\S[\s\S]*)$/.exec(text);
-        return m ? '<span class="' + LINE_CLASSES[m[1]] + '">' + keydownHTML(m[2]) + '</span>' : null;
-    }
-
-    const CHIP_RULES = [
-        [/#G#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-green">$1</span>'],
-        [/#C#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-cyan">$1</span>'],
-        [/#O#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-orange">$1</span>'],
-        [/#R#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-red">$1</span>'],
-        [/#PR#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-purple">$1</span>'],
-        [/#PK#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-pink">$1</span>'],
-        [/#Y#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-yellow">$1</span>'],
-        [/#B#([^#]+)#/g, '<span class="gel-bubble-chip gel-chip-blue">$1</span>'],
-        [/\*\*([^*]+)\*\*/g, '<strong>$1</strong>'],
-        [/\*([^*]+)\*/g, '<em>$1</em>'],
-        [/`([^`]+)`/g, '<code>$1</code>'],
-    ];
-
+    // --- Keydown: the full renderer from keydown.js (chips, highlights, Gel Series, Unique Styles, blocks and all) ---
     function keydownHTML(text) {
         if (!text || !String(text).trim()) return '';
-        const line = lineShortcut(text);
-        if (line) return line;
-        const safe = String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return CHIP_RULES.reduce((html, [re, rep]) => html.replace(re, rep), safe);
+        return kdRender(String(text));
+    }
+
+    // Does the text use any Keydown? (it renders to something other than plain text)
+    function keydown(text) {
+        return !!text && keydownHTML(text) !== kdEscapeHtml(String(text));
     }
 
     // --- Saving: the form survives reloads (and lives under its ?file= ID)! ---
     function save() {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ form: form(), theme: state.theme, mode: builder() ? 'builder' : 'view' }));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ form: form(), mode: builder() ? 'builder' : 'view' }));
         } catch (e) { /* storage full or blocked */ }
         changeHooks.forEach((f) => f());
     }
@@ -131,6 +87,27 @@
 
     const MONO = "font-family: 'JetBrains Mono', monospace;";
     const optionsOf = (field, fallback) => (field.options || fallback).split(',').map((s) => s.trim());
+
+    // --- Chip Select chips: each option gets its own gel color, in order ---
+    const CHIP_COLORS = ['blue', 'green', 'purple', 'orange', 'pink', 'teal', 'gold', 'red', 'cyan', 'lime'];
+    let justPicked = '';
+    function chipButton(text, i, on, pop, locked, pick) {
+        const chip = el('button');
+        chip.type = 'button';
+        chip.className = 'fm-chip gel-bubble-chip gel-chip-' + CHIP_COLORS[i % CHIP_COLORS.length] + (on ? ' is-on' : '') + (pop ? ' fm-pop' : '');
+        chip.setAttribute('role', 'radio');
+        chip.setAttribute('aria-checked', String(on));
+        chip.disabled = locked;
+        const dot = el('span');
+        dot.className = 'fm-chip-dot';
+        dot.setAttribute('aria-hidden', 'true');
+        const label = el('span');
+        label.textContent = text;
+        chip.appendChild(dot);
+        chip.appendChild(label);
+        if (pick) chip.onclick = pick;
+        return chip;
+    }
 
     // --- One field card ---
     function builderHeader(field) {
@@ -230,9 +207,22 @@
             }
             case 'select': return choices('Option 1, Option 2', 650, false);
             case 'chip': {
-                const wrap = el('div', 'display: flex; flex-direction: column; gap: 8px;');
-                wrap.appendChild(choices('Chip 1, Chip 2', 700, true));
-                return wrap;
+                // the choices are glossy Bubble Chips: tap one to pick it!
+                const row = el('div');
+                row.className = 'fm-chip-row';
+                row.setAttribute('role', 'radiogroup');
+                row.setAttribute('aria-label', String(field.label || 'Choices').replace(/<[^>]*>/g, ''));
+                optionsOf(field, 'Chip 1, Chip 2').forEach((o, i) => {
+                    const on = o === field.value;
+                    row.appendChild(chipButton(o, i, on, field.id + '\u0000' + o === justPicked, locked, () => {
+                        clickSound(700 + i * 40, 0.06);
+                        justPicked = field.id + '\u0000' + o;
+                        setValue(o);
+                        render();
+                    }));
+                });
+                justPicked = '';
+                return row;
             }
             case 'rating': {
                 const row = el('div', 'display: flex; gap: 6px; align-items: center;');
@@ -279,7 +269,11 @@
         }
         if (mode() === 'readonly-answers') {
             const read = el('div', MONO + 'width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 8px; background: rgba(157, 132, 255, 0.1); color: #1e293b; box-sizing: border-box; font-weight: bold;');
-            read.textContent = filled(field.value) ? String(field.value) : '(No answer provided)';
+            if (field.type === 'chip' && filled(field.value)) {
+                // a chip answer shows as the chip that was picked
+                const opts = optionsOf(field, String(field.value));
+                read.appendChild(chipButton(String(field.value), Math.max(0, opts.indexOf(String(field.value))), true, false, true, null));
+            } else read.textContent = filled(field.value) ? String(field.value) : '(No answer provided)';
             wrap.appendChild(read);
         } else {
             wrap.appendChild(answerInput(field));
@@ -327,19 +321,12 @@
             $('btn-download-kfe').style.display = 'none';
             $('btn-download-kfv-text').textContent = 'Download form';
         }
-        badge.style.color = state.theme;
+        badge.style.color = ACCENT;
         const list = $('form-fields-list');
         list.innerHTML = '';
         fields().forEach((f) => list.appendChild(fieldCard(f)));
         save();
         renderHooks.forEach((f) => f());
-    }
-
-    // --- Theme ---
-    function setThemeColor(color) {
-        state.theme = color;
-        document.documentElement.style.setProperty('--aero-primary', color);
-        render();
     }
 
     // --- Building ---
@@ -383,12 +370,12 @@
 
     function downloadKfe() {
         clickSound(850, 0.1);
-        download(pretty({ format: 'kfe', version: '1.0', theme: state.theme, form: form() }), fileName('.kfe'), 'application/json');
+        download(pretty({ format: 'kfe', version: '1.0', form: form() }), fileName('.kfe'), 'application/json');
     }
 
     function downloadKfv() {
         clickSound(850, 0.1);
-        download(pretty({ format: 'kfv', version: '1.0', theme: state.theme, form: form() }), fileName('.kfv'), 'application/json');
+        download(pretty({ format: 'kfv', version: '1.0', form: form() }), fileName('.kfv'), 'application/json');
     }
 
     function exportKfa() {
@@ -408,12 +395,10 @@
             switch (doc.format) {
                 case 'kfe':
                     state.form = doc.form; state.mode = 'builder';
-                    if (doc.theme) setThemeColor(doc.theme);
                     alert('Editable Form (.kfe) loaded successfully!');
                     break;
                 case 'kfv':
                     state.form = doc.form; state.mode = 'view';
-                    if (doc.theme) setThemeColor(doc.theme);
                     alert('Viewable Form (.kfv) loaded successfully!');
                     break;
                 case 'kfa':
@@ -439,16 +424,6 @@
 
     function wire() {
         on('sidebar-latch', 'click', () => { clickSound(450, 0.08); $('sidebar').classList.toggle('collapsed'); });
-        on('palette-toggle-btn', 'click', (e) => { e.stopPropagation(); clickSound(600, 0.06); $('aero-palette-menu').classList.toggle('show'); });
-        document.addEventListener('click', (e) => {
-            const menu = $('aero-palette-menu');
-            if (menu && !menu.contains(e.target) && !$('palette-toggle-btn').contains(e.target)) menu.classList.remove('show');
-        });
-        document.querySelectorAll('.color-swatch').forEach((sw) => {
-            sw.addEventListener('click', () => { clickSound(700, 0.08); setThemeColor(sw.dataset.color); });
-        });
-        on('custom-color-picker', 'input', (e) => setThemeColor(e.target.value));
-        on('reset-theme-btn', 'click', () => { clickSound(500, 0.08); setThemeColor(DEFAULT_THEME); $('custom-color-picker').value = DEFAULT_THEME; });
         on('form-title-input', 'input', (e) => { state.form = Object.assign({}, state.form, { title: e.target.value }); });
         on('form-desc-input', 'input', (e) => { state.form = Object.assign({}, state.form, { description: e.target.value }); });
         document.querySelectorAll('.add-field-btn').forEach((btn) => btn.addEventListener('click', () => addField(btn.dataset.type)));
@@ -481,22 +456,17 @@
             const d = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
             if (d && d.form && Array.isArray(d.form.fields)) {
                 state.form = d.form;
-                if (d.theme) {
-                    state.theme = d.theme;
-                    document.documentElement.style.setProperty('--aero-primary', d.theme);
-                }
             }
         } catch (e) { /* a broken save just means a fresh form */ }
     }
 
     // The ribbon (office.js) and live collaboration (collab.js) build on this!
     window.Formly = {
-        state, renderHooks, changeHooks, DEFAULT_THEME,
+        state, renderHooks, changeHooks,
         $, form, fields, mode, builder, updateField, save, render,
-        setThemeColor, addField, setMode, resetForm, downloadKfe, downloadKfv, exportKfa,
+        addField, setMode, resetForm, downloadKfe, downloadKfv, exportKfa,
     };
     // old global names, for anything that still calls them
-    window.setThemeColor = setThemeColor;
     window.renderForm = render;
     window.saveFormly = save;
 

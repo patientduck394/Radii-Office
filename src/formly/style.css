@@ -183,129 +183,6 @@ html, body {
     overflow: hidden;
 }
 
-.color-picker-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-.style-tool-btn {
-    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(224,242,254,0.7) 100%);
-    border: 2px solid rgba(255,255,255,0.9);
-    border-radius: 10px;
-    width: 42px;
-    height: 42px;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--aero-primary, #9D84FF);
-    cursor: pointer;
-    box-shadow: 0 4px 12px rgba(157, 132, 255, 0.15), inset 0 1px 2px #fff;
-    transition: all 0.2s ease;
-}
-.style-tool-btn svg {
-    display: block;
-    margin: auto;
-}
-.style-tool-btn:hover {
-    background: linear-gradient(180deg, var(--aero-primary, #9D84FF) 0%, #7b5ce6 100%);
-    color: #ffffff;
-}
-
-.aero-palette-menu {
-    position: absolute;
-    top: 48px;
-    left: 0;
-    width: 220px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,249,255,0.9) 100%);
-    border: 2px solid rgba(255, 255, 255, 0.9);
-    border-radius: 12px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.25), inset 0 1px 1px #fff;
-    backdrop-filter: blur(12px);
-    padding: 12px;
-    display: none;
-    flex-direction: column;
-    gap: 10px;
-    z-index: 100;
-}
-.aero-palette-menu.show {
-    display: flex;
-}
-.palette-header {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 800;
-    color: var(--aero-primary, #9D84FF);
-    border-bottom: 1px solid #cbd5e1;
-    padding-bottom: 4px;
-    text-transform: uppercase;
-}
-.palette-section label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    color: #475569;
-    display: block;
-    margin-bottom: 4px;
-}
-.preset-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    flex-wrap: wrap;
-}
-.color-swatch {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    border: 1px solid rgba(0,0,0,0.2);
-    cursor: pointer;
-    box-shadow: inset 0 1px 2px rgba(255,255,255,0.8), 0 2px 4px rgba(0,0,0,0.1);
-    transition: transform 0.1s ease;
-}
-.color-swatch:hover {
-    transform: scale(1.15);
-}
-.custom-picker-wrapper {
-    position: relative;
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%);
-    border: 1px solid #cbd5e1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--aero-primary, #9D84FF);
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-.custom-picker-wrapper input[type="color"] {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-}
-.palette-footer {
-    border-top: 1px solid #cbd5e1;
-    padding-top: 6px;
-    display: flex;
-    justify-content: flex-end;
-}
-.reset-style-btn {
-    background: linear-gradient(180deg, #f1f5f9 0%, #cbd5e1 100%);
-    border: 1px solid #94a3b8;
-    border-radius: 6px;
-    font-size: 10px;
-    font-weight: 800;
-    color: #334155;
-    padding: 3px 8px;
-    cursor: pointer;
-}
-
 #sidebar.collapsed {
     transform: translateX(-260px);
 }
@@ -322,3 +199,51 @@ html, body {
     gap: 8px;
     flex-shrink: 0;
 }
+/* Chip Select: the choices are glossy Bubble Chips you tap! */
+.fm-chip-row { display: flex; flex-wrap: wrap; gap: 9px; padding: 2px 0; }
+.fm-chip.gel-bubble-chip {
+    gap: 7px;
+    padding: 5px 13px 5px 8px;
+    border-radius: 999px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    cursor: pointer;
+    opacity: 0.55;
+    filter: saturate(0.5);
+    transition: opacity 0.2s ease, filter 0.2s ease, transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1), box-shadow 0.2s ease;
+}
+.fm-chip:hover:not(:disabled) { opacity: 0.9; filter: none; transform: translateY(-2px); }
+.fm-chip.is-on { opacity: 1; filter: none; box-shadow: 0 5px 12px rgba(0, 0, 0, 0.14), inset 0 1px 1px rgba(255, 255, 255, 0.6), 0 0 0 3px rgba(255, 255, 255, 0.95); }
+.fm-chip:disabled { cursor: default; }
+.fm-chip:focus-visible { outline: 3px solid #7c4ff0; outline-offset: 3px; }
+/* the little dot fills in with a check when the chip is picked */
+.fm-chip-dot {
+    position: relative;
+    flex: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    border: 2px solid currentColor;
+    background: rgba(255, 255, 255, 0.7);
+    box-sizing: border-box;
+}
+.fm-chip.is-on .fm-chip-dot { background: currentColor; }
+.fm-chip.is-on .fm-chip-dot::after {
+    content: "";
+    position: absolute;
+    left: 3px; top: 0.5px;
+    width: 3px; height: 6px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.fm-chip.fm-pop { animation: fmChipPop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+@keyframes fmChipPop { 0% { transform: scale(0.88); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) { .fm-chip, .fm-chip.fm-pop { transition: none; animation: none; } }
+
+/* the Keydown Guide dialog */
+.fm-kd-guide { max-height: 60vh; overflow-y: auto; padding-right: 6px; }
+.fm-kd-guide .kd-guide-note { font-size: 13px; color: #5b4b8a; margin-bottom: 6px; }
+.fm-kd-guide .kd-guide-title { font-weight: 800; margin: 14px 0 6px; color: #7c4ff0; }
+.fm-kd-guide .kd-guide-row { display: flex; gap: 12px; align-items: center; padding: 4px 0; border-bottom: 1px solid #ece7fb; font-size: 13px; }
+.fm-kd-guide .kd-guide-row code { flex: 0 0 42%; font: 12px 'JetBrains Mono', monospace; color: #475569; word-break: break-all; }
