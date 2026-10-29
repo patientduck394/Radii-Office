@@ -300,3 +300,6 @@ html, body {
 .fm-count button:disabled { opacity: 0.4; cursor: default; }
 .fm-count button:focus-visible { outline: 3px solid #7c4ff0; outline-offset: 2px; }
 .fm-count output { min-width: 1.5em; text-align: center; color: #1e293b; }
+
+/* a view-only (.kfv) form: no live sharing, since that could edit it */
+body.fm-locked .rc-share { display: none !important; }

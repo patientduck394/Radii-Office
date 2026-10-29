@@ -151,6 +151,7 @@
             if (mode === 'guest') {
                 app.state.form = { title: 'Shared form', description: '', fields: [] };
                 app.state.mode = 'builder';
+                app.state.locked = false;
                 app.render();
             }
             paint();
@@ -162,6 +163,7 @@
             if (d && Array.isArray(d.fields)) {
                 app.state.form = d;
                 app.state.mode = 'builder';
+                app.state.locked = false;
                 app.render();
                 try { localStorage.removeItem(BACKUP_KEY); } catch (e) { /* fine */ }
             }

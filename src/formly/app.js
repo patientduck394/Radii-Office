@@ -27,7 +27,8 @@
     });
 
     // mode is "builder", "view" or "readonly-answers"
-    const state = { form: starterForm(), mode: 'builder' };
+    // locked is true for a viewable (.kfv) form: it can be filled in, never edited
+    const state = { form: starterForm(), mode: 'builder', locked: false };
 
     // The ribbon and live collaboration hook in here instead of wrapping functions!
     const renderHooks = [];
@@ -38,6 +39,9 @@
     const fields = () => state.form.fields;
     const mode = () => state.mode;
     const builder = () => state.mode === 'builder';
+    const locked = () => !!state.locked;
+    const notify = (msg) => (window.OfficeShell && window.OfficeShell.toast ? window.OfficeShell.toast(msg) : alert(msg));
+    const LOCKED_MSG = 'This is a view-only form: you can fill it in, but not edit it!';
     const filled = (s) => s !== undefined && s !== null && s !== '';
 
     function updateField(id, f) {
@@ -77,7 +81,7 @@
     // --- Saving: the form survives reloads (and lives under its ?file= ID)! ---
     function save() {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ form: form(), mode: builder() ? 'builder' : 'view' }));
+            localStorage.setItem(STORAGE_KEY, JSON.stringify({ form: form(), mode: builder() ? 'builder' : 'view', locked: locked() }));
         } catch (e) { /* storage full or blocked */ }
         changeHooks.forEach((f) => f());
     }
@@ -393,7 +397,15 @@
             $('formula-input').value = answers ? 'Viewing submitted user response file (.kfa).' : 'Fill out your responses below and click Download answers at the bottom!';
             $('btn-download-kfe').style.display = 'none';
             $('btn-download-kfv-text').textContent = 'Download form';
+            if (locked()) {
+                badge.textContent = 'VIEW-ONLY FORM (.kfv)';
+                $('formula-input').value = 'This form is view-only: fill it in and click Download answers at the bottom!';
+            }
         }
+        // Formly Classic's Create Form button would open the builder, so a view-only form hides it
+        $('btn-create-form').style.display = locked() ? 'none' : '';
+        // and live sharing (which could edit it) is hidden too
+        document.body.classList.toggle('fm-locked', locked());
         badge.style.color = ACCENT;
         const list = $('form-fields-list');
         list.innerHTML = '';
@@ -404,6 +416,7 @@
 
     // --- Building ---
     function addField(type) {
+        if (locked()) { notify(LOCKED_MSG); return; }
         clickSound(800, 0.08);
         state.form = Object.assign({}, state.form, {
             fields: fields().concat([{
@@ -418,11 +431,16 @@
         render();
     }
 
-    function setMode(m) { state.mode = m; render(); }
+    function setMode(m) {
+        if (locked() && m === 'builder') { notify(LOCKED_MSG); return; }
+        state.mode = m;
+        render();
+    }
 
     function resetForm() {
         state.form = { title: 'Untitled Form', description: 'Enter instructions here...', fields: [] };
         state.mode = 'builder';
+        state.locked = false;
         render();
     }
 
@@ -442,8 +460,10 @@
     const pretty = (data) => JSON.stringify(data, null, 2);
 
     function downloadKfe() {
+        if (locked()) { notify(LOCKED_MSG); return false; }
         clickSound(850, 0.1);
         download(pretty({ format: 'kfe', version: '1.0', form: form() }), fileName('.kfe'), 'application/json');
+        return true;
     }
 
     function downloadKfv() {
@@ -467,15 +487,15 @@
             const doc = JSON.parse(text);
             switch (doc.format) {
                 case 'kfe':
-                    state.form = doc.form; state.mode = 'builder';
+                    state.form = doc.form; state.mode = 'builder'; state.locked = false;
                     alert('Editable Form (.kfe) loaded successfully!');
                     break;
                 case 'kfv':
-                    state.form = doc.form; state.mode = 'view';
-                    alert('Viewable Form (.kfv) loaded successfully!');
+                    state.form = doc.form; state.mode = 'view'; state.locked = true;
+                    alert('Viewable Form (.kfv) loaded! It is view-only: fill it in and download your answers!');
                     break;
                 case 'kfa':
-                    state.mode = 'readonly-answers';
+                    state.mode = 'readonly-answers'; state.locked = false;
                     state.form = {
                         title: doc.formTitle || 'Submitted Form Response',
                         description: 'Submitted at: ' + new Date(doc.submittedAt).toLocaleString(),
@@ -484,7 +504,7 @@
                     alert('Loaded Form Answers (.kfa) successfully!');
                     break;
                 default:
-                    if (Array.isArray(doc.fields)) { state.form = doc; state.mode = 'builder'; }
+                    if (Array.isArray(doc.fields)) { state.form = doc; state.mode = 'builder'; state.locked = false; }
             }
             render();
         } catch (e) {
@@ -529,6 +549,8 @@
             const d = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
             if (d && d.form && Array.isArray(d.form.fields)) {
                 state.form = d.form;
+                // a view-only form stays view-only after a reload
+                if (d.locked) { state.locked = true; state.mode = 'view'; }
             }
         } catch (e) { /* a broken save just means a fresh form */ }
     }
@@ -536,7 +558,7 @@
     // The ribbon (office.js) and live collaboration (collab.js) build on this!
     window.Formly = {
         state, renderHooks, changeHooks,
-        $, form, fields, mode, builder, updateField, save, render,
+        $, form, fields, mode, builder, locked, updateField, save, render,
         addField, setMode, resetForm, downloadKfe, downloadKfv, exportKfa,
     };
     // old global names, for anything that still calls them

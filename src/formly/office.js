@@ -23,6 +23,7 @@
 
     const sync = () => OS.sync();
     function addField(type) {
+        if (app.locked()) { app.addField(type); return; }
         if (!app.builder()) app.setMode('builder');
         app.addField(type);
         sync();
@@ -31,7 +32,9 @@
             if (last) last.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
         }, 30);
     }
-    const fieldMenu = () => FIELD_KINDS.map(([t, label, icon]) => ({ label: label, icon: icon, run: () => addField(t) }));
+    // a view-only (.kfv) form greys out everything that would edit it
+    const lockedOut = () => app.locked();
+    const fieldMenu = () => FIELD_KINDS.map(([t, label, icon]) => ({ label: label, icon: icon, disabled: lockedOut, run: () => addField(t) }));
     const setMode = (m) => { app.setMode(m); sync(); };
     const askReset = () => OS.confirm('Reset Workspace', 'Clear this form and start over?', 'Reset', true)
         .then((ok) => { if (ok) { app.resetForm(); OS.toast('A fresh form!'); } });
@@ -72,19 +75,19 @@
         { id: 'home', label: 'Home', groups: [
             { label: 'Form', items: [
                 { big: true, icon: 'newDoc', label: 'New\nForm', run: askReset },
-                { big: true, icon: 'plus', label: 'Add\nField', title: 'Short answer, paragraph, dropdown, chips, option row, rating, checkbox!', run: () => addField('text'), menu: fieldMenu },
+                { big: true, icon: 'plus', label: 'Add\nField', title: 'Short answer, paragraph, dropdown, chips, option row, rating, checkbox!', disabled: lockedOut, run: () => addField('text'), menu: fieldMenu },
             ] },
             { label: 'Fields', items: [{ rows: [
-                [{ sm: true, icon: 'pen', label: 'Short', run: () => addField('text') },
-                 { sm: true, icon: 'page', label: 'Paragraph', run: () => addField('textarea') },
-                 { sm: true, icon: 'tag', label: 'Dropdown', run: () => addField('select') }],
-                [{ sm: true, icon: 'bubble', label: 'Chips', run: () => addField('chip') },
-                 { sm: true, icon: 'aCenter', label: 'Option Row', run: () => addField('optrow') },
-                 { sm: true, icon: 'star', label: 'Rating', run: () => addField('rating') },
-                 { sm: true, icon: 'check', label: 'Checkbox', run: () => addField('checkbox') }],
+                [{ sm: true, icon: 'pen', label: 'Short', disabled: lockedOut, run: () => addField('text') },
+                 { sm: true, icon: 'page', label: 'Paragraph', disabled: lockedOut, run: () => addField('textarea') },
+                 { sm: true, icon: 'tag', label: 'Dropdown', disabled: lockedOut, run: () => addField('select') }],
+                [{ sm: true, icon: 'bubble', label: 'Chips', disabled: lockedOut, run: () => addField('chip') },
+                 { sm: true, icon: 'aCenter', label: 'Option Row', disabled: lockedOut, run: () => addField('optrow') },
+                 { sm: true, icon: 'star', label: 'Rating', disabled: lockedOut, run: () => addField('rating') },
+                 { sm: true, icon: 'check', label: 'Checkbox', disabled: lockedOut, run: () => addField('checkbox') }],
             ] }] },
             { label: 'Mode', items: [
-                { big: true, icon: 'pen', label: 'Builder', run: () => setMode('builder'), checked: app.builder },
+                { big: true, icon: 'pen', label: 'Builder', disabled: lockedOut, run: () => setMode('builder'), checked: app.builder },
                 { big: true, icon: 'eye', label: 'Preview', title: 'Fill the form out like a visitor!', run: () => setMode('view'), checked: () => app.mode() === 'view' },
             ] },
             { label: 'Layout', items: [{ big: true, icon: 'layout', label: 'Layout', menu: () => [
@@ -93,10 +96,10 @@
             ] }] },
         ] },
         { id: 'share', label: 'Share', groups: [
-            { label: 'Live', items: [{ big: true, icon: 'user', label: 'Share &\nChat', title: 'Build the form together, live!',
+            { label: 'Live', items: [{ big: true, icon: 'user', label: 'Share &\nChat', title: 'Build the form together, live!', disabled: lockedOut,
                 run: () => { if (window.RadiiCollab) window.RadiiCollab.open('people'); } }] },
             { label: 'Send', items: [
-                { big: true, icon: 'save', label: 'Editable\n.kfe', run: app.downloadKfe },
+                { big: true, icon: 'save', label: 'Editable\n.kfe', disabled: lockedOut, run: app.downloadKfe },
                 { big: true, icon: 'download', label: 'Viewable\n.kfv', run: app.downloadKfv },
                 { big: true, icon: 'check', label: 'Answers\n.kfa', run: app.exportKfa },
             ] },
@@ -131,8 +134,8 @@
             app.save();
         },
         qat: [
-            { icon: 'save', title: 'Download editable (.kfe)', run: () => { app.downloadKfe(); OS.flashSaved('Saved!'); } },
-            { icon: 'plus', title: 'Add a field', run: () => addField('text') },
+            { icon: 'save', title: 'Download editable (.kfe)', run: () => { if (app.downloadKfe()) OS.flashSaved('Saved!'); } },
+            { icon: 'plus', title: 'Add a field', disabled: lockedOut, run: () => addField('text') },
             { icon: 'eye', title: 'Preview / Builder', run: () => setMode(app.builder() ? 'view' : 'builder') },
         ],
         tabs: tabs,
