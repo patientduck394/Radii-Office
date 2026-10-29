@@ -203,6 +203,21 @@ A lens-shaped Bubble Chip cousin, with the gel glowing out from the center and a
 * `#;SL;text;` #;SL;slate;
 * `#;BK;text;` #;BK;black;
 
+## Gel series
+
+Ten more numbered Bubble Chip cousins, all in the same 16 colors. Written `%number%color%text%##`, where the number picks the style:
+
+* `%1%color%text%##` Gel Bevels, a chunky 3D bevel: light top and left edges, deep bottom and right edges: %1%R%red%## %1%O%orange%## %1%GL%gold%## %1%Y%yellow%## %1%L%lime%## %1%G%green%## %1%TU%turquoise%## %1%T%teal%## %1%C%cyan%## %1%B%blue%## %1%PR%purple%## %1%PK%pink%## %1%W%white%## %1%FG%fog%## %1%SL%slate%## %1%BK%black%##
+* `%2%color%text%##` Gel Stripes, candy stripes of gel running diagonally under a glossy wash: %2%R%red%## %2%O%orange%## %2%GL%gold%## %2%Y%yellow%## %2%L%lime%## %2%G%green%## %2%TU%turquoise%## %2%T%teal%## %2%C%cyan%## %2%B%blue%## %2%PR%purple%## %2%PK%pink%## %2%W%white%## %2%FG%fog%## %2%SL%slate%## %2%BK%black%##
+* `%3%color%text%##` Gel Halos, clear glass with a soft glow of color all around it and gel glowing up from below: %3%R%red%## %3%O%orange%## %3%GL%gold%## %3%Y%yellow%## %3%L%lime%## %3%G%green%## %3%TU%turquoise%## %3%T%teal%## %3%C%cyan%## %3%B%blue%## %3%PR%purple%## %3%PK%pink%## %3%W%white%## %3%FG%fog%## %3%SL%slate%## %3%BK%black%##
+* `%4%color%text%##` Gel Dots, little polka dots of gel on tinted glass: %4%R%red%## %4%O%orange%## %4%GL%gold%## %4%Y%yellow%## %4%L%lime%## %4%G%green%## %4%TU%turquoise%## %4%T%teal%## %4%C%cyan%## %4%B%blue%## %4%PR%purple%## %4%PK%pink%## %4%W%white%## %4%FG%fog%## %4%SL%slate%## %4%BK%black%##
+* `%5%color%text%##` Gel Shelves, the gel rises from a thick colored shelf along the bottom: %5%R%red%## %5%O%orange%## %5%GL%gold%## %5%Y%yellow%## %5%L%lime%## %5%G%green%## %5%TU%turquoise%## %5%T%teal%## %5%C%cyan%## %5%B%blue%## %5%PR%purple%## %5%PK%pink%## %5%W%white%## %5%FG%fog%## %5%SL%slate%## %5%BK%black%##
+* `%6%color%text%##` Gel Corners, the gel pools in the top-left corner, which is the one sharp corner: %6%R%red%## %6%O%orange%## %6%GL%gold%## %6%Y%yellow%## %6%L%lime%## %6%G%green%## %6%TU%turquoise%## %6%T%teal%## %6%C%cyan%## %6%B%blue%## %6%PR%purple%## %6%PK%pink%## %6%W%white%## %6%FG%fog%## %6%SL%slate%## %6%BK%black%##
+* `%7%color%text%##` Gel Rings, a double ring edge around a gel glow in the middle: %7%R%red%## %7%O%orange%## %7%GL%gold%## %7%Y%yellow%## %7%L%lime%## %7%G%green%## %7%TU%turquoise%## %7%T%teal%## %7%C%cyan%## %7%B%blue%## %7%PR%purple%## %7%PK%pink%## %7%W%white%## %7%FG%fog%## %7%SL%slate%## %7%BK%black%##
+* `%8%color%text%##` Gel Frames, a bright glassy frame just inside the colored edge: %8%R%red%## %8%O%orange%## %8%GL%gold%## %8%Y%yellow%## %8%L%lime%## %8%G%green%## %8%TU%turquoise%## %8%T%teal%## %8%C%cyan%## %8%B%blue%## %8%PR%purple%## %8%PK%pink%## %8%W%white%## %8%FG%fog%## %8%SL%slate%## %8%BK%black%##
+* `%9%color%text%##` Gel Bands, a band of gel across the middle, fading to clear at the top and bottom: %9%R%red%## %9%O%orange%## %9%GL%gold%## %9%Y%yellow%## %9%L%lime%## %9%G%green%## %9%TU%turquoise%## %9%T%teal%## %9%C%cyan%## %9%B%blue%## %9%PR%purple%## %9%PK%pink%## %9%W%white%## %9%FG%fog%## %9%SL%slate%## %9%BK%black%##
+* `%10%color%text%##` Gel Stitches, a stitched, dashed edge like a sewn-on patch: %10%R%red%## %10%O%orange%## %10%GL%gold%## %10%Y%yellow%## %10%L%lime%## %10%G%green%## %10%TU%turquoise%## %10%T%teal%## %10%C%cyan%## %10%B%blue%## %10%PR%purple%## %10%PK%pink%## %10%W%white%## %10%FG%fog%## %10%SL%slate%## %10%BK%black%##
+
 ## Gel orbs
 
 Round glossy orbs, written `=color=text=color=`:

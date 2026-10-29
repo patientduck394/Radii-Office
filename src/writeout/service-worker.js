@@ -1,11 +1,11 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261131m';
+var WRITEOUT_CACHE = 'writeout-shell-v20261131n';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261131j',
+  'app.js?v=20261131n',
   'style.css?v=20261131e',
-  'keydown.css?v=20261131m',
+  'keydown.css?v=20261131n',
   'marketplace.js?v=20260928',
   'marketplace.css?v=20260928',
   'settings.js?v=20260928',
@@ -28,7 +28,7 @@ var WRITEOUT_SHELL = [
   'collab-kd.js?v=20261021',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261131j',
+  'keydown-doc.js?v=20261131n',
   'favicon.svg',
   'favicon-96.png',
   'apple-touch-icon.png',

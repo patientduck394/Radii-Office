@@ -5333,4 +5333,115 @@
 .gel-lens-slate { --lens-c: #b4b4b4; --lens-edge: #6f6f6f; --lens-ink: #363636; }
 .gel-lens-black { --lens-c: #919191; --lens-edge: #454545; --lens-ink: #222222; }
 
+/* ========================================================
+   GEL SERIES (%N%R%text%##): ten more numbered Bubble Chip cousins, in the same 16 colors!
+   All ten share the same color-to-clear gel, crisp edge and ink; the number picks the style:
+   1 Bevels, 2 Stripes, 3 Halos, 4 Dots, 5 Shelves, 6 Corners, 7 Rings, 8 Frames, 9 Bands, 10 Stitches.
+   ======================================================== */
+.gel-sx-chip {
+  --sx-c: #3b82f6; --sx-edge: #2563eb; --sx-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 10px;
+  border-radius: 10px;
+  border: 2px solid var(--sx-edge);
+  color: var(--sx-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px;
+  vertical-align: middle;
+  background: linear-gradient(180deg, var(--sx-c) 0%, transparent 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+/* 1. Bevels: a chunky 3D bevel */
+.gel-sx-chip.gel-sx-1 {
+  border-width: 3px;
+  border-radius: 6px;
+  border-color: color-mix(in srgb, var(--sx-c) 45%, white) color-mix(in srgb, var(--sx-edge) 80%, black) color-mix(in srgb, var(--sx-edge) 65%, black) color-mix(in srgb, var(--sx-c) 65%, white);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6), inset 0 -2px 3px rgba(0, 0, 0, 0.08);
+}
+/* 2. Stripes: diagonal candy stripes under a glossy wash */
+.gel-sx-chip.gel-sx-2 {
+  border-radius: 999px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.72) 100%),
+    repeating-linear-gradient(135deg, var(--sx-c) 0 6px, color-mix(in srgb, var(--sx-c) 30%, white) 6px 12px);
+}
+/* 3. Halos: clear glass with a soft glow all around */
+.gel-sx-chip.gel-sx-3 {
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse 95% 80% at 50% 115%, var(--sx-c) 0%, color-mix(in srgb, var(--sx-c) 55%, transparent) 35%, transparent 75%),
+    rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sx-c) 28%, transparent), 0 0 12px color-mix(in srgb, var(--sx-c) 65%, transparent), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  margin: 0 5px;
+}
+/* 4. Dots: polka dots of gel on tinted glass */
+.gel-sx-chip.gel-sx-4 {
+  border-radius: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.6) 100%),
+    radial-gradient(circle at 4px 4px, var(--sx-c) 2.3px, transparent 2.9px) 0 0 / 9px 9px,
+    color-mix(in srgb, var(--sx-c) 15%, white);
+}
+/* 5. Shelves: the gel rises from a thick colored shelf */
+.gel-sx-chip.gel-sx-5 {
+  border-radius: 5px 5px 9px 9px;
+  border-bottom-width: 5px;
+  padding: 2px 10px 1px;
+  background: linear-gradient(0deg, var(--sx-c) 0%, transparent 92%);
+}
+/* 6. Corners: gel pooled in the one sharp corner */
+.gel-sx-chip.gel-sx-6 {
+  border-radius: 2px 13px 13px 13px;
+  background: radial-gradient(circle at 0 0, var(--sx-c) 0, var(--sx-c) 14px, color-mix(in srgb, var(--sx-c) 45%, transparent) 24px, color-mix(in srgb, var(--sx-c) 12%, transparent) 60%, transparent 90%);
+}
+/* 7. Rings: a double ring edge around a central glow */
+.gel-sx-chip.gel-sx-7 {
+  border: 5px double var(--sx-edge);
+  border-radius: 999px;
+  padding: 0 10px;
+  background: radial-gradient(ellipse 70% 90% at 50% 50%, color-mix(in srgb, var(--sx-c) 85%, transparent) 0%, transparent 100%);
+}
+/* 8. Frames: a bright glassy frame inside the edge */
+.gel-sx-chip.gel-sx-8 {
+  border-radius: 8px;
+  padding: 3px 11px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 0 0 3px rgba(255, 255, 255, 0.8), inset 0 0 0 4px color-mix(in srgb, var(--sx-edge) 35%, transparent);
+}
+/* 9. Bands: a band of gel across the middle */
+.gel-sx-chip.gel-sx-9 {
+  border-radius: 4px;
+  background: linear-gradient(180deg, transparent 0%, var(--sx-c) 50%, transparent 100%);
+}
+/* 10. Stitches: a stitched patch */
+.gel-sx-chip.gel-sx-10 {
+  border: 2px dashed var(--sx-edge);
+  border-radius: 7px;
+  margin: 0 5px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--sx-c) 85%, transparent) 0%, color-mix(in srgb, var(--sx-c) 15%, transparent) 100%);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--sx-c) 35%, white), 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+.gel-sx-red { --sx-c: #ef4444; --sx-edge: #dc2626; --sx-ink: #450a0a; }
+.gel-sx-orange { --sx-c: #f97316; --sx-edge: #ea580c; --sx-ink: #431407; }
+.gel-sx-gold { --sx-c: #ea9f08; --sx-edge: #ca8a04; --sx-ink: #451a03; }
+.gel-sx-yellow { --sx-c: #ead708; --sx-edge: #caa604; --sx-ink: #452b03; }
+.gel-sx-lime { --sx-c: #84cc16; --sx-edge: #65a30d; --sx-ink: #1a2e05; }
+.gel-sx-green { --sx-c: #10b981; --sx-edge: #059669; --sx-ink: #022c22; }
+.gel-sx-turquoise { --sx-c: #30e5cd; --sx-edge: #26b1a5; --sx-ink: #044439; }
+.gel-sx-teal { --sx-c: #06b6d4; --sx-edge: #0891b2; --sx-ink: #083344; }
+.gel-sx-cyan { --sx-c: #30d3e5; --sx-edge: #26a3b1; --sx-ink: #043e44; }
+.gel-sx-blue { --sx-c: #3b82f6; --sx-edge: #2563eb; --sx-ink: #172554; }
+.gel-sx-purple { --sx-c: #a855f7; --sx-edge: #9333ea; --sx-ink: #2e1065; }
+.gel-sx-pink { --sx-c: #ec4899; --sx-edge: #db2777; --sx-ink: #4c0519; }
+.gel-sx-white { --sx-c: #f3f3f3; --sx-edge: #b3b3b3; --sx-ink: #7a7a7a; }
+.gel-sx-fog { --sx-c: #d9d9d9; --sx-edge: #808080; --sx-ink: #404040; }
+.gel-sx-slate { --sx-c: #b4b4b4; --sx-edge: #6f6f6f; --sx-ink: #363636; }
+.gel-sx-black { --sx-c: #919191; --sx-edge: #454545; --sx-ink: #222222; }
+
+
 
