@@ -33,9 +33,11 @@
         const grid = document.querySelector('.product-grid');
         if (!grid) return;
         const textOf = (el, sel) => { const e = el.querySelector(sel); return e ? e.textContent : ''; };
+        // archived cards stay in the Archives dropdown; a search that finds one opens it!
+        const archives = document.getElementById('archives');
         const cards = Array.from(document.querySelectorAll('.product-card')).map((el) => {
             const badge = textOf(el, '.badge-btn').trim();
-            return { el: el, title: norm(textOf(el, '.product-title')), badge: norm(badge), badgeLabel: badge, text: norm(el.textContent) };
+            return { el: el, home: el.parentNode, title: norm(textOf(el, '.product-title')), badge: norm(badge), badgeLabel: badge, text: norm(el.textContent) };
         });
 
         const style = document.createElement('style');
@@ -87,8 +89,14 @@
             const shown = new Set(hits.map((h) => h[0]));
             cards.forEach((c) => c.el.classList.toggle('rf-hide', !shown.has(c)));
             // best matches first while searching; the page's own order otherwise
-            if (words.length) hits.slice().sort((a, b) => b[1] - a[1]).forEach(([c]) => grid.insertBefore(c.el, empty));
-            else cards.forEach((c) => grid.insertBefore(c.el, empty));
+            const place = (c) => (c.home === grid ? grid.insertBefore(c.el, empty) : c.home.appendChild(c.el));
+            if (words.length) hits.slice().sort((a, b) => b[1] - a[1]).forEach(([c]) => place(c));
+            else cards.forEach(place);
+            if (archives) {
+                const archived = cards.filter((c) => c.home !== grid);
+                archives.classList.toggle('rf-hide', archived.length > 0 && !archived.some((c) => shown.has(c)));
+                if (words.length && archived.some((c) => shown.has(c))) archives.open = true;
+            }
             empty.classList.toggle('rf-hide', shown.size > 0);
             count.textContent = shown.size === cards.length ? cards.length + ' apps' : shown.size + ' of ' + cards.length + ' apps';
             chipButtons.forEach(([label, b]) => b.setAttribute('aria-pressed', String(label === chip)));

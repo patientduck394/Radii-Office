@@ -97,6 +97,33 @@
             gap: 20px;
         }
 
+        /* The Archives dropdown */
+        .archives {
+            margin-top: 34px;
+            border: 2px solid rgba(5, 118, 255, 0.35);
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%);
+            backdrop-filter: blur(16px);
+        }
+        .archives-summary {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        .archives-summary::-webkit-details-marker { display: none; }
+        .archives-summary:focus-visible { outline: 3px solid rgba(14, 165, 233, 0.6); outline-offset: 2px; border-radius: 14px; }
+        .archives-icon { font-size: 1.4rem; }
+        .archives-title { font-size: 1.3rem; font-weight: 900; color: #e0f2fe; }
+        .archives-note { color: #94c5f0; font-size: 0.9rem; flex: 1 1 200px; }
+        .archives-chev { color: #7dd3fc; font-size: 1.2rem; transition: transform 0.25s ease; }
+        .archives[open] .archives-chev { transform: rotate(180deg); }
+        .archives-grid { padding: 0 20px 20px; }
+
         /* Small Colored Product Card */
         .product-card {
             background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
@@ -412,21 +439,6 @@
                 <a href="/omicron" class="launch-btn">Launch Omicron →</a>
             </article>
 
-            <!-- Waterflow -->
-            <article class="product-card">
-                <div class="card-header">
-                    <h2 class="product-title">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.221 17.084v-8.11a4.166 4.166 0 0 0-4.166-4.197h-8.11A4.166 4.166 0 0 0 3.78 8.944v8.11a4.166 4.166 0 0 0 4.166 4.196h8.11a4.166 4.166 0 0 0 4.166-4.166M16.055 6.805V2.75m-8.11 4.055V2.75m-.507 8.11h9.124m-9.124 5.068h9.124"/></svg>
-                        Waterflow
-                    </h2>
-                    <span class="badge-btn badge-frame-sky">Notes</span>
-                </div>
-                <div class="product-desc-box">
-                    <span>Note taking suite for creating fun notes, crafting styles, and making shareable .KD-format notes.</span>
-                </div>
-                <a href="/waterflow" class="launch-btn">Launch Waterflow →</a>
-            </article>
-            
             <!-- Formly -->
             <article class="product-card">
                 <div class="card-header">
@@ -550,6 +562,32 @@
                 <a href="/taskra" class="launch-btn">Launch Taskra →</a>
             </article>
         </div>
+
+        <!-- The Archives: older apps that are still here to use, tucked away in a dropdown! -->
+        <details class="archives" id="archives">
+            <summary class="archives-summary">
+                <span class="archives-icon" aria-hidden="true">🗄️</span>
+                <span class="archives-title">The Archives</span>
+                <span class="archives-note">Older apps, kept around for you to use!</span>
+                <span class="archives-chev" aria-hidden="true">▾</span>
+            </summary>
+            <div class="product-grid archives-grid">
+                <!-- Waterflow -->
+                <article class="product-card">
+                    <div class="card-header">
+                        <h2 class="product-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.221 17.084v-8.11a4.166 4.166 0 0 0-4.166-4.197h-8.11A4.166 4.166 0 0 0 3.78 8.944v8.11a4.166 4.166 0 0 0 4.166 4.196h8.11a4.166 4.166 0 0 0 4.166-4.166M16.055 6.805V2.75m-8.11 4.055V2.75m-.507 8.11h9.124m-9.124 5.068h9.124"/></svg>
+                            Waterflow
+                        </h2>
+                        <span class="badge-btn badge-frame-sky">Notes</span>
+                    </div>
+                    <div class="product-desc-box">
+                        <span>Note taking suite for creating fun notes, crafting styles, and making shareable .KD-format notes.</span>
+                    </div>
+                    <a href="/waterflow" class="launch-btn">Launch Waterflow →</a>
+                </article>
+            </div>
+        </details>
     </main>
 
     <!-- Download popup: pick your operating system to get the desktop app! -->
@@ -655,6 +693,6 @@
     </script>
 
     <!-- "Find an app": the search bar and category chips above the cards -->
-    <script src="/product-finder.js?v=20261130" defer></script>
+    <script src="/product-finder.js?v=20261131o" defer></script>
 </body>
 </html>
