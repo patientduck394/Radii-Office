@@ -5581,6 +5581,65 @@
 .gel-speech-slate { --sp-c: #b4b4b4; --sp-edge: #6f6f6f; --sp-ink: #363636; }
 .gel-speech-black { --sp-c: #919191; --sp-edge: #454545; --sp-ink: #222222; }
 
+/* ========================================================
+   GEL FIZZ (++R+text++): a fizzy Bubble Chip cousin, in the same 16 colors!
+   The same color-to-clear gel, crisp edge and ink, with tiny bubbles rising inside the gel
+   and two glossy soda bubbles fizzing up out of the top right corner.
+   ======================================================== */
+.gel-fizz-chip {
+  --fz-c: #3b82f6; --fz-edge: #2563eb; --fz-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 12px 2px 10px;
+  border-radius: 10px;
+  border: 2px solid var(--fz-edge);
+  color: var(--fz-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 5px 6px 0 2px;
+  vertical-align: middle;
+  /* tiny bubbles rising inside, over the Bubble Chip's own gel */
+  background:
+    radial-gradient(circle at calc(100% - 9px) 70%, rgba(255, 255, 255, 0.9) 0 1.6px, transparent 2.2px),
+    radial-gradient(circle at calc(100% - 14px) 40%, rgba(255, 255, 255, 0.8) 0 1.2px, transparent 1.8px),
+    radial-gradient(circle at calc(100% - 6px) 25%, rgba(255, 255, 255, 0.75) 0 1px, transparent 1.6px),
+    linear-gradient(180deg, var(--fz-c) 0%, transparent 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+/* two soda bubbles fizzing out of the top right corner: a bigger one and a little one above it */
+.gel-fizz-chip::before,
+.gel-fizz-chip::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--fz-edge);
+  background: radial-gradient(circle at 35% 30%, #ffffff 0 18%, color-mix(in srgb, var(--fz-c) 30%, white) 45%, color-mix(in srgb, var(--fz-c) 55%, white) 100%);
+  pointer-events: none;
+}
+.gel-fizz-chip::before { width: 8px; height: 8px; top: -7px; right: 4px; }
+.gel-fizz-chip::after { width: 5px; height: 5px; top: -11px; right: -3px; }
+.gel-fizz-red { --fz-c: #ef4444; --fz-edge: #dc2626; --fz-ink: #450a0a; }
+.gel-fizz-orange { --fz-c: #f97316; --fz-edge: #ea580c; --fz-ink: #431407; }
+.gel-fizz-gold { --fz-c: #ea9f08; --fz-edge: #ca8a04; --fz-ink: #451a03; }
+.gel-fizz-yellow { --fz-c: #ead708; --fz-edge: #caa604; --fz-ink: #452b03; }
+.gel-fizz-lime { --fz-c: #84cc16; --fz-edge: #65a30d; --fz-ink: #1a2e05; }
+.gel-fizz-green { --fz-c: #10b981; --fz-edge: #059669; --fz-ink: #022c22; }
+.gel-fizz-turquoise { --fz-c: #30e5cd; --fz-edge: #26b1a5; --fz-ink: #044439; }
+.gel-fizz-teal { --fz-c: #06b6d4; --fz-edge: #0891b2; --fz-ink: #083344; }
+.gel-fizz-cyan { --fz-c: #30d3e5; --fz-edge: #26a3b1; --fz-ink: #043e44; }
+.gel-fizz-blue { --fz-c: #3b82f6; --fz-edge: #2563eb; --fz-ink: #172554; }
+.gel-fizz-purple { --fz-c: #a855f7; --fz-edge: #9333ea; --fz-ink: #2e1065; }
+.gel-fizz-pink { --fz-c: #ec4899; --fz-edge: #db2777; --fz-ink: #4c0519; }
+.gel-fizz-white { --fz-c: #f3f3f3; --fz-edge: #b3b3b3; --fz-ink: #7a7a7a; }
+.gel-fizz-fog { --fz-c: #d9d9d9; --fz-edge: #808080; --fz-ink: #404040; }
+.gel-fizz-slate { --fz-c: #b4b4b4; --fz-edge: #6f6f6f; --fz-ink: #363636; }
+.gel-fizz-black { --fz-c: #919191; --fz-edge: #454545; --fz-ink: #222222; }
+
+
 
 
 
