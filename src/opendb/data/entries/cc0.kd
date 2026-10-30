@@ -1,4 +1,5 @@
 ---
+format: keydown-text
 id: cc0
 type: article
 title: CC0
@@ -30,7 +31,7 @@ Because of this design, a CC0 work can be used without attribution, without shar
 
 ## What CC0 does not cover
 
-CC0 only covers rights held by the person applying it. It does not affect #O#trademarks or patents##, and it does not grant rights that other people may hold, such as the privacy rights of a person shown in a photograph.
+CC0 only covers rights held by the person applying it. #O#It does not affect trademarks or patents##, and it does not grant rights that other people may hold, such as the privacy rights of a person shown in a photograph.
 
 ## Uses
 
