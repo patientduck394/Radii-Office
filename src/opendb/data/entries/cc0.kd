@@ -23,7 +23,7 @@ Not every country lets people simply give away their copyright, so CC0 works in 
 1. **Waiver**: the creator gives up all of their rights in the work, worldwide.
 2. **Fallback license**: where a full waiver is not legally possible, CC0 grants everyone a license to use the work for any purpose, with no conditions.
 
-!#G#No attribution needed# !#B#Commercial use OK# !#PR#No share-alike#
+!#O#No attribution needed# !#Y#Commercial use OK# !#L#No share-alike#
 
 Because of this design, a CC0 work can be used without attribution, without sharing changes, and for commercial purposes.
 
@@ -31,7 +31,7 @@ Because of this design, a CC0 work can be used without attribution, without shar
 
 ## What CC0 does not cover
 
-CC0 only covers rights held by the person applying it. #O#It does not affect trademarks or patents##, and it does not grant rights that other people may hold, such as the privacy rights of a person shown in a photograph.
+CC0 only covers rights held by the person applying it. It does not affect #O#trademarks or patents##, and it does not grant rights that other people may hold, such as the privacy rights of a person shown in a photograph.
 
 ## Uses
 
