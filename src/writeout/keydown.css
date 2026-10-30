@@ -9817,65 +9817,6 @@
 .gel-speech-slate { --sp-c: #b4b4b4; --sp-edge: #6f6f6f; --sp-ink: #363636; }
 .gel-speech-black { --sp-c: #919191; --sp-edge: #454545; --sp-ink: #222222; }
 
-/* ========================================================
-   GEL HEXES (++R+text++): a Bubble Chip cousin shaped like a hexagon, in the same 16 colors!
-   The same gel, crisp edge and ink, cut into a honeycomb-cell (or gem) shape with pointed ends
-   and a glossy top half. The edge and the gel are two stacked hexagons behind the text.
-   ======================================================== */
-.gel-hex-chip {
-  --hx-c: #3b82f6; --hx-edge: #2563eb; --hx-ink: #172554;
-  --hx-cut: 11px;
-  position: relative;
-  isolation: isolate;
-  display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
-  padding: 3px 17px;
-  color: var(--hx-ink);
-  font-family: inherit;
-  font-weight: 800;
-  white-space: nowrap;
-  margin: 0 2px;
-  vertical-align: middle;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.1));
-}
-.gel-hex-chip::before,
-.gel-hex-chip::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  pointer-events: none;
-}
-/* the crisp edge: a hexagon in the edge color */
-.gel-hex-chip::before {
-  inset: 0;
-  background: var(--hx-edge);
-  clip-path: polygon(var(--hx-cut) 0, calc(100% - var(--hx-cut)) 0, 100% 50%, calc(100% - var(--hx-cut)) 100%, var(--hx-cut) 100%, 0 50%);
-}
-/* the gel: a slightly smaller hexagon on top, color to soft tint, with a glossy top half */
-.gel-hex-chip::after {
-  inset: 2px 2.6px;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 48%, rgba(255, 255, 255, 0) 50%),
-    linear-gradient(180deg, var(--hx-c) 0%, color-mix(in srgb, var(--hx-c) 12%, white) 100%);
-  clip-path: polygon(calc(var(--hx-cut) - 1.2px) 0, calc(100% - var(--hx-cut) + 1.2px) 0, 100% 50%, calc(100% - var(--hx-cut) + 1.2px) 100%, calc(var(--hx-cut) - 1.2px) 100%, 0 50%);
-}
-.gel-hex-red { --hx-c: #ef4444; --hx-edge: #dc2626; --hx-ink: #450a0a; }
-.gel-hex-orange { --hx-c: #f97316; --hx-edge: #ea580c; --hx-ink: #431407; }
-.gel-hex-gold { --hx-c: #ea9f08; --hx-edge: #ca8a04; --hx-ink: #451a03; }
-.gel-hex-yellow { --hx-c: #ead708; --hx-edge: #caa604; --hx-ink: #452b03; }
-.gel-hex-lime { --hx-c: #84cc16; --hx-edge: #65a30d; --hx-ink: #1a2e05; }
-.gel-hex-green { --hx-c: #10b981; --hx-edge: #059669; --hx-ink: #022c22; }
-.gel-hex-turquoise { --hx-c: #30e5cd; --hx-edge: #26b1a5; --hx-ink: #044439; }
-.gel-hex-teal { --hx-c: #06b6d4; --hx-edge: #0891b2; --hx-ink: #083344; }
-.gel-hex-cyan { --hx-c: #30d3e5; --hx-edge: #26a3b1; --hx-ink: #043e44; }
-.gel-hex-blue { --hx-c: #3b82f6; --hx-edge: #2563eb; --hx-ink: #172554; }
-.gel-hex-purple { --hx-c: #a855f7; --hx-edge: #9333ea; --hx-ink: #2e1065; }
-.gel-hex-pink { --hx-c: #ec4899; --hx-edge: #db2777; --hx-ink: #4c0519; }
-.gel-hex-white { --hx-c: #f3f3f3; --hx-edge: #b3b3b3; --hx-ink: #7a7a7a; }
-.gel-hex-fog { --hx-c: #d9d9d9; --hx-edge: #808080; --hx-ink: #404040; }
-.gel-hex-slate { --hx-c: #b4b4b4; --hx-edge: #6f6f6f; --hx-ink: #363636; }
-.gel-hex-black { --hx-c: #919191; --hx-edge: #454545; --hx-ink: #222222; }
 
 
 

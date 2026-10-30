@@ -810,6 +810,8 @@ if (canvas) {
                 { open: '#' + k + '#', close: '##', tagName: 'mark', className: 'an-hl an-hl-' + c },
                 { open: '#' + k + '#', close: '#_', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-ul' },
                 { open: '#' + k + '#', close: '#~', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-st' },
+                { open: '#' + k + '#', close: '#=', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-bx' },
+                { open: '#' + k + '#', close: '#]', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-cb' },
             ]),
             { open: '=Y=',  close: '=Y=',  className: 'gel-orb gel-y' },
             { open: '=R=',  close: '=R=',  className: 'gel-orb gel-r' },
@@ -1280,23 +1282,6 @@ if (canvas) {
             { open: '^^FG^', close: '^^', className: 'gel-speech-chip gel-speech-fog' },
             { open: '^^SL^', close: '^^', className: 'gel-speech-chip gel-speech-slate' },
             { open: '^^BK^', close: '^^', className: 'gel-speech-chip gel-speech-black' },
-            // Gel Hexes: ++R+text++ (a hexagon-shaped Bubble Chip cousin, same 16 colors!)
-            { open: '++R+', close: '++', className: 'gel-hex-chip gel-hex-red' },
-            { open: '++O+', close: '++', className: 'gel-hex-chip gel-hex-orange' },
-            { open: '++GL+', close: '++', className: 'gel-hex-chip gel-hex-gold' },
-            { open: '++Y+', close: '++', className: 'gel-hex-chip gel-hex-yellow' },
-            { open: '++L+', close: '++', className: 'gel-hex-chip gel-hex-lime' },
-            { open: '++G+', close: '++', className: 'gel-hex-chip gel-hex-green' },
-            { open: '++TU+', close: '++', className: 'gel-hex-chip gel-hex-turquoise' },
-            { open: '++T+', close: '++', className: 'gel-hex-chip gel-hex-teal' },
-            { open: '++C+', close: '++', className: 'gel-hex-chip gel-hex-cyan' },
-            { open: '++B+', close: '++', className: 'gel-hex-chip gel-hex-blue' },
-            { open: '++PR+', close: '++', className: 'gel-hex-chip gel-hex-purple' },
-            { open: '++PK+', close: '++', className: 'gel-hex-chip gel-hex-pink' },
-            { open: '++W+', close: '++', className: 'gel-hex-chip gel-hex-white' },
-            { open: '++FG+', close: '++', className: 'gel-hex-chip gel-hex-fog' },
-            { open: '++SL+', close: '++', className: 'gel-hex-chip gel-hex-slate' },
-            { open: '++BK+', close: '++', className: 'gel-hex-chip gel-hex-black' },
             // Gel Flags: #%R%text% (another Bubble Chip cousin, same 16 colors; checked before the pills!)
             { open: '#%R%', close: '%', className: 'gel-flag-chip gel-flag-red' },
             { open: '#%O%', close: '%', className: 'gel-flag-chip gel-flag-orange' },
@@ -1495,7 +1480,7 @@ if (canvas) {
 
             let closeIdx = currentLineText.indexOf(def.close, openIdx + def.open.length);
             if (closeIdx === -1) continue;
-            // a gel highlight ends at ITS nearest ## / #_ / #~ (no # inside), never at a later highlight's ending!
+            // a gel highlight ends at ITS nearest ## / #_ / #~ / #= / #] (no # inside), never at a later highlight's ending!
             if (def.tagName === 'mark' && currentLineText.slice(openIdx + def.open.length, closeIdx).indexOf('#') !== -1) continue;
             if (closeIdx === openIdx + def.open.length) continue; // nothing inside yet (like the ** of **bold**): keep typing!
 
