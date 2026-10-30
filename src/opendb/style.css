@@ -242,3 +242,18 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .kd-doc .odb-callout-fact { --co: #0d9488; --co-bg: #ccfbf1; }
 .kd-doc .odb-indent { margin-top: 0; }
 .kd-doc .odb-callout-icon { width: 20px; height: 20px; vertical-align: -4px; }
+
+/* The editor's Highlight button: a dropdown panel of every highlight and chip style, each a dropdown of its colors */
+.hl-wrap { position: relative; display: inline-block; }
+.hl-pop { position: absolute; z-index: 60; top: calc(100% + 6px); left: 0; width: min(560px, 92vw); max-height: min(70vh, 560px); overflow-y: auto; padding: 10px 12px 12px; border: 1px solid #b9d5ec; border-radius: 14px; background: linear-gradient(180deg, #ffffff, #f2f8fe); box-shadow: 0 14px 40px rgba(0, 60, 120, 0.25), inset 0 1px 0 #fff; text-align: left; }
+.hl-pop .hint { margin: 0 0 8px; }
+.hl-group > b { display: block; margin: 10px 0 6px; color: var(--blue); font-size: 13px; }
+.hl-cat { border: 1px solid var(--line); border-radius: 10px; background: #fbfdff; margin-bottom: 6px; }
+.hl-cat[open] { border-color: #9cc9ec; background: #fff; }
+.hl-cat summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 10px; cursor: pointer; font: 600 13px var(--sans); color: var(--ink); white-space: pre; }
+.hl-cat summary:hover { background: #f1f8ff; border-radius: 10px; }
+.hl-cat-name { overflow: hidden; text-overflow: ellipsis; }
+.hl-cat-peek { flex: none; font-size: 13px; pointer-events: none; }
+.hl-colors { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 10px 12px; }
+.hl-color { font: 600 13px var(--sans); padding: 6px 8px; border-radius: 9px; border: 1px solid transparent; background: transparent; cursor: pointer; line-height: 1.6; }
+.hl-color:hover, .hl-color:focus-visible { border-color: #9cc9ec; background: #f1f8ff; outline: none; }

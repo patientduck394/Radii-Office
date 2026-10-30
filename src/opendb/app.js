@@ -216,6 +216,27 @@
             + rows.map((r) => '<div class="kd-guide-row"><code>' + esc(r[0]).replace(/\n/g, '<br>').replace(/\t/g, '⇥ ') + '</code><span>' + renderKd(r[0]) + '</span></div>').join('')
             + '<div class="kd-guide-row"><span>Several "&gt; " lines in a row make one box; "&gt; [!FACT]" is OpenDB\'s own!</span></div></div>';
     }
+    // The Highlight button's styles, straight from Keydown's own lists (so new styles show up by themselves)
+    const HL_COLOR_NAMES = { R: 'Red', O: 'Orange', GL: 'Gold', Y: 'Yellow', L: 'Lime', G: 'Green', TU: 'Turquoise', T: 'Teal', C: 'Cyan', B: 'Blue', PR: 'Purple', PK: 'Pink', W: 'White', FG: 'Fog', SL: 'Slate', BK: 'Black' };
+    const hlColor = (d) => { const m = /([A-Z]{1,2})[#%^+:;]$/.exec(d.o); return (m && HL_COLOR_NAMES[m[1]]) || d.o; };
+    const hlPreview = (d) => (typeof window.kdRender === 'function' ? window.kdRender(d.o + hlColor(d) + d.c) : esc(d.o + hlColor(d) + d.c));
+    const SERIES_NAMES = ['Bevels', 'Stripes', 'Halos', 'Dots', 'Shelves', 'Corners', 'Rings', 'Frames', 'Bands', 'Stitches', 'Pebbles', 'Rulers', 'Waves', 'Checks', 'Bookends', 'Sparkles', 'Grids', 'Insets', 'Glows', 'Beads'];
+    function hlGroups() {
+        /* global KD_HL, KD_CORE */
+        const hl = typeof KD_HL !== 'undefined' ? KD_HL : [];
+        const core = typeof KD_CORE !== 'undefined' ? KD_CORE : [];
+        const ends = (c) => hl.filter((d) => d.c === c);
+        const cls = (re) => core.filter((d) => re.test(d.cls || '') && d.o !== '!#A#');
+        const cats = (list) => list.map(([name, items]) => ({ name, items })).filter((c) => c.items.length);
+        return [
+            { name: 'Annotate styles', cats: cats([['Gel Highlights  #color#text##', ends('##')], ['Gel Underlines  #color#text#_', ends('#_')], ['Gel Strikes  #color#text#~', ends('#~')],
+                ['Gel Boxes  #color#text#=', ends('#=')], ['Corner Brackets  #color#text#]', ends('#]')], ['Gel Selects  #color#text#-', ends('#-')]]) },
+            { name: 'Bubble Chip cousins', cats: cats([['Bubble Chips  #color#text#', cls(/^gel-bubble-chip /)], ['Gloss Pills  %color%text%', cls(/^gel-pill-chip /)], ['Gel Flags  #%color%text%', cls(/^gel-flag-chip /)],
+                ['Gel Tabs  #^color^text^', cls(/^gel-tab-chip /)], ['Gel Drops  #+color+text+', cls(/^gel-drop-chip /)], ['Gel Splits  #:color:text:', cls(/^gel-split-chip /)],
+                ['Gel Lenses  #;color;text;', cls(/^gel-lens-chip /)], ['Gel Speech  ^^color^text^^', cls(/^gel-speech-chip /)], ['Tag Chips  !#color#text#', cls(/^aero-tag-chip /)]]) },
+            { name: 'Gel Series  %number%color%text%##', cats: cats(SERIES_NAMES.map((n, i) => [(i + 1) + '. Gel ' + n, cls(new RegExp('^gel-sx-chip gel-sx-' + (i + 1) + ' '))])) },
+        ];
+    }
     // Plain text for search: Keydown triggers, math markers and link syntax are dropped
     function plain(src) {
         return String(src || '')
@@ -562,7 +583,7 @@
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
             '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, ![caption](media:file-id), footnotes [^1], <a href="#/templates" target="_blank">templates</a> like {{stub}})</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
-            '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button><button type="button" class="gel small plain" id="add-tpl" title="Stub notices, citation needed, file improvement and more!">⚑ Add a template</button><button type="button" class="gel small plain" id="open-file" title="An OpenDB entry, a Writeout document or a Bitbook note!">📂 Open .kd / .kn</button><input type="file" id="f-open" accept=".kd,.kn,.md,.txt" hidden></div>' +
+            '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button><span class="hl-wrap"><button type="button" class="gel small plain" id="add-hl" aria-haspopup="true" aria-expanded="false" title="Highlights and the Bubble Chip cousins, with a preview of every color!">🖍 Highlight</button></span><button type="button" class="gel small plain" id="add-tpl" title="Stub notices, citation needed, file improvement and more!">⚑ Add a template</button><button type="button" class="gel small plain" id="open-file" title="An OpenDB entry, a Writeout document or a Bitbook note!">📂 Open .kd / .kn</button><input type="file" id="f-open" accept=".kd,.kn,.md,.txt" hidden></div>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
             '<label class="field">Infobox <small>(optional, one “Label: value” per line)</small><textarea id="f-infobox" style="min-height:70px">' + esc(infoboxText) + '</textarea></label>' +
@@ -704,6 +725,45 @@
                 toast('Opened ' + f.name + '!');
             }, () => toast('That file could not be read!'));
         };
+        // Highlight: every Annotate style that Keydown can write, and the Bubble Chip cousins, each in a dropdown of its colors
+        $('add-hl').onclick = (ev) => {
+            ev.stopPropagation();
+            const old = document.getElementById('hl-pop');
+            if (old) { closeHl(); return; }
+            const box = $('f-body');
+            const s0 = box.selectionStart, s1 = box.selectionEnd;
+            const pop = document.createElement('div');
+            pop.id = 'hl-pop';
+            pop.className = 'hl-pop';
+            pop.setAttribute('role', 'dialog');
+            pop.setAttribute('aria-label', 'Highlights and chips');
+            const groups = hlGroups();
+            pop.innerHTML = '<p class="hint">Pick a style, then a color! It wraps the text you selected (or adds a sample to change)!</p>' + groups.map((g) =>
+                '<div class="hl-group"><b>' + esc(g.name) + '</b>' + g.cats.map((c, ci) =>
+                    '<details class="hl-cat"><summary><span class="hl-cat-name">' + esc(c.name) + '</span><span class="hl-cat-peek" aria-hidden="true">' + hlPreview(c.items[Math.min(c.items.length - 1, 9)]) + '</span></summary>'
+                    + '<div class="hl-colors">' + c.items.map((d) => '<button type="button" class="hl-color" data-o="' + esc(d.o) + '" data-c="' + esc(d.c) + '" title="' + esc(c.name + ': ' + hlColor(d)) + '">' + hlPreview(d) + '</button>').join('') + '</div></details>').join('') + '</div>').join('');
+            $('add-hl').parentElement.appendChild(pop);
+            $('add-hl').setAttribute('aria-expanded', 'true');
+            pop.onclick = (e) => {
+                e.stopPropagation();
+                const b = e.target.closest('.hl-color');
+                if (!b) return;
+                const picked = box.value.slice(s0, s1);
+                const inner = picked || hlColor({ o: b.dataset.o });
+                box.setRangeText(b.dataset.o + inner + b.dataset.c, s0, s1, 'end');
+                box.focus();
+                box.setSelectionRange(s0 + b.dataset.o.length, s0 + b.dataset.o.length + inner.length);
+                closeHl();
+                preview();
+            };
+        };
+        function closeHl() {
+            const pop = document.getElementById('hl-pop');
+            if (pop) pop.remove();
+            if ($('add-hl')) $('add-hl').setAttribute('aria-expanded', 'false');
+        }
+        document.addEventListener('click', (e) => { if (!e.target.closest || !e.target.closest('#hl-pop')) closeHl(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && document.getElementById('hl-pop')) { closeHl(); $('add-hl').focus(); } });
         // Templates: maintenance boxes go at the top, the stub note at the bottom, the rest where the cursor is
         $('add-tpl').onclick = () => {
             const box = $('f-body');
