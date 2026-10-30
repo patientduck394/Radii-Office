@@ -13,7 +13,7 @@ infobox.Type: Office suite of web apps
 infobox.Runs in: Any modern web browser
 infobox.Formatting language: Keydown
 infobox.License: CC0, MIT and the Unlicense
-infobox.Source code: [Radii-Office on GitHub](https://github.com/patientduck394/Radii-Office)
+infobox.Source code: "[Radii-Office on GitHub](https://github.com/patientduck394/Radii-Office)"
 ---
 **Radii Office** is a free suite of web apps for writing, calculating, presenting, taking notes, building websites and handling files. Every app runs right in the web browser, with nothing to install, and keeps your work in the browser on your own device. The apps share a glossy look inspired by [[frutiger-aero|Frutiger Aero]] and a formatting language called [[keydown|Keydown]].
 
@@ -58,7 +58,7 @@ infobox.Source code: [Radii-Office on GitHub](https://github.com/patientduck394/
 
 ## Omicron
 
-#O#Web Builder#
+#TU#Web Builder#
 
 **Omicron** is a visual builder for laying out web pages, crafting templates and creating HTML. Its ribbon layout works like Microsoft Sway, with cards, styles, tags and skills. A page can be exported as a website ZIP or as a single HTML file with every style built in, and Bitbook notes can be inserted into it.
 
