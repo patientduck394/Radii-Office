@@ -3629,85 +3629,83 @@ function fmtAlignBlocks(align) {
     fmtSyncAlignButtons();
 }
 
-// Indent = tab char at each line start; outdent strips ONE leading tab (only if there)!
+// Indent is a real block indent: a left margin on the whole line (2.5rem a step, up to 8 steps),
+// so wrapped lines stay indented and Keydown at the start of a line keeps working!
+// dir is 1 / -1 (or 'in' / 'out' from the mobile toolbar). Outdent at step 0 also strips one old-style leading tab!
 function fmtIndentBlocks(dir) {
     if (typeof canvas === 'undefined' || !canvas) return;
+    if (typeof dir === 'string') dir = dir === 'in' ? 1 : -1;
     const sel = window.getSelection();
     if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return;
+    const STEP = 2.5;
+    const MAX = 8;
     const range = sel.getRangeAt(0);
+    const saved = { a: sel.anchorNode, ao: sel.anchorOffset, f: sel.focusNode, fo: sel.focusOffset };
+    const isBlock = function (n) {
+        if (n.nodeType !== 1 || n.tagName === 'BR') return false;
+        try { return String(window.getComputedStyle(n).display || '') !== 'inline'; } catch (e) { return true; }
+    };
+    // Text typed straight into the page (no line box yet) gets wrapped into its own line first
+    const wrapRun = function (node) {
+        let start = node;
+        while (start.previousSibling && !isBlock(start.previousSibling) && start.previousSibling.nodeName !== 'BR') start = start.previousSibling;
+        const div = document.createElement('div');
+        canvas.insertBefore(div, start);
+        let n = start;
+        while (n && !isBlock(n)) {
+            const next = n.nextSibling;
+            div.appendChild(n);
+            if (n.nodeName === 'BR') break;
+            n = next;
+        }
+        return div;
+    };
     const blocks = [];
-    Array.from(canvas.children).forEach(function (kid) {
-        try {
-            if (range.intersectsNode(kid)) blocks.push(kid);
-        } catch (e) {}
+    const add = function (b) {
+        if (/^(UL|OL)$/.test(b.tagName)) {
+            // in a list, each picked item indents on its own
+            const items = Array.from(b.children).filter(function (li) { try { return range.intersectsNode(li); } catch (e) { return false; } });
+            (items.length ? items : [b]).forEach(function (li) { if (blocks.indexOf(li) < 0) blocks.push(li); });
+        } else if (blocks.indexOf(b) < 0) blocks.push(b);
+    };
+    Array.from(canvas.childNodes).forEach(function (kid) {
+        let hit = false;
+        try { hit = range.intersectsNode(kid); } catch (e) {}
+        if (!hit || !kid.parentNode) return;
+        if (isBlock(kid)) add(kid);
+        else if (kid.nodeType === 3 ? kid.nodeValue.trim() !== '' || kid.contains(saved.a) : kid.nodeName !== 'BR') add(wrapRun(kid));
     });
     if (!blocks.length) {
-        const node = sel.anchorNode;
-        const el = node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
-        const block = el && el.closest ? el.closest('div, p, li, h1, h2, h3, blockquote') : null;
-        if (block && canvas.contains(block)) blocks.push(block);
+        const el = saved.a && saved.a.nodeType === 3 ? saved.a.parentElement : saved.a;
+        const b = el && el.closest ? el.closest('li, div, p, h1, h2, h3, h4, blockquote') : null;
+        if (b && b !== canvas && canvas.contains(b)) blocks.push(b);
     }
-    // Remember a collapsed caret so it lands after its fresh tab (never at line start)!
-    const wasCollapsed = sel.isCollapsed;
-    let caretAnchor = null;
-    let caretOffset = 0;
-    let caretBlock = null;
-    try {
-        caretAnchor = sel.anchorNode;
-        caretOffset = sel.anchorOffset;
-        const ael = caretAnchor && caretAnchor.nodeType === 3 ? caretAnchor.parentElement : caretAnchor;
-        caretBlock = (ael && ael.closest) ? ael.closest('div, p, li, h1, h2, h3, blockquote') : null;
-        if (caretBlock && !canvas.contains(caretBlock)) caretBlock = null;
-    } catch (e) {}
-    let caretTab = null;
-    let strippedNode = null;
-    let strippedGoneBlock = null;
+    const level = function (b) {
+        const m = /^([\d.]+)r?em$/.exec(b.style.marginLeft || '');
+        return m ? Math.round(parseFloat(m[1]) / STEP) : 0;
+    };
     blocks.forEach(function (b) {
-        if (dir > 0) {
-            const first = b.firstChild;
-            let tabNode = null;
-            if (first && first.nodeType === 3) { first.nodeValue = '\t' + first.nodeValue; tabNode = first; }
-            else { tabNode = document.createTextNode('\t'); b.insertBefore(tabNode, first); }
-            if (b === caretBlock) caretTab = tabNode;
-        } else {
-            let node = b.firstChild;
-            while (node && node.nodeType === 3 && node.nodeValue === '') {
-                const husk = node;
-                node = node.nextSibling;
-                husk.remove();
+        const was = level(b);
+        if (dir < 0 && was === 0) {
+            // an old-style indent (a typed tab at the start): take one away
+            const walker = document.createTreeWalker(b, NodeFilter.SHOW_TEXT);
+            let t = walker.nextNode();
+            while (t && t.nodeValue === '') t = walker.nextNode();
+            if (t && t.nodeValue.charAt(0) === '\t') {
+                t.nodeValue = t.nodeValue.substring(1);
+                if (saved.a === t) saved.ao = Math.max(0, saved.ao - 1);
+                if (saved.f === t) saved.fo = Math.max(0, saved.fo - 1);
             }
-            while (node && node.nodeType === 1 && node.tagName !== 'BR' && node.firstChild) node = node.firstChild;
-            if (node && node.nodeType === 3 && node.nodeValue.charAt(0) === '\t') {
-                const heldCaret = (node === caretAnchor);
-                node.nodeValue = node.nodeValue.substring(1);
-                if (!node.nodeValue.length) {
-                    node.remove();
-                    if (b === caretBlock && heldCaret) strippedGoneBlock = b;
-                } else if (b === caretBlock) {
-                    strippedNode = node;
-                }
-            }
+            return;
         }
+        const n = Math.max(0, Math.min(MAX, was + (dir > 0 ? 1 : -1)));
+        // rem, so a big heading lines up with the text around it
+        b.style.marginLeft = n ? (n * STEP) + 'rem' : '';
+        if (!b.getAttribute('style')) b.removeAttribute('style');
     });
+    // put the selection back exactly where it was (wrapping a line can move it)
     try {
-        if (wasCollapsed && dir > 0 && caretTab) {
-            const caret = document.createRange();
-            caret.setStart(caretTab, 1);
-            caret.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(caret);
-        } else if (wasCollapsed && dir < 0 && caretBlock && (strippedNode || strippedGoneBlock)) {
-            const caret = document.createRange();
-            if (strippedNode) {
-                const at = (caretAnchor === strippedNode) ? Math.max(0, caretOffset - 1) : 0;
-                caret.setStart(strippedNode, at);
-            } else {
-                caret.setStart(strippedGoneBlock, 0);
-            }
-            caret.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(caret);
-        }
+        if (saved.a && canvas.contains(saved.a) && saved.f && canvas.contains(saved.f)) sel.setBaseAndExtent(saved.a, saved.ao, saved.f, saved.fo);
     } catch (e) {}
     if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
 }

@@ -156,6 +156,8 @@
         for (let i = 0; i < lines.length; i++) {
             const t = lines[i].trim();
             let m;
+            const tabs = Math.min(8, (/^\t*/.exec(lines[i]) || [''])[0].length);
+            const ind = (h) => (tabs ? h.replace(/^<(\w+)/, '<$1 style="margin-left: ' + tabs * 2.5 + 'rem"') : h);
             if ((m = /^@@program(?:="((?:[^"\\]|\\.)*)")?=```$/.exec(t))) {
                 endList();
                 const body = [];
@@ -177,10 +179,10 @@
             if ((m = /^\{\{([^{}]+)\}\}$/.exec(t)) && !INLINE_TAGS[tplName(m[1])]) { out.push(tplHtml(m[1], true)); continue; }
             if ((m = /^(#{1,4})\s+(\S.*)$/.exec(t))) {
                 const n = m[1].length;
-                out.push(n === 4 ? '<h1 class="mega-header">' + inline(m[2], opts) + '</h1>' : '<h' + n + ' class="header-' + n + '">' + inline(m[2], opts) + '</h' + n + '>');
+                out.push(ind(n === 4 ? '<h1 class="mega-header">' + inline(m[2], opts) + '</h1>' : '<h' + n + ' class="header-' + n + '">' + inline(m[2], opts) + '</h' + n + '>'));
                 continue;
             }
-            if ((m = /^>\s+(\S.*)$/.exec(t))) { out.push('<blockquote class="blockquote-list">' + inline(m[1], opts) + '</blockquote>'); continue; }
+            if ((m = /^>\s+(\S.*)$/.exec(t))) { out.push(ind('<blockquote class="blockquote-list">' + inline(m[1], opts) + '</blockquote>')); continue; }
             if ((m = /^\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(t))) {
                 out.push('<div class="kd-footnote-def" id="fn-' + slug(m[1]) + '"><span class="kd-footnote-tag">' + esc(m[1]) + '</span> <span class="kd-footnote-text">' + inline(m[2], opts) + '</span></div>');
                 continue;
@@ -197,7 +199,7 @@
             }
             if (/^\$\$[\s\S]*\$\$$/.test(t)) { out.push(mathHtml(t.slice(2, -2).trim(), true)); continue; }
             if (/^::[a-z]+(\{[^}]*\})?$/.test(t) && blockFromLine(t)) { out.push(blockFromLine(t)); continue; }
-            out.push('<div>' + inline(t, opts) + '</div>');
+            out.push(ind('<div>' + inline(t, opts) + '</div>'));
         }
         endList();
         return out.join('');
@@ -263,6 +265,8 @@
     // a block's contents (its own classes are the block, like header-2, so they never become triggers)
     const kidsText = (el) => Array.from(el.childNodes).map(inlineText).join('');
 
+    // a block's indent step (Writeout and Bitbook indent with a 2.5rem left margin a step)
+    const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && el.style.marginLeft) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
     function htmlToText(html) {
         const box = document.createElement('div');
         box.innerHTML = String(html || '');
@@ -292,7 +296,7 @@
             }
             if (/^H[1-6]$/.test(tag)) {
                 const n = el.classList.contains('mega-header') ? 4 : Math.min(3, +tag[1]);
-                push('#'.repeat(n) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
+                push('\t'.repeat(indentOf(el)) + '#'.repeat(n) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
                 return;
             }
             if (tag === 'UL' || tag === 'OL') {
@@ -302,7 +306,7 @@
                 });
                 return;
             }
-            if (tag === 'BLOCKQUOTE') { push('> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
+            if (tag === 'BLOCKQUOTE') { push('\t'.repeat(indentOf(el)) + '> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
             if (tag === 'PRE') { flush(); lines.push('```'); el.textContent.replace(/\n$/, '').split('\n').forEach((l) => lines.push(l)); lines.push('```'); return; }
             if (tag === 'HR') { push(''); return; }
             if (BLOCK.test(tag)) {
@@ -311,14 +315,14 @@
                 if (hasBlocks) { Array.from(el.childNodes).forEach(walk); flush(); return; }
                 const t = kidsText(el).replace(/\s+$/, '');
                 if (t.trim() === '') lines.push('');
-                else t.split('\n').forEach((l) => lines.push(l.trim()));
+                else t.split('\n').forEach((l) => lines.push('\t'.repeat(indentOf(el)) + l.trim()));
                 return;
             }
             cur += inlineText(el);
         }
         Array.from(box.childNodes).forEach(walk);
         flush();
-        return lines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+        return lines.join('\n').replace(/\n{3,}/g, '\n\n').replace(/^\n+|\s+$/g, '');
     }
 
     /* ---------- Files ---------- */
@@ -652,7 +656,8 @@
     function lineToBlock(b) {
         const text = b.textContent.replace(/​/g, '');
         let m;
-        const make = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; if (b.hasAttribute('contenteditable')) el.setAttribute('contenteditable', 'true'); return el; };
+        // (the new heading / item / quote keeps the line's indent)
+        const make = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; if (b.hasAttribute('contenteditable')) el.setAttribute('contenteditable', 'true'); if (b.style && b.style.marginLeft) el.style.marginLeft = b.style.marginLeft; return el; };
         // move the line's own nodes in, dropping the "# " / "* " / "> " in front
         const takeRest = (el, prefixLen) => {
             let skip = prefixLen;

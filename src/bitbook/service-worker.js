@@ -1,9 +1,9 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261131r';
+var BITBOOK_CACHE = 'bitbook-shell-v20261131s';
 var BITBOOK_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261131r',
+  'app.js?v=20261131s',
   'style.css?v=20261131e',
   'keydown.css?v=20261131r',
   'marketplace.js?v=20261009',
@@ -26,7 +26,7 @@ var BITBOOK_SHELL = [
   'collab-kd.js?v=20261021',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261131r',
+  'keydown-doc.js?v=20261131s',
   'css-presets.js?v=20261005',
   'favicon.svg',
   'favicon-96.png',
