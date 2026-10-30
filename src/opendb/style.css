@@ -241,3 +241,4 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .kd-doc .odb-callout-caution { --co: #dc2626; --co-bg: #fee2e2; }
 .kd-doc .odb-callout-fact { --co: #0d9488; --co-bg: #ccfbf1; }
 .kd-doc .odb-indent { margin-top: 0; }
+.kd-doc .odb-callout-icon { width: 20px; height: 20px; vertical-align: -4px; }

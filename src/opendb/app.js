@@ -120,7 +120,8 @@
     }
     // "> " lines: a quote (a last "— Name" line says who said it), or a callout box when the first line is [!NOTE], [!TIP],
     // [!IMPORTANT], [!WARNING], [!CAUTION] or OpenDB's own [!FACT] ("Did you know?")
-    const CALLOUTS = { NOTE: ['ℹ️', 'Note'], TIP: ['💡', 'Tip'], IMPORTANT: ['❗', 'Important'], WARNING: ['⚠️', 'Warning'], CAUTION: ['🛑', 'Caution'], FACT: ['✨', 'Did you know?'] };
+    // (an icon written as a name, like 'info', is a glossy picture from icons/)
+    const CALLOUTS = { NOTE: ['info', 'Note'], TIP: ['💡', 'Tip'], IMPORTANT: ['❗', 'Important'], WARNING: ['⚠️', 'Warning'], CAUTION: ['🛑', 'Caution'], FACT: ['✨', 'Did you know?'] };
     function quoteBlock(body, notes) {
         const m = /^\[!([A-Za-z]+)\]\s*(.*)$/.exec(body[0] || '');
         const kind = m && CALLOUTS[m[1].toUpperCase()] ? m[1].toUpperCase() : null;
@@ -131,7 +132,7 @@
             return '<blockquote class="odb-quote">' + text.map((l) => inline(l, notes)).join('<br>') + (by ? '<cite>— ' + inline(by, notes) + '</cite>' : '') + '</blockquote>';
         }
         const text = [m[2]].concat(body.slice(1)).filter((l) => l.trim() !== '');
-        return '<div class="odb-callout odb-callout-' + kind.toLowerCase() + '" role="note"><div class="odb-callout-title"><span aria-hidden="true">' + CALLOUTS[kind][0] + '</span> ' + CALLOUTS[kind][1] + '</div>'
+        return '<div class="odb-callout odb-callout-' + kind.toLowerCase() + '" role="note"><div class="odb-callout-title">' + (/^[a-z]+$/.test(CALLOUTS[kind][0]) ? tplIcon(CALLOUTS[kind][0], 'odb-callout-icon') : '<span aria-hidden="true">' + CALLOUTS[kind][0] + '</span>') + ' ' + CALLOUTS[kind][1] + '</div>'
             + (text.length ? '<div class="odb-callout-body">' + text.map((l) => inline(l, notes)).join('<br>') + '</div>' : '') + '</div>';
     }
     function renderKd(src, entry) {
