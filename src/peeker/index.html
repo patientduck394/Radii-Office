@@ -7,7 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="peeker.css?v=20261025">
+    <link rel="stylesheet" href="peeker.css?v=20261131y">
+    <!-- Keydown, the same one Antimony, Phosphor and Formly use: chips, highlights and every other style in text marks -->
+    <link rel="stylesheet" href="keydown.css?v=20261131y">
+    <link rel="stylesheet" href="keydown-marketplace.css?v=20261131y">
+    <link rel="stylesheet" href="../writeout/annotate-hl.css?v=20261130">
     <link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
 </head>
@@ -80,6 +84,17 @@
                 <div class="swatches" id="swatches"></div>
                 <label class="pk-size" title="Text size or line width"><span id="size-label">Size</span><input type="number" id="size-input" min="1" max="96" value="16"></label>
             </div>
+            <div class="pk-group" id="font-group" role="group" aria-label="Font" hidden>
+                <select id="font-select" class="pk-font" title="Font" aria-label="Font">
+                    <option value="sans">Sans (Helvetica)</option>
+                    <option value="serif">Serif (Times)</option>
+                    <option value="mono">Mono (Courier)</option>
+                </select>
+                <button class="gel-btn icon fmt" data-fmt="bold" title="Bold (Ctrl+B)" aria-pressed="false"><b>B</b></button>
+                <button class="gel-btn icon fmt" data-fmt="italic" title="Italic (Ctrl+I)" aria-pressed="false"><i>I</i></button>
+                <button class="gel-btn icon fmt" data-fmt="underline" title="Underline (Ctrl+U)" aria-pressed="false"><u>U</u></button>
+                <button class="gel-btn icon fmt" data-fmt="strike" title="Strikethrough" aria-pressed="false"><s>S</s></button>
+            </div>
             <div class="pk-group">
                 <button class="gel-btn icon" id="undo-btn" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></svg></button>
                 <button class="gel-btn icon" id="redo-btn" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 14l5-5l-5-5M20 9H9a5 5 0 0 0 0 10h3" /></svg></button>
@@ -142,6 +157,7 @@
     <input type="file" id="file-open" accept="application/pdf,.pdf" multiple hidden>
     <input type="file" id="file-merge" accept="application/pdf,.pdf" hidden>
     <input type="file" id="file-img" accept="image/*" hidden>
-    <script src="peeker.js?v=20261026b" defer></script>
+    <script src="keydown.js?v=20261131y"></script>
+    <script src="peeker.js?v=20261131y" defer></script>
 </body>
 </html>

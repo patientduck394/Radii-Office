@@ -13,6 +13,13 @@ const PDFJS_CDNS = [
     'https://cdn.jsdelivr.net/npm/pdfjs-dist@5.7.284/' + PDFJS_FLAVOR,
     'https://unpkg.com/pdfjs-dist@5.7.284/' + PDFJS_FLAVOR,
 ];
+// html-to-image turns Keydown-formatted text into a picture when you save (the browser itself draws it,
+// so every chip, gradient and highlight looks exactly as on screen)!
+const H2I_URLS = [
+    'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js',
+    'https://unpkg.com/html-to-image@1.11.11/dist/html-to-image.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/html-to-image/1.11.11/html-to-image.min.js',
+];
 const PDFLIB_URLS = [
     'https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js',
     'https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js',
@@ -147,11 +154,27 @@ let undoStack = [];
 let redoStack = [];
 const COLORS = ['#111111', '#ff7a00', '#e5371c', '#1d6fe0', '#14a44d', '#ffd400', '#c2185b', '#ffffff'];
 const style = {
-    text: { color: '#111111', size: 16 },
+    text: { color: '#111111', size: 16, font: 'sans', bold: false, italic: false, underline: false, strike: false },
     hl: { color: '#ffd400', size: 0 },
     ink: { color: '#ff7a00', size: 3 },
     box: { color: '#e5371c', size: 2 },
 };
+
+// Text fonts: what the page shows, and the PDF's own standard font for plain, bold, italic and bold italic
+const FONTS = {
+    sans: { css: 'Helvetica, Arial, sans-serif', pdf: ['Helvetica', 'HelveticaBold', 'HelveticaOblique', 'HelveticaBoldOblique'] },
+    serif: { css: "'Times New Roman', Times, serif", pdf: ['TimesRoman', 'TimesRomanBold', 'TimesRomanItalic', 'TimesRomanBoldItalic'] },
+    mono: { css: "'Courier New', Courier, monospace", pdf: ['Courier', 'CourierBold', 'CourierOblique', 'CourierBoldOblique'] },
+};
+const FMT = ['bold', 'italic', 'underline', 'strike'];
+// A text mark's look (z = zoom)
+function textCss(a, z) {
+    const deco = [a.underline ? 'underline' : '', a.strike ? 'line-through' : ''].filter(Boolean).join(' ');
+    return `font-size:${a.size * z}px;color:${esc(a.color)};font-family:${(FONTS[a.font] || FONTS.sans).css};font-weight:${a.bold ? 700 : 400};font-style:${a.italic ? 'italic' : 'normal'};text-decoration:${deco || 'none'};`;
+}
+// Keydown in text marks: chips, highlights, the Gel Series, Unique Styles and the rest, drawn by keydown.js!
+const kdHtml = (t) => (typeof window.kdRender === 'function' ? window.kdRender(t) : esc(t));
+const hasKeydown = (t) => typeof window.kdRender === 'function' && window.kdRender(t) !== (typeof window.kdEscapeHtml === 'function' ? window.kdEscapeHtml(t) : esc(t));
 
 /* ---------- Toast ---------- */
 let toastTimer = null;
@@ -429,7 +452,7 @@ function renderLayer(i) {
             const b = inkBounds(a);
             html += `<div class="pk-a ink inkhit${sel}" data-id="${a.id}" style="left:${b.x * z}px;top:${b.y * z}px;width:${b.w * z}px;height:${b.h * z}px"></div>`;
         } else if (a.t === 'text') {
-            html += `<div class="pk-a text${sel}" data-id="${a.id}" style="left:${a.x * z}px;top:${a.y * z}px;font-size:${a.size * z}px;color:${esc(a.color)};${a.rot ? `transform:rotate(${-a.rot}deg)` : ''}">${esc(a.text)}</div>`;
+            html += `<div class="pk-a text${sel}" data-id="${a.id}" style="left:${a.x * z}px;top:${a.y * z}px;${textCss(a, z)}${a.rot ? `transform:rotate(${-a.rot}deg)` : ''}">${kdHtml(a.text)}</div>`;
         } else {
             const inner = a.t === 'img' ? `<img src="${a.data}" alt="">` : '';
             const look = a.t === 'hl' ? `background:${esc(a.color)}` : a.t === 'box' ? `border:${a.size * z}px solid ${esc(a.color)}` : '';
@@ -596,7 +619,11 @@ function setTool(t) {
 }
 function styleKey() {
     const a = selected();
-    if (a && style[a.t]) return a.t;
+    if (a && style[a.t]) {
+        // a picked text mark shows its own font settings
+        if (a.t === 'text') { style.text.font = a.font || 'sans'; FMT.forEach((f) => { style.text[f] = !!a[f]; }); }
+        return a.t;
+    }
     return style[tool] ? tool : 'text';
 }
 function renderStyle() {
@@ -607,7 +634,21 @@ function renderStyle() {
     inp.disabled = k === 'hl';
     inp.value = k === 'hl' ? '' : s.size;
     $('size-label').textContent = k === 'text' ? 'Text size' : k === 'hl' ? 'Size' : 'Line';
+    // the font controls belong to text only
+    const t = style.text;
+    $('font-group').hidden = k !== 'text';
+    $('font-select').value = t.font;
+    document.querySelectorAll('#font-group [data-fmt]').forEach((b) => { const on = !!t[b.dataset.fmt]; b.classList.toggle('on', on); b.setAttribute('aria-pressed', String(on)); });
 }
+// font, bold, italic, underline and strike: for new text, and for the selected text mark
+function setTextStyle(key, value) {
+    style.text[key] = value;
+    const a = selected();
+    if (a && a.t === 'text') { pushUndo(); a[key] = value; refreshMark(); save(); }
+    renderStyle();
+}
+$('font-select').addEventListener('change', () => setTextStyle('font', $('font-select').value));
+$('font-group').addEventListener('click', (e) => { const b = e.target.closest('[data-fmt]'); if (b) setTextStyle(b.dataset.fmt, !style.text[b.dataset.fmt]); });
 $('tools').addEventListener('click', (e) => { const b = e.target.closest('[data-tool]'); if (b) setTool(b.dataset.tool); });
 $('swatches').addEventListener('click', (e) => {
     const b = e.target.closest('[data-color]');
@@ -693,7 +734,8 @@ pagesEl.addEventListener('pointerdown', (e) => {
     e.preventDefault();
     if (tool === 'text') {
         pushUndo();
-        const a = { id: uid(), t: 'text', x: p.x, y: p.y - style.text.size * 0.6, size: style.text.size, color: style.text.color, text: '', rot: pg.rot, fresh: true };
+        const t = style.text;
+        const a = { id: uid(), t: 'text', x: p.x, y: p.y - t.size * 0.6, size: t.size, color: t.color, font: t.font, bold: t.bold, italic: t.italic, underline: t.underline, strike: t.strike, text: '', rot: pg.rot, fresh: true };
         pg.annots.push(a);
         renderLayer(i);
         editText(i, a.id);
@@ -776,6 +818,8 @@ function editText(i, id) {
     const before = a.text;
     selId = id;
     el.classList.add('sel');
+    // while typing, the Keydown shows as written; it turns into chips again when you click away
+    el.textContent = a.text;
     try { el.contentEditable = 'plaintext-only'; } catch (e) { el.contentEditable = 'true'; }
     if (el.contentEditable !== 'plaintext-only') el.contentEditable = 'true';
     el.focus();
@@ -989,11 +1033,40 @@ function hex(lib, c) {
     const n = parseInt(m[1], 16);
     return lib.rgb(((n >> 16) & 255) / 255, ((n >> 8) & 255) / 255, (n & 255) / 255);
 }
+function loadH2i() {
+    if (window.htmlToImage) return Promise.resolve(window.htmlToImage);
+    return H2I_URLS.reduce((p, u) => p.catch(() => loadScript(u)), Promise.reject(new Error('start')))
+        .then(() => window.htmlToImage)
+        .catch(() => { throw new EngineError('Peeker could not download html-to-image, which saves Keydown text! Check your internet connection!'); });
+}
+// A Keydown text mark becomes a sharp picture (4x), with a little room around it for glows and shadows
+const RASTER_PAD = 8;
+async function rasterText(a) {
+    const h2i = await loadH2i();
+    const host = document.createElement('div');
+    host.style.cssText = `position:fixed;left:0;top:0;z-index:-9999;pointer-events:none;padding:${RASTER_PAD}px;background:transparent;`;
+    const el = document.createElement('div');
+    el.className = 'pk-a text';
+    el.style.cssText = 'position:static;' + textCss(a, 1);
+    el.innerHTML = kdHtml(a.text);
+    host.appendChild(el);
+    document.body.appendChild(host);
+    try {
+        // Unique Styles load their style sheet the first time they are used: wait for it
+        const us = document.getElementById('kd-unique-styles');
+        for (let k = 0; us && !us.sheet && k < 60; k++) await new Promise((r) => setTimeout(r, 50));
+        if (document.fonts && document.fonts.ready) await document.fonts.ready;
+        const png = await h2i.toPng(host, { pixelRatio: 4, skipFonts: true, width: host.offsetWidth, height: host.offsetHeight });
+        return { png, w: host.offsetWidth, h: host.offsetHeight, plain: el.innerText };
+    } finally { host.remove(); }
+}
 async function buildPdf(indices) {
     const lib = await loadPdfLib();
     const { PDFDocument, StandardFonts, degrees, BlendMode, LineCapStyle } = lib;
     const out = await PDFDocument.create();
-    const font = await out.embedFont(StandardFonts.Helvetica);
+    const fontCache = {};
+    const embed = async (name) => (fontCache[name] = fontCache[name] || await out.embedFont(StandardFonts[name]));
+    const font = await embed('Helvetica');
     const srcs = new Map();
     const images = new Map();
     const src = async (sid) => {
@@ -1018,7 +1091,7 @@ async function buildPdf(indices) {
         return srcs.get(sid);
     };
     // Helvetica only knows Latin letters, so anything else becomes "?"!
-    const safe = (t) => [...t].map((ch) => { if (ch === '\n') return ch; try { font.encodeText(ch); return ch; } catch (e) { return '?'; } }).join('');
+    const safe = (t, f) => [...t].map((ch) => { if (ch === '\n') return ch; try { (f || font).encodeText(ch); return ch; } catch (e) { return '?'; } }).join('');
     for (const i of indices) {
         const pg = cur.pages[i];
         let page;
@@ -1033,10 +1106,32 @@ async function buildPdf(indices) {
             else if (a.t === 'box') page.drawRectangle({ x: X(a.x + a.size / 2), y: Y(a.y + a.h - a.size / 2), width: Math.max(0, a.w - a.size), height: Math.max(0, a.h - a.size), borderColor: hex(lib, a.color), borderWidth: a.size });
             else if (a.t === 'ink' && a.pts.length) page.drawSvgPath(inkPath(a.pts), { x: cb.x, y: cb.y + cb.height, borderColor: hex(lib, a.color), borderWidth: a.size, borderLineCap: LineCapStyle.Round });
             else if (a.t === 'text' && a.text) {
-                // baseline of the first line, carried through the mark's turn (CSS rotate(-rot))
-                const r = -(a.rot || 0) * Math.PI / 180, base = a.size * 0.94;
-                const sx = a.x - base * Math.sin(r), sy = a.y + base * Math.cos(r);
-                page.drawText(safe(a.text), { x: X(sx), y: Y(sy), size: a.size, font, color: hex(lib, a.color), lineHeight: a.size * 1.2, rotate: degrees(a.rot || 0) });
+                // the mark's own frame, turned with it (CSS rotate(-rot)): right and down, in page points
+                const r = -(a.rot || 0) * Math.PI / 180, c = Math.cos(r), sn = Math.sin(r);
+                const at = (dx, dy) => ({ x: X(a.x + dx * c - dy * sn), y: Y(a.y + dx * sn + dy * c) });
+                const f = await embed((FONTS[a.font] || FONTS.sans).pdf[(a.bold ? 1 : 0) + (a.italic ? 2 : 0)]);
+                const lh = a.size * 1.2, base = a.size * 0.94;
+                if (hasKeydown(a.text) || safe(a.text, f) !== a.text) {
+                    // Keydown (or letters the standard fonts lack): a picture of the text as it looks, plus invisible real text for search and copy
+                    const pic = await rasterText(a);
+                    const im = await out.embedPng(pic.png);
+                    const bl = at(-RASTER_PAD, pic.h - RASTER_PAD);
+                    page.drawImage(im, { x: bl.x, y: bl.y, width: pic.w, height: pic.h, rotate: degrees(a.rot || 0) });
+                    const o = at(0, base);
+                    page.drawText(safe(pic.plain, f), { x: o.x, y: o.y, size: a.size, font: f, lineHeight: lh, opacity: 0, rotate: degrees(a.rot || 0) });
+                } else {
+                    const o = at(0, base);
+                    page.drawText(a.text, { x: o.x, y: o.y, size: a.size, font: f, color: hex(lib, a.color), lineHeight: lh, rotate: degrees(a.rot || 0) });
+                    // underline and strikethrough are real lines under / through each line of text
+                    a.text.split('\n').forEach((line, k) => {
+                        const w = f.widthOfTextAtSize(line, a.size);
+                        if (!w) return;
+                        const y0 = base + k * lh;
+                        const rule = (dy) => page.drawLine({ start: at(0, y0 + dy), end: at(w, y0 + dy), thickness: Math.max(0.5, a.size * 0.06), color: hex(lib, a.color) });
+                        if (a.underline) rule(a.size * 0.12);
+                        if (a.strike) rule(-a.size * 0.3);
+                    });
+                }
             } else if (a.t === 'img') {
                 let im = images.get(a.data);
                 if (!im) { im = /^data:image\/jpe?g/i.test(a.data) ? await out.embedJpg(a.data) : await out.embedPng(a.data); images.set(a.data, im); }
@@ -1132,6 +1227,9 @@ document.addEventListener('keydown', (e) => {
     if (mod && (e.key === '=' || e.key === '+')) { e.preventDefault(); setZoom(zoom * 1.2); return; }
     if (mod && e.key === '-') { e.preventDefault(); setZoom(zoom / 1.2); return; }
     if (mod && e.key === '0') { e.preventDefault(); setZoom(0, true); return; }
+    // Ctrl+B / Ctrl+I / Ctrl+U on a picked text mark
+    const picked1 = selected();
+    if (mod && picked1 && picked1.t === 'text' && /^[biu]$/i.test(e.key)) { e.preventDefault(); const f = { b: 'bold', i: 'italic', u: 'underline' }[e.key.toLowerCase()]; setTextStyle(f, !style.text[f]); return; }
     if (mod) return;
     if ((e.key === 'Delete' || e.key === 'Backspace') && selId) { e.preventDefault(); deleteSelected(); return; }
     if (e.key === 'Escape') { if (!$('sign-modal').hidden) $('sign-modal').hidden = true; else if (selId) select(null); else closePanel(); return; }

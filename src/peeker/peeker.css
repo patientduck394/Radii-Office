@@ -319,3 +319,10 @@ body.no-doc .pk-pagebar, body.no-doc #thumbs { visibility: hidden; }
     .pk-thumbs { display: none; }
     .pk-panel { position: fixed; inset: auto 16px 16px; width: auto; max-height: 60vh; z-index: 40; background: #2c1d13; }
 }
+
+/* Font controls: a font picker and B / I / U / S toggles */
+.pk-font { font: inherit; font-size: 12px; min-height: 32px; padding: 4px 8px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.9); background: linear-gradient(180deg, #fff, #fff4e8); color: #4a2a0a; box-shadow: inset 0 1px 2px #fff, 0 2px 6px rgba(0,0,0,0.08); cursor: pointer; }
+.gel-btn.fmt { font-size: 14px; font-family: Georgia, "Times New Roman", serif; }
+.gel-btn.fmt.on { background: var(--gel); border-color: var(--gel-edge); color: #fff; box-shadow: inset 0 2px 4px rgba(0,0,0,0.18); }
+/* Keydown chips in text marks keep the text on one line, like the rest of the mark */
+.pk-a.text .gel-bubble-chip, .pk-a.text [class*="-chip"] { white-space: nowrap; }
