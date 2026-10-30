@@ -40,21 +40,32 @@ Start a line with one of these and a space:
 
 ## Gel highlights
 
-Five of the Annotator's tools, as tags: `#R#text##` is a highlight strip, `#R#text#_` a gel underline, `#R#text#~` a gel strike, `#R#text#=` a glossy Gel Box and `#R#text#]` Corner Brackets. They come in 13 colors:
+Six of the Annotator's tools, as tags: `#R#text##` is a highlight strip, `#R#text#_` a gel underline, `#R#text#~` a gel strike, `#R#text#=` a glossy Gel Box, `#R#text#]` Corner Brackets and `#R#text#-` a Gel Select. They come in 13 colors:
 
-* `#R#` red: #R#highlight## #R#underline#_ #R#strike#~ #R#box#= #R#brackets#]
-* `#O#` orange: #O#highlight## #O#underline#_ #O#strike#~ #O#box#= #O#brackets#]
-* `#GL#` gold: #GL#highlight## #GL#underline#_ #GL#strike#~ #GL#box#= #GL#brackets#]
-* `#Y#` yellow: #Y#highlight## #Y#underline#_ #Y#strike#~ #Y#box#= #Y#brackets#]
-* `#L#` lime: #L#highlight## #L#underline#_ #L#strike#~ #L#box#= #L#brackets#]
-* `#G#` green: #G#highlight## #G#underline#_ #G#strike#~ #G#box#= #G#brackets#]
-* `#TU#` turquoise: #TU#highlight## #TU#underline#_ #TU#strike#~ #TU#box#= #TU#brackets#]
-* `#T#` teal: #T#highlight## #T#underline#_ #T#strike#~ #T#box#= #T#brackets#]
-* `#C#` cyan: #C#highlight## #C#underline#_ #C#strike#~ #C#box#= #C#brackets#]
-* `#B#` blue: #B#highlight## #B#underline#_ #B#strike#~ #B#box#= #B#brackets#]
-* `#PR#` purple: #PR#highlight## #PR#underline#_ #PR#strike#~ #PR#box#= #PR#brackets#]
-* `#PK#` pink: #PK#highlight## #PK#underline#_ #PK#strike#~ #PK#box#= #PK#brackets#]
-* `#SL#` slate: #SL#highlight## #SL#underline#_ #SL#strike#~ #SL#box#= #SL#brackets#]
+* `#R#` red: #R#highlight## #R#underline#_ #R#strike#~ #R#box#= #R#brackets#] #R#select#-
+* `#O#` orange: #O#highlight## #O#underline#_ #O#strike#~ #O#box#= #O#brackets#] #O#select#-
+* `#GL#` gold: #GL#highlight## #GL#underline#_ #GL#strike#~ #GL#box#= #GL#brackets#] #GL#select#-
+* `#Y#` yellow: #Y#highlight## #Y#underline#_ #Y#strike#~ #Y#box#= #Y#brackets#] #Y#select#-
+* `#L#` lime: #L#highlight## #L#underline#_ #L#strike#~ #L#box#= #L#brackets#] #L#select#-
+* `#G#` green: #G#highlight## #G#underline#_ #G#strike#~ #G#box#= #G#brackets#] #G#select#-
+* `#TU#` turquoise: #TU#highlight## #TU#underline#_ #TU#strike#~ #TU#box#= #TU#brackets#] #TU#select#-
+* `#T#` teal: #T#highlight## #T#underline#_ #T#strike#~ #T#box#= #T#brackets#] #T#select#-
+* `#C#` cyan: #C#highlight## #C#underline#_ #C#strike#~ #C#box#= #C#brackets#] #C#select#-
+* `#B#` blue: #B#highlight## #B#underline#_ #B#strike#~ #B#box#= #B#brackets#] #B#select#-
+* `#PR#` purple: #PR#highlight## #PR#underline#_ #PR#strike#~ #PR#box#= #PR#brackets#] #PR#select#-
+* `#PK#` pink: #PK#highlight## #PK#underline#_ #PK#strike#~ #PK#box#= #PK#brackets#] #PK#select#-
+* `#SL#` slate: #SL#highlight## #SL#underline#_ #SL#strike#~ #SL#box#= #SL#brackets#] #SL#select#-
+
+## Writing a symbol as itself
+
+To keep a symbol from acting as formatting, put a backslash in front of it. The backslash disappears and the symbol stays as it is:
+
+* `\#R#not a chip#` shows \#R#not a chip#
+* `\*\*not bold\*\*` shows \*\*not bold\*\*
+* `\^\^B^no speech bubble^^` shows \^\^B^no speech bubble^^
+* `\\` shows a single backslash: \\
+
+Only symbols are affected: a backslash before a letter or a number stays, so paths like `C:\Users` are safe.
 
 ## Bubble chips
 

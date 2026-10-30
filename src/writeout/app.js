@@ -932,6 +932,7 @@ if (canvas) {
                 { open: '#' + k + '#', close: '#~', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-st' },
                 { open: '#' + k + '#', close: '#=', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-bx' },
                 { open: '#' + k + '#', close: '#]', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-cb' },
+                { open: '#' + k + '#', close: '#-', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-sl' },
             ]),
             { open: '=Y=',  close: '=Y=',  className: 'gel-orb gel-y' },
             { open: '=R=',  close: '=R=',  className: 'gel-orb gel-r' },
@@ -1597,7 +1598,7 @@ if (canvas) {
 
             let closeIdx = currentLineText.indexOf(def.close, openIdx + def.open.length);
             if (closeIdx === -1) continue;
-            // a gel highlight ends at ITS nearest ## / #_ / #~ / #= / #] (no # inside), never at a later highlight's ending!
+            // a gel highlight ends at ITS nearest ## / #_ / #~ / #= / #] / #- (no # inside), never at a later highlight's ending!
             if (def.tagName === 'mark' && currentLineText.slice(openIdx + def.open.length, closeIdx).indexOf('#') !== -1) continue;
 
             // Match established across your text nodes. Intercept standard input dump

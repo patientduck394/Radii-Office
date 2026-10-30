@@ -14,10 +14,10 @@
     const SCRIPT = (typeof document !== 'undefined' && document.currentScript && document.currentScript.src) || '';
     const OPENDB = SCRIPT ? new URL('../opendb/', SCRIPT).href : '../opendb/';
 
-    // Gel highlights, the Annotator's tools: #R#text## #R#text#_ #R#text#~, plus its Gel Box #R#text#= and Corner Brackets #R#text#], in its 13 colors!
+    // Gel highlights, the Annotator's tools: #R#text## #R#text#_ #R#text#~, plus its Gel Box #R#text#=, Corner Brackets #R#text#] and Gel Select #R#text#-, in its 13 colors!
     const HL_COLORS = [['R', 'red'], ['O', 'orange'], ['GL', 'gold'], ['Y', 'yellow'], ['L', 'lime'], ['G', 'green'], ['TU', 'turquoise'],
         ['T', 'teal'], ['C', 'cyan'], ['B', 'blue'], ['PR', 'purple'], ['PK', 'pink'], ['SL', 'slate']];
-    const HL_STYLES = [['##', ''], ['#_', ' an-s-ul'], ['#~', ' an-s-st'], ['#=', ' an-s-bx'], ['#]', ' an-s-cb']];
+    const HL_STYLES = [['##', ''], ['#_', ' an-s-ul'], ['#~', ' an-s-st'], ['#=', ' an-s-bx'], ['#]', ' an-s-cb'], ['#-', ' an-s-sl']];
     const HIGHLIGHTS = [];
     HL_COLORS.forEach(([k, c]) => HL_STYLES.forEach(([close, s]) => HIGHLIGHTS.push(['#' + k + '#', close, 'mark', 'an-hl an-hl-' + c + s])));
 
@@ -55,7 +55,7 @@
     ];
     // longest openers first (so ** beats * and !#R# beats #R#); highlights go before all of them, each with its NEAREST ending
     const ORDER = TRIGGERS.slice().sort((a, b) => b[0].length - a[0].length);
-    const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#([#_~=\\]])', 'g');
+    const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#([#_~=\\]-])', 'g');
     // Unique Styles Gallery as Keydown: @family-N@text@ (N is the colorway, 1 to 5; @family@text@ is colorway 1)!
     const US_FAMS = new Set('neontube lava holo retrosun vapor sprinkles jelly puffy comic graffiti circuit blueprint led crt pixel aurora galaxy gem foil marble wood washi postit dymo enamel neumorph glassblob ring element origami bubblewrap denim leather chrome window receipt brick scales plaid gingham chevron cyber camo barber sunburst topo glitch hud hazard typewriter crayon brickneon marquee polaroid film brush watercolor stained tiedye popart riso scroll wax banner notebook capsule battery loading cloud glowtext patch softinset clay layers longshadow engraved webtwo retrodesk coderain bokeh ombre mesh swoosh circled spoiler gradtext shimmer extruded diecut letterpress faaqua fabubble faglass fameadow fawater faleaf faflare faswoosh facrystal faunderwater faorb fafrost fadew faeco fasunrise fapinstripe faclouds fataskbar faaquarium faribbon faluna fataskband fagadget fachannel famediawave fablade fapocket fablackglass fatoolbar faprogress fasearch fagltab faballoon fagrass fahorizon farainbow fasunbeam fapetals fawavecrest faripples farainglass faicecube fasnowglobe fashafts faglobe faveins fabamboo faskytext faliquidchrome faliquid faprism fasmoked faneonedge fahologlass fagelring fajellybean facandygloss famarble fawaterdrop fareflect faorbs fabrightribbon faswirl fabanner fabadge fatoggle faicontile fadunes fasunsetsea fatropical fawaterfall facluster fawaveline faecoleaf farecycle fasolar faenergy fapebble fashard faripplering falightleak faicetext fawatertext faglosstext fachrometext faleaftext faskypill famusicnote faflowcard faslider fbcapsule fbwand fbtitlebar fbvalley fbcaustic fbpetal fbstreak fbtwinswoosh fbfacet fbsoda fbpearl fbstacked fbdewbeads fbstatus fbsundisc fbbrushed fbcloudbank fbdockitem fbtank fbsash fbtaskpane fbtray fbgauge fbmenububble fbvisualizer fbhubtile fbclickwheel fbpiano fbribbongroup fbmarquee fbaddress fbdocktab fbtooltip fbflowers fbisland fbrainstreak fbskybeams fbdaisy fbsurf fbpuddle fbmisted fbfrostcorner fbsnowcap fbdappled fbplanet fbfern fbmat fbcloudtext fbchromerim fbleveltube fbprismedge fbgrille fbneonring fbiridescent fbtwinring fbgummy fbpeppermint fbsuperball fbwaterbead fbmirrorpill fbbokeh fbsilk fbflourish fbweb2 fbstarburst fbradio fbrunapp fbpastellayers fbmoonpath fbpalmshade fbrainshower fbfizztrail fbsignalwave fbdropbadge fbcycle fbbattery fbsignalbars fbfroststone fbbevel fbbreathe fbbloom fbfroststroke fbbubbletext fbstickertext fbglasstext fbmeadowtext fbskywindow fbpeel fbsideflow fbcheckbox fckeycap fctwinbubble fcthumb fchillsil fcbelow fcwillow fcsparkle fcvistaglow fccolumn fccurtain fcjewel fcfrostheader fcdewcorner fcecocap fcdawnbands fcgraph fccotton fcstartbar fcfishbowl fccornerribbon fclunawindow fcquicklaunch fcweather fcconsolecard fclightbars fcarrow fcminiscreen fcblackpearl fcsplit fcblocks fclens fcfoldertab fcchat fclawn fcsail fcrainbowrim fcsunburst fcblossomrow fcoceanbands fclilypad fcdrips fcicicle fcsnowflake fcpines fcmoon fcleaffan fcgrove fchorizontext fcsilver fcwavefill fcprismfan fcvisor fcunderglow fcfoil fcbrackets fcjellycube fcwrapper fcgumball fcsplash fcshelf fcspheres fctwist fcrings fcpricetag fcaward fcstepper fcnotify fcwindripple fcretrosun fcvines fccurrent fcfoam fcarc fcsprout fcloop fcplug fcbarchart fcstonestack fcbrick fccorona fcstreak fcglaciertext fcrippletext fccandytext fcmetaltext fcspringtext fccontrail fcpatch fcheadercard fcrange plripple plcaustic plsurface plscallop plsplash plbubbles pldeep plshimmer plclear plrays pldrop plshore plwake plmist plsunref pltiles plmosaic pllane plrope plbuoy pldepth plnodive plcoping plgutter pldrain plladder plboard plblock pllight plskimmer pldeck plterrazzo plwaterline plnighttile plpenny plring plbeachball plnoodle pltube plkick plgoggles plcap plfloatie plraft plwhistle plrescue pltower plflags plumbrella plcabana pltowel plweave plflipflop plsunscreen plshades plicepop plsoda plslush plcitrus plcocktail plmotel plneon plpalms platomic plpostcard plsunset plmorning plheat plchlorine plscore plpace plcaution plslide plcannon plpass plband plsticker plpatch plpin plvarsity plstencil plinflate plgel plfade plsplashtext plripplet plpolaroid pltape plradio plwaveedge pwcrest pwrefract pwshallows pwringlet pwdroptrail pwfoam pwwhirl pwjets pwburst pwglass pwwetglass pwshine pwundertow pwmistglow pwtidegrad pwbigtile pwsubway pwhexpenny pwbullnose pwlanenum pwdraincover pwsteps pwhandrail pwchevron pwdashrope pwplanks pwconcrete pwgate pwlattice pwgauge pwpleats pwthermo pwcover pwinfinity pwarc pwdivering pwdivestick pwsquirt pwballoon pwsnorkel pwflippers pwdonut pwmattress pwducky pwbuckethat pwvisor pwtowelroll pwbagweave pwcooler pwstraw pwsmoothie pwfreezepop pwsnowcone pwtwistrim pwsunhat pwsandal pwroundshades pwdrip pwwatch pwmegaphone pwneontube pwarrowsign pwmarquee pwsnackbar pwpolka pwstripesuit pwgingham pwhalfsun pwriso pwbadge pwribbon pwpennant pwstamp pwmedal pwtrophy pwlcd pwlapcount pwpixelwave pwglitch pwholo pwjelly pwmarble pwbubble pwlongshadow pwoutline pwdotted pwwavyline pwhighlight pwduo pwsunsetmono ptglitter ptdapple ptcrown ptcolumn pttarget ptwaveunder ptombre ptrain ptnightglow ptsunbeam pthorizon pticecube ptsteam ptfizz ptwavegloss ptkidney ptlapfloats ptdivewell ptspajets ptchecker ptorangegrout ptmosaicstrip ptdepthtile ptstones ptswag ptdeckdiag ptpickets ptwaterfall ptguardseat ptbeacon ptpipes ptporthole ptshower ptrules ptstripering ptwings ptvolley ptpolocap ptpaddles pttorpedo pthoop ptlounge ptbucket ptmask ptstrap ptvtowel ptaviator ptsqueeze ptorangeade ptlolly ptfloat ptshaved ptjuicebox ptbitten ptlanyard ptziplock ptbagtag ptcap ptrescueboard ptnoodles ptfirstaid ptscript ptinvite ptneonwave ptboomerang ptgoogie ptboomprint pttileletters ptsleeve ptjersey ptsplitflap ptadmit ptbooth ptslide ptwavestamp ptcalendar ptmixtape ptspeakers ptsurf ptgumbubble ptpopdots ptcomicburst ptextrude ptoutlineduo ptvgrad ptchrome ptfrosted ptcapsule pttoggle ptsunring'.split(' '));
     const US_RE = /@([a-z0-9]+)(?:-([1-5]))?@([^@\n]+?)@/g;
@@ -103,9 +103,11 @@
         let s = String(text);
         // `code` is taken literally, so nothing inside it turns into links, math or chips
         s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code>' + esc(t) + '</code>'));
-        s = s.replace(/\\\$/g, () => stash('$'));
+        s = s.replace(/\\\$/g, () => stash('<span class="kd-esc">$</span>'));
         s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => stash(mathHtml(t.trim(), true)));
         s = s.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (_, pre, t) => pre + stash(mathHtml(t, false)));
+        // a backslash keeps the next symbol as itself (\#R#x# stays "#R#x#"), and \\ is one backslash; letters and digits are never touched
+        s = s.replace(/\\([^A-Za-z0-9\s])/g, (_, c) => stash('<span class="kd-esc">' + esc(c) + '</span>'));
         s = s.replace(new RegExp(SKILL_RE), (m, name, raw) => { if (!SKILL_NAMES.test(name)) return m; const h = skillHtml(name, parseParams(raw.replace(/\\"/g, '"'))); return h ? stash(h) : m; });
         s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplHtml(raw, false)));
         // [[id]] shows the entry's title; data-kd-auto remembers that, so it saves back as [[id]] (unless you change the words)
@@ -215,6 +217,8 @@
         const kids = () => Array.from(el.childNodes).map(inlineText).join('');
         const tag = el.tagName;
         if (el.hasAttribute('data-kd-tpl')) return '{{' + el.getAttribute('data-kd-tpl') + '}}';
+        // an escaped symbol saves with its backslash, so it stays plain next time too
+        if (el.classList.contains('kd-esc')) return '\\' + el.textContent;
         if (el.matches(SKILL_SEL) && !el.classList.contains('bl-prog')) return skillToText(el);
         if (el.classList.contains('kd-math')) {
             const tex = el.getAttribute('data-tex') || '';
@@ -477,7 +481,7 @@
         let changed = false;
         texts.forEach((t) => {
             const text = t.nodeValue;
-            if (!/[#*=~`&$[{!@%]/.test(text)) return;
+            if (!/[#*=~`&$[{!@%^+:;\\]/.test(text)) return;
             const html = inline(text, { notes: {} });
             if (html === esc(text)) return;
             const tpl = document.createElement('template');
@@ -597,6 +601,8 @@
     }
     function unformat(root) {
         let n = 0;
+        // escaped symbols go back to their backslash form
+        root.querySelectorAll('span.kd-esc').forEach((sp) => { sp.replaceWith(document.createTextNode('\\' + sp.textContent)); n++; });
         root.querySelectorAll('a.kd-footnote-back').forEach((a) => a.remove());
         // blocks become ::name{their text} lines (a live sketchpad stays as it is)
         Array.from(root.querySelectorAll(BLOCK_SEL)).forEach((el) => {
@@ -722,7 +728,7 @@
         for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!(t.parentElement && (t.parentElement.closest(SKIP_RE) || isProtected(t.parentElement, root)))) texts.push(t);
         texts.forEach((t) => {
             const text = t.nodeValue;
-            if (!/[#*=~`&$[{!@%]/.test(text)) return;
+            if (!/[#*=~`&$[{!@%^+:;\\]/.test(text)) return;
             const html = inline(text, { notes: {} });
             if (html === esc(text)) return;
             const tpl = document.createElement('template');
@@ -927,7 +933,7 @@
         const all = HIGHLIGHTS.concat(TRIGGERS).filter((d) => d[3] && !NEEDS_TYPING.test(d[3]) && d[0] !== '!#A#');
         const pick = (re) => all.filter((d) => re.test(d[3]));
         const cats = [
-            ['Highlights', pick(/^an-hl an-hl-\w+$/)], ['Gel Underlines', pick(/an-s-ul$/)], ['Gel Strikes', pick(/an-s-st$/)], ['Gel Boxes', pick(/an-s-bx$/)], ['Corner Brackets', pick(/an-s-cb$/)],
+            ['Highlights', pick(/^an-hl an-hl-\w+$/)], ['Gel Underlines', pick(/an-s-ul$/)], ['Gel Strikes', pick(/an-s-st$/)], ['Gel Boxes', pick(/an-s-bx$/)], ['Corner Brackets', pick(/an-s-cb$/)], ['Gel Selects', pick(/an-s-sl$/)],
             ['Bubble Chips', pick(/^gel-bubble-chip/)], ['Gloss Pills', pick(/^gel-pill-chip/)], ['Gel Flags', pick(/^gel-flag-chip/)], ['Gel Tabs', pick(/^gel-tab-chip/)], ['Gel Drops', pick(/^gel-drop-chip/)], ['Gel Splits', pick(/^gel-split-chip/)], ['Gel Lenses', pick(/^gel-lens-chip/)], ['Gel Speech', pick(/^gel-speech-chip/)], ['Gel Bevels', pick(/^gel-sx-chip gel-sx-1 /)], ['Gel Stripes', pick(/^gel-sx-chip gel-sx-2 /)], ['Gel Halos', pick(/^gel-sx-chip gel-sx-3 /)], ['Gel Dots', pick(/^gel-sx-chip gel-sx-4 /)], ['Gel Shelves', pick(/^gel-sx-chip gel-sx-5 /)], ['Gel Corners', pick(/^gel-sx-chip gel-sx-6 /)], ['Gel Rings', pick(/^gel-sx-chip gel-sx-7 /)], ['Gel Frames', pick(/^gel-sx-chip gel-sx-8 /)], ['Gel Bands', pick(/^gel-sx-chip gel-sx-9 /)], ['Gel Stitches', pick(/^gel-sx-chip gel-sx-10 /)], ['Gel Pebbles', pick(/^gel-sx-chip gel-sx-11 /)], ['Gel Rulers', pick(/^gel-sx-chip gel-sx-12 /)], ['Gel Waves', pick(/^gel-sx-chip gel-sx-13 /)], ['Gel Checks', pick(/^gel-sx-chip gel-sx-14 /)], ['Gel Bookends', pick(/^gel-sx-chip gel-sx-15 /)], ['Gel Sparkles', pick(/^gel-sx-chip gel-sx-16 /)], ['Gel Grids', pick(/^gel-sx-chip gel-sx-17 /)], ['Gel Insets', pick(/^gel-sx-chip gel-sx-18 /)], ['Gel Glows', pick(/^gel-sx-chip gel-sx-19 /)], ['Gel Beads', pick(/^gel-sx-chip gel-sx-20 /)], ['Tag Chips', pick(/^aero-tag-chip/)],
             ['Gel Orbs', pick(/^gel-orb/)], ['Text Effects', pick(/^(spark-text|gel-green-flash|liquid-underline|glossy-border-badge|cyber-glow-spark|liquid-text-glow|embossed-glass-text)$/)],
             ['Effects', pick(/^effect-/)], ['Megachips & Badges', pick(/^(megachip-|aero-glass-badge|gel-chip-|droplet-)/)], ['Dev & Journal', pick(/^(dev-|av-|jr-)/)],
