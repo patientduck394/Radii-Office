@@ -121,7 +121,7 @@
     // "> " lines: a quote (a last "— Name" line says who said it), or a callout box when the first line is [!NOTE], [!TIP],
     // [!IMPORTANT], [!WARNING], [!CAUTION] or OpenDB's own [!FACT] ("Did you know?")
     // (an icon written as a name, like 'info', is a glossy picture from icons/)
-    const CALLOUTS = { NOTE: ['info', 'Note'], TIP: ['💡', 'Tip'], IMPORTANT: ['❗', 'Important'], WARNING: ['⚠️', 'Warning'], CAUTION: ['🛑', 'Caution'], FACT: ['✨', 'Did you know?'] };
+    const CALLOUTS = { NOTE: ['info', 'Note'], TIP: ['tip', 'Tip'], IMPORTANT: ['❗', 'Important'], WARNING: ['⚠️', 'Warning'], CAUTION: ['🛑', 'Caution'], FACT: ['✨', 'Did you know?'] };
     function quoteBlock(body, notes) {
         const m = /^\[!([A-Za-z]+)\]\s*(.*)$/.exec(body[0] || '');
         const kind = m && CALLOUTS[m[1].toUpperCase()] ? m[1].toUpperCase() : null;
