@@ -832,7 +832,7 @@
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Slides', items: [{ big: true, icon: 'newSlide', label: 'New\nSlide', run: function () { newSlide('content'); }, menu: function () { return Object.keys(LAYOUTS).map(function (k) { return { label: LAYOUTS[k].label, icon: 'slide', run: function () { newSlide(k); } }; }); } }] },
                 { label: 'Illustrations', items: [
-                    { big: true, icon: 'search', label: 'Online\nPictures', title: 'Search free CC0 / CC BY / CC BY-SA pictures!', run: function () { window.openOnlinePictures(); } },
+                    { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
                     { big: true, icon: 'shapes', label: 'Shapes', menu: shapesMenu },
                     { big: true, icon: 'bubble', label: 'Aero\nChip', run: function () { addShape('chip'); OS.sync(); } }
                 ] },

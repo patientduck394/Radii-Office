@@ -745,7 +745,7 @@
                 ] },
                 { label: 'Media', items: [
                     { big: true, icon: 'image', label: 'Picture', run: function () { insertKind('image'); } },
-                    { big: true, icon: 'search', label: 'Online\nPicture', title: 'Search free CC0 / CC BY / CC BY-SA pictures!', run: function () { window.openOnlinePictures(); } },
+                    { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
                     { big: true, icon: 'attach', label: 'File', run: function () { insertKind('file'); } }
                 ] },
                 { label: 'Links', items: [{ big: true, icon: 'link', label: 'Link', run: insertLink }] },

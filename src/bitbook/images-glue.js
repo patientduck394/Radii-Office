@@ -1,7 +1,7 @@
-/* Online pictures for the document editor (Writeout + Bitbook)! Opens the
-   Radii Images search and drops the chosen picture, with its credit line,
-   at your caret. Works from the ribbon (Insert > Online Picture) and from
-   the Classic Insert menu! */
+/* OpenDB Images for the document editor (Writeout + Bitbook)! Opens the
+   Radii Images picker and drops the chosen OpenDB picture (and a source line,
+   if you ask for one) at your caret. Works from the ribbon (Insert > OpenDB
+   Images) and from the Classic Insert menu! */
 (function () {
     'use strict';
     const KEY = (window.RADII_COLLAB_APP && window.RADII_COLLAB_APP.key) || (location.pathname.indexOf('bitbook') !== -1 ? 'bitbook' : 'writeout');
@@ -15,7 +15,7 @@
         let saved = null;
         try { const s = window.getSelection(); if (s.rangeCount && ed.contains(s.anchorNode)) saved = s.getRangeAt(0).cloneRange(); } catch (e) {}
         window.RadiiImages.open(Object.assign({
-            title: 'Online Pictures',
+            title: 'OpenDB Images',
             onPick: function (r) {
                 ed.focus();
                 try { if (saved) { const s = window.getSelection(); s.removeAllRanges(); s.addRange(saved); } } catch (e) {}
@@ -30,17 +30,17 @@
                     fmtInsertNodeAtCaret(c);
                 }
                 ed.dispatchEvent(new Event('input', { bubbles: true }));
-                try { if (window.OfficeShell) window.OfficeShell.toast('Picture added' + (r.withCredit ? ' with its credit line!' : '!')); } catch (e) {}
+                try { if (window.OfficeShell) window.OfficeShell.toast('Picture added' + (r.withCredit ? ' with its source line!' : '!')); } catch (e) {}
             }
         }, THEME));
     }
     window.openOnlinePictures = open;
-    // Classic Insert menu: "Online Image..." right under "Image..."!
+    // Classic Insert menu: "OpenDB Image..." right under "Image..."!
     const img = document.querySelector('#insert-menu-popup [data-insert="image"]');
     if (img) {
         const b = img.cloneNode(true);
         b.setAttribute('data-insert', 'onlineimage');
-        b.lastChild.nodeType === 3 && (b.lastChild.nodeValue = 'Online Image...');
+        b.lastChild.nodeType === 3 && (b.lastChild.nodeValue = 'OpenDB Image...');
         img.after(b);
     }
     const orig = window.runInsertKind;

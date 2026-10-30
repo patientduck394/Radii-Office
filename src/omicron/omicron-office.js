@@ -1122,17 +1122,17 @@
     window.renderDocument = function () { const r = origRender.apply(this, arguments); paneRefresh(); soonHandles(); return r; };
     page.addEventListener('mousedown', function () { setTimeout(function () { paneRefresh(); soonHandles(); }, 0); });
     page.addEventListener('focusin', function () { setTimeout(function () { paneRefresh(); soonHandles(); }, 0); });
-    // Online pictures: free CC0 / CC BY / CC BY-SA images, linked straight from Wikimedia Commons!
+    // OpenDB Images: free CC0 pictures from OpenDB, linked straight from it!
     function onlinePicture() {
         if (!window.RadiiImages) return;
         window.RadiiImages.open({
-            title: 'Online Pictures', accent: '#00a88f', accent2: '#00D6B6', glow: 'rgba(0,214,182,.3)', hotlink: true,
+            title: 'OpenDB Images', accent: '#00a88f', accent2: '#00D6B6', glow: 'rgba(0,214,182,.3)', hotlink: true,
             onPick: function (r) {
                 const img = addBlock('image', 'hero', r.url);
                 if (r.withCredit) {
                     const c = addBlock('paragraph', 'standard', '<span style="font-size:.75rem;color:#64748b">' + r.creditHtml + '</span>');
                 }
-                OS.toast(r.withCredit ? 'Picture added with its credit line!' : 'Picture added!');
+                OS.toast(r.withCredit ? 'Picture added with its source line!' : 'Picture added!');
             }
         });
     }
@@ -1146,7 +1146,7 @@
             { sm: true, icon: 'image', label: 'Picture', run: insertImage, menu: function () { return cardMenu('image'); } },
             { sm: true, icon: 'cards', label: 'Feature Card', run: function () { addBlock('card', 'border'); }, menu: function () { return cardMenu('card'); } }
         ] },
-        { big: true, icon: 'search', label: 'Online\nPicture', title: 'Search free CC0 / CC BY / CC BY-SA pictures!', run: onlinePicture },
+        { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: onlinePicture },
         { big: true, icon: 'code', label: 'HTML\nBlock', title: 'Your own HTML, with a live preview!', run: function () { addBlock('html', '', '<div style="padding:20px;border-radius:12px;background:#f1f5f9">Hello from your own HTML!</div>'); } }
     ] };
     const tabs = [

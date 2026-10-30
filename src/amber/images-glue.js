@@ -1,11 +1,11 @@
-/* Online pictures for Amber! Search free pictures and drop one on the
-   current slide as a resizable object, with its credit line underneath! */
+/* OpenDB Images for Amber! Pick a free OpenDB picture and drop it on the
+   current slide as a resizable object (with a source line underneath, if you ask)! */
 (function () {
     'use strict';
     function open() {
         if (!window.RadiiImages) return;
         window.RadiiImages.open({
-            title: 'Online Pictures',
+            title: 'OpenDB Images',
             accent: '#d97706', accent2: '#fbbf24', glow: 'rgba(217,119,6,.3)',
             onPick: function (r) {
                 saveState();
@@ -33,8 +33,8 @@
     if (tb) {
         const b = document.createElement('button');
         b.className = 'style-tool-btn';
-        b.title = 'Online Pictures';
-        b.setAttribute('data-tooltip', 'Search free pictures online');
+        b.title = 'OpenDB Images';
+        b.setAttribute('data-tooltip', 'Free pictures from OpenDB');
         b.setAttribute('onclick', 'openOnlinePictures()');
         b.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M3 18l6-6 4 4 4-4 4 4"/></g></svg>';
         tb.after(b);

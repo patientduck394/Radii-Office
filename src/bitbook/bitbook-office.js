@@ -563,7 +563,7 @@
                 { label: 'Files', items: [
                     { big: true, icon: 'attach', label: 'File\nAttachment', run: function () { insertKind('file'); } },
                     { big: true, icon: 'image', label: 'Pictures', run: function () { insertKind('image'); } },
-                    { big: true, icon: 'search', label: 'Online\nPictures', title: 'Search free CC0 / CC BY / CC BY-SA pictures!', run: function () { window.openOnlinePictures(); } }
+                    { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } }
                 ] },
                 { label: 'Links', items: [{ big: true, icon: 'link', label: 'Link', run: insertLink }] },
                 { label: 'Math', items: [{ big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } }] },

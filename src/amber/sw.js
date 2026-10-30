@@ -1,7 +1,7 @@
 /* ========================================================
    AMBER SERVICE WORKER — offline-first app shell!
    ======================================================== */
-const AMBER_CACHE = 'amber-shell-v20261131t';
+const AMBER_CACHE = 'amber-shell-v20261131v';
 
 const APP_SHELL = [
   './',
@@ -12,10 +12,10 @@ const APP_SHELL = [
   './office-shell.js?v=20261128',
   './office-shell.css?v=20261131h',
   './amber-show.js?v=20261019',
-  './amber-office.js?v=20261125',
+  './amber-office.js?v=20261131v',
   './amber-office.css?v=20261019',
-  './radii-images.js?v=20261019',
-  './images-glue.js?v=20261019',
+  './radii-images.js?v=20261131v',
+  './images-glue.js?v=20261131v',
   './radii-file.js?v=20261042',
   './radii-collab.js?v=20261120',
   './radii-collab.css?v=20261042',

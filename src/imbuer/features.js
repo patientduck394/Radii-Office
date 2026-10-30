@@ -1537,7 +1537,7 @@ function animateTemplate(sheets) {
 // ==========================================
 // COMMANDS & MENUS
 // ==========================================
-// Online pictures live on the sheet as chart-style objects (drag, resize, delete)!
+// OpenDB pictures live on the sheet as chart-style objects (drag, resize, delete)!
 function insertPicture(r) {
     const s = sh();
     const z = zf();
@@ -1549,15 +1549,15 @@ function insertPicture(r) {
     change(() => { s.charts.push(ch); });
     selectedChart = ch;
     renderCharts();
-    toast(r.withCredit ? 'Picture added, with its credit as the title! Edit the title any time!' : 'Picture added!');
+    toast(r.withCredit ? 'Picture added, with its source as the title! Edit the title any time!' : 'Picture added!');
 }
 function openOnlinePictures() {
     if (!window.RadiiImages) return;
-    RadiiImages.open({ title: 'Online Pictures', accent: '#6bc702', accent2: '#a3e635', glow: 'rgba(107,199,2,.3)', onPick: insertPicture });
+    RadiiImages.open({ title: 'OpenDB Images', accent: '#6bc702', accent2: '#a3e635', glow: 'rgba(107,199,2,.3)', onPick: insertPicture });
 }
 
 registerCommands({
-    onlinePicture: { label: 'Online Pictures', icon: 'search', run: () => openOnlinePictures() },
+    onlinePicture: { label: 'OpenDB Images', icon: 'search', run: () => openOnlinePictures() },
     chartColumn: { label: 'Insert Column Chart', icon: 'chartColumn', run: () => insertChart('column') },
     chartBar: { label: 'Insert Bar Chart', icon: 'chartBar', run: () => insertChart('bar') },
     chartLine: { label: 'Insert Line Chart', icon: 'chartLine', run: () => insertChart('line') },
