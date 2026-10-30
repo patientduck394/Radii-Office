@@ -1,4 +1,5 @@
 ---
+format: keydown-text
 id: pythagorean-theorem
 type: article
 title: Pythagorean theorem
@@ -32,7 +33,7 @@ For example, a triangle with sides 3 and 4 has a hypotenuse of 5, because $3^2 +
 
 Sets of three whole numbers that fit the theorem are called **Pythagorean triples**. Examples include (3, 4, 5), (5, 12, 13) and (8, 15, 17):
 
-#;B;3, 4, 5; #;G;5, 12, 13; #;PR;8, 15, 17; #;O;6, 8, 10;
+#:R:3, 4, 5: #:O:5, 12, 13: #:Y:8, 15, 17: #:L:6, 8, 10:
 
  Multiplying a triple by any whole number gives another one, such as (6, 8, 10).
 
