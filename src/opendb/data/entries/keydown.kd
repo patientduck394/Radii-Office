@@ -224,9 +224,9 @@ A Bubble Chip cousin shaped like a little speech bubble, with a glossy top and a
 * `^^SL^text^^` ^^SL^slate^^
 * `^^BK^text^^` ^^BK^black^^
 
-## Gel fizz
+## Gel hexes
 
-A fizzy Bubble Chip cousin, with tiny bubbles rising inside the gel and two glossy soda bubbles fizzing out of the top right corner. Written `++color+text++`:
+A Bubble Chip cousin shaped like a hexagon, with pointed ends like a honeycomb cell and a glossy top half. Written `++color+text++`:
 
 * `++R+text++` ++R+red++
 * `++O+text++` ++O+orange++
