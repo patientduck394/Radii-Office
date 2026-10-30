@@ -1,0 +1,16 @@
+---
+id: icon-image
+type: media
+title: Picture icon
+summary: A glossy yellow picture frame with a sun and mountains, used for OpenDB notices about files.
+tags: [icon, design, frutiger aero, opendb]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/icon-image.png
+mime: image/png
+width: 484
+height: 484
+---
+A glossy yellow icon in the [[frutiger-aero|Frutiger Aero]] style, with a soft gradient fill and a thick rounded outline. OpenDB uses it on the `{{file improvement}}` template, for files that someone could redraw or improve. A smaller copy is used on the site itself.

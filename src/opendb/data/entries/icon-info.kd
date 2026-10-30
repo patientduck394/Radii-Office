@@ -1,0 +1,16 @@
+---
+id: icon-info
+type: media
+title: Information icon
+summary: A glossy blue letter i, used for OpenDB information notices.
+tags: [icon, design, frutiger aero, opendb]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/icon-info.png
+mime: image/png
+width: 484
+height: 484
+---
+A glossy blue icon in the [[frutiger-aero|Frutiger Aero]] style, with a soft gradient fill and a thick rounded outline. OpenDB uses it on the `{{orphan}}`, `{{in use}}` and `{{merge}}` templates, and as the small link to each template's page. A smaller copy is used on the site itself.

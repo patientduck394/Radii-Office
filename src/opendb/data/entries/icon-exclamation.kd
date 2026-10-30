@@ -1,0 +1,16 @@
+---
+id: icon-exclamation
+type: media
+title: Exclamation mark icon
+summary: A glossy red exclamation mark, used for OpenDB notices that warn readers.
+tags: [icon, design, frutiger aero, opendb]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/icon-exclamation.png
+mime: image/png
+width: 484
+height: 484
+---
+A glossy red icon in the [[frutiger-aero|Frutiger Aero]] style, with a soft gradient fill and a thick rounded outline. OpenDB uses it on the `{{disputed}}` and `{{outdated}}` templates, for entries whose facts may be wrong or out of date. A smaller copy is used on the site itself.

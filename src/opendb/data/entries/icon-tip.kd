@@ -1,0 +1,16 @@
+---
+id: icon-tip
+type: media
+title: Light bulb icon
+summary: A glossy green light bulb, used for OpenDB notices that suggest improvements.
+tags: [icon, design, frutiger aero, opendb]
+created: 2026-10-29
+updated: 2026-10-29
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/icon-tip.png
+mime: image/png
+width: 484
+height: 484
+---
+A glossy green icon in the [[frutiger-aero|Frutiger Aero]] style, with a soft gradient fill and a thick rounded outline. OpenDB uses it on the `{{cleanup}}`, `{{copy edit}}` and `{{too technical}}` templates, for entries whose writing could be improved. A smaller copy is used on the site itself.
