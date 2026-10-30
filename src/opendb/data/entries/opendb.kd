@@ -5,7 +5,7 @@ title: OpenDB
 summary: OpenDB is an open-access database of articles, media and papers, all dedicated to the public domain under CC0.
 tags: [opendb, open access, public domain]
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-29
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Type: Open-access knowledge base
@@ -25,9 +25,15 @@ OpenDB has three collections:
 
 ## How it works
 
-Every entry is a small text file with a few facts at the top (its title, summary, tags and dates) and the content below, written in **Keydown**, the formatting language used across Radii Office. Keydown gives entries headings, lists and glossy styles like =B=gel orbs=B= and #G#bubble chips#, and entries can include LaTeX math such as $e^{i\pi} + 1 = 0$. The files live in a public repository, so every change is recorded and reviewable. When you contribute, OpenDB prepares the file for you and you submit it as a proposal, which a maintainer reviews before it appears for everyone.
+Every entry is a small text file with a few facts at the top (its title, summary, tags and dates) and the content below, written in **Keydown**, the formatting language used across Radii Office. Keydown gives entries headings, lists and glossy styles like =B=gel orbs=B=, #G#bubble chips#, ^^B^speech bubbles^^, #Y#gel highlights## and %16%PK%Gel Sparkles%##, and entries can include LaTeX math such as $e^{i\pi} + 1 = 0$. The files live in a public repository, so every change is recorded and reviewable. When you contribute, OpenDB prepares the file for you and you submit it as a proposal, which a maintainer reviews before it appears for everyone.
+
+Articles can also hold quotes and callout boxes, written as lines that start with `> `:
+
+> [!TIP] Write `> [!NOTE]`, `> [!TIP]`, `> [!IMPORTANT]`, `> [!WARNING]`, `> [!CAUTION]` or `> [!FACT]` to make a box like this one!
 
 Entries link to each other with double square brackets, so writing `[[water-cycle]]` creates a link to the [[water-cycle|water cycle]] article, and each entry shows what links to it.
+
+> [!NOTE] Every change to OpenDB is reviewed by a maintainer before it appears for everyone.
 
 ## Why CC0?
 

@@ -22,10 +22,12 @@ infobox.File extension: .jl
 
 Julia was created by **Jeff Bezanson**, **Stefan Karpinski**, **Viral B. Shah** and **Alan Edelman**, starting in 2009. It was announced publicly in 2012 in a blog post titled "Why We Created Julia", and version **1.0**, which promised a stable language, was released in August 2018. Julia is released under the **MIT License**, and its source files use the `.jl` extension.
 
+!#PR#Multiple dispatch# !#B#Just-in-time compiled# !#G#MIT licensed# !#O#Made for science#
+
 ## Design
 
 * **Just-in-time compilation**: Julia compiles each function to fast native machine code (through the LLVM compiler framework) the first time it is called with a given combination of argument types.
-* **Multiple dispatch**: a function can have many **methods**, and Julia picks which one to run from the types of *all* of its arguments, not just the first one. This is the central idea of the language.
+* **Multiple dispatch**: a function can have many **methods**, and #PR#Julia picks which one to run from the types of all of its arguments##, not just the first one. This is the central idea of the language.
 * **Dynamic typing with type inference**: types do not have to be written, but they can be added to methods and structs for clarity and to choose behavior.
 * **Built for maths**: arrays, linear algebra, complex numbers (using `im` for the [[imaginary-number|imaginary unit]]), rational numbers and arbitrary-precision numbers are built in. Arrays are indexed from 1, as in mathematics.
 * **Unicode names**: code can use symbols such as `π`, `α` or `∑` directly, so formulas can look like they do on paper.
@@ -65,7 +67,9 @@ area(Circle(1.0))  # 3.141592653589793
 area(Square(2.0))  # 4.0
 ```
 
-Note that `3n` means `3 * n`: Julia allows a number to be written right before a variable, as in mathematical notation.
+> [!TIP] `3n` means `3 * n`: Julia allows a number to be written right before a variable, as in mathematical notation.
+
+> [!FACT] Julia's logo shows three colored dots: red, green and purple. ^^PR^Hello, Julia!^^
 
 ## Ecosystem
 

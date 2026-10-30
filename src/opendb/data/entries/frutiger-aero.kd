@@ -5,7 +5,7 @@ title: Frutiger Aero
 summary: Frutiger Aero is a design style from the mid-2000s to early 2010s known for glossy surfaces, glass, bubbles, water and bright nature imagery.
 tags: [design, aesthetics, technology, culture]
 created: 2026-10-27
-updated: 2026-10-28
+updated: 2026-10-29
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Era: About 2004 to 2013
@@ -22,10 +22,14 @@ infobox.Typical motifs: Gloss, glass, bubbles, water, sky, leaves
 
 #B#Sky blue# #T#Aqua# #G#Grass green# #W#White#
 
+Some Keydown styles inspired by the look: @faaqua-1@Aqua gel@ @fabubble-1@Soap bubble@ @faglass-1@Glass@ %3%TU%Gel halo%## ^^B^Speech bubble^^
+
 * **Gloss and glass**: buttons and panels with bright highlights, reflections and see-through blurred backgrounds.
 * **Nature**: blue skies, green fields, water drops, bubbles, fish and leaves.
 * **Bright, clean colors**: especially sky blue, aqua, green and white.
 * **Skeuomorphism**: interface parts that look like real, shiny physical objects.
+
+> [!FACT] The look was never officially named while it was popular: "Frutiger Aero" was coined by fans years later.
 
 ## The name
 
@@ -37,6 +41,6 @@ Fans of the style have named several subgenres. One example is [[dorfic|DORFic]]
 
 ## Legacy
 
-Flat design largely replaced glossy interfaces in the 2010s, but Frutiger Aero later became popular again as a nostalgic aesthetic. Apps such as those in Radii Office use its gel buttons and glass panels on purpose.
+Flat design largely replaced glossy interfaces in the 2010s, but Frutiger Aero later #TU#became popular again as a nostalgic aesthetic##. Apps such as those in Radii Office use its gel buttons and glass panels on purpose.
 
 {{stub}}

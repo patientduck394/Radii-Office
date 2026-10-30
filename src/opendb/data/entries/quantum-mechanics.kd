@@ -18,9 +18,14 @@ infobox.Developed: 1900–1930s
 
 **Quantum mechanics** is the branch of physics that describes the behavior of matter and light at the scale of atoms and subatomic particles. At that scale, nature works very differently from everyday experience: energy often comes in fixed packets called **quanta**, particles behave like waves, and the result of a measurement can usually only be predicted as a **probability**.
 
-Quantum mechanics is one of the most precisely tested theories in science. It explains the structure of atoms, chemical bonding, and how light and matter interact, and it underlies technologies such as transistors, lasers and LEDs.
+> I think I can safely say that nobody understands quantum mechanics.
+> — Richard Feynman, *The Character of Physical Law* (1965)
+
+Quantum mechanics is #B#one of the most precisely tested theories in science##. It explains the structure of atoms, chemical bonding, and how light and matter interact, and it underlies technologies such as transistors, lasers and LEDs.
 
 ## Key ideas
+
+!#B#Quanta# !#PR#Waves and particles# !#G#Superposition# !#O#Uncertainty# !#PK#Spin# !#TU#Entanglement#
 
 * **Quantization**: some quantities, like the energy of an electron in an atom, can only take certain separate values. In a hydrogen atom the allowed energies are about $E_n = -\dfrac{13.6\ \text{eV}}{n^2}$ for $n = 1, 2, 3, \ldots$
 * **Wave–particle duality**: light and matter show both wave-like behavior (such as interference) and particle-like behavior (such as arriving in single lumps).
@@ -37,7 +42,9 @@ $$i\hbar \frac{\partial \psi}{\partial t} = \hat{H}\psi$$
 
 Here $\hbar$ is the reduced Planck constant ($h / 2\pi$) and $\hat{H}$, the **Hamiltonian**, describes the system's total energy.
 
-The wave function itself cannot be observed directly. By the **Born rule**, the probability of finding a particle at a place is proportional to $|\psi|^2$, the squared size of the wave function there.
+> [!IMPORTANT] The wave function itself cannot be observed directly: only the probabilities it gives can be measured.
+
+By the **Born rule**, the probability of finding a particle at a place is proportional to $|\psi|^2$, the squared size of the wave function there.
 
 ## History
 

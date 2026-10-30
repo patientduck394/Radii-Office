@@ -24,6 +24,8 @@ Swapping the order of two generators flips the sign. Taking $i = j$ gives $\thet
 
 $$\theta_i^2 = 0$$
 
+::amethyst{Grassmann numbers anticommute: swapping two of them flips the sign, so each one squares to zero.}
+
 Every generator squares to zero, even though it is not zero itself. This is very different from ordinary real or [[imaginary-number|imaginary numbers]], and it is exactly what makes Grassmann numbers useful in physics.
 
 They are named after the German mathematician **Hermann Grassmann**, whose 1844 work *Die lineare Ausdehnungslehre* introduced the algebra behind them, known today as the **exterior algebra**.
@@ -40,6 +42,8 @@ $$z = a + b\,\theta_1 + c\,\theta_2 + d\,\theta_1\theta_2$$
 
 In general, $n$ generators give $2^n$ independent terms, one for each subset of the generators (compare the power set in [[set-mathematics|set theory]]).
 
+#%G%Even terms commute% #%PR%Odd terms anticommute%
+
 * Terms with an **even** number of generators, like $\theta_1\theta_2$, commute with everything.
 * Terms with an **odd** number of generators anticommute with each other.
 
@@ -51,7 +55,11 @@ There is a consistent calculus for these numbers, worked out by the mathematicia
 
 $$\int d\theta \; 1 = 0, \qquad \int d\theta \; \theta = 1$$
 
-so integrating behaves like differentiating. A key result is the Gaussian integral over pairs of Grassmann variables, which (up to sign and ordering conventions) gives a **determinant**, $\det A$, where the same integral over ordinary numbers gives $1/\sqrt{\det A}$.
+so integrating behaves like differentiating.
+
+> [!NOTE] For Grassmann numbers, integration and differentiation follow the same rules.
+
+A key result is the Gaussian integral over pairs of Grassmann variables, which (up to sign and ordering conventions) gives a **determinant**, $\det A$, where the same integral over ordinary numbers gives $1/\sqrt{\det A}$.
 
 ## Uses in physics
 

@@ -5,7 +5,7 @@ title: Pythagorean theorem
 summary: In a right triangle, the square of the longest side equals the sum of the squares of the other two sides.
 tags: [mathematics, geometry, triangles]
 created: 2026-10-27
-updated: 2026-10-27
+updated: 2026-10-29
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Field: Geometry
@@ -24,15 +24,25 @@ If the two shorter sides have lengths *a* and *b*, and the hypotenuse has length
 
 $$a^2 + b^2 = c^2$$
 
+::gsky{Remember it|The two short sides, squared and added, equal the long side squared}
+
 For example, a triangle with sides 3 and 4 has a hypotenuse of 5, because $3^2 + 4^2 = 9 + 16 = 25 = 5^2$.
 
 ## Pythagorean triples
 
-Sets of three whole numbers that fit the theorem are called **Pythagorean triples**. Examples include (3, 4, 5), (5, 12, 13) and (8, 15, 17). Multiplying a triple by any whole number gives another one, such as (6, 8, 10).
+Sets of three whole numbers that fit the theorem are called **Pythagorean triples**. Examples include (3, 4, 5), (5, 12, 13) and (8, 15, 17):
+
+#;B;3, 4, 5; #;G;5, 12, 13; #;PR;8, 15, 17; #;O;6, 8, 10;
+
+ Multiplying a triple by any whole number gives another one, such as (6, 8, 10).
 
 ## History and proofs
 
-The theorem is named after the Greek philosopher Pythagoras, but the relationship was known much earlier: a Babylonian clay tablet known as Plimpton 322 lists Pythagorean triples. Hundreds of different proofs exist, including proofs that rearrange four copies of the triangle inside a large square.
+The theorem is named after the Greek philosopher Pythagoras, but the relationship was known much earlier: a Babylonian clay tablet known as Plimpton 322 lists Pythagorean triples. 
+
+> [!FACT] Plimpton 322 is nearly 4,000 years old: it was made more than a thousand years before Pythagoras was born.
+
+Hundreds of different proofs exist, including proofs that rearrange four copies of the triangle inside a large square.
 
 ## Uses
 

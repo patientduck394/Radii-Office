@@ -6,7 +6,7 @@ title: Radii Office
 summary: Radii Office is a free, open-source suite of web apps for documents, spreadsheets, slides, notes, files and more, styled after the Frutiger Aero look.
 tags: [radii office, software, productivity, web apps]
 created: 2026-10-28
-updated: 2026-10-28
+updated: 2026-10-29
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Type: Office suite of web apps
@@ -17,10 +17,12 @@ infobox.Source code: [Radii-Office on GitHub](https://github.com/patientduck394/
 ---
 **Radii Office** is a free suite of web apps for writing, calculating, presenting, taking notes, building websites and handling files. Every app runs right in the web browser, with nothing to install, and keeps your work in the browser on your own device. The apps share a glossy look inspired by [[frutiger-aero|Frutiger Aero]] and a formatting language called [[keydown|Keydown]].
 
+> [!TIP] Every app keeps your work in your own browser, so it stays on your device unless you choose to share it.
+
 ## Shared features
 
 * **Two layouts**: each app can switch between an Office-style **ribbon** layout and its original **Classic** layout, with glass sidebars and gel buttons.
-* **Keydown**: the same short tags, like #G#chips# and #Y#highlights##, format text across the apps.
+* **Keydown**: the same short tags, like #G#chips#, #Y#highlights##, ^^B^speech bubbles^^ and %1%PR%Gel Bevels%##, format text across the apps.
 * **Share & Chat**: many apps let people edit the same file together in real time, with chat.
 * **Open source**: the code is published on GitHub, and the suite is licensed under CC0 and the MIT License or the Unlicense.
 

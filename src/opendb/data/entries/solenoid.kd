@@ -26,7 +26,9 @@ For an ideal solenoid (very long, with closely spaced turns and nothing but air 
 
 $$B = \mu_0 n I$$
 
-where $\mu_0$ is the magnetic constant (the permeability of free space), $n$ is the number of turns per unit length and $I$ is the current. The field does not depend on the coil's width or on where you are inside it, which is why it is so uniform. The result follows from **Ampère's law** applied to a rectangular loop that passes through the inside of the coil.
+::gsky{Field inside an ideal solenoid|B = μ₀ n I: more turns per meter or more current means a stronger field}
+
+where $\mu_0$ is the magnetic constant (the permeability of free space), $n$ is the number of turns per unit length and $I$ is the current. #B#The field does not depend on the coil's width or on where you are inside it##, which is why it is so uniform. The result follows from **Ampère's law** applied to a rectangular loop that passes through the inside of the coil.
 
 The direction of the field follows the **right-hand rule**: if the fingers of your right hand curl the way the current flows around the coil, your thumb points the way the field points inside it, toward the coil's north end.
 
@@ -41,6 +43,8 @@ Because a solenoid stores energy in its magnetic field, it resists changes in cu
 $$L = \frac{\mu_0 N^2 A}{\ell}$$
 
 for $N$ turns, cross-sectional area $A$ and length $\ell$. This makes solenoids useful as **inductors** in electrical circuits, and explains the spark that can jump when a coil's current is switched off suddenly.
+
+> [!WARNING] Switching off a coil suddenly can make a high-voltage spike, so circuits that drive solenoids usually add a protective diode.
 
 ## Uses
 

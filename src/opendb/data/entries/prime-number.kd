@@ -5,7 +5,7 @@ title: Prime number
 summary: A prime number is a whole number greater than 1 whose only divisors are 1 and itself.
 tags: [mathematics, number theory]
 created: 2026-10-27
-updated: 2026-10-28
+updated: 2026-10-29
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Field: Number theory
@@ -18,15 +18,23 @@ A **prime number** is a whole number greater than 1 that can only be divided eve
 
 ## Examples
 
-The first prime numbers are 2, 3, 5, 7, 11, 13, 17, 19, 23 and 29. The number 2 is the only even prime, because every other even number can be divided by 2. The number 1 is not considered prime.
+The first prime numbers are 2, 3, 5, 7, 11, 13, 17, 19, 23 and 29:
+
+%1%R%2%## %1%O%3%## %1%GL%5%## %1%Y%7%## %1%L%11%## %1%G%13%## %1%TU%17%## %1%C%19%## %1%B%23%## %1%PR%29%##
+
+The number 2 is the only even prime, because every other even number can be divided by 2.
+
+> [!IMPORTANT] The number 1 is not prime: a prime has exactly two different divisors, 1 and itself, and 1 has only one.
 
 ## Building blocks of numbers
 
-The **fundamental theorem of arithmetic** says every whole number greater than 1 can be written as a product of primes in exactly one way, apart from the order. For example, $60 = 2^2 \times 3 \times 5$.
+The **fundamental theorem of arithmetic** says #Y#every whole number greater than 1 can be written as a product of primes in exactly one way## (apart from the order). For example, $60 = 2^2 \times 3 \times 5$.
 
 ## Infinitely many primes
 
 Around 300 BC, the Greek mathematician Euclid proved that the primes never run out. If there were only finitely many, $p_1, p_2, \ldots, p_n$, you could multiply them all together and add 1 to get $N = p_1 p_2 \cdots p_n + 1$. The result would leave remainder 1 when divided by every prime on the list, so it would need a prime factor that was missing from the list.
+
+> [!FACT] The largest known primes are **Mersenne primes**, numbers of the form $2^p - 1$.
 
 ## Finding primes
 

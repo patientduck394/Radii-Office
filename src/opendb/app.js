@@ -118,6 +118,22 @@
         const html = typeof window.kdRender === 'function' ? window.kdRender(s) : esc(s);
         return html.replace(/\u0001(\d+)\u0001/g, (_, i) => store[+i]);
     }
+    // "> " lines: a quote (a last "— Name" line says who said it), or a callout box when the first line is [!NOTE], [!TIP],
+    // [!IMPORTANT], [!WARNING], [!CAUTION] or OpenDB's own [!FACT] ("Did you know?")
+    const CALLOUTS = { NOTE: ['ℹ️', 'Note'], TIP: ['💡', 'Tip'], IMPORTANT: ['❗', 'Important'], WARNING: ['⚠️', 'Warning'], CAUTION: ['🛑', 'Caution'], FACT: ['✨', 'Did you know?'] };
+    function quoteBlock(body, notes) {
+        const m = /^\[!([A-Za-z]+)\]\s*(.*)$/.exec(body[0] || '');
+        const kind = m && CALLOUTS[m[1].toUpperCase()] ? m[1].toUpperCase() : null;
+        if (!kind) {
+            let by = '';
+            if (body.length > 1 && /^(—|--)\s*\S/.test(body[body.length - 1])) by = body.pop().replace(/^(—|--)\s*/, '');
+            const text = body.filter((l) => l.trim() !== '');
+            return '<blockquote class="odb-quote">' + text.map((l) => inline(l, notes)).join('<br>') + (by ? '<cite>— ' + inline(by, notes) + '</cite>' : '') + '</blockquote>';
+        }
+        const text = [m[2]].concat(body.slice(1)).filter((l) => l.trim() !== '');
+        return '<div class="odb-callout odb-callout-' + kind.toLowerCase() + '" role="note"><div class="odb-callout-title"><span aria-hidden="true">' + CALLOUTS[kind][0] + '</span> ' + CALLOUTS[kind][1] + '</div>'
+            + (text.length ? '<div class="odb-callout-body">' + text.map((l) => inline(l, notes)).join('<br>') + '</div>' : '') + '</div>';
+    }
     function renderKd(src, entry) {
         tplCtx = entry || null;
         const lines = String(src || '').replace(/\r/g, '').split('\n');
@@ -136,6 +152,17 @@
                 continue;
             }
             if (!t) { flush(); continue; }
+            if (/^>/.test(t)) {
+                flush();
+                const body = [];
+                for (; i < lines.length && /^>/.test(lines[i].trim()); i++) body.push(lines[i].trim().replace(/^>\s?/, ''));
+                i--;
+                out.push(quoteBlock(body, notes));
+                continue;
+            }
+            // a line indented with tabs (Writeout and Bitbook's Indent saves it that way) stays indented
+            const tabs = (/^\t+/.exec(lines[i]) || [''])[0].length;
+            if (tabs && !/^(#{1,4}|\*)\s/.test(t)) { flush(); out.push('<p class="odb-indent" style="margin-left: ' + Math.min(8, tabs) * 2.5 + 'rem">' + inline(t, notes) + '</p>'); continue; }
             // a template alone on its line: a notice box, a hatnote or the stub note
             if ((m = /^\{\{([^{}]+)\}\}$/.exec(t)) && findTpl(m[1]) && findTpl(m[1]).kind !== 'inline') { flush(); out.push(tplBlock(m[1])); continue; }
             // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
@@ -179,6 +206,15 @@
         if (used.length) out.push('<ol class="refs">' + used.map((n) => '<li id="fn-' + esc(n) + '">' + inline(notes.defs[n], { order: [] }) + ' <a href="#ref-' + esc(n) + '" data-scroll title="Back to the text">↩</a></li>').join('') + '</ol>');
         return out.join('\n');
     }
+    // The editor's Keydown guide starts with OpenDB's own extras: quotes, callout boxes and indents, each with a live preview
+    function EXTRAS_GUIDE() {
+        const rows = [['> A quote\n> — Who said it', 'A quote'], ['> [!NOTE] Something worth knowing', 'Note'], ['> [!TIP] A helpful hint', 'Tip'],
+            ['> [!IMPORTANT] Do not miss this', 'Important'], ['> [!WARNING] Be careful here', 'Warning'], ['> [!CAUTION] This can go wrong', 'Caution'],
+            ['> [!FACT] A fun fact', 'Did you know?'], ['\tA line indented with a tab', 'Indented line']];
+        return '<div class="kd-guide-group"><div class="kd-guide-title">OpenDB extras: quotes, callout boxes and indents (' + rows.length + ')</div>'
+            + rows.map((r) => '<div class="kd-guide-row"><code>' + esc(r[0]).replace(/\n/g, '<br>').replace(/\t/g, '⇥ ') + '</code><span>' + renderKd(r[0]) + '</span></div>').join('')
+            + '<div class="kd-guide-row"><span>Several "&gt; " lines in a row make one box; "&gt; [!FACT]" is OpenDB\'s own!</span></div></div>';
+    }
     // Plain text for search: Keydown triggers, math markers and link syntax are dropped
     function plain(src) {
         return String(src || '')
@@ -186,7 +222,8 @@
             .replace(/\[\[([a-z0-9-]+)\|([^\]]+)\]\]/g, '$2').replace(/\[\[([a-z0-9-]+)\]\]/g, '$1')
             .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1').replace(/\[\^[\w-]+\]:?/g, '')
             .replace(/\{\{[^{}]*\}\}/g, ' ')
-            .replace(/::[a-z]+/g, ' ').replace(/~[A-Z0-9-]+~|=[A-Z]+=|!?#[A-Z]+#|&&/g, ' ')
+            .replace(/^\s*>\s*(\[![A-Za-z]+\])?/gm, ' ').replace(/::[a-z]+/g, ' ').replace(/@[a-z0-9]+(?:-[1-5])?@/g, ' ')
+            .replace(/~[A-Z0-9-]+~|=[A-Z]+=|!?#[A-Z]+#|#[%^+:;][A-Z]+[%^+:;]|%\d{1,2}%[A-Z]+%|%[A-Z]+%|\^\^[A-Z]+\^|\^\^|%##|##|#_|#~|&&/g, ' ')
             .replace(/[*`$\\]/g, '').replace(/\s+/g, ' ');
     }
 
@@ -694,7 +731,7 @@
         };
         $('kd-guide').onclick = (ev) => {
             ev.preventDefault();
-            modal('Keydown guide', typeof window.kdBuildGuideHTML === 'function' ? '<p class="hint">Keydown is the formatting language of Radii Office! Wrap text in a trigger to style it! OpenDB adds $LaTeX$ math, [[wiki links]], media and footnotes on top!</p><div class="kd-doc">' + window.kdBuildGuideHTML() + '</div>' : 'The Keydown guide could not load!');
+            modal('Keydown guide', typeof window.kdBuildGuideHTML === 'function' ? '<p class="hint">Keydown is the formatting language of Radii Office! Wrap text in a trigger to style it! OpenDB adds $LaTeX$ math, [[wiki links]], media and footnotes on top!</p><div class="kd-doc">' + EXTRAS_GUIDE() + window.kdBuildGuideHTML() + '</div>' : 'The Keydown guide could not load!');
         };
         $('save-local').onclick = () => {
             const e = current();

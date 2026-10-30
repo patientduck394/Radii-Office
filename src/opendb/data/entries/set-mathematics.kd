@@ -6,7 +6,7 @@ title: Set (mathematics)
 summary: A set is a collection of distinct objects, called its elements, considered as a single object.
 tags: [mathematics, set theory, logic]
 created: 2026-10-28
-updated: 2026-10-28
+updated: 2026-10-29
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Field: Set theory
@@ -15,7 +15,7 @@ infobox.Empty set: ∅ or {}
 ---
 {{unreferenced}}
 
-A **set** is a collection of distinct objects, called its **elements** or **members**. A set is defined only by what it contains: the order of the elements does not matter, and listing an element twice does not change the set. Sets are one of the most basic ideas in mathematics, and almost every other mathematical object can be built from them.
+A **set** is a collection of distinct objects, called its **elements** or **members**. A set is defined only by what it contains: #Y#the order of the elements does not matter, and listing an element twice does not change the set##. Sets are one of the most basic ideas in mathematics, and almost every other mathematical object can be built from them.
 
 ![Two overlapping sets, A and B, inside a universal set U](media:venn-diagram)
 
@@ -42,8 +42,12 @@ For the sets $A = \{1, 2, 3, 4\}$ and $B = \{3, 4, 5, 6\}$ shown in the diagram:
 * **Difference**: $A \setminus B = \{1, 2\}$, what is in $A$ but not in $B$.
 * **Complement**: everything in the universal set $U$ that is not in $A$.
 
+> [!TIP] An easy way to remember: union is like "or", and intersection is like "and".
+
 Two sets with no elements in common, so that $A \cap B = \varnothing$, are called **disjoint**. Drawings like the one above are called **Venn diagrams**.
 
 ## Common number sets
+
+^^B^ℕ natural^^ ^^G^ℤ integers^^ ^^PR^ℚ rational^^ ^^O^ℝ real^^
 
 Some sets are used so often that they have their own symbols: $\mathbb{N}$ for the natural numbers, $\mathbb{Z}$ for the integers, $\mathbb{Q}$ for the rational numbers and $\mathbb{R}$ for the real numbers. The [[prime-number|prime numbers]] also form a set, and it is infinite.

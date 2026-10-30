@@ -5,7 +5,7 @@ title: Photosynthesis
 summary: Photosynthesis is the process plants, algae and some bacteria use to turn light, water and carbon dioxide into sugar and oxygen.
 tags: [biology, plants, energy, chemistry]
 created: 2026-10-27
-updated: 2026-10-28
+updated: 2026-10-29
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Type: Biological process
@@ -15,7 +15,7 @@ infobox.Outputs: Glucose, oxygen
 ---
 {{unreferenced}}
 
-**Photosynthesis** is the process by which plants, algae and some bacteria capture the energy of light and store it in sugar. It produces the oxygen in Earth's air and is the starting point of almost every food chain.
+**Photosynthesis** is the process by which plants, algae and some bacteria capture the energy of light and store it in sugar. It produces the oxygen in Earth's air and is #G#the starting point of almost every food chain##.
 
 ## The overall reaction
 
@@ -25,6 +25,8 @@ $$6\,\mathrm{CO_2} + 6\,\mathrm{H_2O} \xrightarrow{\text{light}} \mathrm{C_6H_{1
 
 Six molecules of carbon dioxide and six of water become one molecule of glucose and six molecules of oxygen.
 
+::gemerald{In short|Light + water + carbon dioxide make sugar + oxygen}
+
 ![What goes into a leaf, and what comes out](media:photosynthesis-diagram)
 
 ## Where it happens
@@ -33,9 +35,13 @@ In plants and algae, photosynthesis takes place in **chloroplasts**, small struc
 
 ## Two stages
 
+#^Y^Stage 1: light^ #^G^Stage 2: Calvin cycle^
+
 1. **Light-dependent reactions**: in the thylakoid membranes, light energy splits water molecules. This releases oxygen and produces energy carriers called ATP and NADPH.
 2. **The Calvin cycle**: in the stroma around the thylakoids, the cell uses ATP and NADPH to fix carbon dioxide from the air into sugars.
 
 ## Importance
+
+> [!FACT] Almost all of the oxygen in the air you breathe was released by photosynthesis.
 
 Photosynthesis provides the oxygen that most living things breathe and the energy stored in food. Fossil fuels such as coal and oil are made from the remains of organisms that once captured energy this way. The water a plant takes in is part of the [[water-cycle|water cycle]], and some of it returns to the air through transpiration.

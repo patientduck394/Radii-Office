@@ -22,17 +22,18 @@ $$i^2 = -1$$
 
 No real number has a negative square, so $i$ is a new kind of number. Numbers such as $3i$, $-\tfrac{1}{2}i$ and $\sqrt{2}\,i$ are imaginary. Adding a real number and an imaginary number gives a **complex number**, written $a + bi$, where $a$ is the **real part** and $b$ is the **imaginary part**. Zero is the only number that is both real and imaginary.
 
-Despite the name, imaginary numbers are no less "real" than negative numbers or fractions: they are a precise and very useful part of mathematics, physics and engineering.
+Despite the name, #PR#imaginary numbers are no less "real"## than negative numbers or fractions: they are a precise and very useful part of mathematics, physics and engineering.
 
 ## Square roots of negative numbers
 
 With $i$, every negative number has square roots. Because $(2i)^2 = 4i^2 = -4$, the principal square root of $-4$ is $2i$, and in general $\sqrt{-x} = i\sqrt{x}$ for $x > 0$. Every quadratic equation then has solutions: $x^2 + 1 = 0$ is solved by $x = i$ and $x = -i$.
 
-One familiar rule needs care: $\sqrt{a}\sqrt{b} = \sqrt{ab}$ is not true when both numbers are negative. For example, $\sqrt{-1}\sqrt{-1} = i \cdot i = -1$, but $\sqrt{(-1)(-1)} = \sqrt{1} = 1$.
+> [!CAUTION] One familiar rule needs care: $\sqrt{a}\sqrt{b} = \sqrt{ab}$ is not true when both numbers are negative.
+> For example, $\sqrt{-1}\sqrt{-1} = i \cdot i = -1$, but $\sqrt{(-1)(-1)} = \sqrt{1} = 1$.
 
 ## Powers of i
 
-The powers of $i$ repeat in a cycle of four:
+The powers of $i$ repeat in a cycle of four: %7%B%i%## %7%R%−1%## %7%PR%−i%## %7%G%1%##
 
 * $i^1 = i$
 * $i^2 = -1$
@@ -50,6 +51,8 @@ This link between multiplication and rotation is captured by **Euler's formula**
 $$e^{i\theta} = \cos\theta + i\sin\theta$$
 
 which, with $\theta = \pi$, gives the famous identity $e^{i\pi} + 1 = 0$.
+
+> [!FACT] Euler's identity links five of the most important numbers in mathematics: 0, 1, π, e and i.
 
 ## History
 
