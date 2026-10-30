@@ -22,7 +22,7 @@ infobox.File extension: .jl
 
 Julia was created by **Jeff Bezanson**, **Stefan Karpinski**, **Viral B. Shah** and **Alan Edelman**, starting in 2009. It was announced publicly in 2012 in a blog post titled "Why We Created Julia", and version **1.0**, which promised a stable language, was released in August 2018. Julia is released under the **MIT License**, and its source files use the `.jl` extension.
 
-!#PR#Multiple dispatch# !#B#Just-in-time compiled# !#G#MIT licensed# !#O#Made for science#
+!#B#Multiple dispatch# !#R#Just-in-time compiled# !#G#MIT licensed# !#PR#Made for science#
 
 ## Design
 
