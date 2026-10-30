@@ -9476,5 +9476,71 @@
 .gel-sx-slate { --sx-c: #b4b4b4; --sx-edge: #6f6f6f; --sx-ink: #363636; }
 .gel-sx-black { --sx-c: #919191; --sx-edge: #454545; --sx-ink: #222222; }
 
+/* ========================================================
+   GEL SPEECH (^^R^text^^): a Bubble Chip cousin shaped like a little speech bubble, in the same 16 colors!
+   The same gel, crisp edge and ink, with a glossy top and a tail at the bottom left,
+   as if the chip is saying the words inside it.
+   ======================================================== */
+.gel-speech-chip {
+  --sp-c: #3b82f6; --sp-edge: #2563eb; --sp-ink: #172554;
+  position: relative;
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 11px;
+  border-radius: 12px;
+  border: 2px solid var(--sp-edge);
+  color: var(--sp-ink);
+  font-family: inherit;
+  font-weight: 800;
+  white-space: nowrap;
+  margin: 0 2px 6px;
+  vertical-align: middle;
+  /* the gel fades into a soft tint (not clear), so the tail can match it */
+  background: linear-gradient(180deg, var(--sp-c) 0%, color-mix(in srgb, var(--sp-c) 12%, white) 100%);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.45);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+/* a glossy streak along the top */
+.gel-speech-chip::before {
+  content: "";
+  position: absolute;
+  left: 10px; right: 10px; top: 2px;
+  height: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+}
+/* the tail: a little corner poking down from the bottom left */
+.gel-speech-chip::after {
+  content: "";
+  position: absolute;
+  left: 10px; bottom: -6px;
+  width: 8px; height: 8px;
+  background: color-mix(in srgb, var(--sp-c) 12%, white);
+  border-right: 2px solid var(--sp-edge);
+  border-bottom: 2px solid var(--sp-edge);
+  border-bottom-right-radius: 2px;
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+.gel-speech-red { --sp-c: #ef4444; --sp-edge: #dc2626; --sp-ink: #450a0a; }
+.gel-speech-orange { --sp-c: #f97316; --sp-edge: #ea580c; --sp-ink: #431407; }
+.gel-speech-gold { --sp-c: #ea9f08; --sp-edge: #ca8a04; --sp-ink: #451a03; }
+.gel-speech-yellow { --sp-c: #ead708; --sp-edge: #caa604; --sp-ink: #452b03; }
+.gel-speech-lime { --sp-c: #84cc16; --sp-edge: #65a30d; --sp-ink: #1a2e05; }
+.gel-speech-green { --sp-c: #10b981; --sp-edge: #059669; --sp-ink: #022c22; }
+.gel-speech-turquoise { --sp-c: #30e5cd; --sp-edge: #26b1a5; --sp-ink: #044439; }
+.gel-speech-teal { --sp-c: #06b6d4; --sp-edge: #0891b2; --sp-ink: #083344; }
+.gel-speech-cyan { --sp-c: #30d3e5; --sp-edge: #26a3b1; --sp-ink: #043e44; }
+.gel-speech-blue { --sp-c: #3b82f6; --sp-edge: #2563eb; --sp-ink: #172554; }
+.gel-speech-purple { --sp-c: #a855f7; --sp-edge: #9333ea; --sp-ink: #2e1065; }
+.gel-speech-pink { --sp-c: #ec4899; --sp-edge: #db2777; --sp-ink: #4c0519; }
+.gel-speech-white { --sp-c: #f3f3f3; --sp-edge: #b3b3b3; --sp-ink: #7a7a7a; }
+.gel-speech-fog { --sp-c: #d9d9d9; --sp-edge: #808080; --sp-ink: #404040; }
+.gel-speech-slate { --sp-c: #b4b4b4; --sp-edge: #6f6f6f; --sp-ink: #363636; }
+.gel-speech-black { --sp-c: #919191; --sp-edge: #454545; --sp-ink: #222222; }
+
+
 
 

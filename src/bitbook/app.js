@@ -179,6 +179,15 @@ if (!kdAmbientHidden()) initializeAmbientDroplets();
 // ==========================================
 if (canvas) {
     canvas.addEventListener('keydown', function(e) {
+        // --- TAB: Tab indents the line and Shift+Tab outdents it (inside code, Tab types a tab)! ---
+        if (e.key === 'Tab' && !e.ctrlKey && !e.metaKey && !e.altKey && e.target && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            const tabAt = window.getSelection().anchorNode;
+            const tabEl = tabAt && (tabAt.nodeType === 3 ? tabAt.parentElement : tabAt);
+            if (!e.shiftKey && tabEl && tabEl.closest && tabEl.closest('pre')) { document.execCommand('insertText', false, '\t'); return; }
+            if (typeof fmtIndentBlocks === 'function') fmtIndentBlocks(e.shiftKey ? -1 : 1);
+            return;
+        }
         // --- DENT SHORTCUTS: Ctrl/Cmd+[ outdents, Ctrl/Cmd+] indents! ---
         if ((e.ctrlKey || e.metaKey) && (e.key === '[' || e.key === ']')) {
             e.preventDefault();
@@ -1407,6 +1416,23 @@ if (canvas) {
             { open: '%11%FG%', close: '%##', className: 'gel-sx-chip gel-sx-11 gel-sx-fog' },
             { open: '%11%SL%', close: '%##', className: 'gel-sx-chip gel-sx-11 gel-sx-slate' },
             { open: '%11%BK%', close: '%##', className: 'gel-sx-chip gel-sx-11 gel-sx-black' },
+            // Gel Speech: ^^R^text^^ (a speech-bubble Bubble Chip cousin, same 16 colors!)
+            { open: '^^R^', close: '^^', className: 'gel-speech-chip gel-speech-red' },
+            { open: '^^O^', close: '^^', className: 'gel-speech-chip gel-speech-orange' },
+            { open: '^^GL^', close: '^^', className: 'gel-speech-chip gel-speech-gold' },
+            { open: '^^Y^', close: '^^', className: 'gel-speech-chip gel-speech-yellow' },
+            { open: '^^L^', close: '^^', className: 'gel-speech-chip gel-speech-lime' },
+            { open: '^^G^', close: '^^', className: 'gel-speech-chip gel-speech-green' },
+            { open: '^^TU^', close: '^^', className: 'gel-speech-chip gel-speech-turquoise' },
+            { open: '^^T^', close: '^^', className: 'gel-speech-chip gel-speech-teal' },
+            { open: '^^C^', close: '^^', className: 'gel-speech-chip gel-speech-cyan' },
+            { open: '^^B^', close: '^^', className: 'gel-speech-chip gel-speech-blue' },
+            { open: '^^PR^', close: '^^', className: 'gel-speech-chip gel-speech-purple' },
+            { open: '^^PK^', close: '^^', className: 'gel-speech-chip gel-speech-pink' },
+            { open: '^^W^', close: '^^', className: 'gel-speech-chip gel-speech-white' },
+            { open: '^^FG^', close: '^^', className: 'gel-speech-chip gel-speech-fog' },
+            { open: '^^SL^', close: '^^', className: 'gel-speech-chip gel-speech-slate' },
+            { open: '^^BK^', close: '^^', className: 'gel-speech-chip gel-speech-black' },
             // Gel Flags: #%R%text% (another Bubble Chip cousin, same 16 colors; checked before the pills!)
             { open: '#%R%', close: '%', className: 'gel-flag-chip gel-flag-red' },
             { open: '#%O%', close: '%', className: 'gel-flag-chip gel-flag-orange' },
