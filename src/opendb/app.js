@@ -232,33 +232,33 @@
     // c is what a template knows: the entry's noun ("article", "file", "paper"), its edit link and the details.
     const TEMPLATES = [
         // maintenance boxes
-        { name: 'stub', kind: 'stub', group: 'Maintenance', icon: '🌱', where: 'end', hint: 'A short entry that should grow. Put it at the very bottom!',
+        { name: 'stub', kind: 'stub', group: 'Maintenance', icon: 'stub', where: 'end', hint: 'A short entry that should grow. Put it at the very bottom!',
             text: (c) => 'This ' + c.noun + ' is a <b>stub</b>. You can help OpenDB by ' + c.edit('expanding it') + '!' },
-        { name: 'more citations', aliases: ['citations needed', 'refimprove', 'more sources'], kind: 'content', group: 'Maintenance', icon: '📚', hint: 'Some claims have no source yet.',
+        { name: 'more citations', aliases: ['citations needed', 'refimprove', 'more sources'], kind: 'content', group: 'Maintenance', icon: 'question', hint: 'Some claims have no source yet.',
             text: (c) => 'This ' + c.noun + ' <b>needs more sources</b>. Please help by ' + c.edit('adding footnotes') + ' that point to reliable sources! Claims without a source may be challenged and removed.' + c.reason() },
-        { name: 'unreferenced', aliases: ['no sources'], kind: 'content', group: 'Maintenance', icon: '❓', hint: 'Nothing in the entry has a source.',
+        { name: 'unreferenced', aliases: ['no sources'], kind: 'content', group: 'Maintenance', icon: 'question', hint: 'Nothing in the entry has a source.',
             text: (c) => 'This ' + c.noun + ' <b>does not cite any sources</b>. Please help by ' + c.edit('adding footnotes') + ' that point to reliable sources!' },
-        { name: 'file improvement', aliases: ['image improvement', 'improve file'], kind: 'file', group: 'Maintenance', icon: '🖼️', example: '{{file improvement|the text is blurry}}', hint: 'A media file that someone could redraw, sharpen or replace. Add what is wrong after a |!',
+        { name: 'file improvement', aliases: ['image improvement', 'improve file'], kind: 'file', group: 'Maintenance', icon: 'image', example: '{{file improvement|the text is blurry}}', hint: 'A media file that someone could redraw, sharpen or replace. Add what is wrong after a |!',
             text: (c) => 'This ' + (c.type === 'media' ? 'file' : c.noun + '’s image') + ' <b>could be improved</b>' + (c.arg ? ': ' + c.argHtml : '') + '! If you can make a better version (sharper, larger, cleaner, or as an SVG), please ' + c.edit('upload it') + '!' },
-        { name: 'images needed', aliases: ['image needed', 'image requested', 'needs images', 'needs image'], kind: 'file', group: 'Maintenance', icon: '📷', example: '{{images needed|a photo of a leaf}}', hint: 'An entry that would be clearer with a picture. Say what would help after a |!',
+        { name: 'images needed', aliases: ['image needed', 'image requested', 'needs images', 'needs image'], kind: 'file', group: 'Maintenance', icon: 'photo', example: '{{images needed|a photo of a leaf}}', hint: 'An entry that would be clearer with a picture. Say what would help after a |!',
             text: (c) => 'This ' + c.noun + ' <b>needs images</b>' + (c.arg ? ': ' + c.argHtml : '') + '! If you can draw, photograph or find a public domain picture, please <a href="#/new/media">upload it</a> and ' + c.edit('add it here') + '!' },
-        { name: 'cleanup', kind: 'style', group: 'Maintenance', icon: '🧹', example: '{{cleanup|the sections repeat each other}}', hint: 'The entry needs tidying. Add the reason after a |!',
+        { name: 'cleanup', kind: 'style', group: 'Maintenance', icon: 'tip', example: '{{cleanup|the sections repeat each other}}', hint: 'The entry needs tidying. Add the reason after a |!',
             text: (c) => 'This ' + c.noun + ' <b>may need cleanup</b> to meet OpenDB’s standards.' + c.reason() + ' You can help by ' + c.edit('improving it') + '!' },
-        { name: 'copy edit', aliases: ['copyedit'], kind: 'style', group: 'Maintenance', icon: '✏️', hint: 'Grammar, spelling or wording need a pass.',
+        { name: 'copy edit', aliases: ['copyedit'], kind: 'style', group: 'Maintenance', icon: 'tip', hint: 'Grammar, spelling or wording need a pass.',
             text: (c) => 'This ' + c.noun + ' <b>may need copy editing</b> for grammar, style, clarity or spelling. You can help by ' + c.edit('editing it') + '!' },
-        { name: 'too technical', aliases: ['technical'], kind: 'style', group: 'Maintenance', icon: '🔬', hint: 'Hard to follow for someone new to the topic.',
+        { name: 'too technical', aliases: ['technical'], kind: 'style', group: 'Maintenance', icon: 'tip', hint: 'Hard to follow for someone new to the topic.',
             text: (c) => 'This ' + c.noun + ' <b>may be too technical</b> for most readers. Please help ' + c.edit('make it easier to understand') + ', without removing the details!' },
-        { name: 'outdated', aliases: ['update'], kind: 'content', group: 'Maintenance', icon: '⏳', example: '{{outdated|date=2026}}', hint: 'Facts that may have changed. Add date=… for when it was last right!',
+        { name: 'outdated', aliases: ['update'], kind: 'content', group: 'Maintenance', icon: 'exclamation', example: '{{outdated|date=2026}}', hint: 'Facts that may have changed. Add date=… for when it was last right!',
             text: (c) => 'Parts of this ' + c.noun + ' <b>may be out of date</b>' + (c.named.date ? ' (as of ' + esc(c.named.date) + ')' : '') + '. Please help ' + c.edit('update it') + ' with newer information!' },
-        { name: 'disputed', aliases: ['dubious entry'], kind: 'content', group: 'Maintenance', icon: '⚠️', hint: 'Someone thinks a fact here is wrong.',
+        { name: 'disputed', aliases: ['dubious entry'], kind: 'content', group: 'Maintenance', icon: 'exclamation', hint: 'Someone thinks a fact here is wrong.',
             text: (c) => 'The <b>accuracy of this ' + c.noun + ' is disputed</b>.' + c.reason() + ' Check its sources, and ' + c.edit('fix any mistakes') + ' you can prove!' },
-        { name: 'expand', aliases: ['expand section'], kind: 'notice', group: 'Maintenance', icon: '➕', hint: 'Put it under a heading that is empty or too thin.',
+        { name: 'expand', aliases: ['expand section'], kind: 'notice', group: 'Maintenance', icon: 'stub', hint: 'Put it under a heading that is empty or too thin.',
             text: (c) => 'This section <b>needs more detail</b>. You can help by ' + c.edit('adding to it') + '!' },
-        { name: 'orphan', kind: 'notice', group: 'Maintenance', icon: '🔗', hint: 'No other entry links here yet.',
+        { name: 'orphan', kind: 'notice', group: 'Maintenance', icon: 'info', hint: 'No other entry links here yet.',
             text: (c) => '<b>No other entries link to this ' + c.noun + '</b>. Please add [[links]] to it from related entries!' + (c.linkedFrom ? ' <i>(' + c.linkedFrom + ' now link here, so this notice can be removed!)</i>' : '') },
-        { name: 'in use', aliases: ['under construction', 'in progress'], kind: 'notice', group: 'Maintenance', icon: '🚧', hint: 'Someone is writing it right now.',
+        { name: 'in use', aliases: ['under construction', 'in progress'], kind: 'notice', group: 'Maintenance', icon: 'info', hint: 'Someone is writing it right now.',
             text: (c) => 'This ' + c.noun + ' is <b>being written right now</b>, so it may change a lot soon. Please be patient!' },
-        { name: 'merge', aliases: ['merge with'], kind: 'move', group: 'Maintenance', icon: '🔀', example: '{{merge|other-entry}}', hint: 'Two entries cover the same thing. Name the other one after a |!',
+        { name: 'merge', aliases: ['merge with'], kind: 'move', group: 'Maintenance', icon: 'info', example: '{{merge|other-entry}}', hint: 'Two entries cover the same thing. Name the other one after a |!',
             text: (c) => 'It has been suggested that this ' + c.noun + ' be <b>merged</b> with ' + (c.args.length ? c.links() : 'another entry') + '.' },
         // hatnotes: one italic line at the top that points somewhere else
         { name: 'main', aliases: ['main article'], kind: 'hatnote', group: 'Hatnotes', example: '{{main|public-domain}}', hint: 'Put it under a heading that summarizes a bigger entry.',
@@ -282,6 +282,8 @@
         { name: 'page needed', kind: 'inline', group: 'Inline tags', tag: 'page needed', hint: 'A source is cited without a page number.' },
     ];
     const tplSlug = (name) => name.replace(/\s+/g, '-');
+    // a template's icon is a glossy picture from icons/ (question, exclamation, photo, image, info, tip or stub)
+    const tplIcon = (name, cls) => '<img class="' + (cls || 'tpl-icon') + '" src="icons/' + name + '.png" alt="" aria-hidden="true">';
     const tplKey = (s) => String(s).trim().toLowerCase().replace(/[\s_-]+/g, ' ');
     const TPL_BY = new Map();
     TEMPLATES.forEach((t) => [t.name].concat(t.aliases || []).forEach((n) => TPL_BY.set(tplKey(n), t)));
@@ -309,17 +311,17 @@
     function tplBlock(raw) {
         const t = findTpl(raw);
         const c = tplContext(raw);
-        const more = ' <a class="tpl-more" href="#/template/' + tplSlug(t.name) + '" title="About this notice, and every entry that has it">ⓘ</a>';
+        const more = ' <a class="tpl-more" href="#/template/' + tplSlug(t.name) + '" title="About this notice, and every entry that has it" aria-label="About this notice">' + tplIcon('info', 'tpl-more-icon') + '</a>';
         if (t.kind === 'hatnote') return '<div class="tpl-hatnote" role="note">' + t.text(c) + '</div>';
-        if (t.kind === 'stub') return '<p class="tpl-stub" role="note"><span class="tpl-icon" aria-hidden="true">' + t.icon + '</span> <i>' + t.text(c) + '</i>' + more + '</p>';
-        return '<div class="tpl tpl-' + t.kind + '" role="note"><span class="tpl-icon" aria-hidden="true">' + t.icon + '</span><div>' + t.text(c) + more + '</div></div>';
+        if (t.kind === 'stub') return '<p class="tpl-stub" role="note">' + tplIcon(t.icon) + ' <i>' + t.text(c) + '</i>' + more + '</p>';
+        return '<div class="tpl tpl-' + t.kind + '" role="note">' + tplIcon(t.icon) + '<div>' + t.text(c) + more + '</div></div>';
     }
     // A template inside a sentence: a [tag], or a little chip for a box that was put mid-line
     function tplInline(raw) {
         const t = findTpl(raw);
         if (!t) return '<span class="tpl-unknown" title="There is no template with this name!">{{' + esc(raw) + '}}</span>';
         if (t.kind === 'inline') return '<sup class="tpl-tag">[<a href="#/template/' + tplSlug(t.name) + '">' + esc(t.tag) + '</a>]</sup>';
-        return '<a class="tpl-chip" href="#/template/' + tplSlug(t.name) + '">' + (t.icon || '↪') + ' ' + esc(t.name) + '</a>';
+        return '<a class="tpl-chip" href="#/template/' + tplSlug(t.name) + '">' + (t.icon ? tplIcon(t.icon, 'tpl-chip-icon') : '↪') + ' ' + esc(t.name) + '</a>';
     }
     // Which templates an entry uses (aliases count as their template)
     function templatesIn(e) {

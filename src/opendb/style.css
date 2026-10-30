@@ -185,15 +185,17 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 
 /* Templates: Wikipedia-style notices ({{stub}}, {{more citations}}, {{file improvement}}, ...) */
 .tpl { display: flex; gap: 12px; align-items: flex-start; margin: 0 0 14px; padding: 10px 14px; border: 1px solid #c8ccd1; border-left: 8px solid #36c; border-radius: 10px; background: #fbfbfb; font-family: var(--sans); font-size: 14px; line-height: 1.5; }
-.tpl-icon { flex: none; font-size: 22px; line-height: 1.1; }
+.tpl-icon { flex: none; width: 30px; height: 30px; object-fit: contain; }
 .tpl-content { border-left-color: #f28500; background: #fff9f2; }
 .tpl-style { border-left-color: #fc3; background: #fffdf2; }
 .tpl-notice { border-left-color: #36c; background: #f5f8ff; }
 .tpl-move { border-left-color: #9932cc; background: #fbf5ff; }
 .tpl-file { border-left-color: #0f9b8c; background: #f1fbf9; }
 .tpl-more { text-decoration: none; margin-left: 2px; font-size: 13px; }
+.tpl-more-icon { width: 15px; height: 15px; vertical-align: -2px; }
+.tpl-chip-icon { width: 14px; height: 14px; vertical-align: -2px; }
 .tpl-stub { font-family: var(--sans); font-size: 13.5px; color: var(--ink-2); padding-top: 10px; border-top: 1px solid var(--line); }
-.tpl-stub .tpl-icon { font-size: 16px; }
+.tpl-stub .tpl-icon { width: 20px; height: 20px; vertical-align: -4px; }
 .tpl-hatnote { font-family: var(--sans); font-style: italic; font-size: 14px; color: var(--ink-2); margin: -4px 0 12px; padding-left: 26px; }
 .tpl-tag { font-family: var(--sans); font-size: 11px; font-style: italic; white-space: nowrap; }
 .tpl-tag a { text-decoration: none; }

@@ -66,26 +66,27 @@
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const slug = (s) => String(s || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'note';
 
-    // Short notices for OpenDB's {{templates}}, so Writeout and Bitbook show what they mean!
+    // Short notices for OpenDB's {{templates}}, so Writeout and Bitbook show what they mean, with OpenDB's own glossy icons!
     const NOTICES = {
-        'stub': '🌱 This is a stub: it could be expanded!', 'more citations': '📚 This needs more sources!', 'unreferenced': '❓ This does not cite any sources yet!',
-        'file improvement': '🖼️ This file could be improved!', 'images needed': '📷 This needs images!', 'image needed': '📷 This needs images!', 'cleanup': '🧹 This may need cleanup!', 'copy edit': '✏️ This may need copy editing!',
-        'too technical': '🔬 This may be too technical for most readers!', 'outdated': '⏳ Parts of this may be out of date!', 'disputed': '⚠️ The accuracy of this is disputed!',
-        'expand': '➕ This section needs more detail!', 'orphan': '🔗 No other entries link here yet!', 'in use': '🚧 This is being written right now!',
-        'merge': '🔀 It has been suggested that this be merged with another entry!',
+        'stub': ['stub', 'This is a stub: it could be expanded!'], 'more citations': ['question', 'This needs more sources!'], 'unreferenced': ['question', 'This does not cite any sources yet!'],
+        'file improvement': ['image', 'This file could be improved!'], 'images needed': ['photo', 'This needs images!'], 'image needed': ['photo', 'This needs images!'], 'cleanup': ['tip', 'This may need cleanup!'], 'copy edit': ['tip', 'This may need copy editing!'],
+        'too technical': ['tip', 'This may be too technical for most readers!'], 'outdated': ['exclamation', 'Parts of this may be out of date!'], 'disputed': ['exclamation', 'The accuracy of this is disputed!'],
+        'expand': ['stub', 'This section needs more detail!'], 'orphan': ['info', 'No other entries link here yet!'], 'in use': ['info', 'This is being written right now!'],
+        'merge': ['info', 'It has been suggested that this be merged with another entry!'],
     };
+    const noticeIcon = (name) => '<img src="' + OPENDB + 'icons/' + name + '.png" alt="" aria-hidden="true" style="width:1.25em;height:1.25em;vertical-align:-0.25em;margin-right:0.3em">';
     const INLINE_TAGS = { 'citation needed': 'citation needed', 'cn': 'citation needed', 'fact': 'citation needed', 'clarify': 'clarification needed', 'dubious': 'dubious',
         'vague': 'vague', 'when': 'when?', 'who': 'who?', 'which': 'which?', 'page needed': 'page needed' };
     const tplName = (raw) => String(raw).split('|')[0].trim().toLowerCase().replace(/[\s_-]+/g, ' ');
     function tplHtml(raw, block) {
         const name = tplName(raw);
         const args = String(raw).split('|').slice(1).map((s) => s.trim()).filter(Boolean);
-        let text = INLINE_TAGS[name] ? '[' + INLINE_TAGS[name] + ']' : NOTICES[name];
+        let text = INLINE_TAGS[name] ? '[' + INLINE_TAGS[name] + ']' : NOTICES[name] && NOTICES[name][1];
         if (!text && /^(main|see also|further|distinguish|about)$/.test(name)) text = '↪ ' + name.replace(/^./, (c) => c.toUpperCase()) + ': ' + args.join(', ');
         if (!text) text = '⚑ {{' + raw + '}}';
         else if (args.length && NOTICES[name]) text += ' (' + args.join(', ') + ')';
         const tag = block ? 'div' : 'span';
-        return '<' + tag + ' class="kd-tpl' + (block ? ' kd-tpl-block' : '') + '" data-kd-tpl="' + esc(raw) + '" contenteditable="false">' + esc(text) + '</' + tag + '>';
+        return '<' + tag + ' class="kd-tpl' + (block ? ' kd-tpl-block' : '') + '" data-kd-tpl="' + esc(raw) + '" contenteditable="false">' + (NOTICES[name] ? noticeIcon(NOTICES[name][0]) : '') + esc(text) + '</' + tag + '>';
     }
 
     function mathHtml(tex, display) {
