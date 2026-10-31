@@ -8,7 +8,7 @@ src/ATTRIBUTIONS.md, ATTRIBUTIONS-ICONS.md and ATTRIBUTIONS-FONTS.md.
 ------------------------------------------------------------------------------
 draw.io
 ------------------------------------------------------------------------------
-Writeout, Bitbook and Imbuer can open the draw.io diagram editor.
+Writeout, Bitbook, Imbuer and Amber can open the draw.io diagram editor.
 
   * draw.io is developed by draw.io Ltd (previously named JGraph) and
     draw.io AG. Its source code (https://github.com/jgraph/drawio) is
