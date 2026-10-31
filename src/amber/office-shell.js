@@ -852,6 +852,8 @@
     function prefsKey() { return cfg.key + '_office_prefs'; }
 
     function currentLayout() {
+        // a New-style phone page always opens in the New style (its Classic is a separate page)
+        if (document.documentElement.hasAttribute('data-os-classic-url')) return 'office';
         return lsGet(layoutKey(), 'office') === 'classic' ? 'classic' : 'office';
     }
 
@@ -867,6 +869,13 @@
 
     function setLayout(l) {
         l = l === 'classic' ? 'classic' : 'office';
+        // a phone page whose Classic style is a separate mobile app (Writeout and Bitbook): Classic goes there
+        const classicUrl = document.documentElement.getAttribute('data-os-classic-url');
+        if (l === 'classic' && classicUrl) {
+            try { localStorage.setItem('radii-mobile-style-' + cfg.key, 'classic'); } catch (e) {}
+            location.href = classicUrl;
+            return;
+        }
         if (currentLayout() === l && document.body.classList.contains(l === 'office' ? 'os-office' : 'os-classic')) {
             toast(l === 'office' ? 'Already in the ' + cfg.officeName + ' layout!' : 'Already in ' + cfg.app + ' Classic!');
             syncLayoutCards();
@@ -1138,6 +1147,17 @@
         const th = cfg.theme || {};
         Object.keys(th).forEach(function (k) { root.setProperty('--os-' + k, th[k]); });
         document.body.classList.add('os-app-' + (cfg.kind || 'word'));
+        // Phone mode: on small screens, and always on an app's /mobile/ page (<html data-os-phone>)
+        const phoneMQ = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
+        const setPhone = function () {
+            const on = document.documentElement.hasAttribute('data-os-phone') || !!(phoneMQ && phoneMQ.matches);
+            if (document.body.classList.contains('os-phone') === on) return;
+            document.body.classList.toggle('os-phone', on);
+            try { if (cfg.onPhone) cfg.onPhone(on); } catch (e) { console.error(e); }
+            queueSync();
+        };
+        setPhone();
+        if (phoneMQ) { if (phoneMQ.addEventListener) phoneMQ.addEventListener('change', setPhone); else if (phoneMQ.addListener) phoneMQ.addListener(setPhone); }
         buildChrome();
         buildRibbon();
         buildBackstage();
@@ -1168,6 +1188,7 @@
         setLayout: setLayout,
         layout: currentLayout,
         isOffice: isOffice,
+        isPhone: function () { return document.body.classList.contains('os-phone'); },
         sync: queueSync,
         showTab: showTab,
         flashSaved: flashSaved,

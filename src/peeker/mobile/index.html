@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en" data-os-phone>
+<head>
+    <!-- Made by scripts/build_mobile.mjs from /peeker/index.html: edit that page, not this one! -->
+    <base href="../">
+    <script>
+    (function () {
+        // remember that this phone uses the New style for peeker
+        try { localStorage.setItem('radii-mobile-style-peeker', 'new'); } catch (e) {}
+        // with <base>, a link like href="#/e/qubit" would jump to the desktop page: keep it on this page
+        document.addEventListener('click', function (e) {
+            var a = e.target && e.target.closest && e.target.closest('a[href^="#"]');
+            if (!a || e.defaultPrevented || a.target) return;
+            var h = a.getAttribute('href');
+            if (!h || h.length < 2) return;
+            e.preventDefault();
+            location.hash = h.slice(1);
+        });
+    })();
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Peeker - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="peeker.css?v=20261131y">
+    <!-- Keydown, the same one Antimony, Phosphor and Formly use: chips, highlights and every other style in text marks -->
+    <link rel="stylesheet" href="keydown.css?v=20261132c">
+    <link rel="stylesheet" href="keydown-marketplace.css?v=20261131y">
+    <link rel="stylesheet" href="../writeout/annotate-hl.css?v=20261132c">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script src="/offline.js?v=20261132g" defer></script>
+    <script src="/phone-drawer.js?v=20261132r" defer></script>
+</head>
+<body>
+    <!-- Peeker Classic: orange glass sidebar and gel buttons! -->
+    <nav id="sidebar" class="aero-sidebar">
+        <div class="sidebar-brand"><h2><img class="brand-logo" src="favicon-96.png" alt="">Peeker</h2></div>
+        <div class="pad-selection-stack">
+            <button class="pad-toggle-btn" id="open-btn" title="Open a PDF from your computer (or drop one anywhere)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /></svg>
+                Open PDF
+            </button>
+            <button class="pad-toggle-btn" id="blank-btn" title="Start a fresh blank PDF">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M12 11v6M9 14h6" /></svg>
+                New Blank PDF
+            </button>
+            <button class="pad-toggle-btn" id="merge-btn" title="Add the pages of another PDF to the end of this one">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4h9a2 2 0 0 1 2 2v9M5 8h9a2 2 0 0 1 2 2v9a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1zM10.5 12v5M8 14.5h5" /></svg>
+                Add Pages...
+            </button>
+            <button class="pad-toggle-btn" id="save-btn" title="Download the edited PDF (Ctrl+S)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v12m0 0l-5-5m5 5l5-5M4 20h16" /></svg>
+                Save PDF
+            </button>
+            <button class="pad-toggle-btn" id="extract-btn" title="Download only the selected pages (Ctrl+click page thumbnails to pick several)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8zM14 3v5h5M9 15l3 3 3-3M12 11v7" /></svg>
+                Extract Pages
+            </button>
+            <button class="pad-toggle-btn" id="forms-btn" title="Fill in the form fields of this PDF">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16v4H4zM4 13h16v6H4zM7 7h.01M7 16h6" /></svg>
+                Fill Forms
+            </button>
+            <button class="pad-toggle-btn" id="find-btn" title="Find words in this PDF (Ctrl+F)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 18a7 7 0 1 0 0-14a7 7 0 0 0 0 14M21 21l-5-5" /></svg>
+                Find Text
+            </button>
+        </div>
+        <div class="doc-menu-box">
+            <span class="section-label">Documents</span>
+            <div id="doc-list" class="doc-list"></div>
+        </div>
+        <div class="sidebar-foot">
+            <label class="section-label" for="doc-name">Document name</label>
+            <input type="text" id="doc-name" class="aero-input" maxlength="120" placeholder="No document open" disabled>
+            <div id="doc-info" class="doc-info">Nothing open yet!</div>
+        </div>
+    </nav>
+
+    <main class="pk-main">
+        <header class="pk-toolbar">
+            <div class="view-seg" id="tools" role="toolbar" aria-label="Tools">
+                <button class="view-seg-btn active" data-tool="select" title="Select and move marks (V)">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 8l-6 2l-2 6z" /></svg>Select</button>
+                <button class="view-seg-btn" data-tool="text" title="Add text (T)">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 6V4h14v2M12 4v16M9 20h6" /></svg>Text</button>
+                <button class="view-seg-btn" data-tool="hl" title="Highlight an area (H)">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.5 4.5l5 5l-8 8H6.5v-5zM4 21h16" /></svg>Highlight</button>
+                <button class="view-seg-btn" data-tool="ink" title="Draw freehand (D)">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 17c3-6 5-9 7-9s0 8 3 8s4-6 8-9" /></svg>Draw</button>
+                <button class="view-seg-btn" data-tool="box" title="Draw a box (B)">
+                    <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="1.5" fill="none" stroke="currentColor" stroke-width="2" /></svg>Box</button>
+                <button class="view-seg-btn" data-tool="white" title="Cover something up with white (W)">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10M5 14l7-10l7 10zM9 14v3h6v-3" /></svg>Whiteout</button>
+                <button class="view-seg-btn" data-tool="img" title="Place a picture">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5h16v14H4zM4 16l5-5l4 4l3-3l4 4M15 9h.01" /></svg>Image</button>
+                <button class="view-seg-btn" data-tool="sign" title="Draw your signature and place it">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 18c2-1 3-5 5-5s0 5 2 5s3-4 4-4s1 3 3 3M15 4l5 5l-7 7h-5v-5zM3 21h18" /></svg>Sign</button>
+            </div>
+            <div class="pk-group" id="style-group">
+                <div class="swatches" id="swatches"></div>
+                <label class="pk-size" title="Text size or line width"><span id="size-label">Size</span><input type="number" id="size-input" min="1" max="96" value="16"></label>
+            </div>
+            <div class="pk-group" id="font-group" role="group" aria-label="Font" hidden>
+                <select id="font-select" class="pk-font" title="Font" aria-label="Font">
+                    <option value="sans">Sans (Helvetica)</option>
+                    <option value="serif">Serif (Times)</option>
+                    <option value="mono">Mono (Courier)</option>
+                </select>
+                <button class="gel-btn icon fmt" data-fmt="bold" title="Bold (Ctrl+B)" aria-pressed="false"><b>B</b></button>
+                <button class="gel-btn icon fmt" data-fmt="italic" title="Italic (Ctrl+I)" aria-pressed="false"><i>I</i></button>
+                <button class="gel-btn icon fmt" data-fmt="underline" title="Underline (Ctrl+U)" aria-pressed="false"><u>U</u></button>
+                <button class="gel-btn icon fmt" data-fmt="strike" title="Strikethrough" aria-pressed="false"><s>S</s></button>
+            </div>
+            <div class="pk-group">
+                <button class="gel-btn icon" id="undo-btn" title="Undo (Ctrl+Z)"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14L4 9l5-5M4 9h11a5 5 0 0 1 0 10h-3" /></svg></button>
+                <button class="gel-btn icon" id="redo-btn" title="Redo (Ctrl+Y)"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 14l5-5l-5-5M20 9H9a5 5 0 0 0 0 10h3" /></svg></button>
+                <button class="gel-btn icon" id="del-mark-btn" title="Delete the selected mark (Delete)"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7h16M10 11v6M14 11v6M5 7l1 13h12l1-13M9 7V4h6v3" /></svg></button>
+            </div>
+            <div class="pk-group">
+                <button class="gel-btn icon" id="zoom-out" title="Zoom out (Ctrl+-)"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 12h14" /></svg></button>
+                <button class="gel-btn zoom-label" id="zoom-fit" title="Fit the page width">100%</button>
+                <button class="gel-btn icon" id="zoom-in" title="Zoom in (Ctrl+=)"><svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M5 12h14M12 5v14" /></svg></button>
+            </div>
+        </header>
+
+        <div class="pk-pagebar" id="pagebar">
+            <span class="pk-pageinfo" id="page-info">Page 0 of 0</span>
+            <button class="gel-btn small" data-page="rotl" title="Rotate page left">⟲ Rotate left</button>
+            <button class="gel-btn small" data-page="rotr" title="Rotate page right">⟳ Rotate right</button>
+            <button class="gel-btn small" data-page="up" title="Move page earlier">▲ Move up</button>
+            <button class="gel-btn small" data-page="down" title="Move page later">▼ Move down</button>
+            <button class="gel-btn small" data-page="dup" title="Duplicate page">⧉ Duplicate</button>
+            <button class="gel-btn small" data-page="blank" title="Insert a blank page after this one">＋ Blank page</button>
+            <button class="gel-btn small danger" data-page="del" title="Delete the selected pages">✕ Delete page</button>
+        </div>
+
+        <div class="pk-body">
+            <aside class="pk-thumbs" id="thumbs" aria-label="Pages"></aside>
+            <section class="pk-viewer" id="viewer">
+                <div id="pages" class="pk-pages"></div>
+                <div id="empty" class="pk-empty">
+                    <div class="pk-empty-card">
+                        <img src="icon-192.png" alt="" class="pk-empty-ico">
+                        <h1>Peek inside a PDF!</h1>
+                        <p id="empty-msg">Drop a PDF anywhere, or press <b>Open PDF</b>! Add text, highlights, drawings, pictures and signatures, fill forms, and rearrange pages!</p>
+                        <button class="gel-btn big" id="empty-open">Open PDF</button>
+                    </div>
+                </div>
+            </section>
+            <aside class="pk-panel" id="panel" hidden>
+                <div class="pk-panel-head"><b id="panel-title">Panel</b><button class="gel-btn icon small" id="panel-close" title="Close">✕</button></div>
+                <div id="panel-body" class="pk-panel-body"></div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Signature pad! -->
+    <div class="modal-gate" id="sign-modal" hidden>
+        <div class="modal-card">
+            <div class="modal-title">Draw your signature!</div>
+            <canvas id="sign-pad" width="520" height="200"></canvas>
+            <div class="modal-actions">
+                <button class="gel-btn" id="sign-clear">Clear</button>
+                <span class="grow"></span>
+                <button class="gel-btn" id="sign-cancel">Cancel</button>
+                <button class="gel-btn primary" id="sign-ok">Place it!</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="drop-veil" id="drop-veil">Drop to open in Peeker!</div>
+    <div class="pk-toast" id="toast"></div>
+    <input type="file" id="file-open" accept="application/pdf,.pdf" multiple hidden>
+    <input type="file" id="file-merge" accept="application/pdf,.pdf" hidden>
+    <input type="file" id="file-img" accept="image/*" hidden>
+    <script src="keydown.js?v=20261132c"></script>
+    <script src="peeker.js?v=20261131y" defer></script>
+</body>
+</html>

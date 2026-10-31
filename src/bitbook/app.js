@@ -9572,9 +9572,14 @@ function checkAndRedirectMobile() {
     const isMobileScreen = window.innerWidth <= 768;
     const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
     
-    // 3. Redirect if on mobile AND not already on the target page (prevents infinite loops)
-    if ((isMobileScreen || isMobileUserAgent) && !window.location.pathname.includes(mobileTargetUrl)) {
-        window.location.href = mobileTargetUrl;
+    // 3. Redirect if on mobile AND not already on a mobile page (prevents infinite loops);
+    //    a phone page (this app's own New-style phone copy) never redirects
+    if (document.documentElement.hasAttribute('data-os-phone') || window.location.pathname.includes('/mobile/')) return;
+    if (isMobileScreen || isMobileUserAgent) {
+        // the mobile style used last: New (this app in phone mode) or Classic (the separate mobile app)
+        let style = 'new';
+        try { style = localStorage.getItem('radii-mobile-style-bitbook') || 'new'; } catch (e) {}
+        window.location.href = style === 'classic' ? mobileTargetUrl : 'mobile/new/';
     }
 }
 

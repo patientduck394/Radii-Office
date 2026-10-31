@@ -217,3 +217,23 @@ body.os-dark .wo-gp-p { color: #e5e5e5; }
     body.os-office.wo-pages #wysiwyg-canvas, body.os-office.wo-web #wysiwyg-canvas { padding: 0 !important; width: 100% !important; box-shadow: none !important; }
     #wo-page-rules { display: none; }
 }
+
+/* Phone mode: Mobile View, like Word's: the text fills the screen instead of a full paper page,
+   and the side panes step aside (Print Layout comes back on a bigger screen) */
+body.os-office.os-phone .canvas-scrollbox { padding: 0 8px; overflow-x: hidden; }
+body.os-office.os-phone #wo-zoomer { width: 100% !important; margin: 10px 0 28px; transform: none !important; }
+body.os-office.os-phone #wo-sheets { display: none !important; }
+body.os-office.os-phone #wysiwyg-canvas {
+    width: 100% !important; max-width: none !important; min-height: 70vh !important; margin: 0 !important;
+    padding: 20px 16px 40px !important; background: var(--wo-sheet-bg, #fff) !important; border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 6px 18px rgba(0, 0, 0, 0.08) !important;
+}
+body.os-office.os-phone.os-dark #wysiwyg-canvas { background: #1f1f1f; }
+body.os-office.os-phone #format-sidebar, body.os-office.os-phone #wo-nav { display: none !important; }
+
+/* Phone mode: the Navigation pane slides in over the page as a drawer */
+body.os-office.os-phone:not(.wo-nav-off):not(.wo-focus) #sidebar {
+    display: flex !important; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; width: min(300px, 84vw); z-index: 70;
+    overflow-y: auto; box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35), 6px 0 24px rgba(0, 0, 0, 0.3); animation: osPhoneDrawer 0.28s var(--os-ease);
+}
+@keyframes osPhoneDrawer { from { transform: translateX(-100%); } }

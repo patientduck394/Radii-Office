@@ -431,3 +431,13 @@ body.os-office.am-pane-on #amber-anim-pane {
     body.os-office .thumbnail-panel { width: 120px; padding-left: 24px; }
     body.os-office.am-pane-on #amber-anim-pane { display: none; }
 }
+
+/* Phone mode: the slide list becomes a swipeable strip of thumbnails under the slide, like PowerPoint on a phone */
+body.os-office.os-phone .slides-editor-container { flex-direction: column-reverse !important; }
+body.os-office.os-phone .thumbnail-panel {
+    width: auto !important; height: 104px; flex: none; flex-direction: row !important; overflow-x: auto; overflow-y: hidden;
+    padding: 8px 10px !important; gap: 10px; border-right: 0; border-top: 1px solid var(--os-ribbon-line); scrollbar-width: none;
+}
+body.os-office.os-phone .thumbnail-panel::-webkit-scrollbar { display: none; }
+body.os-office.os-phone .thumbnail-card { flex: none; width: 128px; margin: 0; }
+body.os-office.os-phone .thumbnail-number { position: absolute; left: 4px; top: 2px; z-index: 2; font-size: 11px; }

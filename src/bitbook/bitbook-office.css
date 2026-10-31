@@ -224,3 +224,16 @@ body.os-dark .bb-gp-p { color: #e5e5e5; }
 
 /* No OneNote page title header: the canvas is exactly Bitbook's own! (Rename pages from the title bar or the page list.) */
 #on-page-head { display: none !important; }
+
+/* Phone mode: the note fills the screen, the side panes step aside, and the Jumper rail slims down */
+body.os-office.os-phone #format-sidebar, body.os-office.os-phone #bb-nav, body.os-office.os-phone .bb-notebook-pane { display: none !important; }
+body.os-office.os-phone .workspace-viewport-wrapper { grid-column: 1 / -1; }
+body.os-office.os-phone #wysiwyg-canvas { padding-left: 14px !important; padding-right: 22px !important; }
+body.os-office.os-phone #doc-jumper-rail { width: 8px !important; }
+
+/* Phone mode: the page list slides in over the page as a drawer */
+body.os-office.os-phone:not(.bb-nav-off):not(.bb-full) #sidebar {
+    display: flex !important; flex-direction: column; position: fixed; left: 0; top: 0; bottom: 0; width: min(300px, 84vw); z-index: 70;
+    overflow-y: auto; box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35), 6px 0 24px rgba(0, 0, 0, 0.3); animation: osPhoneDrawer 0.28s var(--os-ease);
+}
+@keyframes osPhoneDrawer { from { transform: translateX(-100%); } }

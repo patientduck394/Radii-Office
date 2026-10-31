@@ -620,6 +620,23 @@
         }
     ];
 
+    /* ---------- Phone mode: the page list is a drawer that starts closed ---------- */
+    // (tapping outside it, or picking something in it, closes it again; the ribbon's toggle opens it)
+    function phoneDrawer() {
+        if (!OS.isPhone() || !prefs.nav) return;
+        prefs.nav = false;
+        applyView();
+    }
+    document.addEventListener('click', function (e) {
+        if (!OS.isPhone() || !prefs.nav || !office()) return;
+        const side = document.getElementById('sidebar');
+        if (!side || e.target.closest('#os-top, #os-status, .os-menu, .os-dlg')) return;
+        if (side.contains(e.target) && !e.target.closest('button, a, li, [data-page], [data-note], .page-item, .note-item')) return;
+        prefs.nav = false;
+        applyView();
+        OS.sync();
+    }, true);
+
     /* ---------- Boot ---------- */
     buildHead();
     OS.init({
@@ -662,6 +679,7 @@
         },
         onLayout: function () { applyView(); }
     });
+    phoneDrawer();
 
     // Bitbook Classic's Settings gets the layout cards too!
     const classicBody = document.querySelector('#settings-modal-overlay .dialog-body-scroll');

@@ -494,3 +494,55 @@ body.os-no-anim #os-top *, body.os-no-anim #os-status *, body.os-no-anim .os-men
 .os-st-chip { box-shadow: 0 2px 6px var(--os-gel-glow, rgba(0, 0, 0, 0.2)), inset 0 1px 2px #fff !important; }
 .os-dlg-btn.danger.primary { background: linear-gradient(180deg, #f87171 0%, #dc2626 100%) !important; border-color: #fecaca !important; box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3), inset 0 1px 2px #fff !important; }
 #os-title { text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25); }
+
+
+/* =====================================================================
+   Phone mode (body.os-phone): small screens, and every app's /mobile/ page.
+   The tab row and the ribbon become swipeable strips with touch-size buttons,
+   menus and dialogs fit the screen, the File screen's menu moves to the top,
+   and the status bar slims down.
+   ===================================================================== */
+body.os-phone #os-title { height: 44px; padding: 0 6px; gap: 6px; }
+body.os-phone .os-search, body.os-phone .os-brand, body.os-phone .os-saved { display: none; }
+body.os-phone #os-docname { max-width: 46vw; font-size: 14px; }
+body.os-phone .os-qbtn { width: 36px; height: 36px; }
+body.os-phone #os-tabs { height: 40px; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -webkit-overflow-scrolling: touch; padding: 0 4px; }
+body.os-phone #os-tabs::-webkit-scrollbar { display: none; }
+body.os-phone .os-tab { font-size: 14px; padding: 0 14px; flex: none; }
+body.os-phone .os-file { padding: 0 16px; }
+body.os-phone #os-collapse { position: sticky; right: 0; flex: none; background: var(--os-ribbon); }
+body.os-phone #os-ribbon { height: 92px; scroll-snap-type: x proximity; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+body.os-phone #os-ribbon::-webkit-scrollbar { display: none; }
+body.os-phone.os-ribbon-min.os-ribbon-peek #os-ribbon { height: 92px; }
+body.os-phone .os-panel { padding: 4px 2px 0; }
+body.os-phone .os-group { scroll-snap-align: start; padding: 0 4px; }
+body.os-phone .os-rb.big { min-width: 56px; height: 66px; font-size: 11.5px; }
+body.os-phone .os-rb.sm { min-height: 30px; }
+/* a soft fade at the right edge says "there is more to swipe" */
+body.os-phone #os-ribbon { -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent); mask-image: linear-gradient(90deg, #000 88%, transparent); }
+/* menus and dialogs fit the screen, with bigger touch rows */
+body.os-phone .os-menu { max-width: calc(100vw - 12px); max-height: 70vh; overflow-y: auto; }
+body.os-phone .os-menu .os-mi, body.os-phone .os-menu button { min-height: 40px; font-size: 15px; }
+body.os-phone .os-dlg { width: calc(100vw - 16px) !important; max-width: none; max-height: calc(100dvh - 24px); overflow-y: auto; }
+/* the File screen: its menu becomes a strip across the top */
+body.os-phone #os-backstage { flex-direction: column; }
+body.os-phone .os-bs-nav { width: auto; flex-direction: row; overflow-x: auto; padding: 6px; gap: 4px; flex: none; scrollbar-width: none; }
+body.os-phone .os-bs-nav::-webkit-scrollbar { display: none; }
+body.os-phone .os-bs-nav button { flex: none; width: auto; padding: 8px 12px; }
+body.os-phone .os-bs-nav button span { display: inline; }
+body.os-phone .os-bs-nav .os-bs-back { margin: 0 6px 0 0; }
+body.os-phone .os-bs-body { padding: 18px 14px; }
+body.os-phone .os-bs-body h1 { font-size: 24px; margin-bottom: 14px; }
+/* the status bar: just the essentials */
+body.os-phone #os-status { height: 30px; font-size: 12px; }
+body.os-phone .os-zoom-box { display: none; }
+body.os-phone #os-status-l { gap: 10px; }
+body.os-phone .os-view-btn { width: 34px; height: 26px; }
+/* the layout picker stacks its two cards */
+body.os-phone .os-lay-cards { flex-direction: column; }
+/* the title bar: the document name takes what is left and trims with "…"; only the first two quick buttons stay */
+body.os-phone #os-title { grid-template-columns: auto minmax(0, 1fr) auto; }
+body.os-phone .os-tc { justify-content: flex-start; overflow: hidden; }
+body.os-phone #os-docname { width: 100%; max-width: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body.os-phone .os-qat .os-qbtn:nth-child(n+3) { display: none; }
+body.os-phone .os-logo { display: none; }

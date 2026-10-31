@@ -865,6 +865,23 @@
         OS.dialog('Keyboard Shortcuts', '<table class="wo-wc">' + rows.map(function (r) { return '<tr><td><b>' + OS.esc(r[0]) + '</b></td><td>' + OS.esc(r[1]) + '</td></tr>'; }).join('') + '</table>');
     }
 
+    /* ---------- Phone mode: the Navigation pane is a drawer that starts closed ---------- */
+    // (tapping outside it, or picking something in it, closes it again; the ribbon's toggle opens it)
+    function phoneDrawer() {
+        if (!OS.isPhone() || !prefs.nav) return;
+        prefs.nav = false;
+        applyView();
+    }
+    document.addEventListener('click', function (e) {
+        if (!OS.isPhone() || !prefs.nav || !office()) return;
+        const side = document.getElementById('sidebar');
+        if (!side || e.target.closest('#os-top, #os-status, .os-menu, .os-dlg')) return;
+        if (side.contains(e.target) && !e.target.closest('button, a, li, [data-page], [data-note], .page-item, .note-item')) return;
+        prefs.nav = false;
+        applyView();
+        OS.sync();
+    }, true);
+
     /* ---------- Boot ---------- */
     OS.init({
         app: 'Writeout',
@@ -893,6 +910,7 @@
             return ['Page <b>' + currentPage() + '</b> of <b>' + pageCount + '</b>'].concat(goal ? [goal] : []).concat([ '<b>' + s.words.toLocaleString() + '</b> word' + (s.words === 1 ? '' : 's'), '<b>' + s.chars.toLocaleString() + '</b> characters', OS.esc((kdActiveTab() || {}).name || '')]);
         },
         views: [
+            { icon: 'navPane', title: 'Navigation Pane', run: function () { prefs.nav = !prefs.nav; savePrefs(); applyView(); }, active: function () { return prefs.nav; } },
             { icon: 'focus', title: 'Focus', run: function () { setFocus(true); }, active: function () { return prefs.focus; } },
             { icon: 'pages', title: 'Pages (Print Layout)', run: function () { setPagesView(true); }, active: function () { return prefs.pages; } },
             { icon: 'web', title: 'Continuous (Web Layout)', run: function () { setPagesView(false); }, active: function () { return !prefs.pages; } }
@@ -907,6 +925,7 @@
         },
         onLayout: function () { applyView(); }
     });
+    phoneDrawer();
 
     // Classic Settings gets the layout cards too!
     const classicBody = document.querySelector('#settings-modal-overlay .dialog-body-scroll');
