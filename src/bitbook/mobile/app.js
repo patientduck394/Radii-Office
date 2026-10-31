@@ -85,6 +85,16 @@ if (canvas) {
     canvas.addEventListener('input', autoSaveCanvasContent);
 }
 
+// Bring the saved note back when the app opens, then let saves through
+// (unless restoring is turned off, the same setting as the desktop Bitbook)!
+document.addEventListener('DOMContentLoaded', function () {
+    try {
+        const saved = localStorage.getItem('bitbook_save_slot_1');
+        if (canvas && saved && localStorage.getItem('bitbook_restore_notes') !== '0') canvas.innerHTML = saved;
+    } catch (e) {}
+    loadActivePadDataStream('1');
+});
+
 // ==========================================
 // PART 2: AUDIO SOUND EFFECTS ENGINE
 // ==========================================

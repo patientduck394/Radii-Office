@@ -270,8 +270,17 @@
         }
 
         /* Download buttons + the operating system picker! */
-        .card-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
-        .card-actions .launch-btn { margin-top: 0; }
+        .card-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 4px; }
+        .card-actions .launch-btn { margin-top: 0; display: inline-flex; align-items: center; }
+        .card-actions .mobile-btn { line-height: 1.15; }
+        .mobile-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; text-decoration: none;
+            font-weight: 800; font-size: 0.85rem; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.3); border: 1px solid #9333ea;
+            background: linear-gradient(180deg, #d8b4fe 0%, #a855f7 50%, #9333ea 51%, #c084fc 100%);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.7), 0 3px 10px rgba(147,51,234,0.35); transition: transform .15s, box-shadow .15s;
+        }
+        .mobile-btn:hover { transform: translateY(-2px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.7), 0 6px 18px rgba(147,51,234,0.5); }
+        .mobile-btn:focus-visible { outline: 2px solid #e9d5ff; outline-offset: 2px; }
         .download-btn {
             background: linear-gradient(180deg, #ffffff 0%, #dbeafe 100%);
             border: 1px solid #9eddff;
@@ -359,7 +368,10 @@
                 <div class="product-desc-box">
                     <span>Vector graphics editor featuring drag multi-select box controls, real-time Bezier node dragging, and canvas pan/zoom.</span>
                 </div>
-                <a href="/inkpath" class="launch-btn">Launch Inkpath →</a>
+                <div class="card-actions">
+                    <a href="/inkpath" class="launch-btn">Launch Inkpath →</a>
+                    <a href="/inkpath/mobile/" class="mobile-btn" title="The phone version of Inkpath">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Radii Base -->
@@ -374,7 +386,10 @@
                 <div class="product-desc-box">
                     <span>Relational record database manager with custom field builders, search filters, interactive table grids, and gallery views.</span>
                 </div>
-                <a href="/mainkey" class="launch-btn">Launch Mainkey →</a>
+                <div class="card-actions">
+                    <a href="/mainkey" class="launch-btn">Launch Mainkey →</a>
+                    <a href="/mainkey/mobile/" class="mobile-btn" title="The phone version of Mainkey">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Sheets -->
@@ -389,7 +404,10 @@
                 <div class="product-desc-box">
                     <span>Data grid calculator tailored for mathematical analysis, custom cell formatting, and quick data layout grids.</span>
                 </div>
-                <a href="/imbuer" class="launch-btn">Launch Imbuer →</a>
+                <div class="card-actions">
+                    <a href="/imbuer" class="launch-btn">Launch Imbuer →</a>
+                    <a href="/imbuer/mobile/" class="mobile-btn" title="The phone version of Imbuer">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Writer -->
@@ -406,6 +424,7 @@
                 </div>
                 <div class="card-actions">
                     <a href="/writeout" class="launch-btn">Launch Writeout →</a>
+                    <a href="/writeout/mobile/new/" class="mobile-btn" title="The phone version of Writeout">📱 Mobile</a>
                     <button type="button" class="download-btn" data-download-app="writeout">Download ⬇</button>
                 </div>
             </article>
@@ -422,7 +441,10 @@
                 <div class="product-desc-box">
                     <span>Slide presentation studio featuring glossy 3D shapes, spring-animated context menus, and fullscreen presentation mode.</span>
                 </div>
-                <a href="/amber" class="launch-btn">Launch Amber →</a>
+                <div class="card-actions">
+                    <a href="/amber" class="launch-btn">Launch Amber →</a>
+                    <a href="/amber/mobile/" class="mobile-btn" title="The phone version of Amber">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Publisher -->
@@ -437,7 +459,10 @@
                 <div class="product-desc-box">
                     <span>Visual layout suite for positioning web elements, crafting templates, and generating direct HTML output.</span>
                 </div>
-                <a href="/omicron" class="launch-btn">Launch Omicron →</a>
+                <div class="card-actions">
+                    <a href="/omicron" class="launch-btn">Launch Omicron →</a>
+                    <a href="/omicron/mobile/" class="mobile-btn" title="The phone version of Omicron">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Formly -->
@@ -452,7 +477,10 @@
                 <div class="product-desc-box">
                     <span>A form app for everyone!</span>
                 </div>
-                <a href="/formly" class="launch-btn">Launch Formly →</a>
+                <div class="card-actions">
+                    <a href="/formly" class="launch-btn">Launch Formly →</a>
+                    <a href="/formly/mobile/" class="mobile-btn" title="The phone version of Formly">📱 Mobile</a>
+                </div>
             </article>
             
             <!-- OpenDB -->
@@ -467,7 +495,10 @@
                 <div class="product-desc-box">
                     <span>A free database of articles, media and papers that anyone can reuse, all public domain (CC0)!</span>
                 </div>
-                <a href="/opendb" class="launch-btn">Launch OpenDB →</a>
+                <div class="card-actions">
+                    <a href="/opendb" class="launch-btn">Launch OpenDB →</a>
+                    <a href="/opendb/mobile/" class="mobile-btn" title="The phone version of Opendb">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Peeker -->
@@ -482,7 +513,10 @@
                 <div class="product-desc-box">
                     <span>A PDF editor for marking up, signing, filling forms and rearranging pages, right in your browser!</span>
                 </div>
-                <a href="/peeker" class="launch-btn">Launch Peeker →</a>
+                <div class="card-actions">
+                    <a href="/peeker" class="launch-btn">Launch Peeker →</a>
+                    <a href="/peeker/mobile/" class="mobile-btn" title="The phone version of Peeker">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Cabinet -->
@@ -497,7 +531,10 @@
                 <div class="product-desc-box">
                     <span>A drive app that is easy to use, allows drive downloads, and does not lag!</span>
                 </div>
-                <a href="/cabinet" class="launch-btn">Launch Cabinet →</a>
+                <div class="card-actions">
+                    <a href="/cabinet" class="launch-btn">Launch Cabinet →</a>
+                    <a href="/cabinet/mobile/" class="mobile-btn" title="The phone version of Cabinet">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Phosphor -->
@@ -512,7 +549,10 @@
                 <div class="product-desc-box">
                     <span>A messaging app designed for teams that is easy to use and has great features! (No sign-up required!)</span>
                 </div>
-                <a href="/phosphor" class="launch-btn">Launch Phosphor →</a>
+                <div class="card-actions">
+                    <a href="/phosphor" class="launch-btn">Launch Phosphor →</a>
+                    <a href="/phosphor/mobile/" class="mobile-btn" title="The phone version of Phosphor">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Phosphor -->
@@ -529,6 +569,7 @@
                 </div>
                 <div class="card-actions">
                     <a href="/bitbook" class="launch-btn">Launch Bitbook →</a>
+                    <a href="/bitbook/mobile/new/" class="mobile-btn" title="The phone version of Bitbook">📱 Mobile</a>
                     <button type="button" class="download-btn" data-download-app="bitbook">Download ⬇</button>
                 </div>
             </article>
@@ -545,7 +586,10 @@
                 <div class="product-desc-box">
                     <span>Calendar app with month views, event agendas, and .ICS import and export!</span>
                 </div>
-                <a href="/hexa" class="launch-btn">Launch Hexa →</a>
+                <div class="card-actions">
+                    <a href="/hexa" class="launch-btn">Launch Hexa →</a>
+                    <a href="/hexa/mobile/" class="mobile-btn" title="The phone version of Hexa">📱 Mobile</a>
+                </div>
             </article>
 
             <!-- Taskra -->
@@ -560,7 +604,10 @@
                 <div class="product-desc-box">
                     <span>To-do lists with priorities, due dates, filters, and .TK import and export!</span>
                 </div>
-                <a href="/taskra" class="launch-btn">Launch Taskra →</a>
+                <div class="card-actions">
+                    <a href="/taskra" class="launch-btn">Launch Taskra →</a>
+                    <a href="/taskra/mobile/" class="mobile-btn" title="The phone version of Taskra">📱 Mobile</a>
+                </div>
             </article>
         </div>
 
@@ -585,7 +632,10 @@
                     <div class="product-desc-box">
                         <span>Note taking suite for creating fun notes, crafting styles, and making shareable .KD-format notes.</span>
                     </div>
-                    <a href="/waterflow" class="launch-btn">Launch Waterflow →</a>
+                    <div class="card-actions">
+                        <a href="/waterflow" class="launch-btn">Launch Waterflow →</a>
+                        <a href="/waterflow/mobile/" class="mobile-btn" title="The phone version of Waterflow">📱 Mobile</a>
+                    </div>
                 </article>
             </div>
         </details>
