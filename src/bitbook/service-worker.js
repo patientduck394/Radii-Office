@@ -20,6 +20,7 @@ var BITBOOK_SHELL = [
   'bitbook-office.css?v=20261020',
   'radii-images.js?v=20261131v',
   'images-glue.js?v=20261131v',
+  'drawio-plugin.js?v=20261132f',
   'radii-file.js?v=20261042',
   'radii-collab.js?v=20261120',
   'radii-collab.css?v=20261042',

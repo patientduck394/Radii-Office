@@ -746,6 +746,7 @@
                 { label: 'Media', items: [
                     { big: true, icon: 'image', label: 'Picture', run: function () { insertKind('image'); } },
                     { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
+                    { big: true, icon: 'shapes', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
                     { big: true, icon: 'attach', label: 'File', run: function () { insertKind('file'); } }
                 ] },
                 { label: 'Links', items: [{ big: true, icon: 'link', label: 'Link', run: insertLink }] },

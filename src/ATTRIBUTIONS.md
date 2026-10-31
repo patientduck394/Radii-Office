@@ -57,3 +57,12 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 * **Copyright:** Copyright (c) 2024 choptop84 (AbyssBox); Copyright (c) 2012-2022 John Nesky and contributing authors (BeepBox)
 * **Source:** https://github.com/choptop84/abyssbox-source (built from commit 33bb994 into `bitbook/abyssbox_synth.min.js`), https://github.com/johnnesky/beepbox
 * **Modifications:** Removed the synth's writes to the host page's title and its URL-rewrite/page-reload path for custom-sample songs, so it can run embedded in Bitbook.
+
+---
+
+### 9. draw.io (Writeout, Bitbook and Imbuer "draw.io" diagrams)
+* **License:** Apache License 2.0 (the draw.io source code); see `NOTICE` at the root of the repository
+* **Copyright:** draw.io Ltd (previously named JGraph) and draw.io AG
+* **Source:** https://github.com/jgraph/drawio
+* **How it is used:** Radii Office does not copy or modify draw.io's code. Writeout, Bitbook and Imbuer open the official draw.io editor in embed mode from https://embed.diagrams.net and keep the PNG picture it exports (with the diagram stored inside it).
+* **Trademark:** draw.io is a registered EU trademark (#018062448) of draw.io Ltd. Radii Office is not affiliated with, endorsed by or sponsored by draw.io; the name is used only to say which editor opens, and the draw.io logo is not used.

@@ -12,6 +12,7 @@ const ICONS = {
     undo: '<path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/>',
     redo: '<path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/>',
     search: '<circle cx="11" cy="11" r="7"/><path d="M21 21l-5-5"/>',
+    diagram: '<rect x="3" y="3" width="8" height="6" rx="1.5"/><rect x="13" y="15" width="8" height="6" rx="1.5"/><path d="M7 9v6h6M17 15V9h-4"/>',
     chevUp: '<path d="M6 15l6-6 6 6"/>',
     chevDown: '<path d="M6 9l6 6 6-6"/>',
     paste: '<rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 2h6v4H9z"/><path d="M8.5 11h7M8.5 15h4.5"/>',

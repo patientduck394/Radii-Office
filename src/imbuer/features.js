@@ -1551,6 +1551,29 @@ function insertPicture(r) {
     renderCharts();
     toast(r.withCredit ? 'Picture added, with its source as the title! Edit the title any time!' : 'Picture added!');
 }
+// draw.io diagrams live on the sheet like pictures; double-click one to keep editing it in draw.io!
+function openDrawioDiagram() {
+    if (!window.RadiiDrawio) return;
+    RadiiDrawio.open({ accent: '#6bc702', accent2: '#a3e635', onDone: (r) => {
+        const s = sh();
+        const z = zf();
+        const sc = scroller();
+        const w = Math.min(560, Math.max(200, r.w));
+        const ch = { id: uid(), type: 'image', drawio: true, img: r.png, x: Math.round(sc.scrollLeft / z + 60), y: Math.round(sc.scrollTop / z + 50), w: w, h: Math.round(w * r.h / r.w) + 44, title: 'draw.io diagram' };
+        animateChartIds.add(ch.id);
+        change(() => { s.charts.push(ch); });
+        selectedChart = ch;
+        renderCharts();
+        toast('draw.io diagram added! Double-click it to edit it again!');
+    } });
+}
+document.addEventListener('dblclick', (e) => {
+    const el = e.target.closest && e.target.closest('.chart-obj');
+    if (!el || e.target.closest('.chart-head') || !window.RadiiDrawio) return;
+    const ch = sh().charts.find(c => c.id === el.dataset.id);
+    if (!ch || !ch.drawio) return;
+    RadiiDrawio.open({ png: ch.img, accent: '#6bc702', accent2: '#a3e635', onDone: (r) => { change(() => { ch.img = r.png; }); renderCharts(); toast('Diagram updated!'); } });
+});
 function openOnlinePictures() {
     if (!window.RadiiImages) return;
     RadiiImages.open({ title: 'OpenDB Images', accent: '#6bc702', accent2: '#a3e635', glow: 'rgba(107,199,2,.3)', onPick: insertPicture });
@@ -1558,6 +1581,7 @@ function openOnlinePictures() {
 
 registerCommands({
     onlinePicture: { label: 'OpenDB Images', icon: 'search', run: () => openOnlinePictures() },
+    drawioDiagram: { label: 'draw.io', icon: 'diagram', run: () => openDrawioDiagram() },
     chartColumn: { label: 'Insert Column Chart', icon: 'chartColumn', run: () => insertChart('column') },
     chartBar: { label: 'Insert Bar Chart', icon: 'chartBar', run: () => insertChart('bar') },
     chartLine: { label: 'Insert Line Chart', icon: 'chartLine', run: () => insertChart('line') },
