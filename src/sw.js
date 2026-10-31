@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'b45b469e6aa9';
+const VERSION = '08e199ba074b';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","6ee7ad9b06"],
@@ -66,9 +66,9 @@ const CORE = [["/","6ee7ad9b06"],
   ["/bitbook/manifest.json","6c594421f7"],
   ["/bitbook/marketplace.css?v=20261007","defa67a8aa"],
   ["/bitbook/marketplace.js?v=20261009","5ccf04ddcb"],
-  ["/bitbook/mobile/","856db06ac4"],
+  ["/bitbook/mobile/","b4bc989cd2"],
   ["/bitbook/mobile/app.js?v=20261132r","4f81176245"],
-  ["/bitbook/mobile/index.html","856db06ac4"],
+  ["/bitbook/mobile/index.html","b4bc989cd2"],
   ["/bitbook/mobile/keydown.css?v=20261132c","61cde23e6a"],
   ["/bitbook/mobile/marketplace.css?v=20261007","376fbb01d9"],
   ["/bitbook/mobile/marketplace.js?v=20261009","5ccf04ddcb"],
@@ -256,7 +256,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
-  ["/opendb/data/index.json","bb775cd883"],
+  ["/opendb/data/index.json","864418abe0"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/icon-exclamation.png","cb2c7fea56"],
   ["/opendb/data/media/icon-image.png","d86977ba13"],
@@ -357,9 +357,9 @@ const CORE = [["/","6ee7ad9b06"],
   ["/writeout/manifest.json","13e50c2d29"],
   ["/writeout/marketplace.css?v=20260928","9cf841dd2d"],
   ["/writeout/marketplace.js?v=20260928","27e6cab8c5"],
-  ["/writeout/mobile/","2a1012bcc8"],
+  ["/writeout/mobile/","06cd4595cc"],
   ["/writeout/mobile/app.js?v=20261132r","3c9ca8b170"],
-  ["/writeout/mobile/index.html","2a1012bcc8"],
+  ["/writeout/mobile/index.html","06cd4595cc"],
   ["/writeout/mobile/keydown.css?v=20261132c","b4d24c8cbd"],
   ["/writeout/mobile/marketplace.css?v=20260928","9cf841dd2d"],
   ["/writeout/mobile/marketplace.js?v=20260928","27e6cab8c5"],
