@@ -1,0 +1,36 @@
+Radii Office
+Copyright (c) 2026 patientduck394 and contributors.
+
+This NOTICE file lists third-party work that Radii Office uses, as asked by
+the Apache License 2.0 (section 4d). More credits are in
+src/ATTRIBUTIONS.md, ATTRIBUTIONS-ICONS.md and ATTRIBUTIONS-FONTS.md.
+
+------------------------------------------------------------------------------
+draw.io
+------------------------------------------------------------------------------
+Writeout, Bitbook and Imbuer can open the draw.io diagram editor.
+
+  * draw.io is developed by draw.io Ltd (previously named JGraph) and
+    draw.io AG. Its source code (https://github.com/jgraph/drawio) is
+    licensed under the Apache License, Version 2.0; a copy of that license is
+    in LICENSE-APACHE. The draw.io repository has no NOTICE file of its own
+    (checked 2026-10-30), so there is no further notice text to carry here.
+
+  * Radii Office does not include, copy or modify any draw.io source code.
+    The apps open the official, unmodified draw.io editor in embed mode from
+    https://embed.diagrams.net in a frame, and keep the PNG picture it exports
+    (which stores the diagram, so it can be edited again in draw.io).
+
+  * draw.io's icon sets, stencil libraries and diagram templates have their
+    own terms: they "may not be used as software assets in, distributed for
+    use with, or incorporated into Atlassian products or products distributed
+    through the Atlassian marketplace or plugin ecosystem, without explicit
+    written permission". That restriction does not apply to end-user diagram
+    output (such as exported images or documents). draw.io makes no copyright
+    claim on diagrams you create with it.
+
+  * draw.io is a registered EU trademark (#018062448) of draw.io Ltd.
+    Radii Office is not affiliated with, endorsed by or sponsored by draw.io.
+    The name "draw.io" is used only to say which editor opens; the draw.io
+    logo is not used. The same disclaimer is shown at the bottom of the
+    draw.io window in each app.
