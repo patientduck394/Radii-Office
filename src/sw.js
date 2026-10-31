@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'bbb79d1585e7';
+const VERSION = '0f2e173592bd';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","6ee7ad9b06"],
@@ -190,8 +190,8 @@ const CORE = [["/","6ee7ad9b06"],
   ["/omicron/radii-file.js?v=20261042","3bdadf1b3d"],
   ["/omicron/radii-images.js?v=20261131v","7a2dad017b"],
   ["/omicron/style.css?v=20261045","811b69a9ed"],
-  ["/opendb/","472524db4e"],
-  ["/opendb/app.js?v=20261132g","65f8630837"],
+  ["/opendb/","9058cc1e39"],
+  ["/opendb/app.js?v=20261132k","2c651b8e93"],
   ["/opendb/data/entries/aero-bubbles.kd","4105e5a668"],
   ["/opendb/data/entries/cc0.kd","e0a873b739"],
   ["/opendb/data/entries/digamma-function.kd","8ebebc1e7e"],
@@ -232,7 +232,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
-  ["/opendb/data/index.json","c570966077"],
+  ["/opendb/data/index.json","2a9b7e75f1"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/icon-exclamation.png","cb2c7fea56"],
   ["/opendb/data/media/icon-image.png","d86977ba13"],
@@ -255,8 +255,8 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/icons/question.png","8084f6ed28"],
   ["/opendb/icons/stub.png","38ce429149"],
   ["/opendb/icons/tip.png","8a14710d15"],
-  ["/opendb/index.html","472524db4e"],
-  ["/opendb/style.css?v=20261132d","7b01c79021"],
+  ["/opendb/index.html","9058cc1e39"],
+  ["/opendb/style.css?v=20261132j","3ea9ebf3f3"],
   ["/peeker/","f9fba62245"],
   ["/peeker/apple-touch-icon.png","5fa59ee1f8"],
   ["/peeker/favicon-96.png","d9f7b4b5cd"],

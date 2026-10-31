@@ -72,10 +72,104 @@
     // The right player for a media entry: a picture, an audio player or a video player
     function mediaTag(e, src, alt, lazy) {
         const k = mediaKind(e);
-        if (k === 'audio') return '<audio controls preload="metadata" src="' + esc(src) + '" aria-label="' + esc(alt) + '"></audio>';
-        if (k === 'video') return '<video controls playsinline preload="metadata" src="' + esc(src) + '" aria-label="' + esc(alt) + '"></video>';
+        if (k === 'audio' || k === 'video') return playerTag(k, e, src, alt);
         return '<img src="' + esc(src) + '" alt="' + esc(alt) + '"' + (lazy ? ' loading="lazy"' : '') + '>';
     }
+    // OpenDB's own music and video player: play, seek, time, volume, speed, download (and fullscreen for videos)
+    const RP_ICON = {
+        play: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg>',
+        pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2" fill="currentColor"/><rect x="13.5" y="5" width="4" height="14" rx="1.2" fill="currentColor"/></svg>',
+        vol: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M15.5 9a4.5 4.5 0 0 1 0 6M18 6.5a8 8 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+        mute: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z" fill="currentColor"/><path d="M16 9.5l5 5M21 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+        dl: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4.5-4.5M12 15l4.5-4.5M5 19.5h14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+        full: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    };
+    function playerTag(kind, e, src, alt) {
+        // the entry's own name, or (for a file linked from elsewhere) the file's name
+        const fromUrl = /^https?:/.test(src) ? decodeURIComponent(String(src).split(/[?#]/)[0].split('/').pop() || '') : '';
+        const name = e.id ? e.id + extOf(e) : (fromUrl || 'media' + extOf(e));
+        const media = kind === 'video'
+            ? '<video class="rp-media" playsinline preload="metadata" src="' + esc(src) + '" aria-label="' + esc(alt) + '"></video>'
+            : '<audio class="rp-media" preload="metadata" src="' + esc(src) + '" aria-label="' + esc(alt) + '"></audio>';
+        return '<div class="rp rp-' + kind + '" data-rp>' + media +
+            '<div class="rp-bar">' +
+            '<button type="button" class="rp-play" aria-label="Play" title="Play (Space)">' + RP_ICON.play + '</button>' +
+            '<span class="rp-time">0:00</span>' +
+            '<input type="range" class="rp-seek" min="0" max="1000" step="1" value="0" aria-label="Seek">' +
+            '<span class="rp-dur">' + (e.duration ? clock(e.duration) : '0:00') + '</span>' +
+            '<button type="button" class="rp-mute" aria-label="Mute" title="Mute">' + RP_ICON.vol + '</button>' +
+            '<input type="range" class="rp-vol" min="0" max="1" step="0.05" value="1" aria-label="Volume">' +
+            '<button type="button" class="rp-speed" aria-label="Playback speed" title="Playback speed">1×</button>' +
+            (kind === 'video' ? '<button type="button" class="rp-full" aria-label="Fullscreen" title="Fullscreen">' + RP_ICON.full + '</button>' : '') +
+            '<a class="rp-dl" href="' + esc(src) + '" download="' + esc(name) + '" aria-label="Download ' + esc(name) + '" title="Download ' + esc(name) + '">' + RP_ICON.dl + '<span>Download</span></a>' +
+            '</div></div>';
+    }
+    // one set of listeners runs every player on the page (players come and go with each page drawn)
+    (function wirePlayers() {
+        const SPEEDS = [1, 1.25, 1.5, 2, 0.75];
+        const parts = (el) => { const box = el.closest && el.closest('[data-rp]'); return box && { box, m: box.querySelector('.rp-media') }; };
+        const paint = (box, m) => {
+            const play = box.querySelector('.rp-play');
+            play.innerHTML = m.paused ? RP_ICON.play : RP_ICON.pause;
+            play.setAttribute('aria-label', m.paused ? 'Play' : 'Pause');
+            box.classList.toggle('rp-on', !m.paused);
+            const d = isFinite(m.duration) ? m.duration : 0;
+            box.querySelector('.rp-time').textContent = clock(m.currentTime);
+            if (d) box.querySelector('.rp-dur').textContent = clock(d);
+            const seek = box.querySelector('.rp-seek');
+            if (!box.dragging) seek.value = d ? Math.round(m.currentTime / d * 1000) : 0;
+            seek.style.setProperty('--rp-p', (d ? m.currentTime / d * 100 : 0) + '%');
+            const vol = box.querySelector('.rp-vol');
+            vol.value = m.muted ? 0 : m.volume;
+            vol.style.setProperty('--rp-p', (m.muted ? 0 : m.volume * 100) + '%');
+            box.querySelector('.rp-mute').innerHTML = m.muted || !m.volume ? RP_ICON.mute : RP_ICON.vol;
+        };
+        const toggle = (m) => { if (m.paused) { document.querySelectorAll('[data-rp] .rp-media').forEach((o) => { if (o !== m) o.pause(); }); m.play().catch(() => {}); } else m.pause(); };
+        document.addEventListener('click', (ev) => {
+            const t = ev.target.closest && ev.target.closest('.rp-play, .rp-mute, .rp-speed, .rp-full, video.rp-media');
+            const p = t && parts(t);
+            if (!p) return;
+            const { box, m } = p;
+            if (t.matches('.rp-play, video.rp-media')) toggle(m);
+            else if (t.matches('.rp-mute')) { m.muted = !m.muted; if (!m.muted && !m.volume) m.volume = 1; }
+            else if (t.matches('.rp-speed')) { const n = SPEEDS[(SPEEDS.indexOf(m.playbackRate) + 1) % SPEEDS.length] || 1; m.playbackRate = n; t.textContent = n + '×'; }
+            else if (t.matches('.rp-full')) { const f = box.requestFullscreen || box.webkitRequestFullscreen; if (document.fullscreenElement) document.exitFullscreen(); else if (f) f.call(box); }
+            paint(box, m);
+        });
+        // Some hosts send a file only whole (no byte ranges), so the browser cannot jump past what has downloaded:
+        // then the whole file is fetched once and played from memory, where every spot can be reached
+        const reachable = (m, at) => { const r = m.seekable; for (let i = 0; i < r.length; i++) if (at >= r.start(i) && at <= r.end(i)) return true; return false; };
+        function seekTo(box, m, at) {
+            if (reachable(m, at) || m.src.startsWith('blob:') || m.src.startsWith('data:')) { m.currentTime = at; return; }
+            box.pendingSeek = at;
+            if (box.loadingWhole) return;
+            box.loadingWhole = true;
+            box.querySelector('.rp-time').textContent = '…';
+            const wasPlaying = !m.paused;
+            fetch(m.currentSrc || m.src).then((r) => { if (!r.ok) throw new Error(r.status); return r.blob(); }).then((blob) => {
+                m.addEventListener('loadedmetadata', () => { m.currentTime = box.pendingSeek; if (wasPlaying) m.play().catch(() => {}); box.loadingWhole = false; }, { once: true });
+                m.src = URL.createObjectURL(blob);
+            }).catch(() => { box.loadingWhole = false; m.currentTime = at; });
+        }
+        document.addEventListener('input', (ev) => {
+            const t = ev.target, p = t.classList && (t.classList.contains('rp-seek') || t.classList.contains('rp-vol')) && parts(t);
+            if (!p) return;
+            if (t.classList.contains('rp-seek')) { if (isFinite(p.m.duration)) seekTo(p.box, p.m, t.value / 1000 * p.m.duration); }
+            else { p.m.volume = +t.value; p.m.muted = +t.value === 0; }
+            paint(p.box, p.m);
+        });
+        // media events do not bubble, so they are caught on the way down
+        ['timeupdate', 'loadedmetadata', 'play', 'pause', 'ended', 'volumechange', 'durationchange'].forEach((type) =>
+            document.addEventListener(type, (ev) => { const m = ev.target; if (m.classList && m.classList.contains('rp-media')) paint(m.closest('[data-rp]'), m); }, true));
+        // Space plays or pauses the player you last used (unless you are typing)
+        document.addEventListener('keydown', (ev) => {
+            if (ev.key !== ' ' || /^(INPUT|TEXTAREA|SELECT)$/.test(ev.target.tagName) || ev.target.isContentEditable) return;
+            const p = ev.target.closest && ev.target.closest('[data-rp]');
+            if (!p || ev.target.matches('a, input')) return;
+            ev.preventDefault();
+            toggle(p.querySelector('.rp-media'));
+        });
+    })();
     // Small previews for lists and the media grid: a still from a video, a note for music
     function mediaThumb(e, cls) {
         const k = mediaKind(e);
