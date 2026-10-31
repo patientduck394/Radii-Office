@@ -5,7 +5,7 @@
    clicking the picture later opens it again, fully editable!
    draw.io is © draw.io Ltd (previously JGraph) and draw.io AG, under the
    Apache License 2.0; Radii Office is not affiliated with draw.io (see NOTICE).
-   Each app (Writeout, Bitbook, Imbuer) keeps an identical copy of this file!
+   Each app (Writeout, Bitbook, Imbuer, Amber) keeps an identical copy of this file!
 
    RadiiDrawio.open({ png, title, onDone({ png, w, h }) })
    (png: a picture made by draw.io earlier, to keep editing it)

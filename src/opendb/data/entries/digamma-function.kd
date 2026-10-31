@@ -3,22 +3,22 @@ format: keydown-text
 id: digamma-function
 type: article
 title: Digamma function
-summary: The digamma function ψ(x) is the logarithmic derivative of the gamma function; it extends the harmonic numbers to every real and complex number.
+summary: The digamma function ϝ(x) is the logarithmic derivative of the gamma function; it extends the harmonic numbers to every real and complex number.
 tags: [mathematics, special functions, analysis]
 created: 2026-10-31
 updated: 2026-10-31
 authors: [OpenDB contributors]
 license: CC0-1.0
-infobox.Symbol: ψ(x)
+infobox.Symbol: ϝ(x), usually written ψ(x)
 infobox.Definition: Γ′(x) / Γ(x)
-infobox.Special value: ψ(1) = −γ ≈ −0.5772
+infobox.Special value: ϝ(1) = −γ ≈ −0.5772
 infobox.Poles: 0, −1, −2, −3, …
 ---
 {{unreferenced}}
 
-The **digamma function**, written $\psi(x)$, is the derivative of the logarithm of the **gamma function** $\Gamma(x)$:
+The **digamma function**, written $\digamma(x)$, is the derivative of the logarithm of the **gamma function** $\Gamma(x)$:
 
-$$\psi(x) = \frac{d}{dx}\ln\Gamma(x) = \frac{\Gamma'(x)}{\Gamma(x)}$$
+$$\digamma(x) = \frac{d}{dx}\ln\Gamma(x) = \frac{\Gamma'(x)}{\Gamma(x)}$$
 
 The gamma function extends the factorial to non-whole numbers ($\Gamma(n) = (n-1)!$), and #PR#the digamma function does the same for the harmonic numbers##.
 
@@ -26,41 +26,45 @@ The gamma function extends the factorial to non-whole numbers ($\Gamma(n) = (n-1
 
 ## The name
 
-The name comes from **digamma** (Ϝ), an old letter of the Greek alphabet that looked like two gammas stacked on top of each other, a hint that $\psi$ is "one step past" $\Gamma$.
+The name comes from **digamma** (Ϝ), an old letter of the Greek alphabet that looked like two gammas stacked on top of each other, a hint that $\digamma$ is "one step past" $\Gamma$.
+
+## Notation
+
+This article writes the function as $\digamma(x)$, after the letter it is named for. #Y#Most books and references write it $\psi(x)$##, sometimes $\psi_0(x)$ or $\psi^{(0)}(x)$, and the capital letter digamma, Ϝ(x), is also used. They all mean the same function.
 
 ## Key properties
 
-::amethyst{Recurrence: ψ(x + 1) = ψ(x) + 1/x, so each step to the right adds 1/x}
+::amethyst{Recurrence: ϝ(x + 1) = ϝ(x) + 1/x, so each step to the right adds 1/x}
 
-* #+B+Recurrence+ $\psi(x+1) = \psi(x) + \frac{1}{x}$, which mirrors $\Gamma(x+1) = x\,\Gamma(x)$.
-* #+G+At 1+ $\psi(1) = -\gamma$, where $\gamma \approx 0.5772156649$ is the **Euler–Mascheroni constant**.
-* #+O+Harmonic numbers+ For whole numbers, $\psi(n) = H_{n-1} - \gamma$, where $H_k = 1 + \frac{1}{2} + \cdots + \frac{1}{k}$.
-* #+PR+At one half+ $\psi\!\left(\tfrac{1}{2}\right) = -\gamma - 2\ln 2$.
-* #+R+Reflection+ $\psi(1-x) - \psi(x) = \pi\cot(\pi x)$.
+* #+B+Recurrence+ $\digamma(x+1) = \digamma(x) + \frac{1}{x}$, which mirrors $\Gamma(x+1) = x\,\Gamma(x)$.
+* #+G+At 1+ $\digamma(1) = -\gamma$, where $\gamma \approx 0.5772156649$ is the **Euler–Mascheroni constant**.
+* #+O+Harmonic numbers+ For whole numbers, $\digamma(n) = H_{n-1} - \gamma$, where $H_k = 1 + \frac{1}{2} + \cdots + \frac{1}{k}$.
+* #+PR+At one half+ $\digamma\!\left(\tfrac{1}{2}\right) = -\gamma - 2\ln 2$.
+* #+R+Reflection+ $\digamma(1-x) - \digamma(x) = \pi\cot(\pi x)$.
 
-> [!IMPORTANT] $\psi(x)$ has **poles** (it shoots off to infinity) at $x = 0, -1, -2, \ldots$, exactly where the gamma function does.
+> [!IMPORTANT] $\digamma(x)$ has **poles** (it shoots off to infinity) at $x = 0, -1, -2, \ldots$, exactly where the gamma function does.
 
 ## A series and an approximation
 
 For any $x$ that is not a pole,
 
-$$\psi(x) = -\gamma + \sum_{n=0}^{\infty}\left(\frac{1}{n+1} - \frac{1}{n+x}\right)$$
+$$\digamma(x) = -\gamma + \sum_{n=0}^{\infty}\left(\frac{1}{n+1} - \frac{1}{n+x}\right)$$
 
 and for large $x$ it grows like a logarithm:
 
-$$\psi(x) \approx \ln x - \frac{1}{2x} - \frac{1}{12x^2} + \cdots$$
+$$\digamma(x) \approx \ln x - \frac{1}{2x} - \frac{1}{12x^2} + \cdots$$
 
-> [!FACT] On the positive numbers, $\psi$ is zero at exactly one place, $x \approx 1.4616$. That is where the gamma function reaches its smallest value.
+> [!FACT] On the positive numbers, $\digamma$ is zero at exactly one place, $x \approx 1.4616$. That is where the gamma function reaches its smallest value.
 
 ## Polygamma functions
 
-Taking more derivatives gives the **polygamma functions** $\psi^{(m)}(x)$. The first one, $\psi'(x)$, is called the **trigamma function**, and $\psi'(1) = \frac{\pi^2}{6}$.
+Taking more derivatives gives the **polygamma functions**, usually written $\psi^{(m)}(x)$; the digamma function itself is the first of them, $\psi^{(0)}$. Its derivative, $\digamma'(x)$, is called the **trigamma function**, and $\digamma'(1) = \frac{\pi^2}{6}$.
 
 ## Uses
 
 %7%PR%Statistics%## %7%B%Physics%## %7%G%Number theory%##
 
-* **Statistics**: fitting gamma, beta and Dirichlet distributions to data, and in Bayesian methods, involves $\psi$.
+* **Statistics**: fitting gamma, beta and Dirichlet distributions to data, and in Bayesian methods, involves $\digamma$.
 * **Physics**: it appears in quantum field theory calculations.
 * **Number theory and series**: sums of reciprocals, like the harmonic numbers, can be written with it.
 

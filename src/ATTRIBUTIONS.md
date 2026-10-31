@@ -60,9 +60,9 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 
 ---
 
-### 9. draw.io (Writeout, Bitbook and Imbuer "draw.io" diagrams)
+### 9. draw.io (Writeout, Bitbook, Imbuer and Amber "draw.io" diagrams)
 * **License:** Apache License 2.0 (the draw.io source code); see `NOTICE` at the root of the repository
 * **Copyright:** draw.io Ltd (previously named JGraph) and draw.io AG
 * **Source:** https://github.com/jgraph/drawio
-* **How it is used:** Radii Office does not copy or modify draw.io's code. Writeout, Bitbook and Imbuer open the official draw.io editor in embed mode from https://embed.diagrams.net and keep the PNG picture it exports (with the diagram stored inside it).
+* **How it is used:** Radii Office does not copy or modify draw.io's code. Writeout, Bitbook, Imbuer and Amber open the official draw.io editor in embed mode from https://embed.diagrams.net and keep the PNG picture it exports (with the diagram stored inside it).
 * **Trademark:** draw.io is a registered EU trademark (#018062448) of draw.io Ltd. Radii Office is not affiliated with, endorsed by or sponsored by draw.io; the name is used only to say which editor opens, and the draw.io logo is not used.
