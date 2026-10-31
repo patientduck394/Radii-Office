@@ -33,7 +33,9 @@ function walk(dir, rel = '') {
   return out;
 }
 
-const files = walk(ROOT).sort();
+// phone pages are made from each app's own page by build_mobile.mjs, so the download leaves them out (it can rebuild them)
+const generated = (f) => /(^|\/)mobile\/(new\/)?index\.html$/.test(f) && fs.readFileSync(path.join(ROOT, f), 'utf8').includes('Made by scripts/build_mobile.mjs');
+const files = walk(ROOT).filter((f) => !generated(f)).sort();
 
 // ---- ZIP (deflate) ----
 function dosTime(d) { return { t: (d.getHours() << 11) | (d.getMinutes() << 5) | (d.getSeconds() >> 1), d: ((d.getFullYear() - 1980) << 9) | ((d.getMonth() + 1) << 5) | d.getDate() }; }
