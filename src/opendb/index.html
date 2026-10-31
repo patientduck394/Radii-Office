@@ -14,31 +14,33 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
-    <link rel="stylesheet" href="style.css?v=20261132j">
+    <link rel="stylesheet" href="style.css?v=20261132o">
     <script src="/offline.js?v=20261132g" defer></script>
 </head>
 <body>
     <header class="top">
-        <a class="brand" href="#/" title="OpenDB home">
-            <img src="favicon.svg" alt="" class="logo">
-            <span><b>OpenDB</b><small>The free database anyone can reuse</small></span>
-        </a>
-        <form class="search" id="search-form" role="search">
-            <input type="search" id="q" placeholder="Search articles, media and papers…" autocomplete="off" aria-label="Search OpenDB">
-            <button class="gel" type="submit">Search</button>
-        </form>
-        <nav class="nav" aria-label="Collections">
-            <a href="#/browse/article">Articles</a>
-            <a href="#/browse/media">Media</a>
-            <a href="#/browse/paper">Papers</a>
-            <a href="#/random">Random</a>
-            <a href="#/new/article" class="gel green">＋ Contribute</a>
-        </nav>
+        <div class="aero-bar">
+            <a class="brand" href="#/" title="OpenDB home">
+                <img src="favicon.svg" alt="" class="logo">
+                <span><b>OpenDB</b><small>The free database anyone can reuse</small></span>
+            </a>
+            <form class="search" id="search-form" role="search">
+                <input type="search" id="q" placeholder="Search articles, media and papers…" autocomplete="off" aria-label="Search OpenDB">
+                <button class="gel" type="submit"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg><span>Search</span></button>
+            </form>
+            <nav class="nav" aria-label="Collections">
+                <a href="#/browse/article" class="nav-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h9l5 5v11H5z" fill="#fff" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 4v5h5M8 13h8M8 16.5h6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><span>Articles</span></a>
+                <a href="#/browse/media" class="nav-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="14" rx="2.5" fill="#fff" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="10" r="1.8" fill="#f5c400"/><path d="M4 17l5-4.5 3.5 3 3-2.5 4.5 4" fill="none" stroke="#2e9a1c" stroke-width="1.6" stroke-linejoin="round"/></svg><span>Media</span></a>
+                <a href="#/browse/paper" class="nav-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3.5h10v17H7z" fill="#fff" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M9.5 7.5h5M9.5 10.5h5M9.5 13.5h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="16.5" cy="17.5" r="3" fill="#e5371c"/></svg><span>Papers</span></a>
+                <a href="#/random" class="nav-btn"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="#fff" stroke="currentColor" stroke-width="1.6"/><circle cx="9" cy="9" r="1.5" fill="currentColor"/><circle cx="15" cy="15" r="1.5" fill="currentColor"/><circle cx="15" cy="9" r="1.5" fill="currentColor"/><circle cx="9" cy="15" r="1.5" fill="currentColor"/></svg><span>Random</span></a>
+                <a href="#/new/article" class="gel green nav-add"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg><span>Contribute</span></a>
+            </nav>
+        </div>
     </header>
 
     <main id="view" class="view" tabindex="-1"></main>
 
-    <footer class="foot">
+    <footer class="foot"><div class="foot-glass">
         <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer" class="cc0">CC0</a>
         Everything in OpenDB is dedicated to the public domain: copy, change and reuse it for anything, no credit needed!
         &nbsp;·&nbsp; <a href="#/e/opendb">About</a>
@@ -46,7 +48,7 @@
         &nbsp;·&nbsp; <a href="#/mine">On this device</a>
         &nbsp;·&nbsp; <a href="data/index.json" download>Download everything (JSON)</a>
         &nbsp;·&nbsp; <a href="/">Radii Office</a>
-    </footer>
+    </div></footer>
 
     <div class="modal" id="modal" hidden><div class="modal-card"><div class="modal-head"><b id="modal-title"></b><button class="x" id="modal-x" aria-label="Close">✕</button></div><div id="modal-body" class="modal-body"></div></div></div>
     <div class="toast" id="toast" role="status"></div>

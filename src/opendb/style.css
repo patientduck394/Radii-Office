@@ -284,3 +284,102 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .hl-colors { display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 10px 12px; }
 .hl-color { font: 600 13px var(--sans); padding: 6px 8px; border-radius: 9px; border: 1px solid transparent; background: transparent; cursor: pointer; line-height: 1.6; }
 .hl-color:hover, .hl-color:focus-visible { border-color: #9cc9ec; background: #f1f8ff; outline: none; }
+
+
+/* =====================================================================
+   Aero revamp: a frosted-glass taskbar header with gel navigation buttons, glass cards with a shine,
+   Vista-style window title bars on the side boxes, and a sky with light bubbles over green hills.
+   ===================================================================== */
+body {
+    background:
+        radial-gradient(160px 160px at 8% 22%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 70%),
+        radial-gradient(90px 90px at 88% 14%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 70%),
+        radial-gradient(220px 220px at 76% 38%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 70%),
+        radial-gradient(60px 60px at 30% 9%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 70%),
+        radial-gradient(1200px 420px at 50% -160px, rgba(255, 255, 255, 0.9), transparent 70%),
+        radial-gradient(1400px 340px at 20% 112%, #8fd36a 0%, #5fb83c 45%, transparent 46%),
+        radial-gradient(1500px 360px at 85% 118%, #a6e07e 0%, #6cc447 44%, transparent 45%),
+        linear-gradient(180deg, #3aa3ec 0px, #7fc7f6 220px, #c6e8fc 480px, #eaf6ff 760px, #f2fbf0 100%);
+    background-attachment: fixed;
+}
+/* the taskbar */
+.top { padding: 12px 18px 6px; position: sticky; top: 0; z-index: 20; }
+.aero-bar {
+    position: relative; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; padding: 10px 16px; border-radius: 20px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.22) 48%, rgba(170, 220, 255, 0.28) 52%, rgba(120, 190, 245, 0.35) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.85);
+    box-shadow: 0 10px 28px rgba(0, 70, 140, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.95), inset 0 -1px 0 rgba(255, 255, 255, 0.35);
+    backdrop-filter: blur(14px) saturate(1.3); -webkit-backdrop-filter: blur(14px) saturate(1.3);
+}
+.aero-bar::before { content: ""; position: absolute; left: 14px; right: 14px; top: 2px; height: 45%; border-radius: 18px 18px 40px 40px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0)); pointer-events: none; }
+.brand, .search, .nav { position: relative; }
+.brand b { color: #fff; }
+.search input { border-color: rgba(255, 255, 255, 0.95); background: linear-gradient(180deg, #ffffff, #eef7ff); box-shadow: inset 0 2px 5px rgba(0, 60, 120, 0.18), 0 1px 0 rgba(255, 255, 255, 0.6); }
+.search .gel svg, .nav svg { width: 18px; height: 18px; flex: none; }
+.search .gel svg { fill: none; }
+/* navigation: glossy glass buttons with icons */
+.nav { gap: 6px; }
+.nav a.nav-btn {
+    position: relative; overflow: hidden; display: inline-flex; align-items: center; gap: 7px; padding: 7px 14px 7px 10px; border-radius: 999px;
+    color: #0b4a80; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8); font-size: 14px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(235, 246, 255, 0.85) 48%, rgba(205, 231, 252, 0.85) 52%, rgba(225, 241, 255, 0.95) 100%);
+    border: 1px solid rgba(120, 180, 230, 0.9);
+    box-shadow: 0 2px 6px rgba(0, 60, 120, 0.18), inset 0 1px 0 #fff;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.nav a.nav-btn svg { color: #1269b0; }
+.nav a.nav-btn:hover { color: #08375f; background: linear-gradient(180deg, #ffffff 0%, #e3f3ff 48%, #b9e0ff 52%, #dff1ff 100%); box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.45), 0 4px 12px rgba(20, 120, 200, 0.35), inset 0 1px 0 #fff; transform: translateY(-1px); }
+.nav a.nav-btn.on { color: #fff; text-shadow: 0 1px 1px rgba(0, 50, 100, 0.55); border-color: #0b5a99; background: linear-gradient(180deg, #8fd0ff 0%, #1e8fe0 50%, #0b66b5 100%); box-shadow: 0 3px 8px rgba(11, 102, 181, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.6); }
+.nav a.nav-btn.on svg { color: #0b66b5; }
+.nav .nav-add svg { stroke: currentColor; }
+/* glass cards with a shine across the top */
+.card, .side-box {
+    position: relative; background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(248, 252, 255, 0.86) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 14px 36px rgba(0, 60, 120, 0.18), 0 1px 0 rgba(255, 255, 255, 0.8) inset, 0 0 0 1px rgba(140, 195, 240, 0.35);
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+}
+.card::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 70px; border-radius: 18px 18px 0 0; background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0)); pointer-events: none; }
+/* side boxes: their heading becomes a Vista-style window title bar */
+.side-box { border-radius: 16px; overflow: hidden; }
+.side-box > h2:first-child {
+    margin: -14px -16px 10px; padding: 8px 14px; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; color: #fff;
+    text-shadow: 0 1px 1px rgba(0, 50, 100, 0.55);
+    background: linear-gradient(180deg, #8fd0ff 0%, #3b9ee8 48%, #1d7fd3 52%, #2f93e2 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 1px 0 rgba(0, 60, 120, 0.25);
+}
+.side-box.cc0-box { background: linear-gradient(180deg, rgba(240, 255, 232, 0.95), rgba(214, 245, 196, 0.9)); }
+/* the hero gets a glossy title with a soft reflection */
+.hero h1 { color: #fff; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6), 0 2px 3px rgba(0, 70, 140, 0.55), 0 6px 18px rgba(0, 70, 140, 0.45); -webkit-box-reflect: below -14px linear-gradient(transparent 62%, rgba(255, 255, 255, 0.22)); }
+.hero p { text-shadow: 0 1px 2px rgba(0, 60, 120, 0.6); }
+/* long formulas scroll sideways in their own box instead of widening the page */
+.katex-display { position: relative; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+.kd-doc .katex { position: relative; }
+.stat { background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.2)); border-color: rgba(255, 255, 255, 0.85); box-shadow: inset 0 1px 0 #fff, 0 3px 8px rgba(0, 60, 120, 0.15); }
+/* tags: little gel chips */
+.tag { background: linear-gradient(180deg, #ffffff 0%, #e8f4ff 48%, #d3e9fb 52%, #e6f3ff 100%); box-shadow: inset 0 1px 0 #fff, 0 1px 3px rgba(0, 60, 120, 0.12); }
+/* the footer: a glass strip */
+.foot { background: none; border: 0; padding: 18px; }
+.foot-glass { max-width: 1180px; margin: 0 auto; padding: 12px 18px; border-radius: 16px; text-align: center; line-height: 1.7;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(230, 245, 255, 0.6)); border: 1px solid rgba(255, 255, 255, 0.95);
+    box-shadow: 0 8px 22px rgba(0, 60, 120, 0.14), inset 0 1px 0 #fff; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+/* dialogs: an Aero window */
+.modal-card { border: 1px solid rgba(255, 255, 255, 0.95); overflow: hidden; }
+.modal-head { color: #fff; text-shadow: 0 1px 1px rgba(0, 50, 100, 0.55); border-bottom: 0;
+    background: linear-gradient(180deg, #8fd0ff 0%, #3b9ee8 48%, #1d7fd3 52%, #2f93e2 100%); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6); }
+.modal-head .x { color: #fff; }
+/* phones: the taskbar stacks, and the nav buttons keep just their icons when space is tight */
+@media (max-width: 700px) {
+    .top { position: static; padding: 8px 10px 4px; }
+    .aero-bar { padding: 10px; gap: 10px; }
+    .nav { width: 100%; justify-content: space-between; }
+}
+@media (max-width: 460px) {
+    .nav a.nav-btn span, .nav .nav-add span { display: none; }
+    .nav a.nav-btn, .nav .nav-add { padding: 8px 12px; }
+}
+@media (prefers-reduced-transparency: reduce) { .aero-bar, .card, .side-box, .foot-glass { backdrop-filter: none; -webkit-backdrop-filter: none; } }
+/* phones: long chips and highlights wrap onto more lines instead of running off the screen */
+@media (max-width: 600px) {
+    .kd-doc [class*="-chip"], .kd-doc .us-chip { white-space: normal !important; max-width: 100%; text-align: center; }
+}
