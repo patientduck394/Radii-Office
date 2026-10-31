@@ -1,5 +1,5 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261132c';
+var BITBOOK_CACHE = 'bitbook-shell-v20261132g';
 var BITBOOK_SHELL = [
   './',
   'index.html',
@@ -50,7 +50,8 @@ self.addEventListener('activate', function (event) {
   event.waitUntil(
     caches.keys().then(function (keys) {
       return Promise.all(keys.map(function (key) {
-        if (key !== BITBOOK_CACHE) return caches.delete(key);
+        // only this app's own old copies (the suite's offline copy and the other apps' copies stay)
+        if (key !== BITBOOK_CACHE && key.indexOf('bitbook-shell-') === 0) return caches.delete(key);
         return null;
       }));
     }).then(function () {
@@ -71,7 +72,8 @@ self.addEventListener('fetch', function (event) {
         caches.open(BITBOOK_CACHE).then(function (cache) { cache.put(req, copy); });
         return res;
       }).catch(function () {
-        return caches.match('index.html').then(function (hit) { return hit || caches.match('./'); });
+        // the exact page first (so the mobile version opens as itself), then the app's main page
+        return caches.match(req, { ignoreSearch: true }).then(function (page) { return page || caches.match('index.html'); }).then(function (hit) { return hit || caches.match('./'); });
       })
     );
     return;
@@ -85,6 +87,8 @@ self.addEventListener('fetch', function (event) {
           const copy = res.clone();
           caches.open(BITBOOK_CACHE).then(function (cache) { cache.put(req, copy); });
           return res;
+        }).catch(function () {
+          return caches.match(req, { ignoreSearch: true }).then(function (old) { return old || Response.error(); });
         });
       })
     );

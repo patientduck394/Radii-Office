@@ -1,7 +1,7 @@
 /* ========================================================
    AMBER SERVICE WORKER — offline-first app shell!
    ======================================================== */
-const AMBER_CACHE = 'amber-shell-v20261132c';
+const AMBER_CACHE = 'amber-shell-v20261132g';
 
 const APP_SHELL = [
   './',
@@ -38,7 +38,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== AMBER_CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => k !== AMBER_CACHE && k.indexOf('amber-shell-') === 0).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
@@ -57,7 +57,8 @@ self.addEventListener('fetch', (event) => {
       }).catch(() => {
         // Offline navigation fallback lands back on the deck!
         if (req.mode === 'navigate') return caches.match('./index.html');
-        throw new Error('offline');
+        // an older saved version of the same file is better than nothing
+        return caches.match(req, { ignoreSearch: true }).then((old) => old || Response.error());
       });
     })
   );

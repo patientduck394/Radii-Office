@@ -11,6 +11,8 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 // OpenDB's index is built from its entry files first, so the download always matches!
 await import('./build_opendb.mjs').then((m) => m.build());
+// ...and the offline worker's file list, so every app keeps working with no internet!
+await import('./build_offline.mjs').then((m) => m.build());
 const OUT = path.join(ROOT, 'downloads');
 const SKIP_DIRS = new Set(['.git', 'node_modules', 'downloads', 'target', '.claude', '.idea', '.vscode']);
 // (music and videos stay out too: the download has to fit the host's 25 MiB limit per file!)
