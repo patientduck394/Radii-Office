@@ -1,0 +1,29 @@
+/* =====================================================================
+   Mainkey's Database layout! (body.os-office) A light page, purple chrome,
+   the search bar above the table, and the stats along the bottom.
+   Mainkey Classic stays untouched!
+   ===================================================================== */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #f7f0fe;
+    color: #252525;
+}
+body.os-office.os-dark { background: #1a0e26; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .aero-sidebar { display: none !important; }
+body.os-office .workspace-viewport-wrapper { grid-column: 1; grid-row: 2; height: auto; min-height: 0; width: auto; padding: 14px 18px; overflow: hidden; animation: osFade 0.3s; }
+body.os-office .canvas-area-container { height: 100%; min-height: 0; }
+body.os-office .sheets-toolbar { background: #fff; border: 1px solid #ead7fb; box-shadow: 0 1px 4px rgba(163, 5, 255, 0.1); border-radius: 10px; color: #4b1773; }
+body.os-office .toolbar-label, body.os-office .toolbar-hint { color: #7e00cc; text-shadow: none; }
+body.os-office .search-field { background: #fbf7ff; border: 1px solid #dcc2f6; color: #252525; }
+body.os-office .base-frame { background: #fff; border: 1px solid #ead7fb; box-shadow: 0 1px 4px rgba(163, 5, 255, 0.12); border-radius: 10px; }
+body.os-office .stats-bar { background: #fff; color: #4b1773; border: 1px solid #ead7fb; }
+body.os-office.os-dark .sheets-toolbar, body.os-office.os-dark .base-frame, body.os-office.os-dark .stats-bar { background: #241433; border-color: #3d2356; color: #eadcfb; }
+.mk-bs-doc img { width: 36px; height: 36px; border-radius: 8px; }
+.mk-classic-layout { margin-top: 6px; }
+.os-dlg.mk-layout-dlg { width: 560px; }

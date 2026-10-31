@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '5ca0e301a849';
+const VERSION = '5033e0957f47';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","6ee7ad9b06"],
@@ -159,16 +159,20 @@ const CORE = [["/","6ee7ad9b06"],
   ["/inkpath/radii-file.js?v=20261042","3bdadf1b3d"],
   ["/inkpath/style.css?v=20261019","4b9512eafa"],
   ["/logo.png","d33ad92068"],
-  ["/mainkey/","75b286825f"],
+  ["/mainkey/","55122b45ef"],
   ["/mainkey/app.js?v=20261132c","9953c85ff2"],
   ["/mainkey/apple-touch-icon.png","250d27bb90"],
   ["/mainkey/favicon-96.png","6d9050af6c"],
-  ["/mainkey/index.html","75b286825f"],
+  ["/mainkey/index.html","55122b45ef"],
   ["/mainkey/live/README.md","dfb63cc053"],
   ["/mainkey/live/demo.html","174aee1411"],
   ["/mainkey/live/mainkey-live.js","2d2e2e84e5"],
   ["/mainkey/mainkey-host-ui.js","f3ff28f80d"],
-  ["/mainkey/style.css","e9c46da663"],
+  ["/mainkey/mainkey-office.css?v=20261132p","0afb98af54"],
+  ["/mainkey/mainkey-office.js?v=20261132p","4f4a7a0b39"],
+  ["/mainkey/office-shell.css?v=20261131h","dcf1a76ab0"],
+  ["/mainkey/office-shell.js?v=20261128","b9085a11da"],
+  ["/mainkey/style.css?v=20261132p","e9c46da663"],
   ["/not_found.html","8cc5fded82"],
   ["/offline.js?v=20261132g","06cf73e705"],
   ["/omicron/","37741cfae5"],
@@ -232,7 +236,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
-  ["/opendb/data/index.json","04722ee716"],
+  ["/opendb/data/index.json","67d61f4697"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/icon-exclamation.png","cb2c7fea56"],
   ["/opendb/data/media/icon-image.png","d86977ba13"],
