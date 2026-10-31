@@ -1,0 +1,56 @@
+---
+format: keydown-text
+id: hilbert-space
+type: article
+title: Hilbert space
+summary: A Hilbert space is a vector space with an inner product that is also complete, letting geometry like lengths, angles and right angles work even in infinitely many dimensions.
+tags: [mathematics, functional analysis, linear algebra, quantum mechanics]
+created: 2026-10-31
+updated: 2026-10-31
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Field: Functional analysis
+infobox.Named after: David Hilbert
+infobox.Key tool: Inner product ⟨x, y⟩
+infobox.Used in: Quantum mechanics, signal processing, PDEs
+---
+{{unreferenced}}
+
+A **Hilbert space** is a vector space with an **inner product** that is also **complete**. In plain words, #B#it is a space where you can measure lengths and angles, as in ordinary geometry, even when it has infinitely many dimensions##. Hilbert spaces are the mathematical home of [[quantum-mechanics|quantum mechanics]] and of Fourier analysis.
+
+%8%B%Vectors%## %8%G%Inner product%## %8%O%Complete%## %8%PR%Infinite dimensions%##
+
+## The two ingredients
+
+::gsky{Inner product|A way to multiply two vectors to get a number, written ⟨x, y⟩, giving lengths and angles}
+
+* #%B%Inner product% Every pair of vectors $x, y$ has a number $\langle x, y\rangle$. It gives the **length** (norm) $\lVert x\rVert = \sqrt{\langle x, x\rangle}$, and two vectors are **orthogonal** (at right angles) when $\langle x, y\rangle = 0$.
+* #%G%Completeness% Every sequence of vectors that keeps getting closer together (a Cauchy sequence) actually arrives at a vector of the space: there are no "holes".
+
+> [!NOTE] A space with just the first ingredient is an *inner product space*. Completeness is what makes calculus and limits work smoothly, which is why it matters.
+
+## Examples
+
+* $\mathbb{R}^n$ and $\mathbb{C}^n$ with the usual dot product: the familiar finite-dimensional cases.
+* $\ell^2$: infinite sequences $(a_1, a_2, \ldots)$ with $\sum |a_n|^2$ finite.
+* $L^2$: functions whose square can be integrated, with $\langle f, g\rangle = \int f(x)\,\overline{g(x)}\,dx$. ^^G^Waves and sounds live here!^^
+
+## Geometry that still works
+
+* #G#Pythagorean theorem#=: for orthogonal vectors, $\lVert x + y\rVert^2 = \lVert x\rVert^2 + \lVert y\rVert^2$ (see [[pythagorean-theorem|Pythagorean theorem]]).
+* #B#Cauchy–Schwarz inequality#=: $|\langle x, y\rangle| \le \lVert x\rVert\,\lVert y\rVert$.
+* #PR#Orthonormal bases#=: every Hilbert space has one, and every vector is a (possibly infinite) sum of basis vectors. **Fourier series** are exactly this, in $L^2$.
+* #O#Projections#=: from any point there is a single closest point on a closed subspace, found by dropping a perpendicular.
+
+> [!FACT] Parseval's identity says the length of a vector is the same whether you measure it directly or add up the squares of its coordinates in an orthonormal basis, even with infinitely many coordinates.
+
+## History
+
+> The infinite! No other question has ever moved so profoundly the spirit of man.
+> — David Hilbert, "On the Infinite" (1925)
+
+The spaces grew out of David Hilbert's work on integral equations in the early 1900s. John von Neumann gave the modern, abstract definition around 1927–1929, used the name "Hilbert space", and built the mathematics of quantum mechanics on it.
+
+## In quantum mechanics
+
+The state of a quantum system is a vector of length 1 in a complex Hilbert space, and measurable quantities are operators on it. A single [[qubit]] lives in the two-dimensional space $\mathbb{C}^2$, while a particle moving along a line needs the infinite-dimensional $L^2$.

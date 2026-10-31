@@ -1,0 +1,51 @@
+---
+format: keydown-text
+id: sigmoid-function
+type: article
+title: Sigmoid function
+summary: A sigmoid function is an S-shaped curve; the best known is the logistic function, which squashes any number into the range between 0 and 1.
+tags: [mathematics, functions, machine learning, statistics]
+created: 2026-10-31
+updated: 2026-10-31
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Shape: S-shaped curve
+infobox.Standard form: σ(x) = 1 / (1 + e^(−x))
+infobox.Range: 0 to 1 (never reaching either)
+infobox.Uses: Logistic regression, neural networks, growth models
+---
+{{unreferenced}}
+
+A **sigmoid function** is a function whose graph has a characteristic **S shape**: it rises slowly, then quickly, then slowly again, leveling off at both ends. The best known sigmoid is the **logistic function**
+
+$$\sigma(x) = \frac{1}{1 + e^{-x}}$$
+
+which uses [[eulers-number|Euler's number]] $e$. It takes any real number and #B#squashes it into the range between 0 and 1##, which makes it perfect for turning a score into a probability.
+
+%1%B%S-shaped%## %1%G%Smooth%## %1%O%Bounded%## %1%PR%Increasing%##
+
+## Key properties
+
+::gsky{The logistic function at a glance|σ(0) = 1/2, it heads to 1 for big inputs and to 0 for very negative ones}
+
+* #;B;Center; $\sigma(0) = \frac{1}{2}$, the middle of the S.
+* #;G;Symmetry; $\sigma(-x) = 1 - \sigma(x)$, so the curve looks the same turned upside down.
+* #;O;Slope; Its derivative has a neat form, $\sigma'(x) = \sigma(x)\,\bigl(1 - \sigma(x)\bigr)$, and is largest (exactly $\frac{1}{4}$) at $x = 0$.
+* #;PR;Inverse; Going back from a probability $p$ to a score is the **logit**, $\ln\frac{p}{1-p}$.
+
+> [!NOTE] The hyperbolic tangent is a sigmoid too: $\tanh x = 2\sigma(2x) - 1$. It has the same S shape, but runs from $-1$ to $1$.
+
+## Other sigmoid curves
+
+Many S-shaped functions are called sigmoids: #T#the hyperbolic tangent##, #T#the arctangent##, #T#the error function## used in statistics, and the lopsided **Gompertz curve**. They differ in how quickly they bend, but all level off at both ends.
+
+## Uses
+
+* ^^B^Is this email spam?^^ **Logistic regression** feeds a weighted sum of clues through $\sigma$ to get a probability between 0 and 1.
+* **Neural networks** long used sigmoids as "activation functions" between layers.
+* **Growth models**: a population that grows quickly at first but is limited by food or space follows a logistic curve, first described by Pierre-François Verhulst in 1838.
+* **Statistics**: the cumulative distribution functions of many probability distributions are sigmoid-shaped.
+
+> [!WARNING] Far from zero, the sigmoid is almost flat, so its slope is nearly 0. In deep neural networks this makes learning slow (the "vanishing gradient" problem), which is one reason simpler activations such as ReLU became popular.
+
+> [!FACT] The derivative $\sigma(x)(1-\sigma(x))$ is the shape of a bump, and it is the probability density of the **logistic distribution**.

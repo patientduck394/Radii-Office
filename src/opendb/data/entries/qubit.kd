@@ -1,0 +1,66 @@
+---
+format: keydown-text
+id: qubit
+type: article
+title: Qubit
+summary: A qubit, or quantum bit, is the basic unit of quantum information; unlike a bit, it can be in a superposition of 0 and 1.
+tags: [physics, quantum computing, quantum mechanics, information]
+created: 2026-10-31
+updated: 2026-10-31
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Full name: Quantum bit
+infobox.States: |0⟩, |1⟩ and any superposition
+infobox.Picture: The Bloch sphere
+infobox.Name coined: Benjamin Schumacher (1995)
+---
+{{unreferenced}}
+
+A **qubit** (short for **quantum bit**) is the basic unit of information in quantum computing. An ordinary bit is always either 0 or 1. #C#A qubit can be in a superposition of both at once##, and only becomes a definite 0 or 1 when it is measured, following the rules of [[quantum-mechanics|quantum mechanics]].
+
+!#C#Quantum# !#B#Superposition# !#PR#Entanglement# !#O#Measurement#
+
+## The state of a qubit
+
+Its state is a vector in the two-dimensional [[hilbert-space|Hilbert space]] $\mathbb{C}^2$:
+
+$$\lvert\psi\rangle = \alpha\lvert 0\rangle + \beta\lvert 1\rangle, \qquad \lvert\alpha\rvert^2 + \lvert\beta\rvert^2 = 1$$
+
+The numbers $\alpha$ and $\beta$ are complex (they can include the [[imaginary-number|imaginary unit]] $i$) and are called **amplitudes**.
+
+::gsky{Measurement|You get 0 with probability ∣α∣² and 1 with probability ∣β∣², and the superposition is gone}
+
+> [!IMPORTANT] Measuring a qubit gives just **one classical bit** of information. A qubit can hold a continuum of states, but you can only ever read out a 0 or a 1 (the Holevo bound).
+
+## The Bloch sphere
+
+Every pure state of a qubit can be written as
+
+$$\lvert\psi\rangle = \cos\tfrac{\theta}{2}\lvert 0\rangle + e^{i\varphi}\sin\tfrac{\theta}{2}\lvert 1\rangle$$
+
+so it is a point on a sphere: $\lvert 0\rangle$ at the north pole, $\lvert 1\rangle$ at the south pole, and equal superpositions around the equator. Quantum gates are rotations of this sphere.
+
+## Quantum gates
+
+* #:B:X gate: flips $\lvert 0\rangle$ and $\lvert 1\rangle$, like a classical NOT.
+* #:G:Z gate: flips the sign of the $\lvert 1\rangle$ part.
+* #:PR:Hadamard (H): turns $\lvert 0\rangle$ into the even superposition $\frac{1}{\sqrt{2}}(\lvert 0\rangle + \lvert 1\rangle)$.
+* #:O:CNOT: a two-qubit gate that flips the second qubit when the first is $\lvert 1\rangle$.
+
+## Many qubits
+
+$n$ qubits are described by $2^n$ amplitudes at once: 10 qubits need 1,024 numbers, and 300 qubits need more numbers than there are atoms in the observable universe. ^^PR^That is where the power comes from!^^
+
+Qubits can also be **entangled**, sharing one state that cannot be split into separate states for each qubit, such as the Bell state
+
+$$\frac{1}{\sqrt{2}}\bigl(\lvert 00\rangle + \lvert 11\rangle\bigr)$$
+
+> [!CAUTION] The **no-cloning theorem** says an unknown qubit state can never be copied perfectly. Quantum information cannot simply be backed up!
+
+## Building qubits
+
+%14%B%Superconducting circuits%## %14%G%Trapped ions%## %14%O%Photons%## %14%PR%Electron spins%## %14%TU%Neutral atoms%##
+
+Real qubits are fragile: noise from their surroundings makes them lose their quantum behavior (**decoherence**), so today's machines use error correction and are kept extremely cold or isolated.
+
+> [!FACT] The word "qubit" was coined by physicist Benjamin Schumacher, who published it in 1995.

@@ -6,7 +6,7 @@ title: Imaginary number
 summary: An imaginary number is a real number multiplied by the imaginary unit i, the number whose square is −1.
 tags: [mathematics, complex numbers, algebra]
 created: 2026-10-29
-updated: 2026-10-29
+updated: 2026-10-31
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Field: Algebra, complex analysis
@@ -46,7 +46,7 @@ so $i^5 = i$ again, and $i^{n}$ depends only on the remainder when $n$ is divide
 
 Complex numbers can be drawn as points in a plane, with the real part along the horizontal axis and the imaginary part along the vertical axis. Imaginary numbers lie on the vertical axis. In this picture, **multiplying by $i$ rotates a number a quarter turn (90°) counterclockwise** around zero: $1 \to i \to -1 \to -i \to 1$.
 
-This link between multiplication and rotation is captured by **Euler's formula**,
+This link between multiplication and rotation is captured by **Euler's formula**, using [[eulers-number|Euler's number]] $e$,
 
 $$e^{i\theta} = \cos\theta + i\sin\theta$$
 

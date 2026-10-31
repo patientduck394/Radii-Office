@@ -6,7 +6,7 @@ title: Quantum mechanics
 summary: Quantum mechanics is the branch of physics that describes how matter and light behave at the scale of atoms and smaller, where energy comes in discrete amounts and outcomes are described by probabilities.
 tags: [physics, quantum physics, science]
 created: 2026-10-29
-updated: 2026-10-29
+updated: 2026-10-31
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Field: Physics
@@ -36,7 +36,7 @@ Quantum mechanics is #B#one of the most precisely tested theories in science##. 
 
 ## The wave function
 
-The state of a quantum system is described by a **wave function**, usually written $\psi$. Its values are complex numbers, built from real and [[imaginary-number|imaginary numbers]]. The wave function changes over time according to the **Schrödinger equation**:
+The state of a quantum system is described by a **wave function**, usually written $\psi$. Its values are complex numbers, built from real and [[imaginary-number|imaginary numbers]], and it is a vector in a [[hilbert-space|Hilbert space]]. The wave function changes over time according to the **Schrödinger equation**:
 
 $$i\hbar \frac{\partial \psi}{\partial t} = \hat{H}\psi$$
 
@@ -64,5 +64,5 @@ The mathematics of quantum mechanics is agreed upon, but what it *means* is stil
 * **Electronics**: transistors, computer chips, solar cells and LEDs depend on the quantum behavior of electrons in solids.
 * **Lasers** rely on stimulated emission of light from atoms.
 * **Medicine**: MRI scanners use the quantum property of nuclear spin.
-* **Quantum computing** uses superposition and entanglement to process information in new ways.
+* **Quantum computing** uses [[qubit|qubits]], superposition and entanglement to process information in new ways.
 * **Particle physics**: quantum field theory describes the fundamental particles; fermions such as electrons are handled mathematically with [[grassmann-number|Grassmann numbers]].

@@ -1,0 +1,63 @@
+---
+format: keydown-text
+id: eulers-number
+type: article
+title: Euler's number
+summary: Euler's number e ≈ 2.71828 is the mathematical constant at the heart of growth, compound interest and calculus, the base of the natural logarithm.
+tags: [mathematics, constants, calculus]
+created: 2026-10-31
+updated: 2026-10-31
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Symbol: e
+infobox.Value: 2.718281828459045…
+infobox.Type: Irrational and transcendental
+infobox.Named after: Leonhard Euler
+---
+{{unreferenced}}
+
+**Euler's number**, written $e$, is the mathematical constant
+
+$$e = 2.718281828459045\ldots$$
+
+It is the base of the **natural logarithm** and the number that makes exponential growth "natural": #G#the function $e^x$ is its own derivative##. Alongside $0$, $1$, $\pi$ and $i$, it is one of the most important numbers in mathematics.
+
+!#B#Constant# !#G#Calculus# !#O#Growth# !#PR#Irrational#
+
+## Four ways to meet e
+
+::gsky{As a limit|e is what (1 + 1/n) to the power n gets closer and closer to as n grows}
+
+$$e = \lim_{n\to\infty}\left(1 + \frac{1}{n}\right)^{n}$$
+
+* #^B^Compound interest^ Put 1 coin in a bank at 100% interest per year. Paid once, you end with 2 coins; paid monthly, about 2.613; paid every moment ("continuously"), you end with exactly $e \approx 2.718$ coins.
+* #^G^Series^ It is also the sum $e = \sum_{n=0}^{\infty} \frac{1}{n!} = 1 + 1 + \frac{1}{2} + \frac{1}{6} + \frac{1}{24} + \cdots$, which gets very close very fast.
+* #^O^Calculus^ $e^x$ is the only function (apart from multiples) whose slope at every point equals its own value: $\frac{d}{dx} e^x = e^x$.
+* #^PR^Logarithms^ The natural logarithm $\ln x$ is the logarithm to base $e$, and $\ln e = 1$.
+
+> [!TIP] An easy way to remember the first digits: **2.7 1828 1828 45 90 45**. The block "1828" appears twice in a row!
+
+## Properties
+
+* $e$ is #R#irrational#= (Leonhard Euler showed this in 1737): it cannot be written as a fraction.
+* $e$ is #PR#transcendental#] (Charles Hermite proved it in 1873): it is not the solution of any polynomial equation with whole-number coefficients.
+* Its continued fraction has a beautiful pattern: $e = [2; 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, \ldots]$.
+
+With the [[imaginary-number|imaginary unit]] $i$, $e$ also describes rotation, through **Euler's formula** $e^{i\theta} = \cos\theta + i\sin\theta$, and the famous identity:
+
+$$e^{i\pi} + 1 = 0$$
+
+> [!FACT] The same $e$ appears in the bell curve of statistics, in radioactive decay, in the [[sigmoid-function|sigmoid function]] of machine learning and in the cooling of a cup of tea.
+
+## History
+
+* **1683**: Jacob Bernoulli met the number while studying compound interest, and showed it lies between 2 and 3.
+* **1727–1731**: Leonhard Euler began using the letter $e$ for it, and later computed many of its digits. ^^B^It's named after me!^^
+* **1737**: Euler proved that $e$ is irrational.
+* **1873**: Charles Hermite proved that $e$ is transcendental.
+
+## Where it shows up
+
+%3%B%Growth%## %3%G%Decay%## %3%O%Interest%## %3%PR%Probability%## %3%TU%Waves%##
+
+Anything that changes at a rate proportional to its own size, like populations, money with continuous interest, cooling objects or radioactive atoms, follows a curve built from $e$.
