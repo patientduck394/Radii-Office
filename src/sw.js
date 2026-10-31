@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'b2763e532063';
+const VERSION = 'bbb79d1585e7';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","6ee7ad9b06"],
@@ -208,6 +208,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/data/entries/icon-stub.kd","310a25aabb"],
   ["/opendb/data/entries/icon-tip.kd","7a018eadf0"],
   ["/opendb/data/entries/imaginary-number.kd","126bc26493"],
+  ["/opendb/data/entries/joyfully.kd","295b9ad118"],
   ["/opendb/data/entries/julia-programming-language.kd","ee7348b600"],
   ["/opendb/data/entries/keydown.kd","f396282dec"],
   ["/opendb/data/entries/opendb-architecture.kd","250e9bbb43"],
@@ -231,7 +232,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
-  ["/opendb/data/index.json","a7984a3169"],
+  ["/opendb/data/index.json","c570966077"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/icon-exclamation.png","cb2c7fea56"],
   ["/opendb/data/media/icon-image.png","d86977ba13"],
@@ -369,7 +370,7 @@ self.addEventListener('activate', (event) => {
     .then(() => self.clients.claim()));
 });
 
-const save = (req, res) => { if (res && (res.ok || res.type === 'opaque')) { const copy = res.clone(); caches.open(RUNTIME).then((c) => c.put(req, copy)); } return res; };
+const save = (req, res) => { if (res && (res.status === 200 || res.type === 'opaque')) { const copy = res.clone(); caches.open(RUNTIME).then((c) => c.put(req, copy)); } return res; };
 // a saved copy of this page, or of the folder's index.html, or (last) the suite's home page
 async function savedPage(url) {
   const tries = [url.href, url.pathname, url.pathname.endsWith('/') ? url.pathname + 'index.html' : url.pathname + '/', url.pathname.replace(/index\.html$/, '')];
@@ -379,7 +380,8 @@ async function savedPage(url) {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET') return;
+  // music and videos ask for pieces of a file (byte ranges): those go straight to the network
+  if (req.method !== 'GET' || req.headers.has('range')) return;
   const url = new URL(req.url);
   if (url.origin === self.location.origin) {
     if (req.mode === 'navigate') {

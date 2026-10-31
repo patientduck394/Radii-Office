@@ -109,7 +109,7 @@ self.addEventListener('activate', (event) => {
     .then(() => self.clients.claim()));
 });
 
-const save = (req, res) => { if (res && (res.ok || res.type === 'opaque')) { const copy = res.clone(); caches.open(RUNTIME).then((c) => c.put(req, copy)); } return res; };
+const save = (req, res) => { if (res && (res.status === 200 || res.type === 'opaque')) { const copy = res.clone(); caches.open(RUNTIME).then((c) => c.put(req, copy)); } return res; };
 // a saved copy of this page, or of the folder's index.html, or (last) the suite's home page
 async function savedPage(url) {
   const tries = [url.href, url.pathname, url.pathname.endsWith('/') ? url.pathname + 'index.html' : url.pathname + '/', url.pathname.replace(/index\\.html$/, '')];
@@ -119,7 +119,8 @@ async function savedPage(url) {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
-  if (req.method !== 'GET') return;
+  // music and videos ask for pieces of a file (byte ranges): those go straight to the network
+  if (req.method !== 'GET' || req.headers.has('range')) return;
   const url = new URL(req.url);
   if (url.origin === self.location.origin) {
     if (req.mode === 'navigate') {
