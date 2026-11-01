@@ -327,7 +327,7 @@
                 ['Gel Boxes  #color#text#=', ends('#=')], ['Corner Brackets  #color#text#]', ends('#]')], ['Gel Selects  #color#text#-', ends('#-')]]) },
             { name: 'Bubble Chip cousins', cats: cats([['Bubble Chips  #color#text#', cls(/^gel-bubble-chip /)], ['Gloss Pills  %color%text%', cls(/^gel-pill-chip /)], ['Gel Flags  #%color%text%', cls(/^gel-flag-chip /)],
                 ['Gel Tabs  #^color^text^', cls(/^gel-tab-chip /)], ['Gel Drops  #+color+text+', cls(/^gel-drop-chip /)], ['Gel Splits  #:color:text:', cls(/^gel-split-chip /)],
-                ['Gel Lenses  #;color;text;', cls(/^gel-lens-chip /)], ['Gel Speech  ^^color^text^^', cls(/^gel-speech-chip /)], ['Tag Chips  !#color#text#', cls(/^aero-tag-chip /)]]) },
+                ['Gel Lenses  #;color;text;', cls(/^gel-lens-chip /)], ['Gel Speech  ^^color^text^^', cls(/^gel-speech-chip /)], ['Aero Chips  ++color+text++', cls(/^gel-aero-chip /)], ['Logo Chips  ;;color;text;;', cls(/^gel-logo-chip /)], ['Tag Chips  !#color#text#', cls(/^aero-tag-chip /)]]) },
             { name: 'Gel Series  %number%color%text%##', cats: cats(SERIES_NAMES.map((n, i) => [(i + 1) + '. Gel ' + n, cls(new RegExp('^gel-sx-chip gel-sx-' + (i + 1) + ' '))])) },
         ];
     }

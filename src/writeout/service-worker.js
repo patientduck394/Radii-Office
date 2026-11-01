@@ -1,11 +1,11 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261201g';
+var WRITEOUT_CACHE = 'writeout-shell-v20261201h';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261201e',
+  'app.js?v=20261201h',
   'style.css?v=20261131e',
-  'keydown.css?v=20261132c',
+  'keydown.css?v=20261201h',
   'marketplace.js?v=20260928',
   'marketplace.css?v=20260928',
   'settings.js?v=20260928',
@@ -24,12 +24,12 @@ var WRITEOUT_SHELL = [
   'images-glue.js?v=20261131v',
   'drawio-plugin.js?v=20261132f',
   'radii-file.js?v=20261042',
-  'radii-collab.js?v=20261201g',
+  'radii-collab.js?v=20261201h',
   'radii-collab.css?v=20261042',
   'collab-kd.js?v=20261021',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261201f',
+  'keydown-doc.js?v=20261201h',
   'radii-table.js?v=20261201b',
   'favicon.svg',
   'favicon-96.png',

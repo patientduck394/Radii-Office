@@ -5581,8 +5581,70 @@
 .gel-speech-slate { --sp-c: #b4b4b4; --sp-edge: #6f6f6f; --sp-ink: #363636; }
 .gel-speech-black { --sp-c: #919191; --sp-edge: #454545; --sp-ink: #222222; }
 
+/* ========================================================
+   AERO CHIPS (++R+text++): glossy Aero pills, in the 13 Annotate colors!
+   A deep border (darker at the top), the color down to 59% of the height melting into a light tint,
+   a rounded white shine across the top, and a soft gray shadow underneath.
+   ======================================================== */
+.gel-aero-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  position: relative; isolation: isolate;
+  padding: 1px 12px; margin: 0 2px; border-radius: 999px;
+  border: 2px solid transparent;
+  background: linear-gradient(180deg, var(--ae-c) 0%, var(--ae-c) 59%, var(--ae-l) 87%, var(--ae-l) 100%) padding-box,
+              linear-gradient(180deg, var(--ae-e1), var(--ae-e2)) border-box;
+  box-shadow: 0 2px 0 rgba(170, 170, 170, 0.55), 0 3px 6px rgba(0, 0, 0, 0.12);
+  color: var(--ae-ink, #ffffff); font-weight: 800; white-space: nowrap; vertical-align: middle;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+.gel-aero-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 10%; right: 10%; top: 4%; height: 33%; border-radius: 12% / 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.81) 0%, rgba(255, 255, 255, 0.81) 28%, rgba(255, 255, 255, 0.5) 100%);
+}
+.gel-aero-red { --ae-c: #ff2222; --ae-l: #ff6e6e; --ae-e1: #7c0000; --ae-e2: #c60000; }
+.gel-aero-orange { --ae-c: #ff7f22; --ae-l: #ffb26e; --ae-e1: #944200; --ae-e2: #c66700; }
+.gel-aero-gold { --ae-c: #ffb300; --ae-l: #ffd66e; --ae-e1: #8a5a00; --ae-e2: #c98a00; }
+.gel-aero-yellow { --ae-c: #ffd122; --ae-l: #fdff6e; --ae-e1: #9c7c00; --ae-e2: #e6c700; --ae-ink: #000000; text-shadow: none; }
+.gel-aero-lime { --ae-c: #9be000; --ae-l: #d4ff6e; --ae-e1: #4f7a00; --ae-e2: #86c400; --ae-ink: #1f3300; text-shadow: none; }
+.gel-aero-green { --ae-c: #04db00; --ae-l: #98ff6e; --ae-e1: #058100; --ae-e2: #87e600; }
+.gel-aero-turquoise { --ae-c: #00d6a8; --ae-l: #6effd8; --ae-e1: #007a5e; --ae-e2: #00c095; }
+.gel-aero-teal { --ae-c: #00a8a8; --ae-l: #5fe0e0; --ae-e1: #005c66; --ae-e2: #009aa6; }
+.gel-aero-cyan { --ae-c: #00cedb; --ae-l: #6ef9ff; --ae-e1: #007081; --ae-e2: #00c3e6; }
+.gel-aero-blue { --ae-c: #2277ff; --ae-l: #6eb4ff; --ae-e1: #00317c; --ae-e2: #0058c6; }
+.gel-aero-purple { --ae-c: #9b30ff; --ae-l: #c98bff; --ae-e1: #4a0080; --ae-e2: #7a1ad1; }
+.gel-aero-pink { --ae-c: #ff2fa8; --ae-l: #ff8ad0; --ae-e1: #7c0047; --ae-e2: #c6006f; }
+.gel-aero-slate { --ae-c: #7f8ea3; --ae-l: #b5c1d1; --ae-e1: #334155; --ae-e2: #5b6b82; }
 
-
-
-
-
+/* ========================================================
+   LOGO CHIPS (;;B;text;;): chips made like the Radii Office app icons, in the 13 Annotate colors!
+   A softly rounded tile, solid color through its top third fading to a bright tint at the bottom,
+   under a wide white gloss whose curved lower edge dips across the middle.
+   ======================================================== */
+.gel-logo-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: 2px 12px; margin: 0 2px; border-radius: 0.32em;
+  background: linear-gradient(180deg, var(--lg-c) 0%, var(--lg-c) var(--lg-at, 37.5%), var(--lg-l) 100%);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);
+  color: #ffffff; font-weight: 800; white-space: nowrap; vertical-align: middle;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+.gel-logo-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -29.6%; width: 148%; top: -17%; height: 63%; border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.34) 100%);
+}
+.gel-logo-purple { --lg-c: #bd1bff; --lg-l: #f6c0ff; }
+.gel-logo-blue { --lg-c: #1b7dff; --lg-l: #2edbff; }
+.gel-logo-red { --lg-c: #ee0000; --lg-l: #ffbcbc; --lg-at: 27.9%; }
+.gel-logo-orange { --lg-c: #ff9d1b; --lg-l: #ffff17; }
+.gel-logo-green { --lg-c: #08b500; --lg-l: #52ff1b; }
+.gel-logo-gold { --lg-c: #e6a800; --lg-l: #fff06e; }
+.gel-logo-yellow { --lg-c: #ffc800; --lg-l: #ffff8a; }
+.gel-logo-lime { --lg-c: #6fc400; --lg-l: #d6ff52; }
+.gel-logo-turquoise { --lg-c: #00c49a; --lg-l: #6fffe0; }
+.gel-logo-teal { --lg-c: #00999f; --lg-l: #4ff0e6; }
+.gel-logo-cyan { --lg-c: #00b7d6; --lg-l: #7af5ff; }
+.gel-logo-pink { --lg-c: #ff1b9d; --lg-l: #ffc0e6; }
+.gel-logo-slate { --lg-c: #5b6b82; --lg-l: #c9d3e0; }
