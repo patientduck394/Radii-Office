@@ -1,0 +1,105 @@
+# Builds every Radii Office app for macOS (Apple Silicon + Intel), Windows and Linux,
+# and publishes them to the "desktop" release:
+#   https://github.com/patientduck394/Radii-Office/releases/tag/desktop
+# Runs when the site (src/) or the desktop project (desktop/) changes, or from the Actions tab.
+name: Desktop apps
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'desktop/**'
+      - '.github/workflows/desktop.yml'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: desktop-apps
+  cancel-in-progress: true
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-14
+            target: aarch64-apple-darwin
+            label: macOS-AppleSilicon
+          - os: macos-14
+            target: x86_64-apple-darwin
+            label: macOS-Intel
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            label: Windows
+          - os: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            label: Linux
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: desktop/src-tauri -> target
+          key: ${{ matrix.target }}
+
+      - name: Linux libraries
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libfuse2
+
+      - name: Install the Tauri CLI
+        working-directory: desktop
+        run: npm ci
+
+      - name: Build every app
+        working-directory: desktop
+        env:
+          NO_STRIP: true
+        run: node scripts/build-all.mjs --site ../src --target ${{ matrix.target }} --label ${{ matrix.label }} --out ../dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apps-${{ matrix.label }}
+          path: dist/*
+          if-no-files-found: error
+
+  publish:
+    needs: build
+    if: ${{ !cancelled() }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: List the files
+        run: ls -la dist
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: desktop
+          name: Radii Office desktop apps
+          body: |
+            Every Radii Office app as a desktop app, for macOS (Apple Silicon and Intel), Windows and Linux!
+            Download them from https://radii-office.pages.dev/products or right here below.
+
+            macOS: the apps are not notarized yet, so the first time, right-click the app and pick Open.
+            Windows: if SmartScreen warns you, click "More info" then "Run anyway".
+            Linux: make the .AppImage executable (chmod +x) and run it.
+          files: dist/*
+          make_latest: true
