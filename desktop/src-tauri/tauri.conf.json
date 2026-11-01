@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Radii App",
+  "version": "1.0.0",
+  "identifier": "com.radiioffice.app",
+  "build": {
+    "frontendDist": "../stage/app"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Radii App",
+        "url": "index.html",
+        "width": 1280,
+        "height": 860,
+        "minWidth": 480,
+        "minHeight": 400,
+        "resizable": true,
+        "create": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "category": "Productivity",
+    "icon": ["icons/app/32x32.png", "icons/app/128x128.png", "icons/app/128x128@2x.png", "icons/app/icon.icns", "icons/app/icon.ico", "icons/app/icon.png"],
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "signingIdentity": "-"
+    },
+    "windows": {
+      "nsis": { "installMode": "currentUser" }
+    }
+  }
+}

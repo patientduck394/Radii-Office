@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- imbuer: made by scripts/make-icons.mjs from imbuer/favicon.svg -->
+  <defs>
+    <clipPath id="tile"><rect width="1024" height="1024" rx="195" ry="195"/></clipPath>
+    <linearGradient id="color" x1="0" y1="0" x2="0" y2="1"><stop offset="0.375" stop-color="#02bf00"/><stop offset="1" stop-color="#80ff00"/></linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.4"/></linearGradient>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect width="1024" height="1024" fill="url(#color)"/>
+    <ellipse cx="454.7" cy="148.5" rx="757.8" ry="322.6" fill="url(#gloss)"/>
+  </g>
+  <g color="#ffffff" transform="translate(184 210) scale(26.8)">
+  
+  
+  
+  <g
+     fill="none"
+     stroke="currentColor"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="2"
+     id="g2">
+    <rect
+       width="18"
+       height="18"
+       x="3"
+       y="3"
+       rx="2"
+       ry="2"
+       id="rect1"
+       style="stroke:#ffffff;stroke-opacity:1" />
+    <path
+       d="M3 9h18M3 15h18M9 9v12m6-12v12"
+       id="path2"
+       style="stroke:#ffffff;stroke-opacity:1" />
+  </g>
+</g>
+</svg>

@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- phosphor: made by scripts/make-icons.mjs from phosphor/favicon.svg -->
+  <defs>
+    <clipPath id="tile"><rect width="1024" height="1024" rx="195" ry="195"/></clipPath>
+    <linearGradient id="color" x1="0" y1="0" x2="0" y2="1"><stop offset="0.375" stop-color="#34d399"/><stop offset="1" stop-color="#a0e8dc"/></linearGradient>
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffffff" stop-opacity="1"/><stop offset="1" stop-color="#ffffff" stop-opacity="0.4"/></linearGradient>
+  </defs>
+  <g clip-path="url(#tile)">
+    <rect width="1024" height="1024" fill="url(#color)"/>
+    <ellipse cx="454.7" cy="148.5" rx="757.8" ry="322.6" fill="url(#gloss)"/>
+  </g>
+  <g color="#ffffff" transform="translate(184 210) scale(26.8)">
+  
+  
+  
+  <path
+     fill="none"
+     stroke="currentColor"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     stroke-width="2"
+     d="M21.998 11.92C22.1 6.54 17.524 2.03 12.003 2c-5.087-.027-10.13 4.442-10 9.92c.049 2.1.228 2.983 1.623 5.13c.467.867.158 1.95-.328 2.895c-.351.682-.437 1.294-.296 1.54c.571.998 2.893.318 3.5-.14c1.626-1.23 3.396.574 5.498.495c5.568-.208 9.906-5.004 9.998-9.92"
+     id="path2"
+     style="stroke:#ffffff;stroke-opacity:1" />
+</g>
+</svg>

@@ -1,0 +1,17 @@
+[package]
+name = "radii-app"
+version = "1.0.0"
+description = "A Radii Office app in its own desktop window"
+edition = "2021"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+
+[profile.release]
+codegen-units = 16
+lto = "thin"
+opt-level = "s"
+strip = true
