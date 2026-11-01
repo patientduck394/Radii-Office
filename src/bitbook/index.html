@@ -351,7 +351,8 @@
                     <button type="button" class="insert-item" data-skill="timer"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><circle cx="12" cy="13" r="8" /><path d="M12 9v4l2 2M10 2h4" /></g></svg>Focus Timer...</button>
                     <button type="button" class="insert-item" data-skill="dice"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="3" /><circle cx="9" cy="9" r="0.8" fill="currentColor" /><circle cx="15" cy="15" r="0.8" fill="currentColor" /><circle cx="15" cy="9" r="0.8" fill="currentColor" /><circle cx="9" cy="15" r="0.8" fill="currentColor" /></g></svg>Dice Roller...</button>
                     <button type="button" class="insert-item" data-skill="programs"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect x="3" y="4" width="18" height="14" rx="2" /><path d="M9 9l-3 3l3 3M15 9l3 3l-3 3M13 8l-2 8M8 21h8" /></g></svg>Programs</button>
-                    <button type="button" class="insert-item" data-skill="annotate"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M9 11l-5 5v4h4l5-5" /><path d="M14 6l4 4l3-3l-4-4z" /><path d="M9 11l4-4l4 4l-4 4z" /><path d="M3 21h18" opacity="0.5" /></g></svg>Annotate...</button>
+                    <button type="button" class="insert-item" data-skill="annotate"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M9 11l-5 5v4h4l5-5" /><path d="M14 6l4 4l3-3l-4-4z" /><path d="M9 11l4-4l4 4l-4 4z" /><path d="M3 21h18" opacity="0.5" /></g></svg>Highlight...</button>
+                    <button type="button" class="insert-item" data-skill="markup"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M3 21c3-1 5-3 7-6s5-7 9-9"/><path d="M14 4l6 6"/><path d="M3 21l2-5 3 3z"/></g></svg>Annotate...</button>
                     <button type="button" class="insert-item" data-skill="customcss"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8 4H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1" /><path d="M16 4h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1" /><path d="M10.5 15.5c1.2 0 2-.8 2-2s1-2.5 2.5-3.5c-1.5-.2-3 .5-3.8 1.6c-.8-.3-1.7.2-1.7 1.4v2.5z" /></g></svg>Custom CSS...</button>
                     <div class="skills-soon-note">More skills landing soon!</div>
                 </div>
@@ -1400,11 +1401,11 @@
         else dockMainOnTop();
     })();
     </script>
-    <!-- Annotate view (Skills! the document in the center + a highlight bar on top!) -->
+    <!-- Highlight view (Skills! the document in the center + a highlight bar on top!) -->
     <div id="annotate-view" class="an-view" hidden>
         <div class="an-topbar">
-            <span class="an-title">Annotate</span>
-            <div class="an-highlights" aria-label="Annotate tools">
+            <span class="an-title">Highlight</span>
+            <div class="an-highlights" aria-label="Highlight tools">
                 <div class="an-drop is-open has-active" data-an-drop="hl">
                     <button type="button" class="an-hl-btn an-drop-btn" data-an-drop-btn="hl" aria-expanded="true" aria-controls="an-drop-hl" aria-label="Highlighter colors" title="Highlighter" style="--an-c:#ffffff"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><rect x="4" y="7.5" width="16" height="9" rx="2" fill="#ead708" opacity="0.6" stroke="#caa604" stroke-width="1" /><path class="an-chev" d="M10 8l4 4l-4 4" fill="none" stroke="#0369a1" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" /></svg></button>
                     <div class="an-drop-colors" id="an-drop-hl" role="radiogroup" aria-label="Highlighter color">
@@ -1996,11 +1997,12 @@
     <script src="image-resize.js?v=20261040"></script>
     <script src="bitlang.js?v=20261201f"></script>
     <script src="programs.js?v=20261118"></script>
+    <script src="annotate-ink.js?v=20261201i"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script src="latex.js?v=20261130"></script>
-    <script src="keydown-doc.js?v=20261201h"></script>
+    <script src="keydown-doc.js?v=20261201i"></script>
     <script src="office-shell.js?v=20261132r"></script>
-    <script src="bitbook-office.js?v=20261201b"></script>
+    <script src="bitbook-office.js?v=20261201i"></script>
     <script src="radii-images.js?v=20261131v"></script>
     <script src="images-glue.js?v=20261131v"></script>
     <script src="drawio-plugin.js?v=20261132f"></script>

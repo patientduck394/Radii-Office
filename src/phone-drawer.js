@@ -13,13 +13,24 @@
         'html.pd-phone .pd-panel.pd-left{left:0!important;right:auto!important;transform:translateX(-105%)!important}' +
         'html.pd-phone .pd-panel.pd-right{right:0!important;left:auto!important;transform:translateX(105%)!important}' +
         'html.pd-phone .pd-panel.pd-open{transform:none!important;box-shadow:0 0 0 100vmax rgba(0,0,0,.38),0 0 24px rgba(0,0,0,.35)!important}' +
-        '.pd-btn{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));z-index:2147481999;width:52px;height:52px;border-radius:50%;border:1px solid rgba(255,255,255,.85);display:none;place-items:center;cursor:pointer;color:#fff;' +
-        'background:radial-gradient(circle at 50% 28%,rgba(255,255,255,.9) 0,rgba(255,255,255,.25) 32%,transparent 33%),linear-gradient(180deg,#5fb8f3,#1278c8);box-shadow:0 6px 16px rgba(0,0,0,.35),inset 0 1px 1px rgba(255,255,255,.7)}' +
-        '.pd-btn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}' +
+        // each app's buttons are little glossy tiles in that app's own icon colors (the Logo chip recipe)
+        '.pd-btn{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom));z-index:2147481999;width:52px;height:52px;border-radius:15px;border:1px solid rgba(255,255,255,.75);display:none;place-items:center;cursor:pointer;color:#fff;' +
+        'overflow:hidden;isolation:isolate;background:linear-gradient(180deg,var(--pd-c) 0%,var(--pd-c) 37.5%,var(--pd-l) 100%);box-shadow:0 6px 16px rgba(0,0,0,.3),0 0 0 1px rgba(0,0,0,.08)}' +
+        '.pd-btn::before{content:"";position:absolute;z-index:-1;left:-29.6%;width:148%;top:-17%;height:63%;border-radius:50%;background:linear-gradient(180deg,#fff,rgba(255,255,255,.4));pointer-events:none}' +
+        '.pd-btn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;filter:drop-shadow(0 1px 1px rgba(0,0,0,.35))}' +
+        '.pd-btn:active{transform:translateY(1px);filter:brightness(.95)}' +
         '.pd-btn.pd-left{left:16px}.pd-btn.pd-right{right:16px}' +
         'body.os-office .pd-btn{bottom:calc(46px + env(safe-area-inset-bottom))}' +
         'html.pd-phone .pd-btn.pd-show{display:grid}' +
         '@media (prefers-reduced-motion:reduce){html.pd-phone .pd-panel{transition:none!important}}';
+    // [color, bright tint] from each app's icon (Waterflow's icon runs teal to yellow)
+    const THEMES = {
+        amber: ['#f5a300', '#ffe94a'], antimony: ['#0f8f80', '#5ee0cf'], cabinet: ['#ee0000', '#ffbcbc'], formly: ['#8b7cf6', '#ddd4ff'],
+        hexa: ['#22c2a6', '#b8f5ea'], imbuer: ['#02bf00', '#80ff00'], inkpath: ['#ff7cd0', '#ffd7fc'], mainkey: ['#bd1cff', '#f6c2ff'],
+        omicron: ['#17d9bf', '#b8f7f4'], peeker: ['#ff8a1b', '#ffd9a8'], phosphor: ['#34d399', '#a0e8dc'], taskra: ['#6f6cf0', '#cfcdff'],
+        waterflow: ['#14b8a6', '#facc15'], opendb: ['#1d4ed8', '#7cc0ff'], writeout: ['#0a9cf0', '#7fe3ff'], bitbook: ['#d01bff', '#f8c4ff']
+    };
+    const theme = THEMES[(location.pathname.split('/')[1] || '').toLowerCase()] || ['#1278c8', '#7fd0ff'];
     const phoneMQ = window.matchMedia ? window.matchMedia('(max-width: 700px)') : null;
     const isPhone = () => document.documentElement.hasAttribute('data-os-phone') || !!(phoneMQ && phoneMQ.matches);
     const items = [];
@@ -59,7 +70,7 @@
     }
     function start() {
         const style = document.createElement('style');
-        style.textContent = CSS;
+        style.textContent = CSS + ':root{--pd-c:' + theme[0] + ';--pd-l:' + theme[1] + '}';
         document.head.appendChild(style);
         PANELS.forEach((P) => {
             const panel = document.querySelector(P.sel);

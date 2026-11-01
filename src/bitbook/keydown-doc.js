@@ -974,7 +974,7 @@
     /* ---------- Skills as Keydown (Bitbook): @@name="key='value',..." and @@program=``` code ``` ---------- */
     // BeepBox chips, programs, dice, timers, flashcards, time capsules, sprites, Uni-Chips, Custom Chips, Custom CSS
     // chips and jumpers all have a Keydown form, so they travel as text and come back as the real, working skill!
-    const SKILL_SEL = '.bb-chip, .bl-prog, .dc-chip, .tc-chip, .pm-chip, .fl-chip, .px-chip, .uni-chip, .cc-chip, .bbcss-chip, .jumper-anchor';
+    const SKILL_SEL = '.an-ink-layer, .bb-chip, .bl-prog, .dc-chip, .tc-chip, .pm-chip, .fl-chip, .px-chip, .uni-chip, .cc-chip, .bbcss-chip, .jumper-anchor';
     const SKILL_RE = /@@([a-z]+)="((?:[^"\\]|\\.)*)"/g;
     const qv = (v) => String(v == null ? '' : v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
     const params = (obj) => Object.keys(obj).filter((k) => obj[k] !== undefined && obj[k] !== null && obj[k] !== '').map((k) => k + "='" + qv(obj[k]) + "'").join(',');
@@ -1003,6 +1003,13 @@
             const style = (Array.from(c).find((k) => /^bb-st-/.test(k)) || 'bb-st-cartridge').slice(6);
             return '@@beepbox="' + params({ link: z ? 'z:' + z : el.getAttribute('data-bb-song'), style: style, label: txt('.bb-chip-text') }) + '"';
         }
+        // Annotate drawings: every stroke, as JSON
+        if (c.contains('an-ink-layer')) {
+            // ink:color:width:path for each stroke, | between them (no quotes, so nothing needs escaping)
+            let list = [];
+            try { list = JSON.parse(el.getAttribute('data-ink') || '[]'); } catch (e) {}
+            return '@@ink="' + params({ strokes: list.map((s) => [s.t, s.c, s.w, s.d].join(':')).join('|') }) + '"';
+        }
         if (c.contains('dc-chip')) return '@@dice="' + params({ dice: el.getAttribute('data-dc') }) + '"';
         if (c.contains('tc-chip')) return '@@capsule="' + params({ label: txt('.tc-chip-name'), open: el.getAttribute('data-tc-open'), message: el.getAttribute('data-tc-msg') }) + '"';
         if (c.contains('pm-chip')) return '@@timer="' + params({ label: txt('.pm-chip-name'), minutes: el.getAttribute('data-pm-min') }) + '"';
@@ -1020,6 +1027,10 @@
         const span = (cls, attrs, text) => { const e = document.createElement('span'); e.className = cls; Object.keys(attrs || {}).forEach((k) => { if (attrs[k] !== undefined && attrs[k] !== '') e.setAttribute(k, attrs[k]); }); if (text !== undefined) e.innerHTML = text; return e; };
         let el = null;
         try {
+            if (name === 'ink' && W.AnnotateInk) {
+                const list = String(p.strokes || '').split('|').filter(Boolean).map((x) => { const q = x.split(':'); return { t: q[0], c: q[1], w: parseFloat(q[2]) || 6, d: q.slice(3).join(':') }; });
+                return W.AnnotateInk.layerHtml(list);
+            }
             if (name === 'program' && W.BitLang && W.BitLang.blockHTML) return W.BitLang.blockHTML(body, null, p.title || 'Program', p.bbml || '');
             if (name === 'beepbox' && typeof W.bbBuildChip === 'function') {
                 let link = p.link || '';
@@ -1057,7 +1068,7 @@
         } catch (e) { el = null; }
         return el ? el.outerHTML : null;
     }
-    const SKILL_NAMES = /^(beepbox|dice|capsule|timer|flashcard|sprite|unichip|customchip|customcss|jumper)$/;
+    const SKILL_NAMES = /^(ink|beepbox|dice|capsule|timer|flashcard|sprite|unichip|customchip|customcss|jumper)$/;
 
     /* ---------- Exit Formatting: only the selected text (or the caret's spot) leaves its formatting ---------- */
     // The chip is split there, so the parts before and after keep their style, and you keep typing in plain text!

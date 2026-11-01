@@ -497,7 +497,7 @@
     const SKILLS = [
         ['unichip', 'Uni-Chip', 'palette'], ['customchip', 'Custom\nChip', 'bubble'], ['uniquechip', 'Unique\nStyles', 'sparkle'], ['customcss', 'Custom\nCSS', 'css'],
         ['jumper', 'Jumper', 'jumper'], ['beepbox', 'BeepBox\nSong', 'music'], ['sprite', 'Pixel\nSprite', 'pixel'], ['capsule', 'Time\nCapsule', 'capsule'],
-        ['flashcard', 'Flashcard', 'cards'], ['timer', 'Focus\nTimer', 'timer'], ['dice', 'Dice\nRoller', 'dice'], ['programs', 'Programs', 'code'], ['annotate', 'Annotate', 'annotate']
+        ['flashcard', 'Flashcard', 'cards'], ['timer', 'Focus\nTimer', 'timer'], ['dice', 'Dice\nRoller', 'dice'], ['programs', 'Programs', 'code'], ['annotate', 'Highlight', 'annotate'], ['markup', 'Annotate', 'pen']
     ].filter(function (s) { return document.querySelector('#skills-menu-popup [data-skill="' + s[0] + '"]'); });
 
     const tabs = [

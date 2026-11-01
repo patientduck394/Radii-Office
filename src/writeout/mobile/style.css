@@ -1148,22 +1148,28 @@ body.format-collapsed #format-sidebar {
     width: 44px;
     height: 44px;
     transform: none;
-    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
-    border: 2px solid rgba(255,255,255,0.2);
-    border-radius: 50%;
-    backdrop-filter: blur(10px);
+    /* a little glossy tile in Writeout's own icon colors (the Logo chip recipe), like every app's phone buttons */
+    background: linear-gradient(180deg, #0a9cf0 0%, #0a9cf0 37.5%, #7fe3ff 100%);
+    border: 1px solid rgba(255,255,255,0.75);
+    border-radius: 13px;
+    overflow: hidden;
+    isolation: isolate;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     color: #fff;
-    box-shadow: 0 4px 14px rgba(2,132,199,0.45), inset 0 1px 0 rgba(255,255,255,0.4);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,0,0,0.08);
     z-index: 60;
     transition: right 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
     user-select: none;
     -webkit-user-select: none;
 }
 
+.format-latch-toggle-strip::before {
+    content: ''; position: absolute; z-index: -1; left: -29.6%; width: 148%; top: -17%; height: 63%; border-radius: 50%;
+    background: linear-gradient(180deg, #ffffff, rgba(255,255,255,0.4)); pointer-events: none;
+}
 .format-latch-toggle-strip svg {
     transition: transform 0.25s ease;
     transform: rotate(0deg);

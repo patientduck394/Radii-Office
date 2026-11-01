@@ -6,6 +6,19 @@ const sidebar = document.getElementById('sidebar');
 const toggleZone = document.getElementById('toggle-zone');
 const toggleIcon = document.getElementById('toggle-icon');
 
+// Waterflow keeps its own pads (waterflow_save_slot_N), so it never shares documents with Writeout!
+// (It used to save under Writeout's writedown_save_slot_N keys: the first run copies those over once.)
+(function () {
+    try {
+        if (localStorage.getItem('waterflow_storage_split_v1') === '1') return;
+        ['1', '2'].forEach(function (n) {
+            const own = 'waterflow_save_slot_' + n, old = localStorage.getItem('writedown_save_slot_' + n);
+            if (localStorage.getItem(own) === null && old !== null) localStorage.setItem(own, old);
+        });
+        localStorage.setItem('waterflow_storage_split_v1', '1');
+    } catch (e) {}
+})();
+
 // Track active document tracking loops
 let currentActivePadId = "1"; 
 let isInitialBootSync = true; // CRITICAL FLAG: Blocks empty save overwrites on refresh
@@ -25,7 +38,7 @@ function loadActivePadDataStream(padId) {
         if (padId === "3") {
             canvas.innerHTML = temporaryTableScratchContent;
         } else {
-            const saveKeyId = `writedown_save_slot_${padId}`;
+            const saveKeyId = `waterflow_save_slot_${padId}`;
             const historicalContent = localStorage.getItem(saveKeyId);
             
             if (historicalContent) {
@@ -59,7 +72,7 @@ function autoSaveCanvasContent() {
     if (currentActivePadId === "3") {
         temporaryTableScratchContent = canvas.innerHTML;
     } else {
-        const saveKeyId = `writedown_save_slot_${currentActivePadId}`;
+        const saveKeyId = `waterflow_save_slot_${currentActivePadId}`;
         localStorage.setItem(saveKeyId, canvas.innerHTML);
     }
 }
@@ -1476,8 +1489,8 @@ document.addEventListener('DOMContentLoaded', function() {
             
             if (confirm("Are you sure you want to wipe all history? This will clear all pad contents completely.")) {
                 // 1. Purge persistent local storage registry indices
-                localStorage.removeItem('writedown_save_slot_1');
-                localStorage.removeItem('writedown_save_slot_2');
+                localStorage.removeItem('waterflow_save_slot_1');
+                localStorage.removeItem('waterflow_save_slot_2');
                 
                 // 2. Clear out volatile table string cache memory parameters
                 temporaryTableScratchContent = `<h1>One-Time Table Pad</h1><p>This is a temporary scratch space. Everything typed here will wipe completely clean when you close or refresh the app...</p>`;
