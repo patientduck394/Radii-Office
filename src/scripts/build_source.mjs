@@ -23,6 +23,8 @@ const TEXT = /\.(html?|js|mjs|ts|css|scss|json|md|txt|svg|xml|yml|yaml|toml|rs|j
 const MIME = { png: 'image/png', jpg: 'image/jpeg', jpeg: 'image/jpeg', gif: 'image/gif', webp: 'image/webp', ico: 'image/x-icon', svg: 'image/svg+xml', html: 'text/html', htm: 'text/html', js: 'text/javascript', mjs: 'text/javascript', css: 'text/css', json: 'application/json', md: 'text/markdown', txt: 'text/plain', xml: 'application/xml', ts: 'text/typescript', scss: 'text/x-scss' };
 const KC_IMAGE_MAX = 50 * 1024;
 const KC_TEXT_MAX = 1.2 * 1024 * 1024; // keeps the .kc under the host limit of 25 MiB per file!
+// big files the .kc leaves out to stay under that limit (the ZIP still has them)
+const KC_SKIP = new Set(['omicron/export-style.css']);
 
 function walk(dir, rel = '') {
   const out = [];
@@ -76,6 +78,7 @@ for (const f of files) {
   const isText = TEXT.test(f);
   if (!isText && !(MIME[ext] && size <= KC_IMAGE_MAX)) continue;
   if (isText && size > KC_TEXT_MAX) continue;
+  if (KC_SKIP.has(f)) continue;
   const segs = f.split('/');
   let node = tree;
   for (const s of segs.slice(0, -1)) {

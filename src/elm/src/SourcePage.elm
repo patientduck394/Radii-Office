@@ -114,7 +114,7 @@ view model =
                 ]
             ]
         , div [ class "note" ]
-            [ text "The ZIP holds the whole site; the .kc leaves out the font files, music, large images and the huge Bitbook synth libraries to stay under 25 MB. Check "
+            [ text "The ZIP holds the whole site; the .kc leaves out the font files, music, large images, the huge Bitbook synth libraries and Omicron's big export stylesheet to stay under 25 MB. Check "
             , code [] [ text "ATTRIBUTIONS.md" ]
             , text " and the "
             , code [] [ text "LICENSE-*.txt" ]
