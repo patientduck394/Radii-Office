@@ -1,14 +1,21 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="en">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Not Found</title>
-    <link href="/style.css" rel="stylesheet" type="text/css" media="all">
-      <script src="/offline.js?v=20261132g" defer></script>
+    <title>Page not found - Radii Office</title>
+    <!-- This page is written in Elm: the source is in /elm/src/NotFound.elm (see /elm/README.md)! -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS Feed">
+    <link rel="stylesheet" href="/elm/pages.css?v=20261201a">
+    <script src="/offline.js?v=20261132g" defer></script>
 </head>
-  <body>
-    <h1>Page Not Found</h1>
-    <p>The requested page was not found.</p>
-  </body>
+<body>
+    <div id="elm-root"><noscript><div class="no-elm">That page isn&#39;t here! Head back to the <a href="/">Radii Office home page</a>!</div></noscript></div>
+    <script src="/elm/pages.js?v=20261201a"></script>
+    <script>Elm.NotFound.init({ node: document.getElementById('elm-root'), flags: new URLSearchParams(location.search).get('from') || '' });</script>
+</body>
 </html>

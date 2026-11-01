@@ -8,7 +8,7 @@ import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SKIP_DIRS = new Set(['.git', 'node_modules', 'downloads', 'target', '.claude', 'rust', 'scripts', 'tasks']);
+const SKIP_DIRS = new Set(['.git', 'node_modules', 'downloads', 'target', '.claude', 'rust', 'scripts', 'tasks', 'elm-stuff']);
 const MAX = 1.5 * 1024 * 1024; // bigger files are saved when first used, not up front
 
 function walk(dir, rel = '') {
