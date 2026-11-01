@@ -1575,7 +1575,25 @@ fn guess(n):
         const d = new DOMParser().parseFromString('<body>' + html + '</body>', 'text/html');
         d.querySelectorAll('script, iframe, object, embed, link, meta, style').forEach(function (n) { n.remove(); });
         d.querySelectorAll('*').forEach(function (n) { [].slice.call(n.attributes).forEach(function (a) { if (/^on/i.test(a.name) || (/^(href|src|xlink:href)$/i.test(a.name) && /^\s*javascript:/i.test(a.value))) n.removeAttribute(a.name); }); });
-        const kd = (window.RadiiCollab && window.RadiiCollab.kdRender) || function (t) { return t.replace(/=[A-Za-z]=(.+?)=[A-Za-z]=/g, '<mark>$1</mark>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }; // (plain pages get a small stand-in)
+        const kdOld = (window.RadiiCollab && window.RadiiCollab.kdRender) || function (t) { return t.replace(/=[A-Za-z]=(.+?)=[A-Za-z]=/g, '<mark>$1</mark>').replace(/\*\*(.+?)\*\*/g, '<b>$1</b>'); }; // (plain pages get a small stand-in)
+        // Where the editor's full Keydown is loaded (Bitbook), it goes first: the newest styles (Gel Speech, the Annotate
+        // endings, \ escapes, math, links...) all work; then the chat renderer adds the older styles to the plain text left over!
+        const full = window.kdDoc && window.kdDoc.inlineHtml;
+        const kd = !full ? kdOld : function (t) {
+            const box = d.createElement('span');
+            box.innerHTML = full(t);
+            const w2 = d.createTreeWalker(box, NodeFilter.SHOW_TEXT);
+            const left = [];
+            for (let x = w2.nextNode(); x; x = w2.nextNode()) left.push(x);
+            left.forEach(function (n) {
+                if (n.parentElement && n.parentElement.closest('code, pre, .kd-esc, .kd-math')) return;
+                if (!/[=*`~#&!%^+:;@]/.test(n.nodeValue)) return;
+                const sp = d.createElement('span');
+                sp.innerHTML = kdOld(n.nodeValue);
+                n.replaceWith.apply(n, [].slice.call(sp.childNodes));
+            });
+            return box.innerHTML;
+        };
         if (kd) {
             const w = d.createTreeWalker(d.body, NodeFilter.SHOW_TEXT);
             const hits = [];
@@ -1592,7 +1610,7 @@ fn guess(n):
             };
             hits.forEach(function (n) {
                 if (n.parentNode && n.parentNode.closest && n.parentNode.closest('.bl-pt')) return;
-                if (!fenced && !/[=*`~#&]/.test(n.nodeValue)) return;
+                if (!fenced && !/[=*`~#&$[{!@%^+:;\\]/.test(n.nodeValue)) return;
                 const sp = d.createElement('span');
                 sp.innerHTML = fmt(n.nodeValue);
                 n.replaceWith.apply(n, [].slice.call(sp.childNodes));

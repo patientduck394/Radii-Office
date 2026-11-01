@@ -844,6 +844,76 @@
         return null;
     }
 
+    /* ---------- Backspace on formatting with no text in it removes that formatting ----------
+       (instead of the character, or the whole line break, before it!) */
+    const FMT_INLINE = /^(SPAN|B|STRONG|I|EM|U|S|STRIKE|DEL|INS|CODE|MARK|FONT|SUB|SUP|SMALL|A)$/;
+    const FMT_BLOCK = /^(H1|H2|H3|H4|H5|H6|BLOCKQUOTE|PRE)$/;
+    const blankFmt = (el) => el && el.nodeType === 1 && el.getAttribute('contenteditable') !== 'false' &&
+        !(el.textContent || '').replace(/[​﻿\s]/g, '') &&
+        !el.querySelector('img, video, audio, svg, canvas, input, select, textarea, iframe, table, [contenteditable="false"]');
+    const isInlineFmt = (el) => el && el.nodeType === 1 && FMT_INLINE.test(el.tagName) && (el.tagName !== 'SPAN' || !!el.className) && blankFmt(el);
+    function emptyFormatAt(canvas, range) {
+        const n = range.startContainer;
+        let hit = null;
+        // the caret is inside it (the outermost empty one wins: an empty bold inside an empty chip takes both)
+        for (let x = n.nodeType === 1 ? n : n.parentElement; x && x !== canvas && canvas.contains(x); x = x.parentElement) {
+            if (isInlineFmt(x)) hit = x; else break;
+        }
+        if (hit) return { el: hit };
+        // ...or right after it, with nothing but zero-width spaces in between
+        let prev = null;
+        if (n.nodeType === 3) { if (!n.nodeValue.slice(0, range.startOffset).replace(/[​﻿]/g, '')) prev = n.previousSibling; }
+        else prev = n.childNodes[range.startOffset - 1] || null;
+        while (prev && prev.nodeType === 3 && !prev.nodeValue.replace(/[​﻿]/g, '')) prev = prev.previousSibling;
+        if (isInlineFmt(prev)) return { el: prev };
+        // an empty heading, quote or code line becomes a plain empty line (it doesn't join the line above)
+        for (let x = n.nodeType === 1 ? n : n.parentElement; x && x !== canvas && canvas.contains(x); x = x.parentElement) {
+            if (FMT_BLOCK.test(x.tagName)) return blankFmt(x) ? { el: x, block: true } : null;
+            if (LINE_BLOCK.test(x.tagName)) break;
+        }
+        return null;
+    }
+    function removeEmptyFormat(canvas, hit) {
+        const sel = window.getSelection();
+        const r = document.createRange();
+        if (hit.block) {
+            const d = document.createElement('div');
+            if (hit.el.hasAttribute('contenteditable')) d.setAttribute('contenteditable', hit.el.getAttribute('contenteditable'));
+            if (hit.el.style.marginLeft) d.style.marginLeft = hit.el.style.marginLeft;
+            d.appendChild(document.createElement('br'));
+            hit.el.replaceWith(d);
+            r.setStart(d, 0);
+            try { if (d.getAttribute('contenteditable') === 'true') d.focus({ preventScroll: true }); } catch (e) {}
+        } else {
+            const parent = hit.el.parentNode;
+            const holder = document.createTextNode('');
+            parent.insertBefore(holder, hit.el);
+            hit.el.remove();
+            // a line left with nothing in it keeps its height
+            let line = parent;
+            while (line && line !== canvas && !LINE_BLOCK.test(line.tagName)) line = line.parentNode;
+            if (line && line !== canvas && !(line.textContent || '').replace(/[​﻿]/g, '') && !line.querySelector('br, img, [contenteditable="false"]')) line.appendChild(document.createElement('br'));
+            r.setStart(holder, 0);
+        }
+        r.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(r);
+        canvas.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+    if (typeof document !== 'undefined') {
+        document.addEventListener('keydown', (e) => {
+            if (e.key !== 'Backspace' || e.ctrlKey || e.metaKey || e.altKey || e.shiftKey || e.isComposing) return;
+            const canvas = document.getElementById('wysiwyg-canvas');
+            const sel = window.getSelection();
+            if (!canvas || !sel || !sel.rangeCount || !sel.isCollapsed || !canvas.contains(sel.anchorNode)) return;
+            const hit = emptyFormatAt(canvas, sel.getRangeAt(0));
+            if (!hit) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            removeEmptyFormat(canvas, hit);
+        }, true);
+    }
+
     // Re-format: format the whole document again, then check it for tags that could not be formatted
     const LEFTOVER = /@(?:[a-z0-9]+)(?:-[1-5])?@(?=\S)|!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|#([\^+:;])(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\1|%(?:1\d|20|[1-9])%(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])%|\^\^(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\^(?!\^)|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
     function reformat(root) {
@@ -1130,5 +1200,5 @@
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
+    root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);

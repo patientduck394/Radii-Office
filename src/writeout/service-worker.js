@@ -1,5 +1,5 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261201e';
+var WRITEOUT_CACHE = 'writeout-shell-v20261201f';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
@@ -29,7 +29,7 @@ var WRITEOUT_SHELL = [
   'collab-kd.js?v=20261021',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261201e',
+  'keydown-doc.js?v=20261201f',
   'radii-table.js?v=20261201b',
   'favicon.svg',
   'favicon-96.png',
