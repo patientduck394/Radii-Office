@@ -4048,7 +4048,7 @@ function uniRefresh(fromHex) {
     const solid = uniRgbaToHex8(rgb.r, rgb.g, rgb.b, 1).slice(0, 7);
     const chip = document.getElementById('uni-chip-preview');
     if (chip) {
-        // A Bubble Chip cousin: fill, edge, ink and bubbles all come from the picked color!
+        // A Bubble Chip cousin: fill, edge and ink all come from the picked color!
         chip.style.setProperty('--uni-accent', solid);
         chip.textContent = uniPreviewText();
     }
