@@ -101,6 +101,8 @@
         const store = [];
         const stash = (html) => { store.push(html); return '\u0001' + (store.length - 1) + '\u0001'; };
         let s = String(text);
+        // ``` fences are taken literally too (up to the closing ```, or the end if it never comes)
+        s = s.replace(/```[\s\S]*?(?:```|$)/g, (m) => stash(esc(m)));
         // `code` is taken literally, so nothing inside it turns into links, math or chips
         s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code>' + esc(t) + '</code>'));
         s = s.replace(/\\\$/g, () => stash('<span class="kd-esc">$</span>'));
@@ -150,6 +152,20 @@
         return render(s);
     }
 
+    // Tables are pipe tables: | a | b | rows, a | --- | --- | line under the header row (or first, for no header),
+    // and an optional {style} after it (| --- | --- |{green}). A | inside a cell is written \|.
+    const TABLE_SEP = /^\|(\s*:?-{3,}:?\s*\|)+(\{([a-z]+)\})?$/;
+    function tableHtml(block, opts) {
+        const sep = block.findIndex((l) => TABLE_SEP.test(l));
+        if (sep !== 0 && sep !== 1) return null;
+        const style = (TABLE_SEP.exec(block[sep])[3]) || 'blue';
+        const cells = (line) => line.replace(/^\|/, '').replace(/(^|[^\\])\|$/, '$1').split(/(?<!\\)\|/).map((c) => c.trim().replace(/\\\|/g, '|'));
+        const row = (line, tag) => '<tr>' + cells(line).map((c) => '<' + tag + '>' + (c ? inline(c, opts) : '<br>') + '</' + tag + '>').join('') + '</tr>';
+        const body = block.filter((l, k) => k !== sep && !(sep === 1 && k === 0));
+        return '<table class="rt-table rt-' + esc(style) + '">' + (sep === 1 ? '<thead>' + row(block[0], 'th') + '</thead>' : '') +
+            '<tbody>' + (body.length ? body.map((l) => row(l, 'td')).join('') : '') + '</tbody></table>';
+    }
+
     function textToHtml(src, opts) {
         opts = Object.assign({ notes: {} }, opts || {});
         const lines = String(src || '').replace(/\r/g, '').split('\n');
@@ -175,6 +191,13 @@
                 for (i++; i < lines.length && !/^```/.test(lines[i].trim()); i++) body.push(lines[i]);
                 out.push('<pre><code>' + esc(body.join('\n')) + '</code></pre>');
                 continue;
+            }
+            if (/^\|.*\|(\{[a-z]+\})?$/.test(t)) {
+                const block = [];
+                let j = i;
+                while (j < lines.length && /^\|.*\|(\{[a-z]+\})?$/.test(lines[j].trim())) block.push(lines[j++].trim());
+                const html = tableHtml(block, opts);
+                if (html) { endList(); out.push(html); i = j - 1; continue; }
             }
             if ((m = /^\*\s+(\S.*)$/.exec(t))) { (list = list || []).push('<li>' + inline(m[1], opts) + '</li>'); continue; }
             endList();
@@ -313,6 +336,21 @@
                 return;
             }
             if (tag === 'BLOCKQUOTE') { push('\t'.repeat(indentOf(el)) + '> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
+            if (tag === 'TABLE') {
+                flush();
+                const rows = Array.from(el.rows);
+                if (!rows.length) return;
+                const width = Math.max(...rows.map((r) => r.cells.length));
+                const cellText = (c) => (c ? Array.from(c.childNodes).map(inlineText).join('').replace(/\s*\n\s*/g, ' ').trim().replace(/\|/g, '\\|') : '');
+                const line = (r) => '| ' + Array.from({ length: width }, (_, k) => cellText(r.cells[k])).join(' | ') + ' |';
+                const style = (/(?:^|\s)rt-(?!table)([a-z]+)/.exec(el.className) || [])[1];
+                const sepLine = '|' + ' --- |'.repeat(width) + (style && style !== 'blue' ? '{' + style + '}' : '');
+                const head = el.tHead && el.tHead.rows.length ? el.tHead.rows[0] : (Array.from(rows[0].cells).every((c) => c.tagName === 'TH') ? rows[0] : null);
+                if (head) lines.push(line(head));
+                lines.push(sepLine);
+                rows.filter((r) => r !== head).forEach((r) => lines.push(line(r)));
+                return;
+            }
             if (tag === 'PRE') { flush(); lines.push('```'); el.textContent.replace(/\n$/, '').split('\n').forEach((l) => lines.push(l)); lines.push('```'); return; }
             if (tag === 'HR') { push(''); return; }
             if (BLOCK.test(tag)) {
@@ -426,6 +464,38 @@
     /* ---------- Enter at the end of a line: every Keydown tag on it becomes its formatting, in place ---------- */
     const LINE_BLOCK = /^(DIV|P|LI|H1|H2|H3|H4|H5|H6|BLOCKQUOTE|PRE|UL|OL|TABLE|FIGURE)$/;
     const SKIP = 'code, pre, a, .kd-math, .kd-tpl, [contenteditable="false"]';
+    // ``` fences: a line that starts with ``` opens one and the next such line closes it; nothing on those lines
+    // or between them is ever formatted, even many lines apart! (```like this``` on one line just covers itself)
+    function fencedTexts(root) {
+        const out = new Set();
+        const lines = [];
+        let line = null, key = null, broke = true;
+        const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
+        for (let n = w.nextNode(); n; n = w.nextNode()) {
+            if (n.nodeType === 1) { if (n.tagName === 'BR' || /^(TD|TH)$/.test(n.tagName)) broke = true; continue; }
+            let b = n.parentElement;
+            while (b && b !== root && !LINE_BLOCK.test(b.tagName) && !/^(TD|TH)$/.test(b.tagName)) b = b.parentElement;
+            if (broke || b !== key || !line) { line = []; lines.push(line); }
+            key = b; broke = false;
+            line.push(n);
+        }
+        let open = false;
+        lines.forEach((ln) => {
+            const t = ln.map((n) => n.nodeValue).join('').replace(/[\u200B\u00A0]/g, ' ').trim();
+            const fence = /^```/.test(t);
+            const oneLine = fence && t.length >= 6 && /```$/.test(t.slice(3));
+            if (open || fence) ln.forEach((n) => out.add(n));
+            if (fence && !oneLine) open = !open;
+        });
+        return out;
+    }
+    function inFence(node, root) {
+        const set = fencedTexts(root);
+        if (node.nodeType === 3) return set.has(node);
+        const w = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+        for (let t = w.nextNode(); t; t = w.nextNode()) if (set.has(t)) return true;
+        return false;
+    }
     function formatLine(canvas) {
         const sel = window.getSelection();
         if (!canvas || !sel || !sel.rangeCount || !sel.isCollapsed) return false;
@@ -449,6 +519,12 @@
             nodes = Array.from(block.childNodes);
         }
         if (!nodes.length) return false;
+        // inside a ``` fence (or on its ``` lines): Enter is just Enter, nothing gets formatted
+        {
+            const fenced = fencedTexts(canvas);
+            const inside = (n) => (n.nodeType === 3 ? fenced.has(n) : Array.from(n.childNodes).some(inside));
+            if (nodes.some(inside)) return false;
+        }
         // only at the END of the line (an Enter in the middle just splits it, like always)
         const rest = document.createRange();
         rest.setStart(r.startContainer, r.startOffset);
@@ -718,14 +794,16 @@
     const LEFTOVER = /@(?:[a-z0-9]+)(?:-[1-5])?@(?=\S)|!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|#([\^+:;])(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\1|%(?:1\d|20|[1-9])%(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])%|\^\^(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\^(?!\^)|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
     function reformat(root) {
         let n = 0;
-        const blocks = Array.from(root.querySelectorAll('div, p')).filter((b) => !b.closest('pre, code, figure, [contenteditable="false"] [contenteditable="false"], .kd-math, .kd-tpl') && !isProtected(b, root) && !b.closest(BLOCK_SEL) &&
+        const fenced = fencedTexts(root);
+        const hasFenced = (el) => { const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); for (let t = w.nextNode(); t; t = w.nextNode()) if (fenced.has(t)) return true; return false; };
+        const blocks = Array.from(root.querySelectorAll('div, p')).filter((b) => !hasFenced(b)).filter((b) => !b.closest('pre, code, figure, [contenteditable="false"] [contenteditable="false"], .kd-math, .kd-tpl') && !isProtected(b, root) && !b.closest(BLOCK_SEL) &&
             !Array.from(b.children).some((c) => LINE_BLOCK.test(c.tagName) || c.tagName === 'BR' && b.childNodes.length > 1 && c !== b.lastChild));
         blocks.forEach((b) => { if (lineToBlock(b)) n++; });
         // every text piece left: chips, highlights, bold, math, footnotes...
         const SKIP_RE = 'code, pre, a, .kd-math, .kd-tpl, figure, [contenteditable="false"] [contenteditable="false"]';
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
         const texts = [];
-        for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!(t.parentElement && (t.parentElement.closest(SKIP_RE) || isProtected(t.parentElement, root)))) texts.push(t);
+        for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!fenced.has(t) && !(t.parentElement && (t.parentElement.closest(SKIP_RE) || isProtected(t.parentElement, root)))) texts.push(t);
         texts.forEach((t) => {
             const text = t.nodeValue;
             if (!/[#*=~`&$[{!@%^+:;\\]/.test(text)) return;
@@ -741,12 +819,15 @@
     // The check: tags still sitting in the text after formatting are mistakes (a missing closing tag, a typo...)
     function checkKeydown(root) {
         const problems = [];
+        const fenced = fencedTexts(root);
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
         for (let t = walker.nextNode(); t; t = walker.nextNode()) {
-            if (t.parentElement && (t.parentElement.closest('code, pre, .kd-math') || isProtected(t.parentElement, root))) continue;
+            if (fenced.has(t) || (t.parentElement && (t.parentElement.closest('code, pre, .kd-math') || isProtected(t.parentElement, root)))) continue;
             const re = new RegExp(LEFTOVER);
+            // (```inline fences``` are blanked out first: tags inside them are meant to stay as typed)
+            const val = t.nodeValue.replace(/```[\s\S]*?(?:```|$)/g, (x) => ' '.repeat(x.length));
             let m;
-            while ((m = re.exec(t.nodeValue))) {
+            while ((m = re.exec(val))) {
                 const line = (t.parentElement && t.parentElement.closest('div, p, li, h1, h2, h3, blockquote') || t.parentElement || t).textContent.replace(/\s+/g, ' ').trim();
                 problems.push({ tag: m[0], line: line.slice(0, 90), node: t, start: m.index, end: m.index + m[0].length });
             }
@@ -995,5 +1076,5 @@
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { parse, isKeydownText, formatLine, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
+    root.kdDoc = { parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -228,7 +228,7 @@ if (canvas) {
             const inField = (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) ||
                 (aNodeX && aNodeX.nodeType === 1 && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(aNodeX.tagName));
             // --- FOOTNOTES: "[^1]: text" + Enter becomes the definition block! ---
-            if (!inField && kdTryFootnoteEnter(e, selection, range)) return;
+            if (!inField && !(window.kdDoc && kdDoc.inFence && selection.anchorNode && kdDoc.inFence(selection.anchorNode, canvas)) && kdTryFootnoteEnter(e, selection, range)) return;
             // --- ENTER AT THE END OF A LINE: every Keydown tag on the line turns into its formatting, right where it is! ---
             const kdLineDone = !inField && window.kdDoc ? kdDoc.formatLine(canvas) : false;
             if (kdLineDone) {
@@ -6728,6 +6728,8 @@ function fmtInsertTextAtCaret(text) {
 
 function runInsertKind(kind) {
     closeInsertMenu();
+    // a table: the Insert Table dialog (a new one, or one from Imbuer) from radii-table.js!
+    if (kind === 'table') { if (window.RadiiTable && typeof canvas !== 'undefined' && canvas) window.RadiiTable.insertIntoEditor(canvas); return; }
     if (typeof canvas === 'undefined' || !canvas) return;
     playAeroClickSound(700, 0.08);
     // Snapshot the range: focusing the canvas may nudge the caret!

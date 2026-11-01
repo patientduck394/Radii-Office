@@ -148,7 +148,7 @@ if (canvas) {
             const aNodeX = selection.anchorNode;
             const inField = (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) ||
                 (aNodeX && aNodeX.nodeType === 1 && /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(aNodeX.tagName));
-            if (!inField && kdTryFootnoteEnter(e, selection, range)) return;
+            if (!inField && !(window.kdDoc && kdDoc.inFence && selection.anchorNode && kdDoc.inFence(selection.anchorNode, canvas)) && kdTryFootnoteEnter(e, selection, range)) return;
             // --- ENTER AT THE END OF A LINE: every Keydown tag on the line turns into its formatting, right where it is! ---
             const kdLineDone = !inField && window.kdDoc ? kdDoc.formatLine(canvas) : false;
             if (kdLineDone) {

@@ -831,6 +831,7 @@
         {
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Slides', items: [{ big: true, icon: 'newSlide', label: 'New\nSlide', run: function () { newSlide('content'); }, menu: function () { return Object.keys(LAYOUTS).map(function (k) { return { label: LAYOUTS[k].label, icon: 'slide', run: function () { newSlide(k); } }; }); } }] },
+                { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { if (window.amberInsertTable) window.amberInsertTable(); } }] },
                 { label: 'Illustrations', items: [
                     { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
                     { big: true, icon: 'shapes', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },

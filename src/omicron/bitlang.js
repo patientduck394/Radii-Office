@@ -1581,7 +1581,22 @@ fn guess(n):
             const hits = [];
             let t;
             while ((t = w.nextNode())) hits.push(t);
-            hits.forEach(function (n) { if (!/[=*`~#&]/.test(n.nodeValue)) return; if (n.parentNode && n.parentNode.closest && n.parentNode.closest('.bl-pt')) return; const sp = d.createElement('span'); sp.innerHTML = kd(n.nodeValue); n.replaceWith.apply(n, [].slice.call(sp.childNodes)); });
+            // ``` fences: text between them is never formatted, even when the closing ``` comes in a later piece of text
+            let fenced = false;
+            const fmt = function (text) {
+                return text.split('```').map(function (part, i, all) {
+                    if (i > 0) fenced = !fenced;
+                    const ticks = i > 0 ? '```' : '';
+                    return fenced ? esc(ticks + part) : (fenced === false && i > 0 ? esc(ticks) : '') + kd(part);
+                }).join('');
+            };
+            hits.forEach(function (n) {
+                if (n.parentNode && n.parentNode.closest && n.parentNode.closest('.bl-pt')) return;
+                if (!fenced && !/[=*`~#&]/.test(n.nodeValue)) return;
+                const sp = d.createElement('span');
+                sp.innerHTML = fmt(n.nodeValue);
+                n.replaceWith.apply(n, [].slice.call(sp.childNodes));
+            });
         }
         return d.body.innerHTML;
     }

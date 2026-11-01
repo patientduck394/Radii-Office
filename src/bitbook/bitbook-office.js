@@ -560,6 +560,7 @@
         {
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Pages', items: [{ big: true, icon: 'newDoc', label: 'New\nPage', run: newNote }] },
+                { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } }] },
                 { label: 'Files', items: [
                     { big: true, icon: 'attach', label: 'File\nAttachment', run: function () { insertKind('file'); } },
                     { big: true, icon: 'image', label: 'Pictures', run: function () { insertKind('image'); } },

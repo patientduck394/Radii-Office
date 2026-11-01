@@ -241,6 +241,14 @@
         const s = String(text == null ? '' : text);
         let out = '', i = 0, used = false;
         while (i < s.length) {
+            // ``` fences: everything up to the closing ``` (even many lines later) stays exactly as typed!
+            if (s.startsWith('```', i)) {
+                const close = s.indexOf('```', i + 3);
+                const stop = close === -1 ? s.length : close + 3;
+                out += esc(s.slice(i, stop));
+                i = stop;
+                continue;
+            }
             const cand = KD_BY[s.charAt(i)];
             let hit = null;
             if (cand) {

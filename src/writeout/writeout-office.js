@@ -743,6 +743,7 @@
                     { big: true, icon: 'newDoc', label: 'New\nPage', title: 'Add a page tab to this document', run: newPage },
                     { big: true, icon: 'divider', label: 'Divider', run: function () { insertKind('divider'); paginateSoon(); } }
                 ] },
+                { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } }] },
                 { label: 'Media', items: [
                     { big: true, icon: 'image', label: 'Picture', run: function () { insertKind('image'); } },
                     { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },

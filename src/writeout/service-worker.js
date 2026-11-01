@@ -1,9 +1,9 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261132r';
+var WRITEOUT_CACHE = 'writeout-shell-v20261201b';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261132r',
+  'app.js?v=20261201b',
   'style.css?v=20261131e',
   'keydown.css?v=20261132c',
   'marketplace.js?v=20260928',
@@ -14,7 +14,7 @@ var WRITEOUT_SHELL = [
   'image-resize.js?v=20261040',
   'office-shell.js?v=20261132r',
   'office-shell.css?v=20261132r',
-  'writeout-office.js?v=20261132r',
+  'writeout-office.js?v=20261201b',
   'writeout-pro.js?v=20261121',
   'writeout-annotator.js?v=20261122',
   'unique-styles.css?v=20261131f',
@@ -24,12 +24,13 @@ var WRITEOUT_SHELL = [
   'images-glue.js?v=20261131v',
   'drawio-plugin.js?v=20261132f',
   'radii-file.js?v=20261042',
-  'radii-collab.js?v=20261120',
+  'radii-collab.js?v=20261201b',
   'radii-collab.css?v=20261042',
   'collab-kd.js?v=20261021',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261132c',
+  'keydown-doc.js?v=20261201b',
+  'radii-table.js?v=20261201b',
   'favicon.svg',
   'favicon-96.png',
   'apple-touch-icon.png',
