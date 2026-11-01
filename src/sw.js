@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '27f936c404c5';
+const VERSION = 'fd2729e9d8f6';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","6ee7ad9b06"],
@@ -19,6 +19,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/amber/favicon-96.png","a29cf97772"],
   ["/amber/images-glue.js?v=20261131v","57d004f0bd"],
   ["/amber/index.html","604faab951"],
+  ["/amber/keydown.css?v=20261201h","616339b7ed"],
   ["/amber/manifest.json","097fdf4f87"],
   ["/amber/marketplace.css?v=20261002-3","27af397ab3"],
   ["/amber/marketplace.js?v=20261002-3","c1ed93d907"],
@@ -200,7 +201,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/mainkey/office-shell.js?v=20261132r","4c2f8d03d8"],
   ["/mainkey/style.css?v=20261132p","e9c46da663"],
   ["/not_found.html","e3b88aca16"],
-  ["/offline.js?v=20261132g","06cf73e705"],
+  ["/offline.js?v=20261132g","a503f06fa8"],
   ["/omicron/","ce2d874c3f"],
   ["/omicron/app.js?v=20261132r","24d078b46e"],
   ["/omicron/apple-touch-icon.png","7e40af9d19"],
@@ -264,7 +265,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
-  ["/opendb/data/index.json","816e8a3e0e"],
+  ["/opendb/data/index.json","460c6e24a7"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/icon-exclamation.png","cb2c7fea56"],
   ["/opendb/data/media/icon-image.png","d86977ba13"],
