@@ -371,6 +371,7 @@
                 <div class="card-actions">
                     <a href="/inkpath" class="launch-btn">Launch Inkpath →</a>
                     <a href="/inkpath/mobile/" class="mobile-btn" title="The phone version of Inkpath">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="inkpath">Download ⬇</button>
                 </div>
             </article>
 
@@ -389,6 +390,7 @@
                 <div class="card-actions">
                     <a href="/mainkey" class="launch-btn">Launch Mainkey →</a>
                     <a href="/mainkey/mobile/" class="mobile-btn" title="The phone version of Mainkey">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="mainkey">Download ⬇</button>
                 </div>
             </article>
 
@@ -407,6 +409,7 @@
                 <div class="card-actions">
                     <a href="/imbuer" class="launch-btn">Launch Imbuer →</a>
                     <a href="/imbuer/mobile/" class="mobile-btn" title="The phone version of Imbuer">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="imbuer">Download ⬇</button>
                 </div>
             </article>
 
@@ -444,6 +447,7 @@
                 <div class="card-actions">
                     <a href="/amber" class="launch-btn">Launch Amber →</a>
                     <a href="/amber/mobile/" class="mobile-btn" title="The phone version of Amber">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="amber">Download ⬇</button>
                 </div>
             </article>
 
@@ -462,6 +466,7 @@
                 <div class="card-actions">
                     <a href="/omicron" class="launch-btn">Launch Omicron →</a>
                     <a href="/omicron/mobile/" class="mobile-btn" title="The phone version of Omicron">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="omicron">Download ⬇</button>
                 </div>
             </article>
 
@@ -480,6 +485,7 @@
                 <div class="card-actions">
                     <a href="/formly" class="launch-btn">Launch Formly →</a>
                     <a href="/formly/mobile/" class="mobile-btn" title="The phone version of Formly">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="formly">Download ⬇</button>
                 </div>
             </article>
             
@@ -498,6 +504,7 @@
                 <div class="card-actions">
                     <a href="/opendb" class="launch-btn">Launch OpenDB →</a>
                     <a href="/opendb/mobile/" class="mobile-btn" title="The phone version of Opendb">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="opendb">Download ⬇</button>
                 </div>
             </article>
 
@@ -516,6 +523,7 @@
                 <div class="card-actions">
                     <a href="/peeker" class="launch-btn">Launch Peeker →</a>
                     <a href="/peeker/mobile/" class="mobile-btn" title="The phone version of Peeker">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="peeker">Download ⬇</button>
                 </div>
             </article>
 
@@ -534,6 +542,7 @@
                 <div class="card-actions">
                     <a href="/cabinet" class="launch-btn">Launch Cabinet →</a>
                     <a href="/cabinet/mobile/" class="mobile-btn" title="The phone version of Cabinet">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="cabinet">Download ⬇</button>
                 </div>
             </article>
 
@@ -552,6 +561,7 @@
                 <div class="card-actions">
                     <a href="/phosphor" class="launch-btn">Launch Phosphor →</a>
                     <a href="/phosphor/mobile/" class="mobile-btn" title="The phone version of Phosphor">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="phosphor">Download ⬇</button>
                 </div>
             </article>
 
@@ -589,6 +599,7 @@
                 <div class="card-actions">
                     <a href="/hexa" class="launch-btn">Launch Hexa →</a>
                     <a href="/hexa/mobile/" class="mobile-btn" title="The phone version of Hexa">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="hexa">Download ⬇</button>
                 </div>
             </article>
 
@@ -607,6 +618,7 @@
                 <div class="card-actions">
                     <a href="/taskra" class="launch-btn">Launch Taskra →</a>
                     <a href="/taskra/mobile/" class="mobile-btn" title="The phone version of Taskra">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="taskra">Download ⬇</button>
                 </div>
             </article>
         </div>
@@ -635,6 +647,7 @@
                     <div class="card-actions">
                         <a href="/waterflow" class="launch-btn">Launch Waterflow →</a>
                         <a href="/waterflow/mobile/" class="mobile-btn" title="The phone version of Waterflow">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="waterflow">Download ⬇</button>
                     </div>
                 </article>
             </div>
@@ -656,55 +669,48 @@
         (function () {
             // Where each desktop build lives! A string is a download link; anything else
             // is a note saying why that build isn't here yet (its button is disabled)!
+            // Every app's desktop build lives in the "desktop" release on GitHub (built by the workflow in desktop/workflow/)!
             var NOT_BUILT = 'Coming soon!';
-            var DOWNLOADS = {
-                writeout: {
-                    name: 'Writeout',
-                    files: {
-                        'mac-arm': NOT_BUILT,
-                        'mac-intel': NOT_BUILT,
-                        windows: NOT_BUILT,
-                        linux: NOT_BUILT,
-                        freebsd: NOT_BUILT,
-                        openbsd: NOT_BUILT,
-                        haiku: 'Not available yet'
-                    }
-                },
-                bitbook: {
-                    name: 'Bitbook',
-                    files: {
-                        'mac-arm': { url: '/downloads/Bitbook_1.0.0_aarch64.dmg' },
-                        'mac-intel': NOT_BUILT,
-                        windows: NOT_BUILT,
-                        linux: NOT_BUILT,
-                        freebsd: NOT_BUILT,
-                        openbsd: NOT_BUILT,
-                        haiku: 'Not available yet'
-                    }
-                }
-            };
+            var RELEASE = 'https://github.com/patientduck394/Radii-Office/releases/download/desktop/';
+            var APPS = {"inkpath": "Inkpath", "mainkey": "Mainkey", "imbuer": "Imbuer", "writeout": "Writeout", "amber": "Amber", "omicron": "Omicron", "formly": "Formly", "opendb": "OpenDB", "peeker": "Peeker", "cabinet": "Cabinet", "phosphor": "Phosphor", "bitbook": "Bitbook", "hexa": "Hexa", "taskra": "Taskra", "waterflow": "Waterflow"};
+            var FILES = { 'mac-arm': '-macOS-AppleSilicon.dmg', 'mac-intel': '-macOS-Intel.dmg', windows: '-Windows.exe', linux: '-Linux.AppImage' };
+            var DOWNLOADS = {};
+            Object.keys(APPS).forEach(function (id) {
+                var files = {};
+                Object.keys(FILES).forEach(function (k) { files[k] = { url: RELEASE + APPS[id] + FILES[k] }; });
+                DOWNLOADS[id] = { name: APPS[id], files: files };
+            });
             var SYSTEMS = [
-                ['mac-arm', 'macOS', 'Apple Silicon'],
+                ['mac-arm', 'macOS', 'Apple Silicon (M1 and newer)'],
                 ['mac-intel', 'macOS', 'Intel'],
-                ['windows', 'Windows', '64-bit'],
-                ['linux', 'Linux', '64-bit'],
-                ['freebsd', 'FreeBSD', '64-bit'],
-                ['openbsd', 'OpenBSD', '64-bit'],
-                ['haiku', 'Haiku', '64-bit']
+                ['windows', 'Windows', '10 and 11, 64-bit'],
+                ['linux', 'Linux', 'AppImage, 64-bit']
             ];
             var dialog = document.getElementById('dl-dialog');
             var grid = document.getElementById('dl-os-grid');
             var status = document.getElementById('dl-status');
 
+            // Which files the release really has (asked once): a button only works when its file is there!
+            var assetsP = null;
+            function releaseFiles() {
+                if (!assetsP) assetsP = fetch('https://api.github.com/repos/patientduck394/Radii-Office/releases/tags/desktop')
+                    .then(function (r) { if (r.status === 404) return new Set(); if (!r.ok) throw new Error(r.status); return r.json().then(function (d) { return new Set((d.assets || []).map(function (a) { return a.name; })); }); })
+                    .catch(function () { return null; }); // (can't ask GitHub right now: offer every link)
+                return assetsP;
+            }
             function openFor(appId) {
                 var app = DOWNLOADS[appId];
                 if (!app || !dialog) return;
+                releaseFiles().then(function (have) { show(app, have); });
+            }
+            function show(app, have) {
                 document.getElementById('dl-title').textContent = 'Download ' + app.name;
                 status.textContent = '';
                 grid.innerHTML = '';
                 SYSTEMS.forEach(function (sys) {
                     var file = app.files[sys[0]];
-                    var ready = file && typeof file === 'object' && file.url;
+                    var ready = file && typeof file === 'object' && file.url && (!have || have.has(file.url.split('/').pop()));
+                    if (!ready && file && typeof file === 'object') file = NOT_BUILT;
                     var btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'os-btn';
@@ -725,7 +731,10 @@
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
-                        status.textContent = 'Downloading ' + app.name + ' for ' + sys[1] + ' ' + sys[2] + '! Open the file to install it!';
+                        var tip = sys[0].indexOf('mac') === 0 ? ' Drag it to Applications, and the first time, right-click it and pick Open!'
+                            : sys[0] === 'windows' ? ' Run the installer! If SmartScreen warns you, click More info, then Run anyway!'
+                            : ' Make it runnable (chmod +x the file, or tick "Allow executing" in its Properties), then open it!';
+                        status.textContent = 'Downloading ' + app.name + ' for ' + sys[1] + '!' + tip;
                     });
                     grid.appendChild(btn);
                 });
