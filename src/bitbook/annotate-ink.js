@@ -21,7 +21,12 @@
     const INKS = [['gel', 'Gel Ink'], ['pen', 'Felt Pen'], ['marker', 'Highlighter'], ['neon', 'Neon'], ['crayon', 'Crayon']];
     const SIZES = [['s', 'Small', 0.6], ['m', 'Medium', 1], ['l', 'Large', 1.7]];
     // each ink's base width at Medium
-    const BASE = { gel: 9, pen: 2.6, marker: 18, neon: 3.2, crayon: 6 };
+    // Themed inks bring their own colors (the color swatches don't apply to them)
+    const THEMES = [['aero', 'Frutiger Aero'], ['pool', 'Poolside'], ['vapor', 'Vaporwave'], ['mint', 'Peppermint'],
+        ['galaxy', 'Galaxy'], ['rainbow', 'Rainbow'], ['lava', 'Lava'], ['gold', 'Gold Foil']];
+    const IS_THEME = {};
+    THEMES.forEach((t) => { IS_THEME[t[0]] = true; });
+    const BASE = { gel: 9, pen: 2.6, marker: 18, neon: 3.2, crayon: 6, aero: 11, pool: 12, vapor: 4, mint: 9, galaxy: 10, rainbow: 8, lava: 8, gold: 8 };
     const NS = 'http://www.w3.org/2000/svg';
     const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -39,6 +44,7 @@
         const last = pts[pts.length - 1];
         return d + 'L' + r(last[0]) + ' ' + r(last[1]);
     }
+    const up = (w, k) => ' transform="translate(0 ' + (-w * k).toFixed(2) + ')"';
     const line = (d, color, width, extra) => '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="' + width + '" stroke-linecap="round" stroke-linejoin="round"' + (extra || '') + '/>';
     // the inside of one stroke's <g>, by ink
     function strokeSvg(s) {
@@ -56,14 +62,50 @@
                     line(d, c[1], w * 1.5) + line(d, c[3], w * 0.7) + line(d, '#ffffff', w * 0.3, ' opacity="0.85"');
             case 'crayon':
                 return line(d, c[1], w, ' opacity="0.88" filter="url(#ank-wax)"') + line(d, c[3], w * 0.3, ' opacity="0.35" stroke-dasharray="1 3" filter="url(#ank-wax)"');
+            /* ---- themed inks ---- */
+            case 'aero': // Frutiger Aero: a glossy sky-to-grass glass tube with bubbles drifting along it
+                return line(d, '#0369a1', w) + line(d, 'url(#ank-t-aero)', w * 0.72) + line(d, '#ffffff', w * 0.22, up(w, 0.2) + ' opacity="0.7"') +
+                    line(d, '#ffffff', w * 0.3, ' stroke-dasharray="0 ' + (w * 2.2).toFixed(1) + '" opacity="0.85"') +
+                    line(d, '#e0f7ff', w * 0.16, ' stroke-dasharray="0 ' + (w * 1.6).toFixed(1) + '" stroke-dashoffset="' + (w * 0.9).toFixed(1) + '" transform="translate(0 ' + (w * 0.18).toFixed(2) + ')" opacity="0.9"');
+            case 'pool': // Poolside: clear aqua water with light dancing across it, edged in pool tile
+                return line(d, '#ffffff', w * 1.08, ' opacity="0.9"') + line(d, '#0891b2', w) + line(d, 'url(#ank-t-pool)', w * 0.8) +
+                    line(d, '#ffffff', w * 0.12, ' stroke-dasharray="' + (w * 0.9).toFixed(1) + ' ' + (w * 0.7).toFixed(1) + '" transform="translate(0 ' + (-w * 0.15).toFixed(2) + ')" opacity="0.75"') +
+                    line(d, '#ecfeff', w * 0.08, ' stroke-dasharray="' + (w * 0.5).toFixed(1) + ' ' + (w * 1.1).toFixed(1) + '" stroke-dashoffset="' + (w * 0.6).toFixed(1) + '" transform="translate(0 ' + (w * 0.18).toFixed(2) + ')" opacity="0.65"');
+            case 'vapor': // Vaporwave: a sunset glow running pink to purple to cyan
+                return line(d, 'url(#ank-t-vapor)', w * 4.5, ' opacity="0.7" filter="url(#ank-glow)"') + line(d, 'url(#ank-t-vapor)', w * 1.6) + line(d, '#ffffff', w * 0.4, ' opacity="0.8"');
+            case 'mint': // Peppermint: a candy stripe with a shine
+                return line(d, '#b91c1c', w * 1.06) + line(d, '#ffffff', w * 0.88) +
+                    line(d, '#ef4444', w * 0.88, ' stroke-linecap="butt" stroke-dasharray="' + (w * 0.7).toFixed(1) + ' ' + (w * 0.7).toFixed(1) + '"') +
+                    line(d, '#ffffff', w * 0.2, up(w, 0.2) + ' opacity="0.6"');
+            case 'galaxy': // Galaxy: deep space with drifting sparkles
+                return line(d, '#1e1b4b', w) + line(d, 'url(#ank-t-galaxy)', w * 0.78) +
+                    line(d, '#ffffff', w * 0.18, ' stroke-dasharray="0 ' + (w * 1.7).toFixed(1) + '" transform="translate(0 ' + (-w * 0.15).toFixed(2) + ')"') +
+                    line(d, '#fde68a', w * 0.12, ' stroke-dasharray="0 ' + (w * 2.6).toFixed(1) + '" stroke-dashoffset="' + (w * 1.1).toFixed(1) + '" transform="translate(0 ' + (w * 0.2).toFixed(2) + ')"');
+            case 'rainbow':
+                return line(d, 'url(#ank-t-rainbow)', w) + line(d, '#ffffff', w * 0.22, up(w, 0.2) + ' opacity="0.5"');
+            case 'lava': // Lava: molten color with a hot glow and cooling crust
+                return line(d, '#f97316', w * 3.2, ' opacity="0.55" filter="url(#ank-glow)"') + line(d, '#7f1d1d', w) + line(d, 'url(#ank-t-lava)', w * 0.7) +
+                    line(d, '#450a0a', w * 0.3, ' stroke-dasharray="' + (w * 0.4).toFixed(1) + ' ' + (w * 1.6).toFixed(1) + '" opacity="0.55"');
+            case 'gold': // Gold Foil: shining metal
+                return line(d, '#92400e', w) + line(d, 'url(#ank-t-gold)', w * 0.76) + line(d, '#fffbeb', w * 0.2, up(w, 0.2) + ' opacity="0.8"');
         }
         return '';
+    }
+    function grad(id, stops, span) {
+        const n = stops.length - 1;
+        return '<linearGradient id="ank-t-' + id + '" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="' + (span || 140) + '" y2="' + Math.round((span || 140) * 0.35) + '" spreadMethod="reflect">' +
+            stops.map((c, i) => '<stop offset="' + (i / n).toFixed(3) + '" stop-color="' + c + '"/>').join('') + '</linearGradient>';
     }
     // (the filters cover a fixed, roomy area: measured from a nearly straight stroke's own box, a glow would be clipped flat)
     const DEFS = '<defs><filter id="ank-glow" filterUnits="userSpaceOnUse" x="-4000" y="-4000" width="12000" height="40000"><feGaussianBlur stdDeviation="5"/></filter>' +
         '<filter id="ank-glow-in" filterUnits="userSpaceOnUse" x="-4000" y="-4000" width="12000" height="40000"><feGaussianBlur stdDeviation="2"/></filter>' +
         '<filter id="ank-wax" filterUnits="userSpaceOnUse" x="-4000" y="-4000" width="12000" height="40000"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="7" result="n"/>' +
-        '<feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter></defs>';
+        '<feDisplacementMap in="SourceGraphic" in2="n" scale="2.4"/></filter>' +
+        // the themed inks' color runs: in page units, repeating (reflected), so they flow along a stroke in any direction
+        grad('aero', ['#38bdf8', '#7dd3fc', '#4ade80', '#a7f3d0']) + grad('pool', ['#22d3ee', '#67e8f9', '#06b6d4', '#a5f3fc']) +
+        grad('vapor', ['#ff4fd8', '#a855f7', '#22d3ee']) + grad('galaxy', ['#4c1d95', '#7c3aed', '#1e3a8a', '#db2777']) +
+        grad('rainbow', ['#ef4444', '#f97316', '#facc15', '#22c55e', '#06b6d4', '#3b82f6', '#a855f7'], 240) + grad('lava', ['#f97316', '#facc15', '#ef4444']) +
+        grad('gold', ['#fde68a', '#b45309', '#fef3c7', '#d97706'], 90) + '</defs>';
     // a stroke from a saved note or a file is checked before it is drawn: a known ink and color, a sane width, a path of plain numbers
     function clean(list) {
         return (Array.isArray(list) ? list : []).filter((s) => s && typeof s.d === 'string' && /^[MLQl0-9 .\-]+$/.test(s.d) && s.d.length < 200000).map((s) => ({
@@ -150,10 +192,20 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
 .ank-btn svg { width: 34px; height: 16px; overflow: visible; }
 .ank-sw { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); cursor: pointer; padding: 0; }
 .ank-sw.on { box-shadow: 0 0 0 2px #7e22ce; }
+.ank-themes-btn { border-color: rgba(147,51,234,0.35); background: linear-gradient(180deg, #fff, #f3e8ff); }
+.ank-themes { position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;
+  width: min(560px, calc(100vw - 24px)); box-sizing: border-box; padding: 8px; border-radius: 14px; background: linear-gradient(180deg, #ffffff, #faf5ff);
+  border: 1px solid rgba(147,51,234,0.35); box-shadow: 0 10px 30px rgba(59,7,100,0.25); }
+.ank-theme { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px; border-radius: 10px; border: 1px solid transparent; background: transparent; cursor: pointer; font: inherit; color: inherit; }
+.ank-theme svg { width: 100%; max-width: 92px; height: 34px; overflow: visible; }
+.ank-theme:hover { background: rgba(216,180,254,0.35); }
+.ank-theme.on { border-color: #a855f7; background: #fff; }
+.ank-dim { opacity: 0.4; }
+@media (max-width: 520px) { .ank-themes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ank-done { background: linear-gradient(180deg, #d8b4fe, #9333ea); color: #fff; border-color: #7e22ce; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
 .ank-done:hover { background: linear-gradient(180deg, #e9d5ff, #a855f7); }
 `;
-    let bar = null, on = false, ink = 'gel', color = 'red', size = 'm', erasing = false, undo = [];
+    let bar = null, on = false, ink = 'gel', color = 'red', size = 'm', erasing = false, undo = [], themesOpen = false;
     function preview(t) {
         const s = { t: t, c: color, w: BASE[t] * (t === 'marker' ? 0.7 : 1), d: 'M3 11Q10 3 17 8T31 6' };
         return '<svg viewBox="0 0 34 16" aria-hidden="true">' + DEFS + strokeSvg(s) + '</svg>';
@@ -170,7 +222,8 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
         bar.addEventListener('click', (e) => {
             const b = e.target.closest('button');
             if (!b) return;
-            if (b.dataset.ink) { ink = b.dataset.ink; erasing = false; }
+            if (b.dataset.act === 'themes') { themesOpen = !themesOpen; render(); return; }
+            if (b.dataset.ink) { ink = b.dataset.ink; erasing = false; themesOpen = false; }
             else if (b.dataset.color) { color = b.dataset.color; erasing = false; }
             else if (b.dataset.size) size = b.dataset.size;
             else if (b.dataset.act === 'erase') erasing = !erasing;
@@ -183,9 +236,13 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
     }
     function render() {
         document.body.classList.toggle('ank-erase', erasing);
+        const theme = THEMES.find((t) => t[0] === ink);
         bar.innerHTML = '<span class="ank-title">Annotate</span>' +
-            '<span class="ank-group" aria-label="Ink">' + INKS.map((k) => '<button type="button" class="ank-btn' + (k[0] === ink && !erasing ? ' on' : '') + '" data-ink="' + k[0] + '" title="' + k[1] + '">' + preview(k[0]) + k[1] + '</button>').join('') + '</span>' +
-            '<span class="ank-sep"></span><span class="ank-group" aria-label="Color">' + COLORS.map((c) => '<button type="button" class="ank-sw' + (c[0] === color ? ' on' : '') + '" data-color="' + c[0] + '" title="' + c[0].charAt(0).toUpperCase() + c[0].slice(1) + '" style="background:linear-gradient(180deg,' + c[3] + ',' + c[1] + ')"></button>').join('') + '</span>' +
+            '<span class="ank-group" aria-label="Ink">' + INKS.map((k) => '<button type="button" class="ank-btn' + (k[0] === ink && !erasing ? ' on' : '') + '" data-ink="' + k[0] + '" title="' + k[1] + '">' + preview(k[0]) + k[1] + '</button>').join('') +
+            '<button type="button" class="ank-btn ank-themes-btn' + (theme && !erasing ? ' on' : '') + '" data-act="themes" aria-expanded="' + themesOpen + '" title="Themed inks, each with its own colors">' +
+            (theme ? preview(theme[0]) + theme[1] : '✨ Themes') + ' ▾</button></span>' +
+            (themesOpen ? '<div class="ank-themes" role="menu" aria-label="Themed inks">' + THEMES.map((t) => '<button type="button" role="menuitem" class="ank-theme' + (t[0] === ink ? ' on' : '') + '" data-ink="' + t[0] + '"><svg viewBox="0 0 34 16" aria-hidden="true">' + DEFS + strokeSvg({ t: t[0], c: color, w: BASE[t[0]] * 0.75, d: 'M3 11Q10 3 17 8T31 6' }) + '</svg>' + t[1] + '</button>').join('') + '</div>' : '') +
+            '<span class="ank-sep"></span><span class="ank-group' + (theme ? ' ank-dim' : '') + '" aria-label="Color"' + (theme ? ' title="' + theme[1] + ' brings its own colors"' : '') + '>' + COLORS.map((c) => '<button type="button" class="ank-sw' + (c[0] === color ? ' on' : '') + '" data-color="' + c[0] + '" title="' + c[0].charAt(0).toUpperCase() + c[0].slice(1) + '" style="background:linear-gradient(180deg,' + c[3] + ',' + c[1] + ')"></button>').join('') + '</span>' +
             '<span class="ank-sep"></span><span class="ank-group" aria-label="Size">' + SIZES.map((z) => '<button type="button" class="ank-btn' + (z[0] === size ? ' on' : '') + '" data-size="' + z[0] + '" title="' + z[1] + '">' + z[0].toUpperCase() + '</button>').join('') + '</span>' +
             '<span class="ank-sep"></span><span class="ank-group">' +
             '<button type="button" class="ank-btn' + (erasing ? ' on' : '') + '" data-act="erase" title="Eraser: drag over a stroke to remove it">Eraser</button>' +
@@ -267,10 +324,28 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
     };
     document.addEventListener('pointerup', end, true);
     document.addEventListener('pointercancel', end, true);
-    document.addEventListener('keydown', (e) => {
+    // Keys while annotating: caught on the window, before anything else sees them, so Bitbook's own undo (which
+    // would undo the note and drop the caret into the text) never runs, and nothing gets typed into the note
+    function undoInk() { const layer = layerOf(false); if (layer && undo.length) { paint(layer, undo.pop()); saved(); } }
+    window.addEventListener('keydown', (e) => {
         if (!on) return;
-        if (e.key === 'Escape') { e.preventDefault(); stop(); }
-        else if ((e.metaKey || e.ctrlKey) && (e.key === 'z' || e.key === 'Z') && !e.shiftKey) { e.preventDefault(); e.stopImmediatePropagation(); const layer = layerOf(false); if (layer && undo.length) { paint(layer, undo.pop()); saved(); } }
+        const k = e.key;
+        if (k === 'Escape') { e.preventDefault(); e.stopImmediatePropagation(); stop(); return; }
+        const mod = e.metaKey || e.ctrlKey;
+        if (mod && (k === 'z' || k === 'Z' || k === 'y' || k === 'Y')) {
+            e.preventDefault(); e.stopImmediatePropagation();
+            if ((k === 'z' || k === 'Z') && !e.shiftKey) undoInk();
+            return;
+        }
+        // typing keys stay out of the note while you draw (the bar's buttons still work with the keyboard)
+        if (bar && bar.contains(e.target)) return;
+        if (!mod && (k.length === 1 || k === 'Backspace' || k === 'Delete' || k === 'Enter' || k === 'Tab')) { e.preventDefault(); e.stopImmediatePropagation(); }
+    }, true);
+    // undo from the Edit menu or a touch keyboard arrives as beforeinput: keep that out of the note too
+    window.addEventListener('beforeinput', (e) => {
+        if (!on) return;
+        e.preventDefault(); e.stopImmediatePropagation();
+        if (e.inputType === 'historyUndo') undoInk();
     }, true);
 
     /* ---------- wiring ---------- */

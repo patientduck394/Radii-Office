@@ -82,17 +82,21 @@
             btn.setAttribute('aria-label', P.label);
             btn.title = P.label;
             btn.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + P.icon + '</svg>';
-            const it = { panel, btn };
+            const it = { panel, btn, side: P.side };
             btn.addEventListener('click', (e) => { e.stopPropagation(); const open = !panel.classList.contains('pd-open'); closeAll(it); panel.classList.toggle('pd-open', open); });
             document.body.appendChild(btn);
             items.push(it);
         });
         if (!items.length) return;
-        // tapping outside an open drawer closes it; so does picking a button or link in it
+        // tapping outside an open drawer closes it; so does picking a button or link in the Menu drawer
+        // (the Properties drawer stays open: its buttons are settings, like a segmented control, that you adjust in a row)
         document.addEventListener('click', (e) => {
             items.forEach((it) => {
                 if (!it.panel.classList.contains('pd-open') || e.target.closest('.pd-btn')) return;
-                if (!it.panel.contains(e.target) || e.target.closest('button, a')) it.panel.classList.remove('pd-open');
+                // a button that redrew its panel is no longer on the page: that tap was inside, not outside
+                if (!e.target.isConnected) return;
+                const picked = it.side === 'left' && e.target.closest('button, a');
+                if (!it.panel.contains(e.target) || picked) it.panel.classList.remove('pd-open');
             });
         });
         document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeAll(null); });
