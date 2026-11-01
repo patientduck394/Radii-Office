@@ -922,6 +922,8 @@ if (canvas) {
         // --- SECTION B: Inline Saturated Formatting Definition Matrix ---
         // Only Space or Enter compile a macro (any other key used to fire it mid-typing, e.g. "**" + "b")!
         if (e.key !== ' ' && e.key !== 'Enter') return;
+        // ``` fences: nothing on a fenced line (or between fences, even many lines apart) is ever formatted!
+        if (/```/.test(rawNodeTextValue) || (window.kdDoc && kdDoc.inFence && kdDoc.inFence(textNode, canvas))) return;
         const definitions = [
             // Gel highlights, the Annotator's first three tools, in its 13 colors: #R#text## highlights,
             // #R#text#_ is the gel underline and #R#text#~ the gel strike (checked before the #R#chip# ones)!

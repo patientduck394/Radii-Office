@@ -355,7 +355,7 @@
             if (tag === 'HR') { push(''); return; }
             if (BLOCK.test(tag)) {
                 flush();
-                const hasBlocks = Array.from(el.children).some((c) => BLOCK.test(c.tagName) || c.classList.contains('kd-math-display') || c.hasAttribute('data-kd-media'));
+                const hasBlocks = Array.from(el.children).some((c) => BLOCK.test(c.tagName) || c.classList.contains('kd-math-display') || c.hasAttribute('data-kd-media') || c.classList.contains('bl-prog'));
                 if (hasBlocks) { Array.from(el.childNodes).forEach(walk); flush(); return; }
                 const t = kidsText(el).replace(/\s+$/, '');
                 if (t.trim() === '') lines.push('');
@@ -466,8 +466,8 @@
     const SKIP = 'code, pre, a, .kd-math, .kd-tpl, [contenteditable="false"]';
     // ``` fences: a line that starts with ``` opens one and the next such line closes it; nothing on those lines
     // or between them is ever formatted, even many lines apart! (```like this``` on one line just covers itself)
-    function fencedTexts(root) {
-        const out = new Set();
+    // the document's lines, in order: { nodes (its text pieces), text, key (the block it sits in) }
+    function docLines(root) {
         const lines = [];
         let line = null, key = null, broke = true;
         const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT | NodeFilter.SHOW_ELEMENT);
@@ -475,19 +475,71 @@
             if (n.nodeType === 1) { if (n.tagName === 'BR' || /^(TD|TH)$/.test(n.tagName)) broke = true; continue; }
             let b = n.parentElement;
             while (b && b !== root && !LINE_BLOCK.test(b.tagName) && !/^(TD|TH)$/.test(b.tagName)) b = b.parentElement;
-            if (broke || b !== key || !line) { line = []; lines.push(line); }
+            if (broke || b !== key || !line) { line = { nodes: [], text: '', key: b }; lines.push(line); }
             key = b; broke = false;
-            line.push(n);
+            line.nodes.push(n);
         }
+        lines.forEach((ln) => { ln.text = ln.nodes.map((n) => n.nodeValue).join('').replace(/\u200B/g, '').replace(/\u00A0/g, ' '); });
+        return lines;
+    }
+    // A line with an odd number of ``` opens (or closes) a fence: a lone ```, or one that ends in it like @@program=```
+    function fencedTexts(root) {
+        const out = new Set();
         let open = false;
-        lines.forEach((ln) => {
-            const t = ln.map((n) => n.nodeValue).join('').replace(/[\u200B\u00A0]/g, ' ').trim();
-            const fence = /^```/.test(t);
-            const oneLine = fence && t.length >= 6 && /```$/.test(t.slice(3));
-            if (open || fence) ln.forEach((n) => out.add(n));
-            if (fence && !oneLine) open = !open;
+        docLines(root).forEach((ln) => {
+            const t = ln.text.trim();
+            const odd = (t.split('```').length - 1) % 2 === 1;
+            if (open || odd || /^```/.test(t)) ln.nodes.forEach((n) => out.add(n));
+            if (odd) open = !open;
         });
         return out;
+    }
+    // Enter on the closing ``` of a typed-out program (@@program="..."=``` ... ```) turns it into the Program block!
+    const PROGRAM_OPEN = /^@@program(?:="((?:[^"\\]|\\.)*)")?=```$/;
+    function programAt(canvas, nodes) {
+        const lines = docLines(canvas);
+        const at = lines.findIndex((ln) => ln.nodes.some((n) => nodes.some((x) => x === n || (x.nodeType === 1 && x.contains(n)))));
+        if (at < 1 || lines[at].text.trim() !== '```') return false;
+        let start = -1;
+        for (let k = at - 1; k >= 0; k--) {
+            const t = lines[k].text.trim();
+            if (PROGRAM_OPEN.test(t)) { start = k; break; }
+            if (/```/.test(t)) return false;
+        }
+        if (start < 0) return false;
+        // the code, with each line's indent (spaces, or the editor's own indent steps) kept
+        const body = lines.slice(start + 1, at).map((ln) => {
+            const blk = ln.key && ln.key !== canvas ? ln.key : null;
+            const steps = blk ? Math.round((parseFloat(blk.style.marginLeft) || 0) / 2.5) : 0;
+            return '    '.repeat(steps) + ln.text.replace(/\s+$/, '');
+        });
+        const m = PROGRAM_OPEN.exec(lines[start].text.trim());
+        const html = skillHtml('program', parseParams((m[1] || '').replace(/\\"/g, '"')), body.join('\n'));
+        if (!html) return false;
+        const topOf = (n) => { while (n && n.parentNode !== canvas) n = n.parentNode; return n; };
+        const first = topOf(lines[start].nodes[0]), last = topOf(lines[at].nodes[lines[at].nodes.length - 1]);
+        const r = document.createRange();
+        const whole = first && last && first.nodeType === 1 && last.nodeType === 1 && LINE_BLOCK.test(first.tagName) && LINE_BLOCK.test(last.tagName) &&
+            !first.contains(lines[at].nodes[0]) && !last.contains(lines[start].nodes[0]);
+        const editable = canvas.getAttribute('contenteditable') === 'false' || !!canvas.querySelector(':scope > [contenteditable="true"]');
+        const holder = document.createElement('div');
+        if (editable) holder.setAttribute('contenteditable', 'true');
+        holder.innerHTML = html;
+        if (whole) { r.setStartBefore(first); r.setEndAfter(last); }
+        else { r.setStart(lines[start].nodes[0], 0); const z = lines[at].nodes[lines[at].nodes.length - 1]; r.setEnd(z, z.nodeValue.length); }
+        r.deleteContents();
+        r.insertNode(holder);
+        const next = document.createElement('div');
+        if (editable) next.setAttribute('contenteditable', 'true');
+        next.appendChild(document.createTextNode('\u200B'));
+        holder.after(next);
+        const sel = window.getSelection();
+        const c2 = document.createRange();
+        c2.setStart(next.firstChild, 1); c2.collapse(true);
+        sel.removeAllRanges(); sel.addRange(c2);
+        try { next.focus({ preventScroll: true }); sel.removeAllRanges(); sel.addRange(c2); } catch (e) {}
+        try { if (window.BitLang && window.BitLang.hydrate) window.BitLang.hydrate(holder); } catch (e) {}
+        return 'line';
     }
     function inFence(node, root) {
         const set = fencedTexts(root);
@@ -519,6 +571,8 @@
             nodes = Array.from(block.childNodes);
         }
         if (!nodes.length) return false;
+        // the closing ``` of a typed-out program: it becomes the Program block
+        { const prog = programAt(canvas, nodes); if (prog) return prog; }
         // inside a ``` fence (or on its ``` lines): Enter is just Enter, nothing gets formatted
         {
             const fenced = fencedTexts(canvas);
