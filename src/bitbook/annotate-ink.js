@@ -97,7 +97,7 @@
         let layer = c.querySelector('svg.an-ink-layer');
         if (!layer && !make) return null;
         if (!layer) { const t = document.createElement('template'); t.innerHTML = layerHtml([]); layer = t.content.firstChild; }
-        if (layer.parentNode !== c) c.appendChild(layer);
+        if (!c.contains(layer)) c.appendChild(layer);
         fit(layer);
         return layer;
     }
@@ -113,7 +113,9 @@
             const layer = all[0];
             if (!layer) return;
             if (!layer.querySelector('.ank-stroke') && strokesOf(layer).length) paint(layer, strokesOf(layer));
-            if (layer.parentNode !== c) {
+            const holder0 = layer.parentNode;
+            const wrapped = holder0 && holder0 !== c && holder0.parentNode === c && holder0.children.length === 1;
+            if (layer.parentNode !== c && !wrapped) {
                 const holder = layer.parentNode;
                 c.appendChild(layer);
                 if (holder !== c && holder && !holder.textContent.trim() && !holder.querySelector('img, svg, input')) holder.remove();
@@ -158,9 +160,6 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
     }
     function buildBar() {
         if (bar) return bar;
-        const st = document.createElement('style');
-        st.textContent = CSS;
-        document.head.appendChild(st);
         bar = document.createElement('div');
         bar.className = 'ank-bar';
         bar.hidden = true;
@@ -275,6 +274,14 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
     }, true);
 
     /* ---------- wiring ---------- */
+    function injectCss() {
+        if (document.getElementById('ank-css')) return;
+        const st = document.createElement('style');
+        st.id = 'ank-css';
+        st.textContent = CSS;
+        document.head.appendChild(st);
+    }
+    injectCss();
     function wire() {
         document.querySelectorAll('#skills-menu-popup [data-skill="markup"]').forEach((item) => item.addEventListener('click', () => {
             try { if (typeof closeSkillsMenu === 'function') closeSkillsMenu(); } catch (e) {}

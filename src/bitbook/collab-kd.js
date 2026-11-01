@@ -25,7 +25,8 @@
     function bid() { return RC.uid(8); }
 
     /* ---------- Blocks: every top-level node becomes a tagged element ---------- */
-    const BLOCKY = /^(DIV|P|H[1-6]|UL|OL|BLOCKQUOTE|PRE|TABLE|HR|FIGURE|SECTION|DETAILS|IMG)$/;
+    // (an Annotate drawing, <svg class="an-ink-layer">, is a block of its own too: SVG tag names are lowercase)
+    const BLOCKY = /^(DIV|P|H[1-6]|UL|OL|BLOCKQUOTE|PRE|TABLE|HR|FIGURE|SECTION|DETAILS|IMG|SVG)$/i;
     // Wraps loose text/inline runs in <div>s and gives every block a unique id!
     // (Text never changes, so whole-page character offsets keep the caret put!)
     function normalize(container) {
