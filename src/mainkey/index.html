@@ -150,10 +150,10 @@
     <div id="host-modal" class="modal-overlay" style="display:none;">
         <div class="modal-card kit-card">
             <div class="modal-title">📡 Host this database</div>
-            <p class="kit-intro">Turn this tab into the database's server! Everyone who opens your page sees the same live data, and their changes land here. No cloud server of your own: visitors reach this tab through public relays, and every message is locked with a key only your snippet knows!</p>
+            <p class="kit-intro">Make this database shared! Everyone who opens your page sees the same live data, and their changes land here. No cloud server of your own: visitors reach this tab through public relays, and every message is locked with a key only your snippet knows!</p>
             <div class="kit-step">
                 <strong>1. Put the snippet on your page</strong>
-                <span>Upload it next to database.kb and mainkey-live.js (the Website Kit has both). When this tab is closed, visitors see the last shared copy!</span>
+                <span>Upload it next to database.kb and mainkey-live.js (the Website Kit has both). It keeps working when this tab is closed: visitors' pages share the changes among themselves, and Mainkey merges them in when you come back!</span>
                 <pre class="kit-code" id="host-snippet"></pre>
                 <div class="kit-row">
                     <button class="action-btn" onclick="copyHostSnippet()">📋 Copy snippet</button>
@@ -169,7 +169,7 @@
                 </div>
                 <span class="kit-status" id="host-status" aria-live="polite"></span>
             </div>
-            <p class="kit-note">Anyone with your page can read the data (and change it, if you allow that), so don't host anything secret. Keep this tab open while people use your site!</p>
+            <p class="kit-note">Anyone with your page can read the data (and change it, if you allow that), so don't host anything secret. Hosting starts again by itself the next time you open Mainkey!</p>
             <div class="modal-actions">
                 <button class="action-btn cancel-btn" onclick="closeHostModal()">Close</button>
             </div>
@@ -177,8 +177,8 @@
     </div>
     <script src="../stats.js?v=20261130"></script>
     <script src="app.js?v=20261132r"></script>
-    <script src="live/mainkey-live.js"></script>
-    <script src="mainkey-host-ui.js"></script>
+    <script src="live/mainkey-live.js?v=20261201a"></script>
+    <script src="mainkey-host-ui.js?v=20261201a"></script>
     <!-- the Database layout (ribbon, File screen, status bar) from the shared office-shell.js -->
     <script src="office-shell.js?v=20261132r"></script>
     <script src="mainkey-office.js?v=20261132p"></script>

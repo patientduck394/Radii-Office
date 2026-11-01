@@ -5,7 +5,8 @@
     'use strict';
     const ROOM_KEY = 'mainkey-host-room';
     const EDIT_KEY = 'mainkey-host-edit';
-    let hostObj = null;
+    const ON_KEY = 'mainkey-host-on'; // (hosting starts again by itself when Mainkey opens)
+    let hostObj = null, merged = '';
     const $ = (id) => document.getElementById(id);
     const lsGet = (k) => { try { return localStorage.getItem(k); } catch (e) { return null; } };
     const lsSet = (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} };
@@ -24,11 +25,11 @@
         const btn = $('btn-host');
         if (!hostObj) {
             if (btn) btn.textContent = '📡 Host';
-            setStatus('Not hosting. Click Start hosting, and keep this tab open while people use your site!');
+            setStatus('Not hosting. Click Start hosting! Your site keeps working even after you close this tab!');
         } else {
             const v = info ? info.visitors : 0, r = info ? info.relays : 0;
             if (btn) btn.textContent = '📡 Hosting · ' + v + (v === 1 ? ' visitor' : ' visitors');
-            setStatus(info && info.error ? info.error : (r ? 'Hosting live through ' + r + (r === 1 ? ' relay' : ' relays') + '! ' + v + (v === 1 ? ' visitor' : ' visitors') + ' connected' + (info && info.readOnly ? ' (read-only)' : '') + '!' : 'Connecting to the relays…'));
+            setStatus(info && info.error ? info.error : merged + (r ? 'Hosting live through ' + r + (r === 1 ? ' relay' : ' relays') + '! ' + v + (v === 1 ? ' visitor' : ' visitors') + ' connected' + (info && info.readOnly ? ' (read-only)' : '') + '!' : 'Connecting to the relays…'));
         }
         const start = $('host-start'), stopB = $('host-stop');
         if (start) start.hidden = !!hostObj;
@@ -52,11 +53,16 @@
                 getDoc: () => ({ app: 'Radii Base', version: '1.0', fields: fields, records: records }),
                 // a visitor changed something: take the new data, save it here, and redraw
                 setDoc: (doc) => { fields = doc.fields; records = doc.records; savePlain(); render(); }
-            }, { room: room(), readOnly: !($('host-edit') ? $('host-edit').checked : true), onStatus: paint });
+            }, {
+                room: room(), readOnly: !($('host-edit') ? $('host-edit').checked : true), onStatus: paint,
+                // visitors kept using the site while this tab was closed: their changes are merged in!
+                onMerge: () => { merged = 'Merged in the changes visitors made while you were away! '; paint(hostObj ? hostObj.info() : null); }
+            });
         } catch (e) { setStatus(e.message); return; }
+        lsSet(ON_KEY, '1');
         paint(hostObj.info());
     };
-    window.stopHosting = function () { if (hostObj) { hostObj.stop(); hostObj = null; } paint(null); };
+    window.stopHosting = function () { if (hostObj) { hostObj.stop(); hostObj = null; } lsSet(ON_KEY, '0'); paint(null); };
     window.hostEditToggle = function () {
         const on = $('host-edit').checked;
         lsSet(EDIT_KEY, on ? '1' : '0');
@@ -78,4 +84,9 @@
     const savePlain = window.persist;
     window.persist = function () { savePlain(); if (hostObj) hostObj.changed(); };
     window.addEventListener('beforeunload', () => { if (hostObj) hostObj.stop(); });
+    // it was hosting when Mainkey was closed: carry on (and take in what visitors changed meanwhile)!
+    if (lsGet(ON_KEY) === '1') {
+        const resume = () => { try { window.startHosting(); } catch (e) {} };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', resume); else setTimeout(resume, 0);
+    }
 })();

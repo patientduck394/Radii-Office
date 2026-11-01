@@ -23,7 +23,7 @@
 (function (root) {
     'use strict';
 
-    var VERSION = '1.0.0';
+    var VERSION = '1.1.0';
     var YAML_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js';
     var FIELD_TYPES = ['text', 'number', 'tag'];
     var STORE_PREFIX = 'mainkey-live:';
@@ -726,7 +726,7 @@
             });
             this.$('.mk-count').textContent = (rows.length === db.count
                 ? db.count + (db.count === 1 ? ' record' : ' records')
-                : rows.length + ' of ' + db.count + ' records') + (db.remote ? ' · ' + ({ live: '● live (hosted)', away: 'host away: last shared copy', waiting: 'waiting for the host…', offline: 'host offline: published copy', connecting: 'connecting…' }[db.remote.state] || db.remote.state) + (db.remote.readOnly ? ' · read-only' : '') + (db.remote.error ? ' · ' + db.remote.error : '') : '');
+                : rows.length + ' of ' + db.count + ' records') + (db.remote ? ' · ' + ({ live: '● live (hosted)', shared: '● live (shared)', away: 'host away: last shared copy', waiting: 'waiting for the host…', offline: 'offline: your changes are sent when you are back', connecting: 'connecting…' }[db.remote.state] || db.remote.state) + (db.remote.readOnly ? ' · read-only' : '') + (db.remote.error ? ' · ' + db.remote.error : '') : '');
             this.el.classList.toggle('mk-ro', !!(db.remote && db.remote.readOnly));
 
             var body = this.$('.mk-body');
@@ -1018,7 +1018,9 @@
     //     <div data-mainkey="database.kb" data-mainkey-host="ROOM"></div>
     // then reads and changes the SAME live data, through public relays (the same ones Radii's
     // collaboration uses). Everything sent is sealed with AES-GCM using the key inside ROOM, so the
-    // relays only carry locked boxes. When the host tab is closed, visitors see the last shared copy.
+    // relays only carry locked boxes. When the host tab is closed, the database keeps working: one visitor's
+    // page stands in for the host (it makes everyone's changes and leaves the result on the relays), and when
+    // the host tab comes back it merges in everything that changed while it was away.
     var MK_BROKERS = [
         'wss://mqtt.eclipseprojects.io:443/mqtt',
         'wss://broker.emqx.io:8084/mqtt',
@@ -1078,7 +1080,7 @@
             const tl = (body[0] << 8) | body[1];
             const topic = mkDec.decode(body.slice(2, 2 + tl));
             const payload = mkDec.decode(body.slice(2 + tl + (qos ? 2 : 0)));
-            if (this.onmessage) this.onmessage(topic, payload);
+            if (this.onmessage) this.onmessage(topic, payload, !!(head & 1)); // (the last flag: a copy the relay kept)
         }
     };
     MkMqtt.prototype.subscribe = function (topics) {
@@ -1127,12 +1129,12 @@
                 if (t.length) mq.subscribe(t);
                 self.handlers.forEach(function (h) { if (h.open) h.open(); });
             };
-            mq.onmessage = function (topic, payload) {
+            mq.onmessage = function (topic, payload, retained) {
                 var k = topic + '|' + payload.slice(0, 48);
                 if (self.seen[k]) return;
                 self.seen[k] = 1;
                 if (++self.seenN > 1500) { self.seen = {}; self.seenN = 0; }
-                self.handlers.forEach(function (h) { if (h.msg) h.msg(topic, payload); });
+                self.handlers.forEach(function (h) { if (h.msg) h.msg(topic, payload, retained); });
             };
             mq.onclose = function () { clearTimeout(giveUp); L.live = false; if (L.mq === mq) { L.mq = null; self._retry(L); } };
             mq.onerror = function () {};
@@ -1247,8 +1249,47 @@
         return 'Unknown change!';
     }
 
+    // Remembers which visitor changes are already in the data, so a change that is sent twice is only made once!
+    function doneList(list) {
+        var d = { list: Array.isArray(list) ? list.slice(-300).map(String) : [], set: {} };
+        d.list.forEach(function (k) { d.set[k] = 1; });
+        return d;
+    }
+    function doneAdd(d, k) {
+        if (d.set[k]) return;
+        d.set[k] = 1;
+        d.list.push(k);
+        if (d.list.length > 300) delete d.set[d.list.shift()];
+    }
+    function canon(r) { return JSON.stringify(Object.keys(r).sort().map(function (k) { return [k, r[k]]; })); }
+    // Three-way merge: "base" is the copy both sides started from! For each record, whichever side changed it wins
+    // (mine, if both did), records added on either side are kept, and fields the visitors added or removed follow along!
+    function merge3(base, mine, theirs) {
+        if (!base) return clone(theirs);
+        var map = function (doc) { var m = {}; (doc.records || []).forEach(function (r) { m[String(r.id)] = canon(r); }); return m; };
+        var raw = {};
+        mine.records.concat(theirs.records).forEach(function (r) { raw[String(r.id) + '|' + canon(r)] = r; });
+        var B = map(base), M = map(mine), T = map(theirs);
+        var has = function (list, id) { return list.some(function (f) { return f.id === id; }); };
+        var fields = clone(mine.fields);
+        theirs.fields.forEach(function (f) { if (!has(fields, f.id) && !has(base.fields, f.id)) fields.push(clone(f)); });
+        var kept = fields.filter(function (f) { return !(has(base.fields, f.id) && !has(theirs.fields, f.id)); });
+        if (kept.length) fields = kept;
+        var order = [], seen = {};
+        mine.records.concat(theirs.records).forEach(function (r) { var k = String(r.id); if (!seen[k]) { seen[k] = 1; order.push(k); } });
+        var records = [];
+        order.forEach(function (k) {
+            var pick = M[k] === B[k] ? T[k] : (T[k] === B[k] ? M[k] : (M[k] !== undefined ? M[k] : T[k]));
+            if (pick === undefined) return;
+            var r = raw[k + '|' + pick], out = { id: r.id };
+            fields.forEach(function (f) { out[f.id] = f.id in r ? r[f.id] : ''; });
+            records.push(out);
+        });
+        return { app: mine.app || 'Radii Base', version: mine.version || '1.0', fields: fields, records: records };
+    }
+
     // host(source, options) → Host! source is a Database, or { getDoc, setDoc } for apps with their own data!
-    // options: { room: 'id.key' (or one is made), readOnly: false, onStatus(info), onChange(change) }
+    // options: { room: 'id.key' (or one is made), readOnly: false, onStatus(info), onChange(change), onMerge(info) }
     function host(source, options) {
         options = options || {};
         if (!hasDOM || typeof crypto === 'undefined' || !crypto.subtle) throw new Error('Mainkey: hosting needs a modern browser (on https or localhost)!');
@@ -1259,23 +1300,50 @@
             getDoc = function () { return source.toJSON(); };
             setDoc = function (doc) { source._fields = doc.fields; source._records = doc.records; source._commit({ type: 'replace', fromVisitor: true }); };
         } else { getDoc = source.getDoc; setDoc = source.setDoc; }
-        var version = 1, visitors = {}, timer = null, beat = null, stopped = false, lastSent = '';
+        // The last copy this tab shared is kept, so changes made while it was closed can be merged in later!
+        var ls = storage(), baseKey = 'mainkey-host:' + room.id, saved = null;
+        try { saved = JSON.parse((ls && ls.getItem(baseKey)) || 'null'); } catch (e) {}
+        var version = (saved && saved.v) || 0, done = doneList(saved && saved.done), base = saved && saved.doc ? saved.doc : null;
+        var visitors = {}, timer = null, beat = null, stopped = false, lastSent = '', ready = false, settleTimer = null, best = null;
         var info = function () {
             var now = Date.now();
             Object.keys(visitors).forEach(function (k) { if (now - visitors[k] > 70000) delete visitors[k]; });
             return { room: spec, relays: relay.live().length, visitors: Object.keys(visitors).length, readOnly: !!h.readOnly, version: version };
         };
         var status = function () { if (typeof options.onStatus === 'function') { try { options.onStatus(info()); } catch (e) {} } };
+        var snapshot = function () { var d = getDoc(); return { app: d.app || 'Radii Base', version: d.version || '1.0', fields: d.fields, records: d.records }; };
+        var remember = function (doc) {
+            base = clone(doc);
+            if (ls) { try { ls.setItem(baseKey, JSON.stringify({ v: version, doc: base, done: done.list })); } catch (e) {} }
+        };
         var broadcast = function () {
-            if (stopped) return;
-            var doc = getDoc();
-            var body = { t: 'state', v: version, ro: !!h.readOnly, doc: { app: doc.app || 'Radii Base', version: doc.version || '1.0', fields: doc.fields, records: doc.records } };
+            if (stopped || !ready) return;
+            var doc = clone(snapshot());
+            var body = { t: 'state', v: version, ro: !!h.readOnly, by: 'host', at: Date.now(), done: done.list.slice(), doc: doc };
             sealer.seal(body).then(function (sealed) {
                 if (stopped) return;
                 if (sealed.length > 900000) { if (options.onStatus) options.onStatus(Object.assign(info(), { error: 'This database is too big to host (keep it under about 1 MB)!' })); return; }
                 lastSent = sealed;
-                relay.pub(T.state, sealed, true); // (kept by the relays, so new visitors see it at once, even while you are away)
+                relay.pub(T.state, sealed, true); // (kept by the relays, so the data is there even while this tab is closed)
+                remember(doc);
             });
+        };
+        // take in a copy that visitors changed while this tab was away
+        var mergeIn = function (m) {
+            var merged = merge3(base, snapshot(), normalize(m.doc));
+            setDoc(merged);
+            (m.done || []).forEach(function (k) { doneAdd(done, String(k)); });
+            version = Math.max(version, m.v || 0);
+            if (typeof options.onMerge === 'function') { try { options.onMerge({ version: m.v, at: m.at, records: merged.records.length }); } catch (e) {} }
+        };
+        // Before sending anything, look at the copy the relays kept: visitors may have changed it while this tab was closed!
+        var settle = function () {
+            if (ready || stopped) return;
+            ready = true;
+            if (best && best.v > version) { try { mergeIn(best); } catch (e) {} }
+            version++;
+            broadcast();
+            status();
         };
         var h = {
             room: spec,
@@ -1284,48 +1352,132 @@
             changed: function () { version++; clearTimeout(timer); timer = setTimeout(broadcast, 120); },
             setReadOnly: function (ro) { h.readOnly = !!ro; h.changed(); status(); },
             info: info,
-            stop: function () { stopped = true; clearInterval(beat); relay.stop(); status(); },
+            stop: function () { stopped = true; clearInterval(beat); clearTimeout(settleTimer); relay.stop(); status(); },
             link: function (src) { return '<div data-mainkey="' + escapeHtml(src || 'database.kb') + '" data-mainkey-host="' + spec + '"></div>'; }
         };
+        var sendBeat = function () { sealer.seal({ t: 'beat', by: 'host', v: version, ro: !!h.readOnly, at: Date.now() }).then(function (x) { relay.pub(T.beat, x, false); }); };
         relay.handlers.push({
-            open: function () { broadcast(); status(); },
+            open: function () {
+                if (!ready) { if (!settleTimer) settleTimer = setTimeout(settle, 3000); }
+                else broadcast();
+                sendBeat();
+                status();
+            },
             msg: function (topic, payload) {
+                if (topic === T.state) {
+                    sealer.open(payload).then(function (m) {
+                        if (!m || stopped || m.t !== 'state' || !m.doc || !(m.v > version)) return;
+                        if (!ready) { if (!best || m.v > best.v) best = m; return; }
+                        // a visitor stood in for a moment (say, while this tab was reconnecting): take their changes too
+                        if (m.by !== 'host') { try { mergeIn(m); } catch (e) { return; } version++; broadcast(); }
+                    });
+                    return;
+                }
                 if (topic !== T.op) return;
                 sealer.open(payload).then(function (m) {
                     if (!m || stopped) return;
                     if (m.from) visitors[String(m.from).slice(0, 40)] = Date.now();
-                    if (m.t === 'hello') { relay.pub(T.state, lastSent || '', false); if (!lastSent) broadcast(); status(); return; }
-                    if (m.t !== 'op') return;
-                    var err = h.readOnly ? 'This database is read-only (the host only lets visitors look)!' : null;
-                    if (!err) {
-                        var doc = getDoc();
-                        var work = { fields: clone(doc.fields), records: clone(doc.records), app: doc.app, version: doc.version };
-                        err = applyOp(work, m.op);
-                        if (!err) { setDoc(work); version++; broadcast(); if (typeof options.onChange === 'function') { try { options.onChange(m.op); } catch (e) {} } }
+                    if (m.t === 'hello') { sendBeat(); if (ready) broadcast(); status(); return; }
+                    if (m.t !== 'op' || !ready) return; // (not ready yet: the visitor sends it again in a moment)
+                    var k = String(m.from) + ':' + m.rid, err = null;
+                    if (done.set[k]) broadcast(); // (already made: send the data again so the visitor sees it)
+                    else {
+                        err = h.readOnly ? 'This database is read-only (the host only lets visitors look)!' : null;
+                        if (!err) {
+                            var doc = getDoc();
+                            var work = { fields: clone(doc.fields), records: clone(doc.records), app: doc.app, version: doc.version };
+                            err = applyOp(work, m.op);
+                            if (!err) {
+                                setDoc(work);
+                                doneAdd(done, k);
+                                version++;
+                                broadcast();
+                                if (typeof options.onChange === 'function') { try { options.onChange(m.op); } catch (e) {} }
+                            }
+                        }
                     }
-                    sealer.seal({ t: 'ack', to: m.from, rid: m.rid, ok: !err, err: err, v: version }).then(function (x) { relay.pub(T.ack, x, false); });
+                    sealer.seal({ t: 'ack', to: m.from, rid: m.rid, ok: !err, err: err, v: version, nv: 1 }).then(function (x) { relay.pub(T.ack, x, false); });
                     status();
                 });
             }
         });
-        relay.sub([T.op]);
+        relay.sub([T.op, T.state]);
         relay.start();
-        beat = setInterval(function () { sealer.seal({ t: 'beat', v: version, ro: !!h.readOnly, at: Date.now() }).then(function (x) { relay.pub(T.beat, x, false); }); status(); }, 10000);
+        beat = setInterval(function () { sendBeat(); status(); }, 10000);
         return h;
     }
 
-    // A visitor's Database follows the host: reads come from the host's copy, writes are sent to it!
+    // A visitor's Database follows the shared copy: reads come from it, changes go to the host!
+    // When no host is around, the visitor with the smallest id stands in for it, so the database always works!
     function attachRemote(db, spec) {
         var room = parseRoom(spec), T = topics(room), sealer = new Sealer(room), relay = new MkRelay();
-        var me = 'v' + Math.random().toString(36).slice(2, 10), rid = 0, lastBeat = 0, gotState = false;
-        db._persist = false; // (the host keeps the data; nothing is saved as "my edits")
-        db.remote = { state: 'connecting', readOnly: false, room: room.id, error: '' };
+        var me = 'v' + Math.random().toString(36).slice(2, 10), rid = 0;
+        var ls = storage(), cacheKey = 'mainkey-hosted:' + room.id, cache = null;
+        try { cache = JSON.parse((ls && ls.getItem(cacheKey)) || 'null'); } catch (e) {}
+        // the shared copy ("auth"), plus this visitor's changes that are still on their way ("pending")
+        var auth = { v: 0, ro: false, done: doneList(), doc: { fields: clone(db._fields), records: clone(db._records) } };
+        if (cache && cache.doc) { try { var c = normalize(cache.doc); auth = { v: cache.v || 0, ro: !!cache.ro, done: doneList(cache.done), doc: { fields: c.fields, records: c.records } }; } catch (e) {} }
+        var pending = cache && Array.isArray(cache.pending) ? cache.pending.filter(function (p) { return p && p.k && p.op; }) : [];
+        var hostSeen = 0, openedAt = 0, peers = {}, standIn = false, lastVbeat = 0;
+        db._persist = false; // (the shared copy is kept below, per room)
+        db.remote = { state: 'connecting', readOnly: auth.ro, room: room.id, error: '', version: auth.v, standIn: false };
         var setState = function (st) { if (db.remote.state === st) return; db.remote.state = st; db._emit({ type: 'remote', state: st }, false); };
+        var saveCache = function () {
+            if (!ls) return;
+            try { ls.setItem(cacheKey, JSON.stringify({ v: auth.v, ro: auth.ro, done: auth.done.list, doc: auth.doc, pending: pending })); } catch (e) {}
+        };
+        var show = function (quiet) {
+            var work = { fields: clone(auth.doc.fields), records: clone(auth.doc.records) };
+            pending.forEach(function (p) { applyOp(work, p.op); });
+            db._fields = work.fields; db._records = work.records;
+            db.remote.readOnly = auth.ro; db.remote.version = auth.v;
+            if (!quiet) db._emit({ type: 'sync', fromHost: true }, false);
+        };
+        // a change counts as made once it shows up in the shared copy
+        var settled = function () { pending = pending.filter(function (p) { return !auth.done.set[p.k]; }); saveCache(); show(); };
+        var docOut = function () { return { app: 'Radii Base', version: '1.0', fields: auth.doc.fields, records: auth.doc.records }; };
+        var publishState = function (retain) {
+            sealer.seal({ t: 'state', v: auth.v, ro: auth.ro, by: me, at: Date.now(), done: auth.done.list.slice(), doc: docOut() }).then(function (x) {
+                if (x.length <= 900000) relay.pub(T.state, x, retain);
+            });
+        };
+        var onAck = function (m) {
+            var i = -1;
+            pending.forEach(function (p, j) { if (p.from === m.to && p.rid === m.rid) i = j; });
+            if (i < 0) return;
+            if (!m.ok) { pending.splice(i, 1); db.remote.error = m.err || 'The host said no!'; settled(); }
+            else if (!m.nv) { pending.splice(i, 1); settled(); } // (an older host that does not list the changes it made)
+        };
+        // While no host is around, the stand-in makes everyone's changes and leaves the result on the relays!
+        var standOp = function (m) {
+            var k = String(m.from) + ':' + m.rid, err = null;
+            if (auth.done.set[k]) { publishState(false); return; }
+            if (auth.ro) err = 'This database is read-only (the host only lets visitors look)!';
+            else {
+                var work = { fields: clone(auth.doc.fields), records: clone(auth.doc.records) };
+                err = applyOp(work, m.op);
+                if (!err) { auth.doc = work; auth.v++; doneAdd(auth.done, k); publishState(true); }
+            }
+            if (err) {
+                var ack = { t: 'ack', to: m.from, rid: m.rid, ok: false, err: err, nv: 1 };
+                if (m.from === me) onAck(ack);
+                sealer.seal(ack).then(function (x) { relay.pub(T.ack, x, false); });
+            }
+            settled();
+        };
+        var sendOp = function (p) {
+            p.at = Date.now();
+            if (standIn) { standOp(p); return; }
+            sealer.seal({ t: 'op', from: p.from, rid: p.rid, op: p.op }).then(function (x) { relay.pub(T.op, x, false); });
+        };
         var send = function (op) {
             if (db.remote.readOnly) { db.remote.error = 'This database is read-only!'; db._emit({ type: 'remote', state: db.remote.state, error: db.remote.error }, false); throw new Error('Mainkey: this hosted database is read-only!'); }
-            sealer.seal({ t: 'op', from: me, rid: ++rid, op: op }).then(function (x) { if (!relay.pub(T.op, x, false)) { db.remote.error = 'Not connected yet: that change only shows here until the host is reachable!'; db._emit({ type: 'remote', state: db.remote.state }, false); } });
+            var p = { k: me + ':' + (++rid), from: me, rid: rid, op: op, at: 0 };
+            pending.push(p);
+            saveCache();
+            sendOp(p);
         };
-        // every change is tried here first (so it shows at once), then sent; the host's answer replaces it
+        // every change is tried here first (so it shows at once), then sent; the shared copy replaces it
         var wrap = function (name, toOp) {
             var orig = db[name];
             db[name] = function () {
@@ -1343,31 +1495,56 @@
         wrap('clear', function () { return { type: 'clear' }; });
         wrap('addField', function (res, name, type) { return { type: 'addField', name: name, ftype: type }; });
         wrap('removeField', function (res, id) { return res ? { type: 'removeField', id: id } : null; });
-        db.revert = function () { sealer.seal({ t: 'hello', from: me }).then(function (x) { relay.pub(T.op, x, false); }); };
+        var hello = function () { sealer.seal({ t: 'hello', from: me }).then(function (x) { relay.pub(T.op, x, false); }); };
+        var vbeat = function () { lastVbeat = Date.now(); sealer.seal({ t: 'vbeat', from: me }).then(function (x) { relay.pub(T.beat, x, false); }); };
+        db.revert = function () { pending = []; db.remote.error = ''; saveCache(); show(); hello(); };
+        var tick = function () {
+            var now = Date.now();
+            Object.keys(peers).forEach(function (k) { if (now - peers[k] > 15000) delete peers[k]; });
+            var hostHere = now - hostSeen < 25000, connected = relay.live().length > 0, settledIn = openedAt && now - openedAt > 5000;
+            var was = standIn;
+            standIn = !!(connected && !hostHere && settledIn && Object.keys(peers).every(function (id) { return id > me; }));
+            db.remote.standIn = standIn;
+            if (standIn && !was) {
+                if (!auth.v) auth.v = 1;
+                publishState(true); // (refreshes the relays' copy, in case one of them forgot it)
+                pending.slice().forEach(standOp);
+            }
+            setState(!connected ? (openedAt ? 'offline' : 'connecting') : hostHere ? 'live' : settledIn ? 'shared' : 'connecting');
+            if (connected && !hostHere && now - lastVbeat > 4000) vbeat();
+            // changes still on their way are sent again (a host or a stand-in may have just turned up)
+            if (!standIn && connected) pending.forEach(function (p) { if (now - (p.at || 0) > 4000) sendOp(p); });
+        };
         relay.handlers.push({
-            open: function () { sealer.seal({ t: 'hello', from: me }).then(function (x) { relay.pub(T.op, x, false); }); },
-            msg: function (topic, payload) {
-                if (topic !== T.state && topic !== T.beat && topic !== T.ack) return;
+            open: function () { if (!openedAt) openedAt = Date.now(); hello(); vbeat(); },
+            msg: function (topic, payload, retained) {
+                if (topic !== T.state && topic !== T.beat && topic !== T.ack && topic !== T.op) return;
                 sealer.open(payload).then(function (m) {
                     if (!m) return;
-                    if (m.t === 'beat') { lastBeat = Date.now(); db.remote.readOnly = !!m.ro; setState('live'); return; }
-                    if (m.t === 'ack') { if (m.to === me && !m.ok) { db.remote.error = m.err || 'The host said no!'; db._emit({ type: 'remote', state: db.remote.state, error: db.remote.error }, false); } return; }
+                    if (m.t === 'beat') { hostSeen = Date.now(); if (auth.ro !== !!m.ro) { auth.ro = !!m.ro; saveCache(); show(); } setState('live'); return; }
+                    if (m.t === 'vbeat') { if (m.from && m.from !== me) peers[String(m.from).slice(0, 40)] = Date.now(); return; }
+                    if (m.t === 'hello') { if (hostSeen && Date.now() - hostSeen < 25000) return; vbeat(); if (standIn) publishState(false); return; }
+                    if (m.t === 'op') { if (standIn) standOp(m); return; }
+                    if (m.t === 'ack') { onAck(m); return; }
                     if (m.t === 'state' && m.doc) {
+                        var fromHost = m.by === 'host' || !m.by;
+                        if (fromHost && !retained) hostSeen = Date.now();
+                        if (m.by === me) return;
+                        if (!(m.v > auth.v || (m.v === auth.v && m.by) || (!m.by && !retained))) return;
                         try {
                             var n = normalize(m.doc);
-                            db._fields = n.fields; db._records = n.records;
-                            db.remote.readOnly = !!m.ro; db.remote.version = m.v; db.remote.error = '';
-                            gotState = true;
-                            if (Date.now() - lastBeat < 30000) setState('live'); else if (db.remote.state === 'connecting') setState('away');
-                            db._emit({ type: 'sync', fromHost: true }, false);
+                            auth = { v: m.v || 0, ro: !!m.ro, done: m.done ? doneList(m.done) : auth.done, doc: { fields: n.fields, records: n.records } };
+                            db.remote.error = '';
+                            settled();
                         } catch (e) {}
                     }
                 });
             }
         });
-        relay.sub([T.state, T.beat, T.ack]);
+        if (cache && cache.doc) show(true); // (the last shared copy shows at once, even with no internet)
+        relay.sub([T.state, T.beat, T.ack, T.op]);
         relay.start();
-        setInterval(function () { if (lastBeat && Date.now() - lastBeat > 30000) setState(gotState ? 'away' : 'offline'); else if (!lastBeat && !gotState && relay.live().length) setState('waiting'); }, 5000);
+        setInterval(tick, 2000);
         return db;
     }
 

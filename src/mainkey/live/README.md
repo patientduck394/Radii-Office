@@ -88,7 +88,7 @@ Mainkey.scan();                   // mount any [data-mainkey] added later!
 
 Make the database **shared**, with no server of your own:
 
-1. Open it in Mainkey and click **📡 Host**, then **Start hosting**. Keep that tab open!
+1. Open it in Mainkey and click **📡 Host**, then **Start hosting**!
 2. Paste the snippet it gives you into your page (next to `database.kb` and `mainkey-live.js`):
 
 ```html
@@ -99,16 +99,20 @@ Make the database **shared**, with no server of your own:
 Now every visitor reads and changes the **same live data**: their changes go to your Mainkey tab, which saves them and sends the new version to everyone, and your own edits in Mainkey reach them too!
 
 - **How it travels:** through the same public relays Radii's live collaboration uses (MQTT over WebSocket). Every message is sealed with AES-GCM using the key in the room code, so the relays only carry locked boxes!
-- **When your tab is closed,** visitors see the last shared copy (the relays keep it) and the widget says the host is away. Changes made meanwhile only show for that visitor until the host is back!
+- **When your tab is closed, it keeps working!** One visitor's page stands in for the host: it makes everyone's changes and leaves the result on the relays, so the next visitor (even hours later) sees them! If that visitor leaves, another one takes over. The widget says `● live (shared)` while this happens!
+- **When you open Mainkey again,** hosting starts by itself and merges in what visitors changed while you were away (a three-way merge: whichever side changed a record wins, and if both did, your copy wins)!
+- **Every visitor's browser keeps the last shared copy** and any changes still on their way, so the data shows at once and nothing is lost on a reload, even offline!
+- **One limit:** the public relays are free test servers, so on rare occasions one forgets its saved copy. Visitors and Mainkey all keep a copy too and put it back, so it only matters if every one of them is gone at the same time!
 - **Read-only:** untick "Visitors can add and change records" and visitors can only look (the host refuses changes).
 - **Mind this:** the room code is in your page, so anyone who can open your page can read the data (and change it, if you allow that). Don't host secrets! Clicking **New room link** makes a fresh code (the old snippet stops working). Keep the database under about 1 MB.
 
 From code:
 
 ```js
-const h = Mainkey.host(db, { room: Mainkey.makeRoom(), readOnly: false, onStatus: info => console.log(info.visitors) });
+const h = Mainkey.host(db, { room: Mainkey.makeRoom(), readOnly: false, onStatus: info => console.log(info.visitors), onMerge: m => console.log('merged visitor changes!') });
 const shared = await Mainkey.load('database.kb', { host: h.room });   // on a visitor's page
-shared.remote.state;   // 'live', 'away', 'waiting' or 'offline'
+shared.remote.state;   // 'live' (host here), 'shared' (host away, visitors keep it going), 'connecting' or 'offline'
+shared.remote.standIn; // true while this page is the stand-in host!
 ```
 
 ## Notes
