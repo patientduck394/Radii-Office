@@ -1,5 +1,5 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261201f';
+var BITBOOK_CACHE = 'bitbook-shell-v20261201g';
 var BITBOOK_SHELL = [
   './',
   'index.html',
@@ -22,7 +22,7 @@ var BITBOOK_SHELL = [
   'images-glue.js?v=20261131v',
   'drawio-plugin.js?v=20261132f',
   'radii-file.js?v=20261042',
-  'radii-collab.js?v=20261201b',
+  'radii-collab.js?v=20261201g',
   'radii-collab.css?v=20261042',
   'collab-kd.js?v=20261021',
   'manifest.json',
