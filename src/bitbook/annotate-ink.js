@@ -33,7 +33,7 @@
     const STYLE_NAME = {};
     PACKS.forEach((pk) => pk[2].forEach((st) => { STYLE_NAME[st[0]] = [pk[1], st[1], pk[0]]; }));
     const BASE = { gel: 9, pen: 2.6, marker: 18, neon: 3.2, crayon: 6,
-        'aero-tube': 11, 'aero-bubbles': 9, 'aero-aurora': 4, 'aero-sky': 12, 'pool-water': 12, 'pool-tile': 10, 'pool-rope': 9, 'pool-ripple': 10,
+        'aero-tube': 11, 'aero-bubbles': 9, 'aero-aurora': 14, 'aero-sky': 12, 'pool-water': 12, 'pool-tile': 10, 'pool-rope': 9, 'pool-ripple': 10,
         'vapor-glow': 4, 'vapor-grid': 12, 'vapor-chrome': 9, 'vapor-sunset': 10, 'candy-stripe': 9, 'candy-sprinkles': 12, 'candy-gummy': 12, 'candy-ribbon': 9,
         'cosmic-galaxy': 10, 'cosmic-comet': 4, 'cosmic-stars': 10, 'cosmic-nebula': 10, 'metal-foil': 8, 'metal-chain': 8, 'metal-wire': 5, 'metal-rivet': 10,
         'aero2-pearl': 12, 'aero2-vista': 12, 'aero2-brackets': 12, 'aero2-rings': 12, 'pool2-mist': 12, 'pool2-chevron': 12, 'pool2-outline': 12, 'pool2-deck': 12,
