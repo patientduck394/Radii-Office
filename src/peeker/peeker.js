@@ -27,6 +27,8 @@ const PDFLIB_URLS = [
 ];
 
 const $ = (id) => document.getElementById(id);
+// Bitbook's Annotate inks (bitbook/annotate-ink.js), when they loaded
+const AI = window.AnnotateInk && window.AnnotateInk.strokeSvg ? window.AnnotateInk : null;
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 
@@ -156,7 +158,7 @@ const COLORS = ['#111111', '#ff7a00', '#e5371c', '#1d6fe0', '#14a44d', '#ffd400'
 const style = {
     text: { color: '#111111', size: 16, font: 'sans', bold: false, italic: false, underline: false, strike: false },
     hl: { color: '#ffd400', size: 0 },
-    ink: { color: '#ff7a00', size: 3 },
+    ink: { color: '#ff7a00', size: 3, kind: 'plain', ic: 'blue' }, // kind: 'plain', or one of Bitbook's Annotate inks (ic: its color)
     box: { color: '#e5371c', size: 2 },
 };
 
@@ -447,8 +449,8 @@ function renderLayer(i) {
     for (const a of pg.annots) {
         const sel = a.id === selId ? ' sel' : '';
         if (a.t === 'ink') {
-            const d = inkPath(a.pts);
-            ink += `<path d="${d}" fill="none" stroke="${esc(a.color)}" stroke-width="${a.size}" stroke-linecap="round" stroke-linejoin="round"/>`;
+            if (a.kind && AI) ink += '<g>' + AI.strokeSvg({ t: a.kind, c: a.ic, w: a.size, d: AI.pathOf(a.pts) }) + '</g>';
+            else ink += `<path d="${inkPath(a.pts)}" fill="none" stroke="${esc(a.color)}" stroke-width="${a.size}" stroke-linecap="round" stroke-linejoin="round"/>`;
             const b = inkBounds(a);
             html += `<div class="pk-a ink inkhit${sel}" data-id="${a.id}" style="left:${b.x * z}px;top:${b.y * z}px;width:${b.w * z}px;height:${b.h * z}px"></div>`;
         } else if (a.t === 'text') {
@@ -460,7 +462,7 @@ function renderLayer(i) {
             html += `<div class="pk-a ${a.t}${sel}" data-id="${a.id}" style="left:${a.x * z}px;top:${a.y * z}px;width:${a.w * z}px;height:${a.h * z}px;${rot}${look}">${inner}${sel ? '<i class="pk-handle"></i>' : ''}</div>`;
         }
     }
-    svg.innerHTML = ink;
+    svg.innerHTML = (AI && /<g>/.test(ink) ? AI.DEFS : '') + ink;
     box.innerHTML = html;
 }
 function inkPath(pts) {
@@ -473,7 +475,7 @@ function inkPath(pts) {
 function inkBounds(a) {
     let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
     for (const [x, y] of a.pts) { x0 = Math.min(x0, x); y0 = Math.min(y0, y); x1 = Math.max(x1, x); y1 = Math.max(y1, y); }
-    const pad = a.size / 2 + 3;
+    const pad = a.kind ? a.size * 3 + 10 : a.size / 2 + 3; // (Annotate inks glow and shine past their line)
     return { x: x0 - pad, y: y0 - pad, w: x1 - x0 + pad * 2, h: y1 - y0 + pad * 2 };
 }
 
@@ -629,6 +631,22 @@ function styleKey() {
 function renderStyle() {
     const k = styleKey();
     const s = style[k];
+    // the Draw tool's ink: a plain pen, or one of Bitbook's Annotate inks (which use the 13 Annotate colors)
+    const kindSel = $('ink-kind');
+    const sa = selected();
+    const kind = k === 'ink' ? (sa && sa.t === 'ink' ? sa.kind || 'plain' : style.ink.kind) : 'plain';
+    if (kindSel) {
+        kindSel.hidden = k !== 'ink' || !AI;
+        if (AI && !kindSel.options.length) {
+            kindSel.innerHTML = '<option value="plain">Plain pen</option><optgroup label="Annotate inks">' + AI.INKS.map((n) => `<option value="${n[0]}">${esc(n[1])}</option>`).join('') + '</optgroup>' +
+                AI.PACKS.map((pk) => `<optgroup label="${esc(pk[1])}">` + pk[2].map((st) => `<option value="${st[0]}">${esc(st[1])}</option>`).join('') + '</optgroup>').join('');
+        }
+        kindSel.value = kind;
+    }
+    if (kind !== 'plain' && AI) {
+        const ic = sa && sa.t === 'ink' && sa.kind ? sa.ic : style.ink.ic;
+        $('swatches').innerHTML = AI.COLORS.map((c) => `<button class="swatch${c[0] === ic ? ' on' : ''}" data-acolor="${c[0]}" style="background:linear-gradient(180deg,${c[3]},${c[1]})" title="${c[0]}"></button>`).join('');
+    } else
     $('swatches').innerHTML = COLORS.map((c) => `<button class="swatch${c === s.color ? ' on' : ''}" data-color="${c}" style="background:${c}" title="${c}"></button>`).join('');
     const inp = $('size-input');
     inp.disabled = k === 'hl';
@@ -651,12 +669,35 @@ $('font-select').addEventListener('change', () => setTextStyle('font', $('font-s
 $('font-group').addEventListener('click', (e) => { const b = e.target.closest('[data-fmt]'); if (b) setTextStyle(b.dataset.fmt, !style.text[b.dataset.fmt]); });
 $('tools').addEventListener('click', (e) => { const b = e.target.closest('[data-tool]'); if (b) setTool(b.dataset.tool); });
 $('swatches').addEventListener('click', (e) => {
+    const ac = e.target.closest('[data-acolor]');
+    if (ac) {
+        style.ink.ic = ac.dataset.acolor;
+        const a = selected();
+        if (a && a.t === 'ink' && a.kind) { pushUndo(); a.ic = ac.dataset.acolor; refreshMark(); save(); }
+        renderStyle();
+        return;
+    }
     const b = e.target.closest('[data-color]');
     if (!b) return;
     const k = styleKey();
     style[k].color = b.dataset.color;
     const a = selected();
     if (a && a.t === k) { pushUndo(); a.color = b.dataset.color; refreshMark(); save(); }
+    renderStyle();
+});
+$('ink-kind').addEventListener('change', () => {
+    const v = $('ink-kind').value;
+    style.ink.kind = v;
+    // each Annotate ink starts at its own usual width (the Line box can change it)
+    if (v !== 'plain' && AI) style.ink.size = Math.round(AI.BASE[v] || 6);
+    else style.ink.size = 3;
+    const a = selected();
+    if (a && a.t === 'ink') {
+        pushUndo();
+        if (v === 'plain') { delete a.kind; delete a.ic; } else { a.kind = v; a.ic = a.ic || style.ink.ic; }
+        a.size = style.ink.size;
+        refreshMark(); save();
+    }
     renderStyle();
 });
 $('size-input').addEventListener('change', () => {
@@ -743,6 +784,7 @@ pagesEl.addEventListener('pointerdown', (e) => {
     }
     if (tool === 'ink') {
         const a = { id: uid(), t: 'ink', pts: [[p.x, p.y]], color: style.ink.color, size: style.ink.size };
+        if (style.ink.kind !== 'plain' && AI) { a.kind = style.ink.kind; a.ic = style.ink.ic; }
         pushUndo();
         pg.annots.push(a);
         drag = { kind: 'ink', i, pageEl, a };
@@ -1040,6 +1082,24 @@ function loadH2i() {
         .catch(() => { throw new EngineError('Peeker could not download html-to-image, which saves Keydown text! Check your internet connection!'); });
 }
 // A Keydown text mark becomes a sharp picture (4x), with a little room around it for glows and shadows
+// An Annotate ink stroke as a sharp picture (4 pixels per point), drawn by the same code that shows it on the page
+async function rasterInk(a) {
+    const b = inkBounds(a);
+    const S = Math.max(1, Math.min(4, 6000 / Math.max(b.w, b.h)));
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.ceil(b.w * S) + '" height="' + Math.ceil(b.h * S) + '" viewBox="' + b.x + ' ' + b.y + ' ' + b.w + ' ' + b.h + '">' +
+        AI.DEFS + '<g>' + AI.strokeSvg({ t: a.kind, c: a.ic, w: a.size, d: AI.pathOf(a.pts) }) + '</g></svg>';
+    const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+    try {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        const c = document.createElement('canvas');
+        c.width = Math.ceil(b.w * S); c.height = Math.ceil(b.h * S);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        const blob = await new Promise((res) => c.toBlob(res, 'image/png'));
+        return { png: new Uint8Array(await blob.arrayBuffer()), x: b.x, y: b.y, w: b.w, h: b.h };
+    } finally { URL.revokeObjectURL(url); }
+}
 const RASTER_PAD = 8;
 async function rasterText(a) {
     const h2i = await loadH2i();
@@ -1104,6 +1164,11 @@ async function buildPdf(indices) {
             if (a.t === 'hl') page.drawRectangle({ x: X(a.x), y: Y(a.y + a.h), width: a.w, height: a.h, color: hex(lib, a.color), opacity: 0.42, blendMode: BlendMode.Multiply });
             else if (a.t === 'white') page.drawRectangle({ x: X(a.x), y: Y(a.y + a.h), width: a.w, height: a.h, color: lib.rgb(1, 1, 1) });
             else if (a.t === 'box') page.drawRectangle({ x: X(a.x + a.size / 2), y: Y(a.y + a.h - a.size / 2), width: Math.max(0, a.w - a.size), height: Math.max(0, a.h - a.size), borderColor: hex(lib, a.color), borderWidth: a.size });
+            else if (a.t === 'ink' && a.pts.length && a.kind && AI) {
+                const pic = await rasterInk(a);
+                const im = await out.embedPng(pic.png);
+                page.drawImage(im, { x: X(pic.x), y: Y(pic.y + pic.h), width: pic.w, height: pic.h, blendMode: a.kind === 'marker' ? BlendMode.Multiply : BlendMode.Normal });
+            }
             else if (a.t === 'ink' && a.pts.length) page.drawSvgPath(inkPath(a.pts), { x: cb.x, y: cb.y + cb.height, borderColor: hex(lib, a.color), borderWidth: a.size, borderLineCap: LineCapStyle.Round });
             else if (a.t === 'text' && a.text) {
                 // the mark's own frame, turned with it (CSS rotate(-rot)): right and down, in page points

@@ -23,10 +23,10 @@
     // each ink's base width at Medium
     // Theme Packs: each pack is a set of ink styles, and every style is drawn in the color you pick
     const PACKS = [
-        ['aero', 'Frutiger Aero', [['aero-tube', 'Glass Tube'], ['aero-bubbles', 'Bubble Trail'], ['aero-aurora', 'Aurora'], ['aero-sky', 'Aero Chip']]],
+        ['aero', 'Frutiger Aero', [['aero-tube', 'Glass Tube'], ['aero-bubbles', 'Bubble Trail'], ['aero-aurora', 'Glossy Orb'], ['aero-sky', 'Aero Chip']]],
         ['pool', 'Poolside', [['pool-water', 'Water'], ['pool-tile', 'Swirl Lolly'], ['pool-rope', 'Refraction'], ['pool-ripple', 'Reflection Shine']]],
-        ['vapor', 'Vaporwave', [['vapor-glow', 'Glow'], ['vapor-grid', 'Retro Grid'], ['vapor-chrome', 'Chrome'], ['vapor-sunset', 'Sunset Bands']]],
-        ['candy', 'Candy Shop', [['candy-stripe', 'Peppermint'], ['candy-sprinkles', 'Sprinkles'], ['candy-gummy', 'Gummy'], ['candy-ribbon', 'Ribbon']]],
+        ['aero2', 'Frutiger Aero 2', [['aero2-pearl', 'Glossy Pearl'], ['aero2-vista', 'Vista Glow'], ['aero2-brackets', 'Gel Brackets'], ['aero2-rings', 'Ring Wallpaper']]],
+        ['pool2', 'Poolside 2', [['pool2-mist', 'Mist Glow'], ['pool2-chevron', 'Lane Chevrons'], ['pool2-outline', 'Outline Pill'], ['pool2-deck', 'Diagonal Deck']]],
         ['cosmic', 'Cosmic', [['cosmic-galaxy', 'Galaxy'], ['cosmic-comet', 'Comet'], ['cosmic-stars', 'Stars'], ['cosmic-nebula', 'Nebula']]],
         ['metal', 'Metallic', [['metal-foil', 'Foil'], ['metal-chain', 'Chain'], ['metal-wire', 'Wire'], ['metal-rivet', 'Rivets']]]
     ];
@@ -36,6 +36,7 @@
         'aero-tube': 11, 'aero-bubbles': 9, 'aero-aurora': 4, 'aero-sky': 12, 'pool-water': 12, 'pool-tile': 10, 'pool-rope': 9, 'pool-ripple': 10,
         'vapor-glow': 4, 'vapor-grid': 12, 'vapor-chrome': 9, 'vapor-sunset': 10, 'candy-stripe': 9, 'candy-sprinkles': 12, 'candy-gummy': 12, 'candy-ribbon': 9,
         'cosmic-galaxy': 10, 'cosmic-comet': 4, 'cosmic-stars': 10, 'cosmic-nebula': 10, 'metal-foil': 8, 'metal-chain': 8, 'metal-wire': 5, 'metal-rivet': 10,
+        'aero2-pearl': 12, 'aero2-vista': 12, 'aero2-brackets': 12, 'aero2-rings': 12, 'pool2-mist': 12, 'pool2-chevron': 12, 'pool2-outline': 12, 'pool2-deck': 12,
         // (the first themed inks, still drawn in notes that use them)
         aero: 11, pool: 12, vapor: 4, mint: 9, galaxy: 10, rainbow: 8, lava: 8, gold: 8 };
     const NS = 'http://www.w3.org/2000/svg';
@@ -61,6 +62,9 @@
     // a color run for one pack style in one color (defined right in the stroke, so every color gets its own)
     const gid = (k, c) => 'url(#ank-' + k + '-' + c[0] + ')';
     const lg = (k, c, stops, span) => '<defs>' + grad(k + '-' + c[0], stops, span).replace('id="ank-t-', 'id="ank-') + '</defs>';
+    // a shade of a color: k of the way from it to black
+    const dark = (hex, k) => '#' + [1, 3, 5].map((i) => { const v = parseInt(hex.slice(i, i + 2), 16); return Math.round(v * (1 - k)).toString(16).padStart(2, '0'); }).join('');
+    let maskN = 0;
     // a tint of a color: k of the way from it to white
     const mix = (hex, k) => '#' + [1, 3, 5].map((i) => { const v = parseInt(hex.slice(i, i + 2), 16); return Math.round(v + (255 - v) * k).toString(16).padStart(2, '0'); }).join('');
     const up = (w, k) => ' transform="translate(0 ' + (-w * k).toFixed(2) + ')"';
@@ -90,8 +94,11 @@
             case 'aero-bubbles':
                 return dots(d, c[2], w * 0.95, w * 2.3, 0) + dots(d, c[1], w * 0.78, w * 2.3, 0) + dots(d, c[3], w * 0.45, w * 2.3, 0, ' transform="translate(0 ' + (w * 0.1).toFixed(2) + ')"') +
                     dots(d, '#ffffff', w * 0.26, w * 2.3, 0, ' transform="translate(' + (-w * 0.16).toFixed(2) + ' ' + (-w * 0.16).toFixed(2) + ')"');
-            case 'aero-aurora':
-                return line(d, c[1], w * 4.5, ' opacity="0.35" filter="url(#ank-glow)"') + line(d, c[3], w * 2.2, ' opacity="0.6" filter="url(#ank-glow-in)"') + line(d, c[1], w * 1.1) + line(d, '#ffffff', w * 0.4, ' opacity="0.9"');
+            case 'aero-aurora': // Glossy Orb (the gallery's Frutiger Aero 1): a dark-to-color core, a big white gloss on top, a bright glow below, a white ring and a shadow
+                return line(d, 'rgba(0,0,0,0.3)', w * 1.12, ' transform="translate(0 ' + (w * 0.12).toFixed(2) + ')" filter="url(#ank-glow-in)"') + line(d, 'rgba(255,255,255,0.6)', w * 1.16) +
+                    line(d, dark(c[1], 0.6), w) + line(d, dark(c[1], 0.45), w * 0.9) + line(d, c[1], w * 0.62) +
+                    line(d, c[3], w * 0.34, ' transform="translate(0 ' + (w * 0.24).toFixed(2) + ')" opacity="0.85" filter="url(#ank-glow-in)"') +
+                    line(d, '#ffffff', w * 0.3, up(w, 0.22) + ' opacity="0.55"');
             case 'aero-sky': // Aero Chip: the Aero Chip (++R+text++) as a pen: shadow, deep border, color melting into a light tint, and a shine along the top
                 return line(d, 'rgba(150,150,150,0.55)', w, ' transform="translate(0 ' + (w * 0.16).toFixed(2) + ')"') + line(d, c[2], w) + line(d, c[1], w * 0.78) +
                     line(d, c[3], w * 0.18, ' transform="translate(0 ' + (w * 0.26).toFixed(2) + ')" opacity="0.8"') +
@@ -159,6 +166,45 @@
             case 'metal-rivet':
                 return lg('rivet', c, [c[3], c[1], c[3]], 60) + line(d, c[2], w, ' stroke-linecap="butt"') + line(d, gid('rivet', c), w * 0.8, ' stroke-linecap="butt"') +
                     dots(d, c[2], w * 0.34, w * 1.5, w * 0.4) + dots(d, '#ffffff', w * 0.12, w * 1.5, w * 0.4, up(w, 0.06));
+            /* ---- Frutiger Aero 2 and Poolside 2 (after the gallery's styles of the same names) ---- */
+            case 'aero2-pearl': // Glossy Pearl: a white pearl tinted with the color, a white ring, a color glow below and a bright gloss
+                return line(d, c[1], w * 1.5, ' opacity="0.3" filter="url(#ank-glow-in)"') + line(d, 'rgba(255,255,255,0.7)', w * 1.16) + line(d, mix(c[1], 0.45), w) +
+                    line(d, mix(c[1], 0.7), w * 0.9) + line(d, '#ffffff', w * 0.5, ' opacity="0.85"') +
+                    line(d, c[1], w * 0.3, ' transform="translate(0 ' + (w * 0.26).toFixed(2) + ')" opacity="0.5" filter="url(#ank-glow-in)"') + line(d, '#ffffff', w * 0.42, up(w, 0.2) + ' opacity="0.95"');
+            case 'aero2-vista': // Vista Glow: a deep glassy tube, a faint sheen over its top half and a glow rising from the bottom
+                return line(d, dark(c[1], 0.6), w * 1.06) + line(d, dark(c[1], 0.35), w) + line(d, c[1], w * 0.6, ' opacity="0.7"') +
+                    line(d, mix(c[1], 0.55), w * 0.42, ' transform="translate(0 ' + (w * 0.2).toFixed(2) + ')" opacity="0.85" filter="url(#ank-glow-in)"') +
+                    line(d, '#ffffff', w * 0.46, up(w, 0.24) + ' opacity="0.22"');
+            case 'aero2-brackets': // Gel Brackets: a pale body between two glossy gel caps (pathLength makes each cap a share of the stroke)
+                return line(d, mix(c[1], 0.5), w * 1.08) + line(d, mix(c[1], 0.9), w) +
+                    '<path d="' + d + '" pathLength="100" fill="none" stroke="' + c[1] + '" stroke-width="' + w + '" stroke-linecap="round" stroke-dasharray="7 86 7"/>' +
+                    '<path d="' + d + '" pathLength="100" fill="none" stroke="#ffffff" stroke-width="' + (w * 0.36).toFixed(2) + '" stroke-linecap="round" stroke-dasharray="5 90 5" stroke-dashoffset="-1"' + up(w, 0.2) + ' opacity="0.85"/>';
+            case 'aero2-rings': { // Ring Wallpaper: a run from deep to bright color, scattered with white rings
+                const id = 'ank-rings-' + c[0];
+                return lg('ringrun', c, [dark(c[1], 0.3), c[1], mix(c[1], 0.25)], 70) +
+                    '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="44" height="30"><g fill="none" stroke="#ffffff">' +
+                    '<circle cx="5" cy="8" r="4" stroke-width="1" stroke-opacity="0.4"/><circle cx="17" cy="22" r="5" stroke-width="1" stroke-opacity="0.35"/>' +
+                    '<circle cx="29" cy="7" r="3" stroke-width="1" stroke-opacity="0.4"/><circle cx="39" cy="20" r="6" stroke-width="1" stroke-opacity="0.3"/></g></pattern></defs>' +
+                    line(d, 'rgba(0,0,0,0.15)', w * 1.05, ' transform="translate(0 ' + (w * 0.1).toFixed(2) + ')"') + line(d, gid('ringrun', c), w) + line(d, 'url(#' + id + ')', w);
+            }
+            case 'pool2-mist': // Mist Glow: a pale, misty band with a thin rim and a soft halo of the color
+                return line(d, c[1], w * 1.6, ' opacity="0.45" filter="url(#ank-glow-in)"') + line(d, mix(c[1], 0.6), w * 1.06) + line(d, mix(c[1], 0.94), w);
+            case 'pool2-chevron': { // Lane Chevrons: a solid band with see-through chevrons marching along it
+                const id = 'ank-chev-' + c[0];
+                return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="10" height="12"><path d="M2 0L7 6L2 12" fill="none" stroke="#ffffff" stroke-width="2" stroke-opacity="0.35"/></pattern></defs>' +
+                    line(d, c[1], w) + line(d, 'url(#' + id + ')', w);
+            }
+            case 'pool2-outline': { // Outline Pill: just the outline, see-through in the middle (a mask cuts the inside out)
+                const id = 'ank-out-' + (++maskN);
+                return '<defs><mask id="' + id + '" maskUnits="userSpaceOnUse" x="-4000" y="-4000" width="12000" height="40000">' + line(d, '#ffffff', w) + line(d, '#000000', w * 0.7) + '</mask></defs>' +
+                    line(d, c[1], w, ' mask="url(#' + id + ')"');
+            }
+            case 'pool2-deck': { // Diagonal Deck: slanted deck planks in tints of the color, over a solid edge along the bottom
+                const id = 'ank-deck-' + c[0];
+                return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(55)">' +
+                    '<rect width="7" height="7" fill="' + mix(c[1], 0.6) + '"/><rect x="6" width="1" height="7" fill="' + mix(c[1], 0.3) + '"/></pattern></defs>' +
+                    line(d, 'url(#' + id + ')', w) + line(d, c[1], w * 0.2, ' transform="translate(0 ' + (w * 0.46).toFixed(2) + ')"');
+            }
             /* ---- the first themed inks (fixed colors), still drawn in notes that use them ---- */
             case 'aero': // Frutiger Aero: a glossy sky-to-grass glass tube with bubbles drifting along it
                 return line(d, '#0369a1', w) + line(d, 'url(#ank-t-aero)', w * 0.72) + line(d, '#ffffff', w * 0.22, up(w, 0.2) + ' opacity="0.7"') +
@@ -485,6 +531,8 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
             tidy();
         }
     }
-    window.AnnotateInk = { start: start, stop: stop, layerHtml: layerHtml, strokesOf: strokesOf, COLORS: COLORS, INKS: INKS };
+    // (Peeker draws with the same inks: strokeSvg draws one stroke, pathOf smooths points into a path, DEFS holds the filters)
+    window.AnnotateInk = { start: start, stop: stop, layerHtml: layerHtml, strokesOf: strokesOf, strokeSvg: (st) => strokeSvg(clean([st])[0] || st), pathOf: pathOf,
+        DEFS: DEFS, COLORS: COLORS, INKS: INKS, PACKS: PACKS, BASE: BASE };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
 })();

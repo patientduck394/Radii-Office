@@ -100,6 +100,7 @@
                     <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 18c2-1 3-5 5-5s0 5 2 5s3-4 4-4s1 3 3 3M15 4l5 5l-7 7h-5v-5zM3 21h18" /></svg>Sign</button>
             </div>
             <div class="pk-group" id="style-group">
+                <select id="ink-kind" class="pk-font" title="Ink: a plain pen, or Bitbook's Annotate inks and Theme Packs" aria-label="Ink" hidden></select>
                 <div class="swatches" id="swatches"></div>
                 <label class="pk-size" title="Text size or line width"><span id="size-label">Size</span><input type="number" id="size-input" min="1" max="96" value="16"></label>
             </div>
@@ -177,6 +178,7 @@
     <input type="file" id="file-merge" accept="application/pdf,.pdf" hidden>
     <input type="file" id="file-img" accept="image/*" hidden>
     <script src="keydown.js?v=20261201h"></script>
-    <script src="peeker.js?v=20261131y" defer></script>
+    <script src="../bitbook/annotate-ink.js?v=20261201q"></script>
+    <script src="peeker.js?v=20261201q" defer></script>
 </body>
 </html>

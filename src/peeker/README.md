@@ -6,6 +6,7 @@ A PDF editor that runs fully in your browser! Nothing gets uploaded anywhere!
 
 - **Open** any PDF (button or drag and drop), or start a **blank PDF**!
 - **Mark it up:** Text, Highlight, Draw, Box, Whiteout, Image and Sign (draw a signature and drop it in)!
+- **Annotate inks in Draw:** the Ink menu has Bitbook's Annotate inks (Gel Ink, Felt Pen, Highlighter, Neon, Crayon) and every Theme Pack style, in the 13 Annotate colors! Saved PDFs carry them as sharp pictures (4 pixels per point), exactly as they look; the plain pen stays a real PDF line!
 - **Font controls for text:** Sans (Helvetica), Serif (Times) or Mono (Courier), **Bold**, *Italic*, Underline, Strikethrough and size (Ctrl+B / Ctrl+I / Ctrl+U on a picked text mark)!
 - **Keydown in text:** type `#G#chips#`, `#Y#highlights##`, `**bold**`, the Gel Series and every other Keydown style; it shows as you click away!
 - **Move things around:** the Select tool drags marks, the orange dot resizes boxes and pictures, Delete removes them!
