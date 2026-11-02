@@ -28,6 +28,34 @@ function ensureMath(root) {
     });
 }
 
+// @@ink drawings: the layer lives at the top of its document (its strokes are measured from the document's corner),
+// the document is where it is anchored (.keydown-doc is position: relative), and it covers the whole document
+function inkLayers(root) {
+    const layers = Array.from(root.querySelectorAll('svg.an-ink-layer'));
+    if (!layers.length) return;
+    layers.forEach((layer, i) => {
+        // (two drawings in one document become one, like in Bitbook)
+        if (i > 0 && window.AnnotateInk) {
+            const first = layers[0], all = window.AnnotateInk.strokesOf(first).concat(window.AnnotateInk.strokesOf(layer));
+            const t = document.createElement('template'); t.innerHTML = window.AnnotateInk.layerHtml(all);
+            first.replaceWith(t.content.firstChild); layers[0] = root.querySelector('svg.an-ink-layer'); layer.remove();
+            return;
+        }
+        const holder = layer.parentNode;
+        if (holder !== root) {
+            root.appendChild(layer);
+            if (holder && !holder.textContent.replace(/[\s\u200B]/g, '') && !holder.querySelector('img, svg, input, table, [data-kd]')) holder.remove();
+        }
+    });
+    const layer = root.querySelector('svg.an-ink-layer');
+    if (!layer || !root.isConnected) return;
+    if (getComputedStyle(root).position === 'static') root.style.position = 'relative';
+    // (measured with the layer folded away, so it never makes its own document look bigger)
+    layer.setAttribute('width', 0); layer.setAttribute('height', 0);
+    layer.setAttribute('width', Math.max(root.scrollWidth, root.clientWidth));
+    layer.setAttribute('height', Math.max(root.scrollHeight, root.clientHeight));
+}
+
 // Make everything inside an element work: applets get their insides, timers and capsules keep counting
 function upgrade(root) {
     if (!root || !root.querySelectorAll) return root;
@@ -55,18 +83,24 @@ function upgrade(root) {
             if (!next || (next.nodeType === 1 && next.tagName === 'BR')) el.parentNode.insertBefore(document.createTextNode('\u200B'), next);
         });
     }
+    inkLayers(root);
     try { pmSweep(); tcSweep(); } catch (e) {}
     try { ensureMath(root); } catch (e) {}
     return root;
 }
 
 // Keydown text -> HTML (a whole document: headings, lists, tables, math, Skills, applets and every tag)
-function render(text) {
+function draw(text) {
     injectStyles();
     const box = document.createElement('div');
     box.innerHTML = kdDoc.textToHtml(String(text == null ? '' : text));
     upgrade(box);
     return box.innerHTML;
+}
+// (a document with an @@ink drawing comes in its own .keydown-doc box, which the drawing is anchored to and fills)
+function render(text) {
+    const html = draw(text);
+    return /class="an-ink-layer"/.test(html) ? '<div class="keydown-doc kd-ink-wrap">' + html + '</div>' : html;
 }
 // HTML (or an element) -> Keydown text, ready to save
 function toText(html) {
@@ -116,8 +150,8 @@ function editor(el, opts) {
     el.classList.add('keydown-doc');
     if (!el.isContentEditable) el.setAttribute('contenteditable', 'true');
     el.setAttribute('spellcheck', opts.spellcheck === false ? 'false' : 'true');
-    if (opts.value !== undefined) el.innerHTML = render(opts.value);
-    else if (el.textContent.trim() && !el.children.length) el.innerHTML = render(el.textContent);
+    if (opts.value !== undefined) el.innerHTML = draw(opts.value);
+    else if (el.textContent.trim() && !el.children.length) el.innerHTML = draw(el.textContent);
     upgrade(el);
     let lastRange = null, timer = null;
     const changed = () => { clearTimeout(timer); timer = setTimeout(() => { if (typeof opts.onChange === 'function') opts.onChange(toText(el)); }, opts.delay || 250); };
@@ -160,7 +194,7 @@ function editor(el, opts) {
     const api = el.__kdEditor = {
         el,
         getText: () => toText(el),
-        setText: (t) => { el.innerHTML = render(t); upgrade(el); },
+        setText: (t) => { el.innerHTML = draw(t); upgrade(el); },
         format,
         insertSkill: (name, params, body) => { const h = skillHtml(name, params, body); if (h) { insertAt(el, h, lastRange); changed(); } return !!h; },
         insertHtml: (h) => { insertAt(el, h, lastRange); changed(); },
@@ -251,7 +285,7 @@ class Keydown {
     }
 
     // Keydown text -> HTML: everything the engine knows, plus ::name[...] applets and your own definitions
-    parse(text) {
+    parse(text, inPlace) {
         if (!text) return '';
         const store = [];
         const hold = (html) => { store.push(html); return '' + (store.length - 1) + ''; };
@@ -273,7 +307,8 @@ class Keydown {
             src = src.replace(re, (m, inner) => hold(def.className ? '<span class="' + kdEsc(def.className) + '">' + kdDoc.inlineHtml(inner) + '</span>'
                 : '<' + (def.tagName || 'span') + '>' + kdDoc.inlineHtml(inner) + '</' + (def.tagName || 'span') + '>'));
         });
-        let html = render(src);
+        // (inPlace: going straight into a .keydown-doc element, which anchors any drawing itself)
+        let html = inPlace ? draw(src) : render(src);
         for (let k = 0; k < 4 && /\d+/.test(html); k++) html = html.replace(/(\d+)/g, (m, i) => store[+i]);
         return html;
     }
@@ -313,7 +348,8 @@ class Keydown {
         }
         const raw = el.getAttribute('data-raw') || (el.children && el.children.length ? el.innerHTML : el.textContent);
         el.classList.add('keydown-doc');
-        el.innerHTML = this.parse(raw);
+        el.innerHTML = this.parse(raw, true);
+        upgrade(el);
     }
 }
 

@@ -68,7 +68,8 @@ const absUrls = (css, base) => css.replace(/url\((['"]?)(?!data:|https?:|#|%23)(
 
 const SKILL_SEL = /\.(bb-chip|bl-prog|bl-|dc-|tc-|pm-|fl-|px-chip|px-(?:sm|md|lg)|uni-chip|cc-chip|cc-s\d|bbcss-|jumper-|file-chip|img-resize|tag-check|tag-drop)/;
 const EXTRA_CSS = `
-.keydown-doc{line-height:1.6;word-wrap:break-word}
+.keydown-doc{position:relative;line-height:1.6;word-wrap:break-word}
+.kd-ink-wrap>svg.an-ink-layer{width:100%;height:100%}
 .kd-figure{margin:12px 0;text-align:center}.kd-figure img,.kd-figure video{max-width:100%;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.15)}.kd-figure audio{width:100%}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:6px}
 .kd-tpl{display:inline-block;padding:1px 8px;border-radius:999px;background:linear-gradient(180deg,#fff7ed,#fde68a);border:1px solid #f59e0b;color:#78350f;font-size:.85em;font-weight:700}
 .kd-tpl-block{display:block;margin:10px 0;padding:10px 14px;border-radius:12px;font-size:.95em}
