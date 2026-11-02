@@ -55,13 +55,15 @@ const component = `<!--
   required asks for some text before the form can be sent, and the form's Reset button empties it again.
 
   Small enough for a comment or post composer: <KeydownBox compact onsubmit={({ text, html }) => post(text)} />
-  (a slim box with B, I, U and + buttons; + holds highlights, Skills, tables and Un-format; onsubmit adds a Post
-  button, Ctrl/Cmd+Enter posts too, and the box empties after posting unless onsubmit returns false).
+  (a slim box with B, I, U, + and ✏️ buttons; + holds highlights, Skills, tables and Un-format). With onsubmit,
+  Ctrl/Cmd+Enter posts; your own Post button can call box.submit() (bind:this={box}). The box empties after
+  posting unless onsubmit returns false.
   KeydownComposer.svelte is the same thing with compact already on.
 
   Props: value (Keydown text, bindable), html (formatted HTML, bindable), name, required, title, placeholder,
          height, readonly, toolbar (true/false), sound (true/false), onchange(text),
-         compact (true/false), onsubmit({ text, html }), submitLabel ('Post'), width (compact mode: '420px').
+         compact (true/false), onsubmit({ text, html }), width (compact mode: '420px').
+  Methods (bind:this={box}): box.submit() posts like Ctrl/Cmd+Enter, box.editor() hands over the whole editor.
   Both modes can draw on the text with Bitbook's Annotate inks (✏️), saved with the text as @@ink. The editor itself is there too: bind:this={box} then box.editor() (insertSkill, unformat...).
   Built by scripts/build_keydown_svelte.mjs from the Radii Office site's Keydown sources (Svelte 5).
 -->
@@ -86,7 +88,6 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
         height = undefined,
         compact = false,
         onsubmit = undefined,
-        submitLabel = 'Post',
         width = undefined,
         readonly = false,
         toolbar = true,
@@ -189,6 +190,8 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     function outside(e) { if (menu && !(e.target && e.target.closest && e.target.closest('.kdb-pop'))) menu = ''; }
     // (for apps that want the whole editor: insertSkill, unformat, reformat, insertTable, getText, setText...)
     export function editor() { return ed; }
+    // post from your own button (the same as Ctrl/Cmd+Enter)
+    export function submit() { post(); }
 </script>
 
 <svelte:window onclick={outside} />
@@ -227,9 +230,6 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
             </span>
             <button type="button" class="kdb-btn kdb-pen" title={drawing ? 'Back to typing' : 'Annotate: draw on your text'} aria-label="Annotate" aria-pressed={drawing} onmousedown={keep} onclick={draw}>✏️</button>
             <span class="kdb-gap"></span>
-            {#if typeof onsubmit === 'function'}
-                <button type="button" class="kdb-post" disabled={!words} title="Post (Ctrl/Cmd+Enter)" onmousedown={keep} onclick={post}>{submitLabel}</button>
-            {/if}
         </div>
     {/if}
 </div>
@@ -429,16 +429,6 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     .kdb-menu-label { font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: #0369a1; padding: 6px 8px 3px; }
     .kdb-swatch-row { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 6px 4px; }
     .kdb-swatch-row .kdb-swatch { width: 22px; height: 22px; }
-    .kdb-post {
-        font: inherit; font-size: 13px; font-weight: 800; color: #fff; cursor: pointer; height: 28px; padding: 0 16px; border-radius: 999px;
-        border: 1px solid #15803d; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-        background: linear-gradient(180deg, #86efac 0%, #22c55e 48%, #16a34a 52%, #4ade80 100%);
-        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), 0 2px 6px rgba(22, 163, 74, 0.35);
-        transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
-    }
-    .kdb-post:hover:not(:disabled) { transform: translateY(-1px); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), 0 4px 10px rgba(22, 163, 74, 0.45); }
-    .kdb-post:disabled { cursor: not-allowed; filter: grayscale(0.7) opacity(0.6); }
-    .kdb-post:focus-visible { outline: 2px solid #15803d; outline-offset: 2px; }
     /* (the form field is there for the form, never seen) */
     .kdb-field { position: absolute; left: 50%; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; resize: none; border: 0; padding: 0; }
 
@@ -449,16 +439,21 @@ ${globalCss(KEYDOWN_CSS)}
 fs.writeFileSync(OUT, component);
 const composer = `<!--
   KeydownComposer.svelte: KeydownBox's compact mode, ready for comment and post composers!
-  <KeydownComposer bind:value={comment} onsubmit={({ text, html }) => send(text)} />
-  Every KeydownBox prop works here too (name, required, placeholder, submitLabel, height...).
+  <KeydownComposer bind:this={composer} bind:value={comment} onsubmit={({ text, html }) => send(text)} />
+  <button onclick={() => composer.submit()}>Post</button>   (or Ctrl/Cmd+Enter in the box)
+  Every KeydownBox prop works here too (name, required, placeholder, width, height...).
   Needs KeydownBox.svelte next to it (that one holds the Keydown engine and styles).
 -->
 <script>
     import KeydownBox from './KeydownBox.svelte';
     let { value = $bindable(''), html = $bindable(''), ...rest } = $props();
+    let box;
+    // (your own Post button: bind:this={composer}, then composer.submit())
+    export function submit() { if (box) box.submit(); }
+    export function editor() { return box ? box.editor() : null; }
 <\/script>
 
-<KeydownBox compact bind:value bind:html {...rest} />
+<KeydownBox compact bind:this={box} bind:value bind:html {...rest} />
 `;
 fs.writeFileSync(path.join(path.dirname(OUT), 'KeydownComposer.svelte'), composer);
 console.log('KeydownBox.svelte built!', OUT, (component.length / 1048576).toFixed(2) + ' MB');
