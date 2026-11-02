@@ -11077,7 +11077,8 @@ function cscCheckDecls(text, where) {
     cscSplitDecls(text).forEach(function (piece) {
         const m = piece.match(/^([-a-zA-Z]+)\s*:\s*([\s\S]+)$/);
         if (!m) { bad.push(pre + '"' + piece + '" needs a colon, like "color: red"!'); return; }
-        const prop = m[1].toLowerCase();
+        // (a custom property like --capL is case-sensitive: only real properties are lowercased)
+        const prop = m[1].indexOf('--') === 0 ? m[1] : m[1].toLowerCase();
         const value = m[2].replace(/\s*!\s*important\s*$/i, '').trim();
         // Nothing that could end a CSS rule (or an exported page's <style>) early ever gets through!
         if (/[{}]|<\//.test(value)) { bad.push(pre + '"' + value + '" can\'t use { } or </ !'); return; }
@@ -11566,9 +11567,9 @@ var CSF_SOURCES = [
     ['gallery', 'Gallery'],
     ['keydown', 'Keydown'],
     ['market', 'Keydown Styles (Marketplace)'],
-    ['highlight', 'Highlight (top bar)'],
+    ['highlight', 'Keydown (top bar)'],
     ['toolbar', 'Selection toolbar'],
-    ['annotate', 'Annotate'],
+    ['annotate', 'Highlight'],
     ['customchip', 'Custom Chip'],
     ['csspreset', 'Custom CSS presets'],
     ['saved', 'Saved CSS']
@@ -11671,7 +11672,23 @@ function csfEntries() {
     try {
         [['FMT_HIGHLIGHT_STYLES', 'Highlighter'], ['FMT_CHIP_STYLES', 'Gel Orbs'], ['FMT_AQUA_STYLES', 'Gel Bubbles']].forEach(function (g) {
             const arr = window[g[0]] || [];
-            arr.forEach(function (it) { add({ name: it.label, cls: it.cls, src: 'highlight', where: 'Top bar · ' + g[1] }); });
+            arr.forEach(function (it) { add({ name: it.label, cls: it.cls, src: 'highlight', where: 'Keydown (top bar) · ' + g[1] }); });
+        });
+    } catch (e) {}
+    try {
+        // The Bubble Chip's siblings (pills, flags, tabs, drops, splits, lenses, speech bubbles, logo and Aero chips):
+        // all of their colors, in the Keydown list and the Keydown (top bar) list, with the Keydown line that makes each one!
+        const CODES = [['Red', 'R', 'red'], ['Orange', 'O', 'orange'], ['Gold', 'GL', 'gold'], ['Yellow', 'Y', 'yellow'], ['Lime', 'L', 'lime'], ['Green', 'G', 'green'], ['Turquoise', 'TU', 'turquoise'], ['Teal', 'T', 'teal'], ['Cyan', 'C', 'cyan'], ['Blue', 'B', 'blue'], ['Purple', 'PR', 'purple'], ['Pink', 'PK', 'pink'], ['White', 'W', 'white'], ['Fog', 'FG', 'fog'], ['Slate', 'SL', 'slate'], ['Black', 'BK', 'black']];
+        const NO_LIGHT = { white: 1, fog: 1, black: 1 };
+        [['pill', 'Gloss Pill', '%', '%', '%'], ['flag', 'Gel Flag', '#%', '%', '%'], ['tab', 'Gel Tab', '#^', '^', '^'], ['drop', 'Gel Drop', '#+', '+', '+'], ['split', 'Gel Split', '#:', ':', ':'], ['lens', 'Gel Lens', '#;', ';', ';'], ['speech', 'Speech Bubble', '^^', '^', '^^'], ['logo', 'Logo Chip', ';;', ';', ';;', true], ['aero', 'Aero Chip', '++', '+', '++', true]].forEach(function (f) {
+            CODES.forEach(function (c) {
+                if (f[5] && NO_LIGHT[c[2]]) return; // (Logo and Aero chips come in the 13 Annotate colors)
+                const cls = 'gel-' + f[0] + '-chip gel-' + f[0] + '-' + c[2];
+                const trigger = f[2] + c[1] + f[3];
+                const entry = { name: f[1] + ' ' + c[0], cls: cls, trigger: trigger + 'text' + f[4] };
+                add(Object.assign({ src: 'keydown', where: 'Keydown · ' + f[1] + 's' }, entry));
+                add(Object.assign({ src: 'highlight', where: 'Keydown (top bar) · ' + f[1] + 's' }, entry));
+            });
         });
     } catch (e) {}
     try {
@@ -11705,7 +11722,7 @@ function csfEntries() {
             const style = b.getAttribute('data-an-style');
             if (!color || color === 'erase') return;
             const kind = { hl: 'Highlighter', ul: 'Gel Underline', st: 'Gel Strikethrough', bx: 'Gel Box', ha: 'Halo', cb: 'Corner Brackets', gf: 'Spotlight', ga: 'Gel Accent', gb: 'Gel Bubble', dk: 'Dusk', pr: 'Prism', cm: 'Complement', tk: 'Ticket', nn: 'Neon', sm: 'Stamp', tp: 'Washi Tape', ck: 'Checker', ht: 'Halftone', au: 'Aurora', ml: 'Mild', gw: 'Gel Wrap', bt: 'Highlight Belt', bk: 'Gel Bucket', tr: 'Gel Torpedo', bo: 'Gel Bottle', pk: 'Gel Packet', sl: 'Gel Select', cs: 'Gel Capsule', fr: 'Frost', px: 'Pixel', fl: 'Gel Flag', gm: 'Gel Gem' }[style] || style;
-            add({ name: (b.getAttribute('aria-label') || color), tag: 'mark', cls: 'an-hl an-hl-' + color + (style !== 'hl' ? ' an-s-' + style : ''), src: 'annotate', where: 'Annotate · ' + kind });
+            add({ name: (b.getAttribute('aria-label') || color), tag: 'mark', cls: 'an-hl an-hl-' + color + (style !== 'hl' ? ' an-s-' + style : ''), src: 'annotate', where: 'Highlight · ' + kind });
         });
     } catch (e) {}
     try {
@@ -12032,7 +12049,7 @@ function csfStyleOf(entry) {
         const put = function (d) {
             const m = d.match(/^([-\w]+)\s*:\s*([\s\S]+)$/);
             if (!m) return;
-            const prop = m[1].toLowerCase();
+            const prop = m[1].indexOf('--') === 0 ? m[1] : m[1].toLowerCase();
             const imp = /!\s*important\s*$/i.test(m[2]);
             if (merged[prop] && merged[prop].imp && !imp) return;
             if (!merged[prop]) keys.push(prop);
