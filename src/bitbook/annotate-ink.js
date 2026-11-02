@@ -62,6 +62,39 @@
     // a color run for one pack style in one color (defined right in the stroke, so every color gets its own)
     const gid = (k, c) => 'url(#ank-' + k + '-' + c[0] + ')';
     const lg = (k, c, stops, span) => '<defs>' + grad(k + '-' + c[0], stops, span).replace('id="ank-t-', 'id="ank-') + '</defs>';
+    // A stroke's length along its path (good enough to place things a set distance from its ends)
+    function pathLen(d) {
+        let len = 0, x = 0, y = 0;
+        const re = /([MLQl])([^MLQl]*)/g;
+        let m;
+        while ((m = re.exec(String(d)))) {
+            const v = (m[2].match(/-?\d*\.?\d+/g) || []).map(Number);
+            if (m[1] === 'M') { x = v[0]; y = v[1]; }
+            else if (m[1] === 'L') { len += Math.hypot(v[0] - x, v[1] - y); x = v[0]; y = v[1]; }
+            else if (m[1] === 'l') { len += Math.hypot(v[0], v[1]); x += v[0]; y += v[1]; }
+            else if (m[1] === 'Q') {
+                // a curve: measured along 8 short pieces of it
+                let px = x, py = y;
+                for (let k = 1; k <= 8; k++) {
+                    const t = k / 8, u = 1 - t;
+                    const qx = u * u * x + 2 * u * t * v[0] + t * t * v[2], qy = u * u * y + 2 * u * t * v[1] + t * t * v[3];
+                    len += Math.hypot(qx - px, qy - py); px = qx; py = qy;
+                }
+                x = v[2]; y = v[3];
+            }
+        }
+        return len;
+    }
+    // the path drawn only between two set distances from its ends (a dash that starts at one inset and ends at the other)
+    function trim(d, color, width, inset, extra) {
+        const len = pathLen(d), span = Math.max(0.1, len - inset * 2);
+        return line(d, color, width, ' stroke-dasharray="' + span.toFixed(1) + ' ' + (len + inset * 4 + 10).toFixed(1) + '" stroke-dashoffset="' + (-inset).toFixed(1) + '"' + (extra || ''));
+    }
+    // just the two ends of the path, each a set length (skip trims that much off the very tips)
+    function caps(d, color, width, size, extra, skip) {
+        const len = pathLen(d), k = skip || 0, cap = Math.min(size, Math.max(0.1, len / 2 - k));
+        return line(d, color, width, ' stroke-dasharray="' + cap.toFixed(1) + ' ' + Math.max(0.1, len - 2 * cap - 2 * k).toFixed(1) + ' ' + cap.toFixed(1) + ' ' + (len + 10).toFixed(1) + '" stroke-dashoffset="' + (-k).toFixed(1) + '"' + (extra || ''));
+    }
     // A real gradient across a stroke's thickness (top to bottom), made of n stacked bands: each band runs from its
     // starting point down to the stroke's bottom edge, a little lighter (or darker) than the one before, so they blend
     // smoothly. from/to are where the blend starts and ends (0 = top edge, 1 = bottom edge).
@@ -124,8 +157,8 @@
                     bands(d, w, 0, 1, e1, e2, 10) +                // the border: a gradient from top to bottom of the whole stroke
                     bands(d, fw, 0, 1, c[1], c[1], 1) +           // the fill's solid top
                     bands(d, fw, 0.59, 0.87, c[1], light, 9) +    // ...blending into the light tint
-                    // the shine stops short of both ends (pathLength makes the dash a share of the stroke's length)
-                    '<path d="' + d + '" pathLength="100" fill="none" stroke="#ffffff" stroke-width="' + (w * 0.3).toFixed(2) + '" stroke-linecap="round" stroke-dasharray="80 20" stroke-dashoffset="-10"' + up(w, 0.17) + ' opacity="0.8"/>';
+                    // the shine stops a set distance short of both ends (measured in the stroke's own width, so it keeps up as the line grows)
+                    trim(d, '#ffffff', w * 0.3, w * 0.55, up(w, 0.17) + ' opacity="0.8"');
             }
             case 'pool-water':
                 return lg('pool', c, [c[1], c[3], c[1]]) + line(d, '#ffffff', w * 1.08, ' opacity="0.9"') + line(d, c[2], w) + line(d, gid('pool', c), w * 0.8) +
@@ -198,10 +231,10 @@
                 return line(d, dark(c[1], 0.6), w * 1.06) + line(d, dark(c[1], 0.35), w) + line(d, c[1], w * 0.6, ' opacity="0.7"') +
                     line(d, mix(c[1], 0.55), w * 0.42, ' transform="translate(0 ' + (w * 0.2).toFixed(2) + ')" opacity="0.85" filter="url(#ank-glow-in)"') +
                     line(d, '#ffffff', w * 0.46, up(w, 0.24) + ' opacity="0.22"');
-            case 'aero2-brackets': // Gel Brackets: a pale body between two glossy gel caps (pathLength makes each cap a share of the stroke)
+            case 'aero2-brackets': // Gel Brackets: a pale body between two glossy gel caps (each cap a set length, whatever the stroke's length)
                 return line(d, mix(c[1], 0.5), w * 1.08) + line(d, mix(c[1], 0.9), w) +
-                    '<path d="' + d + '" pathLength="100" fill="none" stroke="' + c[1] + '" stroke-width="' + w + '" stroke-linecap="round" stroke-dasharray="7 86 7"/>' +
-                    '<path d="' + d + '" pathLength="100" fill="none" stroke="#ffffff" stroke-width="' + (w * 0.36).toFixed(2) + '" stroke-linecap="round" stroke-dasharray="5 90 5" stroke-dashoffset="-1"' + up(w, 0.2) + ' opacity="0.85"/>';
+                    caps(d, c[1], w, w * 1.1, '') +
+                    caps(d, '#ffffff', w * 0.36, w * 0.75, up(w, 0.2) + ' opacity="0.85"', w * 0.15);
             case 'aero2-rings': { // Ring Wallpaper: a run from deep to bright color, scattered with white rings
                 const id = 'ank-rings-' + c[0];
                 return lg('ringrun', c, [dark(c[1], 0.3), c[1], mix(c[1], 0.25)], 70) +
