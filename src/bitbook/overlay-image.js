@@ -1,9 +1,9 @@
 /* =====================================================================
    Image on top of the document! Puts a picture (from your computer or from OpenDB) in front of the text,
    anywhere on the page. Click it to select it, drag it to move it, pull the 8 handles to resize it
-   (corners keep its shape, edges stretch it), use the arrow keys to nudge it (Shift for bigger steps)
+   (corners keep its shape, edges stretch it), tap it again to swap them for rotate handles (tap once more to go back, Shift snaps to 15 degrees), use the arrow keys to nudge it (Shift for bigger steps)
    and press Delete or the X to remove it. It lives in the note and saves in the Keydown file as
-   ![alt](data:...){overlay x=120 y=60 w=240 h=180}.
+   ![alt](data:...){overlay x=120 y=60 w=240 h=180 r=30}.
    window.DocOverlay = { add, pickFile, pickOpenDB }
    ===================================================================== */
 (function () {
@@ -23,6 +23,8 @@
         '.kd-ov-frame { position: fixed; border: 2px solid ' + ACCENT + '; box-shadow: 0 0 0 1px rgba(255,255,255,0.8), 0 0 12px ' + ACCENT2 + '66; pointer-events: none; box-sizing: border-box; }' +
         '.kd-ov-h { position: fixed; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 4px; background: #fff; border: 2px solid ' + ACCENT + '; box-sizing: border-box; pointer-events: auto; touch-action: none; }' +
         '.kd-ov-h:hover { background: ' + ACCENT2 + '; }' +
+        '.kd-ov-r { position: fixed; width: 18px; height: 18px; margin: -9px 0 0 -9px; border-radius: 50%; background: ' + ACCENT2 + '; border: 2px solid #fff; box-shadow: 0 0 0 1px ' + ACCENT + ', 0 2px 6px rgba(0,0,0,0.3); box-sizing: border-box; pointer-events: auto; touch-action: none; cursor: grab; }' +
+        '.kd-ov-r:active { cursor: grabbing; }' +
         '.kd-ov-x { position: fixed; width: 26px; height: 26px; margin: 0; border-radius: 13px; border: 2px solid #fff; background: linear-gradient(180deg, #fca5a5, #ef4444); color: #fff; font: 800 13px/22px system-ui, sans-serif; text-align: center; cursor: pointer; pointer-events: auto; box-shadow: 0 2px 6px rgba(0,0,0,0.3); padding: 0; }' +
         '.kd-ov-x:hover { filter: brightness(1.1); }' +
         '@media print { .kd-ov-ui { display: none !important; } }';
@@ -108,10 +110,30 @@
         });
     }
 
-    /* ---------- selecting, moving, resizing ---------- */
-    let sel = null, ui = null, raf = 0;
+    /* ---------- selecting, moving, resizing and rotating ---------- */
+    // Tap an image that is already selected and its resize handles turn into rotate handles (tap again to switch back)
+    let sel = null, ui = null, raf = 0, mode = 'scale';
     const DIRS = [['nw', -1, -1], ['n', 0, -1], ['ne', 1, -1], ['e', 1, 0], ['se', 1, 1], ['s', 0, 1], ['sw', -1, 1], ['w', -1, 0]];
+    const CORNERS = DIRS.filter(function (d) { return d[1] && d[2]; });
     const CURSOR = { nw: 'nwse-resize', se: 'nwse-resize', ne: 'nesw-resize', sw: 'nesw-resize', n: 'ns-resize', s: 'ns-resize', e: 'ew-resize', w: 'ew-resize' };
+    const rad = (d) => d * Math.PI / 180;
+    function angleOf(el) {
+        const m = /rotate\((-?[\d.]+)deg\)/.exec(el.style.transform || '');
+        return m ? parseFloat(m[1]) : 0;
+    }
+    function setAngle(el, deg) {
+        deg = Math.round((((deg % 360) + 540) % 360 - 180) * 10) / 10; // (kept between -180 and 180)
+        el.style.transform = deg ? 'rotate(' + deg + 'deg)' : '';
+    }
+    const rot = (x, y, deg) => ({ x: x * Math.cos(rad(deg)) - y * Math.sin(rad(deg)), y: x * Math.sin(rad(deg)) + y * Math.cos(rad(deg)) });
+    // the image's middle (on screen, and in the note's own units), its size and its turn
+    function geom(el) {
+        const r = canvas.getBoundingClientRect(), s = scaleOf() || 1;
+        const w = num(el, 'width'), h = num(el, 'height');
+        const lx = num(el, 'left') + w / 2, ly = num(el, 'top') + h / 2;
+        return { s: s, w: w, h: h, lx: lx, ly: ly, ang: angleOf(el),
+            cx: r.left + (lx - canvas.scrollLeft + canvas.clientLeft) * s, cy: r.top + (ly - canvas.scrollTop + canvas.clientTop) * s };
+    }
     function buildUi() {
         ui = document.createElement('div');
         ui.className = 'kd-ov-ui';
@@ -120,7 +142,13 @@
             const h = document.createElement('div');
             h.className = 'kd-ov-h';
             h.setAttribute('data-dir', d[0]);
-            h.style.cursor = CURSOR[d[0]];
+            ui.appendChild(h);
+        });
+        CORNERS.forEach(function (d) {
+            const h = document.createElement('div');
+            h.className = 'kd-ov-r';
+            h.setAttribute('data-dir', d[0]);
+            h.title = 'Drag to rotate (hold Shift to snap to 15 degrees)';
             ui.appendChild(h);
         });
         const x = document.createElement('button');
@@ -134,20 +162,31 @@
     }
     function place() {
         if (!sel || !sel.isConnected) { select(null); return; }
-        const r = sel.getBoundingClientRect();
+        const g = geom(sel), W = g.w * g.s, H = g.h * g.s;
         const f = ui.querySelector('.kd-ov-frame');
-        f.style.left = r.left + 'px'; f.style.top = r.top + 'px'; f.style.width = r.width + 'px'; f.style.height = r.height + 'px';
+        f.style.left = (g.cx - W / 2) + 'px'; f.style.top = (g.cy - H / 2) + 'px'; f.style.width = W + 'px'; f.style.height = H + 'px';
+        f.style.transform = 'rotate(' + g.ang + 'deg)';
+        const at = (d) => { const o = rot(d[1] * W / 2, d[2] * H / 2, g.ang); return { x: g.cx + o.x, y: g.cy + o.y }; };
         DIRS.forEach(function (d) {
-            const h = ui.querySelector('[data-dir="' + d[0] + '"]');
-            h.style.left = (r.left + r.width * (d[1] + 1) / 2) + 'px';
-            h.style.top = (r.top + r.height * (d[2] + 1) / 2) + 'px';
+            const h = ui.querySelector('.kd-ov-h[data-dir="' + d[0] + '"]'), p = at(d);
+            h.style.display = mode === 'scale' ? '' : 'none';
+            h.style.left = p.x + 'px'; h.style.top = p.y + 'px';
+            // the resize arrow turned with the picture
+            const a = ((Math.atan2(d[2] * H, d[1] * W) * 180 / Math.PI + g.ang) % 180 + 180) % 180;
+            h.style.cursor = a < 22.5 || a >= 157.5 ? 'ew-resize' : a < 67.5 ? 'nwse-resize' : a < 112.5 ? 'ns-resize' : 'nesw-resize';
         });
-        const x = ui.querySelector('.kd-ov-x');
-        x.style.left = Math.min(window.innerWidth - 30, r.right + 6) + 'px';
-        x.style.top = Math.max(4, r.top - 30) + 'px';
+        CORNERS.forEach(function (d) {
+            const h = ui.querySelector('.kd-ov-r[data-dir="' + d[0] + '"]'), p = at(d);
+            h.style.display = mode === 'rotate' ? '' : 'none';
+            h.style.left = p.x + 'px'; h.style.top = p.y + 'px';
+        });
+        const x = ui.querySelector('.kd-ov-x'), ne = at(DIRS[2]);
+        x.style.left = Math.max(4, Math.min(window.innerWidth - 30, ne.x + 8)) + 'px';
+        x.style.top = Math.max(4, ne.y - 34) + 'px';
     }
     function loop() { raf = 0; if (!sel) return; place(); raf = requestAnimationFrame(loop); }
     function select(el) {
+        if (el !== sel) mode = 'scale'; // (a newly selected image starts with its resize handles)
         sel = el;
         if (!el) {
             if (ui) { ui.remove(); ui = null; }
@@ -170,41 +209,54 @@
         el.style.left = Math.round(Math.max(-w + 24, Math.min(num(el, 'left'), canvas.clientWidth - 24))) + 'px';
         el.style.top = Math.round(Math.max(-h + 24, num(el, 'top'))) + 'px';
     }
-    function drag(el, e, mode, dir) {
+    // kind is 'move', 'resize' or 'rotate'; wasSelected lets a plain tap on a selected image swap the handles
+    function drag(el, e, kind, dir, wasSelected) {
         const s = scaleOf() || 1;
         const sx = e.clientX, sy = e.clientY;
         const x0 = num(el, 'left'), y0 = num(el, 'top'), w0 = num(el, 'width'), h0 = num(el, 'height');
+        const g0 = geom(el), ang0 = g0.ang;
         const ratio = w0 / (h0 || 1);
+        const a0 = Math.atan2(sy - g0.cy, sx - g0.cx) * 180 / Math.PI;
         let moved = false;
         function onMove(ev) {
             const dx = (ev.clientX - sx) / s, dy = (ev.clientY - sy) / s;
             if (!moved && Math.hypot(dx, dy) < 2) return;
             moved = true;
-            if (mode === 'move') {
+            if (kind === 'move') {
                 el.style.left = Math.round(x0 + dx) + 'px';
                 el.style.top = Math.round(y0 + dy) + 'px';
                 clamp(el);
                 return;
             }
-            let w = w0, h = h0, x = x0, y = y0;
+            if (kind === 'rotate') {
+                let a = ang0 + (Math.atan2(ev.clientY - g0.cy, ev.clientX - g0.cx) * 180 / Math.PI - a0);
+                if (ev.shiftKey) a = Math.round(a / 15) * 15;
+                setAngle(el, a);
+                return;
+            }
+            // resizing happens in the picture's own (turned) directions, and the opposite side stays where it is
+            const u = rot(dx, dy, -ang0);
             const hx = dir[1], hy = dir[2];
-            if (hx) w = Math.max(24, w0 + hx * dx);
-            if (hy) h = Math.max(24, h0 + hy * dy);
+            let w = w0, h = h0;
+            if (hx) w = Math.max(24, w0 + hx * u.x);
+            if (hy) h = Math.max(24, h0 + hy * u.y);
             // corners keep the picture's shape (the bigger pull wins), edges stretch it
             if (hx && hy) {
                 const k = Math.max(w / w0, h / h0);
                 w = Math.max(24, w0 * k); h = Math.max(24, w / ratio);
             }
-            if (hx < 0) x = x0 + (w0 - w);
-            if (hy < 0) y = y0 + (h0 - h);
-            el.style.left = Math.round(x) + 'px'; el.style.top = Math.round(y) + 'px';
+            const A = rot(-hx * w0 / 2, -hy * h0 / 2, ang0);      // the fixed point, from the old middle
+            const B = rot(hx * w / 2, hy * h / 2, ang0);          // the same point, from the new middle
+            const cx = g0.lx + A.x + B.x, cy = g0.ly + A.y + B.y;
             el.style.width = Math.round(w) + 'px'; el.style.height = Math.round(h) + 'px';
+            el.style.left = Math.round(cx - w / 2) + 'px'; el.style.top = Math.round(cy - h / 2) + 'px';
         }
         function onUp() {
             window.removeEventListener('pointermove', onMove, true);
             window.removeEventListener('pointerup', onUp, true);
             window.removeEventListener('pointercancel', onUp, true);
             if (moved) changed();
+            else if (kind === 'move' && wasSelected) { mode = mode === 'rotate' ? 'scale' : 'rotate'; place(); }
         }
         window.addEventListener('pointermove', onMove, true);
         window.addEventListener('pointerup', onUp, true);
@@ -214,6 +266,8 @@
         if (e.button > 0) return;
         const t = e.target;
         if (!t || !t.closest) return;
+        const rh = t.closest('.kd-ov-r');
+        if (rh && sel) { e.preventDefault(); e.stopPropagation(); drag(sel, e, 'rotate'); return; }
         const handle = t.closest('.kd-ov-h');
         if (handle && sel) {
             e.preventDefault(); e.stopPropagation();
@@ -224,14 +278,16 @@
         const ov = t.closest('.kd-overlay');
         if (ov && canvas.contains(ov)) {
             e.preventDefault(); e.stopPropagation();
+            const was = sel === ov;
             select(ov);
-            drag(ov, e, 'move');
+            drag(ov, e, 'move', null, was);
             return;
         }
         if (sel) select(null);
     }, true);
     document.addEventListener('keydown', function (e) {
         if (!sel) return;
+        if (/^(Shift|Control|Alt|Meta|CapsLock)$/.test(e.key)) return; // (modifiers alone do nothing, Shift is held for snapping)
         const ae = document.activeElement;
         if (ae && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName)) return;
         if (e.key === 'Escape') { select(null); return; }

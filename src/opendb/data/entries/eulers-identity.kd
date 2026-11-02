@@ -1,0 +1,104 @@
+---
+format: keydown-text
+id: eulers-identity
+type: article
+title: Euler's identity
+summary: Euler's identity, e^(iπ) + 1 = 0, links the five most important constants in mathematics in one short equation, and is often called the most beautiful formula in mathematics.
+tags: [mathematics, constants, complex numbers, analysis]
+created: 2026-11-02
+updated: 2026-11-02
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Equation: e^(iπ) + 1 = 0
+infobox.Constants: 0, 1, e, i, π
+infobox.Operations: Addition, multiplication, exponentiation
+infobox.Named after: Leonhard Euler
+infobox.Special case of: Euler's formula
+---
+**Euler's identity** is the equation
+
+$$e^{i\pi} + 1 = 0$$
+
+It is a special case of **Euler's formula** $e^{i\theta} = \cos\theta + i\sin\theta$, and it ties together five of the most important numbers in mathematics: #G#$0$ and $1$##, [[eulers-number|Euler's number]] $e$ (the base of the natural logarithm), the [[imaginary-number|imaginary unit]] $i$, and the circle constant $\pi$. Many mathematicians call it the most beautiful equation in mathematics, because so many different ideas fit into so few symbols.
+
+!#B#Constant# !#G#Complex numbers# !#O#Analysis# !#PR#Famous equation#
+
+## What it says
+
+The equation can also be written in a form that moves the $1$ across:
+
+$$e^{i\pi} = -1$$
+
+In words, **raising $e$ to the power $i\pi$ gives exactly $-1$**. Nothing is rounded or approximated here, the equation is exact. The "$+ 1 = 0$" form is the one that became famous, because it uses the five constants and nothing else, each exactly once.
+
+* #^B^Five constants^ The additive identity $0$, the multiplicative identity $1$, [[eulers-number|Euler's number]] $e \approx 2.71828$, the [[imaginary-number|imaginary unit]] $i$ with $i^2 = -1$, and $\pi \approx 3.14159$.
+* #^G^Three operations^ Addition, multiplication and exponentiation each appear once.
+* #^O^One relation^ The equals sign, which holds the whole thing together.
+
+## Where it comes from
+
+The identity follows from Euler's formula. For any real number $\theta$,
+
+$$e^{i\theta} = \cos\theta + i\sin\theta$$
+
+Putting $\theta = \pi$ gives $\cos\pi = -1$ and $\sin\pi = 0$, so
+
+$$e^{i\pi} = -1 + i\cdot 0 = -1$$
+
+Adding $1$ to both sides gives $e^{i\pi} + 1 = 0$.
+
+### Why Euler's formula is true
+
+One way to see it is with power series. The exponential function can be written as an infinite sum,
+
+$$e^{x} = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \frac{x^4}{4!} + \cdots$$
+
+and this still makes sense when $x$ is replaced by $i\theta$. Because $i^2 = -1$, $i^3 = -i$ and $i^4 = 1$, the powers of $i$ repeat in a cycle of four, and the terms split into two groups:
+
+$$e^{i\theta} = \underbrace{\left(1 - \frac{\theta^2}{2!} + \frac{\theta^4}{4!} - \cdots\right)}_{\cos\theta} + i\underbrace{\left(\theta - \frac{\theta^3}{3!} + \frac{\theta^5}{5!} - \cdots\right)}_{\sin\theta}$$
+
+The two brackets are exactly the power series of cosine and sine, which gives Euler's formula.
+
+> [!TIP] If you only remember one idea, remember this one. $e^{i\theta}$ is the point on a circle of radius 1 that you reach by walking an angle $\theta$ around from the right-hand side.
+
+## What it means
+
+On the **complex plane**, the number $e^{i\theta}$ is the point on the unit circle at angle $\theta$ (measured in radians) from the positive real axis. Multiplying by $e^{i\theta}$ turns any complex number by that angle around the origin.
+
+* $\theta = 0$ gives $e^{0} = 1$, the starting point on the right.
+* $\theta = \pi/2$ gives $e^{i\pi/2} = i$, a quarter turn to the top.
+* $\theta = \pi$ gives $e^{i\pi} = -1$, a half turn to the left. **That is Euler's identity.**
+* $\theta = 2\pi$ gives $e^{2\pi i} = 1$, a full turn, back where it began.
+
+So the identity says that **a half turn around the circle takes $1$ to $-1$**. The surprise is that the same $e$ that describes growth and compound interest also describes rotation, once it is given an imaginary power.
+
+## Related facts
+
+* The formula $e^{2\pi i} = 1$ is sometimes written with $\tau = 2\pi$ as $e^{i\tau} = 1$, which some authors find even simpler.
+* The $n$ solutions of $z^n = 1$, called the **roots of unity**, are $e^{2\pi i k/n}$ for $k = 0, 1, \ldots, n-1$, evenly spaced around the unit circle.
+* Taking logarithms gives $\ln(-1) = i\pi$ (one of infinitely many values, since the complex logarithm is multivalued).
+* A surprising consequence is that $i^i = e^{-\pi/2} \approx 0.2079$ is a **real** number.
+
+> [!FACT] The same idea powers a lot of technology. Writing waves as $e^{i\omega t}$ is the basis of the Fourier transform, of alternating-current circuit analysis and of the phase of a particle in [[quantum-mechanics|quantum mechanics]].
+
+## History
+
+* **1714**: Roger Cotes published a result equivalent to $\ln(\cos x + i\sin x) = ix$, one of the first links between logarithms, trigonometry and imaginary numbers.
+* **1748**: Leonhard Euler's *Introductio in analysin infinitorum* presented the formula $e^{i\theta} = \cos\theta + i\sin\theta$ and made it widely known.[^1] ^^B^The identity is named after me, although I never wrote it in this exact form!^^
+* **1988**: Readers of *The Mathematical Intelligencer* voted Euler's identity the most beautiful theorem in mathematics.[^2]
+* **2004**: In a poll of readers of *Physics World*, Euler's equation came second in a list of the greatest equations of all time, behind Maxwell's equations.
+
+The exact wording matters here. Euler proved the **formula**, and the famous special case follows from it at once, but the neat "$+1 = 0$" form is a later way of presenting that special case, and who first wrote it down is not clearly recorded.
+
+## In popular culture
+
+The identity appears on T-shirts, in lecture halls and in books about mathematics, as a favourite example of beauty in science. The physicist Richard Feynman called the more general formula "the most remarkable formula in mathematics", and it is often the first place students meet the idea that complex numbers describe rotation.
+
+## See also
+
+* [[eulers-number|Euler's number]], the constant $e$
+* [[imaginary-number|Imaginary number]], the unit $i$
+* [[pythagorean-theorem|Pythagorean theorem]], another famous equation tied to circles and triangles
+
+[^1]: Leonhard Euler, *Introductio in analysin infinitorum* (Lausanne, 1748), volume 1, chapter 8. A readable modern account is Paul J. Nahin, *Dr. Euler's Fabulous Formula* (Princeton University Press, 2006).
+[^2]: David Wells, "Which is the most beautiful?", *The Mathematical Intelligencer* 10 (4), 1988, pages 30–31.

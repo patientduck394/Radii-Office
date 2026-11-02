@@ -277,12 +277,12 @@
         });
         // pictures and attached files that travel inside the file itself:
         // ![alt](data:image/png;base64,...){width=240px} and [report.pdf](data:application/pdf;base64,...){file}
-        // (an image on top of the document: ![alt](data:...){overlay x=120 y=60 w=240 h=180})
+        // (an image on top of the document: ![alt](data:...){overlay x=120 y=60 w=240 h=180 r=30})
         s = s.replace(/!\[([^\]\n]*)\]\((data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+)\)(?:\{width=(\d+(?:\.\d+)?)px\}|\{overlay ([^}\n]*)\})?/gi, (_, alt, src, w, ov) => {
             if (ov !== undefined) {
                 const g = (k) => { const m = new RegExp('(?:^|\\s)' + k + '=(-?\\d+(?:\\.\\d+)?)').exec(ov); return m ? +m[1] : 0; };
                 const ow = Math.max(24, g('w') || 240), oh = Math.max(24, g('h') || ow);
-                return stash('<div class="kd-overlay" contenteditable="false" data-kd-overlay="1" style="position:absolute;z-index:40;left:' + g('x') + 'px;top:' + g('y') + 'px;width:' + ow + 'px;height:' + oh + 'px;"><img src="' + src + '" alt="' + esc(alt) + '" draggable="false"></div>');
+                return stash('<div class="kd-overlay" contenteditable="false" data-kd-overlay="1" style="position:absolute;z-index:40;left:' + g('x') + 'px;top:' + g('y') + 'px;width:' + ow + 'px;height:' + oh + 'px;' + (g('r') ? 'transform:rotate(' + g('r') + 'deg);' : '') + '"><img src="' + src + '" alt="' + esc(alt) + '" draggable="false"></div>');
             }
             return stash('<span class="img-resize"' + (w ? ' style="width: ' + w + 'px;"' : '') + '><img src="' + src + '" alt="' + esc(alt) + '"></span>');
         });
@@ -447,7 +447,8 @@
             const img = el.querySelector('img');
             const pic = img ? inlineText(img) : '';
             const n = (p) => Math.round((parseFloat(el.style[p]) || 0) * 10) / 10;
-            return pic ? pic + '{overlay x=' + n('left') + ' y=' + n('top') + ' w=' + n('width') + ' h=' + n('height') + '}' : '';
+            const tr = /rotate\((-?[\d.]+)deg\)/.exec(el.style.transform || '');
+            return pic ? pic + '{overlay x=' + n('left') + ' y=' + n('top') + ' w=' + n('width') + ' h=' + n('height') + (tr && parseFloat(tr[1]) ? ' r=' + Math.round(parseFloat(tr[1]) * 10) / 10 : '') + '}' : '';
         }
         // a picture you inserted (in its resizable frame): ![alt](data:...){width=240px}
         if (el.classList.contains('img-resize')) {
