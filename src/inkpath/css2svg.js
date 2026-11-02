@@ -409,7 +409,8 @@
             bgColor: cs.backgroundColor, bgImage: cs.backgroundImage,
             bgSize: splitTop(cs.backgroundSize || 'auto'), bgPos: splitTop(cs.backgroundPosition || '0% 0%'), bgRepeat: splitTop(cs.backgroundRepeat || 'repeat'), bgOrigin: splitTop(cs.backgroundOrigin || 'padding-box'),
             borderW: cs.borderTopStyle === 'none' ? 0 : (parseFloat(cs.borderTopWidth) || 0), borderColor: cs.borderTopColor,
-            bw: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return cs['border' + k + 'Style'] === 'none' ? 0 : (parseFloat(cs['border' + k + 'Width']) || 0); }),
+            bw: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return /^(none|hidden)$/.test(cs['border' + k + 'Style']) ? 0 : (parseFloat(cs['border' + k + 'Width']) || 0); }),
+            bc: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return cs['border' + k + 'Color']; }),
             pad: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return parseFloat(cs['padding' + k]) || 0; }),
             clips: splitTop(cs.backgroundClip || 'border-box'),
             outlineW: cs.outlineStyle === 'none' ? 0 : (parseFloat(cs.outlineWidth) || 0), outlineColor: cs.outlineColor, outlineOffset: parseFloat(cs.outlineOffset) || 0,
@@ -488,6 +489,68 @@
         }
         const clip = finishBox(Object.assign({}, base, box, { fillType: 'color', fill: '#000000ff' }));
         return { type: 'clip', clip: clip, children: wedges, opacity: 1, rotation: 0, blur: 0 };
+    }
+    // Borders that differ by side (border-left: 6px solid ...; four colors...), drawn like CSS paints them: each
+    // border is the filled area between the outer edge and the inner (padding) edge. Where two bordered sides meet,
+    // the corner is split down its middle; a side next to a side with no border gets the whole corner. Neighbouring
+    // sides of the same color are one shape. sides = [top, right, bottom, left] of { w, c } or null.
+    function sideBorders(M, x0, y0, sides, base) {
+        const k = 0.5522847498;
+        const half = function (c, first) {
+            // one half of a cubic (de Casteljau at t = 0.5)
+            const m = function (a, b2) { return [(a[0] + b2[0]) / 2, (a[1] + b2[1]) / 2]; };
+            const p01 = m(c[0], c[1]), p12 = m(c[1], c[2]), p23 = m(c[2], c[3]), a = m(p01, p12), b2 = m(p12, p23), mid = m(a, b2);
+            return first ? [c[0], p01, a, mid] : [mid, b2, p23, c[3]];
+        };
+        const line = function (p, q) { return [p, p, q, q]; };
+        // a rounded box's corners (clockwise: TL, TR, BR, BL) and edges (top, right, bottom, left) as cubics
+        function outline(x, y, w, h, rr) {
+            const tl = rr[0], tr = rr[1], br = rr[2], bl = rr[3];
+            return {
+                corner: [
+                    [[x, y + tl.y], [x, y + tl.y - k * tl.y], [x + tl.x - k * tl.x, y], [x + tl.x, y]],
+                    [[x + w - tr.x, y], [x + w - tr.x + k * tr.x, y], [x + w, y + tr.y - k * tr.y], [x + w, y + tr.y]],
+                    [[x + w, y + h - br.y], [x + w, y + h - br.y + k * br.y], [x + w - br.x + k * br.x, y + h], [x + w - br.x, y + h]],
+                    [[x + bl.x, y + h], [x + bl.x - k * bl.x, y + h], [x, y + h - bl.y + k * bl.y], [x, y + h - bl.y]]
+                ],
+                edge: [line([x + tl.x, y], [x + w - tr.x, y]), line([x + w, y + tr.y], [x + w, y + h - br.y]), line([x + w - br.x, y + h], [x + bl.x, y + h]), line([x, y + h - bl.y], [x, y + tl.y])]
+            };
+        }
+        const t = M.bw[0], r = M.bw[1], b = M.bw[2], l = M.bw[3];
+        const O = outline(x0, y0, M.w, M.h, M.radii);
+        const I = outline(x0 + l, y0 + t, Math.max(0.01, M.w - l - r), Math.max(0.01, M.h - t - b), insetRadii(M.radii, t, r, b, l));
+        // side i sits between corner i (before it) and corner (i + 1) % 4 (after it)
+        function piece(B, run, prevHas, nextHas) {
+            const out = [];
+            const first = run[0], last = run[run.length - 1];
+            out.push(prevHas ? half(B.corner[first], false) : B.corner[first]);
+            run.forEach(function (i, j) { out.push(B.edge[i]); if (j < run.length - 1) out.push(B.corner[(i + 1) % 4]); });
+            out.push(nextHas ? half(B.corner[(last + 1) % 4], true) : B.corner[(last + 1) % 4]);
+            return out;
+        }
+        // runs of neighbouring sides with the same color (all four the same: two halves, so each is one simple shape)
+        const col = function (i) { return sides[i] ? sides[i].c : ''; };
+        let start = 0;
+        for (let i = 0; i < 4; i++) if (col(i) !== col((i + 3) % 4)) { start = i; break; }
+        const runs = [];
+        for (let n = 0; n < 4; n++) {
+            const i = (start + n) % 4;
+            if (!sides[i]) continue;
+            const prev = runs[runs.length - 1];
+            if (prev && col(prev[prev.length - 1]) === col(i) && (prev[prev.length - 1] + 1) % 4 === i && prev.length < 3) prev.push(i);
+            else runs.push([i]);
+        }
+        return runs.map(function (run) {
+            const prevHas = !!sides[(run[0] + 3) % 4], nextHas = !!sides[(run[run.length - 1] + 1) % 4];
+            const outer = piece(O, run, prevHas, nextHas);
+            const inner = piece(I, run, prevHas, nextHas).reverse().map(function (c) { return [c[3], c[2], c[1], c[0]]; });
+            const S = outer.concat([line(outer[outer.length - 1][3], inner[0][0])], inner, [line(inner[inner.length - 1][3], outer[0][0])]);
+            const nodes = [{ x: S[0][0][0], y: S[0][0][1], cx1: S[0][0][0], cy1: S[0][0][1], cx2: S[0][1][0], cy2: S[0][1][1] }];
+            S.forEach(function (c, j) { const nx = S[j + 1]; nodes.push({ x: c[3][0], y: c[3][1], cx1: c[2][0], cy1: c[2][1], cx2: nx ? nx[1][0] : c[3][0], cy2: nx ? nx[1][1] : c[3][1] }); });
+            const p = Object.assign({}, base, { type: 'path', pathMode: 'bezier', nodes: nodes, fillType: 'color', fill: sides[run[0]].c, strokeType: 'none', stroke: '#00000000', strokeWidth: 0, name: 'Border' });
+            delete p.x; delete p.y; delete p.width; delete p.height; delete p._r;
+            return p;
+        });
     }
     // The shapes for one box (background layers, border, outline, shadows) at x0, y0 (no label)
     function boxShapes(M, x0, y0, isMain) {
@@ -575,11 +638,14 @@
         if (!shapes.length && (drop || inner)) shapes.push(Object.assign({}, base, { fillType: 'color', fill: '#ffffff00', name: 'Shadow' }));
         if (drop && shapes.length) shapes[0].effects = Object.assign(shapes[0].effects || {}, { drop: { dx: drop.dx, dy: drop.dy, blur: drop.blur, color: drop.color } });
         if (inner && shapes.length) shapes[shapes.length - 1].effects = Object.assign(shapes[shapes.length - 1].effects || {}, { inner: { dx: inner.dx, dy: inner.dy, blur: inner.blur, color: inner.color } });
-        if (M.borderW > 0 && alphaOf(M.borderColor) > 0) {
+        const sides = [0, 1, 2, 3].map(function (i) { return M.bw[i] > 0 && alphaOf(M.bc[i]) > 0 ? { w: M.bw[i], c: toHex8(M.bc[i]) } : null; });
+        const sameAll = sides.every(function (sd) { return sd && sd.w === sides[0].w && sd.c === sides[0].c; });
+        if (!sameAll && sides.some(Boolean)) sideBorders(M, x0, y0, sides, base).forEach(function (b) { shapes.push(b); });
+        else if (sameAll) {
             const top = shapes[shapes.length - 1];
-            const bw = M.borderW;
+            const bw = sides[0].w;
             // CSS borders sit INSIDE the box; SVG strokes straddle the edge, so inset by half!
-            const ring = Object.assign({}, base, { x: x0 + bw / 2, y: y0 + bw / 2, width: Math.max(1, M.w - bw), height: Math.max(1, M.h - bw), _r: insetRadii(M.radii, bw / 2, bw / 2, bw / 2, bw / 2), fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.borderColor), strokeWidth: bw, name: 'Border' });
+            const ring = Object.assign({}, base, { x: x0 + bw / 2, y: y0 + bw / 2, width: Math.max(1, M.w - bw), height: Math.max(1, M.h - bw), _r: insetRadii(M.radii, bw / 2, bw / 2, bw / 2, bw / 2), fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: sides[0].c, strokeWidth: bw, name: 'Border' });
             if (top && top.type === 'rect' && top.fillType === 'none') Object.assign(top, ring); else shapes.push(ring);
         }
         if (M.outlineW > 0 && alphaOf(M.outlineColor) > 0) {
