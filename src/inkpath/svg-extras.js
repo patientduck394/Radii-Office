@@ -3,7 +3,7 @@
      Stroke      line caps (butt/round/square), line joins (miter/round/bevel), miter limit,
                  dash patterns (dashed, dotted, dash-dot, long, or your own numbers) and the dash offset
      Markers     arrowheads and other line ends (arrow, open arrow, dot, square, diamond, bar) on lines and paths
-     Fill        the fill rule (nonzero / even-odd), Pattern fills (stripes, dots, grid, checker, hatch, waves),
+     Fill        the fill rule (nonzero / even-odd), Pattern fills (20 patterns, from stripes to honeycomb),
                  gradient size and repeat (pad / reflect / repeat)
      Appearance  blend modes (multiply, screen, overlay...), paint order (stroke behind the fill), flip across and down
      Text        italic, underline, strike-through, letter spacing
@@ -28,7 +28,7 @@
     const BLENDS = ['normal', 'multiply', 'screen', 'overlay', 'darken', 'lighten', 'color-dodge', 'color-burn', 'hard-light', 'soft-light', 'difference', 'exclusion', 'hue', 'saturation', 'color', 'luminosity'];
     const DASHES = [['solid', 'Solid'], ['dashed', 'Dashed'], ['dotted', 'Dotted'], ['dashdot', 'Dash-dot'], ['long', 'Long dash'], ['custom', 'Custom…']];
     const MARKERS = [['none', 'None'], ['arrow', 'Arrow'], ['open', 'Open arrow'], ['dot', 'Dot'], ['square', 'Square'], ['diamond', 'Diamond'], ['bar', 'Bar']];
-    const PATTERNS = [['stripes', 'Stripes'], ['dots', 'Dots'], ['grid', 'Grid'], ['checker', 'Checker'], ['hatch', 'Cross-hatch'], ['waves', 'Waves']];
+    const PATTERNS = [['stripes', 'Stripes'], ['pinstripes', 'Pinstripes'], ['dots', 'Dots'], ['staggered', 'Staggered dots'], ['grid', 'Grid'], ['plaid', 'Plaid'], ['checker', 'Checker'], ['tiles', 'Rounded tiles'], ['bricks', 'Bricks'], ['hexagons', 'Honeycomb'], ['diamonds', 'Diamonds'], ['triangles', 'Triangles'], ['hatch', 'Cross-hatch'], ['crosses', 'Plus signs'], ['stars', 'Sparkles'], ['rings', 'Rings'], ['dashes', 'Dashes'], ['zigzag', 'Zigzag'], ['chevrons', 'Chevrons'], ['waves', 'Waves']];
 
     function dashArray(obj) {
         const w = Math.max(0.5, num(obj.strokeWidth, 2));
@@ -61,19 +61,42 @@
     function patternEl(obj, id) {
         const size = Math.max(3, num(obj.patternSize, 12)), ang = num(obj.patternAngle, 0);
         const c1 = obj.fill || '#a305ffff', c2 = obj.patternBg || obj.fill2 || '#ffffff00';
-        const p = svgEl('pattern', { id: id, patternUnits: 'userSpaceOnUse', width: size, height: size, patternTransform: 'rotate(' + ang + ')' });
-        const bg = svgEl('rect', { width: size, height: size, fill: c2 });
-        p.appendChild(bg);
-        const k = obj.patternKind || 'stripes', h = size / 2;
-        if (k === 'stripes') p.appendChild(svgEl('rect', { width: h, height: size, fill: c1 }));
-        else if (k === 'dots') p.appendChild(svgEl('circle', { cx: h, cy: h, r: size * 0.22, fill: c1 }));
-        else if (k === 'grid') { p.appendChild(svgEl('rect', { width: size, height: Math.max(1, size * 0.14), fill: c1 })); p.appendChild(svgEl('rect', { width: Math.max(1, size * 0.14), height: size, fill: c1 })); }
-        else if (k === 'checker') { p.appendChild(svgEl('rect', { width: h, height: h, fill: c1 })); p.appendChild(svgEl('rect', { x: h, y: h, width: h, height: h, fill: c1 })); }
+        const k = obj.patternKind || 'stripes';
+        const s = size, h = size / 2, q = size / 4;
+        // (most tiles are square; the honeycomb needs a tile as wide as one hexagon and as tall as three of its sides)
+        const hex = k === 'hexagons', A = h, W = hex ? Math.sqrt(3) * A : s, H = hex ? 3 * A : s;
+        const p = svgEl('pattern', { id: id, patternUnits: 'userSpaceOnUse', width: W, height: H, patternTransform: 'rotate(' + ang + ')' });
+        p.appendChild(svgEl('rect', { width: W, height: H, fill: c2 }));
+        const add = (tag, attrs) => p.appendChild(svgEl(tag, attrs));
+        const line = (d, w, extra) => add('path', Object.assign({ d: d, stroke: c1, 'stroke-width': Math.max(0.6, w), fill: 'none' }, extra || {}));
+        const f = (v) => Math.round(v * 100) / 100;
+        const t = Math.max(1, s * 0.14);
+        if (k === 'stripes') add('rect', { width: h, height: s, fill: c1 });
+        else if (k === 'pinstripes') { const w = Math.max(1, s * 0.07); add('rect', { width: w, height: s, fill: c1 }); add('rect', { x: h, width: w, height: s, fill: c1 }); }
+        else if (k === 'dots') add('circle', { cx: h, cy: h, r: s * 0.22, fill: c1 });
+        else if (k === 'staggered') { add('circle', { cx: q, cy: q, r: s * 0.15, fill: c1 }); add('circle', { cx: 3 * q, cy: 3 * q, r: s * 0.15, fill: c1 }); }
+        else if (k === 'grid') { add('rect', { width: s, height: Math.max(1, s * 0.14), fill: c1 }); add('rect', { width: Math.max(1, s * 0.14), height: s, fill: c1 }); }
+        else if (k === 'plaid') { add('rect', { width: s * 0.4, height: s, fill: c1, opacity: 0.55 }); add('rect', { width: s, height: s * 0.4, fill: c1, opacity: 0.55 }); }
+        else if (k === 'checker') { add('rect', { width: h, height: h, fill: c1 }); add('rect', { x: h, y: h, width: h, height: h, fill: c1 }); }
+        else if (k === 'tiles') add('rect', { x: s * 0.1, y: s * 0.1, width: s * 0.8, height: s * 0.8, rx: s * 0.2, fill: c1 });
+        else if (k === 'bricks') { const w = Math.max(1, s * 0.1); line('M0 0H' + s + 'M0 ' + h + 'H' + s, w); line('M0 0V' + h + 'M' + h + ' ' + h + 'V' + s, w); }
+        else if (k === 'hexagons') {
+            const hexAt = (cx, cy) => [[cx, cy - A], [cx + W / 2, cy - A / 2], [cx + W / 2, cy + A / 2], [cx, cy + A], [cx - W / 2, cy + A / 2], [cx - W / 2, cy - A / 2]];
+            [[W / 2, A], [0, 2.5 * A], [W, 2.5 * A], [0, -0.5 * A], [W, -0.5 * A]].forEach(([cx, cy]) => line('M' + hexAt(cx, cy).map((v) => f(v[0]) + ' ' + f(v[1])).join('L') + 'Z', Math.max(1, s * 0.09), { 'stroke-linejoin': 'round' }));
+        }
+        else if (k === 'diamonds') add('path', { d: 'M' + h + ' ' + f(s * 0.1) + 'L' + f(s * 0.9) + ' ' + h + 'L' + h + ' ' + f(s * 0.9) + 'L' + f(s * 0.1) + ' ' + h + 'Z', fill: c1 });
+        else if (k === 'triangles') add('path', { d: 'M0 ' + s + 'L' + h + ' 0L' + s + ' ' + s + 'Z', fill: c1 });
         else if (k === 'hatch') {
-            const sw = Math.max(1, size * 0.12);
-            ['M0 ' + size + 'L' + size + ' 0', 'M-1 1L1 -1', 'M' + (size - 1) + ' ' + (size + 1) + 'L' + (size + 1) + ' ' + (size - 1), 'M0 0L' + size + ' ' + size, 'M-1 ' + (size - 1) + 'L1 ' + (size + 1), 'M' + (size - 1) + ' -1L' + (size + 1) + ' 1']
-                .forEach((d) => p.appendChild(svgEl('path', { d: d, stroke: c1, 'stroke-width': sw, fill: 'none' })));
-        } else p.appendChild(svgEl('path', { d: 'M0 ' + h + 'Q' + (size / 4) + ' 0 ' + h + ' ' + h + 'T' + size + ' ' + h, stroke: c1, 'stroke-width': Math.max(1, size * 0.13), fill: 'none' }));
+            const w = Math.max(1, s * 0.12);
+            ['M0 ' + s + 'L' + s + ' 0', 'M-1 1L1 -1', 'M' + (s - 1) + ' ' + (s + 1) + 'L' + (s + 1) + ' ' + (s - 1), 'M0 0L' + s + ' ' + s, 'M-1 ' + (s - 1) + 'L1 ' + (s + 1), 'M' + (s - 1) + ' -1L' + (s + 1) + ' 1'].forEach((d) => line(d, w));
+        }
+        else if (k === 'crosses') { const w = Math.max(1, s * 0.14); add('rect', { x: h - w / 2, y: s * 0.22, width: w, height: s * 0.56, fill: c1 }); add('rect', { x: s * 0.22, y: h - w / 2, width: s * 0.56, height: w, fill: c1 }); }
+        else if (k === 'stars') { const a = s * 0.1; add('path', { d: 'M' + h + ' ' + f(s * 0.12) + 'L' + f(h + a) + ' ' + f(h - a) + 'L' + f(s * 0.88) + ' ' + h + 'L' + f(h + a) + ' ' + f(h + a) + 'L' + h + ' ' + f(s * 0.88) + 'L' + f(h - a) + ' ' + f(h + a) + 'L' + f(s * 0.12) + ' ' + h + 'L' + f(h - a) + ' ' + f(h - a) + 'Z', fill: c1 }); }
+        else if (k === 'rings') { add('circle', { cx: h, cy: h, r: s * 0.36, fill: 'none', stroke: c1, 'stroke-width': Math.max(1, s * 0.09) }); add('circle', { cx: h, cy: h, r: s * 0.1, fill: c1 }); }
+        else if (k === 'dashes') { add('rect', { x: 0, y: s * 0.18, width: h, height: Math.max(1, s * 0.13), rx: s * 0.06, fill: c1 }); add('rect', { x: h, y: s * 0.68, width: h, height: Math.max(1, s * 0.13), rx: s * 0.06, fill: c1 }); }
+        else if (k === 'zigzag') line('M0 ' + f(s * 0.7) + 'L' + h + ' ' + f(s * 0.25) + 'L' + s + ' ' + f(s * 0.7), t, { 'stroke-linejoin': 'miter' });
+        else if (k === 'chevrons') { const w = Math.max(1, s * 0.1); line('M0 ' + f(s * 0.1) + 'L' + h + ' ' + f(s * 0.4) + 'L' + s + ' ' + f(s * 0.1), w); line('M0 ' + f(s * 0.6) + 'L' + h + ' ' + f(s * 0.9) + 'L' + s + ' ' + f(s * 0.6), w); }
+        else line('M0 ' + h + 'Q' + q + ' 0 ' + h + ' ' + h + 'T' + s + ' ' + h, Math.max(1, s * 0.13));
         return p;
     }
     // called for every shape app.js draws (el: the SVG element, obj: its data, idp: an id that is unique to it)

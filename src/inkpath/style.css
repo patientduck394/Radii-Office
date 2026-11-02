@@ -343,6 +343,9 @@ svg#viewport { width: 100%; height: 100%; cursor: crosshair; }
     font-family: inherit;
     outline: none;
 }
+/* a slider is as wide as its panel, never wider (the padding and border above must not push it past the edge) */
+.control-group input[type="range"] { box-sizing: border-box; width: 100%; max-width: 100%; min-width: 0; margin: 0; }
+.control-group input.prop-slider { padding: 0; }
 
 .inspector-empty-text { font-size: 11px; color: #94a3b8; text-align: center; margin-top: 40px; }
 .color-swatch {
@@ -547,6 +550,8 @@ svg#viewport { width: 100%; height: 100%; cursor: crosshair; }
     padding: 4px;
     width: fit-content;
 }
+/* five fill styles (color, linear, radial, pattern, none) sit in one row */
+.fill-style-seg { grid-template-columns: repeat(5, 32px); }
 .fill-seg-btn,
 .stroke-seg-btn {
     width: 32px;
