@@ -6,6 +6,12 @@ let activePathNodes = [];
 let isDrawingShape = false;
 let isMovingShape = false;
 let isScalingShape = false;
+// Selection handles: 'scale' (8 resize handles) or 'rotate' (4 corner rotate handles); tapping a selected shape again
+// switches between them. xfDrag is the handle being dragged; tapToggle is a press on an already selected shape.
+let transformMode = 'scale';
+let transformKey = '';
+let xfDrag = null;
+let tapToggle = null;
 let isMultiSelecting = false;
 let selectBoxStart = { x: 0, y: 0 };
 let selectBoxCurrent = { x: 0, y: 0 };
@@ -611,6 +617,46 @@ svg.addEventListener('wheel', (evt) => {
     applyTransform();
 }, { passive: false });
 
+// Phones and tablets: one finger on the canvas works like the mouse (tap, drag shapes, handles and nodes;
+// a quick double tap edits text). Two fingers are left to the browser.
+(function () {
+    let lastTap = null, startTarget = null;
+    const fire = (type, t, target) => target.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window, clientX: t.clientX, clientY: t.clientY, button: 0 }));
+    // (the rest of a touch goes to the element it started on, even after render() replaces that element,
+    // so the move/end listeners sit on that element itself)
+    const onMove = (e) => {
+        if (e.touches.length !== 1 || !startTarget) return;
+        e.preventDefault();
+        fire('mousemove', e.touches[0], svg);
+    };
+    const finish = (e) => {
+        const el = startTarget;
+        if (!el) return;
+        startTarget = null;
+        el.removeEventListener('touchmove', onMove);
+        el.removeEventListener('touchend', finish);
+        el.removeEventListener('touchcancel', finish);
+        const t = e.changedTouches[0];
+        if (e.type === 'touchcancel') { fire('mouseup', { clientX: -1e6, clientY: -1e6 }, svg); return; }
+        fire('mouseup', t, svg);
+        const now = Date.now();
+        if (lastTap && now - lastTap.t < 350 && Math.hypot(t.clientX - lastTap.x, t.clientY - lastTap.y) < 20) {
+            const hit = document.elementFromPoint(t.clientX, t.clientY);
+            if (hit && svg.contains(hit)) fire('dblclick', t, hit);
+            lastTap = null;
+        } else lastTap = { t: now, x: t.clientX, y: t.clientY };
+    };
+    svg.addEventListener('touchstart', (e) => {
+        if (e.touches.length !== 1) return;
+        e.preventDefault();
+        startTarget = e.target;
+        startTarget.addEventListener('touchmove', onMove, { passive: false });
+        startTarget.addEventListener('touchend', finish);
+        startTarget.addEventListener('touchcancel', finish);
+        fire('mousedown', e.touches[0], e.target);
+    }, { passive: false });
+})();
+
 function applyTransform() {
     drawLayer.setAttribute('transform', `translate(${panOffset.x}, ${panOffset.y}) scale(${zoomLevel})`);
     previewLayer.setAttribute('transform', `translate(${panOffset.x}, ${panOffset.y}) scale(${zoomLevel})`);
@@ -653,8 +699,8 @@ function handleCanvasMouseDown(evt) {
     }
 
     if (currentTool === 'select') {
-        if (evt.target.classList.contains('scale-handle')) {
-            isScalingShape = true;
+        if (xfDrag) {
+            // (a handle was pressed: its own mousedown started the drag)
         } else if (selectedIndices.length > 0 && evt.target !== svg && evt.target.classList.contains('shape-element')) {
             isMovingShape = true;
         } else {
@@ -760,12 +806,8 @@ function handleCanvasMouseMove(evt) {
         return;
     }
 
-    if (isScalingShape && selectedIndices.length > 0) {
-        const scaleFactor = 1 + (pt.x - currentDragPos.x) / 100;
-        if (!gestureDirty) { pushHistory(true); gestureDirty = true; }
-        selectedIndices.forEach(idx => scaleObject(objects[idx], scaleFactor));
-        currentDragPos = pt;
-        render();
+    if (xfDrag) {
+        updateTransformDrag(pt, evt);
         return;
     }
 
@@ -787,6 +829,17 @@ function handleCanvasMouseMove(evt) {
 function handleCanvasMouseUp(evt) {
     isPanning = false;
     gestureDirty = false;
+    const tap = tapToggle;
+    tapToggle = null;
+    if (xfDrag) { xfDrag = null; render(); return; }
+    // tapping a selected shape again (without dragging it) swaps resize handles for rotate handles, and back
+    if (tap && currentTool === 'select' && Math.hypot(evt.clientX - tap.x, evt.clientY - tap.y) < 6) {
+        isMovingShape = false;
+        transformMode = transformMode === 'rotate' ? 'scale' : 'rotate';
+        playUISound('click');
+        render();
+        return;
+    }
     isBezierPlacing = false; bezierActive = null;
     const press = nodePress;
     nodePress = null;
@@ -835,6 +888,151 @@ function handleCanvasMouseUp(evt) {
         render();
     }
     isMovingShape = false; isScalingShape = false; dragTarget = null;
+}
+
+// ---- Selection handles: resize (8-way) and rotate ----
+function noteTap(idx, e) {
+    tapToggle = (currentTool === 'select' && !e.shiftKey && selectedIndices.includes(idx)) ? { x: e.clientX, y: e.clientY } : null;
+}
+function rotPt(p, deg, c) {
+    const a = (deg || 0) * Math.PI / 180, cs = Math.cos(a), sn = Math.sin(a);
+    const dx = p.x - c.x, dy = p.y - c.y;
+    return { x: c.x + dx * cs - dy * sn, y: c.y + dx * sn + dy * cs };
+}
+// The frame the handles sit on: one shape uses its own (rotated) box; several shapes share one upright box
+function transformFrame() {
+    const list = selectedIndices.map(i => objects[i]).filter(Boolean);
+    if (list.length === 1) {
+        const o = list[0];
+        return { box: shapeBBox(o), rot: parseFloat(o.rotation) || 0, pivot: getCenter(o) };
+    }
+    return { box: unionBBox(list.map(shapeBBox)), rot: 0, pivot: null };
+}
+function frameToWorld(fr, x, y) { return fr.pivot ? rotPt({ x, y }, fr.rot, fr.pivot) : { x, y }; }
+function drawTransformHandles() {
+    const key = selectedIndices.slice().sort((a, b) => a - b).join(',');
+    if (key !== transformKey) { transformKey = key; transformMode = 'scale'; } // (a new selection starts with resize handles)
+    const fr = transformFrame(), b = fr.box, z = zoomLevel || 1;
+    const NS = 'http://www.w3.org/2000/svg';
+    const at = (hx, hy) => frameToWorld(fr, b.x + b.w * (hx + 1) / 2, b.y + b.h * (hy + 1) / 2);
+    const outline = document.createElementNS(NS, 'polygon');
+    outline.setAttribute('points', [[-1, -1], [1, -1], [1, 1], [-1, 1]].map(([hx, hy]) => { const p = at(hx, hy); return p.x + ',' + p.y; }).join(' '));
+    outline.setAttribute('class', 'xf-frame');
+    outline.style.strokeWidth = (1.5 / z) + 'px';
+    uiLayer.appendChild(outline);
+    const spots = transformMode === 'rotate' ? [[-1, -1], [1, -1], [1, 1], [-1, 1]] : [[-1, -1], [0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0]];
+    spots.forEach(([hx, hy]) => {
+        const p = at(hx, hy);
+        let el;
+        if (transformMode === 'rotate') {
+            el = document.createElementNS(NS, 'circle');
+            el.setAttribute('cx', p.x); el.setAttribute('cy', p.y); el.setAttribute('r', 7 / z);
+            el.setAttribute('class', 'xf-rotate');
+        } else {
+            const r = 5.5 / z;
+            el = document.createElementNS(NS, 'rect');
+            el.setAttribute('x', p.x - r); el.setAttribute('y', p.y - r); el.setAttribute('width', r * 2); el.setAttribute('height', r * 2);
+            el.setAttribute('rx', 1.5 / z);
+            el.setAttribute('class', 'scale-handle');
+            // the resize cursor that matches the handle's direction (turned with the shape)
+            const ang = ((Math.atan2(hy * (b.h || 1), hx * (b.w || 1)) * 180 / Math.PI + fr.rot) % 180 + 180) % 180;
+            el.style.cursor = ang < 22.5 || ang >= 157.5 ? 'ew-resize' : ang < 67.5 ? 'nwse-resize' : ang < 112.5 ? 'ns-resize' : 'nesw-resize';
+        }
+        el.style.strokeWidth = (2 / z) + 'px';
+        el.onmousedown = (e) => {
+            if (e.button === 2) return;
+            e.stopPropagation();
+            startTransformDrag(transformMode, hx, hy, getMousePos(e));
+        };
+        uiLayer.appendChild(el);
+    });
+}
+function startTransformDrag(kind, hx, hy, pt) {
+    const fr = transformFrame();
+    gestureDirty = false;
+    tapToggle = null;
+    const snaps = selectedIndices.map(i => JSON.parse(JSON.stringify(objects[i])));
+    // rotating turns everything about the middle of what is selected (as seen on screen)
+    const mid = frameToWorld(fr, fr.box.x + fr.box.w / 2, fr.box.y + fr.box.h / 2);
+    xfDrag = { kind, hx, hy, fr, snaps, mid, a0: Math.atan2(pt.y - mid.y, pt.x - mid.x) };
+}
+// Stretches a shape by sx, sy about (ax, ay), in its own upright space (a circle stretched unevenly becomes an
+// ellipse; a polygon or star becomes a path)
+function scaleXYAbout(obj, sx, sy, ax, ay) {
+    if (!obj) return obj;
+    const px = (x) => ax + (x - ax) * sx, py = (y) => ay + (y - ay) * sy;
+    const even = Math.abs(sx - sy) < 1e-6;
+    if ((obj.type === 'polygon' || obj.type === 'star') && !even) {
+        const nodes = shapeToNodes(obj);
+        if (nodes) { obj = Object.assign(obj, { type: 'path', pathMode: 'bezier', nodes }); }
+    }
+    if (obj.type === 'circle' && !even) { obj.type = 'ellipse'; obj.rx = obj.r; obj.ry = obj.r; delete obj.r; }
+    if (obj.type === 'rect') {
+        const x2 = px(obj.x + obj.width), y2 = py(obj.y + obj.height);
+        obj.x = px(obj.x); obj.y = py(obj.y);
+        obj.width = Math.max(1, x2 - obj.x); obj.height = Math.max(1, y2 - obj.y);
+        if (obj.rx) obj.rx = obj.rx * Math.min(sx, sy);
+    } else if (obj.type === 'text') {
+        obj.x = px(obj.x); obj.y = py(obj.y);
+        obj.fontSize = Math.max(1, Math.round((obj.fontSize || 28) * (even ? sx : (Math.abs(sy - 1) > Math.abs(sx - 1) ? sy : sx))));
+    } else if (obj.type === 'circle' || obj.type === 'polygon' || obj.type === 'star') {
+        obj.cx = px(obj.cx); obj.cy = py(obj.cy); obj.r = Math.max(0.5, obj.r * sx);
+    } else if (obj.type === 'ellipse') {
+        obj.cx = px(obj.cx); obj.cy = py(obj.cy); obj.rx = Math.max(0.5, obj.rx * sx); obj.ry = Math.max(0.5, obj.ry * sy);
+    } else if (obj.type === 'line') {
+        obj.x1 = px(obj.x1); obj.y1 = py(obj.y1); obj.x2 = px(obj.x2); obj.y2 = py(obj.y2);
+    } else if (obj.type === 'path' && Array.isArray(obj.nodes)) {
+        obj.nodes.forEach(n => { n.x = px(n.x); n.y = py(n.y); n.cx1 = px(n.cx1); n.cy1 = py(n.cy1); n.cx2 = px(n.cx2); n.cy2 = py(n.cy2); });
+    } else if (obj.type === 'boolean' || obj.type === 'clip' || obj.type === 'mask') {
+        if (obj.clip) obj.clip = scaleXYAbout(obj.clip, sx, sy, ax, ay);
+        if (obj.mask) obj.mask = scaleXYAbout(obj.mask, sx, sy, ax, ay);
+        if (Array.isArray(obj.children)) obj.children = obj.children.map(c => scaleXYAbout(c, sx, sy, ax, ay));
+    }
+    return obj;
+}
+// Moves a shape so the point that was at 'was' (on screen) is back there, whatever its rotation centre did
+function keepPinned(obj, local, was) {
+    const r = parseFloat(obj.rotation) || 0;
+    const now = r ? rotPt(local, r, getCenter(obj)) : local;
+    moveObject(obj, was.x - now.x, was.y - now.y);
+}
+function updateTransformDrag(pt, evt) {
+    const d = xfDrag, fr = d.fr, b = fr.box;
+    if (!gestureDirty) { pushHistory(true); gestureDirty = true; }
+    const fresh = () => d.snaps.map(o => JSON.parse(JSON.stringify(o)));
+    if (d.kind === 'rotate') {
+        let delta = (Math.atan2(pt.y - d.mid.y, pt.x - d.mid.x) - d.a0) * 180 / Math.PI;
+        if (evt && evt.shiftKey) delta = Math.round(delta / 15) * 15;
+        const list = fresh();
+        list.forEach((o, k) => {
+            const bb = shapeBBox(d.snaps[k]);
+            const local = { x: bb.x + bb.w / 2, y: bb.y + bb.h / 2 };
+            const r0 = parseFloat(d.snaps[k].rotation) || 0;
+            const was = rotPt(r0 ? rotPt(local, r0, getCenter(d.snaps[k])) : local, delta, d.mid);
+            o.rotation = Math.round(((r0 + delta) % 360) * 100) / 100;
+            keepPinned(o, local, was);
+        });
+        selectedIndices.forEach((idx, k) => { objects[idx] = list[k]; });
+        render();
+        return;
+    }
+    // resize: the opposite side (or corner) stays put and the dragged one follows the pointer
+    const p = fr.pivot ? rotPt(pt, -fr.rot, fr.pivot) : pt;
+    const ax = d.hx === 1 ? b.x : d.hx === -1 ? b.x + b.w : b.x + b.w / 2;
+    const ay = d.hy === 1 ? b.y : d.hy === -1 ? b.y + b.h : b.y + b.h / 2;
+    const min = 0.02;
+    let sx = d.hx ? Math.max(min, d.hx * (p.x - ax) / (b.w || 1)) : 1;
+    let sy = d.hy ? Math.max(min, d.hy * (p.y - ay) / (b.h || 1)) : 1;
+    // Shift on a corner keeps the proportions
+    if (evt && evt.shiftKey && d.hx && d.hy) { const k = Math.max(sx, sy); sx = k; sy = k; }
+    const anchorWas = frameToWorld(fr, ax, ay);
+    const list = fresh().map((o, k) => {
+        const n = scaleXYAbout(o, sx, sy, ax, ay);
+        if (fr.pivot) keepPinned(n, { x: ax, y: ay }, anchorWas); // (one rotated shape: the anchor stays on screen)
+        return n;
+    });
+    selectedIndices.forEach((idx, k) => { objects[idx] = list[k]; });
+    render();
 }
 
 function renderMultiSelectBox() {
@@ -1307,6 +1505,7 @@ function selectHandlerFor(topIdx) {
         if (e.button === 2) return;
         if (currentTool === 'select' || currentTool === 'node' || currentTool === 'eyedropper' || currentTool === 'eraser') {
             e.stopPropagation();
+            noteTap(topIdx, e);
             if (!e.shiftKey && !selectedIndices.includes(topIdx)) {
                 selectedIndices = [topIdx];
             } else if (e.shiftKey) {
@@ -1621,6 +1820,7 @@ function render() {
                 if (e.button === 2) return;
                 if (currentTool === 'select' || currentTool === 'node' || currentTool === 'eyedropper' || currentTool === 'eraser') {
                     e.stopPropagation();
+                    noteTap(idx, e);
                     if (!e.shiftKey && !selectedIndices.includes(idx)) {
                         selectedIndices = [idx];
                     } else if (e.shiftKey) {
@@ -1639,11 +1839,7 @@ function render() {
         }
     });
 
-    if (selectedIndices.length > 0 && currentTool === 'select') {
-        const primaryObj = objects[selectedIndices[0]];
-        const bb = shapeBBox(primaryObj);
-        createCircle(bb.x + bb.w, bb.y + bb.h, 6, 'scale-handle', () => {});
-    }
+    if (selectedIndices.length > 0 && currentTool === 'select') drawTransformHandles();
 
     if ((currentTool === 'node' || currentTool === 'bezier') && (selectedIndices.length > 0 || activePathNodes.length > 0)) {
         const nodes = selectedPathNodes() || (currentTool === 'bezier' ? activePathNodes : objects[selectedIndices[0]].nodes);
