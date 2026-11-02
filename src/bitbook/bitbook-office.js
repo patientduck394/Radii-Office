@@ -126,6 +126,92 @@
     function swatchMenu(title, list, applyFn, swCls) {
         return [{ header: title }, { cols: 5, cls: 'bb-sw-grid', swatches: list.map(function (s) { return { cls: swCls + ' ' + s.cls, html: 'Aa', title: s.label, run: function () { applyFn(s.cls); save(); } }; }) }];
     }
+    /* ---------- Gel Chips: the Bubble Chip's cousins. An icon grid of the styles; pick one to see its color variants
+       (live previews), pick a color to apply it just like Gel Orbs and Gel Bubbles do! ---------- */
+    const CHIP_SVG = function (inner) { return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>'; };
+    const CHIP_FAMILIES = [
+        { id: 'pill', name: 'Gloss Pill', icon: CHIP_SVG('<rect x="2.5" y="7.5" width="19" height="9" rx="4.5"/><path d="M7 10.8h6" stroke-width="2"/>') },
+        { id: 'flag', name: 'Gel Flag', icon: CHIP_SVG('<path d="M3 6.5h18l-3.2 5.5 3.2 5.5H3z"/><path d="M6.5 10h6" stroke-width="2"/>') },
+        { id: 'tab', name: 'Gel Tab', icon: CHIP_SVG('<path d="M3 18.5v-9a3.5 3.5 0 0 1 3.5-3.5h11A3.5 3.5 0 0 1 21 9.5v9z"/><path d="M7 10h6" stroke-width="2"/>') },
+        { id: 'drop', name: 'Gel Drop', icon: CHIP_SVG('<rect x="3" y="6" width="18" height="12" rx="5"/><ellipse cx="16.8" cy="14.6" rx="2" ry="1" stroke-width="1.5"/>') },
+        { id: 'split', name: 'Gel Split', icon: CHIP_SVG('<rect x="3" y="4.5" width="15" height="11" rx="3"/><path d="M6.5 19.5H21V9"/>') },
+        { id: 'lens', name: 'Gel Lens', icon: CHIP_SVG('<rect x="3" y="6" width="18" height="12" rx="6"/><path d="M10 8L7.5 16M14.5 8L12 16" stroke-width="1.5"/>') },
+        { id: 'speech', name: 'Speech Bubble', icon: CHIP_SVG('<path d="M5.5 4.5h13a2.5 2.5 0 0 1 2.5 2.5v6.5a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h-1A2.5 2.5 0 0 1 3 13.5V7a2.5 2.5 0 0 1 2.5-2.5z"/>') },
+        { id: 'logo', name: 'Logo Chip', icon: CHIP_SVG('<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8.2 9.5A4.2 4.2 0 0 1 12 7.4" stroke-width="2"/>'), light: true },
+        { id: 'aero', name: 'Aero Chip', icon: CHIP_SVG('<rect x="2.5" y="7" width="19" height="10" rx="5"/><path d="M5.5 10.5h13" stroke-width="1.4" opacity=".7"/>'), light: true }
+    ];
+    const CHIP_COLORS = [['red', 'Red'], ['orange', 'Orange'], ['gold', 'Gold'], ['yellow', 'Yellow'], ['lime', 'Lime'], ['green', 'Green'], ['turquoise', 'Turquoise'], ['teal', 'Teal'], ['cyan', 'Cyan'], ['blue', 'Blue'], ['purple', 'Purple'], ['pink', 'Pink'], ['white', 'White'], ['fog', 'Fog'], ['slate', 'Slate'], ['black', 'Black']];
+    OS.icons.chips = '<rect x="2" y="3" width="13" height="8" rx="4"/><path d="M6 11v3.2l3.2-3.2"/><rect x="9" y="13.5" width="13" height="7" rx="3.5"/>';
+    function chipsMenu() {
+        const wrap = document.createElement('div');
+        wrap.className = 'bb-chipmenu';
+        // (keeps the text selection in the note while you click around in the menu)
+        wrap.addEventListener('mousedown', function (e) { e.preventDefault(); });
+        function head(text, back) {
+            const h = document.createElement('div');
+            h.className = 'bb-chipmenu-head';
+            if (back) {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'bb-chipmenu-back';
+                b.textContent = '‹ Styles';
+                b.addEventListener('click', function (e) { e.stopPropagation(); showFamilies(); });
+                h.appendChild(b);
+            }
+            const t = document.createElement('span');
+            t.textContent = text;
+            h.appendChild(t);
+            wrap.appendChild(h);
+        }
+        function showFamilies() {
+            wrap.innerHTML = '';
+            head('Gel Chips');
+            const grid = document.createElement('div');
+            grid.className = 'bb-chip-fams';
+            CHIP_FAMILIES.forEach(function (f) {
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'bb-chip-fam';
+                b.title = f.name;
+                b.innerHTML = f.icon + '<span>' + f.name + '</span>';
+                b.addEventListener('click', function (e) { e.stopPropagation(); showColors(f); }); // (the button is replaced during the click, so the shell must not see it as a click outside the menu)
+                grid.appendChild(b);
+            });
+            wrap.appendChild(grid);
+        }
+        function showColors(f) {
+            wrap.innerHTML = '';
+            head(f.name, true);
+            const grid = document.createElement('div');
+            grid.className = 'bb-chip-cols';
+            CHIP_COLORS.forEach(function (c) {
+                if (f.light && (c[0] === 'white' || c[0] === 'fog' || c[0] === 'black')) return; // (Logo and Aero chips come in 13 colors)
+                const cls = 'gel-' + f.id + '-chip gel-' + f.id + '-' + c[0];
+                const b = document.createElement('button');
+                b.type = 'button';
+                b.className = 'bb-chip-col';
+                b.title = f.name + ' ' + c[1];
+                // the real chip, so you see exactly what you get
+                const chip = document.createElement('span');
+                chip.className = cls;
+                chip.textContent = 'Aa';
+                chip.style.margin = '0';
+                b.appendChild(chip);
+                const nm = document.createElement('small');
+                nm.textContent = c[1];
+                b.appendChild(nm);
+                b.addEventListener('click', function () {
+                    OS.closeMenu();
+                    if (typeof fmtApplyAqua === 'function') fmtApplyAqua(cls);
+                    save();
+                });
+                grid.appendChild(b);
+            });
+            wrap.appendChild(grid);
+        }
+        showFamilies();
+        return [{ node: wrap }];
+    }
     function setBlock(kind) {
         const map = { p: 'div', h1: 'h1', h2: 'h2', h3: 'h3', quote: 'blockquote', code: 'pre' };
         let blk = topBlock();
@@ -526,10 +612,11 @@
                         { glyph: 'ab', glyphCls: 's', title: 'Strikethrough', run: function () { fmt('strikethrough'); }, checked: function () { return inTag('s, strike, del'); } },
                         { icon: 'code', title: 'Inline Code', run: inlineCode, checked: function () { return inTag('code'); } },
                         { sep: true },
-                        { icon: 'highlighter', title: 'Highlight', bar: function () { return '#fde047'; }, run: function () { if (lastHl && typeof fmtApplyHighlight === 'function') { fmtApplyHighlight(lastHl); save(); } }, menu: function () { return swatchMenu('Highlighter', hl, function (c) { lastHl = c; fmtApplyHighlight(c); }, 'hl-swatch'); } },
+                        { icon: 'highlighter', title: 'Highlight', bar: function () { return '#fde047'; }, run: function () { if (lastHl && typeof fmtApplyHighlight === 'function') { fmtApplyHighlight(lastHl); save(); } } },
                         { icon: 'fontColor', title: 'Font Color', bar: function () { return lastColor; }, run: function () { applyColor(lastColor); }, menu: colorMenu },
                         { icon: 'orb', title: 'Gel Orbs', menu: function () { return swatchMenu('Gel Orbs', chips, fmtApplyChip, 'cp-swatch'); } },
-                        { icon: 'bubble', title: 'Gel Bubbles', menu: function () { return swatchMenu('Gel Bubbles', aqua, fmtApplyAqua, 'aq-swatch'); } }
+                        { icon: 'bubble', title: 'Gel Bubbles', menu: function () { return swatchMenu('Gel Bubbles', aqua, fmtApplyAqua, 'aq-swatch'); } },
+                        { icon: 'chips', title: 'Gel Chips: the Bubble Chip cousins (pills, flags, tabs, drops, splits, lenses, speech bubbles, logo and Aero chips)', menu: chipsMenu }
                     ]
                 ] }] },
                 { label: 'Paragraph', items: [{ rows: [
