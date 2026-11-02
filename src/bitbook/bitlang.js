@@ -581,6 +581,8 @@
         this.skills = [];
         this.btns = [];
         this.inputs = [];
+        this.waits = /\bwait\s*\(/.test(code || '');
+        this.timers = [];
         installBuiltins(this);
     }
     Runtime.prototype.tick = function (line) { if (++this.steps > this.budget) fail(line, 'This program took too long without a break (an endless loop?)! I stopped it.'); };
@@ -731,6 +733,16 @@
             try { return f.call(this, args, kw, line); } catch (err) { if (err instanceof BitError) throw err; throw new BitError(String(err && err.message || err), line); }
         }
         if (f instanceof BitFn) {
+            const sc = this.bindArgs(f, args, kw, line, label);
+            const keepDepth = this.depth;
+            this.depth = 0; // (inside a function body, renderRT shows things again)
+            try { this.execBlock(f.def.body, sc); } catch (s) { if (s instanceof Signal && s.kind === 'return') return s.v; throw s; } finally { this.depth = keepDepth; }
+            return null;
+        }
+        fail(line, 'That is not something you can call!');
+    };
+    Runtime.prototype.bindArgs = function (f, args, kw, line, label) {
+        {
             const sc = new Scope(f.closure);
             const defs = f.def.params;
             defs.forEach(function (pr, i) {
@@ -740,12 +752,8 @@
                 else fail(line, (label || f.def.name) + ' needs a value for "' + pr.name + '"!');
             }, this);
             if (args.length > defs.length) fail(line, (label || f.def.name) + ' only takes ' + defs.length + ' value' + (defs.length === 1 ? '' : 's') + '!');
-            const keepDepth = this.depth;
-            this.depth = 0; // (inside a function body, renderRT shows things again)
-            try { this.execBlock(f.def.body, sc); } catch (s) { if (s instanceof Signal && s.kind === 'return') return s.v; throw s; } finally { this.depth = keepDepth; }
-            return null;
+            return sc;
         }
-        fail(line, 'That is not something you can call!');
     };
     Runtime.prototype.execBlock = function (body, scope) { for (let i = 0; i < body.length; i++) this.exec(body[i], scope); };
     Runtime.prototype.exec = function (s, scope) {
@@ -773,12 +781,7 @@
             case 'use': return; // (the libraries are loaded before the program starts)
             case 'fn': scope.vars[s.name] = new BitFn(s, scope); this.fns[s.name] = scope.vars[s.name]; return;
             case 'assign': return this.assign(s, scope);
-            case 'expr': {
-                const v = this.evalE(s.e, scope);
-                // a quick command (annotate_bubble(...), beepbox(...), btn(...)) on its own line shows itself right away!
-                if (typeof v === 'string' && this.host.renderRT && ((s.e.k === 'call' && v.indexOf('\u2063') !== -1) || (s.e.k === 'bin' && s.e.op === '&'))) this.host.renderRT(v, null, this, s.line);
-                return;
-            }
+            case 'expr': this.shown(s, this.evalE(s.e, scope)); return;
             case 'if': {
                 for (let i = 0; i < s.arms.length; i++) if (truthy(this.evalE(s.arms[i].c, scope))) { this.execBlock(s.arms[i].body, scope); return; }
                 if (s.els) this.execBlock(s.els, scope);
@@ -791,9 +794,7 @@
                 return;
             }
             case 'for': {
-                const it = this.evalE(s.it, scope);
-                const list = it instanceof BitVec ? it.a.slice() : it instanceof BitMat ? it.r.map(function (r) { return new BitVec(r.slice()); }) : Array.isArray(it) ? it.slice() : typeof it === 'string' ? it.split('') : it && typeof it === 'object' ? Object.keys(it) : null;
-                if (!list) fail(s.line, 'You can only loop over a list, text or a map!');
+                const list = this.loopList(s, scope);
                 for (let i = 0; i < list.length; i++) {
                     scope.vars[s.name] = list[i];
                     try { this.execBlock(s.body, scope); } catch (g) { if (g instanceof Signal && g.kind === 'break') break; if (g instanceof Signal && g.kind === 'continue') continue; throw g; }
@@ -807,6 +808,104 @@
         }
         fail(s.line, 'Unknown statement!');
     };
+    // a quick command (annotate_bubble(...), beepbox(...), btn(...)) on its own line shows itself right away!
+    Runtime.prototype.shown = function (s, v) {
+        if (typeof v === 'string' && this.host.renderRT && ((s.e.k === 'call' && v.indexOf('\u2063') !== -1) || (s.e.k === 'bin' && s.e.op === '&'))) this.host.renderRT(v, null, this, s.line);
+    };
+    Runtime.prototype.loopList = function (s, scope) {
+        const it = this.evalE(s.it, scope);
+        const list = it instanceof BitVec ? it.a.slice() : it instanceof BitMat ? it.r.map(function (r) { return new BitVec(r.slice()); }) : Array.isArray(it) ? it.slice() : typeof it === 'string' ? it.split('') : it && typeof it === 'object' ? Object.keys(it) : null;
+        if (!list) fail(s.line, 'You can only loop over a list, text or a map!');
+        return list;
+    };
+
+    // wait(seconds): a program that waits runs through these generators, which hand back the seconds at each wait()
+    // (lines, ifs, loops and calls of your own functions on a line of their own can pause; everything else is exec)
+    Runtime.prototype.execBlockG = function* (body, scope) { for (let i = 0; i < body.length; i++) yield* this.execG(body[i], scope); };
+    Runtime.prototype.execG = function* (s, scope) {
+        const loop = function (g) { if (g instanceof Signal && g.kind === 'break') return 'break'; if (g instanceof Signal && g.kind === 'continue') return 'continue'; throw g; };
+        switch (s.k) {
+            case 'expr': {
+                const e = s.e;
+                const f = e.k === 'call' && e.f.k === 'name' && scope.find(e.f.name) ? scope.find(e.f.name).vars[e.f.name] : null;
+                if (f === this.waitFn) {
+                    this.tick(s.line);
+                    const a = this.argsOf(e, scope);
+                    const sec = a.args.length ? a.args[0] : a.kw.seconds;
+                    if (typeof sec !== 'number' || !(sec >= 0)) fail(s.line, 'wait needs a number of seconds (like wait(2) or wait(0.5))!');
+                    yield Math.min(sec, 86400);
+                    return;
+                }
+                if (f instanceof BitFn) {
+                    this.tick(s.line);
+                    const a = this.argsOf(e, scope);
+                    this.shown(s, yield* this.callFnG(f, a.args, a.kw, e.line, e.f.name));
+                    return;
+                }
+                break;
+            }
+            case 'if': {
+                this.tick(s.line);
+                for (let i = 0; i < s.arms.length; i++) if (truthy(this.evalE(s.arms[i].c, scope))) { yield* this.execBlockG(s.arms[i].body, scope); return; }
+                if (s.els) yield* this.execBlockG(s.els, scope);
+                return;
+            }
+            case 'while': {
+                this.tick(s.line);
+                while (truthy(this.evalE(s.c, scope))) {
+                    try { yield* this.execBlockG(s.body, scope); } catch (g) { if (loop(g) === 'break') break; }
+                }
+                return;
+            }
+            case 'for': {
+                this.tick(s.line);
+                const list = this.loopList(s, scope);
+                for (let i = 0; i < list.length; i++) {
+                    scope.vars[s.name] = list[i];
+                    try { yield* this.execBlockG(s.body, scope); } catch (g) { if (loop(g) === 'break') break; }
+                }
+                return;
+            }
+        }
+        this.exec(s, scope);
+    };
+    Runtime.prototype.argsOf = function (e, scope) {
+        const args = [], kw = {};
+        this.depth = (this.depth || 0) + 1;
+        try { e.args.forEach(function (a) { const v = this.evalE(a.e, scope); if (a.name) kw[a.name] = v; else args.push(v); }, this); } finally { this.depth--; }
+        return { args: args, kw: kw };
+    };
+    Runtime.prototype.callFnG = function* (f, args, kw, line, label) {
+        if (!(f instanceof BitFn)) return this.callFn(f, args, kw, line, label);
+        const sc = this.bindArgs(f, args, kw, line, label);
+        const keepDepth = this.depth;
+        this.depth = 0;
+        try { yield* this.execBlockG(f.def.body, sc); } catch (g) { if (g instanceof Signal && g.kind === 'return') return g.v; throw g; } finally { this.depth = keepDepth; }
+        return null;
+    };
+    // Runs a generator to its end: each wait() is a timer (wrap runs each stretch, catching errors like the player's run)
+    Runtime.prototype.drive = function (gen, done, wrap) {
+        const rt = this;
+        const step = function () {
+            if (rt.halted) return;
+            let r = null;
+            rt.steps = 0; // (every stretch between waits gets the whole step budget: a loop with a wait never runs out)
+            (wrap || function (fn) { fn(); })(function () { r = gen.next(); });
+            if (!r || rt.halted) return;
+            if (r.done) { if (done) done(r.value); return; }
+            const t = setTimeout(function () { rt.timers.splice(rt.timers.indexOf(t), 1); step(); }, r.value * 1000);
+            rt.timers.push(t);
+        };
+        step();
+    };
+    Runtime.prototype.halt = function () { this.halted = true; this.timers.forEach(clearTimeout); this.timers = []; };
+    // Calls one of the program's functions: right away, or step by step when the program waits
+    Runtime.prototype.go = function (f, args, label, wrap) {
+        if (!(f instanceof BitFn)) return;
+        if (!this.waits) { const rt = this; (wrap || function (fn) { fn(); })(function () { rt.steps = 0; rt.callFn(f, args || [], {}, 0, label); }); return; }
+        this.drive(this.callFnG(f, args || [], {}, 0, label), null, wrap);
+    };
+
     Runtime.prototype.assign = function (s, scope) {
         const t = s.target;
         let v = this.evalE(s.e, scope);
@@ -916,6 +1015,7 @@
             if (strokes && host.renderRT) host.renderRT('@@ink="strokes=\'' + strokes + '\'"', null, rt, line);
             return null;
         });
+        def('inkc', function () { if (host.clearInk) host.clearInk(); return null; });
         def('renderPT', function (a, k, line) {
             const txt = show0(a.length ? a[0] : k.text);
             const html = '<span class="bl-pt">' + esc(txt) + '</span>';
@@ -1290,6 +1390,8 @@
         def('mat_has', function (a, k, line) { return matchOne(a[0], pairsOf(a[1], line, 'mat_has')).hit; });
         def('mat_keys', function (a, k, line) { return pairsOf(a[0], line, 'mat_keys').map(function (pr) { return pr.k; }); });
         def('stop', function () { rt.stopped = true; return null; });
+        def('wait', function (a, k, line) { fail(line, 'wait() goes on a line of its own (like wait(2)), not inside a calculation or in onend!'); });
+        rt.waitFn = g.wait;
     }
 
     /* ================= Playing a program in a block ================= */
@@ -1812,13 +1914,23 @@ fn guess(n):
                     const fr = new FileReader();
                     fr.onload = function () {
                         if (live.get(prog) !== st) return;
-                        run(function () { st.rt.steps = 0; const n = cb instanceof BitFn ? cb.def.params.length : 2; st.rt.callFn(cb, [f.name, String(fr.result)].slice(0, n), {}, 0, 'import'); });
+                        st.rt.go(cb, [f.name, String(fr.result)].slice(0, cb instanceof BitFn ? cb.def.params.length : 2), 'import', run);
                     };
                     fr.onerror = function () { showError(new BitError('I could not read that file!', 0)); };
                     fr.readAsText(f);
                 });
                 document.body.appendChild(inp);
                 inp.click();
+            },
+            // inkc(): every drawing goes; a line that only held a drawing goes too (ink() can draw it again later)
+            clearInk: function () {
+                Object.keys(lines).forEach(function (n) {
+                    const el = lines[n];
+                    const inks = el.querySelectorAll('svg.an-ink-layer');
+                    if (!inks.length) return;
+                    [].forEach.call(inks, function (k) { k.remove(); });
+                    if (!el.textContent.trim() && !el.querySelector('img, button, input, svg, video, canvas, iframe')) { el.remove(); delete lines[n]; }
+                });
             },
             print: function (s) { const d = lineEl(String(autoNext++)); d.className = 'bl-line bl-print'; d.textContent = s; },
             beep: beepNow,
@@ -1894,9 +2006,9 @@ fn guess(n):
             if (e.target.closest && e.target.closest('textarea, input, select')) return;
             if (/^(arrow|space)/i.test(k) || k === ' ') e.preventDefault();
             st.keys[k] = true;
-            if (st.rt && st.rt.has('onkey')) run(function () { st.rt.call('onkey', [k]); });
+            if (st.rt) st.rt.go(st.rt.fns.onkey, [k], 'onkey', run);
         };
-        const ku = function (e) { const k = KEYNAME(e); st.keys[k] = false; if (st.rt && st.rt.has('onkeyup')) run(function () { st.rt.call('onkeyup', [k]); }); };
+        const ku = function (e) { const k = KEYNAME(e); st.keys[k] = false; if (st.rt) st.rt.go(st.rt.fns.onkeyup, [k], 'onkeyup', run); };
                 const bc = function (e) {
             // BeepBox song chips in the document play and stop when clicked (Bitbook's player)!
             const chip = e.target.closest && e.target.closest('.bb-chip');
@@ -1904,7 +2016,7 @@ fn guess(n):
             const b = e.target.closest && e.target.closest('[data-bl-btn]');
             if (!b || !st.rt) return;
             const o = st.rt.btns[+b.getAttribute('data-bl-btn')];
-            if (o) run(function () { st.rt.steps = 0; st.rt.callFn(o.fn, [], {}, 0, 'button'); });
+            if (o) st.rt.go(o.fn, [], 'button', run);
         };
         // typing into textbox() / counter(): the variable follows live, but only when the text really changed
         const plainKd = function (text) {
@@ -1948,19 +2060,36 @@ fn guess(n):
         st.off.push(function () { document.removeEventListener('keydown', kd, true); document.removeEventListener('keyup', ku, true); });
         let rt;
         try { rt = new Runtime(ta ? ta.value : '', host); st.rt = rt; } catch (err) { showError(err); return; }
+        const setup = function () {
+            const bbEl = prog.querySelector('.bl-bbml');
+            if (bbEl && bbEl.value.trim()) {
+                // BBML: the page's starting lines, set up before onstart runs
+                const comp = compileBBML(bbEl.value);
+                rt.execBlock(parse(comp.code, { lams: rt.lams }, comp.map), rt.globals);
+            }
+            if (rt.has('onclick')) fail(0, 'onclick is gone: programs only change the document now (use btn to make something clickable)!');
+        };
         const begin = function () {
             if (live.get(prog) !== st || st.dead) return;
+            if (rt.waits) {
+                // with wait(): the top level, then onstart, then the frames, each once the one before has finished waiting
+                rt.savedNames = {};
+                rt.drive(rt.execBlockG(rt.ast, rt.globals), function () {
+                    run(setup);
+                    if (st.dead || live.get(prog) !== st) return;
+                    if (rt.has('onstart')) rt.drive(rt.callFnG(rt.fns.onstart, [], {}, 0, 'onstart'), frames, run); else frames();
+                }, run);
+                return;
+            }
             try {
                 rt.start();
-                const bbEl = prog.querySelector('.bl-bbml');
-                if (bbEl && bbEl.value.trim()) {
-                    // BBML: the page's starting lines, set up before onstart runs
-                    const comp = compileBBML(bbEl.value);
-                    rt.execBlock(parse(comp.code, { lams: rt.lams }, comp.map), rt.globals);
-                }
-                if (rt.has('onclick')) fail(0, 'onclick is gone: programs only change the document now (use btn to make something clickable)!');
+                setup();
                 rt.call('onstart');
             } catch (err) { showError(err); return; }
+            frames();
+        };
+        const frames = function () {
+            if (live.get(prog) !== st || st.dead) return;
             if (st.rt.stopped) { stop(prog); return; }
             if (st.rt.has('onframe')) {
                 let last = performance.now();
@@ -1968,7 +2097,7 @@ fn guess(n):
                     if (live.get(prog) !== st || st.dead) return;
                     const dt = Math.min(0.1, (now - last) / 1000);
                     last = now;
-                    run(function () { st.rt.call('onframe', [dt]); });
+                    st.rt.go(st.rt.fns.onframe, [dt], 'onframe', run);
                     if (live.get(prog) === st && !st.dead) st.raf = requestAnimationFrame(frame);
                 };
                 st.raf = requestAnimationFrame(frame);
@@ -2000,6 +2129,7 @@ fn guess(n):
         if (st.noSave && window.autoSaveCanvasContent === st.noSave) window.autoSaveCanvasContent = window.savedAutoSave;
         prog.classList.remove('bl-playing');
         if (st.rt) {
+            st.rt.halt(); // (no more waiting lines)
             if (!quiet && !st.dead) { try { st.rt.call('onend'); } catch (e) {} }
             try { saveVars(prog, st.rt.saveVars()); } catch (e) {}
         }
@@ -2259,6 +2389,8 @@ for item in items:
 <tr><td><code>print(a, b, ...)</code></td><td>Adds a line of plain text</td></tr>
 <tr><td><code>renderRT(html, line="1")</code></td><td>Shows <b>rich text</b> on a numbered line. <code>line="2"</code> <b>takes over</b> line 2, replacing whatever was written there before (by <code>renderRT</code>, a quick command, or <code>print</code>). Leave <code>line</code> out and it adds the next free line instead (the same statement keeps its own line, so a loop or <code>onframe</code> updates it in place). It understands HTML and Keydown: <code>=Y=gel=Y=</code>, <code>**bold**</code>, <code>#C#chip#</code>…</td></tr>
 <tr><td><code>ink("gel:red:9:M10 10L80 40")</code></td><td>Draws on the program's page with Bitbook's Annotate inks, over everything else. The easy way: press <b>✏️ Draw</b> in the editor, draw, and press <b>Done</b>: the drawing goes into your code as an <code>@@ink="strokes='...'"</code> line, which runs just like <code>ink(...)</code>!</td></tr>
+<tr><td><code>wait(2)</code></td><td><b>Pauses</b> the program for that many seconds (<code>wait(0.5)</code> is half a second), then carries on with the next line! It works on a line of its own: at the top level, in <code>onstart</code>, buttons, keys, and functions of your own called on their own line. A <code>while true:</code> loop with a <code>wait</code> inside never runs out of time, and <b>Stop</b> ends the waiting.</td></tr>
+<tr><td><code>inkc()</code></td><td><b>Clears the ink</b>: every drawing made with <code>ink(...)</code> (or an <code>@@ink</code> line) leaves the page. Draw again any time with <code>ink(...)</code>!</td></tr>
 <tr><td><code>renderPT(text, line="1")</code></td><td>Like <code>renderRT</code>, but <b>plain text</b>: no Keydown, no HTML, shown exactly as written (<code>**stars**</code> stay as stars). Same line rules: <code>line=N</code> takes over line N, no <code>line</code> adds the next free line, and inside another call or a <code>&amp;</code> row it just hands back its text.</td></tr>
 <tr><td><code>btn(function, contents)</code></td><td>A clickable button! The <b>function</b> runs when it is clicked; the <b>contents</b> can be anything <code>renderRT</code> understands. A button has <b>no style of its own</b>, so whatever you put inside becomes the button: a Keydown chip (<code>#C#Play#</code>), an Annotate highlight, an image, plain text… Show it with <code>renderRT(btn(restart, "↻ Again") + "", line="2")</code>. You can mix buttons, text and skills in one line.</td></tr>
 </table>
