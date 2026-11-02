@@ -9892,79 +9892,19 @@
 .gel-logo-black { --lg-c: #1f1f1f; --lg-l: #707070; }
 
 /* ========================================================
-   GEL ORB COUSINS (=:Y:=text=:Y:=): four relatives of the Gel Orb, in the Orb's 12 colors!
-   Same gel, same crisp edge and ink, in new shapes (the color codes are the Orb's: Y R G C B V P O MG LM AQ SL):
-     =:Y:= Gel Pearl   a round glossy sphere with a bright specular dot
-     =^Y^= Gel Gem     a cut crystal with pointed ends and glassy facets
-     =+Y+= Gel Beacon  a pale pill with a glowing orb bead, like a status light
-     =!Y!= Gel Blob    a soft squishy blob that wobbles like jelly
+   GEL ORB COUSIN (=+Y+=text=+Y+=): the Gel Beacon, in the Orb's 12 colors (Y R G C B V P O MG LM AQ SL)!
+   A pale pill with the orb itself glowing at the front, like a status light.
    ======================================================== */
-.gel-pearl-chip, .gel-gem-chip, .gel-beacon-chip, .gel-blob-chip {
+.gel-beacon-chip {
   position: relative; isolation: isolate;
   display: inline-flex !important; align-items: center; justify-content: center;
-  margin: 0 2px; vertical-align: middle; white-space: nowrap;
-  font-family: inherit; font-weight: 800;
-  color: var(--oc-ink, #ffffff); text-shadow: var(--oc-ts, none);
-  transition: background-color 0.35s ease, border-color 0.35s ease;
-}
-.gel-pearl-y, .gel-gem-y, .gel-beacon-y, .gel-blob-y { --oc-hi: #fde047; --oc-lo: #eab308; --oc-edge: #ca8a04; --oc-ink: #451a03; --oc-ts: none; }
-.gel-pearl-r, .gel-gem-r, .gel-beacon-r, .gel-blob-r { --oc-hi: #fca5a5; --oc-lo: #ef4444; --oc-edge: #dc2626; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-g, .gel-gem-g, .gel-beacon-g, .gel-blob-g { --oc-hi: #6ee7b7; --oc-lo: #10b981; --oc-edge: #059669; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-c, .gel-gem-c, .gel-beacon-c, .gel-blob-c { --oc-hi: #67e8f9; --oc-lo: #06b6d4; --oc-edge: #0891b2; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-b, .gel-gem-b, .gel-beacon-b, .gel-blob-b { --oc-hi: #93c5fd; --oc-lo: #3b82f6; --oc-edge: #2563eb; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-v, .gel-gem-v, .gel-beacon-v, .gel-blob-v { --oc-hi: #c084fc; --oc-lo: #9333ea; --oc-edge: #7e22ce; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-p, .gel-gem-p, .gel-beacon-p, .gel-blob-p { --oc-hi: #f472b6; --oc-lo: #db2777; --oc-edge: #be185d; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-o, .gel-gem-o, .gel-beacon-o, .gel-blob-o { --oc-hi: #fb923c; --oc-lo: #ea580c; --oc-edge: #c2410c; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-mg, .gel-gem-mg, .gel-beacon-mg, .gel-blob-mg { --oc-hi: #f472b6; --oc-lo: #e11d48; --oc-edge: #be123c; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-lm, .gel-gem-lm, .gel-beacon-lm, .gel-blob-lm { --oc-hi: #a3e635; --oc-lo: #65a30d; --oc-edge: #4d7c0f; --oc-ink: #1a2e05; --oc-ts: none; }
-.gel-pearl-aq, .gel-gem-aq, .gel-beacon-aq, .gel-blob-aq { --oc-hi: #22d3ee; --oc-lo: #0891b2; --oc-edge: #0e7490; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
-.gel-pearl-sl, .gel-gem-sl, .gel-beacon-sl, .gel-blob-sl { --oc-hi: #e2e8f0; --oc-lo: #94a3b8; --oc-edge: #475569; --oc-ink: #1e293b; --oc-ts: none; }
-
-/* Gel Pearl: a full sphere, lit from the top left */
-.gel-pearl-chip {
-  padding: 2px 13px; border-radius: 999px;
-  border: 2px solid var(--oc-edge, #2563eb);
-  background: radial-gradient(130% 150% at 50% 6%, var(--oc-hi, #93c5fd) 0%, var(--oc-lo, #3b82f6) 66%, color-mix(in srgb, var(--oc-lo, #3b82f6) 80%, black) 100%);
-  box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.55), 0 3px 6px rgba(0, 0, 0, 0.14);
-}
-.gel-pearl-chip::before {
-  content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 11%; top: 8%; width: 30%; height: 38%; border-radius: 50%;
-  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.45) 55%, rgba(255, 255, 255, 0) 100%);
-  transform: rotate(-12deg);
-}
-.gel-pearl-chip::after {
-  content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 24%; right: 24%; bottom: 2px; height: 3px; border-radius: 999px;
-  background: rgba(255, 255, 255, 0.35);
-}
-
-/* Gel Gem: a hexagon cut like a gemstone, an edge-colored shape with the gel set inside it */
-.gel-gem-chip {
-  padding: 3px 18px; background: var(--oc-edge, #2563eb);
-  clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 9px 100%, 0 50%);
-}
-.gel-gem-chip::before {
-  content: ''; position: absolute; z-index: -2; pointer-events: none; inset: 2px;
-  background: linear-gradient(180deg, var(--oc-hi, #93c5fd) 0%, var(--oc-lo, #3b82f6) 100%);
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%);
-}
-.gel-gem-chip::after {
-  content: ''; position: absolute; z-index: -1; pointer-events: none; inset: 2px;
-  background:
-    linear-gradient(115deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.55) 22%, rgba(255, 255, 255, 0) 22.5%),
-    linear-gradient(245deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.12) 20%, rgba(0, 0, 0, 0) 20.5%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.28) 42%, rgba(255, 255, 255, 0) 42.5%);
-  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%);
-}
-
-/* Gel Beacon: a pale pill with the orb itself glowing at the front */
-.gel-beacon-chip {
+  margin: 0 2px; vertical-align: middle; white-space: nowrap; font-family: inherit; font-weight: 800;
   gap: 7px; padding: 2px 12px 2px 8px; border-radius: 999px;
   border: 2px solid var(--oc-edge, #2563eb);
   background: linear-gradient(180deg, color-mix(in srgb, var(--oc-hi, #93c5fd) 32%, white) 0%, color-mix(in srgb, var(--oc-hi, #93c5fd) 12%, white) 100%);
-  color: color-mix(in srgb, var(--oc-edge, #2563eb) 55%, black); text-shadow: none;
+  color: color-mix(in srgb, var(--oc-edge, #2563eb) 55%, black);
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .gel-beacon-chip::before {
   content: ''; flex: none; width: 0.78em; height: 0.78em; border-radius: 50%;
@@ -9972,23 +9912,104 @@
   background: radial-gradient(circle at 34% 28%, #ffffff 0%, var(--oc-hi, #93c5fd) 30%, var(--oc-lo, #3b82f6) 100%);
   box-shadow: 0 0 7px color-mix(in srgb, var(--oc-lo, #3b82f6) 75%, transparent), inset 0 -1px 2px rgba(0, 0, 0, 0.2);
 }
+.gel-beacon-y { --oc-hi: #fde047; --oc-lo: #eab308; --oc-edge: #ca8a04; }
+.gel-beacon-r { --oc-hi: #fca5a5; --oc-lo: #ef4444; --oc-edge: #dc2626; }
+.gel-beacon-g { --oc-hi: #6ee7b7; --oc-lo: #10b981; --oc-edge: #059669; }
+.gel-beacon-c { --oc-hi: #67e8f9; --oc-lo: #06b6d4; --oc-edge: #0891b2; }
+.gel-beacon-b { --oc-hi: #93c5fd; --oc-lo: #3b82f6; --oc-edge: #2563eb; }
+.gel-beacon-v { --oc-hi: #c084fc; --oc-lo: #9333ea; --oc-edge: #7e22ce; }
+.gel-beacon-p { --oc-hi: #f472b6; --oc-lo: #db2777; --oc-edge: #be185d; }
+.gel-beacon-o { --oc-hi: #fb923c; --oc-lo: #ea580c; --oc-edge: #c2410c; }
+.gel-beacon-mg { --oc-hi: #f472b6; --oc-lo: #e11d48; --oc-edge: #be123c; }
+.gel-beacon-lm { --oc-hi: #a3e635; --oc-lo: #65a30d; --oc-edge: #4d7c0f; }
+.gel-beacon-aq { --oc-hi: #22d3ee; --oc-lo: #0891b2; --oc-edge: #0e7490; }
+.gel-beacon-sl { --oc-hi: #e2e8f0; --oc-lo: #94a3b8; --oc-edge: #475569; }
 
-/* Gel Blob: soft and squishy, always very slightly wobbling */
-.gel-blob-chip {
-  padding: 3px 15px; border: 2px solid var(--oc-edge, #2563eb);
-  border-radius: 58% 42% 55% 45% / 62% 48% 52% 38%;
-  background: linear-gradient(170deg, var(--oc-hi, #93c5fd) 0%, var(--oc-lo, #3b82f6) 100%);
-  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.55), inset 0 -3px 5px rgba(0, 0, 0, 0.14), 0 3px 6px rgba(0, 0, 0, 0.12);
-  animation: gel-blob-wobble 5s ease-in-out infinite;
+/* ========================================================
+   BUBBLE CHIP COUSINS: four more relatives of the Bubble Chip, in its 16 colors (R O GL Y L G TU T C B PR PK W FG SL BK)!
+     !!R!text!!  Gel Ticket   a ticket stub with notched sides and a dotted tear line
+     ??R?text??  Gel Arrow    a breadcrumb arrow pointing the way forward
+     ,,R,text,,  Gel Dogear   a note with its bottom corner folded over
+     __R_text__  Gel Keycap   a raised keyboard key you can almost press
+   Same gel, crisp edge and ink as the Bubble Chip (the gel fades into a soft tint).
+   ======================================================== */
+.gel-ticket-chip, .gel-arrow-chip, .gel-dogear-chip, .gel-keycap-chip {
+  --bc-t: color-mix(in srgb, var(--bc-c, #3b82f6) 12%, white);
+  position: relative; isolation: isolate;
+  display: inline-flex !important; align-items: center; justify-content: center;
+  margin: 0 2px; vertical-align: middle; white-space: nowrap; font-family: inherit; font-weight: 800;
+  color: var(--bc-ink, #172554);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
 }
-.gel-blob-chip::before {
+.gel-ticket-red, .gel-arrow-red, .gel-dogear-red, .gel-keycap-red { --bc-c: #ef4444; --bc-edge: #dc2626; --bc-ink: #450a0a; }
+.gel-ticket-orange, .gel-arrow-orange, .gel-dogear-orange, .gel-keycap-orange { --bc-c: #f97316; --bc-edge: #ea580c; --bc-ink: #431407; }
+.gel-ticket-gold, .gel-arrow-gold, .gel-dogear-gold, .gel-keycap-gold { --bc-c: #ea9f08; --bc-edge: #ca8a04; --bc-ink: #451a03; }
+.gel-ticket-yellow, .gel-arrow-yellow, .gel-dogear-yellow, .gel-keycap-yellow { --bc-c: #ead708; --bc-edge: #caa604; --bc-ink: #452b03; }
+.gel-ticket-lime, .gel-arrow-lime, .gel-dogear-lime, .gel-keycap-lime { --bc-c: #84cc16; --bc-edge: #65a30d; --bc-ink: #1a2e05; }
+.gel-ticket-green, .gel-arrow-green, .gel-dogear-green, .gel-keycap-green { --bc-c: #10b981; --bc-edge: #059669; --bc-ink: #022c22; }
+.gel-ticket-turquoise, .gel-arrow-turquoise, .gel-dogear-turquoise, .gel-keycap-turquoise { --bc-c: #30e5cd; --bc-edge: #26b1a5; --bc-ink: #044439; }
+.gel-ticket-teal, .gel-arrow-teal, .gel-dogear-teal, .gel-keycap-teal { --bc-c: #06b6d4; --bc-edge: #0891b2; --bc-ink: #083344; }
+.gel-ticket-cyan, .gel-arrow-cyan, .gel-dogear-cyan, .gel-keycap-cyan { --bc-c: #30d3e5; --bc-edge: #26a3b1; --bc-ink: #043e44; }
+.gel-ticket-blue, .gel-arrow-blue, .gel-dogear-blue, .gel-keycap-blue { --bc-c: #3b82f6; --bc-edge: #2563eb; --bc-ink: #172554; }
+.gel-ticket-purple, .gel-arrow-purple, .gel-dogear-purple, .gel-keycap-purple { --bc-c: #a855f7; --bc-edge: #9333ea; --bc-ink: #2e1065; }
+.gel-ticket-pink, .gel-arrow-pink, .gel-dogear-pink, .gel-keycap-pink { --bc-c: #ec4899; --bc-edge: #db2777; --bc-ink: #4c0519; }
+.gel-ticket-white, .gel-arrow-white, .gel-dogear-white, .gel-keycap-white { --bc-c: #f3f3f3; --bc-edge: #b3b3b3; --bc-ink: #7a7a7a; }
+.gel-ticket-fog, .gel-arrow-fog, .gel-dogear-fog, .gel-keycap-fog { --bc-c: #d9d9d9; --bc-edge: #808080; --bc-ink: #404040; }
+.gel-ticket-slate, .gel-arrow-slate, .gel-dogear-slate, .gel-keycap-slate { --bc-c: #b4b4b4; --bc-edge: #6f6f6f; --bc-ink: #363636; }
+.gel-ticket-black, .gel-arrow-black, .gel-dogear-black, .gel-keycap-black { --bc-c: #919191; --bc-edge: #454545; --bc-ink: #222222; }
+
+/* Gel Ticket: round bites out of both sides, with a dotted tear line */
+.gel-ticket-chip {
+  padding: 2px 15px 2px 21px; border-radius: 6px;
+  border: 2px solid var(--bc-edge, #2563eb);
+  background: linear-gradient(180deg, var(--bc-c, #3b82f6) 0%, var(--bc-t) 100%);
+  -webkit-mask: radial-gradient(circle 5px at 0 50%, #0000 96%, #000) left / 51% 100% no-repeat, radial-gradient(circle 5px at 100% 50%, #0000 96%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 5px at 0 50%, #0000 96%, #000) left / 51% 100% no-repeat, radial-gradient(circle 5px at 100% 50%, #0000 96%, #000) right / 51% 100% no-repeat;
+}
+.gel-ticket-chip::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 14%; top: 10%; width: 24%; height: 26%; border-radius: 50%;
-  background: rgba(255, 255, 255, 0.7); filter: blur(0.5px);
+  left: 12px; top: 3px; bottom: 3px; border-left: 2px dotted var(--bc-edge, #2563eb); opacity: 0.65;
 }
-@keyframes gel-blob-wobble {
-  0%, 100% { border-radius: 58% 42% 55% 45% / 62% 48% 52% 38%; transform: scale(1, 1); }
-  33% { border-radius: 46% 54% 44% 56% / 50% 60% 40% 50%; transform: scale(1.02, 0.97); }
-  66% { border-radius: 52% 48% 60% 40% / 40% 52% 48% 60%; transform: scale(0.98, 1.03); }
+
+/* Gel Arrow: an edge-colored arrow shape with the gel set inside it */
+.gel-arrow-chip {
+  padding: 3px 22px 3px 14px; background: var(--bc-edge, #2563eb); border-radius: 8px 0 0 8px;
+  clip-path: polygon(0 0, calc(100% - 11px) 0, 100% 50%, calc(100% - 11px) 100%, 0 100%);
 }
-@media (prefers-reduced-motion: reduce) { .gel-blob-chip { animation: none; } }
+.gel-arrow-chip::before {
+  content: ''; position: absolute; z-index: -2; pointer-events: none; inset: 2px 2px 2px 2px; border-radius: 6px 0 0 6px;
+  background: linear-gradient(180deg, var(--bc-c, #3b82f6) 0%, var(--bc-t) 100%);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%);
+}
+.gel-arrow-chip::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 8px; right: 18px; top: 4px; height: 3px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+/* Gel Dogear: the bottom right corner is folded over */
+.gel-dogear-chip {
+  padding: 2px 15px 2px 11px; background: var(--bc-edge, #2563eb); border-radius: 8px 8px 0 8px;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 11px), calc(100% - 11px) 100%, 0 100%);
+}
+.gel-dogear-chip::before {
+  content: ''; position: absolute; z-index: -2; pointer-events: none; inset: 2px; border-radius: 6px 6px 0 6px;
+  background: linear-gradient(180deg, var(--bc-c, #3b82f6) 0%, var(--bc-t) 100%);
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%);
+}
+.gel-dogear-chip::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; right: 0; bottom: 0; width: 11px; height: 11px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--bc-c, #3b82f6) 35%, white) 44%, var(--bc-edge, #2563eb) 44%, var(--bc-edge, #2563eb) 58%, transparent 58%);
+}
+
+/* Gel Keycap: a raised key with a dished top and a solid side */
+.gel-keycap-chip {
+  margin: 0 3px 5px; padding: 1px 11px 2px; border-radius: 7px;
+  border: 2px solid var(--bc-edge, #2563eb);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bc-c, #3b82f6) 40%, white) 0%, var(--bc-c, #3b82f6) 100%);
+  box-shadow: 0 3px 0 var(--bc-edge, #2563eb), 0 5px 6px rgba(0, 0, 0, 0.22), inset 0 1px 1px rgba(255, 255, 255, 0.85);
+}
+.gel-keycap-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; inset: 2px 3px 3px; border-radius: 4px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
