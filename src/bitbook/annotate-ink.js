@@ -62,6 +62,22 @@
     // a color run for one pack style in one color (defined right in the stroke, so every color gets its own)
     const gid = (k, c) => 'url(#ank-' + k + '-' + c[0] + ')';
     const lg = (k, c, stops, span) => '<defs>' + grad(k + '-' + c[0], stops, span).replace('id="ank-t-', 'id="ank-') + '</defs>';
+    // A real gradient across a stroke's thickness (top to bottom), made of n stacked bands: each band runs from its
+    // starting point down to the stroke's bottom edge, a little lighter (or darker) than the one before, so they blend
+    // smoothly. from/to are where the blend starts and ends (0 = top edge, 1 = bottom edge).
+    function bands(d, w, from, to, c1, c2, n) {
+        let out = '';
+        const bottom = w / 2;
+        for (let k = 0; k <= n; k++) {
+            const f = n ? k / n : 0, at = from + (to - from) * f;
+            const top = -w / 2 + w * at, h = bottom - top;
+            if (h <= 0.05) break;
+            const shift = (top + bottom) / 2;
+            out += line(d, blend(c1, c2, f), h, ' stroke-linecap="round" transform="translate(0 ' + shift.toFixed(2) + ')"');
+        }
+        return out;
+    }
+    const blend = (a, b, f) => '#' + [1, 3, 5].map((i) => { const x = parseInt(a.slice(i, i + 2), 16), y = parseInt(b.slice(i, i + 2), 16); return Math.round(x + (y - x) * f).toString(16).padStart(2, '0'); }).join('');
     // a shade of a color: k of the way from it to black
     const dark = (hex, k) => '#' + [1, 3, 5].map((i) => { const v = parseInt(hex.slice(i, i + 2), 16); return Math.round(v * (1 - k)).toString(16).padStart(2, '0'); }).join('');
     let maskN = 0;
@@ -101,11 +117,16 @@
                     line(d, c[1], w * 0.32, ' transform="translate(0 ' + (w * 0.24).toFixed(2) + ')" opacity="0.8" filter="url(#ank-glow-in)"') +
                     line(d, mix(c[1], 0.35), w * 0.14, ' transform="translate(0 ' + (w * 0.27).toFixed(2) + ')" opacity="0.6" filter="url(#ank-glow-in)"') +
                     line(d, '#ffffff', w * 0.34, up(w, 0.25) + ' opacity="0.6"');
-            case 'aero-sky': // Aero Chip: the Aero Chip (++R+text++) as a pen: shadow, deep border, color melting into a light tint, and a shine along the top
-                return line(d, 'rgba(150,150,150,0.55)', w, ' transform="translate(0 ' + (w * 0.16).toFixed(2) + ')"') + line(d, c[2], w) + line(d, c[1], w * 0.78) +
-                    line(d, c[3], w * 0.18, ' transform="translate(0 ' + (w * 0.26).toFixed(2) + ')" opacity="0.8"') +
+            case 'aero-sky': { // Aero Chip: the Aero Chip (++R+text++) as a pen: its border gradient (dark at the top, lighter at the bottom),
+                // its fill (the color down to 59%, blending into a light tint by 87%), the shine along the top, and the shadow
+                const e1 = dark(c[1], 0.5), e2 = dark(c[1], 0.2), light = mix(c[1], 0.45), fw = w * 0.78;
+                return line(d, 'rgba(150,150,150,0.55)', w, ' transform="translate(0 ' + (w * 0.16).toFixed(2) + ')"') +
+                    bands(d, w, 0, 1, e1, e2, 10) +                // the border: a gradient from top to bottom of the whole stroke
+                    bands(d, fw, 0, 1, c[1], c[1], 1) +           // the fill's solid top
+                    bands(d, fw, 0.59, 0.87, c[1], light, 9) +    // ...blending into the light tint
                     // the shine stops short of both ends (pathLength makes the dash a share of the stroke's length)
                     '<path d="' + d + '" pathLength="100" fill="none" stroke="#ffffff" stroke-width="' + (w * 0.3).toFixed(2) + '" stroke-linecap="round" stroke-dasharray="80 20" stroke-dashoffset="-10"' + up(w, 0.17) + ' opacity="0.8"/>';
+            }
             case 'pool-water':
                 return lg('pool', c, [c[1], c[3], c[1]]) + line(d, '#ffffff', w * 1.08, ' opacity="0.9"') + line(d, c[2], w) + line(d, gid('pool', c), w * 0.8) +
                     line(d, '#ffffff', w * 0.12, ' stroke-dasharray="' + n(w * 0.9) + ' ' + n(w * 0.7) + '"' + up(w, 0.15) + ' opacity="0.75"') +
