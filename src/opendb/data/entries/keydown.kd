@@ -6,7 +6,7 @@ title: Keydown
 summary: Keydown is the formatting language of Radii Office, where short tags typed around text turn it into glossy chips, highlights, headings and more.
 tags: [radii office, formatting, markup language, software]
 created: 2026-10-28
-updated: 2026-10-28
+updated: 2026-11-01
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Used in: Writeout, Bitbook, OpenDB, Phosphor, Imbuer, Formly and more
@@ -234,6 +234,42 @@ A Bubble Chip cousin shaped like a little speech bubble, with a glossy top and a
 * `^^FG^text^^` ^^FG^fog^^
 * `^^SL^text^^` ^^SL^slate^^
 * `^^BK^text^^` ^^BK^black^^
+
+## Aero chips
+
+Glossy Aero pills: a deep border that is darker at the top, the color melting into a light tint toward the bottom, a rounded white shine across the top and a soft shadow underneath. Written `++color+text++`, in the 13 Annotate colors:
+
+* `++R+text++` ++R+red++
+* `++O+text++` ++O+orange++
+* `++GL+text++` ++GL+gold++
+* `++Y+text++` ++Y+yellow++
+* `++L+text++` ++L+lime++
+* `++G+text++` ++G+green++
+* `++TU+text++` ++TU+turquoise++
+* `++T+text++` ++T+teal++
+* `++C+text++` ++C+cyan++
+* `++B+text++` ++B+blue++
+* `++PR+text++` ++PR+purple++
+* `++PK+text++` ++PK+pink++
+* `++SL+text++` ++SL+slate++
+
+## Logo chips
+
+Chips made like the Radii Office app icons: a softly rounded tile, solid color through its top third fading to a bright tint, under a wide white gloss with a curved lower edge. Written `;;color;text;;`, in the 13 Annotate colors:
+
+* `;;R;text;;` ;;R;red;;
+* `;;O;text;;` ;;O;orange;;
+* `;;GL;text;;` ;;GL;gold;;
+* `;;Y;text;;` ;;Y;yellow;;
+* `;;L;text;;` ;;L;lime;;
+* `;;G;text;;` ;;G;green;;
+* `;;TU;text;;` ;;TU;turquoise;;
+* `;;T;text;;` ;;T;teal;;
+* `;;C;text;;` ;;C;cyan;;
+* `;;B;text;;` ;;B;blue;;
+* `;;PR;text;;` ;;PR;purple;;
+* `;;PK;text;;` ;;PK;pink;;
+* `;;SL;text;;` ;;SL;slate;;
 
 ## Gel series
 

@@ -1,5 +1,4 @@
-/* Bitbook Custom CSS chip presets: 166 chip styles in 13 categories (Highlights: 10 favorites from 25 styles x 4 colors;
-   Keydown Chips and Highlight Skill: today's Keydown chips and the Highlight skill's own styles, 4 colors each)!
+/* Bitbook Custom CSS chip presets: 110 chip styles in 11 categories (Highlights: 10 favorites from 25 styles x 4 colors)!
    Each preset's css is plain declarations, so it can live in the chip's own style=""
    and travel with the note! Animated ones use the bbcss-* keyframes in style.css! */
 var CSS_CHIP_CATEGORIES = [
@@ -13,8 +12,6 @@ var CSS_CHIP_CATEGORIES = [
     ['nature', 'Nature'],
     ['text', 'Text Effects'],
     ['highlight', 'Highlights'],
-    ['keydown', 'Keydown Chips'],
-    ['hlskill', 'Highlight Skill'],
     ['anim', 'Animated']
 ];
 
@@ -214,43 +211,6 @@ var CSS_CHIP_PRESETS = (function () {
         const st = HL_STYLES.filter(function (x) { return x[0] === pick[0]; })[0];
         const c = HL_COLORS.filter(function (x) { return x.id === pick[1]; })[0];
         p('highlight', 'hl-' + st[0] + '-' + c.id, c.name + ' ' + st[1], st[2] + ' ' + c.id + ' highlight highlighter', HL_BASE + st[3](c));
-    });
-
-    // Today's Keydown chips and the Highlight skill's own styles, as plain declarations: the details the real ones draw
-    // with ::before / ::after (an eyelet, a shine, a gloss) are extra background layers here, so they travel in style=""!
-    // Colors: the Highlight skill's own [color, deep edge, light, ink].
-    var KD_COLORS = [
-        { id: 'red', name: 'Red', c: '#ef4444', e: '#dc2626', l: '#f9b4b4', ink: '#450a0a' },
-        { id: 'green', name: 'Green', c: '#10b981', e: '#059669', l: '#9fe3cd', ink: '#022c22' },
-        { id: 'blue', name: 'Blue', c: '#3b82f6', e: '#2563eb', l: '#b1cdfb', ink: '#172554' },
-        { id: 'purple', name: 'Purple', c: '#a855f7', e: '#9333ea', l: '#dcbbfc', ink: '#3b0764' }
-    ];
-    var GEL = function (k) { return 'linear-gradient(180deg, ' + k.c + ' 0%, transparent 100%)'; };
-    var KD_FAMILIES = [
-        ['bubble', 'Bubble Chip', 'bubble chip gel keydown', function (k) { return 'background: ' + GEL(k) + '; border: 2px solid ' + k.e + '; border-radius: 10px; color: ' + k.ink + '; font-weight: 800; padding: 2px 10px; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.06), inset 0 1px 1px rgba(255, 255, 255, 0.4);'; }],
-        ['tag', 'Tag Chip', 'tag luggage eyelet keydown', function (k) { return 'background: radial-gradient(circle at 9px 50%, #ffffff 0 3px, ' + k.e + ' 3px 4.5px, transparent 5px), ' + GEL(k) + '; border: 2px solid ' + k.e + '; border-radius: 3px 11px 11px 3px; color: ' + k.ink + '; font-weight: 800; padding: 2px 10px 2px 19px;'; }],
-        ['speech', 'Gel Speech', 'speech bubble talk keydown', function (k) { return 'background: linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)) 10px 2px / calc(100% - 20px) 3px no-repeat, ' + GEL(k) + '; border: 2px solid ' + k.e + '; border-radius: 12px 12px 12px 3px; color: ' + k.ink + '; font-weight: 800; padding: 3px 11px;'; }],
-        ['tab', 'Gel Tab', 'tab folder cap keydown', function (k) { return 'background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75)) 4px 1px / calc(100% - 8px) 2px no-repeat, ' + GEL(k) + '; border: 2px solid ' + k.e + '; border-top-width: 5px; border-radius: 9px 9px 2px 2px; color: ' + k.ink + '; font-weight: 800; padding: 1px 10px 2px;'; }],
-        ['drop', 'Gel Drop', 'drop droplet water keydown', function (k) { return 'background: radial-gradient(ellipse 5px 2px at calc(100% - 11px) calc(100% - 6px), rgba(255, 255, 255, 0.9) 0 90%, transparent 100%), linear-gradient(0deg, ' + k.c + ' 0%, transparent 100%); border: 2px solid ' + k.e + '; border-radius: 12px 12px 12px 2px; color: ' + k.ink + '; font-weight: 800; padding: 2px 11px;'; }],
-        ['lens', 'Gel Lens', 'lens oval glass keydown', function (k) { return 'background: linear-gradient(118deg, transparent 22%, rgba(255, 255, 255, 0.7) 27%, transparent 32%), radial-gradient(ellipse at center, ' + k.c + ' 0%, transparent 80%); border: 2px solid ' + k.e + '; border-radius: 50%; color: ' + k.ink + '; font-weight: 800; padding: 3px 14px;'; }],
-        ['aero', 'Aero Chip', 'aero pill glossy shine keydown', function (k) { return 'border: 2px solid transparent; border-radius: 999px; background: radial-gradient(ellipse 40% 17% at 50% 20%, rgba(255, 255, 255, 0.8) 0 85%, transparent 100%) padding-box, linear-gradient(180deg, ' + k.c + ' 0%, ' + k.c + ' 59%, ' + k.l + ' 87%, ' + k.l + ' 100%) padding-box, linear-gradient(180deg, ' + k.e + ', ' + k.c + ') border-box; color: #ffffff; font-weight: 800; padding: 1px 12px; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25); box-shadow: 0 2px 0 rgba(170, 170, 170, 0.55), 0 3px 6px rgba(0, 0, 0, 0.12);'; }],
-        ['logo', 'Logo Chip', 'logo app icon tile gloss keydown', function (k) { return 'background: radial-gradient(ellipse 74% 32% at 44% 15%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.4) 97%, transparent 100%), linear-gradient(180deg, ' + k.c + ' 0%, ' + k.c + ' 37.5%, ' + k.l + ' 100%); border-radius: 0.32em; color: #ffffff; font-weight: 800; padding: 2px 12px; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18);'; }]
-    ];
-    KD_FAMILIES.forEach(function (f) {
-        KD_COLORS.forEach(function (k) { p('keydown', 'kd-' + f[0] + '-' + k.id, k.name + ' ' + f[1], f[2] + ' ' + k.id, f[3](k)); });
-    });
-    var mixw = function (k, pct) { return 'color-mix(in srgb, ' + k.c + ' ' + pct + '%, #ffffff)'; };
-    var BAR = function (k) { return 'linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.14) 48%, transparent 52%), linear-gradient(180deg, ' + k.l + ' 18%, ' + k.c + ' 82%)'; };
-    var SKILL_STYLES = [
-        ['strip', 'Highlighter', 'highlight strip marker gel', function (k) { return 'background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0) 50%), ' + mixw(k, 42) + '; border-top: 2px solid ' + k.e + '; border-bottom: 2px solid ' + k.e + '; padding: 0 3px; border-radius: 0;'; }],
-        ['underline', 'Gel Underline', 'underline gel bar', function (k) { return 'background: ' + BAR(k).replace(/\), linear/, ') left bottom / 100% 0.32em no-repeat, linear') + ' left bottom / 100% 0.32em no-repeat; padding: 0 2px 0.22em; border-radius: 0;'; }],
-        ['strike', 'Gel Strikethrough', 'strikethrough strike gel bar', function (k) { return 'background: ' + BAR(k).replace(/\), linear/, ') left 58% / 100% 0.3em no-repeat, linear') + ' left 58% / 100% 0.3em no-repeat; text-decoration: line-through 0.18em ' + k.e + '; padding: 0 2px; border-radius: 0;'; }],
-        ['box', 'Gel Box', 'box outline rounded gel', function (k) { return 'background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.12) 48%, rgba(255, 255, 255, 0) 52%), linear-gradient(180deg, ' + mixw(k, 34) + ' 0%, ' + mixw(k, 12) + ' 100%); border: 2px solid ' + k.e + '; border-radius: 9px; padding: 0 5px; box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.85);'; }],
-        ['brackets', 'Corner Brackets', 'corner brackets viewfinder', function (k) { var g = 'linear-gradient(' + k.e + ', ' + k.e + ')'; return 'background: ' + [g + ' left top / 0.55em 2.5px', g + ' left top / 2.5px 0.55em', g + ' right top / 0.55em 2.5px', g + ' right top / 2.5px 0.55em', g + ' left bottom / 0.55em 2.5px', g + ' left bottom / 2.5px 0.55em', g + ' right bottom / 0.55em 2.5px', g + ' right bottom / 2.5px 0.55em'].join(', ') + ', ' + mixw(k, 10) + '; background-repeat: no-repeat; padding: 0 7px; border-radius: 2px;'; }],
-        ['select', 'Gel Select', 'select selection bold gel', function (k) { return 'background: linear-gradient(180deg, ' + k.c + ' 0%, transparent 100%); color: color-mix(in srgb, ' + k.c + ' 30%, #000000); font-weight: 800; padding: 0.05em 0.25em; border-radius: 10px;'; }]
-    ];
-    SKILL_STYLES.forEach(function (st) {
-        KD_COLORS.forEach(function (k) { p('hlskill', 'hls-' + st[0] + '-' + k.id, k.name + ' ' + st[1], st[2] + ' ' + k.id + ' highlight skill', st[3](k)); });
     });
 
     return list;

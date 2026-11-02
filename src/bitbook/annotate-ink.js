@@ -23,7 +23,7 @@
     // each ink's base width at Medium
     // Theme Packs: each pack is a set of ink styles, and every style is drawn in the color you pick
     const PACKS = [
-        ['aero', 'Frutiger Aero', [['aero-tube', 'Glass Tube'], ['aero-bubbles', 'Bubble Trail'], ['aero-aurora', 'Aurora'], ['aero-sky', 'Sky Gloss']]],
+        ['aero', 'Frutiger Aero', [['aero-tube', 'Glass Tube'], ['aero-bubbles', 'Bubble Trail'], ['aero-aurora', 'Aurora'], ['aero-sky', 'Aero Chip']]],
         ['pool', 'Poolside', [['pool-water', 'Water'], ['pool-tile', 'Swirl Lolly'], ['pool-rope', 'Refraction'], ['pool-ripple', 'Reflection Shine']]],
         ['vapor', 'Vaporwave', [['vapor-glow', 'Glow'], ['vapor-grid', 'Retro Grid'], ['vapor-chrome', 'Chrome'], ['vapor-sunset', 'Sunset Bands']]],
         ['candy', 'Candy Shop', [['candy-stripe', 'Peppermint'], ['candy-sprinkles', 'Sprinkles'], ['candy-gummy', 'Gummy'], ['candy-ribbon', 'Ribbon']]],
@@ -33,7 +33,7 @@
     const STYLE_NAME = {};
     PACKS.forEach((pk) => pk[2].forEach((st) => { STYLE_NAME[st[0]] = [pk[1], st[1], pk[0]]; }));
     const BASE = { gel: 9, pen: 2.6, marker: 18, neon: 3.2, crayon: 6,
-        'aero-tube': 11, 'aero-bubbles': 9, 'aero-aurora': 4, 'aero-sky': 14, 'pool-water': 12, 'pool-tile': 10, 'pool-rope': 9, 'pool-ripple': 10,
+        'aero-tube': 11, 'aero-bubbles': 9, 'aero-aurora': 4, 'aero-sky': 12, 'pool-water': 12, 'pool-tile': 10, 'pool-rope': 9, 'pool-ripple': 10,
         'vapor-glow': 4, 'vapor-grid': 12, 'vapor-chrome': 9, 'vapor-sunset': 10, 'candy-stripe': 9, 'candy-sprinkles': 12, 'candy-gummy': 12, 'candy-ribbon': 9,
         'cosmic-galaxy': 10, 'cosmic-comet': 4, 'cosmic-stars': 10, 'cosmic-nebula': 10, 'metal-foil': 8, 'metal-chain': 8, 'metal-wire': 5, 'metal-rivet': 10,
         // (the first themed inks, still drawn in notes that use them)
@@ -92,9 +92,11 @@
                     dots(d, '#ffffff', w * 0.26, w * 2.3, 0, ' transform="translate(' + (-w * 0.16).toFixed(2) + ' ' + (-w * 0.16).toFixed(2) + ')"');
             case 'aero-aurora':
                 return line(d, c[1], w * 4.5, ' opacity="0.35" filter="url(#ank-glow)"') + line(d, c[3], w * 2.2, ' opacity="0.6" filter="url(#ank-glow-in)"') + line(d, c[1], w * 1.1) + line(d, '#ffffff', w * 0.4, ' opacity="0.9"');
-            case 'aero-sky':
-                return line(d, c[1], w, ' opacity="0.3"') + line(d, c[3], w * 0.6, ' opacity="0.65"') + line(d, '#ffffff', w * 0.16, up(w, 0.18) + ' opacity="0.95"') +
-                    line(d, c[2], w * 0.1, ' transform="translate(0 ' + (w * 0.42).toFixed(2) + ')" opacity="0.55"');
+            case 'aero-sky': // Aero Chip: the Aero Chip (++R+text++) as a pen: shadow, deep border, color melting into a light tint, and a shine along the top
+                return line(d, 'rgba(150,150,150,0.55)', w, ' transform="translate(0 ' + (w * 0.16).toFixed(2) + ')"') + line(d, c[2], w) + line(d, c[1], w * 0.78) +
+                    line(d, c[3], w * 0.18, ' transform="translate(0 ' + (w * 0.26).toFixed(2) + ')" opacity="0.8"') +
+                    // the shine stops short of both ends (pathLength makes the dash a share of the stroke's length)
+                    '<path d="' + d + '" pathLength="100" fill="none" stroke="#ffffff" stroke-width="' + (w * 0.3).toFixed(2) + '" stroke-linecap="round" stroke-dasharray="80 20" stroke-dashoffset="-10"' + up(w, 0.17) + ' opacity="0.8"/>';
             case 'pool-water':
                 return lg('pool', c, [c[1], c[3], c[1]]) + line(d, '#ffffff', w * 1.08, ' opacity="0.9"') + line(d, c[2], w) + line(d, gid('pool', c), w * 0.8) +
                     line(d, '#ffffff', w * 0.12, ' stroke-dasharray="' + n(w * 0.9) + ' ' + n(w * 0.7) + '"' + up(w, 0.15) + ' opacity="0.75"') +
@@ -322,7 +324,13 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
         bar.addEventListener('click', (e) => {
             const b = e.target.closest('button');
             if (!b) return;
-            if (b.dataset.act === 'themes') { themesOpen = !themesOpen; render(); return; }
+            if (b.dataset.act === 'themes') {
+                themesOpen = !themesOpen;
+                // opening the menu shows the pack of the style you are using (after that, the tabs switch freely)
+                if (themesOpen && STYLE_NAME[ink]) pack = STYLE_NAME[ink][2];
+                render();
+                return;
+            }
             if (b.dataset.pack) { pack = b.dataset.pack; render(); return; }
             if (b.dataset.ink) { ink = b.dataset.ink; erasing = false; themesOpen = false; }
             else if (b.dataset.color) { color = b.dataset.color; erasing = false; }
@@ -338,7 +346,6 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
     function render() {
         document.body.classList.toggle('ank-erase', erasing);
         const style = STYLE_NAME[ink];
-        if (style) pack = style[2];
         const cur = PACKS.find((pk) => pk[0] === pack) || PACKS[0];
         bar.innerHTML = '<span class="ank-title">Annotate</span>' +
             '<span class="ank-group" aria-label="Ink">' + INKS.map((k) => '<button type="button" class="ank-btn' + (k[0] === ink && !erasing ? ' on' : '') + '" data-ink="' + k[0] + '" title="' + k[1] + '">' + preview(k[0]) + k[1] + '</button>').join('') +
