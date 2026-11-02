@@ -866,8 +866,10 @@
         if (!canvas.contains(r.startContainer)) return false;
         // the line: the block around the caret, or (text sitting right in the canvas) the run of inline nodes around it
         let block = r.startContainer.nodeType === 1 ? r.startContainer : r.startContainer.parentElement;
-        while (block && block !== canvas && !LINE_BLOCK.test(block.tagName)) block = block.parentElement;
+        // (a table cell is a line of its own: its tags format on their own, and never the whole table at once)
+        while (block && block !== canvas && !LINE_BLOCK.test(block.tagName) && !/^(TD|TH)$/.test(block.tagName)) block = block.parentElement;
         if (!block) return false;
+        const cell = /^(TD|TH)$/.test(block.tagName);
         let nodes;
         if (block === canvas) {
             // (the caret can sit right in the canvas, between its lines: then the line is the node just before it)
@@ -892,11 +894,12 @@
             const inside = (n) => (n.nodeType === 3 ? fenced.has(n) : Array.from(n.childNodes).some(inside));
             if (nodes.some(inside)) return false;
         }
-        // only at the END of the line (an Enter in the middle just splits it, like always)
+        // only at the END of the line (an Enter in the middle just splits it, like always); a table cell is small,
+        // so Enter anywhere in it formats the whole cell
         const rest = document.createRange();
         rest.setStart(r.startContainer, r.startOffset);
         rest.setEndAfter(nodes[nodes.length - 1]);
-        if (rest.toString().replace(/[\s\u200B\u00A0]/g, '') !== '') return false;
+        if (!cell && rest.toString().replace(/[\s\u200B\u00A0]/g, '') !== '') return false;
         // the line itself first: "# Title", "* item", "> quote", ::block{...}, $$math$$... becomes what it says
         let lineEl2 = null;
         const runText = nodes.map((n) => n.textContent).join('').replace(/\u200B/g, '');
@@ -957,7 +960,8 @@
         caret.collapse(true);
         sel.removeAllRanges();
         sel.addRange(caret);
-        return true;
+        // (in a cell the Enter is used up by formatting: no new line inside the cell)
+        return cell ? 'line' : true;
     }
 
     // ::name{your text}: every block takes your own text (| splits a title from its text, or one line from the next)!
@@ -1265,7 +1269,7 @@
             const val = t.nodeValue.replace(/```[\s\S]*?(?:```|$)/g, (x) => ' '.repeat(x.length));
             let m;
             while ((m = re.exec(val))) {
-                const line = (t.parentElement && t.parentElement.closest('div, p, li, h1, h2, h3, blockquote') || t.parentElement || t).textContent.replace(/\s+/g, ' ').trim();
+                const line = (t.parentElement && t.parentElement.closest('td, th, div, p, li, h1, h2, h3, blockquote') || t.parentElement || t).textContent.replace(/\s+/g, ' ').trim();
                 problems.push({ tag: m[0], line: line.slice(0, 90), node: t, start: m.index, end: m.index + m[0].length });
             }
         }

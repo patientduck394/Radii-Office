@@ -590,7 +590,8 @@
                 }
                 canvas.dispatchEvent(new Event('input', { bubbles: true }));
                 try { if (typeof window.autoSaveCanvasContent === 'function') window.autoSaveCanvasContent(); } catch (e) {}
-                // the caret goes into the first cell, ready to type (after the editor has made the cells editable)
+                // the caret goes into the first cell, ready to type (after the editor has made the cells editable);
+                // a label already in it (Column 1) is selected, so typing replaces it
                 setTimeout(() => {
                     const first = table.querySelector('th, td');
                     if (!first) return;
@@ -599,7 +600,7 @@
                         else canvas.focus();
                         const r = document.createRange();
                         r.selectNodeContents(first);
-                        r.collapse(true);
+                        if (!(first.textContent || '').trim()) r.collapse(true);
                         const s = window.getSelection();
                         s.removeAllRanges(); s.addRange(r);
                     } catch (e) {}

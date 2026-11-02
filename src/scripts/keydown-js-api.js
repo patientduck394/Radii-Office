@@ -155,9 +155,10 @@ function editor(el, opts) {
     upgrade(el);
     let lastRange = null, timer = null;
     const changed = () => { clearTimeout(timer); timer = setTimeout(() => { if (typeof opts.onChange === 'function') opts.onChange(toText(el)); }, opts.delay || 250); };
-    const format = () => { try { if (kdDoc.formatLine(el)) { upgrade(el); changed(); } } catch (e) {} };
+    const format = () => { try { const done = kdDoc.formatLine(el); if (done) { upgrade(el); changed(); } return done; } catch (e) { return false; } };
     const onKeydown = (e) => {
-        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) format();
+        // ('line': the formatting already used the Enter, like in a table cell or after a new block: no extra line)
+        if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && format() === 'line') e.preventDefault();
     };
     // Space right after a closing tag formats it, like in Writeout and Bitbook
     const onKeyup = (e) => {
