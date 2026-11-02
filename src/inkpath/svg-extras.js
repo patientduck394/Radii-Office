@@ -121,7 +121,7 @@
     function common(el, obj) {
         if (obj.blend && obj.blend !== 'normal') el.style.mixBlendMode = obj.blend;
         if (obj.flipX || obj.flipY) {
-            const c = getCenter(obj), sx = obj.flipX ? -1 : 1, sy = obj.flipY ? -1 : 1;
+            const bb = shapeBBox(obj), c = { x: bb.x + bb.w / 2, y: bb.y + bb.h / 2 }, sx = obj.flipX ? -1 : 1, sy = obj.flipY ? -1 : 1; // (the middle of what you see, text included)
             const flip = 'translate(' + c.x + ' ' + c.y + ') scale(' + sx + ' ' + sy + ') translate(' + (-c.x) + ' ' + (-c.y) + ')';
             el.setAttribute('transform', ((el.getAttribute('transform') || '') + ' ' + flip).trim());
         }
