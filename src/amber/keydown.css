@@ -2984,3 +2984,105 @@
 .gel-logo-white { --lg-c: #dedede; --lg-l: #ffffff; color: #5c5c5c; text-shadow: none; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18), inset 0 0 0 1px rgba(0, 0, 0, 0.14); }
 .gel-logo-fog { --lg-c: #a8a8a8; --lg-l: #e4e4e4; color: #2e2e2e; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45); }
 .gel-logo-black { --lg-c: #1f1f1f; --lg-l: #707070; }
+
+/* ========================================================
+   GEL ORB COUSINS (=:Y:=text=:Y:=): four relatives of the Gel Orb, in the Orb's 12 colors!
+   Same gel, same crisp edge and ink, in new shapes (the color codes are the Orb's: Y R G C B V P O MG LM AQ SL):
+     =:Y:= Gel Pearl   a round glossy sphere with a bright specular dot
+     =^Y^= Gel Gem     a cut crystal with pointed ends and glassy facets
+     =+Y+= Gel Beacon  a pale pill with a glowing orb bead, like a status light
+     =!Y!= Gel Blob    a soft squishy blob that wobbles like jelly
+   ======================================================== */
+.gel-pearl-chip, .gel-gem-chip, .gel-beacon-chip, .gel-blob-chip {
+  position: relative; isolation: isolate;
+  display: inline-flex !important; align-items: center; justify-content: center;
+  margin: 0 2px; vertical-align: middle; white-space: nowrap;
+  font-family: inherit; font-weight: 800;
+  color: var(--oc-ink, #ffffff); text-shadow: var(--oc-ts, none);
+  transition: background-color 0.35s ease, border-color 0.35s ease;
+}
+.gel-pearl-y, .gel-gem-y, .gel-beacon-y, .gel-blob-y { --oc-hi: #fde047; --oc-lo: #eab308; --oc-edge: #ca8a04; --oc-ink: #451a03; --oc-ts: none; }
+.gel-pearl-r, .gel-gem-r, .gel-beacon-r, .gel-blob-r { --oc-hi: #fca5a5; --oc-lo: #ef4444; --oc-edge: #dc2626; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-g, .gel-gem-g, .gel-beacon-g, .gel-blob-g { --oc-hi: #6ee7b7; --oc-lo: #10b981; --oc-edge: #059669; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-c, .gel-gem-c, .gel-beacon-c, .gel-blob-c { --oc-hi: #67e8f9; --oc-lo: #06b6d4; --oc-edge: #0891b2; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-b, .gel-gem-b, .gel-beacon-b, .gel-blob-b { --oc-hi: #93c5fd; --oc-lo: #3b82f6; --oc-edge: #2563eb; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-v, .gel-gem-v, .gel-beacon-v, .gel-blob-v { --oc-hi: #c084fc; --oc-lo: #9333ea; --oc-edge: #7e22ce; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-p, .gel-gem-p, .gel-beacon-p, .gel-blob-p { --oc-hi: #f472b6; --oc-lo: #db2777; --oc-edge: #be185d; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-o, .gel-gem-o, .gel-beacon-o, .gel-blob-o { --oc-hi: #fb923c; --oc-lo: #ea580c; --oc-edge: #c2410c; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-mg, .gel-gem-mg, .gel-beacon-mg, .gel-blob-mg { --oc-hi: #f472b6; --oc-lo: #e11d48; --oc-edge: #be123c; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-lm, .gel-gem-lm, .gel-beacon-lm, .gel-blob-lm { --oc-hi: #a3e635; --oc-lo: #65a30d; --oc-edge: #4d7c0f; --oc-ink: #1a2e05; --oc-ts: none; }
+.gel-pearl-aq, .gel-gem-aq, .gel-beacon-aq, .gel-blob-aq { --oc-hi: #22d3ee; --oc-lo: #0891b2; --oc-edge: #0e7490; --oc-ink: #ffffff; --oc-ts: 0 1px 2px rgba(0, 0, 0, 0.35); }
+.gel-pearl-sl, .gel-gem-sl, .gel-beacon-sl, .gel-blob-sl { --oc-hi: #e2e8f0; --oc-lo: #94a3b8; --oc-edge: #475569; --oc-ink: #1e293b; --oc-ts: none; }
+
+/* Gel Pearl: a full sphere, lit from the top left */
+.gel-pearl-chip {
+  padding: 2px 13px; border-radius: 999px;
+  border: 2px solid var(--oc-edge, #2563eb);
+  background: radial-gradient(130% 150% at 50% 6%, var(--oc-hi, #93c5fd) 0%, var(--oc-lo, #3b82f6) 66%, color-mix(in srgb, var(--oc-lo, #3b82f6) 80%, black) 100%);
+  box-shadow: inset 0 -4px 6px rgba(0, 0, 0, 0.18), inset 0 1px 1px rgba(255, 255, 255, 0.55), 0 3px 6px rgba(0, 0, 0, 0.14);
+}
+.gel-pearl-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 11%; top: 8%; width: 30%; height: 38%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.45) 55%, rgba(255, 255, 255, 0) 100%);
+  transform: rotate(-12deg);
+}
+.gel-pearl-chip::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 24%; right: 24%; bottom: 2px; height: 3px; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+/* Gel Gem: a hexagon cut like a gemstone, an edge-colored shape with the gel set inside it */
+.gel-gem-chip {
+  padding: 3px 18px; background: var(--oc-edge, #2563eb);
+  clip-path: polygon(9px 0, calc(100% - 9px) 0, 100% 50%, calc(100% - 9px) 100%, 9px 100%, 0 50%);
+}
+.gel-gem-chip::before {
+  content: ''; position: absolute; z-index: -2; pointer-events: none; inset: 2px;
+  background: linear-gradient(180deg, var(--oc-hi, #93c5fd) 0%, var(--oc-lo, #3b82f6) 100%);
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%);
+}
+.gel-gem-chip::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; inset: 2px;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.55) 22%, rgba(255, 255, 255, 0) 22.5%),
+    linear-gradient(245deg, rgba(0, 0, 0, 0.12) 0%, rgba(0, 0, 0, 0.12) 20%, rgba(0, 0, 0, 0) 20.5%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0.28) 42%, rgba(255, 255, 255, 0) 42.5%);
+  clip-path: polygon(8px 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 8px 100%, 0 50%);
+}
+
+/* Gel Beacon: a pale pill with the orb itself glowing at the front */
+.gel-beacon-chip {
+  gap: 7px; padding: 2px 12px 2px 8px; border-radius: 999px;
+  border: 2px solid var(--oc-edge, #2563eb);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--oc-hi, #93c5fd) 32%, white) 0%, color-mix(in srgb, var(--oc-hi, #93c5fd) 12%, white) 100%);
+  color: color-mix(in srgb, var(--oc-edge, #2563eb) 55%, black); text-shadow: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.07), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+.gel-beacon-chip::before {
+  content: ''; flex: none; width: 0.78em; height: 0.78em; border-radius: 50%;
+  border: 1.5px solid var(--oc-edge, #2563eb);
+  background: radial-gradient(circle at 34% 28%, #ffffff 0%, var(--oc-hi, #93c5fd) 30%, var(--oc-lo, #3b82f6) 100%);
+  box-shadow: 0 0 7px color-mix(in srgb, var(--oc-lo, #3b82f6) 75%, transparent), inset 0 -1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* Gel Blob: soft and squishy, always very slightly wobbling */
+.gel-blob-chip {
+  padding: 3px 15px; border: 2px solid var(--oc-edge, #2563eb);
+  border-radius: 58% 42% 55% 45% / 62% 48% 52% 38%;
+  background: linear-gradient(170deg, var(--oc-hi, #93c5fd) 0%, var(--oc-lo, #3b82f6) 100%);
+  box-shadow: inset 0 2px 2px rgba(255, 255, 255, 0.55), inset 0 -3px 5px rgba(0, 0, 0, 0.14), 0 3px 6px rgba(0, 0, 0, 0.12);
+  animation: gel-blob-wobble 5s ease-in-out infinite;
+}
+.gel-blob-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 14%; top: 10%; width: 24%; height: 26%; border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7); filter: blur(0.5px);
+}
+@keyframes gel-blob-wobble {
+  0%, 100% { border-radius: 58% 42% 55% 45% / 62% 48% 52% 38%; transform: scale(1, 1); }
+  33% { border-radius: 46% 54% 44% 56% / 50% 60% 40% 50%; transform: scale(1.02, 0.97); }
+  66% { border-radius: 52% 48% 60% 40% / 40% 52% 48% 60%; transform: scale(0.98, 1.03); }
+}
+@media (prefers-reduced-motion: reduce) { .gel-blob-chip { animation: none; } }

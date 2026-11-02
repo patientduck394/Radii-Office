@@ -340,6 +340,7 @@
             { name: 'Bubble Chip cousins', cats: cats([['Bubble Chips  #color#text#', cls(/^gel-bubble-chip /)], ['Gloss Pills  %color%text%', cls(/^gel-pill-chip /)], ['Gel Flags  #%color%text%', cls(/^gel-flag-chip /)],
                 ['Gel Tabs  #^color^text^', cls(/^gel-tab-chip /)], ['Gel Drops  #+color+text+', cls(/^gel-drop-chip /)], ['Gel Splits  #:color:text:', cls(/^gel-split-chip /)],
                 ['Gel Lenses  #;color;text;', cls(/^gel-lens-chip /)], ['Gel Speech  ^^color^text^^', cls(/^gel-speech-chip /)], ['Aero Chips  ++color+text++', cls(/^gel-aero-chip /)], ['Logo Chips  ;;color;text;;', cls(/^gel-logo-chip /)], ['Tag Chips  !#color#text#', cls(/^aero-tag-chip /)]]) },
+            { name: 'Gel Orb cousins', cats: cats([['Gel Pearls  =:color:=text=:color:=', cls(/^gel-pearl-chip /)], ['Gel Gems  =^color^=text=^color^=', cls(/^gel-gem-chip /)], ['Gel Beacons  =+color+=text=+color+=', cls(/^gel-beacon-chip /)], ['Gel Blobs  =!color!=text=!color!=', cls(/^gel-blob-chip /)]]) },
             { name: 'Gel Series  %number%color%text%##', cats: cats(SERIES_NAMES.map((n, i) => [(i + 1) + '. Gel ' + n, cls(new RegExp('^gel-sx-chip gel-sx-' + (i + 1) + ' '))])) },
         ];
     }
