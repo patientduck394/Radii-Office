@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '872e5fb62dde';
+const VERSION = '3a3a36bf13f0';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","6ee7ad9b06"],
@@ -266,7 +266,7 @@ const CORE = [["/","6ee7ad9b06"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
-  ["/opendb/data/index.json","6a1cad20b6"],
+  ["/opendb/data/index.json","f9690c51d7"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/icon-exclamation.png","cb2c7fea56"],
   ["/opendb/data/media/icon-image.png","d86977ba13"],
@@ -321,10 +321,10 @@ const CORE = [["/","6ee7ad9b06"],
   ["/phosphor/phosphor-ui.css?v=20261124","021e6adbab"],
   ["/phosphor/sound.js","96f77f489c"],
   ["/phosphor/styles.css","60a243a650"],
-  ["/product-finder.js?v=20261131o","7c109c67a1"],
-  ["/products.html","43a9811c93"],
+  ["/products.html","da95793480"],
   ["/source.html","ab17f08d54"],
   ["/stats.js?v=20261130","e953c1055a"],
+  ["/svelte/products.js?v=20261201y","943f2bc402"],
   ["/taskra/","c59faa351c"],
   ["/taskra/app.js?v=20261132r","c9477e4ff1"],
   ["/taskra/apple-touch-icon.png","b1c1c44984"],

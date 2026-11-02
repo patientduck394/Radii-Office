@@ -295,37 +295,7 @@
             transition: all 0.2s ease;
         }
         .download-btn:hover { box-shadow: 0 6px 18px rgba(5, 130, 255, 0.5); transform: translateY(-2px); }
-        .download-btn:focus-visible, .os-btn:focus-visible, .dl-close:focus-visible { outline: 2px solid #9eddff; outline-offset: 2px; }
-        .dl-dialog {
-            width: min(520px, calc(100vw - 32px));
-            box-sizing: border-box;
-            padding: 22px;
-            border: 2px solid rgba(5, 147, 255, 0.5);
-            border-radius: 16px;
-            background: linear-gradient(180deg, #06293a 0%, #021521 100%);
-            color: #ffffff;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 0 30px rgba(5, 130, 255, 0.25);
-        }
-        .dl-dialog::backdrop { background: rgba(0, 10, 18, 0.7); backdrop-filter: blur(4px); }
-        .dl-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .dl-head h3 { margin: 0; font-size: 1.2rem; }
-        .dl-close {
-            background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(158, 221, 255, 0.5); border-radius: 8px;
-            color: #ffffff; font: inherit; font-weight: 800; padding: 4px 10px; cursor: pointer;
-        }
-        .dl-sub { margin: 8px 0 14px; font-size: 0.85rem; color: #bae6fd; }
-        .os-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
-        .os-btn {
-            display: flex; flex-direction: column; align-items: flex-start; gap: 2px; text-align: left;
-            padding: 10px 12px; border-radius: 10px; cursor: pointer; font: inherit; color: #ffffff;
-            background: linear-gradient(180deg, #5e9cff 0%, #0582ff 100%); border: 1px solid #9eddff;
-            box-shadow: 0 4px 12px rgba(5, 130, 255, 0.35); transition: all 0.2s ease;
-        }
-        .os-btn:hover:not(:disabled) { box-shadow: 0 6px 18px rgba(5, 130, 255, 0.7); transform: translateY(-2px); }
-        .os-btn:disabled { cursor: not-allowed; background: rgba(255, 255, 255, 0.06); border-color: rgba(158, 221, 255, 0.25); box-shadow: none; color: #94a3b8; }
-        .os-name { font-weight: 800; font-size: 0.9rem; }
-        .os-note { font-size: 0.72rem; opacity: 0.85; }
-        .dl-status { min-height: 1.2em; margin: 12px 0 0; font-size: 0.8rem; color: #bae6fd; }
+        .download-btn:focus-visible { outline: 2px solid #9eddff; outline-offset: 2px; }
     </style>
     <script src="/offline.js?v=20261132g" defer></script>
 </head>
@@ -654,105 +624,7 @@
         </details>
     </main>
 
-    <!-- Download popup: pick your operating system to get the desktop app! -->
-    <dialog id="dl-dialog" class="dl-dialog" aria-labelledby="dl-title">
-        <div class="dl-head">
-            <h3 id="dl-title">Download</h3>
-            <button type="button" class="dl-close" id="dl-close" aria-label="Close">X</button>
-        </div>
-        <p class="dl-sub">Pick your operating system to download the latest desktop app!</p>
-        <div class="os-grid" id="dl-os-grid"></div>
-        <p class="dl-status" id="dl-status" aria-live="polite"></p>
-    </dialog>
-
-    <script>
-        (function () {
-            // Where each desktop build lives! A string is a download link; anything else
-            // is a note saying why that build isn't here yet (its button is disabled)!
-            // Every app's desktop build lives in the "desktop" release on GitHub (built by the workflow in desktop/workflow/)!
-            var NOT_BUILT = 'Coming soon!';
-            var RELEASE = 'https://github.com/patientduck394/Radii-Office/releases/download/desktop/';
-            var APPS = {"inkpath": "Inkpath", "mainkey": "Mainkey", "imbuer": "Imbuer", "writeout": "Writeout", "amber": "Amber", "omicron": "Omicron", "formly": "Formly", "opendb": "OpenDB", "peeker": "Peeker", "cabinet": "Cabinet", "phosphor": "Phosphor", "bitbook": "Bitbook", "hexa": "Hexa", "taskra": "Taskra", "waterflow": "Waterflow"};
-            var FILES = { 'mac-arm': '-macOS-AppleSilicon.dmg', 'mac-intel': '-macOS-Intel.dmg', windows: '-Windows.exe', linux: '-Linux.AppImage' };
-            var DOWNLOADS = {};
-            Object.keys(APPS).forEach(function (id) {
-                var files = {};
-                Object.keys(FILES).forEach(function (k) { files[k] = { url: RELEASE + APPS[id] + FILES[k] }; });
-                DOWNLOADS[id] = { name: APPS[id], files: files };
-            });
-            var SYSTEMS = [
-                ['mac-arm', 'macOS', 'Apple Silicon (M1 and newer)'],
-                ['mac-intel', 'macOS', 'Intel'],
-                ['windows', 'Windows', '10 and 11, 64-bit'],
-                ['linux', 'Linux', 'AppImage, 64-bit']
-            ];
-            var dialog = document.getElementById('dl-dialog');
-            var grid = document.getElementById('dl-os-grid');
-            var status = document.getElementById('dl-status');
-
-            // Which files the release really has (asked once): a button only works when its file is there!
-            var assetsP = null;
-            function releaseFiles() {
-                if (!assetsP) assetsP = fetch('https://api.github.com/repos/patientduck394/Radii-Office/releases/tags/desktop')
-                    .then(function (r) { if (r.status === 404) return new Set(); if (!r.ok) throw new Error(r.status); return r.json().then(function (d) { return new Set((d.assets || []).map(function (a) { return a.name; })); }); })
-                    .catch(function () { return null; }); // (can't ask GitHub right now: offer every link)
-                return assetsP;
-            }
-            function openFor(appId) {
-                var app = DOWNLOADS[appId];
-                if (!app || !dialog) return;
-                releaseFiles().then(function (have) { show(app, have); });
-            }
-            function show(app, have) {
-                document.getElementById('dl-title').textContent = 'Download ' + app.name;
-                status.textContent = '';
-                grid.innerHTML = '';
-                SYSTEMS.forEach(function (sys) {
-                    var file = app.files[sys[0]];
-                    var ready = file && typeof file === 'object' && file.url && (!have || have.has(file.url.split('/').pop()));
-                    if (!ready && file && typeof file === 'object') file = NOT_BUILT;
-                    var btn = document.createElement('button');
-                    btn.type = 'button';
-                    btn.className = 'os-btn';
-                    btn.disabled = !ready;
-                    var nm = document.createElement('span');
-                    nm.className = 'os-name';
-                    nm.textContent = sys[1];
-                    var note = document.createElement('span');
-                    note.className = 'os-note';
-                    note.textContent = ready ? sys[2] : sys[2] + ' · ' + file;
-                    btn.appendChild(nm);
-                    btn.appendChild(note);
-                    btn.setAttribute('aria-label', 'Download ' + app.name + ' for ' + sys[1] + ' ' + sys[2] + (ready ? '' : ' (' + file + ')'));
-                    if (ready) btn.addEventListener('click', function () {
-                        var a = document.createElement('a');
-                        a.href = file.url;
-                        a.download = file.url.split('/').pop();
-                        document.body.appendChild(a);
-                        a.click();
-                        a.remove();
-                        var tip = sys[0].indexOf('mac') === 0 ? ' Drag it to Applications, and the first time, right-click it and pick Open!'
-                            : sys[0] === 'windows' ? ' Run the installer! If SmartScreen warns you, click More info, then Run anyway!'
-                            : ' Make it runnable (chmod +x the file, or tick "Allow executing" in its Properties), then open it!';
-                        status.textContent = 'Downloading ' + app.name + ' for ' + sys[1] + '!' + tip;
-                    });
-                    grid.appendChild(btn);
-                });
-                if (typeof dialog.showModal === 'function') dialog.showModal(); else dialog.setAttribute('open', '');
-            }
-            function close() {
-                if (typeof dialog.close === 'function') dialog.close(); else dialog.removeAttribute('open');
-            }
-            document.querySelectorAll('[data-download-app]').forEach(function (b) {
-                b.addEventListener('click', function () { openFor(b.getAttribute('data-download-app')); });
-            });
-            document.getElementById('dl-close').addEventListener('click', close);
-            // Clicking the dimmed area outside the popup closes it too!
-            dialog.addEventListener('click', function (ev) { if (ev.target === dialog) close(); });
-        })();
-    </script>
-
-    <!-- "Find an app": the search bar and category chips above the cards -->
-    <script src="/product-finder.js?v=20261131o" defer></script>
+    <!-- The "Find an app" bar and the Download popup are Svelte components (sources in /svelte/src)! -->
+    <script src="/svelte/products.js?v=20261201y" defer></script>
 </body>
 </html>

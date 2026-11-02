@@ -1,0 +1,14 @@
+{
+  "name": "radii-office-svelte",
+  "private": true,
+  "type": "module",
+  "description": "The Svelte parts of the Radii Office website (built into ../svelte/products.js)",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "esbuild-svelte": "0.9.5",
+    "svelte": "5.57.2"
+  }
+}
