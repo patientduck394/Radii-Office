@@ -1,5 +1,5 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261201n';
+var BITBOOK_CACHE = 'bitbook-shell-v20261201o';
 var BITBOOK_SHELL = [
   './',
   'index.html',
@@ -30,7 +30,7 @@ var BITBOOK_SHELL = [
   'keydown-doc.js?v=20261201i',
   'annotate-ink.js?v=20261201n',
   'radii-table.js?v=20261201b',
-  'css-presets.js?v=20261005',
+  'css-presets.js?v=20261201o',
   'favicon.svg',
   'favicon-96.png',
   'apple-touch-icon.png',
