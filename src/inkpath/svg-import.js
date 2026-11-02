@@ -188,6 +188,19 @@
         const out = { fillType: f.type, fill: f.color || '#000000ff', fill2: f.color2 || f.color || '#000000ff', fillAngle: f.angle || 0,
             strokeType: s.type === 'none' || !(sw > 0) ? 'none' : s.type, stroke: s.color || '#000000ff', stroke2: s.color2 || s.color || '#000000ff', strokeAngle: s.angle || 0,
             strokeWidth: Math.round(sw * 100) / 100, opacity: Math.round(op * 1000) / 1000, blur: 0, rotation: 0, rx: 0 };
+        // line caps and joins, miter limit, dashes, fill rule, blend mode and paint order
+        const sc = scaleOf(m);
+        if (cs.strokeLinecap && cs.strokeLinecap !== 'butt') out.linecap = cs.strokeLinecap;
+        if (cs.strokeLinejoin && cs.strokeLinejoin !== 'miter' && /^(round|bevel)$/.test(cs.strokeLinejoin)) out.linejoin = cs.strokeLinejoin;
+        const ml = parseFloat(cs.strokeMiterlimit); if (ml && ml !== 4) out.miterlimit = ml;
+        const da = String(cs.strokeDasharray || 'none');
+        if (da !== 'none' && out.strokeType !== 'none') {
+            const parts = da.split(/[\s,]+/).map((v) => parseFloat(v)).filter((v) => isFinite(v) && v >= 0);
+            if (parts.length && parts.some((v) => v > 0)) { out.dashPreset = 'custom'; out.dashCustom = parts.map((v) => Math.round(v * sc * 100) / 100).join(' '); const off = parseFloat(cs.strokeDashoffset); if (off) out.dashOffset = Math.round(off * sc * 100) / 100; }
+        }
+        if (cs.fillRule === 'evenodd') out.fillRule = 'evenodd';
+        if (cs.mixBlendMode && cs.mixBlendMode !== 'normal') out.blend = cs.mixBlendMode;
+        if (/^stroke/.test(cs.paintOrder || '')) out.paintOrder = 'stroke';
         if (f.stops) { out.fillStops = f.stops; if (f.scale !== 1) out.fillScale = f.scale; }
         if (s.stops) out.strokeStops = s.stops;
         return out;
@@ -246,6 +259,14 @@
             for (let k = 2; k + 1 < n.length; k += 2) d += 'L' + n[k] + ' ' + n[k + 1];
             return asPath(d + (t === 'polygon' ? 'Z' : ''));
         }
+        if (t === 'image') {
+            const href = (el.getAttribute('href') || el.getAttributeNS(XL, 'href') || '').trim();
+            const w = len(el, 'width'), h = len(el, 'height');
+            if (!/^data:image\//i.test(href) || !(w > 0 && h > 0) || !axisAligned(m)) return [];
+            const p = apply(m, len(el, 'x'), len(el, 'y')), q = apply(m, len(el, 'x') + w, len(el, 'y') + h);
+            const par = (el.getAttribute('preserveAspectRatio') || 'xMidYMid meet').trim();
+            return [{ type: 'image', x: Math.min(p.x, q.x), y: Math.min(p.y, q.y), width: Math.abs(q.x - p.x), height: Math.abs(q.y - p.y), href: href, aspect: par === 'none' ? 'none' : par, opacity: st.opacity, rotation: 0, blur: 0 }];
+        }
         if (t === 'text') {
             const text = (el.textContent || '').replace(/\s+/g, ' ').trim();
             if (!text) return [];
@@ -262,13 +283,13 @@
 
     /* ---------- Reading the file ---------- */
     const SKIP_IN = 'defs, clipPath, mask, pattern, marker, symbol, linearGradient, radialGradient, filter, metadata, title, desc';
-    const SHAPES = 'path, rect, circle, ellipse, line, polyline, polygon, text';
+    const SHAPES = 'path, rect, circle, ellipse, line, polyline, polygon, text, image';
     function sanitize(root) {
         root.querySelectorAll('script, foreignObject, iframe, object, embed, audio, video, animate, animateTransform, animateMotion, set').forEach((e) => e.remove());
         [root].concat(Array.from(root.querySelectorAll('*'))).forEach((e) => {
             Array.from(e.attributes).forEach((a) => {
                 if (/^on/i.test(a.name)) e.removeAttribute(a.name);
-                else if (/href$/i.test(a.name) && !/^#/.test(a.value.trim())) e.removeAttributeNode(a); // (only links inside the file)
+                else if (/href$/i.test(a.name) && !/^#/.test(a.value.trim()) && !(e.localName === 'image' && /^data:image\/(png|jpe?g|gif|webp|svg\+xml)[;,]/i.test(a.value.trim()))) e.removeAttributeNode(a); // (only links inside the file; pictures stay when they are embedded)
             });
         });
         root.querySelectorAll('style').forEach((s) => { s.textContent = s.textContent.replace(/@import[^;]*;?/gi, '').replace(/url\(\s*["']?(?!#)[^)]*\)/gi, 'none'); });
@@ -326,10 +347,15 @@
                 if (!sc) { skipped++; return; }
                 const m = base.multiply(sc);
                 const st = styleOf(el, win, doc, m);
-                if (st.fillType === 'none' && st.strokeType === 'none' && el.localName !== 'text') return;
-                try { shapesOf(el, m, st, win).forEach((s) => out.push(s)); } catch (e) { skipped++; }
+                if (st.fillType === 'none' && st.strokeType === 'none' && el.localName !== 'text' && el.localName !== 'image') return;
+                try {
+                    const made = shapesOf(el, m, st, win);
+                    // a <title> becomes the shape's name
+                    const ti = Array.from(el.children).find((c) => c.localName === 'title');
+                    if (ti && made.length === 1 && ti.textContent.trim()) made[0].name = ti.textContent.trim().slice(0, 80);
+                    made.forEach((s) => out.push(s));
+                } catch (e) { skipped++; }
             });
-            skipped += root.querySelectorAll('image').length;
             return { shapes: out, skipped: skipped };
         } finally { frame.remove(); }
     }

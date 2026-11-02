@@ -967,7 +967,7 @@ function scaleXYAbout(obj, sx, sy, ax, ay) {
         if (nodes) { obj = Object.assign(obj, { type: 'path', pathMode: 'bezier', nodes }); }
     }
     if (obj.type === 'circle' && !even) { obj.type = 'ellipse'; obj.rx = obj.r; obj.ry = obj.r; delete obj.r; }
-    if (obj.type === 'rect') {
+    if (isRectLike(obj)) {
         const x2 = px(obj.x + obj.width), y2 = py(obj.y + obj.height);
         obj.x = px(obj.x); obj.y = py(obj.y);
         obj.width = Math.max(1, x2 - obj.x); obj.height = Math.max(1, y2 - obj.y);
@@ -1091,9 +1091,12 @@ function createShapeFromDrag(p1, p2) {
     if (newShape) { objects.push(newShape); selectedIndices = [objects.length - 1]; }
 }
 
+// (a picture moves, scales and is measured like a rectangle)
+function isRectLike(o) { return !!o && (o.type === 'rect' || o.type === 'image'); }
+
 function moveObject(obj, dx, dy) {
     if (!obj) return;
-    if (obj.type === 'rect' || obj.type === 'text') { obj.x += dx; obj.y += dy; }
+    if (isRectLike(obj) || obj.type === 'text') { obj.x += dx; obj.y += dy; }
     else if (obj.type === 'circle' || obj.type === 'ellipse' || obj.type === 'polygon' || obj.type === 'star') { obj.cx += dx; obj.cy += dy; }
     else if (obj.type === 'line') { obj.x1 += dx; obj.y1 += dy; obj.x2 += dx; obj.y2 += dy; }
     else if (obj.type === 'path') { obj.nodes.forEach(n => { n.x += dx; n.y += dy; n.cx1 += dx; n.cy1 += dy; n.cx2 += dx; n.cy2 += dy; }); }
@@ -1107,7 +1110,7 @@ function moveObject(obj, dx, dy) {
 
 function scaleObject(obj, s) {
     if (!obj || !isFinite(s) || s <= 0) return;
-    if (obj.type === 'rect') { obj.width *= s; obj.height *= s; }
+    if (isRectLike(obj)) { obj.width *= s; obj.height *= s; }
     else if (obj.type === 'circle' || obj.type === 'polygon' || obj.type === 'star') { obj.r *= s; }
     else if (obj.type === 'ellipse') { obj.rx *= s; obj.ry *= s; }
     else if (obj.type === 'text') { obj.fontSize = Math.round(obj.fontSize * s); }
@@ -1126,9 +1129,9 @@ function scaleObject(obj, s) {
 function scaleObjectAbout(obj, s, cx, cy) {
     if (!obj || !isFinite(s) || s <= 0) return;
     const px = (x) => cx + (x - cx) * s, py = (y) => cy + (y - cy) * s;
-    if (obj.type === 'rect' || obj.type === 'text') {
+    if (isRectLike(obj) || obj.type === 'text') {
         obj.x = px(obj.x); obj.y = py(obj.y);
-        if (obj.type === 'rect') { obj.width *= s; obj.height *= s; }
+        if (isRectLike(obj)) { obj.width *= s; obj.height *= s; }
         else obj.fontSize = Math.max(1, Math.round((obj.fontSize || 28) * s));
     }
     else if (obj.type === 'circle' || obj.type === 'ellipse' || obj.type === 'polygon' || obj.type === 'star') {
@@ -1485,6 +1488,10 @@ function leafPaintFor(obj, idp, mode) {
     } else if (obj.type === 'star') {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
         el.setAttribute('points', buildStarPoints(obj.cx, obj.cy, obj.points || 5, obj.r, obj.r / 2));
+    } else if (obj.type === 'image') {
+        el = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+        el.setAttribute('x', obj.x); el.setAttribute('y', obj.y); el.setAttribute('width', obj.width); el.setAttribute('height', obj.height);
+        el.setAttribute('href', obj.href || ''); el.setAttribute('preserveAspectRatio', obj.aspect || 'none');
     } else if (obj.type === 'text') {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         el.setAttribute('x', obj.x); el.setAttribute('y', obj.y);
@@ -1505,6 +1512,7 @@ function leafPaintFor(obj, idp, mode) {
     el.setAttribute('opacity', obj.opacity !== undefined ? obj.opacity : 1);
     if (filterAttr) el.setAttribute('filter', filterAttr);
     if (obj.rotation) el.setAttribute('transform', `rotate(${obj.rotation} ${getCenter(obj).x} ${getCenter(obj).y})`);
+    if (window.inkpathExtras) window.inkpathExtras.apply(el, obj, String(idp));
     return { el, filterAttr };
 }
 
@@ -1585,6 +1593,7 @@ function renderContainerInto(obj, idp, parent, topIdx) {
     if (obj.rotation) { const c = getCenter(obj); g.setAttribute('transform', `rotate(${obj.rotation} ${c.x} ${c.y})`); }
     const bf = buildFxFilterInto(defs, `fxc-${idp}`, obj.blur, obj.effects);
     if (bf) g.setAttribute('filter', bf);
+    if (window.inkpathExtras) window.inkpathExtras.applyGroup(g, obj);
 
     if (obj.type === 'boolean') {
         const kids = Array.isArray(obj.children) ? obj.children : [];
@@ -1795,6 +1804,10 @@ function render() {
         } else if (obj.type === 'star') {
             el = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
             el.setAttribute('points', buildStarPoints(obj.cx, obj.cy, obj.points || 5, obj.r, obj.r / 2));
+        } else if (obj.type === 'image') {
+            el = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+            el.setAttribute('x', obj.x); el.setAttribute('y', obj.y); el.setAttribute('width', obj.width); el.setAttribute('height', obj.height);
+            el.setAttribute('href', obj.href || ''); el.setAttribute('preserveAspectRatio', obj.aspect || 'none');
         } else if (obj.type === 'text') {
             el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             el.setAttribute('x', obj.x); el.setAttribute('y', obj.y);
@@ -1823,6 +1836,7 @@ function render() {
             el.setAttribute('opacity', obj.opacity !== undefined ? obj.opacity : 1);
             if (filterAttr) el.setAttribute('filter', filterAttr);
             if (obj.rotation) el.setAttribute('transform', `rotate(${obj.rotation} ${getCenter(obj).x} ${getCenter(obj).y})`);
+            if (window.inkpathExtras) window.inkpathExtras.apply(el, obj, String(idx));
             if (selectedIndices.includes(idx)) el.classList.add('shape-selected');
 
             el.onmousedown = (e) => {
@@ -1874,11 +1888,12 @@ function render() {
 
     applyTransform();
     syncInspector();
+    if (window.inkpathExtras) window.inkpathExtras.sync();
 }
 
 function getCenter(obj) {
     if (!obj) return { x: 0, y: 0 };
-    if (obj.type === 'rect' || obj.type === 'text') return { x: obj.x + (obj.width || 50) / 2, y: obj.y + (obj.height || 20) / 2 };
+    if (isRectLike(obj) || obj.type === 'text') return { x: obj.x + (obj.width || 50) / 2, y: obj.y + (obj.height || 20) / 2 };
     if (obj.type === 'circle' || obj.type === 'ellipse' || obj.type === 'polygon' || obj.type === 'star') return { x: obj.cx, y: obj.cy };
     if (obj.type === 'line') return { x: (obj.x1 + obj.x2) / 2, y: (obj.y1 + obj.y2) / 2 };
     if (obj.type === 'path' && obj.nodes.length > 0) return { x: obj.nodes[0].x, y: obj.nodes[0].y };
@@ -1892,7 +1907,7 @@ function getCenter(obj) {
 // Bounding box + silhouette helpers (power boolean ops, clip/mask, node conversion)
 function shapeBBox(obj) {
     if (!obj) return { x: 0, y: 0, w: 10, h: 10 };
-    if (obj.type === 'rect') return { x: obj.x || 0, y: obj.y || 0, w: obj.width || 0, h: obj.height || 0 };
+    if (isRectLike(obj)) return { x: obj.x || 0, y: obj.y || 0, w: obj.width || 0, h: obj.height || 0 };
     if (obj.type === 'circle') { const r = obj.r || 0; return { x: (obj.cx || 0) - r, y: (obj.cy || 0) - r, w: r * 2, h: r * 2 }; }
     if (obj.type === 'ellipse') { const rx = obj.rx || 0, ry = obj.ry || 0; return { x: (obj.cx || 0) - rx, y: (obj.cy || 0) - ry, w: rx * 2, h: ry * 2 }; }
     if (obj.type === 'line') {
@@ -3289,8 +3304,9 @@ function duplicateSelected() {
 function layerNameFor(o, i) {
     if (!o) return `Layer ${i + 1}`;
     if (o.type === 'text') { const t = String(o.text || 'Inkpath'); return `"${t.length > 14 ? t.slice(0, 14) + '…' : t}"`; }
+    if (o.name) return o.name;
     if (o.type === 'path') return `Path (${(o.nodes || []).length} pts)`;
-    if (o.type === 'boolean') return { union: 'Union', subtract: 'Subtract', intersect: 'Intersect', exclude: 'Exclude' }[o.op] || 'Boolean';
+    if (o.type === 'boolean') return { union: 'Union', subtract: 'Subtract', intersect: 'Intersect', exclude: 'Exclude', group: 'Group' }[o.op] || 'Boolean';
     if (o.type === 'clip') return 'Clip group';
     if (o.type === 'mask') return 'Mask group';
     return o.type.charAt(0).toUpperCase() + o.type.slice(1);
