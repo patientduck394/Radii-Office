@@ -2085,8 +2085,20 @@ function exportKeydownFile() {
     }
     yamlConfigBlock += "---\n\n";
 
-    const completePayloadContent = yamlConfigBlock + canvasInnerContentHTML;
-    const dataBlobPayload = new Blob([completePayloadContent], { type: 'text/yaml;charset=utf-8' });
+    // The file is the note as Keydown text (readable anywhere, formatted again when it opens)!
+    let completePayloadContent = yamlConfigBlock + canvasInnerContentHTML;
+    if (window.kdDoc && kdDoc.toFileText) {
+        const meta = {};
+        yamlConfigBlock.split('\n').forEach(function (ln) {
+            const m = ln.match(/^([A-Za-z][\w.-]*):\s*(.*)$/);
+            if (!m || m[1] === 'format') return;
+            let v = m[2].trim();
+            try { v = JSON.parse(v); } catch (e) {}
+            meta[m[1]] = v;
+        });
+        completePayloadContent = kdDoc.toFileText(meta, [{ name: 'Main', html: canvasInnerContentHTML }]);
+    }
+    const dataBlobPayload = new Blob([completePayloadContent], { type: 'text/plain;charset=utf-8' });
     const blobUrl = URL.createObjectURL(dataBlobPayload);
     
     const phantomAnchorLink = document.createElement('a');
@@ -2112,6 +2124,17 @@ function importKeydownFile(inputEvent) {
     const fileReaderInstance = new FileReader();
     fileReaderInstance.onload = function(readEvent) {
         const fullFileStringContent = readEvent.target.result;
+        // Files saved as Keydown text: a file with several tabs shows each tab under its name!
+        if (window.kdDoc && kdDoc.fromFileText && /^\uFEFF?---\r?\n(?:[^\n]*\n)*?format:\s*"keydown-text"/.test(fullFileStringContent)) {
+            kdDoc.fromFileText(fullFileStringContent, 'Main').then(function (doc) {
+                const esc = function (t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+                canvasViewport.innerHTML = doc.tabs.length > 1
+                    ? doc.tabs.map(function (t) { return '<h2 class="header-2">' + esc(t.name) + '</h2>' + t.html; }).join('')
+                    : doc.tabs[0].html;
+                if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+            });
+            return;
+        }
         // OpenDB entries are Keydown text: draw them as a document (title, summary, math, links and all)!
         if (window.kdDoc && kdDoc.isKeydownText(fullFileStringContent)) {
             kdDoc.toEditorHtml(fullFileStringContent).then(function (html) {

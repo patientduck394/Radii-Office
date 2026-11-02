@@ -209,6 +209,11 @@
             const k = notes.order.indexOf(n) + 1;
             return stash('<sup id="ref-' + esc(n) + '"><a href="#fn-' + esc(n) + '" data-scroll>[' + k + ']</a></sup>');
         });
+        // Writeout's toolbar formatting as Keydown: [words]{color=#dc2626 bg=#fde047 font="Georgia" size=24px weight=600}
+        if (window.kdDoc && kdDoc.styleCss) s = s.replace(/\[([^[\]\n]+)\]\{((?:\s*(?:color|bg|font|size|weight)=(?:"[^"\n]*"|[^\s}"]+))+\s*)\}/g, (m, body, attrs) => {
+            const css = kdDoc.styleCss(attrs);
+            return css ? stash('<span style="' + css + '">' + inline(body, notes) + '</span>') : m;
+        });
         const html = typeof window.kdRender === 'function' ? window.kdRender(s) : esc(s);
         return html.replace(/\u0001(\d+)\u0001/g, (_, i) => store[+i]);
     }
@@ -247,6 +252,8 @@
                 continue;
             }
             if (!t) { flush(); continue; }
+            // {align=center} at the start of a line (Writeout's align buttons, saved as Keydown)
+            if ((m = /^\{align=(left|center|right|justify)\}\s*(.*)$/.exec(t))) { flush(); out.push('<p style="text-align: ' + m[1] + '">' + inline(m[2], notes) + '</p>'); continue; }
             if (/^>/.test(t)) {
                 flush();
                 const body = [];

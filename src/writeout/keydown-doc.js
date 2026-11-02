@@ -98,6 +98,58 @@
         return '<' + tag + ' class="kd-math' + (display ? ' kd-math-display' : '') + '" contenteditable="false" data-tex="' + esc(tex) + '" data-display="' + (display ? '1' : '0') + '" title="Double-click to edit this equation!">' + inner + '</' + tag + '>';
     }
 
+    /* ---------- The toolbar's formatting, pictures and files, as Keydown ---------- */
+    // [words]{color=#dc2626 bg=#fde047 font="Georgia" size=24px weight=600}: any of them, in any order
+    const STYLED_RE = /\[([^[\]\n]+)\]\{((?:\s*(?:color|bg|font|size|weight)=(?:"[^"\n]*"|[^\s}"]+))+\s*)\}/g;
+    const STYLE_PROPS = { color: 'color', bg: 'background-color', font: 'font-family', size: 'font-size', weight: 'font-weight' };
+    const COLOR_OK = /^(#[0-9a-f]{3,8}|[a-z]{3,20}|rgba?\(\s*[\d.]+%?\s*,\s*[\d.]+%?\s*,\s*[\d.]+%?\s*(,\s*[\d.]+\s*)?\))$/i;
+    function styleCss(attrs) {
+        const css = [];
+        String(attrs).replace(/(color|bg|font|size|weight)=("([^"\n]*)"|[^\s}"]+)/g, (_, k, raw, quoted) => {
+            const v = (quoted !== undefined ? quoted : raw).trim();
+            const ok = k === 'color' || k === 'bg' ? COLOR_OK.test(v)
+                : k === 'size' ? /^\d+(\.\d+)?(px|pt|em|rem|%)$/.test(v)
+                : k === 'weight' ? /^([1-9]00|bold|normal)$/.test(v)
+                : /^[^;:<>"{}]{1,80}$/.test(v);
+            if (ok) css.push(STYLE_PROPS[k] + ': ' + (k === 'font' ? "'" + v.replace(/'/g, '') + "'" : v));
+            return '';
+        });
+        return esc(css.join('; '));
+    }
+    const hex2 = (n) => Math.max(0, Math.min(255, Math.round(n))).toString(16).padStart(2, '0');
+    // rgb(220, 38, 38) -> #dc2626 (and rgba with its alpha), so saved colors stay short and readable
+    function cssColor(v) {
+        const m = /^rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*(?:,\s*([\d.]+)\s*)?\)$/.exec(String(v).trim());
+        if (!m) return String(v).trim().replace(/\s+/g, '');
+        return '#' + hex2(+m[1]) + hex2(+m[2]) + hex2(+m[3]) + (m[4] !== undefined && +m[4] < 1 ? hex2(+m[4] * 255) : '');
+    }
+    const quoteIf = (v) => (/[\s}"]/.test(v) ? '"' + v.replace(/"/g, '') + '"' : v);
+    // an element's own toolbar styles as {color=... bg=...}, or '' when it has none
+    const FONT_SIZES = { 1: '10px', 2: '13px', 3: '16px', 4: '18px', 5: '24px', 6: '32px', 7: '48px' };
+    function styleAttrs(el) {
+        const out = [];
+        const st = el.style || {};
+        const color = st.color || (el.tagName === 'FONT' && el.getAttribute('color')) || '';
+        const bg = st.backgroundColor || '';
+        const font = (st.fontFamily || (el.tagName === 'FONT' && el.getAttribute('face')) || '').replace(/["']/g, '').trim();
+        const size = st.fontSize || (el.tagName === 'FONT' && FONT_SIZES[el.getAttribute('size')]) || '';
+        const weight = st.fontWeight || '';
+        if (color) out.push('color=' + quoteIf(cssColor(color)));
+        if (bg && !/^(transparent|rgba\(0,\s*0,\s*0,\s*0\))$/.test(bg)) out.push('bg=' + quoteIf(cssColor(bg)));
+        if (font) out.push('font=' + quoteIf(font));
+        if (/^\d+(\.\d+)?(px|pt|em|rem|%)$/.test(size)) out.push('size=' + size);
+        if (/^([1-9]00|bold|normal)$/.test(weight)) out.push('weight=' + weight);
+        return out.length ? '{' + out.join(' ') + '}' : '';
+    }
+    const FILE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" /></svg>';
+    // the same pill Writeout and Bitbook make when you attach a file (its bytes ride along in the attributes)
+    function fileChipHtml(name, type, src, b64) {
+        const size = Math.max(0, Math.floor(String(b64 || '').length * 3 / 4) - (/==$/.test(b64) ? 2 : /=$/.test(b64) ? 1 : 0));
+        const stem = String(name).replace(/\.[a-z0-9]{1,8}$/i, '') || name;
+        return '<span class="file-chip" spellcheck="false" contenteditable="false" data-filename="' + esc(name) + '" data-filetype="' + esc(type) + '" data-filesize="' + size +
+            '" data-filedata="' + esc(src) + '"><span>' + FILE_ICON + '</span><span class="file-chip-name">' + esc(stem) + '</span></span>';
+    }
+
     /* ---------- Keydown text -> editor HTML ---------- */
     // opts: { title(id) -> a title for [[id]] links, media(id) -> an image address or null, notes: { count } }
     function inline(text, opts) {
@@ -124,9 +176,19 @@
             const n = (opts.notes[slug(label)] = (opts.notes[slug(label)] || 0) + 1);
             return stash('<a class="kd-footnote-ref" id="fnref-' + slug(label) + '-' + n + '" href="#fn-' + slug(label) + '" spellcheck="false">' + esc(label) + '</a>');
         });
+        // pictures and attached files that travel inside the file itself:
+        // ![alt](data:image/png;base64,...){width=240px} and [report.pdf](data:application/pdf;base64,...){file}
+        s = s.replace(/!\[([^\]\n]*)\]\((data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+)\)(?:\{width=(\d+(?:\.\d+)?)px\})?/gi, (_, alt, src, w) =>
+            stash('<span class="img-resize"' + (w ? ' style="width: ' + w + 'px;"' : '') + '><img src="' + src + '" alt="' + esc(alt) + '"></span>'));
+        s = s.replace(/\[([^\]\n]+)\]\((data:([a-z0-9.+-]+\/[a-z0-9.+-]+)?;base64,([A-Za-z0-9+/=]*))\)\{file\}/gi, (_, name, src, type, b64) => stash(fileChipHtml(name, type || '', src, b64)));
         s = s.replace(/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|#)[^)\s]+)\)/g, (_, t, u) => stash('<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t) + '</a>'));
         // Keydown triggers: the inside of each goes through the triggers too, so a highlight can hold bold or a chip!
         const triggers = (str) => {
+            // the toolbar's own formatting: [words]{color=#dc2626 bg=#fde047 font="Georgia" size=24px weight=600}
+            str = str.replace(new RegExp(STYLED_RE), (m, body, attrs) => {
+                const css = styleCss(attrs);
+                return css ? stash('<span style="' + css + '">\u0002' + triggers(body) + '\u0003</span>') : m;
+            });
             str = str.replace(new RegExp(US_RE), (m, fam, n, body) => (US_FAMS.has(fam) ? stash('<span class="us-chip us-' + fam + ' us-' + fam + '-' + (n || 1) + '" spellcheck="false">\u0002' + triggers(body.trim()) + '\u0003</span>') : m));
             // (a fresh copy each time: the same /g pattern used again inside its own replace would loop forever)
             str = str.replace(new RegExp(HL_RE), (m, k, body, end) => stash('<mark class="an-hl an-hl-' + HL_COLORS.find((x) => x[0] === k)[1] +
@@ -176,10 +238,17 @@
         let list = null;
         const endList = () => { if (list) { out.push('<ul class="bulleted-list">' + list.join('') + '</ul>'); list = null; } };
         for (let i = 0; i < lines.length; i++) {
-            const t = lines[i].trim();
+            let t = lines[i].trim();
             let m;
             const tabs = Math.min(8, (/^\t*/.exec(lines[i]) || [''])[0].length);
-            const ind = (h) => (tabs ? h.replace(/^<(\w+)/, '<$1 style="margin-left: ' + tabs * 2.5 + 'rem"') : h);
+            // {align=center} at the start of a line lines it up like the toolbar's align buttons
+            const am = /^\{align=(left|center|right|justify)\}\s*/.exec(t);
+            const align = am ? am[1] : '';
+            if (am) t = t.slice(am[0].length);
+            const ind = (h) => {
+                const st = (tabs ? 'margin-left: ' + tabs * 2.5 + 'rem;' : '') + (align ? ' text-align: ' + align + ';' : '');
+                return st ? h.replace(/^<(\w+)/, '<$1 style="' + st.trim() + '"') : h;
+            };
             if ((m = /^@@program(?:="((?:[^"\\]|\\.)*)")?=```$/.exec(t))) {
                 endList();
                 const body = [];
@@ -236,8 +305,16 @@
 
     /* ---------- editor HTML -> Keydown text ---------- */
     const BLOCK = /^(P|DIV|H1|H2|H3|H4|H5|H6|UL|OL|LI|BLOCKQUOTE|PRE|FIGURE|TABLE|SECTION|ARTICLE|HR)$/;
+    // Plain words that only look like Keydown (#R#x##, **y**) keep their symbols as themselves when the file opens: \#R\#x\#\#
+    const MAYBE_TAG = /[#*~=%!@^_+;[\]{}$`|\\<>&]/;
+    const unEsc = (h) => h.replace(/<span class="kd-esc">([^<]*)<\/span>/g, '$1');
+    function asPlain(raw) {
+        const t = raw.replace(/\$/g, '\\$');
+        if (!MAYBE_TAG.test(raw) || unEsc(inline(t, { notes: {} })) === esc(raw)) return t;
+        return raw.replace(/[#*~=%!@^_+;[\]{}$`|\\<>&]/g, '\\$&');
+    }
     function inlineText(node) {
-        if (node.nodeType === 3) return node.nodeValue.replace(/​/g, '').replace(/\$/g, '\\$').replace(/ /g, ' ');
+        if (node.nodeType === 3) return asPlain(node.nodeValue.replace(/​/g, '').replace(/ /g, ' '));
         if (node.nodeType !== 1) return '';
         const el = node;
         const kids = () => Array.from(el.childNodes).map(inlineText).join('');
@@ -253,7 +330,18 @@
         if (tag === 'BR') return '\n';
         if (tag === 'IMG') {
             const src = el.getAttribute('src') || '';
-            return /^https:\/\//.test(src) ? '![' + (el.getAttribute('alt') || '') + '](' + src + ')' : '';
+            return /^(https:\/\/|data:image\/[a-z0-9.+-]+;base64,)/i.test(src) ? '![' + (el.getAttribute('alt') || '').replace(/[\]\n]/g, '') + '](' + src + ')' : '';
+        }
+        // a picture you inserted (in its resizable frame): ![alt](data:...){width=240px}
+        if (el.classList.contains('img-resize')) {
+            const img = el.querySelector('img');
+            const pic = img ? inlineText(img) : '';
+            const w = /^(\d+(?:\.\d+)?)px$/.exec((el.style && el.style.width) || '');
+            return pic ? pic + (w ? '{width=' + w[1] + 'px}' : '') : kids();
+        }
+        // an attached file: [report.pdf](data:application/pdf;base64,...){file}
+        if (el.classList.contains('file-chip') && /^data:/.test(el.getAttribute('data-filedata') || '')) {
+            return '[' + (el.getAttribute('data-filename') || 'file').replace(/[\]\n]/g, '') + '](' + el.getAttribute('data-filedata') + '){file}';
         }
         if (tag === 'A') {
             if (el.classList.contains('kd-footnote-ref')) return '[^' + el.textContent.trim() + ']';
@@ -261,7 +349,7 @@
             const id = el.getAttribute('data-kd-link');
             if (id) { const t = el.textContent.trim(); return '[[' + id + (t && t !== id && t !== el.getAttribute('data-kd-auto') ? '|' + t : '') + ']]'; }
             const href = el.getAttribute('href') || '';
-            return /^(https?:|mailto:)/.test(href) ? '[' + kids() + '](' + href + ')' : kids();
+            return /^(https?:|mailto:|#)/.test(href) && !/[\s)]/.test(href) ? '[' + kids() + '](' + href + ')' : kids();
         }
         if (tag === 'STRONG' || tag === 'B') return wrap('**', kids());
         if (tag === 'EM' || tag === 'I') return wrap('*', kids());
@@ -273,8 +361,12 @@
             const style = kdStyle ? kdStyle[0] : (Array.from(el.classList).some((c) => /^an-s-/.test(c)) ? null : '##');
             return code && style ? '#' + code + '#' + kids() + style : kids();
         }
-        // the editor's own line styles (a bullet's or heading's inner span) are part of the line, not a tag
-        if (/^(header-[123]|mega-header|bulleted-list|blockquote-list)$/.test(String(el.className).trim())) return kids();
+        // the editor's own line styles (a bullet's or heading's inner span): a whole line saves as "# ..." (see htmlToText),
+        // one in the middle of a line keeps its tag (~MH~Sample~MH~)
+        if (/^(header-[123]|mega-header|bulleted-list|blockquote-list)$/.test(String(el.className).trim())) {
+            const lt = tag === 'SPAN' ? BY_CLASS.get(classKey(el.className)) : null;
+            return lt ? lt[0] + kids().trim() + lt[1] : kids();
+        }
         if (tag === 'SPAN' && el.classList.contains('us-chip')) {
             const c = Array.from(el.classList).find((k) => /^us-[a-z0-9]+-[1-5]$/.test(k));
             if (c) { const m = /^us-([a-z0-9]+)-([1-5])$/.exec(c); return '@' + m[1] + (m[2] === '1' ? '' : '-' + m[2]) + '@' + kids() + '@'; }
@@ -286,6 +378,9 @@
             const label = el.getAttribute('data-label') || (el.querySelector('span') && !/^(gel-|aero-tag|spark|liquid|glossy|cyber|embossed)/.test(d[3]) ? el.querySelector('span').textContent : el.textContent);
             return d[0] + String(label).replace(/​/g, '').trim() + d[1];
         }
+        // the toolbar's colors, fonts, sizes and weights: [words]{color=#dc2626 font="Georgia"} (line by line, since a style never spans lines)
+        const sa = tag === 'SPAN' || tag === 'FONT' ? styleAttrs(el) : '';
+        if (sa) return kids().split('\n').map((part) => (/[^\s]/.test(part) && !/[[\]]/.test(part) ? part.replace(/^(\s*)([\s\S]*?)(\s*)$/, (_, a, b, c) => a + '[' + b + ']' + sa + c) : part)).join('\n');
         return kids();
     }
     // **x** keeps its spaces outside the markers, so "a **b** c" stays readable
@@ -298,6 +393,18 @@
     const kidsText = (el) => Array.from(el.childNodes).map(inlineText).join('');
 
     // a block's indent step (Writeout and Bitbook indent with a 2.5rem left margin a step)
+    // {align=center} for a line the toolbar centered (or aligned right, or justified)
+    const alignOf = (el) => { const a = (el.style && el.style.textAlign) || el.getAttribute('align') || ''; return /^(center|right|justify)$/.test(a) ? '{align=' + a + '} ' : ''; };
+    // a line the editor styled as a whole (~H1~ makes <div><span class="header-1">...</span></div>)
+    const LINE_SPANS = { 'header-1': '# ', 'header-2': '## ', 'header-3': '### ', 'mega-header': '#### ', 'blockquote-list': '> ', 'bulleted-list': '* ' };
+    function lineSpanOf(el) {
+        const parts = Array.from(el.childNodes).filter((n) => !(n.nodeType === 3 && !n.nodeValue.replace(/\u200B/g, '').trim()) && !(n.nodeType === 1 && n.tagName === 'BR'));
+        const only = parts.length === 1 && parts[0].nodeType === 1 ? parts[0] : null;
+        return only && LINE_SPANS[String(only.className).trim()] ? only : null;
+    }
+    // a plain line that starts like a heading, bullet, quote, block, table, fence or footnote keeps that start as itself
+    const LINE_MARK = /^(#{1,4}\s|\*\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
+    const plainLine = (l) => (LINE_MARK.test(l) ? '\\' + l : l);
     const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && el.style.marginLeft) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
     function htmlToText(html) {
         const box = document.createElement('div');
@@ -328,7 +435,7 @@
             }
             if (/^H[1-6]$/.test(tag)) {
                 const n = el.classList.contains('mega-header') ? 4 : Math.min(3, +tag[1]);
-                push('\t'.repeat(indentOf(el)) + '#'.repeat(n) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
+                push('\t'.repeat(indentOf(el)) + alignOf(el) + '#'.repeat(n) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
                 return;
             }
             if (tag === 'UL' || tag === 'OL') {
@@ -338,7 +445,7 @@
                 });
                 return;
             }
-            if (tag === 'BLOCKQUOTE') { push('\t'.repeat(indentOf(el)) + '> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
+            if (tag === 'BLOCKQUOTE') { push('\t'.repeat(indentOf(el)) + alignOf(el) + '> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
             if (tag === 'TABLE') {
                 flush();
                 const rows = Array.from(el.rows);
@@ -360,9 +467,16 @@
                 flush();
                 const hasBlocks = Array.from(el.children).some((c) => BLOCK.test(c.tagName) || c.classList.contains('kd-math-display') || c.hasAttribute('data-kd-media') || c.classList.contains('bl-prog'));
                 if (hasBlocks) { Array.from(el.childNodes).forEach(walk); flush(); return; }
+                const ls = lineSpanOf(el);
+                if (ls) { lines.push((LINE_SPANS[String(ls.className).trim()] === '* ' ? '' : '\t'.repeat(indentOf(el)) + alignOf(el)) + LINE_SPANS[String(ls.className).trim()] + kidsText(ls).replace(/\n+/g, ' ').trim()); return; }
                 const t = kidsText(el).replace(/\s+$/, '');
                 if (t.trim() === '') lines.push('');
-                else t.split('\n').forEach((l) => lines.push('\t'.repeat(indentOf(el)) + l.trim()));
+                else {
+                    // (only a line that starts with typed words: a template or chip at the start is real Keydown)
+                    const first = Array.from(el.childNodes).find((n) => !(n.nodeType === 3 && !n.nodeValue.trim()));
+                    const typed = !!first && first.nodeType === 3;
+                    t.split('\n').forEach((l, k) => lines.push(l.trim() ? '\t'.repeat(indentOf(el)) + alignOf(el) + (typed || k > 0 ? plainLine(l.trim()) : l.trim()) : ''));
+                }
                 return;
             }
             cur += inlineText(el);
@@ -462,6 +576,94 @@
         if (!entry.summary && doc.meta.note_info) entry.summary = String(doc.meta.note_info).split('\n')[0].slice(0, 300);
         entry.body = htmlToText(box.innerHTML);
         return entry;
+    }
+
+    /* ---------- Writeout + Bitbook files, written as Keydown text ---------- */
+    // A file is a short front matter (format: "keydown-text", page size, ...) and then the document as Keydown text!
+    // Each extra tab starts with a ::tab{name="Notes"} line. Loading turns the text back into formatting.
+    const TAB_LINE = /^::tab\{name="((?:[^"\\]|\\.)*)"\}$/;
+    // the app's own settings (everything else in a front matter is an OpenDB entry's details)
+    const OWN_KEYS = /^(format|app|exported_at|page_size|page_orientation|doc_password|note_info|infobox)$/;
+    // An OpenDB entry opened in the editor keeps its title, summary, abstract and details (infobox, tags...) in hidden
+    // markers: they go back into the front matter, so the entry saves and opens as itself!
+    function entryHead(html, meta) {
+        if (!/data-kd-(meta|title|summary|abstract)/.test(html)) return html;
+        const box = document.createElement('div');
+        box.innerHTML = html;
+        const metaEl = box.querySelector('.kd-meta[data-kd-meta]');
+        if (metaEl) {
+            try {
+                const m = JSON.parse(metaEl.getAttribute('data-kd-meta')) || {};
+                Object.keys(m).forEach((k) => { if ((!OWN_KEYS.test(k) || k === 'infobox') && !(k in meta)) meta[k] = m[k]; });
+            } catch (e) {}
+            metaEl.remove();
+        }
+        const t = box.querySelector('[data-kd-title]');
+        if (t) { meta.title = clean(t.textContent); t.remove(); }
+        const su = box.querySelector('[data-kd-summary]');
+        if (su) { meta.summary = clean(su.textContent); const gap = su.nextElementSibling; su.remove(); if (gap && gap.tagName === 'DIV' && !gap.textContent.trim() && !gap.querySelector('img')) gap.remove(); }
+        const ab = box.querySelector('[data-kd-abstract]');
+        if (ab) { meta.abstract = clean(ab.textContent); ab.remove(); }
+        return box.innerHTML;
+    }
+    // the front matter's lines: "quoted" text, [lists] and infobox.Name lines
+    function metaLines(meta) {
+        let out = '';
+        Object.keys(meta || {}).forEach((k) => {
+            const v = meta[k];
+            if (v === undefined || v === null || v === '' || !/^[A-Za-z][\w .-]*$/.test(k) || k === 'format') return;
+            if (k === 'infobox' && typeof v === 'object') { Object.keys(v).forEach((n) => { if (/^[^:\n]+$/.test(n) && v[n] !== '') out += 'infobox.' + n + ': ' + JSON.stringify(String(v[n])) + '\n'; }); return; }
+            if (Array.isArray(v)) { out += k + ': [' + v.map((x) => String(x).replace(/[,[\]\n]/g, ' ').trim()).join(', ') + ']\n'; return; }
+            if (typeof v === 'object') return;
+            out += k + ': ' + JSON.stringify(String(v)) + '\n';
+        });
+        return out;
+    }
+    function toFileText(meta, tabs) {
+        meta = Object.assign({}, meta || {});
+        const list = (tabs || []).filter(Boolean).map((t, i) => (i === 0 ? Object.assign({}, t, { html: entryHead(t.html || '', meta) }) : t));
+        const head = '---\nformat: "keydown-text"\n' + metaLines(meta) + '---\n\n';
+        if (list.length <= 1) return head + htmlToText(list[0] ? list[0].html : '') + '\n';
+        return head + list.map((t) => '::tab{name=' + JSON.stringify(String(t.name || 'Tab')) + '}\n' + htmlToText(t.html || '')).join('\n\n') + '\n';
+    }
+    // The other way: { meta, tabs: [{ name, html }] }, ready for the editor (firstName names a file without tabs)
+    function fromFileText(fileText, firstName) {
+        const doc = parse(fileText);
+        const parts = [];
+        let cur = null;
+        doc.body.split('\n').forEach((ln) => {
+            const m = TAB_LINE.exec(ln.trim());
+            if (m) {
+                let name = m[1];
+                try { name = JSON.parse('"' + m[1] + '"'); } catch (e) {}
+                cur = { name: name, lines: [] };
+                parts.push(cur);
+                return;
+            }
+            if (!cur) { cur = { name: firstName || 'Main', lines: [] }; parts.push(cur); }
+            cur.lines.push(ln);
+        });
+        // (text before the first ::tab line is only kept when there is some)
+        if (parts.length > 1 && parts[0].name === (firstName || 'Main') && !TAB_LINE.test(doc.body.split('\n')[0].trim()) && !parts[0].lines.join('').trim()) parts.shift();
+        if (!parts.length) parts.push({ name: firstName || 'Main', lines: [] });
+        const needIndex = /\[\[|media:/.test(doc.body);
+        return (needIndex ? opendbIndex() : Promise.resolve({ entries: [] })).then((index) => {
+            const byId = new Map((index.entries || []).map((e) => [e.id, e]));
+            const opts = {
+                title: (id) => (byId.get(id) || {}).title,
+                media: (id) => { const e = byId.get(id); return e && e.file ? OPENDB + 'data/' + e.file : null; },
+            };
+            // an OpenDB entry's title, summary and details come back at the top, like when it was first opened
+            const meta = doc.meta;
+            const keep = {};
+            Object.keys(meta).forEach((k) => { if (!OWN_KEYS.test(k)) keep[k] = meta[k]; });
+            if (Object.keys(meta.infobox || {}).length) keep.infobox = meta.infobox;
+            const top = (Object.keys(keep).length ? '<div class="kd-meta" hidden data-kd-meta="' + esc(JSON.stringify(keep)) + '"></div>' : '') +
+                (meta.title ? '<h1 class="header-1" data-kd-title="1">' + esc(meta.title) + '</h1>' : '') +
+                (meta.summary ? '<div data-kd-summary="1"><em>' + esc(meta.summary) + '</em></div><div><br></div>' : '') +
+                (meta.abstract ? '<blockquote class="blockquote-list" data-kd-abstract="1">' + esc(meta.abstract) + '</blockquote>' : '');
+            return { meta: meta, tabs: parts.map((p, i) => ({ name: p.name, html: (i === 0 ? top : '') + textToHtml(p.lines.join('\n').replace(/^\n+|\n+$/g, ''), opts) })) };
+        });
     }
 
     /* ---------- Enter at the end of a line: every Keydown tag on it becomes its formatting, in place ---------- */
@@ -1214,5 +1416,5 @@
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, HL_COLORS };
+    root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, toFileText, fromFileText, styleCss, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);

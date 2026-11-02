@@ -1746,3 +1746,13 @@ Smaller packs that each add one style:
 * **Footnotes**: `[^1]` adds a numbered note, and a line starting with `[^1]:` gives its text.
 * **Links**: in OpenDB, `[[entry-name]]` links to another entry, and `[[entry-name|other words]]` changes the words shown.
 * **Templates**: in OpenDB, notices like `{{stub}}` and `{{citation needed}}` mark entries that need work. See the [Templates](#/templates) page.
+
+## Files saved as Keydown
+
+Writeout and Bitbook save their files (.kd and .kn) as Keydown text: a short header with the page size and other settings, then the document itself, readable in any text editor. When a file opens, the text turns back into formatting. A few extra spellings cover what the toolbar makes:
+
+* **Colors, fonts and sizes**: `[words]{color=#dc2626}` colors the words, like [these words]{color=#dc2626}. `bg=` gives a background, like [a marker]{bg=#fde047}, `font="Georgia"` picks a font, `size=24px` a size and `weight=600` a weight. They can be combined: `[big blue words]{color=#2563eb size=20px weight=700}` gives [big blue words]{color=#2563eb size=20px weight=700}.
+* **Alignment**: a line starting with `{align=center}` is centered; `right` and `justify` work too.
+* **Pictures and files**: a picture you inserted is saved right in the file as `![name](data:image/png;base64,...)`, with `{width=240px}` after it when you resized it. An attached file is `[report.pdf](data:application/pdf;base64,...){file}`.
+* **Tabs**: each tab of a document starts with a line like `::tab{name="Ideas"}`.
+* **Plain symbols**: words that only look like Keydown keep their symbols as themselves, with a backslash, like `\#R\#not a highlight\#\#`.

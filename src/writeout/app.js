@@ -2319,6 +2319,40 @@ function kdKeydownPayload(html) {
     return yamlConfigBlock + html;
 }
 
+// The file's settings (app, page size, orientation, password), from the same front matter the old files used!
+function kdFileMeta() {
+    const meta = {};
+    kdKeydownPayload('').split('\n').forEach(function (ln) {
+        const m = ln.match(/^([A-Za-z][\w.-]*):\s*(.*)$/);
+        if (!m || m[1] === 'format') return;
+        let v = m[2].trim();
+        try { v = JSON.parse(v); } catch (e) {}
+        meta[m[1]] = v;
+    });
+    return meta;
+}
+
+// Every tab's contents (the open tab straight from the page)!
+function kdTabsForFile() {
+    return kdTabs.map(function (t) {
+        return { name: t.name, html: (t.id === kdActiveTabId && canvasViewport) ? canvasViewport.innerHTML : (t.html || '') };
+    });
+}
+
+// A file written as Keydown text: its tabs and settings come back, formatted again!
+const KD_TEXT_FILE = /^\uFEFF?---\r?\n(?:[^\n]*\n)*?format:\s*"keydown-text"/;
+function kdLoadKeydownFile(text) {
+    const front = (String(text).match(/^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/) || [])[1] || '';
+    return kdDoc.fromFileText(text, 'Main').then(function (doc) {
+        kdApplyDocSettings(front);
+        canvasViewport.innerHTML = kdRestoreTabs(doc.tabs);
+        kdHydrateInteractions();
+        kdRenderTabs();
+        kdRenderOutline();
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+    });
+}
+
 function exportKeydownFile() {
     if (isExporting) return; // Prevent double firing completely!
     isExporting = true;
@@ -2330,8 +2364,12 @@ function exportKeydownFile() {
         if (curTab) curTab.html = canvasViewport.innerHTML;
         if (typeof kdSaveTabs === 'function') kdSaveTabs();
     } catch (e) {}
-    const completePayloadContent = kdKeydownPayload(canvasViewport.innerHTML) + kdTabsFence();
-    const dataBlobPayload = new Blob([completePayloadContent], { type: 'text/yaml;charset=utf-8' });
+    // The file is the document as Keydown text: a short front matter, then the text itself (readable anywhere,
+    // formatted again when it opens)! Every tab comes along, each after a ::tab{name="..."} line!
+    const completePayloadContent = (window.kdDoc && kdDoc.toFileText)
+        ? kdDoc.toFileText(kdFileMeta(), kdTabsForFile())
+        : kdKeydownPayload(canvasViewport.innerHTML) + kdTabsFence();
+    const dataBlobPayload = new Blob([completePayloadContent], { type: 'text/plain;charset=utf-8' });
     kdDownloadBlob(dataBlobPayload, 'canvas_snapshot.kd');
 }
 
@@ -3542,6 +3580,18 @@ function importKeydownFile(inputEvent) {
     const fileReaderInstance = new FileReader();
     fileReaderInstance.onload = function(readEvent) {
         const fullFileStringContent = readEvent.target.result;
+        // Files saved as Keydown text (a password asks first, like before)!
+        if (window.kdDoc && kdDoc.fromFileText && KD_TEXT_FILE.test(fullFileStringContent)) {
+            const front = (fullFileStringContent.match(/^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/) || [])[1] || '';
+            const lockHash = (front.match(/doc_password:\s*"([^"]+)"/) || [])[1];
+            if (lockHash) {
+                kdPendingLock = { hash: lockHash, keydownText: fullFileStringContent };
+                kdShowLockDialog();
+                return;
+            }
+            kdLoadKeydownFile(fullFileStringContent);
+            return;
+        }
         // OpenDB entries are Keydown text: draw them as a document (title, summary, math, links and all)!
         if (window.kdDoc && kdDoc.isKeydownText(fullFileStringContent)) {
             kdDoc.toEditorHtml(fullFileStringContent).then(function (html) {
@@ -5370,6 +5420,7 @@ function kdUnlockAttempt() {
     if (attempt && kdHashPassword(attempt) === kdPendingLock.hash) {
         const pending = kdPendingLock;
         kdHideLockDialog();
+        if (pending.keydownText) { kdLoadKeydownFile(pending.keydownText); return; }
         kdApplyDocSettings(pending.frontGate);
         kdLoadDocContent(pending.afterText);
     } else {
