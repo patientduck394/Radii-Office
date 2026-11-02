@@ -1,5 +1,5 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261202f';
+var BITBOOK_CACHE = 'bitbook-shell-v20261202g';
 var BITBOOK_SHELL = [
   './',
   'index.html',
@@ -11,7 +11,7 @@ var BITBOOK_SHELL = [
   'settings.js?v=20261118',
   'settings.css?v=20261118',
   'block-editor.js?v=20261049',
-  'bitlang.js?v=20261202f',
+  'bitlang.js?v=20261202g',
   'programs.js?v=20261118',
   'image-resize.js?v=20261040',
   'office-shell.js?v=20261132r',
