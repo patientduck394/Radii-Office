@@ -61,7 +61,8 @@ const component = `<!--
 
   Props: value (Keydown text, bindable), html (formatted HTML, bindable), name, required, title, placeholder,
          height, readonly, toolbar (true/false), sound (true/false), onchange(text),
-         compact (true/false), onsubmit({ text, html }), submitLabel ('Post'). The editor itself is there too: bind:this={box} then box.editor() (insertSkill, unformat...).
+         compact (true/false), onsubmit({ text, html }), submitLabel ('Post'), width (compact mode: '420px').
+  Both modes can draw on the text with Bitbook's Annotate inks (✏️), saved with the text as @@ink. The editor itself is there too: bind:this={box} then box.editor() (insertSkill, unformat...).
   Built by scripts/build_keydown_svelte.mjs from the Radii Office site's Keydown sources (Svelte 5).
 -->
 <script module>
@@ -86,6 +87,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
         compact = false,
         onsubmit = undefined,
         submitLabel = 'Post',
+        width = undefined,
         readonly = false,
         toolbar = true,
         sound = true,
@@ -102,6 +104,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     let shown = value;             // the text the canvas holds right now
     let menu = $state('');         // which menu is open: '', 'skills' or 'highlight'
     let unformatted = $state(false);
+    let drawing = $state(false);   // Annotate is on (the ✏️ button lights up)
     let words = $state(0);
 
     const HIGHLIGHTS = [['R', 'red'], ['O', 'orange'], ['Y', 'yellow'], ['L', 'lime'], ['G', 'green'], ['C', 'cyan'], ['B', 'blue'], ['PR', 'purple'], ['PK', 'pink'], ['SL', 'slate']];
@@ -158,6 +161,14 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
         ed.insertHtml('');
     }
     function skill(name) { menu = ''; canvas.focus(); ed.insertSkill(name); }
+    // Annotate: draw on the text with Bitbook's inks; Done (or Esc) on the ink bar goes back to typing
+    function draw() {
+        menu = '';
+        if (!ed || readonly) return;
+        if (drawing && window.AnnotateInk) { window.AnnotateInk.stop(); return; }
+        drawing = true;
+        ed.annotate(() => { drawing = false; });
+    }
     function toggleFormat() {
         if (unformatted) ed.reformat(); else ed.unformat();
         unformatted = !unformatted;
@@ -183,7 +194,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
 <svelte:window onclick={outside} />
 
 {#if compact}
-<div class="kdb kdb-compact" class:readonly style:--kdb-height={boxHeight}>
+<div class="kdb kdb-compact" class:readonly style:--kdb-height={boxHeight} style:--kdb-width={width || '420px'}>
     <div class="kdb-glass">
         <div bind:this={canvas} class="kdb-canvas keydown-doc" contenteditable={readonly ? 'false' : 'true'} role="textbox" aria-multiline="true" aria-label={title} data-placeholder={hint} tabindex="0" onkeydown={onKey} oninput={() => (words = count())}></div>
     </div>
@@ -209,10 +220,12 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
                         {/each}
                         <div class="kdb-menu-label">More</div>
                         <button type="button" class="kdb-item" onmousedown={keep} onclick={() => { menu = ''; ed && ed.insertTable(); }}>▦ Table</button>
+                        <button type="button" class="kdb-item" onmousedown={keep} onclick={draw}>✏️ Draw</button>
                         <button type="button" class="kdb-item" onmousedown={keep} onclick={() => { menu = ''; toggleFormat(); }}>{unformatted ? '✨ Re-format' : '🏷️ Un-format'}</button>
                     </div>
                 {/if}
             </span>
+            <button type="button" class="kdb-btn kdb-pen" title={drawing ? 'Back to typing' : 'Annotate: draw on your text'} aria-label="Annotate" aria-pressed={drawing} onmousedown={keep} onclick={draw}>✏️</button>
             <span class="kdb-gap"></span>
             {#if typeof onsubmit === 'function'}
                 <button type="button" class="kdb-post" disabled={!words} title="Post (Ctrl/Cmd+Enter)" onmousedown={keep} onclick={post}>{submitLabel}</button>
@@ -221,7 +234,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     {/if}
 </div>
 {:else}
-<div class="kdb" class:readonly style:--kdb-height={boxHeight}>
+<div class="kdb" class:readonly style:--kdb-height={boxHeight} style:width={width}>
     <div class="kdb-title">
         <span class="kdb-orb" aria-hidden="true"></span>
         <span class="kdb-name">{title}</span>
@@ -253,6 +266,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
                 {/if}
             </span>
             <button type="button" class="kdb-btn" title="Insert a table" onmousedown={keep} onclick={() => ed && ed.insertTable()}>▦ Table</button>
+            <button type="button" class="kdb-btn kdb-draw" title={drawing ? 'Back to typing' : 'Annotate: draw on your text'} aria-pressed={drawing} onmousedown={keep} onclick={draw}>✏️ Annotate</button>
             <span class="kdb-gap"></span>
             <button type="button" class="kdb-btn" title={unformatted ? 'Turn the tags back into formatting' : 'Show the Keydown tags behind the formatting'} aria-pressed={unformatted} onmousedown={keep} onclick={toggleFormat}>{unformatted ? '✨ Re-format' : '🏷️ Un-format'}</button>
         </div>
@@ -402,7 +416,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     .kdb-hint { opacity: 0.8; }
     .readonly .kdb-canvas { cursor: default; }
     /* ---------- compact mode: a comment / post composer ---------- */
-    .kdb-compact { border-radius: 14px; padding: 3px; box-shadow: 0 6px 16px rgba(3, 105, 161, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95); }
+    .kdb-compact { width: var(--kdb-width, 420px); max-width: 100%; box-sizing: border-box; border-radius: 14px; padding: 3px; box-shadow: 0 6px 16px rgba(3, 105, 161, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95); }
     .kdb-compact::before { height: 16px; border-radius: 13px 13px 50% 50% / 13px 13px 8px 8px; }
     .kdb-compact .kdb-glass { border-radius: 11px; }
     .kdb-compact .kdb-canvas { max-height: 240px; padding: 8px 12px; font-size: 14px; line-height: 1.5; }
@@ -410,6 +424,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     .kdb-compact .kdb-btn { height: 26px; min-width: 28px; padding: 0 7px; font-size: 12px; border-radius: 8px; }
     .kdb-compact .kdb-plus { font-size: 17px; font-weight: 800; line-height: 1; color: #fff; border-color: #6d28d9; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
         background: linear-gradient(180deg, #c4b5fd 0%, #8b5cf6 48%, #7c3aed 52%, #a78bfa 100%); }
+    .kdb-compact .kdb-pen { font-size: 13px; padding: 0 5px; }
     .kdb-menu-up { top: auto; bottom: calc(100% + 6px); max-height: 320px; overflow-y: auto; }
     .kdb-menu-label { font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: #0369a1; padding: 6px 8px 3px; }
     .kdb-swatch-row { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 6px 4px; }

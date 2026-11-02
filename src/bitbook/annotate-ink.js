@@ -324,7 +324,9 @@
     }
 
     /* ---------- the layer in the note ---------- */
-    const ed = () => document.getElementById('wysiwyg-canvas');
+    // the page being drawn on: Bitbook's note, or any element handed to start() (Keydown.js editors, KeydownBox...)
+    let target = null, onStop = null;
+    const ed = () => target || document.getElementById('wysiwyg-canvas');
     function fit(layer) {
         const c = ed();
         if (!c || !layer) return;
@@ -373,11 +375,11 @@
 
     /* ---------- the Annotate bar and drawing ---------- */
     const CSS = `
-#wysiwyg-canvas { position: relative; }
+#wysiwyg-canvas, .ank-target { position: relative; }
 svg.an-ink-layer { position: absolute; left: 0; top: 0; overflow: visible; pointer-events: none; z-index: 5; }
 body.ank-on svg.an-ink-layer { pointer-events: auto; cursor: crosshair; touch-action: none; }
 body.ank-on.ank-erase svg.an-ink-layer { cursor: cell; }
-body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
+body.ank-on #wysiwyg-canvas, body.ank-on .ank-target { user-select: none; -webkit-user-select: none; }
 .ank-bar { position: fixed; z-index: 100000; left: 50%; bottom: calc(44px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px;
   max-width: calc(100vw - 16px); box-sizing: border-box; padding: 8px 12px; border-radius: 16px; font: 600 12px system-ui, sans-serif; color: #3b0764;
   background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(243,232,255,0.95)); border: 1px solid rgba(147,51,234,0.35); box-shadow: 0 10px 30px rgba(59,7,100,0.25); }
@@ -465,7 +467,12 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
             '<button type="button" class="ank-btn" data-act="clear" title="Remove every drawing from this note">Clear</button>' +
             '<button type="button" class="ank-btn ank-done" data-act="done" title="Back to typing (Esc)">Done</button></span>';
     }
-    function start() {
+    // start(): draw on Bitbook's note; start(element, { onStop }) draws on that element instead (onStop runs when you press Done)
+    function start(el, opts) {
+        if (on) stop();
+        // (a different page starts its own undo list)
+        if (el && el.nodeType === 1) { if (el !== start.last) undo = []; start.last = el; target = el; el.classList.add('ank-target'); }
+        onStop = opts && typeof opts.onStop === 'function' ? opts.onStop : null;
         if (!ed()) return;
         buildBar();
         on = true;
@@ -483,6 +490,9 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
         const layer = layerOf(false);
         // an empty layer leaves the note
         if (layer && !strokesOf(layer).length) { layer.remove(); saved(); }
+        const done = onStop;
+        target = null; onStop = null;
+        if (done) { try { done(); } catch (e) {} }
     }
 
     // drawing: points are smoothed as they come, so the line flows
@@ -588,7 +598,7 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
         }
     }
     // (Peeker draws with the same inks: strokeSvg draws one stroke, pathOf smooths points into a path, DEFS holds the filters)
-    window.AnnotateInk = { start: start, stop: stop, layerHtml: layerHtml, strokesOf: strokesOf, strokeSvg: (st) => strokeSvg(clean([st])[0] || st), pathOf: pathOf,
+    window.AnnotateInk = { start: start, stop: stop, isOn: () => on, layerHtml: layerHtml, strokesOf: strokesOf, strokeSvg: (st) => strokeSvg(clean([st])[0] || st), pathOf: pathOf,
         DEFS: DEFS, COLORS: COLORS, INKS: INKS, PACKS: PACKS, BASE: BASE };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire); else wire();
 })();

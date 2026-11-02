@@ -168,6 +168,8 @@ function editor(el, opts) {
         reformat: () => { const r = kdDoc.reformat(el); upgrade(el); changed(); return r; },
         exitFormatting: () => kdDoc.exitFormatting(el),
         // the Insert Table window (rows, columns, header row, style, or a sheet from Imbuer), at the caret
+        // Annotate: draw on the text with Bitbook's inks (Done or Esc goes back to typing); onStop runs when drawing ends
+        annotate: (onStop) => { if (window.AnnotateInk) window.AnnotateInk.start(el, { onStop: () => { changed(); if (typeof onStop === 'function') onStop(); } }); },
         insertTable: () => {
             if (!window.RadiiTable) return;
             el.focus();
