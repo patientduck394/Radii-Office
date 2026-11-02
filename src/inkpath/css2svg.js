@@ -237,9 +237,13 @@
     // -> { main: 'decls', before: 'decls' or null, after: 'decls' or null }
     function parseRules(css) {
         const src = String(css || '').replace(/\/\*[\s\S]*?\*\//g, '');
-        const list = []; // { t: target, d: declarations, spec, n: order }
+        const list = []; // { t: target, d: declarations, spec, rank, n: order }
         const seen = { main: true };
-        const add = function (t, d, spec) { d = String(d).replace(/[{}]/g, '').trim(); seen[t] = true; if (d) list.push({ t: t, d: d, spec: spec, n: list.length }); };
+        // rank, between rules of the same specificity: global defaults (:root, html, body, *) are weakest, then normal
+        // rules, then rules that only set variables (a color/theme rule like .gel-drop-cyan { --c: ... } wins over
+        // the base rule's own variables, in either order)
+        const varsOnly = function (d) { const ds = d.split(';').map(function (x) { return x.trim(); }).filter(Boolean); return ds.length > 0 && ds.every(function (x) { return /^--/.test(x); }); };
+        const add = function (t, d, spec, global) { d = String(d).replace(/[{}]/g, '').trim(); seen[t] = true; if (d) list.push({ t: t, d: d, spec: spec, rank: global ? 0 : varsOnly(d) ? 2 : 1, n: list.length }); };
         function targets(sel, def, base) {
             const out = {};
             splitTop(sel).forEach(function (part) {
@@ -274,13 +278,14 @@
                 i = j;
                 if (/^@/.test(head)) { if (/^@(media|supports|layer|container|scope|document)\b/i.test(head)) walk(body, def, base); continue; }
                 const ts = targets(head, def, base);
-                Object.keys(ts).forEach(function (t) { seen[t] = true; if (/\{/.test(body)) walk(body, t, ts[t]); else add(t, body, ts[t]); });
+                const global = splitTop(head).every(function (x) { return /^\s*(:root|html|body|\*)\s*$/i.test(x); });
+                Object.keys(ts).forEach(function (t) { seen[t] = true; if (/\{/.test(body)) walk(body, t, ts[t]); else add(t, body, ts[t], global); });
             }
             if (pending.trim()) add(def, pending, base);
         }
         walk(src, 'main', 0);
-        // like a browser: the more specific rule wins, and between equals the later one
-        list.sort(function (x, y) { return x.spec - y.spec || x.n - y.n; });
+        // like a browser: the more specific rule wins, and between equals the stronger rank, then the later one
+        list.sort(function (x, y) { return x.spec - y.spec || x.rank - y.rank || x.n - y.n; });
         const join = function (t) { return list.filter(function (e) { return e.t === t; }).map(function (e) { return /;\s*$/.test(e.d) ? e.d : e.d + ';'; }).join('\n'); };
         // a var(--name) that is never set counts as none (so var(--cap), linear-gradient(...) keeps its gradient,
         // where a browser would throw the whole line away)
