@@ -1142,6 +1142,135 @@ async function webkitSafe(root) {
         }
     }
 }
+// Firefox paints every CSS gradient in a snapshot as one flat color (its first one) once the snapshot is drawn
+// 3x or bigger, so gel highlights lost their fade! Pictures still scale fine there, so in Firefox each linear or
+// radial gradient of the throwaway copy is painted on a canvas (4 pixels per CSS pixel) and put back as a PNG
+const FIREFOX = /Firefox\//.test(navigator.userAgent);
+const toRgba = (c) => c.replace(/color\(srgb ([\d.e-]+) ([\d.e-]+) ([\d.e-]+)(?: \/ ([\d.e-]+%?))?\)/g, (_, r, g, b, al) =>
+    'rgba(' + Math.round(r * 255) + ', ' + Math.round(g * 255) + ', ' + Math.round(b * 255) + ', ' + (al === undefined ? 1 : /%$/.test(al) ? parseFloat(al) / 100 : al) + ')');
+// "red 20%", "red 0% 50%", "red" or a bare hint "40%" -> [{ c, p }] (p: a fraction, null when left out; hints are skipped)
+function gradStops(parts, len) {
+    const pos = (v) => /%$/.test(v) ? parseFloat(v) / 100 : parseFloat(v) / len;
+    const stops = [];
+    for (const s of parts) {
+        const m = /^(.*?\))?\s*([^()]*)$/.exec(s.trim());
+        const col = (m && m[1]) || s.trim().split(/\s+/)[0];
+        const rest = (m && m[1] ? m[2] : s.trim().split(/\s+/).slice(1).join(' ')).trim().split(/\s+/).filter(Boolean);
+        if (/^-?[\d.]/.test(col)) continue;
+        if (!rest.length) stops.push({ c: col, p: null });
+        rest.forEach((r) => stops.push({ c: col, p: pos(r) }));
+    }
+    if (!stops.length) return stops;
+    if (stops[0].p === null) stops[0].p = 0;
+    if (stops[stops.length - 1].p === null) stops[stops.length - 1].p = 1;
+    for (let i = 1, last = 0; i < stops.length; i++) {
+        if (stops[i].p === null) continue;
+        for (let j = last + 1; j < i; j++) stops[j].p = stops[last].p + (stops[i].p - stops[last].p) * (j - last) / (i - last);
+        stops[i].p = Math.max(stops[i].p, stops[last].p);
+        last = i;
+    }
+    return stops;
+}
+function paintGradient(layer, w, h) {
+    const m = /^(linear|radial)-gradient\((.*)\)$/.exec(layer.trim());
+    if (!m || w < 1 || h < 1) return null;
+    const S = Math.min(4, 4096 / Math.max(w, h));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w * S)); c.height = Math.max(1, Math.round(h * S));
+    const x = c.getContext('2d');
+    x.scale(c.width / w, c.height / h);
+    let parts = splitTop(toRgba(m[2])), g;
+    if (m[1] === 'linear') {
+        let ang = 180;
+        const first = parts[0];
+        const deg = /^(-?[\d.]+)(deg|turn|rad|grad)$/.exec(first);
+        if (deg) { ang = parseFloat(deg[1]) * ({ deg: 1, turn: 360, rad: 180 / Math.PI, grad: 0.9 })[deg[2]]; parts = parts.slice(1); }
+        else if (/^to /.test(first)) {
+            const d = first.slice(3);
+            const tb = /top/.test(d) ? -1 : /bottom/.test(d) ? 1 : 0, lr = /left/.test(d) ? -1 : /right/.test(d) ? 1 : 0;
+            ang = tb && lr ? (Math.atan2(lr * h, -tb * w) * 180 / Math.PI) : { '0,-1': 0, '1,0': 90, '0,1': 180, '-1,0': 270 }[lr + ',' + tb];
+            parts = parts.slice(1);
+        }
+        const r = ang * Math.PI / 180, sx = Math.sin(r), sy = -Math.cos(r);
+        const L = Math.abs(w * sx) + Math.abs(h * sy);
+        g = x.createLinearGradient(w / 2 - sx * L / 2, h / 2 - sy * L / 2, w / 2 + sx * L / 2, h / 2 + sy * L / 2);
+        gradStops(parts, L).forEach((s) => g.addColorStop(Math.min(1, Math.max(0, s.p)), s.c));
+        x.fillStyle = g;
+        x.fillRect(0, 0, w, h);
+    } else {
+        let cx = w / 2, cy = h / 2, circle = false, size = 'farthest-corner', rx = null, ry = null;
+        const first = parts[0];
+        if (!/^(rgba?|hsla?|#|transparent)/.test(first) && /^(circle|ellipse|closest|farthest|at |-?[\d.])/.test(first)) {
+            parts = parts.slice(1);
+            const [shape, at] = first.split(/\s*\bat\b\s*/);
+            const coord = (v, len) => v === 'left' || v === 'top' ? 0 : v === 'right' || v === 'bottom' ? len : v === 'center' ? len / 2 : /%$/.test(v) ? parseFloat(v) / 100 * len : parseFloat(v);
+            if (at) {
+                let [px, py] = at.trim().split(/\s+/);
+                if (px === 'top' || px === 'bottom') [px, py] = [py || 'center', px];
+                cx = coord(px, w); cy = coord(py || 'center', h);
+            }
+            circle = /circle/.test(shape);
+            const kw = /(closest|farthest)-(side|corner)/.exec(shape);
+            if (kw) size = kw[0];
+            const lens = (shape || '').split(/\s+/).filter((v) => /^-?[\d.]/.test(v));
+            if (lens.length) { rx = /%$/.test(lens[0]) ? parseFloat(lens[0]) / 100 * w : parseFloat(lens[0]); ry = lens[1] ? (/%$/.test(lens[1]) ? parseFloat(lens[1]) / 100 * h : parseFloat(lens[1])) : rx; }
+        }
+        if (rx === null) {
+            const dx = [cx, w - cx], dy = [cy, h - cy];
+            const pick = /closest/.test(size) ? Math.min : Math.max;
+            if (/side/.test(size)) { rx = pick(...dx); ry = pick(...dy); if (circle) rx = ry = pick(rx, ry); }
+            else {
+                const ex = pick(...dx), ey = pick(...dy);
+                if (circle) rx = ry = Math.hypot(ex, ey);
+                else { rx = ex * Math.SQRT2; ry = ey * Math.SQRT2; }
+            }
+        }
+        rx = Math.max(rx, 0.01); ry = Math.max(ry, 0.01);
+        x.translate(cx, cy); x.scale(1, ry / rx);
+        g = x.createRadialGradient(0, 0, 0, 0, 0, rx);
+        gradStops(parts, rx).forEach((s) => g.addColorStop(Math.min(1, Math.max(0, s.p)), s.c));
+        x.fillStyle = g;
+        x.fillRect(-cx, -cy * rx / ry, w, h * rx / ry);
+    }
+    return c.toDataURL('image/png');
+}
+function firefoxSafe(root) {
+    for (const n of [root, ...root.querySelectorAll('*')]) {
+        const cs = getComputedStyle(n);
+        if (!/(^|[\s,])(linear|radial)-gradient\(/.test(cs.backgroundImage)) continue;
+        const rect = n.getClientRects()[0];
+        if (!rect) continue;
+        // the gradient fills the padding box unless background-size says otherwise
+        const bw = rect.width - parseFloat(cs.borderLeftWidth) - parseFloat(cs.borderRightWidth);
+        const bh = rect.height - parseFloat(cs.borderTopWidth) - parseFloat(cs.borderBottomWidth);
+        const sizes = splitTop(cs.backgroundSize), layers = splitTop(cs.backgroundImage);
+        const outSizes = [];
+        n.style.backgroundImage = layers.map((layer, i) => {
+            const sz = (sizes[i % sizes.length] || 'auto').split(/\s+/);
+            outSizes.push(sizes[i % sizes.length] || 'auto');
+            if (!/^(linear|radial)-gradient\(/.test(layer)) return layer;
+            // a length, a percentage or a calc() of them, like calc(100% - 4.1px)
+            const dim = (v, box) => {
+                if (v === undefined || v === 'auto') return box;
+                let t = 0;
+                v.replace(/calc\(|\)/g, '').replace(/\s*([+-])\s+/g, ' $1').split(/\s+/).forEach((term) => {
+                    const n = parseFloat(term);
+                    if (!isNaN(n)) t += /%$/.test(term) ? n / 100 * box : n;
+                });
+                return t;
+            };
+            if (sz[0] === 'cover' || sz[0] === 'contain') sz[0] = sz[1] = 'auto';
+            const w = dim(sz[0], bw), h = dim(sz[1] === undefined ? 'auto' : sz[1], bh);
+            let png = null;
+            try { png = paintGradient(layer, w, h); } catch (e) { png = null; }
+            if (!png) return layer;
+            // an auto size becomes 100% so each line of a wrapped highlight still gets the whole fade
+            if (sz[0] === 'auto' || sz[0] === undefined) outSizes[i] = '100% 100%';
+            return 'url("' + png + '")';
+        }).join(', ');
+        n.style.backgroundSize = outSizes.join(', ');
+    }
+}
 async function rasterText(a) {
     const h2i = await loadH2i();
     const host = document.createElement('div');
@@ -1160,6 +1289,7 @@ async function rasterText(a) {
         const opts = { pixelRatio: 4, skipFonts: true, width: host.offsetWidth, height: host.offsetHeight };
         // WebKit loads the pictures inside a snapshot only after the first one is drawn, so it draws twice
         if (WEBKIT) { await webkitSafe(host); await h2i.toPng(host, opts); }
+        if (FIREFOX) firefoxSafe(host);
         const png = await h2i.toPng(host, opts);
         return { png, w: host.offsetWidth, h: host.offsetHeight, plain: el.innerText };
     } finally { host.remove(); }
