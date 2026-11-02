@@ -24,7 +24,7 @@
     // Theme Packs: each pack is a set of ink styles, and every style is drawn in the color you pick
     const PACKS = [
         ['aero', 'Frutiger Aero', [['aero-tube', 'Glass Tube'], ['aero-bubbles', 'Bubble Trail'], ['aero-aurora', 'Aurora'], ['aero-sky', 'Sky Gloss']]],
-        ['pool', 'Poolside', [['pool-water', 'Water'], ['pool-tile', 'Checker Border'], ['pool-rope', 'Lap Floats'], ['pool-ripple', 'Glitter Water']]],
+        ['pool', 'Poolside', [['pool-water', 'Water'], ['pool-tile', 'Swirl Lolly'], ['pool-rope', 'Refraction'], ['pool-ripple', 'Reflection Shine']]],
         ['vapor', 'Vaporwave', [['vapor-glow', 'Glow'], ['vapor-grid', 'Retro Grid'], ['vapor-chrome', 'Chrome'], ['vapor-sunset', 'Sunset Bands']]],
         ['candy', 'Candy Shop', [['candy-stripe', 'Peppermint'], ['candy-sprinkles', 'Sprinkles'], ['candy-gummy', 'Gummy'], ['candy-ribbon', 'Ribbon']]],
         ['cosmic', 'Cosmic', [['cosmic-galaxy', 'Galaxy'], ['cosmic-comet', 'Comet'], ['cosmic-stars', 'Stars'], ['cosmic-nebula', 'Nebula']]],
@@ -61,8 +61,8 @@
     // a color run for one pack style in one color (defined right in the stroke, so every color gets its own)
     const gid = (k, c) => 'url(#ank-' + k + '-' + c[0] + ')';
     const lg = (k, c, stops, span) => '<defs>' + grad(k + '-' + c[0], stops, span).replace('id="ank-t-', 'id="ank-') + '</defs>';
-    // Poolside 3's pairing: bright orange beside the blue-greens, sparkling aqua beside everything else
-    const partner = (c) => (/^(cyan|teal|turquoise|blue|green|slate)$/.test(c[0]) ? ['#ff7f11', '#ffbf80'] : ['#00c2d6', '#9be9f2']);
+    // a tint of a color: k of the way from it to white
+    const mix = (hex, k) => '#' + [1, 3, 5].map((i) => { const v = parseInt(hex.slice(i, i + 2), 16); return Math.round(v + (255 - v) * k).toString(16).padStart(2, '0'); }).join('');
     const up = (w, k) => ' transform="translate(0 ' + (-w * k).toFixed(2) + ')"';
     // (round ends unless a style asks for its own: a repeated attribute would be ignored, keeping the first)
     const line = (d, color, width, extra) => '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="' + width + '"' +
@@ -99,28 +99,23 @@
                 return lg('pool', c, [c[1], c[3], c[1]]) + line(d, '#ffffff', w * 1.08, ' opacity="0.9"') + line(d, c[2], w) + line(d, gid('pool', c), w * 0.8) +
                     line(d, '#ffffff', w * 0.12, ' stroke-dasharray="' + n(w * 0.9) + ' ' + n(w * 0.7) + '"' + up(w, 0.15) + ' opacity="0.75"') +
                     line(d, '#ffffff', w * 0.08, ' stroke-dasharray="' + n(w * 0.5) + ' ' + n(w * 1.1) + '" stroke-dashoffset="' + n(w * 0.6) + '" transform="translate(0 ' + (w * 0.18).toFixed(2) + ')" opacity="0.6"');
-            // Poolside's other three follow the gallery's Poolside 3 set: the color you pick paired with a pool partner
-            // (bright orange beside the blue-greens, sparkling aqua beside everything else), in tiles, floats and glitter
-            case 'pool-tile': { // Checker Border: a checkerboard band of the two, framed in white
-                const pt = partner(c), sq = n(w * 0.5);
-                return line(d, c[2], w * 1.5, ' stroke-linecap="butt" opacity="0.6"') + line(d, '#ffffff', w * 1.32, ' stroke-linecap="butt"') + line(d, pt[0], w, ' stroke-linecap="butt"') +
-                    line(d, c[1], w * 0.5, ' stroke-linecap="butt" stroke-dasharray="' + sq + ' ' + sq + '"' + up(w, 0.25)) +
-                    line(d, c[1], w * 0.5, ' stroke-linecap="butt" stroke-dasharray="' + sq + ' ' + sq + '" stroke-dashoffset="' + sq + '" transform="translate(0 ' + (w * 0.25).toFixed(2) + ')"');
+            // Poolside's other three take after the gallery's Swirl Lolly, Refraction and Reflection Shine, in your one color
+            case 'pool-tile': { // Swirl Lolly: pale diagonal stripes in tints of the color, with white between, inside a full-color outline
+                const id = 'ank-lolly-' + c[0], t1 = mix(c[1], 0.45), t2 = mix(c[1], 0.22);
+                return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="12" height="12" patternTransform="rotate(-60)">' +
+                    '<rect width="12" height="12" fill="#ffffff"/><rect width="4" height="12" fill="' + t1 + '"/><rect x="6" width="4" height="12" fill="' + t2 + '"/></pattern></defs>' +
+                    line(d, c[1], w * 1.14) + line(d, 'url(#' + id + ')', w * 0.86);
             }
-            case 'pool-rope': { // Lap Floats: a strip of partner water edged with float stripes in your color
-                const pt = partner(c), seg = n(w * 0.55), gap = n(w * 0.2);
-                return line(d, pt[0], w, ' stroke-linecap="butt"') + line(d, pt[1], w * 0.3, ' opacity="0.7"') +
-                    line(d, '#ffffff', w * 0.26, ' stroke-linecap="butt"' + up(w, 0.42)) + line(d, c[1], w * 0.26, ' stroke-linecap="butt" stroke-dasharray="' + seg + ' ' + gap + '"' + up(w, 0.42)) +
-                    line(d, '#ffffff', w * 0.26, ' stroke-linecap="butt" transform="translate(0 ' + (w * 0.42).toFixed(2) + ')"') +
-                    line(d, c[1], w * 0.26, ' stroke-linecap="butt" stroke-dasharray="' + seg + ' ' + gap + '" stroke-dashoffset="' + n(w * 0.37) + '" transform="translate(0 ' + (w * 0.42).toFixed(2) + ')"');
+            case 'pool-rope': { // Refraction: light-to-color water with slanted bands of light crossing it
+                const id = 'ank-refract-' + c[0];
+                return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="46" height="46" patternTransform="rotate(10)">' +
+                    '<rect x="9" width="5" height="46" fill="#ffffff" fill-opacity="0.5"/><rect x="25" width="3" height="46" fill="#ffffff" fill-opacity="0.35"/></pattern></defs>' +
+                    line(d, c[1], w) + line(d, mix(c[1], 0.5), w * 0.55, up(w, 0.2) + ' opacity="0.85"') + line(d, 'url(#' + id + ')', w) +
+                    line(d, c[2], w * 0.12, ' transform="translate(0 ' + (w * 0.42).toFixed(2) + ')" opacity="0.5"');
             }
-            case 'pool-ripple': { // Glitter Water: your color as water, with sun dapples and white and partner sparkles
-                const pt = partner(c);
-                return lg('glitter', c, [c[1], c[3], c[1]], 80) + line(d, c[2], w * 1.06) + line(d, gid('glitter', c), w * 0.9) +
-                    dots(d, '#ffffff', w * 0.55, w * 2.6, w * 0.4, ' opacity="0.3"') +
-                    dots(d, '#ffffff', w * 0.16, w * 1.1, 0, up(w, 0.22)) + dots(d, pt[0], w * 0.15, w * 1.7, w * 0.8, ' transform="translate(0 ' + (w * 0.2).toFixed(2) + ')"') +
-                    dots(d, '#ffffff', w * 0.1, w * 2.3, w * 1.5, ' transform="translate(0 ' + (w * 0.05).toFixed(2) + ')"');
-            }
+            case 'pool-ripple': // Reflection Shine: the color with a flat white shine over its top half and a soft glow along the bottom
+                return line(d, c[1], w) + line(d, mix(c[1], 0.85), w * 0.3, ' transform="translate(0 ' + (w * 0.28).toFixed(2) + ')" opacity="0.6" filter="url(#ank-glow-in)"') +
+                    line(d, '#ffffff', w * 0.46, up(w, 0.24) + ' opacity="0.6"');
             case 'vapor-glow':
                 return lg('vapor', c, [c[1], c[3], '#ffffff', c[3]]) + line(d, c[1], w * 4.5, ' opacity="0.7" filter="url(#ank-glow)"') + line(d, gid('vapor', c), w * 1.6) + line(d, '#ffffff', w * 0.4, ' opacity="0.8"');
             case 'vapor-grid':
