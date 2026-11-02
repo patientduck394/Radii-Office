@@ -21,12 +21,23 @@
     const INKS = [['gel', 'Gel Ink'], ['pen', 'Felt Pen'], ['marker', 'Highlighter'], ['neon', 'Neon'], ['crayon', 'Crayon']];
     const SIZES = [['s', 'Small', 0.6], ['m', 'Medium', 1], ['l', 'Large', 1.7]];
     // each ink's base width at Medium
-    // Themed inks bring their own colors (the color swatches don't apply to them)
-    const THEMES = [['aero', 'Frutiger Aero'], ['pool', 'Poolside'], ['vapor', 'Vaporwave'], ['mint', 'Peppermint'],
-        ['galaxy', 'Galaxy'], ['rainbow', 'Rainbow'], ['lava', 'Lava'], ['gold', 'Gold Foil']];
-    const IS_THEME = {};
-    THEMES.forEach((t) => { IS_THEME[t[0]] = true; });
-    const BASE = { gel: 9, pen: 2.6, marker: 18, neon: 3.2, crayon: 6, aero: 11, pool: 12, vapor: 4, mint: 9, galaxy: 10, rainbow: 8, lava: 8, gold: 8 };
+    // Theme Packs: each pack is a set of ink styles, and every style is drawn in the color you pick
+    const PACKS = [
+        ['aero', 'Frutiger Aero', [['aero-tube', 'Glass Tube'], ['aero-bubbles', 'Bubble Trail'], ['aero-aurora', 'Aurora'], ['aero-sky', 'Sky Gloss']]],
+        ['pool', 'Poolside', [['pool-water', 'Water'], ['pool-tile', 'Tile Edge'], ['pool-rope', 'Lane Rope'], ['pool-ripple', 'Ripples']]],
+        ['vapor', 'Vaporwave', [['vapor-glow', 'Glow'], ['vapor-grid', 'Retro Grid'], ['vapor-chrome', 'Chrome'], ['vapor-sunset', 'Sunset Bands']]],
+        ['candy', 'Candy Shop', [['candy-stripe', 'Peppermint'], ['candy-sprinkles', 'Sprinkles'], ['candy-gummy', 'Gummy'], ['candy-ribbon', 'Ribbon']]],
+        ['cosmic', 'Cosmic', [['cosmic-galaxy', 'Galaxy'], ['cosmic-comet', 'Comet'], ['cosmic-stars', 'Stars'], ['cosmic-nebula', 'Nebula']]],
+        ['metal', 'Metallic', [['metal-foil', 'Foil'], ['metal-chain', 'Chain'], ['metal-wire', 'Wire'], ['metal-rivet', 'Rivets']]]
+    ];
+    const STYLE_NAME = {};
+    PACKS.forEach((pk) => pk[2].forEach((st) => { STYLE_NAME[st[0]] = [pk[1], st[1], pk[0]]; }));
+    const BASE = { gel: 9, pen: 2.6, marker: 18, neon: 3.2, crayon: 6,
+        'aero-tube': 11, 'aero-bubbles': 9, 'aero-aurora': 4, 'aero-sky': 14, 'pool-water': 12, 'pool-tile': 10, 'pool-rope': 9, 'pool-ripple': 10,
+        'vapor-glow': 4, 'vapor-grid': 12, 'vapor-chrome': 9, 'vapor-sunset': 10, 'candy-stripe': 9, 'candy-sprinkles': 12, 'candy-gummy': 12, 'candy-ribbon': 9,
+        'cosmic-galaxy': 10, 'cosmic-comet': 4, 'cosmic-stars': 10, 'cosmic-nebula': 10, 'metal-foil': 8, 'metal-chain': 8, 'metal-wire': 5, 'metal-rivet': 10,
+        // (the first themed inks, still drawn in notes that use them)
+        aero: 11, pool: 12, vapor: 4, mint: 9, galaxy: 10, rainbow: 8, lava: 8, gold: 8 };
     const NS = 'http://www.w3.org/2000/svg';
     const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -44,6 +55,12 @@
         const last = pts[pts.length - 1];
         return d + 'L' + r(last[0]) + ' ' + r(last[1]);
     }
+    const n = (v) => Math.max(0.1, v).toFixed(1);
+    // a row of round dots along the path (a dash of length 0 with round caps is a dot)
+    const dots = (d, color, size, gap, offset, extra) => line(d, color, size, ' stroke-dasharray="0 ' + n(gap) + '"' + (offset ? ' stroke-dashoffset="' + n(offset) + '"' : '') + (extra || ''));
+    // a color run for one pack style in one color (defined right in the stroke, so every color gets its own)
+    const gid = (k, c) => 'url(#ank-' + k + '-' + c[0] + ')';
+    const lg = (k, c, stops, span) => '<defs>' + grad(k + '-' + c[0], stops, span).replace('id="ank-t-', 'id="ank-') + '</defs>';
     const up = (w, k) => ' transform="translate(0 ' + (-w * k).toFixed(2) + ')"';
     const line = (d, color, width, extra) => '<path d="' + d + '" fill="none" stroke="' + color + '" stroke-width="' + width + '" stroke-linecap="round" stroke-linejoin="round"' + (extra || '') + '/>';
     // the inside of one stroke's <g>, by ink
@@ -62,7 +79,74 @@
                     line(d, c[1], w * 1.5) + line(d, c[3], w * 0.7) + line(d, '#ffffff', w * 0.3, ' opacity="0.85"');
             case 'crayon':
                 return line(d, c[1], w, ' opacity="0.88" filter="url(#ank-wax)"') + line(d, c[3], w * 0.3, ' opacity="0.35" stroke-dasharray="1 3" filter="url(#ank-wax)"');
-            /* ---- themed inks ---- */
+            /* ---- Theme Packs (each style in the picked color: c[1] color, c[2] deep edge, c[3] light) ---- */
+            case 'aero-tube':
+                return lg('aero', c, [c[3], c[1], c[3], '#ffffff']) + line(d, c[2], w) + line(d, gid('aero', c), w * 0.72) + line(d, '#ffffff', w * 0.22, up(w, 0.2) + ' opacity="0.7"') +
+                    dots(d, '#ffffff', w * 0.3, w * 2.2, 0, ' opacity="0.85"');
+            case 'aero-bubbles':
+                return dots(d, c[2], w * 0.95, w * 2.3, 0) + dots(d, c[1], w * 0.78, w * 2.3, 0) + dots(d, c[3], w * 0.45, w * 2.3, 0, ' transform="translate(0 ' + (w * 0.1).toFixed(2) + ')"') +
+                    dots(d, '#ffffff', w * 0.26, w * 2.3, 0, ' transform="translate(' + (-w * 0.16).toFixed(2) + ' ' + (-w * 0.16).toFixed(2) + ')"');
+            case 'aero-aurora':
+                return line(d, c[1], w * 4.5, ' opacity="0.35" filter="url(#ank-glow)"') + line(d, c[3], w * 2.2, ' opacity="0.6" filter="url(#ank-glow-in)"') + line(d, c[1], w * 1.1) + line(d, '#ffffff', w * 0.4, ' opacity="0.9"');
+            case 'aero-sky':
+                return line(d, c[1], w, ' opacity="0.3"') + line(d, c[3], w * 0.6, ' opacity="0.65"') + line(d, '#ffffff', w * 0.16, up(w, 0.18) + ' opacity="0.95"') +
+                    line(d, c[2], w * 0.1, ' transform="translate(0 ' + (w * 0.42).toFixed(2) + ')" opacity="0.55"');
+            case 'pool-water':
+                return lg('pool', c, [c[1], c[3], c[1]]) + line(d, '#ffffff', w * 1.08, ' opacity="0.9"') + line(d, c[2], w) + line(d, gid('pool', c), w * 0.8) +
+                    line(d, '#ffffff', w * 0.12, ' stroke-dasharray="' + n(w * 0.9) + ' ' + n(w * 0.7) + '"' + up(w, 0.15) + ' opacity="0.75"') +
+                    line(d, '#ffffff', w * 0.08, ' stroke-dasharray="' + n(w * 0.5) + ' ' + n(w * 1.1) + '" stroke-dashoffset="' + n(w * 0.6) + '" transform="translate(0 ' + (w * 0.18).toFixed(2) + ')" opacity="0.6"');
+            case 'pool-tile':
+                return line(d, '#ffffff', w * 1.15) + line(d, c[2], w, ' stroke-linecap="butt" stroke-dasharray="' + n(w * 0.9) + ' ' + n(w * 0.22) + '"') + line(d, c[1], w * 0.5) + line(d, '#ffffff', w * 0.14, up(w, 0.12) + ' opacity="0.6"');
+            case 'pool-rope':
+                return line(d, c[2], w * 0.22) + line(d, c[2], w * 1.0, ' stroke-dasharray="' + n(w * 0.6) + ' ' + n(w * 1.5) + '"') + line(d, c[1], w * 0.8, ' stroke-dasharray="' + n(w * 0.6) + ' ' + n(w * 1.5) + '"') +
+                    line(d, c[2], w * 1.0, ' stroke-dasharray="' + n(w * 0.6) + ' ' + n(w * 1.5) + '" stroke-dashoffset="' + (w * 1.05).toFixed(1) + '"') +
+                    line(d, '#ffffff', w * 0.72, ' stroke-dasharray="' + n(w * 0.6) + ' ' + n(w * 1.5) + '" stroke-dashoffset="' + (w * 1.05).toFixed(1) + '"') +
+                    line(d, '#ffffff', w * 0.18, ' stroke-dasharray="' + n(w * 0.3) + ' ' + n(w * 1.8) + '"' + up(w, 0.2) + ' opacity="0.7"');
+            case 'pool-ripple':
+                return line(d, c[3], w * 0.14, up(w, 0.42) + ' opacity="0.45"') + line(d, c[1], w * 0.16, up(w, 0.14) + ' opacity="0.7"') + line(d, c[2], w * 0.18, ' transform="translate(0 ' + (w * 0.14).toFixed(2) + ')" opacity="0.9"') +
+                    line(d, c[3], w * 0.14, ' transform="translate(0 ' + (w * 0.42).toFixed(2) + ')" opacity="0.5"');
+            case 'vapor-glow':
+                return lg('vapor', c, [c[1], c[3], '#ffffff', c[3]]) + line(d, c[1], w * 4.5, ' opacity="0.7" filter="url(#ank-glow)"') + line(d, gid('vapor', c), w * 1.6) + line(d, '#ffffff', w * 0.4, ' opacity="0.8"');
+            case 'vapor-grid':
+                return line(d, c[1], w * 1.4, ' opacity="0.35" filter="url(#ank-glow-in)"') + line(d, c[1], w * 0.7, ' stroke-linecap="butt" stroke-dasharray="' + n(w * 0.1) + ' ' + n(w * 0.55) + '"') +
+                    line(d, c[3], w * 0.12, up(w, 0.35)) + line(d, c[3], w * 0.12, ' transform="translate(0 ' + (w * 0.35).toFixed(2) + ')"');
+            case 'vapor-chrome':
+                return lg('chrome', c, ['#ffffff', c[3], c[1], c[2], c[3]], 36) + line(d, c[2], w) + line(d, gid('chrome', c), w * 0.78) + line(d, '#ffffff', w * 0.16, up(w, 0.2) + ' opacity="0.9"');
+            case 'vapor-sunset':
+                return line(d, c[2], w * 0.34, ' transform="translate(0 ' + (w * 0.33).toFixed(2) + ')"') + line(d, c[1], w * 0.34) + line(d, c[3], w * 0.34, up(w, 0.33)) +
+                    line(d, '#ffffff', w * 0.12, up(w, 0.55) + ' opacity="0.7"');
+            case 'candy-stripe':
+                return line(d, c[2], w * 1.06) + line(d, '#ffffff', w * 0.88) + line(d, c[1], w * 0.88, ' stroke-linecap="butt" stroke-dasharray="' + n(w * 0.7) + ' ' + n(w * 0.7) + '"') +
+                    line(d, '#ffffff', w * 0.2, up(w, 0.2) + ' opacity="0.6"');
+            case 'candy-sprinkles':
+                return dots(d, c[1], w * 0.32, w * 1.3, 0, up(w, 0.25)) + dots(d, c[3], w * 0.28, w * 1.5, w * 0.6, ' transform="translate(0 ' + (w * 0.2).toFixed(2) + ')"') +
+                    dots(d, c[2], w * 0.26, w * 1.7, w * 0.3) + dots(d, '#ffffff', w * 0.22, w * 1.9, w * 1.1, ' transform="translate(0 ' + (w * 0.35).toFixed(2) + ')"');
+            case 'candy-gummy':
+                return line(d, c[2], w * 1.04, ' opacity="0.45"') + line(d, c[1], w * 0.9, ' opacity="0.6"') + line(d, c[3], w * 0.5, ' opacity="0.6"') + line(d, '#ffffff', w * 0.2, up(w, 0.22) + ' opacity="0.85"');
+            case 'candy-ribbon':
+                return line(d, c[2], w * 1.05) + line(d, c[1], w * 0.85) + line(d, c[3], w * 0.25, up(w, 0.22) + ' opacity="0.7"') +
+                    line(d, '#ffffff', w * 0.09, ' stroke-dasharray="' + n(w * 0.35) + ' ' + n(w * 0.28) + '" opacity="0.9"');
+            case 'cosmic-galaxy':
+                return lg('galaxy', c, [c[2], c[1], '#1e1b4b', c[3]]) + line(d, '#1e1b4b', w) + line(d, gid('galaxy', c), w * 0.78) +
+                    dots(d, '#ffffff', w * 0.18, w * 1.7, 0, up(w, 0.15)) + dots(d, '#fde68a', w * 0.12, w * 2.6, w * 1.1, ' transform="translate(0 ' + (w * 0.2).toFixed(2) + ')"');
+            case 'cosmic-comet':
+                return line(d, c[1], w * 3.6, ' opacity="0.55" filter="url(#ank-glow)"') + line(d, c[3], w * 1.4) + line(d, '#ffffff', w * 0.55) + dots(d, '#ffffff', w * 0.5, w * 4, 0, ' opacity="0.8" filter="url(#ank-glow-in)"');
+            case 'cosmic-stars':
+                return dots(d, c[1], w * 0.6, w * 2.2, 0, ' opacity="0.45" filter="url(#ank-glow-in)"') + dots(d, c[3], w * 0.45, w * 2.2, 0) + dots(d, '#ffffff', w * 0.22, w * 2.2, 0) +
+                    dots(d, c[3], w * 0.14, w * 1.4, w * 0.7, up(w, 0.3));
+            case 'cosmic-nebula':
+                return line(d, c[1], w * 2.6, ' opacity="0.35" filter="url(#ank-glow)"') + line(d, c[3], w * 1.4, ' opacity="0.45" filter="url(#ank-glow-in)"') + dots(d, '#ffffff', w * 0.12, w * 1.3, 0, ' opacity="0.8"');
+            case 'metal-foil':
+                return lg('foil', c, [c[3], c[2], '#ffffff', c[1]], 90) + line(d, c[2], w) + line(d, gid('foil', c), w * 0.76) + line(d, '#ffffff', w * 0.2, up(w, 0.2) + ' opacity="0.8"');
+            case 'metal-chain':
+                return line(d, c[2], w * 0.95, ' stroke-dasharray="' + n(w * 1.2) + ' ' + n(w * 0.55) + '"') + line(d, c[3], w * 0.5, ' stroke-dasharray="' + n(w * 1.2) + ' ' + n(w * 0.55) + '"') +
+                    line(d, '#ffffff', w * 0.15, ' stroke-dasharray="' + n(w * 0.7) + ' ' + n(w * 1.05) + '"' + up(w, 0.2) + ' opacity="0.7"');
+            case 'metal-wire':
+                return line(d, c[2], w * 0.5) + line(d, c[1], w * 0.32) + line(d, '#ffffff', w * 0.12, up(w, 0.08) + ' opacity="0.8"');
+            case 'metal-rivet':
+                return lg('rivet', c, [c[3], c[1], c[3]], 60) + line(d, c[2], w, ' stroke-linecap="butt"') + line(d, gid('rivet', c), w * 0.8, ' stroke-linecap="butt"') +
+                    dots(d, c[2], w * 0.34, w * 1.5, w * 0.4) + dots(d, '#ffffff', w * 0.12, w * 1.5, w * 0.4, up(w, 0.06));
+            /* ---- the first themed inks (fixed colors), still drawn in notes that use them ---- */
             case 'aero': // Frutiger Aero: a glossy sky-to-grass glass tube with bubbles drifting along it
                 return line(d, '#0369a1', w) + line(d, 'url(#ank-t-aero)', w * 0.72) + line(d, '#ffffff', w * 0.22, up(w, 0.2) + ' opacity="0.7"') +
                     line(d, '#ffffff', w * 0.3, ' stroke-dasharray="0 ' + (w * 2.2).toFixed(1) + '" opacity="0.85"') +
@@ -193,19 +277,24 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
 .ank-sw { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0,0,0,0.2); cursor: pointer; padding: 0; }
 .ank-sw.on { box-shadow: 0 0 0 2px #7e22ce; }
 .ank-themes-btn { border-color: rgba(147,51,234,0.35); background: linear-gradient(180deg, #fff, #f3e8ff); }
-.ank-themes { position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px;
+.ank-themes { position: absolute; left: 50%; bottom: calc(100% + 8px); transform: translateX(-50%); display: flex; flex-direction: column; gap: 8px;
   width: min(560px, calc(100vw - 24px)); box-sizing: border-box; padding: 8px; border-radius: 14px; background: linear-gradient(180deg, #ffffff, #faf5ff);
   border: 1px solid rgba(147,51,234,0.35); box-shadow: 0 10px 30px rgba(59,7,100,0.25); }
+.ank-packs { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
+.ank-pack { border: 1px solid rgba(147,51,234,0.3); background: #fff; color: #6b21a8; border-radius: 999px; padding: 4px 11px; font: 700 12px system-ui, sans-serif; cursor: pointer; }
+.ank-pack:hover { background: #f3e8ff; }
+.ank-pack.on { color: #fff; border-color: #7e22ce; background: linear-gradient(180deg, #d8b4fe, #9333ea); }
+.ank-styles { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; }
+.ank-pack-note { text-align: center; font-size: 11px; color: #6b21a8; opacity: 0.8; }
 .ank-theme { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px; border-radius: 10px; border: 1px solid transparent; background: transparent; cursor: pointer; font: inherit; color: inherit; }
 .ank-theme svg { width: 100%; max-width: 92px; height: 34px; overflow: visible; }
 .ank-theme:hover { background: rgba(216,180,254,0.35); }
 .ank-theme.on { border-color: #a855f7; background: #fff; }
-.ank-dim { opacity: 0.4; }
-@media (max-width: 520px) { .ank-themes { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 520px) { .ank-styles { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 .ank-done { background: linear-gradient(180deg, #d8b4fe, #9333ea); color: #fff; border-color: #7e22ce; text-shadow: 0 1px 1px rgba(0,0,0,0.3); }
 .ank-done:hover { background: linear-gradient(180deg, #e9d5ff, #a855f7); }
 `;
-    let bar = null, on = false, ink = 'gel', color = 'red', size = 'm', erasing = false, undo = [], themesOpen = false;
+    let bar = null, on = false, ink = 'gel', color = 'red', size = 'm', erasing = false, undo = [], themesOpen = false, pack = 'aero';
     function preview(t) {
         const s = { t: t, c: color, w: BASE[t] * (t === 'marker' ? 0.7 : 1), d: 'M3 11Q10 3 17 8T31 6' };
         return '<svg viewBox="0 0 34 16" aria-hidden="true">' + DEFS + strokeSvg(s) + '</svg>';
@@ -223,6 +312,7 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
             const b = e.target.closest('button');
             if (!b) return;
             if (b.dataset.act === 'themes') { themesOpen = !themesOpen; render(); return; }
+            if (b.dataset.pack) { pack = b.dataset.pack; render(); return; }
             if (b.dataset.ink) { ink = b.dataset.ink; erasing = false; themesOpen = false; }
             else if (b.dataset.color) { color = b.dataset.color; erasing = false; }
             else if (b.dataset.size) size = b.dataset.size;
@@ -236,13 +326,18 @@ body.ank-on #wysiwyg-canvas { user-select: none; -webkit-user-select: none; }
     }
     function render() {
         document.body.classList.toggle('ank-erase', erasing);
-        const theme = THEMES.find((t) => t[0] === ink);
+        const style = STYLE_NAME[ink];
+        if (style) pack = style[2];
+        const cur = PACKS.find((pk) => pk[0] === pack) || PACKS[0];
         bar.innerHTML = '<span class="ank-title">Annotate</span>' +
             '<span class="ank-group" aria-label="Ink">' + INKS.map((k) => '<button type="button" class="ank-btn' + (k[0] === ink && !erasing ? ' on' : '') + '" data-ink="' + k[0] + '" title="' + k[1] + '">' + preview(k[0]) + k[1] + '</button>').join('') +
-            '<button type="button" class="ank-btn ank-themes-btn' + (theme && !erasing ? ' on' : '') + '" data-act="themes" aria-expanded="' + themesOpen + '" title="Themed inks, each with its own colors">' +
-            (theme ? preview(theme[0]) + theme[1] : '✨ Themes') + ' ▾</button></span>' +
-            (themesOpen ? '<div class="ank-themes" role="menu" aria-label="Themed inks">' + THEMES.map((t) => '<button type="button" role="menuitem" class="ank-theme' + (t[0] === ink ? ' on' : '') + '" data-ink="' + t[0] + '"><svg viewBox="0 0 34 16" aria-hidden="true">' + DEFS + strokeSvg({ t: t[0], c: color, w: BASE[t[0]] * 0.75, d: 'M3 11Q10 3 17 8T31 6' }) + '</svg>' + t[1] + '</button>').join('') + '</div>' : '') +
-            '<span class="ank-sep"></span><span class="ank-group' + (theme ? ' ank-dim' : '') + '" aria-label="Color"' + (theme ? ' title="' + theme[1] + ' brings its own colors"' : '') + '>' + COLORS.map((c) => '<button type="button" class="ank-sw' + (c[0] === color ? ' on' : '') + '" data-color="' + c[0] + '" title="' + c[0].charAt(0).toUpperCase() + c[0].slice(1) + '" style="background:linear-gradient(180deg,' + c[3] + ',' + c[1] + ')"></button>').join('') + '</span>' +
+            '<button type="button" class="ank-btn ank-themes-btn' + (style && !erasing ? ' on' : '') + '" data-act="themes" aria-expanded="' + themesOpen + '" title="Theme Packs: sets of ink styles, in any color">' +
+            (style ? preview(ink) + style[1] : '🎨 Theme Packs') + ' ▾</button></span>' +
+            (themesOpen ? '<div class="ank-themes" role="menu" aria-label="Theme Packs">' +
+                '<div class="ank-packs">' + PACKS.map((pk) => '<button type="button" class="ank-pack' + (pk[0] === cur[0] ? ' on' : '') + '" data-pack="' + pk[0] + '">' + pk[1] + '</button>').join('') + '</div>' +
+                '<div class="ank-styles">' + cur[2].map((st) => '<button type="button" role="menuitem" class="ank-theme' + (st[0] === ink ? ' on' : '') + '" data-ink="' + st[0] + '"><svg viewBox="0 0 34 16" aria-hidden="true">' + DEFS + strokeSvg({ t: st[0], c: color, w: BASE[st[0]] * 0.75, d: 'M3 11Q10 3 17 8T31 6' }) + '</svg>' + st[1] + '</button>').join('') + '</div>' +
+                '<div class="ank-pack-note">Every style draws in the color you pick below!</div></div>' : '') +
+            '<span class="ank-sep"></span><span class="ank-group" aria-label="Color">' + COLORS.map((c) => '<button type="button" class="ank-sw' + (c[0] === color ? ' on' : '') + '" data-color="' + c[0] + '" title="' + c[0].charAt(0).toUpperCase() + c[0].slice(1) + '" style="background:linear-gradient(180deg,' + c[3] + ',' + c[1] + ')"></button>').join('') + '</span>' +
             '<span class="ank-sep"></span><span class="ank-group" aria-label="Size">' + SIZES.map((z) => '<button type="button" class="ank-btn' + (z[0] === size ? ' on' : '') + '" data-size="' + z[0] + '" title="' + z[1] + '">' + z[0].toUpperCase() + '</button>').join('') + '</span>' +
             '<span class="ank-sep"></span><span class="ank-group">' +
             '<button type="button" class="ank-btn' + (erasing ? ' on' : '') + '" data-act="erase" title="Eraser: drag over a stroke to remove it">Eraser</button>' +
