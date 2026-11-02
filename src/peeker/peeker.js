@@ -1082,12 +1082,47 @@ function loadH2i() {
         .catch(() => { throw new EngineError('Peeker could not download html-to-image, which saves Keydown text! Check your internet connection!'); });
 }
 // A Keydown text mark becomes a sharp picture (4x), with a little room around it for glows and shadows
+// Firefox outlines a thick stroke's curves coarsely at tight turns (a hand-drawn star's points came out as
+// polygons in the saved PDF), but it draws round joins between straight pieces perfectly! So the smooth path
+// is split into tiny straight pieces (about a quarter point long) before it is drawn for the PDF
+function densePath(d, step) {
+    const out = [];
+    let x = 0, y = 0, m;
+    const re = /([MLQl])([^MLQl]*)/g;
+    const at = (px, py) => px.toFixed(2) + ' ' + py.toFixed(2);
+    while ((m = re.exec(String(d)))) {
+        const v = (m[2].match(/-?\d*\.?\d+/g) || []).map(Number);
+        if (m[1] === 'M') { x = v[0]; y = v[1]; out.push('M' + at(x, y)); }
+        else if (m[1] === 'L') { x = v[0]; y = v[1]; out.push('L' + at(x, y)); }
+        else if (m[1] === 'l') { x += v[0]; y += v[1]; out.push('L' + at(x, y)); }
+        else if (m[1] === 'Q') {
+            const [cx, cy, ex, ey] = v;
+            const n = Math.max(1, Math.ceil((Math.hypot(cx - x, cy - y) + Math.hypot(ex - cx, ey - cy)) / step));
+            for (let i = 1; i <= n; i++) {
+                const t = i / n, u = 1 - t;
+                out.push('L' + at(u * u * x + 2 * u * t * cx + t * t * ex, u * u * y + 2 * u * t * cy + t * t * ey));
+            }
+            x = ex; y = ey;
+        }
+    }
+    return out.join('');
+}
+// a quarter point per piece, coarser for very long strokes so the path stays a sane size
+function inkStep(pts) {
+    let len = 0;
+    for (let k = 1; k < pts.length; k++) len += Math.hypot(pts[k][0] - pts[k - 1][0], pts[k][1] - pts[k - 1][1]);
+    return Math.max(0.25, len / 9000);
+}
 // An Annotate ink stroke as a sharp picture (4 pixels per point), drawn by the same code that shows it on the page
 async function rasterInk(a) {
     const b = inkBounds(a);
     const S = Math.max(1, Math.min(4, 6000 / Math.max(b.w, b.h)));
+    // The inks' glow + shadow filters cover a huge area (12000 x 40000) so they never clip on the page, but at
+    // 4x that is far past what browsers render at full quality: Firefox drops the blur and others can blur
+    // coarsely, so the saved stroke looked hard-edged and "low poly"! Here they (and the Outline Pill's mask) cover just this stroke's box
+    const fit = (s) => s.replace(/x="-4000" y="-4000" width="12000" height="40000"/g, 'x="' + b.x + '" y="' + b.y + '" width="' + b.w + '" height="' + b.h + '"');
     const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="' + Math.ceil(b.w * S) + '" height="' + Math.ceil(b.h * S) + '" viewBox="' + b.x + ' ' + b.y + ' ' + b.w + ' ' + b.h + '">' +
-        AI.DEFS + '<g>' + AI.strokeSvg({ t: a.kind, c: a.ic, w: a.size, d: AI.pathOf(a.pts) }) + '</g></svg>';
+        fit(AI.DEFS) + '<g>' + fit(AI.strokeSvg({ t: a.kind, c: a.ic, w: a.size, d: densePath(AI.pathOf(a.pts), inkStep(a.pts)) })) + '</g></svg>';
     const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
     try {
         const img = new Image();
