@@ -6,7 +6,7 @@ title: Keydown
 summary: Keydown is the formatting language of Radii Office, where short tags typed around text turn it into glossy chips, highlights, headings and more.
 tags: [radii office, formatting, markup language, software]
 created: 2026-10-28
-updated: 2026-11-01
+updated: 2026-11-02
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Used in: Writeout, Bitbook, OpenDB, Phosphor, Imbuer, Formly and more
@@ -1746,6 +1746,17 @@ Smaller packs that each add one style:
 * **Footnotes**: `[^1]` adds a numbered note, and a line starting with `[^1]:` gives its text.
 * **Links**: in OpenDB, `[[entry-name]]` links to another entry, and `[[entry-name|other words]]` changes the words shown.
 * **Templates**: in OpenDB, notices like `{{stub}}` and `{{citation needed}}` mark entries that need work. See the [Templates](#/templates) page.
+
+## Tables
+
+Writeout and Bitbook have two ways to write a table.
+
+* **Pipe tables**: one row per line, like `| Name | Score |`, with a line of `| --- | --- |` under the header row. Add a style after it, like `| --- | --- |{green}`.
+* **Cell by cell**: `@@table=[a1h:'Name',b1:'Score',a2:'Ann',b2:'#O#9#']` names each cell like a spreadsheet (columns a to o, rows 1 and up) and gives its text in quotes. The text can use any Keydown, like chips and **bold**, and `\'` writes a quote. A style can follow the `]`, like `{green}`.
+
+In a cell-by-cell table, an **h** after the cell name makes a header. A row is a header row when its first cell is a header (`a1h`), and then its whole row is headers. An h cell on any other row moves up to the nearest header row above it. Another header row further down starts a new part of the table:
+
+@@table=[a1h:'Name',b1h:'Score',a2:'Ann',b2:'#O#9#',c3h:'Bonus',a4h:'Round 2',b4:'Score',a5:'Bob',b5:'**7**']{green}
 
 ## Files saved as Keydown
 

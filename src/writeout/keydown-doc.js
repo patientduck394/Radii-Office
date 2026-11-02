@@ -150,6 +150,103 @@
             '" data-filedata="' + esc(src) + '"><span>' + FILE_ICON + '</span><span class="file-chip-name">' + esc(stem) + '</span></span>';
     }
 
+    /* ---------- @@table=[a1h:'Name',b1:'Score',a2:'Ann',b2:'#O#9#']{green}: a table, cell by cell ---------- */
+    // a1, b2, c3... name the cells (columns a to o, rows 1 and up), and an h after the name (a1h) makes it a header.
+    // A row is a header row when its first cell is a header (aNh), and then its whole row is headers! An h cell on
+    // another row moves up to the nearest header row above it (or the first one, when none is above). Each header row
+    // after the first starts a new part of the table. Cell text is Keydown (chips, bold...), and \' writes a quote.
+    const AT_TABLE = '@@table=[';
+    function readAtTable(s, at) {
+        let i = at + AT_TABLE.length;
+        const cells = [];
+        let closed = false;
+        while (i < s.length) {
+            while (s[i] === ' ' || s[i] === ',') i++;
+            if (s[i] === ']') { i++; closed = true; break; }
+            const m = /^([a-oA-O])(\d{1,3})([hH]?)\s*:\s*'/.exec(s.slice(i, i + 12));
+            if (!m || +m[2] < 1) return null;
+            i += m[0].length;
+            let text = '';
+            while (i < s.length && s[i] !== "'") {
+                if (s[i] === '\\' && s[i + 1] === "'") { text += "'"; i += 2; } else text += s[i++];
+            }
+            if (s[i] !== "'") return null;
+            i++;
+            cells.push({ col: m[1].toLowerCase().charCodeAt(0) - 97, row: +m[2], h: !!m[3], text: text });
+            if (cells.length > 3000) return null;
+        }
+        if (!closed) return null;
+        const sm = /^\{([a-z]+)\}/.exec(s.slice(i));
+        if (sm) i += sm[0].length;
+        return { cells: cells, end: i, style: sm ? sm[1] : 'blue' };
+    }
+    function atTableHtml(t, opts) {
+        const cells = t.cells;
+        let heads = [...new Set(cells.filter((c) => c.h && c.col === 0).map((c) => c.row))].sort((a, b) => a - b);
+        if (!heads.length && cells.some((c) => c.h)) heads = [Math.min(...cells.filter((c) => c.h).map((c) => c.row))];
+        const grid = new Map();
+        const key = (r, c) => r + ':' + c;
+        // the cells as written first, then the header cells moved up to their header row (never over a written cell)
+        cells.forEach((c) => { if (!c.h || heads.includes(c.row)) grid.set(key(c.row, c.col), c.text); });
+        cells.filter((c) => c.h && !heads.includes(c.row)).forEach((c) => {
+            const above = heads.filter((h) => h <= c.row);
+            const r = above.length ? above[above.length - 1] : heads[0];
+            if (!grid.get(key(r, c.col))) grid.set(key(r, c.col), c.text);
+            else if (!grid.has(key(c.row, c.col))) grid.set(key(c.row, c.col), c.text);
+        });
+        const rows = Math.max(1, ...[...grid.keys()].map((k) => +k.split(':')[0]));
+        const cols = Math.max(1, ...cells.map((c) => c.col + 1));
+        const rowHtml = (r) => {
+            const head = heads.includes(r);
+            let h = '<tr' + (head && r !== 1 ? ' class="rt-head-row"' : '') + '>';
+            for (let c = 0; c < cols; c++) {
+                const v = grid.get(key(r, c));
+                const tag = head ? 'th' : 'td';
+                h += '<' + tag + '>' + (v ? inline(v, opts) : '<br>') + '</' + tag + '>';
+            }
+            return h + '</tr>';
+        };
+        let html = '<table class="rt-table rt-' + esc(t.style) + '" data-kd-at="1">';
+        let r = 1;
+        if (heads.includes(1)) { html += '<thead>' + rowHtml(1) + '</thead>'; r = 2; }
+        html += '<tbody>';
+        for (; r <= rows; r++) html += rowHtml(r);
+        return html + '</tbody></table>';
+    }
+    // every @@table=[...] in a piece of text, drawn as a table
+    function atTables(s, opts, stash) {
+        let at = s.indexOf(AT_TABLE);
+        while (at !== -1) {
+            const t = readAtTable(s, at);
+            if (!t) { at = s.indexOf(AT_TABLE, at + AT_TABLE.length); continue; }
+            const ph = stash(atTableHtml(t, Object.assign({}, opts, { notes: opts.notes || {} })));
+            s = s.slice(0, at) + ph + s.slice(t.end);
+            at = s.indexOf(AT_TABLE, at + ph.length);
+        }
+        return s;
+    }
+    // a table back as @@table=[...]: header rows say so with their first cell (a1h), every other cell as written
+    function atTableText(el) {
+        const parts = [];
+        const rows = Array.from(el.rows);
+        let lastRow = 0, lastCol = 0;
+        rows.forEach((tr, ri) => {
+            const cells = Array.from(tr.cells).slice(0, 15);
+            const head = cells.length > 0 && cells.every((c) => c.tagName === 'TH');
+            cells.forEach((c, ci) => {
+                lastRow = Math.max(lastRow, ri + 1); lastCol = Math.max(lastCol, ci);
+                const text = Array.from(c.childNodes).map(inlineText).join('').replace(/\s*\n\s*/g, ' ').trim();
+                if (!text && !(head && ci === 0)) return;
+                parts.push(String.fromCharCode(97 + ci) + (ri + 1) + (head && ci === 0 ? 'h' : '') + ":'" + text.replace(/'/g, "\\'") + "'");
+            });
+        });
+        // the bottom-right cell is always written, so empty rows and columns at the end come back too
+        const corner = String.fromCharCode(97 + lastCol) + lastRow;
+        if (lastRow && !parts.some((p) => p.startsWith(corner + ':') || p.startsWith(corner + 'h:'))) parts.push(corner + ":''");
+        const style = (/(?:^|\s)rt-(?!table)([a-z]+)/.exec(el.className) || [])[1];
+        return '@@table=[' + parts.join(',') + ']' + (style && style !== 'blue' ? '{' + style + '}' : '');
+    }
+
     /* ---------- Keydown text -> editor HTML ---------- */
     // opts: { title(id) -> a title for [[id]] links, media(id) -> an image address or null, notes: { count } }
     function inline(text, opts) {
@@ -158,6 +255,8 @@
         let s = String(text);
         // ``` fences are taken literally too (up to the closing ```, or the end if it never comes)
         s = s.replace(/```[\s\S]*?(?:```|$)/g, (m) => stash(esc(m)));
+        // @@table=[a1h:'Name',b1:'Score'...] tables, before anything else can touch the text in their cells
+        s = atTables(s, opts, stash);
         // `code` is taken literally, so nothing inside it turns into links, math or chips
         s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code>' + esc(t) + '</code>'));
         s = s.replace(/\\\$/g, () => stash('<span class="kd-esc">$</span>'));
@@ -263,6 +362,10 @@
                 for (i++; i < lines.length && !/^```/.test(lines[i].trim()); i++) body.push(lines[i]);
                 out.push('<pre><code>' + esc(body.join('\n')) + '</code></pre>');
                 continue;
+            }
+            if (t.startsWith(AT_TABLE)) {
+                const at = readAtTable(t, 0);
+                if (at && at.end === t.length) { endList(); out.push(ind(atTableHtml(at, opts))); continue; }
             }
             if (/^\|.*\|(\{[a-z]+\})?$/.test(t)) {
                 const block = [];
@@ -450,6 +553,9 @@
                 flush();
                 const rows = Array.from(el.rows);
                 if (!rows.length) return;
+                // a table written as @@table, or one with header rows further down (pipe tables can't say that), saves as @@table
+                const headRows = rows.filter((r) => r.cells.length && Array.from(r.cells).every((c) => c.tagName === 'TH'));
+                if (el.hasAttribute('data-kd-at') || headRows.some((r) => r !== rows[0])) { lines.push(atTableText(el)); return; }
                 const width = Math.max(...rows.map((r) => r.cells.length));
                 const cellText = (c) => (c ? Array.from(c.childNodes).map(inlineText).join('').replace(/\s*\n\s*/g, ' ').trim().replace(/\|/g, '\\|') : '');
                 const line = (r) => '| ' + Array.from({ length: width }, (_, k) => cellText(r.cells[k])).join(' | ') + ' |';
@@ -764,8 +870,10 @@
         if (!block) return false;
         let nodes;
         if (block === canvas) {
-            let top = r.startContainer;
-            while (top.parentNode !== canvas) top = top.parentNode;
+            // (the caret can sit right in the canvas, between its lines: then the line is the node just before it)
+            let top = r.startContainer === canvas ? (canvas.childNodes[r.startOffset - 1] || canvas.childNodes[r.startOffset]) : r.startContainer;
+            while (top && top.parentNode !== canvas) top = top.parentNode;
+            if (!top) return false;
             const inline = (n) => n && !(n.nodeType === 1 && (n.tagName === 'BR' || LINE_BLOCK.test(n.tagName))) && !(n.nodeType === 3 && /\n/.test(n.nodeValue));
             let first = top, last = top;
             while (inline(first.previousSibling)) first = first.previousSibling;
@@ -1416,5 +1524,5 @@
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, toFileText, fromFileText, styleCss, HL_COLORS };
+    root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, toFileText, fromFileText, styleCss, atTableHtml: (spec, opts) => { const t = readAtTable(String(spec), 0); return t ? atTableHtml(t, Object.assign({ notes: {} }, opts)) : null; }, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);

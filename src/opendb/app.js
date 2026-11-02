@@ -252,6 +252,11 @@
                 continue;
             }
             if (!t) { flush(); continue; }
+            // @@table=[a1h:'Name',b1:'Score',a2:'Ann'...]{style}: a table, cell by cell (drawn by keydown-doc.js)
+            if (t.startsWith('@@table=[') && window.kdDoc && kdDoc.atTableHtml) {
+                const h = kdDoc.atTableHtml(t);
+                if (h) { flush(); try { if (window.RadiiTable) window.RadiiTable.injectCss(); } catch (e) {} out.push('<div class="odb-table">' + h + '</div>'); continue; }
+            }
             // {align=center} at the start of a line (Writeout's align buttons, saved as Keydown)
             if ((m = /^\{align=(left|center|right|justify)\}\s*(.*)$/.exec(t))) { flush(); out.push('<p style="text-align: ' + m[1] + '">' + inline(m[2], notes) + '</p>'); continue; }
             if (/^>/.test(t)) {

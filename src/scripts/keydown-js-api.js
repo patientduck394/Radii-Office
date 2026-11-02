@@ -154,6 +154,8 @@ function editor(el, opts) {
     el.addEventListener('paste', onPaste);
     el.addEventListener('input', changed);
     document.addEventListener('selectionchange', onSel);
+    // tables get Radii Table's floating toolbar (rows, columns, header, style) and Tab between cells
+    try { if (window.RadiiTable) window.RadiiTable.attach(el); } catch (e) {}
     const sweep = setInterval(() => { try { tcSweep(); } catch (e) {} }, 30000);
     const api = el.__kdEditor = {
         el,
@@ -165,7 +167,13 @@ function editor(el, opts) {
         unformat: () => { const n = kdDoc.unformat(el); changed(); return n; },
         reformat: () => { const r = kdDoc.reformat(el); upgrade(el); changed(); return r; },
         exitFormatting: () => kdDoc.exitFormatting(el),
-        insertTable: () => { if (window.RadiiTable) { el.focus(); window.RadiiTable.open(el); } },
+        // the Insert Table window (rows, columns, header row, style, or a sheet from Imbuer), at the caret
+        insertTable: () => {
+            if (!window.RadiiTable) return;
+            el.focus();
+            if (lastRange && el.contains(lastRange.startContainer)) { const s = window.getSelection(); s.removeAllRanges(); s.addRange(lastRange); }
+            window.RadiiTable.insertIntoEditor(el);
+        },
         destroy: () => {
             ['keydown', 'keyup', 'mousedown', 'click', 'paste', 'input'].forEach((t) => el.removeEventListener(t, { keydown: onKeydown, keyup: onKeyup, mousedown: onMousedown, click: onClick, paste: onPaste, input: changed }[t]));
             document.removeEventListener('selectionchange', onSel);
