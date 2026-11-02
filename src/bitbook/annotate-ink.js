@@ -94,11 +94,13 @@
             case 'aero-bubbles':
                 return dots(d, c[2], w * 0.95, w * 2.3, 0) + dots(d, c[1], w * 0.78, w * 2.3, 0) + dots(d, c[3], w * 0.45, w * 2.3, 0, ' transform="translate(0 ' + (w * 0.1).toFixed(2) + ')"') +
                     dots(d, '#ffffff', w * 0.26, w * 2.3, 0, ' transform="translate(' + (-w * 0.16).toFixed(2) + ' ' + (-w * 0.16).toFixed(2) + ')"');
-            case 'aero-aurora': // Glossy Orb (the gallery's Frutiger Aero 1): a dark-to-color core, a big white gloss on top, a bright glow below, a white ring and a shadow
-                return line(d, 'rgba(0,0,0,0.3)', w * 1.12, ' transform="translate(0 ' + (w * 0.12).toFixed(2) + ')" filter="url(#ank-glow-in)"') + line(d, 'rgba(255,255,255,0.6)', w * 1.16) +
-                    line(d, dark(c[1], 0.6), w) + line(d, dark(c[1], 0.45), w * 0.9) + line(d, c[1], w * 0.62) +
-                    line(d, c[3], w * 0.34, ' transform="translate(0 ' + (w * 0.24).toFixed(2) + ')" opacity="0.85" filter="url(#ank-glow-in)"') +
-                    line(d, '#ffffff', w * 0.3, up(w, 0.22) + ' opacity="0.55"');
+            case 'aero-aurora': // Glossy Orb (the gallery's Frutiger Aero 1): a deep, dark glossy pill: dark rim, rich core, a broad pale gloss on top,
+                // a bright glow along the bottom, a white ring and a shadow
+                return line(d, 'rgba(0,0,0,0.35)', w * 1.1, ' transform="translate(0 ' + (w * 0.1).toFixed(2) + ')" filter="url(#ank-glow-in)"') + line(d, 'rgba(255,255,255,0.55)', w * 1.16) +
+                    line(d, dark(c[1], 0.72), w) + line(d, dark(c[1], 0.55), w * 0.9) + line(d, dark(c[1], 0.35), w * 0.62) +
+                    line(d, c[1], w * 0.32, ' transform="translate(0 ' + (w * 0.24).toFixed(2) + ')" opacity="0.8" filter="url(#ank-glow-in)"') +
+                    line(d, mix(c[1], 0.35), w * 0.14, ' transform="translate(0 ' + (w * 0.27).toFixed(2) + ')" opacity="0.6" filter="url(#ank-glow-in)"') +
+                    line(d, '#ffffff', w * 0.34, up(w, 0.25) + ' opacity="0.6"');
             case 'aero-sky': // Aero Chip: the Aero Chip (++R+text++) as a pen: shadow, deep border, color melting into a light tint, and a shine along the top
                 return line(d, 'rgba(150,150,150,0.55)', w, ' transform="translate(0 ' + (w * 0.16).toFixed(2) + ')"') + line(d, c[2], w) + line(d, c[1], w * 0.78) +
                     line(d, c[3], w * 0.18, ' transform="translate(0 ' + (w * 0.26).toFixed(2) + ')" opacity="0.8"') +
