@@ -1101,6 +1101,47 @@ async function rasterInk(a) {
     } finally { URL.revokeObjectURL(url); }
 }
 const RASTER_PAD = 8;
+// Safari's engine (WebKit: Safari, and the Mac and Linux desktop apps) gets two things wrong in html-to-image's
+// snapshot: an SVG picture inside it (the round glossy ends of the Gel Underline and Gel Strike bars) loses its
+// own gradients and turns black, and soft outer shadows (gel highlights, Gel Box, Gel Orbs) become gray slabs
+// beside the mark! So in WebKit the throwaway copy gets those SVGs as PNGs and its shadows as drop-shadow filters
+const WEBKIT = /AppleWebKit/.test(navigator.userAgent) && !/Chrome|Chromium|CriOS|Edg/.test(navigator.userAgent);
+const splitTop = (s) => { const out = []; let d = 0, part = ''; for (const ch of s) { if (ch === '(') d++; else if (ch === ')') d--; if (ch === ',' && !d) { out.push(part.trim()); part = ''; } else part += ch; } if (part.trim()) out.push(part.trim()); return out; };
+async function svgToPng(url, w, h) {
+    const img = new Image();
+    img.src = url;
+    await img.decode();
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w)); c.height = Math.max(1, Math.round(h));
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    return c.toDataURL('image/png');
+}
+async function webkitSafe(root) {
+    for (const n of [root, ...root.querySelectorAll('*')]) {
+        const cs = getComputedStyle(n);
+        if (/data:image\/svg\+xml/.test(cs.backgroundImage)) {
+            const sizes = splitTop(cs.backgroundSize), fs = parseFloat(cs.fontSize) || 16;
+            const layers = [];
+            for (const [i, layer] of splitTop(cs.backgroundImage).entries()) {
+                const m = /^url\("(data:image\/svg\+xml.*)"\)$/.exec(layer);
+                if (!m) { layers.push(layer); continue; }
+                const sz = (sizes[i] || sizes[0] || '').split(/\s+/).map(parseFloat);
+                // 8 pixels per CSS pixel: still sharp after the 4x snapshot
+                try { layers.push('url("' + await svgToPng(m[1], (sz[0] || fs) * 8, (sz[1] || sz[0] || fs) * 8) + '")'); } catch (e) { layers.push(layer); }
+            }
+            n.style.backgroundImage = layers.join(', ');
+        }
+        if (cs.boxShadow && cs.boxShadow !== 'none') {
+            const sh = splitTop(cs.boxShadow), inset = sh.filter((s) => /\binset\b/.test(s)), outer = sh.filter((s) => !/\binset\b/.test(s));
+            if (!outer.length) continue;
+            n.style.boxShadow = inset.length ? inset.join(', ') : 'none';
+            n.style.filter = outer.map((s) => {
+                const col = (s.match(/rgba?\([^)]*\)|#[0-9a-f]{3,8}\b/i) || ['rgba(0, 0, 0, 0.2)'])[0];
+                return 'drop-shadow(' + col + ' ' + s.replace(col, '').trim().split(/\s+/).slice(0, 3).join(' ') + ')';
+            }).join(' ');
+        }
+    }
+}
 async function rasterText(a) {
     const h2i = await loadH2i();
     const host = document.createElement('div');
@@ -1116,7 +1157,10 @@ async function rasterText(a) {
         const us = document.getElementById('kd-unique-styles');
         for (let k = 0; us && !us.sheet && k < 60; k++) await new Promise((r) => setTimeout(r, 50));
         if (document.fonts && document.fonts.ready) await document.fonts.ready;
-        const png = await h2i.toPng(host, { pixelRatio: 4, skipFonts: true, width: host.offsetWidth, height: host.offsetHeight });
+        const opts = { pixelRatio: 4, skipFonts: true, width: host.offsetWidth, height: host.offsetHeight };
+        // WebKit loads the pictures inside a snapshot only after the first one is drawn, so it draws twice
+        if (WEBKIT) { await webkitSafe(host); await h2i.toPng(host, opts); }
+        const png = await h2i.toPng(host, opts);
         return { png, w: host.offsetWidth, h: host.offsetHeight, plain: el.innerText };
     } finally { host.remove(); }
 }
