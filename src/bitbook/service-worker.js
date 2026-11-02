@@ -1,9 +1,10 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261202k';
+var BITBOOK_CACHE = 'bitbook-shell-v20261202l';
 var BITBOOK_SHELL = [
   './',
   'index.html',
   'app.js?v=20261202c',
+  'chip-guard.js?v=20261202a',
   'style.css?v=20261201d',
   'keydown.css?v=20261202c',
   'marketplace.js?v=20261009',
