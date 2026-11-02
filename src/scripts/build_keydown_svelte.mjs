@@ -54,8 +54,14 @@ const component = `<!--
   In a <form>: give it a name (name="notes") and the text is sent with the form like any other field;
   required asks for some text before the form can be sent, and the form's Reset button empties it again.
 
+  Small enough for a comment or post composer: <KeydownBox compact onsubmit={({ text, html }) => post(text)} />
+  (a slim box with B, I, U and + buttons; + holds highlights, Skills, tables and Un-format; onsubmit adds a Post
+  button, Ctrl/Cmd+Enter posts too, and the box empties after posting unless onsubmit returns false).
+  KeydownComposer.svelte is the same thing with compact already on.
+
   Props: value (Keydown text, bindable), html (formatted HTML, bindable), name, required, title, placeholder,
-         height, readonly, toolbar (true/false), sound (true/false), onchange(text). The editor itself is there too: bind:this={box} then box.editor() (insertSkill, unformat...).
+         height, readonly, toolbar (true/false), sound (true/false), onchange(text),
+         compact (true/false), onsubmit({ text, html }), submitLabel ('Post'). The editor itself is there too: bind:this={box} then box.editor() (insertSkill, unformat...).
   Built by scripts/build_keydown_svelte.mjs from the Radii Office site's Keydown sources (Svelte 5).
 -->
 <script module>
@@ -75,16 +81,22 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
         name = undefined,
         required = false,
         title = 'Keydown',
-        placeholder = 'Type here! Keydown tags like #G#chip# or **bold** format when you press Space or Enter!',
-        height = '340px',
+        placeholder = undefined,
+        height = undefined,
+        compact = false,
+        onsubmit = undefined,
+        submitLabel = 'Post',
         readonly = false,
         toolbar = true,
         sound = true,
         onchange = undefined,
     } = $props();
 
-    let canvas;
-    let field;
+    let canvas = $state();
+    let field = $state();
+    const boxHeight = $derived(height || (compact ? '40px' : '340px'));
+    const hint = $derived(placeholder || (compact ? 'Write something! **bold**, #G#chips# and more format as you type!'
+        : 'Type here! Keydown tags like #G#chip# or **bold** format when you press Space or Enter!'));
     const initial = value;          // what the form's Reset button goes back to
     let ed = null;
     let shown = value;             // the text the canvas holds right now
@@ -150,11 +162,66 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
         if (unformatted) ed.reformat(); else ed.unformat();
         unformatted = !unformatted;
     }
+    // Post (compact mode): hands over the text, then the box empties (unless onsubmit returns false)
+    function post() {
+        words = count();
+        if (typeof onsubmit !== 'function' || !words || readonly) return;
+        const t = ed ? ed.getText() : value;
+        const kept = onsubmit({ text: t, html: canvas.innerHTML });
+        if (kept !== false) { shown = ''; value = ''; html = ''; if (ed) ed.setText(''); words = 0; }
+    }
+    function onKey(e) {
+        if (e.key === 'Escape' && menu) { menu = ''; return; }
+        if (e.key === 'Enter' && (e.ctrlKey || e.metaKey) && typeof onsubmit === 'function') { e.preventDefault(); post(); }
+    }
+    // a click anywhere else closes an open menu
+    function outside(e) { if (menu && !(e.target && e.target.closest && e.target.closest('.kdb-pop'))) menu = ''; }
     // (for apps that want the whole editor: insertSkill, unformat, reformat, insertTable, getText, setText...)
     export function editor() { return ed; }
 </script>
 
-<div class="kdb" class:readonly style:--kdb-height={height}>
+<svelte:window onclick={outside} />
+
+{#if compact}
+<div class="kdb kdb-compact" class:readonly style:--kdb-height={boxHeight}>
+    <div class="kdb-glass">
+        <div bind:this={canvas} class="kdb-canvas keydown-doc" contenteditable={readonly ? 'false' : 'true'} role="textbox" aria-multiline="true" aria-label={title} data-placeholder={hint} tabindex="0" onkeydown={onKey} oninput={() => (words = count())}></div>
+    </div>
+    <textarea bind:this={field} class="kdb-field" {name} {required} value={value} tabindex="-1" aria-hidden="true" readonly={readonly}></textarea>
+    {#if toolbar && !readonly}
+        <div class="kdb-mini" role="toolbar" aria-label="Formatting">
+            <button type="button" class="kdb-btn" title="Bold" aria-label="Bold" onmousedown={keep} onclick={() => cmd('bold')}><b>B</b></button>
+            <button type="button" class="kdb-btn" title="Italic" aria-label="Italic" onmousedown={keep} onclick={() => cmd('italic')}><i>I</i></button>
+            <button type="button" class="kdb-btn" title="Underline" aria-label="Underline" onmousedown={keep} onclick={() => cmd('underline')}><u>U</u></button>
+            <span class="kdb-pop">
+                <button type="button" class="kdb-btn kdb-plus" title="More: highlights, Skills, tables" aria-label="More formatting" aria-expanded={menu === 'plus'} onmousedown={keep} onclick={() => (menu = menu === 'plus' ? '' : 'plus')}>+</button>
+                {#if menu === 'plus'}
+                    <div class="kdb-menu kdb-menu-up">
+                        <div class="kdb-menu-label" title="Select some words first!">Highlight</div>
+                        <div class="kdb-swatch-row">
+                            {#each HIGHLIGHTS as [code, color] (code)}
+                                <button type="button" class="kdb-swatch kdb-sw-{color}" title={color} aria-label={color + ' highlight'} onmousedown={keep} onclick={() => highlight(code, color)}></button>
+                            {/each}
+                        </div>
+                        <div class="kdb-menu-label">Skills</div>
+                        {#each (typeof window !== 'undefined' && window.Keydown ? window.Keydown.skills : []) as s (s.name)}
+                            <button type="button" class="kdb-item" onmousedown={keep} onclick={() => skill(s.name)}>{s.label}</button>
+                        {/each}
+                        <div class="kdb-menu-label">More</div>
+                        <button type="button" class="kdb-item" onmousedown={keep} onclick={() => { menu = ''; ed && ed.insertTable(); }}>▦ Table</button>
+                        <button type="button" class="kdb-item" onmousedown={keep} onclick={() => { menu = ''; toggleFormat(); }}>{unformatted ? '✨ Re-format' : '🏷️ Un-format'}</button>
+                    </div>
+                {/if}
+            </span>
+            <span class="kdb-gap"></span>
+            {#if typeof onsubmit === 'function'}
+                <button type="button" class="kdb-post" disabled={!words} title="Post (Ctrl/Cmd+Enter)" onmousedown={keep} onclick={post}>{submitLabel}</button>
+            {/if}
+        </div>
+    {/if}
+</div>
+{:else}
+<div class="kdb" class:readonly style:--kdb-height={boxHeight}>
     <div class="kdb-title">
         <span class="kdb-orb" aria-hidden="true"></span>
         <span class="kdb-name">{title}</span>
@@ -191,7 +258,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
         </div>
     {/if}
     <div class="kdb-glass">
-        <div bind:this={canvas} class="kdb-canvas keydown-doc" contenteditable={readonly ? 'false' : 'true'} role="textbox" aria-multiline="true" aria-label={title} data-placeholder={placeholder}></div>
+        <div bind:this={canvas} class="kdb-canvas keydown-doc" contenteditable={readonly ? 'false' : 'true'} role="textbox" aria-multiline="true" aria-label={title} data-placeholder={hint} tabindex="0" onkeydown={onKey} oninput={() => (words = count())}></div>
     </div>
     <!-- the form field: always holds the Keydown text, so <form> sends it (and checks required) like any input -->
     <textarea bind:this={field} class="kdb-field" {name} {required} value={value} tabindex="-1" aria-hidden="true" readonly={readonly}></textarea>
@@ -200,6 +267,7 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
         <span class="kdb-hint">{readonly ? 'Read only' : 'Space or Enter formats your tags!'}</span>
     </div>
 </div>
+{/if}
 
 <style>
     /* ---------- KeydownBox's own Frutiger Aero look ---------- */
@@ -333,6 +401,29 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     }
     .kdb-hint { opacity: 0.8; }
     .readonly .kdb-canvas { cursor: default; }
+    /* ---------- compact mode: a comment / post composer ---------- */
+    .kdb-compact { border-radius: 14px; padding: 3px; box-shadow: 0 6px 16px rgba(3, 105, 161, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.95); }
+    .kdb-compact::before { height: 16px; border-radius: 13px 13px 50% 50% / 13px 13px 8px 8px; }
+    .kdb-compact .kdb-glass { border-radius: 11px; }
+    .kdb-compact .kdb-canvas { max-height: 240px; padding: 8px 12px; font-size: 14px; line-height: 1.5; }
+    .kdb-mini { position: relative; display: flex; align-items: center; gap: 4px; padding: 4px 3px 1px; }
+    .kdb-compact .kdb-btn { height: 26px; min-width: 28px; padding: 0 7px; font-size: 12px; border-radius: 8px; }
+    .kdb-compact .kdb-plus { font-size: 17px; font-weight: 800; line-height: 1; color: #fff; border-color: #6d28d9; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(180deg, #c4b5fd 0%, #8b5cf6 48%, #7c3aed 52%, #a78bfa 100%); }
+    .kdb-menu-up { top: auto; bottom: calc(100% + 6px); max-height: 320px; overflow-y: auto; }
+    .kdb-menu-label { font-size: 11px; font-weight: 800; letter-spacing: 0.4px; text-transform: uppercase; color: #0369a1; padding: 6px 8px 3px; }
+    .kdb-swatch-row { display: flex; flex-wrap: wrap; gap: 5px; padding: 2px 6px 4px; }
+    .kdb-swatch-row .kdb-swatch { width: 22px; height: 22px; }
+    .kdb-post {
+        font: inherit; font-size: 13px; font-weight: 800; color: #fff; cursor: pointer; height: 28px; padding: 0 16px; border-radius: 999px;
+        border: 1px solid #15803d; text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(180deg, #86efac 0%, #22c55e 48%, #16a34a 52%, #4ade80 100%);
+        box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), 0 2px 6px rgba(22, 163, 74, 0.35);
+        transition: transform 0.12s, box-shadow 0.12s, filter 0.12s;
+    }
+    .kdb-post:hover:not(:disabled) { transform: translateY(-1px); box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.7), 0 4px 10px rgba(22, 163, 74, 0.45); }
+    .kdb-post:disabled { cursor: not-allowed; filter: grayscale(0.7) opacity(0.6); }
+    .kdb-post:focus-visible { outline: 2px solid #15803d; outline-offset: 2px; }
     /* (the form field is there for the form, never seen) */
     .kdb-field { position: absolute; left: 50%; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; resize: none; border: 0; padding: 0; }
 
@@ -341,4 +432,18 @@ ${globalCss(KEYDOWN_CSS)}
 </style>
 `;
 fs.writeFileSync(OUT, component);
+const composer = `<!--
+  KeydownComposer.svelte: KeydownBox's compact mode, ready for comment and post composers!
+  <KeydownComposer bind:value={comment} onsubmit={({ text, html }) => send(text)} />
+  Every KeydownBox prop works here too (name, required, placeholder, submitLabel, height...).
+  Needs KeydownBox.svelte next to it (that one holds the Keydown engine and styles).
+-->
+<script>
+    import KeydownBox from './KeydownBox.svelte';
+    let { value = $bindable(''), html = $bindable(''), ...rest } = $props();
+<\/script>
+
+<KeydownBox compact bind:value bind:html {...rest} />
+`;
+fs.writeFileSync(path.join(path.dirname(OUT), 'KeydownComposer.svelte'), composer);
 console.log('KeydownBox.svelte built!', OUT, (component.length / 1048576).toFixed(2) + ' MB');
