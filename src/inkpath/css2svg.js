@@ -32,9 +32,25 @@
         if (cur.trim()) out.push(cur.trim());
         return out;
     }
+    // Colors like color(srgb 0.9 0.8 0 / 0.5) (what color-mix() turns into), oklch(), lab(), hsl()... -> rgba(),
+    // by letting a 1x1 canvas paint them
+    let cvx = null;
+    const cssColorCache = {};
+    function plainColor(c) {
+        if (cssColorCache[c]) return cssColorCache[c];
+        if (!cvx) { const cv = document.createElement('canvas'); cv.width = cv.height = 1; cvx = cv.getContext('2d', { willReadFrequently: true }); }
+        cvx.clearRect(0, 0, 1, 1);
+        cvx.fillStyle = 'rgba(0, 0, 0, 0)';
+        cvx.fillStyle = c;
+        cvx.fillRect(0, 0, 1, 1);
+        const d = cvx.getImageData(0, 0, 1, 1).data;
+        return (cssColorCache[c] = 'rgba(' + d[0] + ', ' + d[1] + ', ' + d[2] + ', ' + Math.round(d[3] / 255 * 1000) / 1000 + ')');
+    }
+    function plainColors(s) { return String(s).replace(/\b(?:color|oklch|oklab|lab|lch|hwb|hsla?)\([^()]*\)/gi, plainColor); }
     function hex2(n) { return ('0' + Math.max(0, Math.min(255, Math.round(n))).toString(16)).slice(-2); }
     // Any computed CSS color -> Inkpath's #rrggbbaa!
     function toHex8(c) {
+        c = plainColors(c);
         const m = String(c).match(/rgba?\(\s*([\d.]+)[ ,]+([\d.]+)[ ,]+([\d.]+)(?:\s*[,/]\s*([\d.]+%?))?\s*\)/);
         if (m) {
             let a = m[4] === undefined ? 1 : (m[4].slice(-1) === '%' ? parseFloat(m[4]) / 100 : parseFloat(m[4]));
@@ -70,6 +86,7 @@
     // w x h is the box the gradient paints, so px stops and angles come out exactly like CSS!
     function parseGradient(g, w, h) {
         w = w || 100; h = h || 100;
+        g = plainColors(g);
         const m = g.match(/^(repeating-)?(linear|radial)-gradient\((.*)\)$/s);
         if (!m) return null;
         const repeating = !!m[1];
@@ -142,6 +159,7 @@
     }
     function parseShadows(s) {
         if (!s || s === 'none') return [];
+        s = plainColors(s);
         return splitTop(s).map(function (one) {
             const inset = /\binset\b/.test(one);
             const col = (one.match(/rgba?\([^)]*\)|#[0-9a-f]{3,8}/i) || ['rgba(0, 0, 0, 0.5)'])[0];
@@ -156,18 +174,21 @@
     // -> { main: 'decls', before: 'decls' or null, after: 'decls' or null }
     function parseRules(css) {
         const src = String(css || '').replace(/\/\*[\s\S]*?\*\//g, '');
-        const R = { main: [], before: null, after: null };
-        const add = function (t, d) { d = String(d).replace(/[{}]/g, '').trim(); if (!d) return; if (t === 'main') R.main.push(d); else (R[t] = R[t] || []).push(d); };
-        const ensure = function (t) { if (t !== 'main' && !R[t]) R[t] = []; };
-        function targets(sel, def) {
-            const out = [];
+        const list = []; // { t: target, d: declarations, spec, n: order }
+        const seen = { main: true };
+        const add = function (t, d, spec) { d = String(d).replace(/[{}]/g, '').trim(); seen[t] = true; if (d) list.push({ t: t, d: d, spec: spec, n: list.length }); };
+        function targets(sel, def, base) {
+            const out = {};
             splitTop(sel).forEach(function (part) {
                 const t = /::?before\b/i.test(part) ? 'before' : /::?after\b/i.test(part) ? 'after' : /::[a-z-]+/i.test(part) ? null : def;
-                if (t && out.indexOf(t) < 0) out.push(t);
+                if (!t) return;
+                const sp = base + specOf(part);
+                // (several selectors in one rule: the strongest one counts, as it would on a page)
+                if (!(t in out) || sp > out[t]) out[t] = sp;
             });
             return out;
         }
-        function walk(s, def) {
+        function walk(s, def, base) {
             let i = 0, pending = '', q = null;
             while (i < s.length) {
                 const c = s[i];
@@ -184,18 +205,38 @@
                 }
                 const body = s.slice(i + 1, depth ? j : j - 1);
                 const cut = pending.lastIndexOf(';');
-                if (cut >= 0) add(def, pending.slice(0, cut + 1));
+                if (cut >= 0) add(def, pending.slice(0, cut + 1), base);
                 const head = pending.slice(cut + 1).trim();
                 pending = '';
                 i = j;
-                if (/^@/.test(head)) { if (/^@(media|supports|layer|container|scope|document)\b/i.test(head)) walk(body, def); continue; }
-                targets(head, def).forEach(function (t) { ensure(t); if (/\{/.test(body)) walk(body, t); else add(t, body); });
+                if (/^@/.test(head)) { if (/^@(media|supports|layer|container|scope|document)\b/i.test(head)) walk(body, def, base); continue; }
+                const ts = targets(head, def, base);
+                Object.keys(ts).forEach(function (t) { seen[t] = true; if (/\{/.test(body)) walk(body, t, ts[t]); else add(t, body, ts[t]); });
             }
-            if (pending.trim()) add(def, pending);
+            if (pending.trim()) add(def, pending, base);
         }
-        walk(src, 'main');
-        const join = function (list) { return list.map(function (d) { return /;\s*$/.test(d) ? d : d + ';'; }).join('\n'); };
-        return { main: join(R.main), before: R.before ? join(R.before) : null, after: R.after ? join(R.after) : null };
+        walk(src, 'main', 0);
+        // like a browser: the more specific rule wins, and between equals the later one
+        list.sort(function (x, y) { return x.spec - y.spec || x.n - y.n; });
+        const join = function (t) { return list.filter(function (e) { return e.t === t; }).map(function (e) { return /;\s*$/.test(e.d) ? e.d : e.d + ';'; }).join('\n'); };
+        // a var(--name) that is never set counts as none (so var(--cap), linear-gradient(...) keeps its gradient,
+        // where a browser would throw the whole line away)
+        const all = list.map(function (e) { return e.d; }).join('\n');
+        const defined = {}, missing = [];
+        all.replace(/(^|[;\s{])--([\w-]+)\s*:/g, function (m, p, n) { defined[n] = true; return m; });
+        all.replace(/var\(\s*--([\w-]+)\s*\)/g, function (m, n) { if (!defined[n] && missing.indexOf(n) < 0) missing.push(n); return m; });
+        const pre = missing.map(function (n) { return '--' + n + ': none;'; }).join('');
+        return { main: pre + join('main'), before: seen.before ? join('before') : null, after: seen.after ? join('after') : null };
+    }
+    // Selector specificity as one number: ids, then classes / attributes / pseudo-classes, then element names
+    function specOf(sel) {
+        let s = String(sel).replace(/:where\((?:[^()]|\([^()]*\))*\)/gi, ' ').replace(/:(?:is|not|has|matches)\(((?:[^()]|\([^()]*\))*)\)/gi, ' $1 ');
+        const ids = (s.match(/#[\w-]+/g) || []).length;
+        const attrs = (s.match(/\[[^\]]*\]/g) || []).length;
+        s = s.replace(/\[[^\]]*\]/g, ' ');
+        const classes = (s.match(/\.[\w-]+/g) || []).length + (s.match(/(?<!:):(?!:)(?!before\b|after\b)[\w-]+/gi) || []).length;
+        const elems = (s.match(/(?:^|[\s>+~])[a-zA-Z][\w-]*/g) || []).length + (s.match(/::?(?:before|after)\b|::[\w-]+/gi) || []).length;
+        return ids * 10000 + (classes + attrs) * 100 + elems;
     }
     // the text in content: "..." (several strings join; \2605 escapes work); none/normal = no box at all
     function contentText(decls) {
@@ -216,6 +257,23 @@
             if (real) out += sel + '::' + k + ' {' + (/(^|[;\n])\s*content\s*:/i.test(R[k]) ? '' : 'content: "";') + R[k] + '}\n';
             else out += sel + ' > .c2s-p' + k + ' {' + R[k] + '}\n';
         });
+        return out;
+    }
+    // "calc(100% - 4.1px)", "50%", "12px" -> px, with % of ref
+    function evalLen(v, ref) {
+        const e = String(v).trim().replace(/calc\(/g, '(').replace(/(-?[\d.]+(?:e-?\d+)?)%/g, function (m, n) { return '(' + n + '*' + ref + '/100)'; }).replace(/(\d)px/g, '$1');
+        if (!/^[\d.\s+\-*/()e]*$/.test(e)) return NaN;
+        try { return Function('"use strict";return (' + e + ')')(); } catch (err) { return NaN; }
+    }
+    // splits "calc(100% - 2px) 50%" at its top-level spaces
+    function words(s) {
+        const out = []; let depth = 0, cur = '';
+        for (const ch of String(s).trim()) {
+            if (ch === '(') depth++;
+            if (ch === ')') depth--;
+            if (/\s/.test(ch) && depth === 0) { if (cur) out.push(cur); cur = ''; } else cur += ch;
+        }
+        if (cur) out.push(cur);
         return out;
     }
     let seq = 0;
@@ -274,6 +332,7 @@
             w: Math.max(minSize, r.width), h: Math.max(minSize, r.height),
             radius: Math.min(radiusPx, Math.min(r.width, r.height) / 2), textLeft: textLeft, textWidth: textWidth, textTop: textTop, textHeight: textHeight,
             bgColor: cs.backgroundColor, bgImage: cs.backgroundImage,
+            bgSize: splitTop(cs.backgroundSize || 'auto'), bgPos: splitTop(cs.backgroundPosition || '0% 0%'), bgRepeat: splitTop(cs.backgroundRepeat || 'repeat'), bgOrigin: splitTop(cs.backgroundOrigin || 'padding-box'),
             borderW: cs.borderTopStyle === 'none' ? 0 : (parseFloat(cs.borderTopWidth) || 0), borderColor: cs.borderTopColor,
             bw: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return cs['border' + k + 'Style'] === 'none' ? 0 : (parseFloat(cs['border' + k + 'Width']) || 0); }),
             pad: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return parseFloat(cs['padding' + k]) || 0; }),
@@ -305,13 +364,35 @@
             return { x: x0 + ins[3], y: y0 + ins[0], width: w, height: h, rx: Math.max(0, Math.min(M.radius - Math.max(ins[0], ins[3]), Math.min(w, h) / 2)) };
         }
         if (!(M.w > 0 && M.h > 0)) return shapes;
+        // where one background layer really paints: its background-size at its background-position, when it does not
+        // repeat (a repeating one fills its whole clip box, as before)
+        function layerBox(i, clip) {
+            const cb = clipBox(clip);
+            const at = function (list) { return list.length ? list[i % list.length] : ''; };
+            const rep = at(M.bgRepeat || []);
+            if (!/^no-repeat( no-repeat)?$/.test(rep)) return cb;
+            const ob = clipBox(at(M.bgOrigin || []) || 'padding-box');
+            const sz = words(at(M.bgSize || []) || 'auto');
+            let w = ob.width, h = ob.height;
+            if (sz[0] && !/^(auto|cover|contain)$/.test(sz[0])) { w = evalLen(sz[0], ob.width); h = sz[1] && sz[1] !== 'auto' ? evalLen(sz[1], ob.height) : h; }
+            const ps = words(at(M.bgPos || []) || '0% 0%');
+            const x = ob.x + evalLen(ps[0] || '0%', ob.width - w), y = ob.y + evalLen(ps[1] || ps[0] || '0%', ob.height - h);
+            if (!(isFinite(w) && isFinite(h) && isFinite(x) && isFinite(y))) return cb;
+            // only the part inside the clip box shows
+            const x1 = Math.max(x, cb.x), y1 = Math.max(y, cb.y), x2 = Math.min(x + w, cb.x + cb.width), y2 = Math.min(y + h, cb.y + cb.height);
+            if (x2 - x1 <= 0.01 || y2 - y1 <= 0.01) return null;
+            const full = Math.abs(x1 - cb.x) < 0.01 && Math.abs(y1 - cb.y) < 0.01 && Math.abs(x2 - cb.x - cb.width) < 0.01 && Math.abs(y2 - cb.y - cb.height) < 0.01;
+            return { x: x1, y: y1, width: x2 - x1, height: y2 - y1, rx: full ? cb.rx : 0, gw: w, gh: h };
+        }
         const layers = (M.bgImage && M.bgImage !== 'none') ? splitTop(M.bgImage) : [];
         const clipOf = function (i) { return M.clips[Math.min(i, M.clips.length - 1)] || 'border-box'; };
         // Bottom layer first: the background color (it uses the LAST clip), then images from back to front!
         if (alphaOf(M.bgColor) > 0) shapes.push(Object.assign({}, base, clipBox(clipOf(layers.length ? layers.length - 1 : 0)), { fillType: 'color', fill: toHex8(M.bgColor), name: 'Background' }));
-        layers.map(function (layer, i) { return { layer: layer, clip: clipOf(i) }; }).reverse().forEach(function (L, i, all) {
-            const box = clipBox(L.clip);
-            const g = parseGradient(L.layer, box.width, box.height);
+        layers.map(function (layer, i) { return { layer: layer, clip: clipOf(i), i: i }; }).reverse().forEach(function (L, i, all) {
+            const box = layerBox(L.i, L.clip);
+            if (!box) return;
+            const g = parseGradient(L.layer, box.gw || box.width, box.gh || box.height);
+            delete box.gw; delete box.gh;
             if (!g) return;
             // a flat gradient (one color, like linear-gradient(white, white)) is just a color!
             const flat = g.stops.every(function (st) { return st.c === g.stops[0].c; });
