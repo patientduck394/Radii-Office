@@ -100,10 +100,12 @@
             <span class="section-label">File Options</span>
             <button class="action-btn" onclick="exportKV()">💾 Export .KV</button>
             <button class="action-btn" onclick="document.getElementById('file-kv').click()">📂 Import .KV</button>
+            <button class="action-btn" onclick="document.getElementById('file-svg').click()" title="Every shape in the SVG becomes an editable Inkpath shape!">📥 Import SVG</button>
             <button class="action-btn" onclick="exportSVG()">🖼️ Export SVG</button>
             <button class="action-btn" onclick="exportPNG()">📸 Export PNG</button>
             
             <input type="file" id="file-kv" style="display:none" accept=".kv,.yaml,.yml" onchange="importKV(event)">
+            <input type="file" id="file-svg" style="display:none" accept=".svg,image/svg+xml" onchange="importSVG(event)">
         </div>
     </nav>
 
@@ -504,5 +506,6 @@
     <script src="radii-collab.js?v=20261201h"></script>
     <script src="collab-inkpath.js?v=20261042"></script>
     <script src="css2svg.js?v=20261026"></script>
+    <script src="svg-import.js?v=20261202a"></script>
 </body>
 </html>

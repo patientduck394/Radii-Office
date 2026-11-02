@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Inkpath renderer</title>
+    <meta name="robots" content="noindex">
+    <!-- Inkpath's drawing engine on its own (no saving, no sharing): Writeout and Bitbook hand it a .kv drawing
+         with window.inkpathKvToSvg(text) and get back the finished picture as SVG text, cropped to the drawing! -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+    <style>body { margin: 0; } #viewport { width: 1200px; height: 800px; display: block; } [hidden] { display: none; }</style>
+</head>
+<body>
+    <svg id="viewport" xmlns="http://www.w3.org/2000/svg">
+        <defs id="svg-defs"></defs>
+        <g id="drawing-layer"></g>
+        <g id="preview-layer"></g>
+        <g id="ui-layer"></g>
+    </svg>
+    <div id="inspector-content" hidden></div>
+    <div id="inspector-empty" hidden></div>
+    <script src="bezmath.js"></script>
+    <script src="app.js?v=20261132r"></script>
+    <script>
+    window.inkpathKvToSvg = function (text) {
+        let doc;
+        try { doc = jsyaml.load(String(text || '')); } catch (e) { throw new Error('That .kv file could not be read!'); }
+        if (!doc || !Array.isArray(doc.shapes)) throw new Error('That file is not an Inkpath drawing!');
+        if (!doc.shapes.length) throw new Error('That Inkpath drawing is empty!');
+        objects = doc.shapes; selectedIndices = []; activePathNodes = []; currentTool = 'select';
+        panOffset.x = 0; panOffset.y = 0; zoomLevel = 1;
+        render();
+        // the canvas's dashed border goes (it is the first thing drawn), then the picture is cropped to the drawing
+        const layer = document.getElementById('drawing-layer');
+        if (layer.firstChild && layer.firstChild.getAttribute('stroke-dasharray')) layer.firstChild.remove();
+        layer.removeAttribute('transform');
+        // each shape's box, grown by its own stroke, blur and drop shadow (only on the side the shadow falls)
+        let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
+        Array.from(layer.children).forEach(el => {
+            const o = objects[+el.getAttribute('data-idx')] || {};
+            let b; try { b = el.getBBox(); } catch (e) { return; }
+            if (!(b.width > 0 || b.height > 0)) return;
+            const g = (o.strokeWidth || 0) / 2 + (o.blur || 0) * 3, d = o.effects && o.effects.drop, s = d ? (d.blur || 0) * 3 : 0;
+            const dx = d ? d.dx || 0 : 0, dy = d ? d.dy || 0 : 0;
+            x1 = Math.min(x1, b.x - g - Math.max(0, s - dx)); x2 = Math.max(x2, b.x + b.width + g + Math.max(0, s + dx));
+            y1 = Math.min(y1, b.y - g - Math.max(0, s - dy)); y2 = Math.max(y2, b.y + b.height + g + Math.max(0, s + dy));
+        });
+        if (!isFinite(x1)) throw new Error('That Inkpath drawing is empty!');
+        const pad = 12;
+        const x = Math.floor(x1 - pad), y = Math.floor(y1 - pad), w = Math.ceil(x2 - x1 + pad * 2), h = Math.ceil(y2 - y1 + pad * 2);
+        const out = document.getElementById('viewport').cloneNode(true);
+        out.querySelector('#ui-layer').remove(); out.querySelector('#preview-layer').remove();
+        out.removeAttribute('id');
+        out.querySelectorAll('[class], [data-idx]').forEach(e => { e.removeAttribute('class'); e.removeAttribute('data-idx'); });
+        out.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        out.setAttribute('viewBox', x + ' ' + y + ' ' + w + ' ' + h);
+        out.setAttribute('width', w); out.setAttribute('height', h);
+        return { svg: new XMLSerializer().serializeToString(out), width: w, height: h };
+    };
+    </script>
+</body>
+</html>
