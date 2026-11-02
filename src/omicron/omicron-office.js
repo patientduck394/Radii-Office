@@ -342,7 +342,7 @@
         const box = document.createElement('div');
         box.className = 'om-skill';
         const st = { tab: which || 'uni', uni: '#a78bfa', cc: '#8b5cf6', ccs: 1, us: null, col: 'regular', q: '' };
-        const COLS = [['regular', 'Regular'], ['aero', 'Frutiger Aero'], ['aero2', 'Aero 2'], ['aero3', 'Aero 3'], ['pool', 'Poolside'], ['pool2', 'Poolside 2'], ['pool3', 'Poolside 3'], ['pool4', 'Poolside 4']];
+        const COLS = [['regular', 'Regular'], ['aero', 'Frutiger Aero'], ['aero2', 'Aero 2'], ['aero3', 'Aero 3'], ['aero4', 'Aero 4'], ['pool', 'Poolside'], ['pool2', 'Poolside 2'], ['pool3', 'Poolside 3'], ['pool4', 'Poolside 4']];
         function draw() {
             let h = '<div class="os-seg om-skill-tabs">' + [['uni', 'Uni-Chip'], ['cc', 'Custom Chip'], ['us', 'Unique Styles']].map(function (t) { return '<button type="button" data-t="' + t[0] + '" class="' + (st.tab === t[0] ? 'on' : '') + '">' + t[1] + '</button>'; }).join('') + '</div>';
             if (st.tab === 'uni') {
@@ -1183,7 +1183,7 @@
                 { label: 'Card Styles', items: [{ gallery: true, cls: 'om-card-gal', items: cardsGallery, menu: function () { return [{ header: 'Card Styles' }].concat(cardsGallery.map(function (g) { return { label: g.label, checked: g.active(), run: g.run }; })); } }] },
                 { label: 'Keydown', items: [
                     { big: true, icon: 'store', label: 'Marketplace\nStyles', title: 'Every Marketplace Keydown pack!', menu: marketMenu },
-                    { big: true, icon: 'palette', label: 'Skills', title: 'Uni-Chip, Custom Chip and 3600 Unique Styles!', run: function () { skill('us'); }, menu: function () { return [{ label: 'Uni-Chip', icon: 'palette', run: function () { skill('uni'); } }, { label: 'Custom Chip', icon: 'bubble', run: function () { skill('cc'); } }, { label: 'Unique Styles', icon: 'sparkle', run: function () { skill('us'); } }]; } }
+                    { big: true, icon: 'palette', label: 'Skills', title: 'Uni-Chip, Custom Chip and 4050 Unique Styles!', run: function () { skill('us'); }, menu: function () { return [{ label: 'Uni-Chip', icon: 'palette', run: function () { skill('uni'); } }, { label: 'Custom Chip', icon: 'bubble', run: function () { skill('cc'); } }, { label: 'Unique Styles', icon: 'sparkle', run: function () { skill('us'); } }]; } }
                 ] },
                 { label: 'Arrange', items: [{ stack: [
                     { sm: true, icon: 'arrowUp', label: 'Move Up', run: function () { moveBlock(-1); } },

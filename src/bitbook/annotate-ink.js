@@ -27,6 +27,10 @@
         ['pool', 'Poolside', [['pool-water', 'Water'], ['pool-tile', 'Swirl Lolly'], ['pool-rope', 'Refraction'], ['pool-ripple', 'Reflection Shine']]],
         ['aero2', 'Frutiger Aero 2', [['aero2-pearl', 'Glossy Pearl'], ['aero2-vista', 'Vista Glow'], ['aero2-brackets', 'Gel Brackets'], ['aero2-rings', 'Ring Wallpaper']]],
         ['pool2', 'Poolside 2', [['pool2-mist', 'Mist Glow'], ['pool2-chevron', 'Lane Chevrons'], ['pool2-outline', 'Outline Pill'], ['pool2-deck', 'Diagonal Deck']]],
+        ['aero3', 'Frutiger Aero 3', [['aero3-jelly', 'Jelly Tube'], ['aero3-silver', 'Silver Chrome Pill'], ['aero3-ribbons', 'Twisted Ribbons'], ['aero3-streak', 'Light Streak']]],
+        ['pool3', 'Poolside 3', [['pool3-glitter', 'Glitter Water'], ['pool3-dapple', 'Sun Dapples'], ['pool3-checker', 'Checker Border'], ['pool3-ombre', 'Pool Ombre']]],
+        ['aero4', 'Frutiger Aero 4', [['aero4-peek', 'Peek Panel'], ['aero4-trio', 'Bubble Trio'], ['aero4-glow', 'Glow Tube'], ['aero4-aurora', 'Aurora Bar']]],
+        ['pool4', 'Poolside 4', [['pool4-wavelet', 'Wavelet Edge'], ['pool4-current', 'Current Lines'], ['pool4-gloss', 'Wet Gloss'], ['pool4-tape', 'Caution Tape']]],
         ['cosmic', 'Cosmic', [['cosmic-galaxy', 'Galaxy'], ['cosmic-comet', 'Comet'], ['cosmic-stars', 'Stars'], ['cosmic-nebula', 'Nebula']]],
         ['metal', 'Metallic', [['metal-foil', 'Foil'], ['metal-chain', 'Chain'], ['metal-wire', 'Wire'], ['metal-rivet', 'Rivets']]]
     ];
@@ -37,6 +41,8 @@
         'vapor-glow': 4, 'vapor-grid': 12, 'vapor-chrome': 9, 'vapor-sunset': 10, 'candy-stripe': 9, 'candy-sprinkles': 12, 'candy-gummy': 12, 'candy-ribbon': 9,
         'cosmic-galaxy': 10, 'cosmic-comet': 4, 'cosmic-stars': 10, 'cosmic-nebula': 10, 'metal-foil': 8, 'metal-chain': 8, 'metal-wire': 5, 'metal-rivet': 10,
         'aero2-pearl': 12, 'aero2-vista': 12, 'aero2-brackets': 12, 'aero2-rings': 12, 'pool2-mist': 12, 'pool2-chevron': 12, 'pool2-outline': 12, 'pool2-deck': 12,
+        'aero3-jelly': 12, 'aero3-silver': 12, 'aero3-ribbons': 12, 'aero3-streak': 8, 'pool3-glitter': 12, 'pool3-dapple': 12, 'pool3-checker': 12, 'pool3-ombre': 12,
+        'aero4-peek': 12, 'aero4-trio': 10, 'aero4-glow': 8, 'aero4-aurora': 12, 'pool4-wavelet': 12, 'pool4-current': 12, 'pool4-gloss': 12, 'pool4-tape': 12,
         // (the first themed inks, still drawn in notes that use them)
         aero: 11, pool: 12, vapor: 4, mint: 9, galaxy: 10, rainbow: 8, lava: 8, gold: 8 };
     const NS = 'http://www.w3.org/2000/svg';
@@ -260,6 +266,63 @@
                 return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="7" height="7" patternTransform="rotate(55)">' +
                     '<rect width="7" height="7" fill="' + mix(c[1], 0.6) + '"/><rect x="6" width="1" height="7" fill="' + mix(c[1], 0.3) + '"/></pattern></defs>' +
                     line(d, 'url(#' + id + ')', w) + line(d, c[1], w * 0.2, ' transform="translate(0 ' + (w * 0.46).toFixed(2) + ')"');
+            }
+            /* ---- Frutiger Aero 3, Poolside 3, Frutiger Aero 4 and Poolside 4 (after the gallery's styles of the same names) ---- */
+            case 'aero3-jelly': // Jelly Tube: a fat translucent jelly, a bright core, a gloss on top and glints
+                return line(d, dark(c[1], 0.3), w * 1.04, ' opacity="0.85"') + line(d, c[1], w * 0.86, ' opacity="0.9"') +
+                    line(d, mix(c[1], 0.5), w * 0.46, ' transform="translate(0 ' + (w * 0.12).toFixed(2) + ')" opacity="0.7" filter="url(#ank-glow-in)"') +
+                    line(d, '#ffffff', w * 0.22, up(w, 0.24) + ' opacity="0.8"') + dots(d, '#ffffff', w * 0.14, w * 2.4, w * 0.5, ' transform="translate(' + (-w * 0.12).toFixed(2) + ' ' + (w * 0.1).toFixed(2) + ')" opacity="0.8"');
+            case 'aero3-silver': // Silver Chrome Pill: brushed chrome from bright to dark, tinted with the color, in a thin edge of the color
+                return line(d, c[2], w * 1.06) + bands(d, w, 0, 1, '#f7f9fb', '#6f7c88', 10) + bands(d, w * 0.9, 0.5, 1, mix(c[1], 0.7), c[1], 6) +
+                    line(d, '#ffffff', w * 0.14, up(w, 0.28) + ' opacity="0.9"');
+            case 'aero3-ribbons': // Twisted Ribbons: two ribbons of the color crossing over each other along the stroke
+                return line(d, c[2], w) + line(d, c[1], w * 0.82, ' stroke-linecap="butt" stroke-dasharray="' + n(w * 1.5) + ' ' + n(w * 1.5) + '"') +
+                    line(d, c[3], w * 0.82, ' stroke-linecap="butt" stroke-dasharray="' + n(w * 1.5) + ' ' + n(w * 1.5) + '" stroke-dashoffset="' + n(w * 1.5) + '"') +
+                    line(d, '#ffffff', w * 0.18, up(w, 0.22) + ' opacity="0.5"');
+            case 'aero3-streak': // Light Streak: a hot white core inside a soft colored glow
+                return line(d, c[1], w * 3.4, ' opacity="0.55" filter="url(#ank-glow)"') + line(d, c[1], w * 1.6, ' opacity="0.85"') + line(d, mix(c[1], 0.6), w * 0.9) + line(d, '#ffffff', w * 0.4);
+            case 'pool3-glitter': // Glitter Water: a water-colored band flecked with white glitter
+                return line(d, c[2], w) + line(d, c[1], w * 0.86) + line(d, mix(c[1], 0.4), w * 0.3, up(w, 0.18) + ' opacity="0.6"') +
+                    dots(d, '#ffffff', w * 0.12, w * 0.8, 0, ' opacity="0.9"') + dots(d, mix(c[1], 0.8), w * 0.09, w * 1.1, w * 0.45, ' transform="translate(0 ' + (w * 0.2).toFixed(2) + ')"') +
+                    dots(d, '#ffffff', w * 0.07, w * 1.3, w * 0.7, ' transform="translate(0 ' + (-w * 0.22).toFixed(2) + ')" opacity="0.8"');
+            case 'pool3-dapple': // Sun Dapples: the color with soft pools of sunlight floating over it
+                return line(d, c[1], w) + dots(d, 'rgba(255,255,255,0.38)', w * 0.62, w * 1.7, 0, ' filter="url(#ank-glow-in)"') +
+                    dots(d, 'rgba(255,255,255,0.3)', w * 0.4, w * 1.7, w * 0.85, ' transform="translate(0 ' + (w * 0.15).toFixed(2) + ')" filter="url(#ank-glow-in)"') + line(d, c[2], w * 0.12, ' transform="translate(0 ' + (w * 0.46).toFixed(2) + ')" opacity="0.6"');
+            case 'pool3-checker': { // Checker Border: a checkerboard of the color and white, like pool-edge tile
+                const id = 'ank-chk-' + c[0];
+                return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="12" height="12"><rect width="12" height="12" fill="#ffffff"/><rect width="6" height="6" fill="' + c[1] + '"/><rect x="6" y="6" width="6" height="6" fill="' + c[1] + '"/></pattern></defs>' +
+                    line(d, c[2], w * 1.12, ' stroke-linecap="butt"') + line(d, 'url(#' + id + ')', w * 0.88, ' stroke-linecap="butt"');
+            }
+            case 'pool3-ombre': // Pool Ombre: from pale at the top of the stroke to deep at the bottom, with a bright shine
+                return line(d, c[2], w * 1.04) + bands(d, w, 0, 1, mix(c[1], 0.7), dark(c[1], 0.25), 12) + line(d, '#ffffff', w * 0.16, up(w, 0.26) + ' opacity="0.7"');
+            case 'aero4-peek': // Peek Panel: clear Aero glass: a white rim, a faint tint, a diagonal gloss
+                return line(d, c[2], w * 1.1, ' opacity="0.7"') + line(d, 'rgba(255,255,255,0.92)', w) + line(d, c[1], w * 0.88, ' opacity="0.32"') +
+                    line(d, '#ffffff', w * 0.36, up(w, 0.2) + ' opacity="0.55"') + line(d, c[1], w * 0.26, ' transform="translate(0 ' + (w * 0.24).toFixed(2) + ')" opacity="0.35" filter="url(#ank-glow-in)"');
+            case 'aero4-trio': // Bubble Trio: bubbles in threes (big, middle, small) drifting along the stroke
+                return dots(d, c[2], w * 0.96, w * 3.4, 0) + dots(d, c[1], w * 0.78, w * 3.4, 0) + dots(d, c[2], w * 0.66, w * 3.4, w * 1.15) + dots(d, c[1], w * 0.5, w * 3.4, w * 1.15) +
+                    dots(d, c[2], w * 0.44, w * 3.4, w * 2.1) + dots(d, c[3], w * 0.32, w * 3.4, w * 2.1) +
+                    dots(d, '#ffffff', w * 0.26, w * 3.4, 0, ' transform="translate(' + (-w * 0.16).toFixed(2) + ' ' + (-w * 0.16).toFixed(2) + ')"');
+            case 'aero4-glow': // Glow Tube: a glass tube lit from inside, with a halo
+                return line(d, c[1], w * 3, ' opacity="0.45" filter="url(#ank-glow)"') + line(d, c[2], w * 1.1) + line(d, c[1], w * 0.86) + line(d, mix(c[1], 0.55), w * 0.5) + line(d, '#ffffff', w * 0.24, up(w, 0.2) + ' opacity="0.85"');
+            case 'aero4-aurora': { // Aurora Bar: a ribbon that shifts from the color to white and back along its length
+                return lg('aur4', c, [c[1], mix(c[1], 0.55), '#ffffff', mix(c[1], 0.45), c[1]], 110) + line(d, 'rgba(0,0,0,0.12)', w * 1.06, ' transform="translate(0 ' + (w * 0.08).toFixed(2) + ')"') +
+                    line(d, c[2], w) + line(d, gid('aur4', c), w * 0.84) + line(d, '#ffffff', w * 0.22, up(w, 0.22) + ' opacity="0.6"');
+            }
+            case 'pool4-wavelet': // Wavelet Edge: a water band with a row of little scallops along its bottom edge
+                return lg('wvl', c, [c[3], c[1], c[2]]) + line(d, gid('wvl', c), w * 0.9) + dots(d, '#ffffff', w * 0.3, w * 0.52, 0, ' transform="translate(0 ' + (w * 0.4).toFixed(2) + ')" opacity="0.92"') +
+                    line(d, '#ffffff', w * 0.12, up(w, 0.22) + ' opacity="0.6"');
+            case 'pool4-current': { // Current Lines: a solid band with pale lines streaming along it
+                const id = 'ank-cur-' + c[0];
+                return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(100)"><rect width="9" height="9" fill="' + c[1] + '"/><rect width="1.4" height="9" fill="#ffffff" fill-opacity="0.32"/></pattern></defs>' +
+                    line(d, c[2], w * 1.06) + line(d, 'url(#' + id + ')', w * 0.9);
+            }
+            case 'pool4-gloss': // Wet Gloss: a glossy band with a wet white sheen across its top half
+                return line(d, 'rgba(0,0,0,0.12)', w * 1.04, ' transform="translate(0 ' + (w * 0.08).toFixed(2) + ')"') + line(d, c[2], w) + line(d, c[1], w * 0.86) +
+                    line(d, mix(c[1], 0.5), w * 0.28, ' transform="translate(0 ' + (w * 0.2).toFixed(2) + ')" opacity="0.7" filter="url(#ank-glow-in)"') + line(d, '#ffffff', w * 0.44, up(w, 0.2) + ' opacity="0.55"');
+            case 'pool4-tape': { // Caution Tape: slanted stripes of the color and its deep shade
+                const id = 'ank-tape-' + c[0];
+                return '<defs><pattern id="' + id + '" patternUnits="userSpaceOnUse" width="14" height="14" patternTransform="rotate(-45)"><rect width="14" height="14" fill="' + c[1] + '"/><rect width="7" height="14" fill="' + dark(c[2], 0.45) + '"/></pattern></defs>' +
+                    line(d, dark(c[2], 0.5), w * 1.06, ' stroke-linecap="butt"') + line(d, 'url(#' + id + ')', w * 0.9, ' stroke-linecap="butt"');
             }
             /* ---- the first themed inks (fixed colors), still drawn in notes that use them ---- */
             case 'aero': // Frutiger Aero: a glossy sky-to-grass glass tube with bubbles drifting along it

@@ -410,7 +410,7 @@ Applets are small interactive widgets: click the ones below to try them. Wrap a 
 
 ## Unique Styles
 
-All 3,600 styles from Bitbook's Unique Styles Gallery are Keydown tags too: 720 designs in 8 collections, each in 5 colorways. Write `@family-N@text@`, where N is the colorway from 1 to 5, like `@neontube-2@Hello@`. Leave the number out for the first colorway: `@neontube@Hello@`.
+All 4,050 styles from Bitbook's Unique Styles Gallery are Keydown tags too: 810 designs in 9 collections, each in 5 colorways. Write `@family-N@text@`, where N is the colorway from 1 to 5, like `@neontube-2@Hello@`. Leave the number out for the first colorway: `@neontube@Hello@`.
 
 ### Regular (90 designs)
 
@@ -783,6 +783,99 @@ All 3,600 styles from Bitbook's Unique Styles Gallery are Keydown tags too: 720 
 * `@fcpatch-N@text@` Stitched Patch: @fcpatch-1@Aqua Patch@ @fcpatch-2@Lime Patch@ @fcpatch-3@Pink Patch@ @fcpatch-4@Orange Patch@ @fcpatch-5@Purple Patch@
 * `@fcheadercard-N@text@` Header Card: @fcheadercard-1@Blue Header Card@ @fcheadercard-2@Green Header Card@ @fcheadercard-3@Sunset Header Card@ @fcheadercard-4@Berry Header Card@ @fcheadercard-5@Ocean Header Card@
 * `@fcrange-N@text@` Aqua Range: @fcrange-1@Range Blue@ @fcrange-2@Range Gold@ @fcrange-3@Range Green@ @fcrange-4@Range Purple@ @fcrange-5@Range Teal@
+
+### Frutiger Aero 4 (90 designs)
+
+* `@fdpeek-N@text@` Peek Panel: @fdpeek-1@Aqua Peek@ @fdpeek-2@Lime Peek@ @fdpeek-3@Tangerine Peek@ @fdpeek-4@Grape Peek@ @fdpeek-5@Graphite Peek@
+* `@fdlivetile-N@text@` Live Tile: @fdlivetile-1@Aqua Tile@ @fdlivetile-2@Lime Tile@ @fdlivetile-3@Tangerine Tile@ @fdlivetile-4@Grape Tile@ @fdlivetile-5@Graphite Tile@
+* `@fdsplitgloss-N@text@` Split Gloss: @fdsplitgloss-1@Aqua Split@ @fdsplitgloss-2@Lime Split@ @fdsplitgloss-3@Tangerine Split@ @fdsplitgloss-4@Grape Split@ @fdsplitgloss-5@Graphite Split@
+* `@fdinsetwell-N@text@` Inset Well: @fdinsetwell-1@Aqua Well@ @fdinsetwell-2@Lime Well@ @fdinsetwell-3@Tangerine Well@ @fdinsetwell-4@Grape Well@ @fdinsetwell-5@Graphite Well@
+* `@fdgrip-N@text@` Grip Handle: @fdgrip-1@Aqua Grip@ @fdgrip-2@Lime Grip@ @fdgrip-3@Tangerine Grip@ @fdgrip-4@Grape Grip@ @fdgrip-5@Graphite Grip@
+* `@fdknob-N@text@` Rotary Knob: @fdknob-1@Aqua Knob@ @fdknob-2@Lime Knob@ @fdknob-3@Tangerine Knob@ @fdknob-4@Grape Knob@ @fdknob-5@Graphite Knob@
+* `@fdlozenge-N@text@` Lozenge: @fdlozenge-1@Aqua Lozenge@ @fdlozenge-2@Lime Lozenge@ @fdlozenge-3@Tangerine Lozenge@ @fdlozenge-4@Grape Lozenge@ @fdlozenge-5@Graphite Lozenge@
+* `@fdbevelpill-N@text@` Bevel Pill: @fdbevelpill-1@Aqua Bevel@ @fdbevelpill-2@Lime Bevel@ @fdbevelpill-3@Tangerine Bevel@ @fdbevelpill-4@Grape Bevel@ @fdbevelpill-5@Graphite Bevel@
+* `@fdglassrail-N@text@` Glass Rail: @fdglassrail-1@Aqua Rail@ @fdglassrail-2@Lime Rail@ @fdglassrail-3@Tangerine Rail@ @fdglassrail-4@Grape Rail@ @fdglassrail-5@Graphite Rail@
+* `@fdsoftbutton-N@text@` Soft Button: @fdsoftbutton-1@Aqua Button@ @fdsoftbutton-2@Lime Button@ @fdsoftbutton-3@Tangerine Button@ @fdsoftbutton-4@Grape Button@ @fdsoftbutton-5@Graphite Button@
+* `@fdpressed-N@text@` Pressed Key: @fdpressed-1@Aqua Pressed@ @fdpressed-2@Lime Pressed@ @fdpressed-3@Tangerine Pressed@ @fdpressed-4@Grape Pressed@ @fdpressed-5@Graphite Pressed@
+* `@fdmenuhl-N@text@` Menu Highlight: @fdmenuhl-1@Aqua Highlight@ @fdmenuhl-2@Lime Highlight@ @fdmenuhl-3@Tangerine Highlight@ @fdmenuhl-4@Grape Highlight@ @fdmenuhl-5@Graphite Highlight@
+* `@fdhotrow-N@text@` Hot Row: @fdhotrow-1@Aqua Row@ @fdhotrow-2@Lime Row@ @fdhotrow-3@Tangerine Row@ @fdhotrow-4@Grape Row@ @fdhotrow-5@Graphite Row@
+* `@fdcrumb-N@text@` Breadcrumb Link: @fdcrumb-1@Aqua Crumb@ @fdcrumb-2@Lime Crumb@ @fdcrumb-3@Tangerine Crumb@ @fdcrumb-4@Grape Crumb@ @fdcrumb-5@Graphite Crumb@
+* `@fdstatuscell-N@text@` Status Cell: @fdstatuscell-1@Aqua Status@ @fdstatuscell-2@Lime Status@ @fdstatuscell-3@Tangerine Status@ @fdstatuscell-4@Grape Status@ @fdstatuscell-5@Graphite Status@
+* `@fdmeadowline-N@text@` Meadow Line: @fdmeadowline-1@Aqua Meadow@ @fdmeadowline-2@Lime Meadow@ @fdmeadowline-3@Tangerine Meadow@ @fdmeadowline-4@Grape Meadow@ @fdmeadowline-5@Graphite Meadow@
+* `@fdlakeglass-N@text@` Lake Glass: @fdlakeglass-1@Aqua Lake@ @fdlakeglass-2@Lime Lake@ @fdlakeglass-3@Tangerine Lake@ @fdlakeglass-4@Grape Lake@ @fdlakeglass-5@Graphite Lake@
+* `@fdcloudpuff-N@text@` Cloud Puff: @fdcloudpuff-1@Aqua Cloud@ @fdcloudpuff-2@Lime Cloud@ @fdcloudpuff-3@Tangerine Cloud@ @fdcloudpuff-4@Grape Cloud@ @fdcloudpuff-5@Graphite Cloud@
+* `@fdwheat-N@text@` Wheat Field: @fdwheat-1@Aqua Field@ @fdwheat-2@Lime Field@ @fdwheat-3@Tangerine Field@ @fdwheat-4@Grape Field@ @fdwheat-5@Graphite Field@
+* `@fdtideedge-N@text@` Tide Edge: @fdtideedge-1@Aqua Tide@ @fdtideedge-2@Lime Tide@ @fdtideedge-3@Tangerine Tide@ @fdtideedge-4@Grape Tide@ @fdtideedge-5@Graphite Tide@
+* `@fdmistvalley-N@text@` Mist Valley: @fdmistvalley-1@Aqua Valley@ @fdmistvalley-2@Lime Valley@ @fdmistvalley-3@Tangerine Valley@ @fdmistvalley-4@Grape Valley@ @fdmistvalley-5@Graphite Valley@
+* `@fdcanopy-N@text@` Leaf Canopy: @fdcanopy-1@Aqua Canopy@ @fdcanopy-2@Lime Canopy@ @fdcanopy-3@Tangerine Canopy@ @fdcanopy-4@Grape Canopy@ @fdcanopy-5@Graphite Canopy@
+* `@fdglacier-N@text@` Glacier Ledge: @fdglacier-1@Aqua Glacier@ @fdglacier-2@Lime Glacier@ @fdglacier-3@Tangerine Glacier@ @fdglacier-4@Grape Glacier@ @fdglacier-5@Graphite Glacier@
+* `@fdcanyon-N@text@` Canyon Bands: @fdcanyon-1@Aqua Canyon@ @fdcanyon-2@Lime Canyon@ @fdcanyon-3@Tangerine Canyon@ @fdcanyon-4@Grape Canyon@ @fdcanyon-5@Graphite Canyon@
+* `@fddewgrass-N@text@` Dewy Grass: @fddewgrass-1@Aqua Grass@ @fddewgrass-2@Lime Grass@ @fddewgrass-3@Tangerine Grass@ @fddewgrass-4@Grape Grass@ @fddewgrass-5@Graphite Grass@
+* `@fdhorizon-N@text@` Horizon Sun: @fdhorizon-1@Aqua Horizon@ @fdhorizon-2@Lime Horizon@ @fdhorizon-3@Tangerine Horizon@ @fdhorizon-4@Grape Horizon@ @fdhorizon-5@Graphite Horizon@
+* `@fdraindrops-N@text@` Rain Drops: @fdraindrops-1@Aqua Rain@ @fdraindrops-2@Lime Rain@ @fdraindrops-3@Tangerine Rain@ @fdraindrops-4@Grape Rain@ @fdraindrops-5@Graphite Rain@
+* `@fdshoreline-N@text@` Shoreline: @fdshoreline-1@Aqua Shore@ @fdshoreline-2@Lime Shore@ @fdshoreline-3@Tangerine Shore@ @fdshoreline-4@Grape Shore@ @fdshoreline-5@Graphite Shore@
+* `@fdduskstars-N@text@` Dusk Sky: @fdduskstars-1@Aqua Dusk@ @fdduskstars-2@Lime Dusk@ @fdduskstars-3@Tangerine Dusk@ @fdduskstars-4@Grape Dusk@ @fdduskstars-5@Graphite Dusk@
+* `@fdpetalfall-N@text@` Petal Fall: @fdpetalfall-1@Rainbow Petals@ @fdpetalfall-2@Mint Petals@ @fdpetalfall-3@Sunny Petals@ @fdpetalfall-4@Rose Petals@ @fdpetalfall-5@Lilac Petals@
+* `@fdbubbletrio-N@text@` Bubble Trio: @fdbubbletrio-1@Aqua Bubbles@ @fdbubbletrio-2@Lime Bubbles@ @fdbubbletrio-3@Tangerine Bubbles@ @fdbubbletrio-4@Grape Bubbles@ @fdbubbletrio-5@Graphite Bubbles@
+* `@fdhalodisc-N@text@` Halo Disc: @fdhalodisc-1@Aqua Halo@ @fdhalodisc-2@Lime Halo@ @fdhalodisc-3@Tangerine Halo@ @fdhalodisc-4@Grape Halo@ @fdhalodisc-5@Graphite Halo@
+* `@fdlensring-N@text@` Lens Ring: @fdlensring-1@Aqua Lens@ @fdlensring-2@Lime Lens@ @fdlensring-3@Tangerine Lens@ @fdlensring-4@Grape Lens@ @fdlensring-5@Graphite Lens@
+* `@fdstarglint-N@text@` Star Glint: @fdstarglint-1@Aqua Glint@ @fdstarglint-2@Lime Glint@ @fdstarglint-3@Tangerine Glint@ @fdstarglint-4@Grape Glint@ @fdstarglint-5@Graphite Glint@
+* `@fdprismbar-N@text@` Prism Bar: @fdprismbar-1@Aqua Prism@ @fdprismbar-2@Lime Prism@ @fdprismbar-3@Tangerine Prism@ @fdprismbar-4@Grape Prism@ @fdprismbar-5@Graphite Prism@
+* `@fdrainbowgloss-N@text@` Rainbow Gloss: @fdrainbowgloss-1@Aqua Rainbow@ @fdrainbowgloss-2@Lime Rainbow@ @fdrainbowgloss-3@Tangerine Rainbow@ @fdrainbowgloss-4@Grape Rainbow@ @fdrainbowgloss-5@Graphite Rainbow@
+* `@fdbokehcard-N@text@` Bokeh Card: @fdbokehcard-1@Rainbow Bokeh@ @fdbokehcard-2@Mint Bokeh@ @fdbokehcard-3@Sunny Bokeh@ @fdbokehcard-4@Rose Bokeh@ @fdbokehcard-5@Lilac Bokeh@
+* `@fdsparkletrail-N@text@` Sparkle Trail: @fdsparkletrail-1@Aqua Trail@ @fdsparkletrail-2@Lime Trail@ @fdsparkletrail-3@Tangerine Trail@ @fdsparkletrail-4@Grape Trail@ @fdsparkletrail-5@Graphite Trail@
+* `@fdglowtube-N@text@` Glow Tube: @fdglowtube-1@Aqua Tube@ @fdglowtube-2@Lime Tube@ @fdglowtube-3@Tangerine Tube@ @fdglowtube-4@Grape Tube@ @fdglowtube-5@Graphite Tube@
+* `@fdglassbead-N@text@` Glass Bead: @fdglassbead-1@Aqua Bead@ @fdglassbead-2@Lime Bead@ @fdglassbead-3@Tangerine Bead@ @fdglassbead-4@Grape Bead@ @fdglassbead-5@Graphite Bead@
+* `@fdfloatsphere-N@text@` Float Sphere: @fdfloatsphere-1@Aqua Sphere@ @fdfloatsphere-2@Lime Sphere@ @fdfloatsphere-3@Tangerine Sphere@ @fdfloatsphere-4@Grape Sphere@ @fdfloatsphere-5@Graphite Sphere@
+* `@fdlightstrip-N@text@` Light Strip: @fdlightstrip-1@Aqua Strip@ @fdlightstrip-2@Lime Strip@ @fdlightstrip-3@Tangerine Strip@ @fdlightstrip-4@Grape Strip@ @fdlightstrip-5@Graphite Strip@
+* `@fdaurorabar-N@text@` Aurora Bar: @fdaurorabar-1@Rainbow Aurora@ @fdaurorabar-2@Mint Aurora@ @fdaurorabar-3@Sunny Aurora@ @fdaurorabar-4@Rose Aurora@ @fdaurorabar-5@Lilac Aurora@
+* `@fdpulsering-N@text@` Pulse Ring: @fdpulsering-1@Aqua Pulse@ @fdpulsering-2@Lime Pulse@ @fdpulsering-3@Tangerine Pulse@ @fdpulsering-4@Grape Pulse@ @fdpulsering-5@Graphite Pulse@
+* `@fdcomet-N@text@` Comet Glass: @fdcomet-1@Aqua Comet@ @fdcomet-2@Lime Comet@ @fdcomet-3@Tangerine Comet@ @fdcomet-4@Grape Comet@ @fdcomet-5@Graphite Comet@
+* `@fdbeta-N@text@` Beta Badge: @fdbeta-1@Aqua Beta@ @fdbeta-2@Lime Beta@ @fdbeta-3@Tangerine Beta@ @fdbeta-4@Grape Beta@ @fdbeta-5@Graphite Beta@
+* `@fdcornerflag-N@text@` Corner Flag: @fdcornerflag-1@Aqua Flag@ @fdcornerflag-2@Lime Flag@ @fdcornerflag-3@Tangerine Flag@ @fdcornerflag-4@Grape Flag@ @fdcornerflag-5@Graphite Flag@
+* `@fdglossspeech-N@text@` Gloss Speech: @fdglossspeech-1@Aqua Speech@ @fdglossspeech-2@Lime Speech@ @fdglossspeech-3@Tangerine Speech@ @fdglossspeech-4@Grape Speech@ @fdglossspeech-5@Graphite Speech@
+* `@fdfeedtile-N@text@` Feed Tile: @fdfeedtile-1@Aqua Feed@ @fdfeedtile-2@Lime Feed@ @fdfeedtile-3@Tangerine Feed@ @fdfeedtile-4@Grape Feed@ @fdfeedtile-5@Graphite Feed@
+* `@fdtagcloud-N@text@` Tag Cloud Chip: @fdtagcloud-1@Aqua Tag@ @fdtagcloud-2@Lime Tag@ @fdtagcloud-3@Tangerine Tag@ @fdtagcloud-4@Grape Tag@ @fdtagcloud-5@Graphite Tag@
+* `@fdvotebox-N@text@` Vote Box: @fdvotebox-1@Aqua Vote@ @fdvotebox-2@Lime Vote@ @fdvotebox-3@Tangerine Vote@ @fdvotebox-4@Grape Vote@ @fdvotebox-5@Graphite Vote@
+* `@fdstarrow-N@text@` Star Row: @fdstarrow-1@Aqua Rating@ @fdstarrow-2@Lime Rating@ @fdstarrow-3@Tangerine Rating@ @fdstarrow-4@Grape Rating@ @fdstarrow-5@Graphite Rating@
+* `@fdcounterwell-N@text@` Counter Well: @fdcounterwell-1@Aqua Counter@ @fdcounterwell-2@Lime Counter@ @fdcounterwell-3@Tangerine Counter@ @fdcounterwell-4@Grape Counter@ @fdcounterwell-5@Graphite Counter@
+* `@fdcallout-N@text@` Callout Box: @fdcallout-1@Aqua Callout@ @fdcallout-2@Lime Callout@ @fdcallout-3@Tangerine Callout@ @fdcallout-4@Grape Callout@ @fdcallout-5@Graphite Callout@
+* `@fdnavtab-N@text@` Nav Tab: @fdnavtab-1@Aqua Tab@ @fdnavtab-2@Lime Tab@ @fdnavtab-3@Tangerine Tab@ @fdnavtab-4@Grape Tab@ @fdnavtab-5@Graphite Tab@
+* `@fdstickerstar-N@text@` Sticker Star: @fdstickerstar-1@Aqua Sticker@ @fdstickerstar-2@Lime Sticker@ @fdstickerstar-3@Tangerine Sticker@ @fdstickerstar-4@Grape Sticker@ @fdstickerstar-5@Graphite Sticker@
+* `@fdmeter-N@text@` Meter Bar: @fdmeter-1@Aqua Meter@ @fdmeter-2@Lime Meter@ @fdmeter-3@Tangerine Meter@ @fdmeter-4@Grape Meter@ @fdmeter-5@Graphite Meter@
+* `@fdhovertip-N@text@` Hover Tip: @fdhovertip-1@Aqua Tip@ @fdhovertip-2@Lime Tip@ @fdhovertip-3@Tangerine Tip@ @fdhovertip-4@Grape Tip@ @fdhovertip-5@Graphite Tip@
+* `@fdpricebubble-N@text@` Price Bubble: @fdpricebubble-1@Aqua Price@ @fdpricebubble-2@Lime Price@ @fdpricebubble-3@Tangerine Price@ @fdpricebubble-4@Grape Price@ @fdpricebubble-5@Graphite Price@
+* `@fdsearchpill-N@text@` Search Pill: @fdsearchpill-1@Aqua Search@ @fdsearchpill-2@Lime Search@ @fdsearchpill-3@Tangerine Search@ @fdsearchpill-4@Grape Search@ @fdsearchpill-5@Graphite Search@
+* `@fdsolarcell-N@text@` Solar Cell: @fdsolarcell-1@Aqua Solar@ @fdsolarcell-2@Lime Solar@ @fdsolarcell-3@Tangerine Solar@ @fdsolarcell-4@Grape Solar@ @fdsolarcell-5@Graphite Solar@
+* `@fdbiobar-N@text@` Bio Bar: @fdbiobar-1@Aqua Bio@ @fdbiobar-2@Lime Bio@ @fdbiobar-3@Tangerine Bio@ @fdbiobar-4@Grape Bio@ @fdbiobar-5@Graphite Bio@
+* `@fdecoseal-N@text@` Eco Seal: @fdecoseal-1@Aqua Seal@ @fdecoseal-2@Lime Seal@ @fdecoseal-3@Tangerine Seal@ @fdecoseal-4@Grape Seal@ @fdecoseal-5@Graphite Seal@
+* `@fdcircuitleaf-N@text@` Circuit Leaf: @fdcircuitleaf-1@Aqua Circuit@ @fdcircuitleaf-2@Lime Circuit@ @fdcircuitleaf-3@Tangerine Circuit@ @fdcircuitleaf-4@Grape Circuit@ @fdcircuitleaf-5@Graphite Circuit@
+* `@fdlcdgloss-N@text@` LCD Gloss: @fdlcdgloss-1@Aqua LCD@ @fdlcdgloss-2@Lime LCD@ @fdlcdgloss-3@Tangerine LCD@ @fdlcdgloss-4@Grape LCD@ @fdlcdgloss-5@Graphite LCD@
+* `@fdwaveform-N@text@` Waveform: @fdwaveform-1@Aqua Wave@ @fdwaveform-2@Lime Wave@ @fdwaveform-3@Tangerine Wave@ @fdwaveform-4@Grape Wave@ @fdwaveform-5@Graphite Wave@
+* `@fdequalizer-N@text@` Equalizer: @fdequalizer-1@Aqua EQ@ @fdequalizer-2@Lime EQ@ @fdequalizer-3@Tangerine EQ@ @fdequalizer-4@Grape EQ@ @fdequalizer-5@Graphite EQ@
+* `@fdplaypill-N@text@` Play Pill: @fdplaypill-1@Aqua Play@ @fdplaypill-2@Lime Play@ @fdplaypill-3@Tangerine Play@ @fdplaypill-4@Grape Play@ @fdplaypill-5@Graphite Play@
+* `@fdvinyl-N@text@` Vinyl Glass: @fdvinyl-1@Aqua Vinyl@ @fdvinyl-2@Lime Vinyl@ @fdvinyl-3@Tangerine Vinyl@ @fdvinyl-4@Grape Vinyl@ @fdvinyl-5@Graphite Vinyl@
+* `@fdthermo-N@text@` Thermo Glass: @fdthermo-1@Aqua Thermo@ @fdthermo-2@Lime Thermo@ @fdthermo-3@Tangerine Thermo@ @fdthermo-4@Grape Thermo@ @fdthermo-5@Graphite Thermo@
+* `@fdradar-N@text@` Radar Sweep: @fdradar-1@Aqua Radar@ @fdradar-2@Lime Radar@ @fdradar-3@Tangerine Radar@ @fdradar-4@Grape Radar@ @fdradar-5@Graphite Radar@
+* `@fdcompass-N@text@` Compass Pill: @fdcompass-1@Aqua Compass@ @fdcompass-2@Lime Compass@ @fdcompass-3@Tangerine Compass@ @fdcompass-4@Grape Compass@ @fdcompass-5@Graphite Compass@
+* `@fdecodrop-N@text@` Eco Drop: @fdecodrop-1@Aqua Drop@ @fdecodrop-2@Lime Drop@ @fdecodrop-3@Tangerine Drop@ @fdecodrop-4@Grape Drop@ @fdecodrop-5@Graphite Drop@
+* `@fdtermlight-N@text@` Terminal Glass: @fdtermlight-1@Aqua Terminal@ @fdtermlight-2@Lime Terminal@ @fdtermlight-3@Tangerine Terminal@ @fdtermlight-4@Grape Terminal@ @fdtermlight-5@Graphite Terminal@
+* `@fdpowerbar-N@text@` Power Bar: @fdpowerbar-1@Aqua Power@ @fdpowerbar-2@Lime Power@ @fdpowerbar-3@Tangerine Power@ @fdpowerbar-4@Grape Power@ @fdpowerbar-5@Graphite Power@
+* `@fdreflecttext-N@text@` Reflected Text: @fdreflecttext-1@Aqua Reflect@ @fdreflecttext-2@Lime Reflect@ @fdreflecttext-3@Tangerine Reflect@ @fdreflecttext-4@Grape Reflect@ @fdreflecttext-5@Graphite Reflect@
+* `@fdaquastroke-N@text@` Aqua Stroke Text: @fdaquastroke-1@Aqua Stroke@ @fdaquastroke-2@Lime Stroke@ @fdaquastroke-3@Tangerine Stroke@ @fdaquastroke-4@Grape Stroke@ @fdaquastroke-5@Graphite Stroke@
+* `@fdgelletters-N@text@` Gel Letters: @fdgelletters-1@Aqua Gel@ @fdgelletters-2@Lime Gel@ @fdgelletters-3@Tangerine Gel@ @fdgelletters-4@Grape Gel@ @fdgelletters-5@Graphite Gel@
+* `@fdsilvertext-N@text@` Silver Text: @fdsilvertext-1@Aqua Silver@ @fdsilvertext-2@Lime Silver@ @fdsilvertext-3@Tangerine Silver@ @fdsilvertext-4@Grape Silver@ @fdsilvertext-5@Graphite Silver@
+* `@fdglowtext-N@text@` Aero Glow Text: @fdglowtext-1@Aqua Glow@ @fdglowtext-2@Lime Glow@ @fdglowtext-3@Tangerine Glow@ @fdglowtext-4@Grape Glow@ @fdglowtext-5@Graphite Glow@
+* `@fdshinetext-N@text@` Shine Text: @fdshinetext-1@Aqua Shine@ @fdshinetext-2@Lime Shine@ @fdshinetext-3@Tangerine Shine@ @fdshinetext-4@Grape Shine@ @fdshinetext-5@Graphite Shine@
+* `@fdsoftblur-N@text@` Soft Blur Text: @fdsoftblur-1@Aqua Blur@ @fdsoftblur-2@Lime Blur@ @fdsoftblur-3@Tangerine Blur@ @fdsoftblur-4@Grape Blur@ @fdsoftblur-5@Graphite Blur@
+* `@fdskygrass-N@text@` Sky to Grass Text: @fdskygrass-1@Rainbow Sky Grass@ @fdskygrass-2@Mint Sky Grass@ @fdskygrass-3@Sunny Sky Grass@ @fdskygrass-4@Rose Sky Grass@ @fdskygrass-5@Lilac Sky Grass@
+* `@fdglassoutline-N@text@` Glass Outline Text: @fdglassoutline-1@Aqua Outline@ @fdglassoutline-2@Lime Outline@ @fdglassoutline-3@Tangerine Outline@ @fdglassoutline-4@Grape Outline@ @fdglassoutline-5@Graphite Outline@
+* `@fdbadgetext-N@text@` Badge Text: @fdbadgetext-1@Aqua Badge@ @fdbadgetext-2@Lime Badge@ @fdbadgetext-3@Tangerine Badge@ @fdbadgetext-4@Grape Badge@ @fdbadgetext-5@Graphite Badge@
+* `@fdglowrule-N@text@` Glow Rule: @fdglowrule-1@Aqua Rule@ @fdglowrule-2@Lime Rule@ @fdglowrule-3@Tangerine Rule@ @fdglowrule-4@Grape Rule@ @fdglowrule-5@Graphite Rule@
+* `@fdbubblerule-N@text@` Bubble Underline: @fdbubblerule-1@Aqua Underline@ @fdbubblerule-2@Lime Underline@ @fdbubblerule-3@Tangerine Underline@ @fdbubblerule-4@Grape Underline@ @fdbubblerule-5@Graphite Underline@
+* `@fdfloattext-N@text@` Float Text: @fdfloattext-1@Aqua Float@ @fdfloattext-2@Lime Float@ @fdfloattext-3@Tangerine Float@ @fdfloattext-4@Grape Float@ @fdfloattext-5@Graphite Float@
+* `@fdchipglass-N@text@` Glass Chip: @fdchipglass-1@Aqua Chip@ @fdchipglass-2@Lime Chip@ @fdchipglass-3@Tangerine Chip@ @fdchipglass-4@Grape Chip@ @fdchipglass-5@Graphite Chip@
+* `@fdcaption-N@text@` Caption Plate: @fdcaption-1@Rainbow Caption@ @fdcaption-2@Mint Caption@ @fdcaption-3@Sunny Caption@ @fdcaption-4@Rose Caption@ @fdcaption-5@Lilac Caption@
 
 ### Poolside 1 (90 designs)
 
