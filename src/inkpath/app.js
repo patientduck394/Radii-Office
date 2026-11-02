@@ -1410,6 +1410,13 @@ function linearGradientVector(angleDeg, scale) {
     const r = (n) => Math.round(n * 1000) / 1000;
     return { x1: r(0.5 - dx / 2), y1: r(0.5 - dy / 2), x2: r(0.5 + dx / 2), y2: r(0.5 + dy / 2) };
 }
+// A radial gradient with its own centre and size (fractions of the shape's box: cx, cy, rx, ry), so it can be an
+// oval or sit off-centre, like CSS's radial-gradient(130% 95% at 50% 120%, ...)
+function applyRadialShape(gradEl, r) {
+    const n = (v, d) => (isFinite(parseFloat(v)) ? parseFloat(v) : d);
+    gradEl.setAttribute('cx', 0); gradEl.setAttribute('cy', 0); gradEl.setAttribute('r', 1);
+    gradEl.setAttribute('gradientTransform', `translate(${n(r.cx, 0.5)} ${n(r.cy, 0.5)}) scale(${Math.max(0.0001, n(r.rx, 0.5))} ${Math.max(0.0001, n(r.ry, 0.5))})`);
+}
 function applyGradientAngle(gradEl, angleDeg, scale) {
     const v = linearGradientVector(angleDeg, scale);
     gradEl.setAttribute('x1', v.x1); gradEl.setAttribute('y1', v.y1);
@@ -1426,6 +1433,7 @@ function leafPaintFor(obj, idp, mode) {
         const grad = document.createElementNS('http://www.w3.org/2000/svg', obj.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
         grad.setAttribute('id', gradId);
         if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle, obj.fillScale);
+        else if (obj.fillRadial) applyRadialShape(grad, obj.fillRadial);
         grad.innerHTML = getFillStops(obj).map(s => {
             const st = stopStyle(s.c, activePrimaryColor);
             return `<stop offset="${+(clampNum(s.o, 0, 1) * 100).toFixed(3)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;
@@ -1737,6 +1745,7 @@ function render() {
             const grad = document.createElementNS('http://www.w3.org/2000/svg', obj.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
             grad.setAttribute('id', gradId);
             if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle, obj.fillScale);
+        else if (obj.fillRadial) applyRadialShape(grad, obj.fillRadial);
             grad.innerHTML = getFillStops(obj).map(s => {
                 const st = stopStyle(s.c, activePrimaryColor);
                 return `<stop offset="${+(clampNum(s.o, 0, 1) * 100).toFixed(3)}%" stop-color="${st.color}" stop-opacity="${st.opacity}" />`;

@@ -84,15 +84,54 @@
     // "repeating-linear-gradient(45deg, rgb(..) 0px, rgb(..) 4px, ...)" (from the browser, so px, %,
     // var() and shorthand stops are already resolved) -> {type, angle, scale, stops}!
     // w x h is the box the gradient paints, so px stops and angles come out exactly like CSS!
+    // radial-gradient's shape, size and position ("130% 95% at 50% 120%", "circle at 0% 0%", "closest-side"...)
+    // -> centre and radii as fractions of the box, plus the ray length in px (what px stops are measured along)
+    function radialGeom(head, w, h) {
+        const t = words(head || '');
+        const at = t.indexOf('at');
+        const shapeT = at < 0 ? t : t.slice(0, at), posT = at < 0 ? [] : t.slice(at + 1);
+        const cx = posT.length ? evalLen(posT[0], w) : w / 2, cy = posT.length > 1 ? evalLen(posT[1], h) : h / 2;
+        let circle = shapeT.indexOf('circle') >= 0;
+        const sizeT = shapeT.filter(function (x) { return x !== 'circle' && x !== 'ellipse'; });
+        const isKw = function (x) { return /^(closest|farthest)-(side|corner)$/.test(x); };
+        const lens = sizeT.filter(function (x) { return !isKw(x); });
+        const kw = sizeT.find(isKw) || 'farthest-corner';
+        if (lens.length === 1) circle = true;
+        let rx, ry;
+        if (lens.length) { rx = evalLen(lens[0], w); ry = lens.length > 1 ? evalLen(lens[1], h) : rx; }
+        else {
+            const far = /farthest/.test(kw);
+            const pick = far ? Math.max : Math.min;
+            const sx = pick(Math.abs(cx), Math.abs(w - cx)), sy = pick(Math.abs(cy), Math.abs(h - cy));
+            if (/side/.test(kw)) { if (circle) rx = ry = pick(sx, sy); else { rx = sx; ry = sy; } }
+            else {
+                let best = null;
+                [[0, 0], [w, 0], [w, h], [0, h]].forEach(function (c) { const d = Math.hypot(c[0] - cx, c[1] - cy); if (!best || (far ? d > best.d : d < best.d)) best = { d: d, x: c[0] - cx, y: c[1] - cy }; });
+                if (circle || !(sy > 0) || !(sx > 0)) rx = ry = best.d;
+                else { const k = sx / sy, s2 = Math.sqrt(Math.pow(best.x / k, 2) + best.y * best.y); ry = s2; rx = k * s2; } // (the -side shape, stretched to reach the corner)
+            }
+        }
+        rx = Math.max(0.01, rx || 0); ry = Math.max(0.01, ry || 0);
+        const r4 = function (n) { return Math.round(n * 10000) / 10000; };
+        return { cx: r4(cx / w), cy: r4(cy / h), rx: r4(rx / w), ry: r4(ry / h), L: rx };
+    }
+    function angleOf(v) {
+        const n = parseFloat(v);
+        if (/turn$/.test(v)) return n * 360;
+        if (/grad$/.test(v)) return n * 0.9;
+        if (/rad$/.test(v)) return n * 180 / Math.PI;
+        return n;
+    }
     function parseGradient(g, w, h) {
         w = w || 100; h = h || 100;
         g = plainColors(g);
-        const m = g.match(/^(repeating-)?(linear|radial)-gradient\((.*)\)$/s);
+        const m = g.match(/^(repeating-)?(linear|radial|conic)-gradient\((.*)\)$/s);
         if (!m) return null;
-        const repeating = !!m[1];
+        const repeating = !!m[1], kind = m[2];
         const parts = splitTop(m[3]);
-        let angle = 180;
-        if (m[2] === 'linear' && parts.length && !/^(rgb|#|hsl|transparent)/i.test(parts[0])) {
+        const isColor = function (p) { return /^(rgb|#|hsl|transparent)/i.test(p); };
+        let angle = 180, geom = null, conic = null;
+        if (kind === 'linear' && parts.length && !isColor(parts[0])) {
             const head = parts.shift();
             const deg = head.match(/(-?[\d.]+)deg/);
             const turn = head.match(/(-?[\d.]+)turn/);
@@ -111,21 +150,44 @@
                     angle = up ? (right ? corner : 360 - corner) : (right ? 180 - corner : 180 + corner);
                 }
             }
-        } else if (m[2] === 'radial' && parts.length && !/^(rgb|#|hsl|transparent)/i.test(parts[0])) parts.shift();
+        } else if (kind === 'radial') geom = radialGeom(parts.length && !isColor(parts[0]) ? parts.shift() : '', w, h);
+        else if (kind === 'conic') {
+            const t = words(parts.length && !isColor(parts[0]) ? parts.shift() : '');
+            const f = t.indexOf('from'), at = t.indexOf('at');
+            conic = { from: f >= 0 ? angleOf(t[f + 1]) : 0, cx: at >= 0 ? evalLen(t[at + 1], w) : w / 2, cy: at >= 0 && t[at + 2] ? evalLen(t[at + 2], h) : h / 2 };
+        }
         // the length of the gradient line, so px positions turn into fractions
         const th = angle * Math.PI / 180;
         const ux = Math.sin(th), uy = -Math.cos(th);
-        const L = m[2] === 'linear' ? (Math.abs(w * ux) + Math.abs(h * uy)) || 1 : Math.hypot(w, h) / 2 || 1;
-        const pos = function (v) { if (v === undefined) return null; const n = parseFloat(v); return /%$/.test(v) ? n / 100 : n / L; };
+        const L = kind === 'linear' ? (Math.abs(w * ux) + Math.abs(h * uy)) || 1 : geom ? geom.L : 360;
+        const pos = function (v) {
+            if (v === undefined) return null;
+            const n = parseFloat(v);
+            if (/%$/.test(v)) return n / 100;
+            if (/(deg|turn|rad|grad)$/.test(v)) return angleOf(v) / 360;
+            return n / L;
+        };
         let stops = [];
         parts.forEach(function (p) {
-            const cm = p.match(/^(rgba?\([^)]*\)|#[0-9a-f]{3,8}|transparent)\s*(-?[\d.]+(?:%|px))?(?:\s+(-?[\d.]+(?:%|px)))?/i);
+            const cm = p.match(/^(rgba?\([^)]*\)|#[0-9a-f]{3,8}|transparent)\s*(-?[\d.]+(?:%|px|deg|turn|rad|grad))?(?:\s+(-?[\d.]+(?:%|px|deg|turn|rad|grad)))?/i);
             if (!cm) return;
             const col = toHex8(cm[1] === 'transparent' ? 'rgba(0, 0, 0, 0)' : cm[1]);
             stops.push({ c: col, o: pos(cm[2]) });
             if (cm[3] !== undefined) stops.push({ c: col, o: pos(cm[3]) });
         });
         if (stops.length < 2) return null;
+        // A see-through stop (like transparent) fades like CSS: toward the color beside it, never toward black
+        const rgbOf = function (c) { return c.slice(0, 7); }, clear = function (c) { return parseInt(c.slice(7, 9), 16) === 0; };
+        for (let i = 0; i < stops.length; i++) {
+            if (!clear(stops[i].c)) continue;
+            const prev = stops.slice(0, i).reverse().find(function (t) { return !clear(t.c); }), next = stops.slice(i + 1).find(function (t) { return !clear(t.c); });
+            if (prev && next && rgbOf(prev.c) !== rgbOf(next.c)) {
+                // between two colors: two stops at the same spot, each fading to its own side's color
+                stops.splice(i + 1, 0, { c: rgbOf(next.c) + '00', o: stops[i].o });
+                stops[i] = { c: rgbOf(prev.c) + '00', o: stops[i].o };
+                i++;
+            } else if (prev || next) stops[i] = { c: rgbOf((prev || next).c) + '00', o: stops[i].o };
+        }
         // Missing positions spread evenly between their neighbors, like CSS does!
         if (stops[0].o === null) stops[0].o = 0;
         if (stops[stops.length - 1].o === null) stops[stops.length - 1].o = repeating ? stops[0].o + 1 : 1;
@@ -149,7 +211,8 @@
             stops = tiled;
         }
         stops = clipStops(stops);
-        if (m[2] === 'radial') return { type: 'radial', angle: 0, scale: 1, stops: stops };
+        if (kind === 'radial') { const r = { cx: geom.cx, cy: geom.cy, rx: geom.rx, ry: geom.ry }; return { type: 'radial', angle: 0, scale: 1, stops: stops, radial: r }; }
+        if (kind === 'conic') return { type: 'conic', from: conic.from, cx: conic.cx, cy: conic.cy, stops: stops };
         // Inkpath gradients run in box units (0 = left-to-right, 90 = top-to-bottom), so the
         // direction is corrected for the box shape and the vector stretched to match CSS!
         const ex = w * ux / L, ey = h * uy / L;
@@ -324,13 +387,20 @@
             if (tr.width) { textLeft = tr.left - r.left; textWidth = tr.width; textTop = tr.top - r.top; textHeight = tr.height; }
         }
         const minSize = isMain ? 4 : 0;
+        // every corner's own radius (x and y: 50% on a long box is an oval corner); CSS shrinks them all if they overlap
+        const rr = ['TopLeft', 'TopRight', 'BottomRight', 'BottomLeft'].map(function (k) {
+            const v = words(cs['border' + k + 'Radius'] || '0');
+            return { x: Math.max(0, evalLen(v[0] || '0', r.width) || 0), y: Math.max(0, evalLen(v[1] || v[0] || '0', r.height) || 0) };
+        });
+        const fit = Math.min(1, r.width / ((rr[0].x + rr[1].x) || 1e9), r.width / ((rr[3].x + rr[2].x) || 1e9), r.height / ((rr[0].y + rr[3].y) || 1e9), r.height / ((rr[1].y + rr[2].y) || 1e9));
+        const radii = rr.map(function (c) { return { x: c.x * fit, y: c.y * fit }; });
         // border-radius: 50% means half the box, not 50px!
         const rawR = String(cs.borderTopLeftRadius).split(' ')[0];
         const radiusPx = /%$/.test(rawR) ? parseFloat(rawR) / 100 * Math.min(r.width, r.height) : parseFloat(rawR) || 0;
         return {
             ox: r.left - origin.left, oy: r.top - origin.top, realW: r.width, realH: r.height,
             w: Math.max(minSize, r.width), h: Math.max(minSize, r.height),
-            radius: Math.min(radiusPx, Math.min(r.width, r.height) / 2), textLeft: textLeft, textWidth: textWidth, textTop: textTop, textHeight: textHeight,
+            radius: Math.min(radiusPx, Math.min(r.width, r.height) / 2), radii: radii, textLeft: textLeft, textWidth: textWidth, textTop: textTop, textHeight: textHeight,
             bgColor: cs.backgroundColor, bgImage: cs.backgroundImage,
             bgSize: splitTop(cs.backgroundSize || 'auto'), bgPos: splitTop(cs.backgroundPosition || '0% 0%'), bgRepeat: splitTop(cs.backgroundRepeat || 'repeat'), bgOrigin: splitTop(cs.backgroundOrigin || 'padding-box'),
             borderW: cs.borderTopStyle === 'none' ? 0 : (parseFloat(cs.borderTopWidth) || 0), borderColor: cs.borderTopColor,
@@ -351,17 +421,80 @@
     }
 
     /* ---------- Turn the measurements into Inkpath objects ---------- */
+    // Corner radii [top-left, top-right, bottom-right, bottom-left] as {x, y}, pulled in by insets (or pushed out)
+    function insetRadii(r, t, rt, b, l) {
+        const f = function (v, d) { return v > 0 ? Math.max(0, v - d) : 0; };
+        return [{ x: f(r[0].x, l), y: f(r[0].y, t) }, { x: f(r[1].x, rt), y: f(r[1].y, t) }, { x: f(r[2].x, rt), y: f(r[2].y, b) }, { x: f(r[3].x, l), y: f(r[3].y, b) }];
+    }
+    // A rounded box with its own radius at every corner (each corner can be oval) as Inkpath path nodes
+    function roundedNodes(x, y, w, h, r) {
+        const k = 0.5522847498, tl = r[0], tr = r[1], br = r[2], bl = r[3];
+        const S = { x: x + tl.x, y: y };
+        const segs = [
+            [S.x, S.y, x + w - tr.x, y, x + w - tr.x, y],
+            [x + w - tr.x + k * tr.x, y, x + w, y + tr.y - k * tr.y, x + w, y + tr.y],
+            [x + w, y + tr.y, x + w, y + h - br.y, x + w, y + h - br.y],
+            [x + w, y + h - br.y + k * br.y, x + w - br.x + k * br.x, y + h, x + w - br.x, y + h],
+            [x + w - br.x, y + h, x + bl.x, y + h, x + bl.x, y + h],
+            [x + bl.x - k * bl.x, y + h, x, y + h - bl.y + k * bl.y, x, y + h - bl.y],
+            [x, y + h - bl.y, x, y + tl.y, x, y + tl.y],
+            [x, y + tl.y - k * tl.y, x + tl.x - k * tl.x, y, S.x, S.y]
+        ];
+        const nodes = [{ x: S.x, y: S.y, cx1: S.x, cy1: S.y, cx2: segs[0][0], cy2: segs[0][1] }];
+        segs.forEach(function (g, i) { const nx = segs[i + 1]; nodes.push({ x: g[4], y: g[5], cx1: g[2], cy1: g[3], cx2: nx ? nx[0] : g[4], cy2: nx ? nx[1] : g[5] }); });
+        const first = nodes[0], last = nodes[nodes.length - 1];
+        first.cx1 = last.cx1; first.cy1 = last.cy1; last.cx2 = first.cx2; last.cy2 = first.cy2;
+        return nodes;
+    }
+    // A box shape with corners: an even round rectangle, a true ellipse (corners meeting in the middle), or a path
+    function finishBox(s) {
+        const r = s._r;
+        delete s._r;
+        if (!r || s.type !== 'rect') return s;
+        const near = function (a, b) { return Math.abs(a - b) < 0.01; };
+        if (r.every(function (c) { return near(c.x, r[0].x) && near(c.y, r[0].y); }) && near(r[0].x, r[0].y)) { s.rx = r[0].x; return s; }
+        if (r.every(function (c) { return near(c.x, s.width / 2) && near(c.y, s.height / 2); })) {
+            const e = Object.assign({}, s, { type: 'ellipse', cx: s.x + s.width / 2, cy: s.y + s.height / 2, rx: s.width / 2, ry: s.height / 2 });
+            delete e.x; delete e.y; delete e.width; delete e.height;
+            return e;
+        }
+        const p = Object.assign({}, s, { type: 'path', pathMode: 'bezier', nodes: roundedNodes(s.x, s.y, s.width, s.height, r) });
+        delete p.x; delete p.y; delete p.width; delete p.height; delete p.rx;
+        return p;
+    }
+    // A conic gradient: fine wedges of color around its centre, clipped to the box
+    function conicShape(g, box, base) {
+        const cx = box.x + g.cx, cy = box.y + g.cy;
+        const R = Math.max(Math.hypot(box.x - cx, box.y - cy), Math.hypot(box.x + box.width - cx, box.y - cy), Math.hypot(box.x - cx, box.y + box.height - cy), Math.hypot(box.x + box.width - cx, box.y + box.height - cy)) + 2;
+        const N = 120, dir = function (deg) { const a = deg * Math.PI / 180; return { x: cx + R * Math.sin(a), y: cy - R * Math.cos(a) }; };
+        const P = function (p) { return { x: p.x, y: p.y, cx1: p.x, cy1: p.y, cx2: p.x, cy2: p.y }; };
+        const wedges = [];
+        let k = 0;
+        while (k < N) {
+            const c = colorAt(g.stops, (k + 0.5) / N);
+            let j = k + 1;
+            while (j < N && colorAt(g.stops, (j + 0.5) / N) === c) j++; // (one wedge for a run of the same color)
+            const a = g.from + k * 360 / N, b = g.from + j * 360 / N + (j < N ? 0.6 : 0); // (a hair of overlap: no seams)
+            const pts = [P({ x: cx, y: cy })];
+            for (let t = 0; t <= Math.ceil((b - a) / 30); t++) pts.push(P(dir(a + (b - a) * t / Math.ceil((b - a) / 30))));
+            pts.push(P({ x: cx, y: cy }));
+            wedges.push({ type: 'path', pathMode: 'bezier', nodes: pts, fillType: 'color', fill: c, fill2: c, strokeType: 'none', stroke: '#00000000', strokeWidth: 0, opacity: 1, blur: 0, rotation: 0 });
+            k = j;
+        }
+        const clip = finishBox(Object.assign({}, base, box, { fillType: 'color', fill: '#000000ff' }));
+        return { type: 'clip', clip: clip, children: wedges, opacity: 1, rotation: 0, blur: 0 };
+    }
     // The shapes for one box (background layers, border, outline, shadows) at x0, y0 (no label)
     function boxShapes(M, x0, y0, isMain) {
         const shapes = [];
-        const base = { type: 'rect', x: x0, y: y0, width: M.w, height: M.h, rx: M.radius, strokeType: 'none', stroke: '#ffffff00', stroke2: '#38bdf8ff', strokeAngle: 0, strokeWidth: 0, opacity: 1, blur: 0, rotation: 0, fill2: '#38bdf8ff', fillAngle: 0 };
+        const base = { type: 'rect', x: x0, y: y0, width: M.w, height: M.h, _r: M.radii, strokeType: 'none', stroke: '#ffffff00', stroke2: '#38bdf8ff', strokeAngle: 0, strokeWidth: 0, opacity: 1, blur: 0, rotation: 0, fill2: '#38bdf8ff', fillAngle: 0 };
         // Each background layer paints only inside its background-clip box (border-box,
         // padding-box or content-box), with the corners rounded to match!
         function clipBox(clip) {
             const b = M.bw, p = M.pad;
             const ins = clip === 'content-box' ? [b[0] + p[0], b[1] + p[1], b[2] + p[2], b[3] + p[3]] : clip === 'padding-box' ? b : [0, 0, 0, 0];
             const w = Math.max(1, M.w - ins[1] - ins[3]), h = Math.max(1, M.h - ins[0] - ins[2]);
-            return { x: x0 + ins[3], y: y0 + ins[0], width: w, height: h, rx: Math.max(0, Math.min(M.radius - Math.max(ins[0], ins[3]), Math.min(w, h) / 2)) };
+            return { x: x0 + ins[3], y: y0 + ins[0], width: w, height: h, _r: insetRadii(M.radii, ins[0], ins[1], ins[2], ins[3]) };
         }
         if (!(M.w > 0 && M.h > 0)) return shapes;
         // where one background layer really paints: its background-size at its background-position, when it does not
@@ -369,20 +502,33 @@
         function layerBox(i, clip) {
             const cb = clipBox(clip);
             const at = function (list) { return list.length ? list[i % list.length] : ''; };
-            const rep = at(M.bgRepeat || []);
-            if (!/^no-repeat( no-repeat)?$/.test(rep)) return cb;
+            const rw = words(at(M.bgRepeat || []) || 'repeat');
+            const rpt = rw[0] === 'repeat-x' ? [true, false] : rw[0] === 'repeat-y' ? [false, true] : [rw[0] !== 'no-repeat', (rw[1] || rw[0]) !== 'no-repeat'];
             const ob = clipBox(at(M.bgOrigin || []) || 'padding-box');
             const sz = words(at(M.bgSize || []) || 'auto');
             let w = ob.width, h = ob.height;
             if (sz[0] && !/^(auto|cover|contain)$/.test(sz[0])) { w = evalLen(sz[0], ob.width); h = sz[1] && sz[1] !== 'auto' ? evalLen(sz[1], ob.height) : h; }
             const ps = words(at(M.bgPos || []) || '0% 0%');
             const x = ob.x + evalLen(ps[0] || '0%', ob.width - w), y = ob.y + evalLen(ps[1] || ps[0] || '0%', ob.height - h);
-            if (!(isFinite(w) && isFinite(h) && isFinite(x) && isFinite(y))) return cb;
+            if (!(isFinite(w) && isFinite(h) && isFinite(x) && isFinite(y)) || !(w > 0.5 && h > 0.5)) return cb;
+            // (a layer the size of its own box is one shape, even though CSS would repeat it under the border)
+            if ((rpt[0] || rpt[1]) && Math.abs(w - ob.width) < 0.01 && Math.abs(h - ob.height) < 0.01) return cb;
+            if (rpt[0] || rpt[1]) {
+                // a repeating layer: tiles of w x h across the clip box (a layer that fills the box is one tile)
+                const xs = [], ys = [];
+                if (rpt[0]) for (let tx = x - Math.ceil((x - cb.x) / w) * w; tx < cb.x + cb.width - 0.01 && xs.length < 200; tx += w) xs.push(tx); else xs.push(x);
+                if (rpt[1]) for (let ty = y - Math.ceil((y - cb.y) / h) * h; ty < cb.y + cb.height - 0.01 && ys.length < 200; ty += h) ys.push(ty); else ys.push(y);
+                if (xs.length * ys.length <= 1 && Math.abs(w - cb.width) < 0.01 && Math.abs(h - cb.height) < 0.01) return cb;
+                if (xs.length * ys.length > 400) return cb;
+                const tiles = [];
+                ys.forEach(function (ty) { xs.forEach(function (tx) { tiles.push({ x: tx, y: ty, width: w, height: h, _r: null }); }); });
+                return Object.assign({}, cb, { tiles: tiles, gw: w, gh: h });
+            }
             // only the part inside the clip box shows
             const x1 = Math.max(x, cb.x), y1 = Math.max(y, cb.y), x2 = Math.min(x + w, cb.x + cb.width), y2 = Math.min(y + h, cb.y + cb.height);
             if (x2 - x1 <= 0.01 || y2 - y1 <= 0.01) return null;
             const full = Math.abs(x1 - cb.x) < 0.01 && Math.abs(y1 - cb.y) < 0.01 && Math.abs(x2 - cb.x - cb.width) < 0.01 && Math.abs(y2 - cb.y - cb.height) < 0.01;
-            return { x: x1, y: y1, width: x2 - x1, height: y2 - y1, rx: full ? cb.rx : 0, gw: w, gh: h };
+            return { x: x1, y: y1, width: x2 - x1, height: y2 - y1, _r: full ? cb._r : null, gw: w, gh: h };
         }
         const layers = (M.bgImage && M.bgImage !== 'none') ? splitTop(M.bgImage) : [];
         const clipOf = function (i) { return M.clips[Math.min(i, M.clips.length - 1)] || 'border-box'; };
@@ -394,13 +540,28 @@
             const g = parseGradient(L.layer, box.gw || box.width, box.gh || box.height);
             delete box.gw; delete box.gh;
             if (!g) return;
+            const name = (all.length > 1 ? (i === all.length - 1 ? 'Gloss' : 'Gradient ' + (i + 1)) : 'Gradient') + (L.clip !== 'border-box' ? ' (' + L.clip.replace('-box', '') + ')' : '');
+            if (box.tiles) {
+                // tiles: each one painted, all clipped to the (rounded) box
+                const tiles = box.tiles;
+                delete box.tiles;
+                const kids = tiles.map(function (t) {
+                    if (g.type === 'conic') return conicShape(g, t, base);
+                    const flat1 = g.stops.every(function (st) { return st.c === g.stops[0].c; });
+                    const f1 = flat1 ? { fillType: 'color', fill: g.stops[0].c } : { fillType: g.type, fill: g.stops[0].c, fill2: g.stops[g.stops.length - 1].c, fillStops: g.stops, fillAngle: g.angle, fillScale: g.scale };
+                    if (!flat1 && g.radial) f1.fillRadial = g.radial;
+                    return finishBox(Object.assign({}, base, t, f1));
+                });
+                const clip = finishBox(Object.assign({}, base, box, { fillType: 'color', fill: '#000000ff' }));
+                shapes.push({ type: 'clip', clip: clip, children: kids, opacity: 1, rotation: 0, blur: 0, name: name + ' (' + kids.length + ' tiles)' });
+                return;
+            }
+            if (g.type === 'conic') { shapes.push(Object.assign(conicShape(g, box, base), { name: name + ' (conic)' })); return; }
             // a flat gradient (one color, like linear-gradient(white, white)) is just a color!
             const flat = g.stops.every(function (st) { return st.c === g.stops[0].c; });
-            shapes.push(Object.assign({}, base, box, flat ? { fillType: 'color', fill: g.stops[0].c } : {
-                fillType: g.type, fill: g.stops[0].c, fill2: g.stops[g.stops.length - 1].c, fillStops: g.stops, fillAngle: g.angle, fillScale: g.scale
-            }, {
-                name: (all.length > 1 ? (i === all.length - 1 ? 'Gloss' : 'Gradient ' + (i + 1)) : 'Gradient') + (L.clip !== 'border-box' ? ' (' + L.clip.replace('-box', '') + ')' : '')
-            }));
+            const fill = flat ? { fillType: 'color', fill: g.stops[0].c } : { fillType: g.type, fill: g.stops[0].c, fill2: g.stops[g.stops.length - 1].c, fillStops: g.stops, fillAngle: g.angle, fillScale: g.scale };
+            if (!flat && g.radial) fill.fillRadial = g.radial;
+            shapes.push(Object.assign({}, base, box, fill, { name: name }));
         });
         if (!shapes.length && isMain) shapes.push(Object.assign({}, base, { fillType: 'none', fill: '#00000000', name: 'Box' }));
         // Shadows go on the bottom shape, the border becomes the top shape's stroke!
@@ -413,18 +574,18 @@
             const top = shapes[shapes.length - 1];
             const bw = M.borderW;
             // CSS borders sit INSIDE the box; SVG strokes straddle the edge, so inset by half!
-            const ring = Object.assign({}, base, { x: x0 + bw / 2, y: y0 + bw / 2, width: Math.max(1, M.w - bw), height: Math.max(1, M.h - bw), rx: Math.max(0, M.radius - bw / 2), fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.borderColor), strokeWidth: bw, name: 'Border' });
-            if (top && top.fillType === 'none') Object.assign(top, ring); else shapes.push(ring);
+            const ring = Object.assign({}, base, { x: x0 + bw / 2, y: y0 + bw / 2, width: Math.max(1, M.w - bw), height: Math.max(1, M.h - bw), _r: insetRadii(M.radii, bw / 2, bw / 2, bw / 2, bw / 2), fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.borderColor), strokeWidth: bw, name: 'Border' });
+            if (top && top.type === 'rect' && top.fillType === 'none') Object.assign(top, ring); else shapes.push(ring);
         }
         if (M.outlineW > 0 && alphaOf(M.outlineColor) > 0) {
             const ow = M.outlineW, out = M.outlineOffset + ow / 2;
-            shapes.push(Object.assign({}, base, { x: x0 - out, y: y0 - out, width: M.w + out * 2, height: M.h + out * 2, rx: M.radius > 0 ? M.radius + out : 0, fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.outlineColor), strokeWidth: ow, name: 'Outline' }));
+            shapes.push(Object.assign({}, base, { x: x0 - out, y: y0 - out, width: M.w + out * 2, height: M.h + out * 2, _r: insetRadii(M.radii, -out, -out, -out, -out), fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.outlineColor), strokeWidth: ow, name: 'Outline' }));
         }
         shapes.forEach(function (s) {
             if (M.opacity < 1) s.opacity = M.opacity;
             if (+M.blur) s.blur = +M.blur;
         });
-        return shapes;
+        return shapes.map(finishBox);
     }
     // The text, with its middle exactly where the browser put the text's middle!
     function labelShape(M, x0, y0, text) {
@@ -434,6 +595,15 @@
         const t = { type: 'text', text: text, fontSize: M.fontSize, fontFamily: M.fontFamily || 'JetBrains Mono', fontWeight: M.fontWeight, textAlign: 'middle', x: tx, y: ty, fill: toHex8(M.color) || '#000000ff', fillType: 'color', stroke: '#ffffff00', strokeType: 'none', strokeWidth: 0, opacity: M.opacity < 1 ? M.opacity : 1, blur: 0, rotation: 0, name: 'Label' };
         if (ts) t.effects = { drop: { dx: ts.dx, dy: ts.dy, blur: ts.blur, color: ts.color } };
         return t;
+    }
+    // Turns a shape by deg about the point P (as seen), whatever point Inkpath turns that kind of shape about
+    function turnAbout(s, deg, P) {
+        const bb = shapeBBox(s), local = { x: bb.x + bb.w / 2, y: bb.y + bb.h / 2 };
+        const r0 = s.rotation || 0;
+        const was = rotPt(r0 ? rotPt(local, r0, getCenter(s)) : local, deg, P);
+        s.rotation = Math.round((r0 + deg) * 100) / 100;
+        const now = rotPt(local, s.rotation, getCenter(s));
+        moveObject(s, was.x - now.x, was.y - now.y);
     }
     function convert(css, text, x0, y0) {
         const S = stage(css, text);
@@ -445,7 +615,7 @@
             const origin = S.el.getBoundingClientRect();
             const M = measurePart(S.el, S.textNode, origin, true);
             const mainTf = tf[0];
-            const below = [], above = [];
+            const below = [];
             const main = boxShapes(M, x0, y0, true);
             const label = text ? [labelShape(M, x0, y0, text)] : [];
             const pseudo = { before: [], after: [] };
@@ -458,26 +628,22 @@
                 const list = boxShapes(P, px, py, false);
                 if (sp.textContent) list.push(labelShape(P, px, py, sp.textContent));
                 const own = tf[nodes.indexOf(sp)];
+                const mid = { x: px + P.w / 2, y: py + P.h / 2 };
                 list.forEach(function (s) {
                     s.name = (k === 'before' ? '::before ' : '::after ') + (s.name || '');
                     if (M.opacity < 1) s.opacity = (s.opacity === undefined ? 1 : s.opacity) * M.opacity;
-                    if (own.rot) s.rotation = own.rot;
+                    if (own.rot) turnAbout(s, own.rot, mid);
                     if (own.dx || own.dy) moveObject(s, own.dx, own.dy);
                 });
                 // (a ::before/::after with a negative z-index sits under the element's own background)
-                (P.zIndex < 0 ? below : pseudo[k]).push.apply(P.zIndex < 0 ? below : pseudo[k], list);
+                if (P.zIndex < 0) below.push.apply(below, list); else pseudo[k].push.apply(pseudo[k], list);
             });
-            const shapes = below.concat(main, pseudo.before, label, pseudo.after, above);
+            const shapes = below.concat(main, pseudo.before, label, pseudo.after);
             // the element's own transform turns everything (its ::before/::after turn with it)
             if (mainTf.rot || mainTf.dx || mainTf.dy) {
                 const mid = { x: x0 + M.w / 2, y: y0 + M.h / 2 };
                 shapes.forEach(function (s) {
-                    if (mainTf.rot) {
-                        const bb = shapeBBox(s), c = { x: bb.x + bb.w / 2, y: bb.y + bb.h / 2 };
-                        const c2 = rotPt(c, mainTf.rot, mid);
-                        moveObject(s, c2.x - c.x, c2.y - c.y);
-                        s.rotation = (s.rotation || 0) + mainTf.rot;
-                    }
+                    if (mainTf.rot) turnAbout(s, mainTf.rot, mid);
                     if (mainTf.dx || mainTf.dy) moveObject(s, mainTf.dx, mainTf.dy);
                 });
             }
@@ -492,13 +658,50 @@
         svg.innerHTML = '';
         const defs = document.createElementNS(NS, 'defs');
         svg.appendChild(defs);
-        shapes.forEach(function (s, i) {
+        let n = 0;
+        function geom(s) {
+            let el;
+            if (s.type === 'text') {
+                el = document.createElementNS(NS, 'text');
+                el.textContent = s.text;
+                el.setAttribute('x', s.x); el.setAttribute('y', s.y);
+                el.setAttribute('font-size', s.fontSize); el.setAttribute('font-family', s.fontFamily); el.setAttribute('font-weight', s.fontWeight);
+                el.setAttribute('text-anchor', s.textAlign);
+            } else if (s.type === 'ellipse') {
+                el = document.createElementNS(NS, 'ellipse');
+                el.setAttribute('cx', s.cx); el.setAttribute('cy', s.cy); el.setAttribute('rx', s.rx); el.setAttribute('ry', s.ry);
+            } else if (s.type === 'path') {
+                el = document.createElementNS(NS, 'path');
+                el.setAttribute('d', buildPathData(s.nodes));
+            } else {
+                el = document.createElementNS(NS, 'rect');
+                el.setAttribute('x', s.x); el.setAttribute('y', s.y); el.setAttribute('width', s.width); el.setAttribute('height', s.height); el.setAttribute('rx', s.rx || 0);
+            }
+            if (s.rotation) { const c = getCenter(s); el.setAttribute('transform', 'rotate(' + s.rotation + ' ' + c.x + ' ' + c.y + ')'); }
+            return el;
+        }
+        function one(s, parent) {
+            const i = n++;
+            if (s.type === 'clip') {
+                const cp = document.createElementNS(NS, 'clipPath');
+                cp.id = 'c2s-c' + i;
+                cp.appendChild(geom(s.clip));
+                defs.appendChild(cp);
+                const g = document.createElementNS(NS, 'g');
+                g.setAttribute('clip-path', 'url(#' + cp.id + ')');
+                if (s.opacity < 1) g.setAttribute('opacity', s.opacity);
+                if (typeof buildFxFilterInto === 'function') { const f = buildFxFilterInto(defs, 'c2s-f' + i, s.blur || 0, s.effects); if (f) g.setAttribute('filter', f); }
+                s.children.forEach(function (c) { one(c, g); });
+                parent.appendChild(g);
+                return;
+            }
             let fill = 'none';
             if (s.fillType === 'color') fill = s.fill;
             else if (s.fillType === 'linear' || s.fillType === 'radial') {
                 const g = document.createElementNS(NS, s.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
                 g.id = 'c2s-g' + i;
                 if (s.fillType === 'linear' && typeof applyGradientAngle === 'function') applyGradientAngle(g, s.fillAngle, s.fillScale);
+                if (s.fillType === 'radial' && s.fillRadial && typeof applyRadialShape === 'function') applyRadialShape(g, s.fillRadial);
                 s.fillStops.forEach(function (st) {
                     const stop = document.createElementNS(NS, 'stop');
                     stop.setAttribute('offset', st.o);
@@ -509,17 +712,7 @@
                 defs.appendChild(g);
                 fill = 'url(#' + g.id + ')';
             }
-            let el;
-            if (s.type === 'text') {
-                el = document.createElementNS(NS, 'text');
-                el.textContent = s.text;
-                el.setAttribute('x', s.x); el.setAttribute('y', s.y);
-                el.setAttribute('font-size', s.fontSize); el.setAttribute('font-family', s.fontFamily); el.setAttribute('font-weight', s.fontWeight);
-                el.setAttribute('text-anchor', s.textAlign);
-            } else {
-                el = document.createElementNS(NS, 'rect');
-                el.setAttribute('x', s.x); el.setAttribute('y', s.y); el.setAttribute('width', s.width); el.setAttribute('height', s.height); el.setAttribute('rx', s.rx || 0);
-            }
+            const el = geom(s);
             el.setAttribute('fill', fill.length === 9 && fill[0] === '#' ? fill.slice(0, 7) : fill);
             if (fill.length === 9 && fill[0] === '#') el.setAttribute('fill-opacity', parseInt(fill.slice(7), 16) / 255);
             if (s.strokeType === 'color' && s.strokeWidth) { el.setAttribute('stroke', s.stroke.slice(0, 7)); el.setAttribute('stroke-opacity', parseInt(s.stroke.slice(7, 9) || 'ff', 16) / 255); el.setAttribute('stroke-width', s.strokeWidth); }
@@ -528,8 +721,9 @@
                 const f = buildFxFilterInto(defs, 'c2s-f' + i, s.blur || 0, s.effects);
                 if (f) el.setAttribute('filter', f);
             }
-            svg.appendChild(el);
-        });
+            parent.appendChild(el);
+        }
+        shapes.forEach(function (s) { one(s, svg); });
     }
 
     /* ---------- The dialog ---------- */
