@@ -4321,6 +4321,8 @@ function chipSelKeydown(ev) {
 var EMPTY_STYLE_MARK = '​';
 var EMPTY_STYLE_TAGS = 'b,strong,i,em,u,s,strike,code';
 function emptyStyleSel() {
+    // (chips are handled by chip-guard.js, the one shared rule for every chip family; this code keeps bold, italic and the like)
+    if (window.KdChips && window.KdChips.handlesChips) return EMPTY_STYLE_TAGS;
     let s = CHIP_STYLE_SEL + ', ' + EMPTY_STYLE_TAGS;
     try { if (typeof FMT_STYLE_SPAN_SEL === 'string') s += ', ' + FMT_STYLE_SPAN_SEL; } catch (e) {}
     try { if (typeof fmtMarketplaceSuffix === 'function') s += fmtMarketplaceSuffix(); } catch (e) {}

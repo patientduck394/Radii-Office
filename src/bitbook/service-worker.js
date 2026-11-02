@@ -1,10 +1,11 @@
 /* Bitbook service worker: offline-first app shell, zero dependencies! */
-var BITBOOK_CACHE = 'bitbook-shell-v20261202l';
+var BITBOOK_CACHE = 'bitbook-shell-v20261202m';
 var BITBOOK_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261202c',
-  'chip-guard.js?v=20261202a',
+  'app.js?v=20261202d',
+  'chip-guard.js?v=20261202b',
+  'overlay-image.js?v=20261202b',
   'style.css?v=20261201d',
   'keydown.css?v=20261202c',
   'marketplace.js?v=20261009',
@@ -17,7 +18,7 @@ var BITBOOK_SHELL = [
   'image-resize.js?v=20261040',
   'office-shell.js?v=20261132r',
   'office-shell.css?v=20261132r',
-  'bitbook-office.js?v=20261202c',
+  'bitbook-office.js?v=20261202d',
   'bitbook-office.css?v=20261202b',
   'radii-images.js?v=20261131v',
   'images-glue.js?v=20261131v',
@@ -29,7 +30,7 @@ var BITBOOK_SHELL = [
   'collab-kd.js?v=20261201j',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261202c',
+  'keydown-doc.js?v=20261202e',
   'annotate-ink.js?v=20261202e',
   'radii-table.js?v=20261202d',
   'css-presets.js?v=20261201p',

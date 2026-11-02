@@ -1,10 +1,11 @@
 /* Writeout service worker: offline-first app shell, zero dependencies! */
-var WRITEOUT_CACHE = 'writeout-shell-v20261202g';
+var WRITEOUT_CACHE = 'writeout-shell-v20261202h';
 var WRITEOUT_SHELL = [
   './',
   'index.html',
-  'app.js?v=20261202c',
-  'chip-guard.js?v=20261202a',
+  'app.js?v=20261202d',
+  'chip-guard.js?v=20261202b',
+  'overlay-image.js?v=20261202b',
   'style.css?v=20261131e',
   'keydown.css?v=20261202c',
   'marketplace.js?v=20260928',
@@ -15,7 +16,7 @@ var WRITEOUT_SHELL = [
   'image-resize.js?v=20261040',
   'office-shell.js?v=20261132r',
   'office-shell.css?v=20261132r',
-  'writeout-office.js?v=20261202a',
+  'writeout-office.js?v=20261202d',
   'writeout-pro.js?v=20261121',
   'writeout-annotator.js?v=20261122',
   'unique-styles.css?v=20261131f',
@@ -31,7 +32,7 @@ var WRITEOUT_SHELL = [
   'collab-kd.js?v=20261201j',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261202c',
+  'keydown-doc.js?v=20261202e',
   'radii-table.js?v=20261202d',
   'favicon.svg',
   'favicon-96.png',

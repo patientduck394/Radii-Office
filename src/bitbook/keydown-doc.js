@@ -277,8 +277,15 @@
         });
         // pictures and attached files that travel inside the file itself:
         // ![alt](data:image/png;base64,...){width=240px} and [report.pdf](data:application/pdf;base64,...){file}
-        s = s.replace(/!\[([^\]\n]*)\]\((data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+)\)(?:\{width=(\d+(?:\.\d+)?)px\})?/gi, (_, alt, src, w) =>
-            stash('<span class="img-resize"' + (w ? ' style="width: ' + w + 'px;"' : '') + '><img src="' + src + '" alt="' + esc(alt) + '"></span>'));
+        // (an image on top of the document: ![alt](data:...){overlay x=120 y=60 w=240 h=180})
+        s = s.replace(/!\[([^\]\n]*)\]\((data:image\/[a-z0-9.+-]+;base64,[A-Za-z0-9+/=]+)\)(?:\{width=(\d+(?:\.\d+)?)px\}|\{overlay ([^}\n]*)\})?/gi, (_, alt, src, w, ov) => {
+            if (ov !== undefined) {
+                const g = (k) => { const m = new RegExp('(?:^|\\s)' + k + '=(-?\\d+(?:\\.\\d+)?)').exec(ov); return m ? +m[1] : 0; };
+                const ow = Math.max(24, g('w') || 240), oh = Math.max(24, g('h') || ow);
+                return stash('<div class="kd-overlay" contenteditable="false" data-kd-overlay="1" style="position:absolute;z-index:40;left:' + g('x') + 'px;top:' + g('y') + 'px;width:' + ow + 'px;height:' + oh + 'px;"><img src="' + src + '" alt="' + esc(alt) + '" draggable="false"></div>');
+            }
+            return stash('<span class="img-resize"' + (w ? ' style="width: ' + w + 'px;"' : '') + '><img src="' + src + '" alt="' + esc(alt) + '"></span>');
+        });
         s = s.replace(/\[([^\]\n]+)\]\((data:([a-z0-9.+-]+\/[a-z0-9.+-]+)?;base64,([A-Za-z0-9+/=]*))\)\{file\}/gi, (_, name, src, type, b64) => stash(fileChipHtml(name, type || '', src, b64)));
         s = s.replace(/\[([^\]]+)\]\(((?:https?:\/\/|mailto:|#)[^)\s]+)\)/g, (_, t, u) => stash('<a href="' + esc(u) + '" target="_blank" rel="noopener">' + esc(t) + '</a>'));
         // Keydown triggers: the inside of each goes through the triggers too, so a highlight can hold bold or a chip!
@@ -435,6 +442,13 @@
             const src = el.getAttribute('src') || '';
             return /^(https:\/\/|data:image\/[a-z0-9.+-]+;base64,)/i.test(src) ? '![' + (el.getAttribute('alt') || '').replace(/[\]\n]/g, '') + '](' + src + ')' : '';
         }
+        // an image on top of the document: ![alt](data:...){overlay x=120 y=60 w=240 h=180}
+        if (el.classList.contains('kd-overlay')) {
+            const img = el.querySelector('img');
+            const pic = img ? inlineText(img) : '';
+            const n = (p) => Math.round((parseFloat(el.style[p]) || 0) * 10) / 10;
+            return pic ? pic + '{overlay x=' + n('left') + ' y=' + n('top') + ' w=' + n('width') + ' h=' + n('height') + '}' : '';
+        }
         // a picture you inserted (in its resizable frame): ![alt](data:...){width=240px}
         if (el.classList.contains('img-resize')) {
             const img = el.querySelector('img');
@@ -522,6 +536,8 @@
             const el = node, tag = el.tagName;
             if (el.classList.contains('kd-meta') || /^(SCRIPT|STYLE|TEMPLATE)$/.test(tag)) return;
             if (el.classList.contains('bl-prog')) { push(''); skillToText(el).split('\n').forEach((l) => lines.push(l)); return; }
+            // an image on top of the document gets a line of its own
+            if (el.classList.contains('kd-overlay')) { const t = inlineText(el); if (t) push(t); return; }
             if (el.matches(BLOCK_SEL) && !el.parentElement.closest(BLOCK_SEL)) { const bk = blockOf(el); if (bk) { push(blockLine(bk)); return; } }
             if (el.hasAttribute('data-kd-tpl') && el.classList.contains('kd-tpl-block')) { push('{{' + el.getAttribute('data-kd-tpl') + '}}'); return; }
             if (el.classList.contains('kd-math') && el.getAttribute('data-display') === '1') { push('$$' + (el.getAttribute('data-tex') || '') + '$$'); return; }

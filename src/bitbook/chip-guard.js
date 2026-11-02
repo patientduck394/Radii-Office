@@ -1,67 +1,87 @@
 /* =====================================================================
    Chip guard! One shared rule for EVERY formatting chip in the note (Gel Orbs, Gel Bubbles and all their
    cousins, Aero and Logo chips, Unique Chips, Custom Chips, Custom CSS chips, tag chips, Annotate highlights,
-   effect text...):
+   effect text, Marketplace styles...):
    1. A chip is never empty. An empty inline chip would collapse to a thin line (it has no text to give it a
       height), so it always holds a zero-width placeholder and keeps its full chip shape and size!
    2. Deleting the last letter of a chip (Backspace, Delete, word delete or deleting a selection inside it) leaves
-      the empty chip waiting for new text instead of removing the whole chip. Deleting once more, from the empty
-      chip, removes it!
-   3. Typing into a chip drops the placeholder, so the saved text stays clean!
-   window.KdChips = { sel, of, seed }
+      the empty chip in place with the caret inside, so typing goes right back into it! Only a Backspace on an
+      already empty chip removes it, and Delete on an empty chip hops over it!
+   3. Typing into an emptied chip drops the placeholder, so the saved text stays clean!
+   (Bold, italic, underline and the like are handled by each app's own code.)
+   window.KdChips = { sel: () => selector, host, seed }
    ===================================================================== */
 (function () {
     'use strict';
-    const ZW = '​';
+    const MARK = '​';
     const canvas = document.getElementById('wysiwyg-canvas');
     if (!canvas) return;
 
-    // every kind of formatting chip (the same families the Format sidebar's "Remove formatting" knows about)
-    const SEL = [
+    const BASE = [
         '.gel-orb', 'span[class*="-chip"]', 'span[class*="gel-chip-"]', 'span[class*="megachip-"]', 'span[class*="droplet-"]',
         'span[class*="effect-"]', 'span[class*="mkt-"]', 'span[class*="orange-hl-"]', 'span[class*="dev-chip-"]',
-        'mark.an-hl', '.spark-text', '.liquid-underline', '.glossy-border-badge', '.cyber-glow-spark', '.liquid-text-glow',
-        '.aqua-bubble-text', '.reflected-text-block', '.embossed-glass-text', '.kinetic-wave-text'
+        '.uni-chip', '.cc-chip', '.us-chip', '.bbcss-chip', 'mark.an-hl', '.spark-text', '.liquid-underline',
+        '.glossy-border-badge', '.cyber-glow-spark', '.liquid-text-glow', '.aqua-bubble-text', '.reflected-text-block',
+        '.embossed-glass-text', '.kinetic-wave-text'
     ].join(', ');
-
-    function editable(c) {
-        if (!c || c === canvas || !canvas.contains(c)) return false;
-        if (c.getAttribute('contenteditable') === 'false' || !c.isContentEditable) return false;
-        // (chips that hold buttons, boxes or other locked pieces are applets, not text chips)
-        return !c.querySelector('input, textarea, button, select, [contenteditable="false"]');
+    // plus whatever styles the app itself knows about (and the Marketplace's)
+    function selector() {
+        let s = BASE;
+        try { if (typeof FMT_STYLE_SPAN_SEL === 'string') s += ', ' + FMT_STYLE_SPAN_SEL; } catch (e) {}
+        try { if (typeof fmtMarketplaceSuffix === 'function') s += fmtMarketplaceSuffix(); } catch (e) {}
+        return s;
     }
-    // the innermost text chip around a node
-    function of(node) {
-        let el = node && (node.nodeType === 3 ? node.parentElement : node);
-        let c = el && el.closest ? el.closest(SEL) : null;
-        while (c) {
-            if (editable(c)) return c;
-            c = c.parentElement && c.parentElement.closest ? c.parentElement.closest(SEL) : null;
+    function lockedPieces(c) { return c.querySelector('input, textarea, button, select, [contenteditable="false"]'); }
+    // the innermost chip around a node (never an applet or a chip holding locked pieces)
+    function host(node) {
+        const el = node && (node.nodeType === 3 ? node.parentElement : node);
+        if (!el || !el.closest) return null;
+        let s = null;
+        try { s = el.closest(selector()); } catch (e) { return null; }
+        while (s) {
+            if (s !== canvas && canvas.contains(s) && s.getAttribute('contenteditable') !== 'false' && s.isContentEditable && !lockedPieces(s)) return s;
+            s = s.parentElement && s.parentElement.closest ? s.parentElement.closest(selector()) : null;
         }
         return null;
     }
-    const plain = (c) => (c.textContent || '').split(ZW).join('');
-    const save = () => {
-        try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {}
-        try { if (typeof syncTopBarWithSelection === 'function') syncTopBarWithSelection(); } catch (e) {}
-    };
-    // puts the placeholder in an empty chip (and the caret after it when the caret was inside)
-    function fill(c, withCaret) {
-        while (c.firstChild) c.removeChild(c.firstChild);
-        const z = document.createTextNode(ZW);
-        c.appendChild(z);
-        if (withCaret) {
-            try { const s = window.getSelection(); const r = document.createRange(); r.setStart(z, 1); r.collapse(true); s.removeAllRanges(); s.addRange(r); } catch (e) {}
-        }
-        return z;
+    const text = (el) => (el.textContent || '').split(MARK).join('');
+    const save = () => { try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {} };
+    function caretIn(el) {
+        let t = el.lastChild;
+        if (!t || t.nodeType !== 3) { t = document.createTextNode(MARK); el.appendChild(t); }
+        const r = document.createRange();
+        r.setStart(t, t.length);
+        r.collapse(true);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(r);
     }
-    // an empty chip at the caret gets its placeholder
+    // swaps a chip's whole text for the placeholder (a normal edit, so Undo brings the letters back)
+    function keep(el) {
+        const sel = window.getSelection();
+        try {
+            const r = document.createRange();
+            r.selectNodeContents(el);
+            sel.removeAllRanges();
+            sel.addRange(r);
+            document.execCommand('insertText', false, MARK);
+        } catch (e) {}
+        if (!el.isConnected) return false; // (the browser dropped it)
+        if (text(el) !== '' || (el.textContent || '').indexOf(MARK) === -1) el.textContent = MARK;
+        el.setAttribute('data-empty-style', '1');
+        caretIn(el);
+        return true;
+    }
+    // a brand new empty chip at the caret (made by any menu) gets its placeholder, so it has its full size
     function seed() {
         const s = window.getSelection();
         if (!s || !s.rangeCount || !s.isCollapsed) return;
-        const c = of(s.anchorNode);
-        if (!c || (c.textContent || '') !== '') return;
-        fill(c, true);
+        const h = host(s.anchorNode);
+        if (!h || (h.textContent || '') !== '') return;
+        while (h.firstChild) h.removeChild(h.firstChild);
+        h.appendChild(document.createTextNode(MARK));
+        h.setAttribute('data-empty-style', '1');
+        caretIn(h);
     }
     let seedT = 0;
     document.addEventListener('selectionchange', function () {
@@ -69,62 +89,95 @@
         seedT = setTimeout(function () { seedT = 0; seed(); }, 0);
     });
 
-    // deleting the chip's last letter keeps the (empty) chip
-    document.addEventListener('beforeinput', function (e) {
-        if (!/^delete(Content|Word|SoftLine|HardLine)(Backward|Forward)?$/.test(e.inputType || '')) return;
-        const s = window.getSelection();
-        if (!s || !s.rangeCount) return;
-        const rng = s.getRangeAt(0);
-        const chip = of(rng.startContainer);
-        if (!chip || !chip.contains(rng.endContainer)) return;
-        const text = plain(chip);
-        if (!text) return; // (already empty: the next delete removes it)
-        let gone = null;
+    canvas.addEventListener('beforeinput', function (ev) {
         try {
-            const t = e.getTargetRanges && e.getTargetRanges();
-            if (t && t.length) { gone = document.createRange(); gone.setStart(t[0].startContainer, t[0].startOffset); gone.setEnd(t[0].endContainer, t[0].endOffset); }
-        } catch (err) { gone = null; }
-        let len = -1;
-        if (gone && !gone.collapsed) {
-            if (!chip.contains(gone.startContainer) || !chip.contains(gone.endContainer)) return; // (the delete reaches outside the chip)
-            len = gone.toString().split(ZW).join('').length;
-        } else if (!rng.collapsed) {
-            len = rng.toString().split(ZW).join('').length;
-        } else {
-            const pre = document.createRange();
-            pre.selectNodeContents(chip);
-            pre.setEnd(rng.startContainer, rng.startOffset);
-            const pos = pre.toString().split(ZW).join('').length;
-            if (/Backward/.test(e.inputType)) len = pos > 0 ? 1 : 0;
-            else if (/Forward/.test(e.inputType)) len = pos < text.length ? 1 : 0;
-        }
-        if (len >= text.length) {
-            e.preventDefault();
-            fill(chip, true);
+            const type = ev.inputType || '';
+            if (type.indexOf('delete') !== 0 || ev.isComposing || type === 'deleteByCut' || type === 'deleteByDrag') return;
+            const sel = window.getSelection();
+            if (!sel.rangeCount) return;
+            const cur = sel.getRangeAt(0);
+            if (!canvas.contains(cur.commonAncestorContainer)) return;
+            const backward = /Backward/.test(type);
+            // what would this keypress delete?
+            let target = null;
+            try {
+                const tr = ev.getTargetRanges ? ev.getTargetRanges() : [];
+                if (tr && tr.length === 1) {
+                    target = document.createRange();
+                    target.setStart(tr[0].startContainer, tr[0].startOffset);
+                    target.setEnd(tr[0].endContainer, tr[0].endOffset);
+                }
+            } catch (e) { target = null; }
+            if (!target) target = cur.cloneRange();
+            // the chip this deletion lives in (or the one chip it exactly covers)
+            let h = host(target.commonAncestorContainer);
+            if (!h && target.startContainer === target.endContainer && target.endOffset - target.startOffset === 1) {
+                const n = target.startContainer.childNodes && target.startContainer.childNodes[target.startOffset];
+                if (n && n.nodeType === 1 && host(n) === n) h = n;
+            }
+            if (!h && sel.isCollapsed) {
+                const at = host(cur.startContainer);
+                if (at && text(at) === '') h = at;
+            }
+            if (!h) return;
+            if (text(h) === '') {
+                // already empty. Backspace removes it, Delete hops over it and deletes what is next
+                ev.preventDefault();
+                const r = document.createRange();
+                r.setStartAfter(h);
+                r.collapse(true);
+                if (backward) {
+                    const parent = h.parentNode;
+                    const idx = Array.prototype.indexOf.call(parent.childNodes, h);
+                    h.remove();
+                    r.setStart(parent, Math.min(idx, parent.childNodes.length));
+                    r.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(r);
+                } else {
+                    sel.removeAllRanges();
+                    sel.addRange(r);
+                    try { document.execCommand('forwardDelete'); } catch (e) {}
+                }
+                save();
+                return;
+            }
+            // this deletion would wipe the chip's whole text, so empty it but keep it
+            const gone = target.toString().split(MARK).join('');
+            if (!gone || gone !== text(h)) return;
+            ev.preventDefault();
+            keep(h);
             save();
-        }
+        } catch (e) {}
     }, true);
 
-    // typing into a chip drops the placeholder
-    document.addEventListener('input', function (e) {
-        if (!/^insert/.test(e.inputType || '')) return;
-        const s = window.getSelection();
-        if (!s || !s.rangeCount) return;
-        const chip = of(s.anchorNode);
-        if (!chip || (chip.textContent || '').indexOf(ZW) === -1 || !plain(chip)) return;
-        const walker = document.createTreeWalker(chip, NodeFilter.SHOW_TEXT);
-        const nodes = [];
-        while (walker.nextNode()) nodes.push(walker.currentNode);
-        nodes.forEach(function (n) {
-            if (n.data.indexOf(ZW) === -1) return;
-            let off = s.anchorNode === n ? s.anchorOffset : -1;
-            if (off >= 0) off -= n.data.slice(0, off).split(ZW).length - 1;
-            n.data = n.data.split(ZW).join('');
-            if (off >= 0) {
-                try { const r = document.createRange(); r.setStart(n, Math.max(0, off)); r.collapse(true); s.removeAllRanges(); s.addRange(r); } catch (err) {}
+    // real text arrived in an emptied chip, so the placeholder goes and the caret stays put
+    canvas.addEventListener('input', function () {
+        try {
+            const sel = window.getSelection();
+            if (!sel.rangeCount) return;
+            const h = host(sel.anchorNode);
+            if (!h || !h.hasAttribute('data-empty-style') || text(h) === '') return;
+            const an = sel.anchorNode, ao = sel.anchorOffset;
+            let off = ao;
+            const walker = document.createTreeWalker(h, NodeFilter.SHOW_TEXT);
+            const nodes = [];
+            while (walker.nextNode()) nodes.push(walker.currentNode);
+            nodes.forEach(function (t) {
+                if (t.data.indexOf(MARK) === -1) return;
+                if (t === an) off = ao - (t.data.slice(0, ao).split(MARK).length - 1);
+                t.data = t.data.split(MARK).join('');
+            });
+            h.removeAttribute('data-empty-style');
+            if (an && an.nodeType === 3 && an.isConnected) {
+                const r = document.createRange();
+                r.setStart(an, Math.max(0, Math.min(off, an.length)));
+                r.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(r);
             }
-        });
+        } catch (e) {}
     });
 
-    window.KdChips = { sel: SEL, of: of, seed: seed };
+    window.KdChips = { sel: selector, host: host, seed: seed, handlesChips: true };
 })();

@@ -1,0 +1,16 @@
+---
+id: gel-arrow-red
+type: media
+title: Red gel arrow
+summary: A glossy red hand-drawn arrow pointing up.
+tags: [arrow, pointer, annotation, drawing, red, gel, frutiger aero]
+created: 2026-11-02
+updated: 2026-11-02
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/gel-arrow-red.png
+mime: image/png
+width: 317
+height: 513
+---
+A wobbly, hand-drawn red arrow in the [[frutiger-aero|Frutiger Aero]] style, with a soft glossy highlight down its middle and a thick dark outline. It has a see-through background, so it can sit on top of a diagram, a screenshot or a page of notes to point at something. It points up, so turn it to aim it where you need.
