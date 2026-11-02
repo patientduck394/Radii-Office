@@ -137,8 +137,8 @@
         { id: 'split', name: 'Gel Split', icon: CHIP_SVG('<rect x="3" y="4.5" width="15" height="11" rx="3"/><path d="M6.5 19.5H21V9"/>') },
         { id: 'lens', name: 'Gel Lens', icon: CHIP_SVG('<rect x="3" y="6" width="18" height="12" rx="6"/><path d="M10 8L7.5 16M14.5 8L12 16" stroke-width="1.5"/>') },
         { id: 'speech', name: 'Speech Bubble', icon: CHIP_SVG('<path d="M5.5 4.5h13a2.5 2.5 0 0 1 2.5 2.5v6.5a2.5 2.5 0 0 1-2.5 2.5H11l-4.5 4v-4h-1A2.5 2.5 0 0 1 3 13.5V7a2.5 2.5 0 0 1 2.5-2.5z"/>') },
-        { id: 'logo', name: 'Logo Chip', icon: CHIP_SVG('<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8.2 9.5A4.2 4.2 0 0 1 12 7.4" stroke-width="2"/>'), light: true },
-        { id: 'aero', name: 'Aero Chip', icon: CHIP_SVG('<rect x="2.5" y="7" width="19" height="10" rx="5"/><path d="M5.5 10.5h13" stroke-width="1.4" opacity=".7"/>'), light: true }
+        { id: 'logo', name: 'Logo Chip', icon: CHIP_SVG('<rect x="4" y="4" width="16" height="16" rx="5"/><path d="M8.2 9.5A4.2 4.2 0 0 1 12 7.4" stroke-width="2"/>') },
+        { id: 'aero', name: 'Aero Chip', icon: CHIP_SVG('<rect x="2.5" y="7" width="19" height="10" rx="5"/><path d="M5.5 10.5h13" stroke-width="1.4" opacity=".7"/>') }
     ];
     const CHIP_COLORS = [['red', 'Red'], ['orange', 'Orange'], ['gold', 'Gold'], ['yellow', 'Yellow'], ['lime', 'Lime'], ['green', 'Green'], ['turquoise', 'Turquoise'], ['teal', 'Teal'], ['cyan', 'Cyan'], ['blue', 'Blue'], ['purple', 'Purple'], ['pink', 'Pink'], ['white', 'White'], ['fog', 'Fog'], ['slate', 'Slate'], ['black', 'Black']];
     OS.icons.chips = '<rect x="2" y="3" width="13" height="8" rx="4"/><path d="M6 11v3.2l3.2-3.2"/><rect x="9" y="13.5" width="13" height="7" rx="3.5"/>';
@@ -185,7 +185,6 @@
             const grid = document.createElement('div');
             grid.className = 'bb-chip-cols';
             CHIP_COLORS.forEach(function (c) {
-                if (f.light && (c[0] === 'white' || c[0] === 'fog' || c[0] === 'black')) return; // (Logo and Aero chips come in 13 colors)
                 const cls = 'gel-' + f.id + '-chip gel-' + f.id + '-' + c[0];
                 const b = document.createElement('button');
                 b.type = 'button';

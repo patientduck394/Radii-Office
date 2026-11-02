@@ -1,6 +1,6 @@
 /* =====================================================================
    Bitbook's Annotate skill: draw right on the note, over the letters!
-   Five inks in the 13 Annotate colors:
+   Five inks in 16 colors (the 13 Annotate colors plus White, Fog and Black):
      Gel Ink      the Gel Underline (#R#text#_) as a pen: a deep edge, a light-to-color gel core and a gloss on top,
                   following your hand at any angle, smoothed as it goes
      Felt Pen     a crisp line in the deep shade of the color

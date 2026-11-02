@@ -1268,7 +1268,7 @@ if (canvas) {
             { open: '%11%FG%', close: '%##', className: 'gel-sx-chip gel-sx-11 gel-sx-fog' },
             { open: '%11%SL%', close: '%##', className: 'gel-sx-chip gel-sx-11 gel-sx-slate' },
             { open: '%11%BK%', close: '%##', className: 'gel-sx-chip gel-sx-11 gel-sx-black' },
-            // Aero Chips: ++R+text++ (glossy Aero pills) and Logo Chips: ;;B;text;; (like the app icons), in the 13 Annotate colors!
+            // Aero Chips: ++R+text++ (glossy Aero pills) and Logo Chips: ;;B;text;; (like the app icons), in 16 colors (the 13 Annotate colors plus White, Fog and Black)!
             { open: '++R+', close: '++', className: 'gel-aero-chip gel-aero-red' },
             { open: '++O+', close: '++', className: 'gel-aero-chip gel-aero-orange' },
             { open: '++GL+', close: '++', className: 'gel-aero-chip gel-aero-gold' },
@@ -1282,6 +1282,9 @@ if (canvas) {
             { open: '++PR+', close: '++', className: 'gel-aero-chip gel-aero-purple' },
             { open: '++PK+', close: '++', className: 'gel-aero-chip gel-aero-pink' },
             { open: '++SL+', close: '++', className: 'gel-aero-chip gel-aero-slate' },
+            { open: '++W+', close: '++', className: 'gel-aero-chip gel-aero-white' },
+            { open: '++FG+', close: '++', className: 'gel-aero-chip gel-aero-fog' },
+            { open: '++BK+', close: '++', className: 'gel-aero-chip gel-aero-black' },
             { open: ';;R;', close: ';;', className: 'gel-logo-chip gel-logo-red' },
             { open: ';;O;', close: ';;', className: 'gel-logo-chip gel-logo-orange' },
             { open: ';;GL;', close: ';;', className: 'gel-logo-chip gel-logo-gold' },
@@ -1295,6 +1298,9 @@ if (canvas) {
             { open: ';;PR;', close: ';;', className: 'gel-logo-chip gel-logo-purple' },
             { open: ';;PK;', close: ';;', className: 'gel-logo-chip gel-logo-pink' },
             { open: ';;SL;', close: ';;', className: 'gel-logo-chip gel-logo-slate' },
+            { open: ';;W;', close: ';;', className: 'gel-logo-chip gel-logo-white' },
+            { open: ';;FG;', close: ';;', className: 'gel-logo-chip gel-logo-fog' },
+            { open: ';;BK;', close: ';;', className: 'gel-logo-chip gel-logo-black' },
             // Gel Speech: ^^R^text^^ (a speech-bubble Bubble Chip cousin, same 16 colors!)
             { open: '^^R^', close: '^^', className: 'gel-speech-chip gel-speech-red' },
             { open: '^^O^', close: '^^', className: 'gel-speech-chip gel-speech-orange' },

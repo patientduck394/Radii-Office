@@ -3138,7 +3138,7 @@
 .gel-speech-black { --sp-c: #919191; --sp-edge: #454545; --sp-ink: #222222; }
 
 /* ========================================================
-   AERO CHIPS (++R+text++): glossy Aero pills, in the 13 Annotate colors!
+   AERO CHIPS (++R+text++): glossy Aero pills, in 16 colors (the 13 Annotate colors plus White, Fog and Black)!
    A deep border (darker at the top), the color down to 59% of the height melting into a light tint,
    a rounded white shine across the top, and a soft gray shadow underneath.
    ======================================================== */
@@ -3171,9 +3171,12 @@
 .gel-aero-purple { --ae-c: #9b30ff; --ae-l: #c98bff; --ae-e1: #4a0080; --ae-e2: #7a1ad1; }
 .gel-aero-pink { --ae-c: #ff2fa8; --ae-l: #ff8ad0; --ae-e1: #7c0047; --ae-e2: #c6006f; }
 .gel-aero-slate { --ae-c: #7f8ea3; --ae-l: #b5c1d1; --ae-e1: #334155; --ae-e2: #5b6b82; }
+.gel-aero-white { --ae-c: #f2f2f2; --ae-l: #ffffff; --ae-e1: #8e8e8e; --ae-e2: #c6c6c6; --ae-ink: #5c5c5c; text-shadow: none; }
+.gel-aero-fog { --ae-c: #c5c5c5; --ae-l: #e8e8e8; --ae-e1: #6d6d6d; --ae-e2: #9c9c9c; --ae-ink: #2e2e2e; text-shadow: none; }
+.gel-aero-black { --ae-c: #333333; --ae-l: #7d7d7d; --ae-e1: #000000; --ae-e2: #2c2c2c; }
 
 /* ========================================================
-   LOGO CHIPS (;;B;text;;): chips made like the Radii Office app icons, in the 13 Annotate colors!
+   LOGO CHIPS (;;B;text;;): chips made like the Radii Office app icons, in 16 colors (the 13 Annotate colors plus White, Fog and Black)!
    A softly rounded tile, solid color through its top third fading to a bright tint at the bottom,
    under a wide white gloss whose curved lower edge dips across the middle.
    ======================================================== */
@@ -3204,3 +3207,6 @@
 .gel-logo-cyan { --lg-c: #00b7d6; --lg-l: #7af5ff; }
 .gel-logo-pink { --lg-c: #ff1b9d; --lg-l: #ffc0e6; }
 .gel-logo-slate { --lg-c: #5b6b82; --lg-l: #c9d3e0; }
+.gel-logo-white { --lg-c: #dedede; --lg-l: #ffffff; color: #5c5c5c; text-shadow: none; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.18), inset 0 0 0 1px rgba(0, 0, 0, 0.14); }
+.gel-logo-fog { --lg-c: #a8a8a8; --lg-l: #e4e4e4; color: #2e2e2e; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45); }
+.gel-logo-black { --lg-c: #1f1f1f; --lg-l: #707070; }

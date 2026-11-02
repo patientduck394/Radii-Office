@@ -237,7 +237,7 @@ A Bubble Chip cousin shaped like a little speech bubble, with a glossy top and a
 
 ## Aero chips
 
-Glossy Aero pills: a deep border that is darker at the top, the color melting into a light tint toward the bottom, a rounded white shine across the top and a soft shadow underneath. Written `++color+text++`, in the 13 Annotate colors:
+Glossy Aero pills: a deep border that is darker at the top, the color melting into a light tint toward the bottom, a rounded white shine across the top and a soft shadow underneath. Written `++color+text++`, in 16 colors (the 13 Annotate colors plus white, fog and black):
 
 * `++R+text++` ++R+red++
 * `++O+text++` ++O+orange++
@@ -251,11 +251,14 @@ Glossy Aero pills: a deep border that is darker at the top, the color melting in
 * `++B+text++` ++B+blue++
 * `++PR+text++` ++PR+purple++
 * `++PK+text++` ++PK+pink++
+* `++W+text++` ++W+white++
+* `++FG+text++` ++FG+fog++
 * `++SL+text++` ++SL+slate++
+* `++BK+text++` ++BK+black++
 
 ## Logo chips
 
-Chips made like the Radii Office app icons: a softly rounded tile, solid color through its top third fading to a bright tint, under a wide white gloss with a curved lower edge. Written `;;color;text;;`, in the 13 Annotate colors:
+Chips made like the Radii Office app icons: a softly rounded tile, solid color through its top third fading to a bright tint, under a wide white gloss with a curved lower edge. Written `;;color;text;;`, in 16 colors (the 13 Annotate colors plus white, fog and black):
 
 * `;;R;text;;` ;;R;red;;
 * `;;O;text;;` ;;O;orange;;
@@ -269,7 +272,10 @@ Chips made like the Radii Office app icons: a softly rounded tile, solid color t
 * `;;B;text;;` ;;B;blue;;
 * `;;PR;text;;` ;;PR;purple;;
 * `;;PK;text;;` ;;PK;pink;;
+* `;;W;text;;` ;;W;white;;
+* `;;FG;text;;` ;;FG;fog;;
 * `;;SL;text;;` ;;SL;slate;;
+* `;;BK;text;;` ;;BK;black;;
 
 ## Gel series
 
