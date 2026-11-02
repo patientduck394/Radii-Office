@@ -337,7 +337,7 @@
     function layerOf(make) {
         const c = ed();
         if (!c) return null;
-        let layer = c.querySelector('svg.an-ink-layer');
+        let layer = Array.from(c.querySelectorAll('svg.an-ink-layer')).find((l) => !l.closest('.bl-view')) || null;
         if (!layer && !make) return null;
         if (!layer) { const t = document.createElement('template'); t.innerHTML = layerHtml([]); layer = t.content.firstChild; }
         if (!c.contains(layer)) c.appendChild(layer);
@@ -351,7 +351,8 @@
         tidyQueued = setTimeout(() => {
             const c = ed();
             if (!c) return;
-            const all = c.querySelectorAll('svg.an-ink-layer');
+            // (a drawing on a playing BitLang program's page belongs to the program: it stays where the program put it)
+            const all = Array.from(c.querySelectorAll('svg.an-ink-layer')).filter((l) => !l.closest('.bl-view'));
             all.forEach((l, i) => { if (i > 0) { paint(all[0], strokesOf(all[0]).concat(strokesOf(l))); l.remove(); } });
             const layer = all[0];
             if (!layer) return;
@@ -380,7 +381,7 @@ svg.an-ink-layer { position: absolute; left: 0; top: 0; overflow: visible; point
 body.ank-on svg.an-ink-layer { pointer-events: auto; cursor: crosshair; touch-action: none; }
 body.ank-on.ank-erase svg.an-ink-layer { cursor: cell; }
 body.ank-on #wysiwyg-canvas, body.ank-on .ank-target { user-select: none; -webkit-user-select: none; }
-.ank-bar { position: fixed; z-index: 100000; left: 50%; bottom: calc(44px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px;
+.ank-bar { position: fixed; z-index: 2147483600; left: 50%; bottom: calc(44px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px 10px;
   max-width: calc(100vw - 16px); box-sizing: border-box; padding: 8px 12px; border-radius: 16px; font: 600 12px system-ui, sans-serif; color: #3b0764;
   background: linear-gradient(180deg, rgba(255,255,255,0.97), rgba(243,232,255,0.95)); border: 1px solid rgba(147,51,234,0.35); box-shadow: 0 10px 30px rgba(59,7,100,0.25); }
 .ank-bar[hidden] { display: none; }
