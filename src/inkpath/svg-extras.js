@@ -154,7 +154,7 @@
         options.forEach(([v, l]) => { const b = make('button', { type: 'button', class: 'seg-btn', 'data-v': v }, l); b.addEventListener('click', () => onpick(v)); box.appendChild(b); });
         return box;
     }
-    function range(min, max, step, oninput) { const r = make('input', { type: 'range', class: 'prop-slider', min: min, max: max, step: step }); r.addEventListener('input', () => oninput(parseFloat(r.value))); return r; }
+    function range(min, max, step, oninput) { const r = make('input', { type: 'range', class: 'prop-slider', min: min, max: max, step: step }); r.style.cssText = 'width:100%;min-width:0;box-sizing:border-box;'; r.addEventListener('input', () => oninput(parseFloat(r.value))); return r; }
     function toggleBtn(label, title, onclick) { const b = make('button', { type: 'button', class: 'action-btn', title: title }, label); b.addEventListener('click', onclick); return b; }
     const markSeg = (box, val) => box.querySelectorAll('.seg-btn').forEach((b) => b.classList.toggle('active', b.getAttribute('data-v') === val));
 
@@ -237,9 +237,22 @@
         ui.pAngle = range(0, 180, 1, (v) => setProp('patternAngle', v || '', true));
         ui.pAngleLbl = make('label', null, 'Pattern angle (0°)');
         const pag = make('div', { class: 'control-group' }); pag.appendChild(ui.pAngleLbl); pag.appendChild(ui.pAngle); pt.appendChild(pag);
-        ui.pBg = make('input', { type: 'color', value: '#ffffff' });
-        ui.pBg.addEventListener('input', () => setProp('patternBg', ui.pBg.value + 'ff', true));
-        pt.appendChild(group('Pattern background (the lines use Fill Color 1)', ui.pBg));
+        // the background color uses Inkpath's own color picker (the same popup as Fill Color: H, S, V, A, hex, pick from canvas)
+        const bgGroup = make('div', { class: 'control-group', id: 'grp-pattern-bg', style: 'position:relative;' });
+        bgGroup.appendChild(make('label', null, 'Pattern background (the lines use Fill Color 1)'));
+        const holder = make('div');
+        holder.innerHTML =
+            '<button type="button" id="pbg-swatch" class="color-swatch" title="Pick the pattern background color">--</button>' +
+            '<div id="pbg-popup" class="color-popup" style="display:none;">' +
+            ['h|H|0|360|0|°', 's|S|0|100|0|%', 'v|V|0|100|100|%', 'a|A|0|100|100|%'].map((r) => { const [k, l, mn, mx, val, u] = r.split('|'); return '<div class="popup-row"><label>' + l + ' <span id="val-pbg-' + k + '">' + val + '</span>' + u + '</label><input type="range" id="insp-pbg-' + k + '" min="' + mn + '" max="' + mx + '" step="1" value="' + val + '"></div>'; }).join('') +
+            '<div class="popup-preview-row"><span id="pbg-preview" class="popup-preview"></span><input id="pbg-hex" class="popup-hex-input" value="#ffffffff" spellcheck="false" autocomplete="off" maxlength="9"></div>' +
+            '<button type="button" class="popup-pick-btn" id="pbg-pick">Pick from canvas</button></div>';
+        while (holder.firstChild) bgGroup.appendChild(holder.firstChild);
+        pt.appendChild(bgGroup);
+        bgGroup.querySelector('#pbg-swatch').addEventListener('click', (e) => toggleColorPopup('pbg-popup', e));
+        ['h', 's', 'v', 'a'].forEach((k) => bgGroup.querySelector('#insp-pbg-' + k).addEventListener('input', pbgFromHSVA));
+        bgGroup.querySelector('#pbg-hex').addEventListener('change', () => setColorFromHex('pbg', 'patternBg'));
+        bgGroup.querySelector('#pbg-pick').addEventListener('click', (e) => pickFromCanvas('pbg', 'patternBg', e));
         fx.appendChild(pt); ui.patternBox = pt;
         // gradient size and repeat
         const gd = make('div', { id: 'grp-extras-gradient' });
@@ -259,6 +272,17 @@
             const none = $('filltype-none'); row.insertBefore(b, none || null); ui.patternBtn = b;
         }
     }
+
+    // the pattern background's popup (the sliders): same behavior as the Fill Color popup
+    function pbgFromHSVA() {
+        const c = updateColorFromHSVA('pbg', 'patternBg');
+        if (c === null) return;
+        picked().forEach((o) => deep(o, 'patternBg', c));
+        render();
+        const pop = $('pbg-popup'); if (pop) pop.style.display = 'flex';
+    }
+    // a style value goes to every shape inside a group, too (app.js calls this when a color is picked)
+    function deep(o, prop, value) { leaves(o).forEach((x) => { x[prop] = value; }); }
 
     // bring the controls in line with what is selected
     function sync() {
@@ -307,7 +331,7 @@
             ui.pKind.value = f.patternKind || 'stripes';
             ui.pSize.value = f.patternSize || 12; ui.pSizeLbl.textContent = 'Pattern size (' + (f.patternSize || 12) + 'px)';
             ui.pAngle.value = f.patternAngle || 0; ui.pAngleLbl.textContent = 'Pattern angle (' + (f.patternAngle || 0) + '°)';
-            const bg = String(f.patternBg || f.fill2 || '#ffffffff'); ui.pBg.value = /^#[0-9a-f]{6}/i.test(bg) ? bg.slice(0, 7) : '#ffffff';
+            syncColorPopup('pbg', f.patternBg || f.fill2 || '#ffffffff', '#ffffffff');
         }
         if (isGrad) {
             const size = f.fillType === 'linear' ? Math.round((f.fillScale || 1) * 100) : Math.round(((f.fillRadial && f.fillRadial.rx) ? f.fillRadial.rx * 200 : 100));
@@ -380,7 +404,7 @@
         });
     }
 
-    window.inkpathExtras = { apply: apply, applyGroup: applyGroup, sync: sync, groupSelected: groupSelected, addImageFile: addImageFile, dashArray: dashArray };
+    window.inkpathExtras = { deep: deep, apply: apply, applyGroup: applyGroup, sync: sync, groupSelected: groupSelected, addImageFile: addImageFile, dashArray: dashArray };
     const start = () => { try { build(); wireActions(); if (typeof render === 'function') render(); } catch (e) { console.error('Inkpath extras:', e); } };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 })();

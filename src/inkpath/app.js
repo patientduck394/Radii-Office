@@ -223,7 +223,7 @@ function toggleFxPopup(evt) {
     const popup = document.getElementById('fx-popup');
     if (!popup) return;
     const willShow = popup.style.display === 'none' || popup.style.display === '';
-    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup'].forEach(id => {
+    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
     });
@@ -440,7 +440,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener("click", (e) => {
-        ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'fx-popup'].forEach(id => {
+        ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup', 'fx-popup'].forEach(id => {
             const popup = document.getElementById(id);
             if (!popup || popup.style.display === 'none' || popup.style.display === '') return;
             if (popup.contains(e.target)) return;
@@ -527,7 +527,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             closeOpsPopup();
             closeEditPopup();
-            ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'fx-popup'].forEach(id => {
+            ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup', 'fx-popup'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el) el.style.display = 'none';
             });
@@ -2349,6 +2349,8 @@ function applyColorToProp(prop, hex8) {
             const stops = getStrokeStops(o);
             stops[stops.length - 1].c = hex8;
             mirrorStrokeStops(o);
+        } else if (prop === 'patternBg' && window.inkpathExtras) {
+            window.inkpathExtras.deep(o, prop, hex8);
         } else {
             o[prop] = hex8;
         }
@@ -2659,7 +2661,7 @@ function toggleColorPopup(popupId, evt) {
     const popup = document.getElementById(popupId);
     if (!popup) return;
     const willShow = popup.style.display === 'none' || popup.style.display === '';
-    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'fx-popup'].forEach(id => {
+    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup', 'fx-popup'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.style.display = 'none';
     });
