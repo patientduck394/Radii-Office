@@ -7,7 +7,7 @@
 //   bitbook/annotate-ink.js   @@ink drawings
 //   bitbook/mobile/skills-lite.js + bitbook/bb-lite.js + bitbook/bitlang.js   the Skills that do things when clicked
 //   bitbook/radii-table.js    tables (and their floating toolbar while editing)
-//   + every Keydown style: keydown.css, the marketplace tags, gel highlights, the 3,150 Unique Styles and the Skills
+//   + every Keydown style: keydown.css, the marketplace tags, gel highlights, the 3,600 Unique Styles and the Skills
 // Run: node scripts/build_keydown_js.mjs [output file]   (default: ../Keydown.js, next to this project)
 import fs from 'node:fs';
 import path from 'node:path';
