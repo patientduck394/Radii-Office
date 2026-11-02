@@ -150,37 +150,129 @@
         });
     }
 
-    /* ---------- Measure the CSS with the real browser ---------- */
-    function cleanCss(css) {
-        let s = String(css || '');
-        const brace = s.match(/\{([^}]*)\}/);
-        if (brace) s = brace[1];
-        return s.replace(/\/\*[\s\S]*?\*\//g, '').trim();
+    /* ---------- Reading the CSS: every rule counts, whatever its name ---------- */
+    // Plain declarations and rules like .highlight { ... } or :root { --c: red } all style the element; rules
+    // with ::before / ::after style those; @media/@supports blocks are read inside; nested rules work too.
+    // -> { main: 'decls', before: 'decls' or null, after: 'decls' or null }
+    function parseRules(css) {
+        const src = String(css || '').replace(/\/\*[\s\S]*?\*\//g, '');
+        const R = { main: [], before: null, after: null };
+        const add = function (t, d) { d = String(d).replace(/[{}]/g, '').trim(); if (!d) return; if (t === 'main') R.main.push(d); else (R[t] = R[t] || []).push(d); };
+        const ensure = function (t) { if (t !== 'main' && !R[t]) R[t] = []; };
+        function targets(sel, def) {
+            const out = [];
+            splitTop(sel).forEach(function (part) {
+                const t = /::?before\b/i.test(part) ? 'before' : /::?after\b/i.test(part) ? 'after' : /::[a-z-]+/i.test(part) ? null : def;
+                if (t && out.indexOf(t) < 0) out.push(t);
+            });
+            return out;
+        }
+        function walk(s, def) {
+            let i = 0, pending = '', q = null;
+            while (i < s.length) {
+                const c = s[i];
+                if (q) { pending += c; if (c === '\\') { pending += s[i + 1] || ''; i += 2; continue; } if (c === q) q = null; i++; continue; }
+                if (c === '"' || c === "'") { q = c; pending += c; i++; continue; }
+                if (c === '}') { i++; continue; }
+                if (c !== '{') { pending += c; i++; continue; }
+                // a block: find its closing brace
+                let depth = 1, j = i + 1, q2 = null;
+                for (; j < s.length && depth; j++) {
+                    const d = s[j];
+                    if (q2) { if (d === '\\') j++; else if (d === q2) q2 = null; continue; }
+                    if (d === '"' || d === "'") q2 = d; else if (d === '{') depth++; else if (d === '}') depth--;
+                }
+                const body = s.slice(i + 1, depth ? j : j - 1);
+                const cut = pending.lastIndexOf(';');
+                if (cut >= 0) add(def, pending.slice(0, cut + 1));
+                const head = pending.slice(cut + 1).trim();
+                pending = '';
+                i = j;
+                if (/^@/.test(head)) { if (/^@(media|supports|layer|container|scope|document)\b/i.test(head)) walk(body, def); continue; }
+                targets(head, def).forEach(function (t) { ensure(t); if (/\{/.test(body)) walk(body, t); else add(t, body); });
+            }
+            if (pending.trim()) add(def, pending);
+        }
+        walk(src, 'main');
+        const join = function (list) { return list.map(function (d) { return /;\s*$/.test(d) ? d : d + ';'; }).join('\n'); };
+        return { main: join(R.main), before: R.before ? join(R.before) : null, after: R.after ? join(R.after) : null };
     }
-    function measure(css, text) {
+    // the text in content: "..." (several strings join; \2605 escapes work); none/normal = no box at all
+    function contentText(decls) {
+        let v = null;
+        String(decls || '').replace(/(?:^|;|\n)\s*content\s*:\s*((?:"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|[^;"'])*)/gi, function (m, val) { v = val.trim(); return m; });
+        if (v === null) return '';
+        if (/^(none|normal)\b/i.test(v)) return null;
+        let out = '';
+        v.replace(/"((?:\\.|[^"\\])*)"|'((?:\\.|[^'\\])*)'/g, function (m, a, b) { out += a !== undefined ? a : b; return m; });
+        return out.replace(/\\([0-9a-fA-F]{1,6})\s?/g, function (m, h) { return String.fromCodePoint(parseInt(h, 16)); }).replace(/\\(.)/g, '$1');
+    }
+    const BASE = 'display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;white-space:pre;font-family:"JetBrains Mono",monospace;';
+    // The CSS as a stylesheet for one class: real ::before/::after (the preview), or stand-in spans (measuring)
+    function scopedCss(R, sel, real) {
+        let out = sel + ' {' + BASE + R.main + '}\n';
+        ['before', 'after'].forEach(function (k) {
+            if (R[k] === null) return;
+            if (real) out += sel + '::' + k + ' {' + (/(^|[;\n])\s*content\s*:/i.test(R[k]) ? '' : 'content: "";') + R[k] + '}\n';
+            else out += sel + ' > .c2s-p' + k + ' {' + R[k] + '}\n';
+        });
+        return out;
+    }
+    let seq = 0;
+    // A styled copy of the CSS off screen: the element, its text, and stand-ins for ::before / ::after
+    function stage(css, text) {
+        const R = parseRules(css);
+        const cls = 'c2s-m' + (++seq);
+        const style = document.createElement('style');
+        style.textContent = scopedCss(R, '.' + cls, false);
+        document.head.appendChild(style);
         const host = document.createElement('div');
         host.style.cssText = 'position:fixed;left:-5000px;top:0;visibility:hidden;';
         const el = document.createElement('div');
-        el.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;white-space:pre;font-family:"JetBrains Mono",monospace;' + cleanCss(css);
-        el.textContent = text || '';
+        el.className = cls;
+        const parts = {};
+        ['before', 'after'].forEach(function (k) {
+            if (R[k] === null) return;
+            const t = contentText(R[k]);
+            if (t === null) return;
+            const sp = document.createElement('span');
+            sp.className = 'c2s-p' + k;
+            sp.textContent = t;
+            parts[k] = sp;
+        });
+        if (parts.before) el.appendChild(parts.before);
+        const textNode = document.createTextNode(text || '');
+        el.appendChild(textNode);
+        if (parts.after) el.appendChild(parts.after);
         host.appendChild(el);
         document.body.appendChild(host);
-        const r = el.getBoundingClientRect();
-        const cs = getComputedStyle(el);
-        // where the browser really put the text (flex centering, padding, text-align all included)
-        let textLeft = null, textWidth = 0;
-        if (el.firstChild) {
+        return { el: el, parts: parts, textNode: textNode, done: function () { host.remove(); style.remove(); } };
+    }
+    function readTransform(cs) {
+        const m = String(cs.transform || 'none').match(/matrix\(([^)]+)\)/);
+        if (!m) return { rot: 0, dx: 0, dy: 0 };
+        const v = m[1].split(',').map(parseFloat);
+        return { rot: Math.round(Math.atan2(v[1], v[0]) * 18000 / Math.PI) / 100, dx: v[4] || 0, dy: v[5] || 0 };
+    }
+    // One box's measurements (the element or a stand-in), relative to the element's top-left corner
+    function measurePart(node, textNode, origin, isMain) {
+        const r = node.getBoundingClientRect();
+        const cs = getComputedStyle(node);
+        let textLeft = null, textWidth = 0, textTop = null, textHeight = 0;
+        if (textNode && textNode.nodeValue) {
             const range = document.createRange();
-            range.selectNodeContents(el);
+            range.selectNodeContents(textNode);
             const tr = range.getBoundingClientRect();
-            if (tr.width) { textLeft = tr.left - r.left; textWidth = tr.width; }
+            if (tr.width) { textLeft = tr.left - r.left; textWidth = tr.width; textTop = tr.top - r.top; textHeight = tr.height; }
         }
+        const minSize = isMain ? 4 : 0;
         // border-radius: 50% means half the box, not 50px!
         const rawR = String(cs.borderTopLeftRadius).split(' ')[0];
         const radiusPx = /%$/.test(rawR) ? parseFloat(rawR) / 100 * Math.min(r.width, r.height) : parseFloat(rawR) || 0;
-        const out = {
-            w: Math.max(4, r.width), h: Math.max(4, r.height),
-            radius: Math.min(radiusPx, Math.min(r.width, r.height) / 2), textLeft: textLeft, textWidth: textWidth,
+        return {
+            ox: r.left - origin.left, oy: r.top - origin.top, realW: r.width, realH: r.height,
+            w: Math.max(minSize, r.width), h: Math.max(minSize, r.height),
+            radius: Math.min(radiusPx, Math.min(r.width, r.height) / 2), textLeft: textLeft, textWidth: textWidth, textTop: textTop, textHeight: textHeight,
             bgColor: cs.backgroundColor, bgImage: cs.backgroundImage,
             borderW: cs.borderTopStyle === 'none' ? 0 : (parseFloat(cs.borderTopWidth) || 0), borderColor: cs.borderTopColor,
             bw: ['Top', 'Right', 'Bottom', 'Left'].map(function (k) { return cs['border' + k + 'Style'] === 'none' ? 0 : (parseFloat(cs['border' + k + 'Width']) || 0); }),
@@ -190,15 +282,18 @@
             shadows: parseShadows(cs.boxShadow), textShadows: parseShadows(cs.textShadow),
             opacity: parseFloat(cs.opacity), color: cs.color, fontSize: parseFloat(cs.fontSize) || 16,
             fontFamily: cs.fontFamily.split(',')[0].replace(/["']/g, '').trim(), fontWeight: cs.fontWeight, textAlign: cs.textAlign,
-            blur: ((cs.filter || '').match(/blur\(([\d.]+)px\)/) || [0, 0])[1]
+            blur: ((cs.filter || '').match(/blur\(([\d.]+)px\)/) || [0, 0])[1],
+            zIndex: parseInt(cs.zIndex, 10) || 0, hidden: cs.display === 'none' // (visibility is hidden on the whole off-screen copy, so it can't count)
         };
-        host.remove();
-        return out;
+    }
+    function measure(css, text) {
+        const S = stage(css, text);
+        try { return measurePart(S.el, S.textNode, S.el.getBoundingClientRect(), true); } finally { S.done(); }
     }
 
     /* ---------- Turn the measurements into Inkpath objects ---------- */
-    function convert(css, text, x0, y0) {
-        const M = measure(css, text);
+    // The shapes for one box (background layers, border, outline, shadows) at x0, y0 (no label)
+    function boxShapes(M, x0, y0, isMain) {
         const shapes = [];
         const base = { type: 'rect', x: x0, y: y0, width: M.w, height: M.h, rx: M.radius, strokeType: 'none', stroke: '#ffffff00', stroke2: '#38bdf8ff', strokeAngle: 0, strokeWidth: 0, opacity: 1, blur: 0, rotation: 0, fill2: '#38bdf8ff', fillAngle: 0 };
         // Each background layer paints only inside its background-clip box (border-box,
@@ -209,6 +304,7 @@
             const w = Math.max(1, M.w - ins[1] - ins[3]), h = Math.max(1, M.h - ins[0] - ins[2]);
             return { x: x0 + ins[3], y: y0 + ins[0], width: w, height: h, rx: Math.max(0, Math.min(M.radius - Math.max(ins[0], ins[3]), Math.min(w, h) / 2)) };
         }
+        if (!(M.w > 0 && M.h > 0)) return shapes;
         const layers = (M.bgImage && M.bgImage !== 'none') ? splitTop(M.bgImage) : [];
         const clipOf = function (i) { return M.clips[Math.min(i, M.clips.length - 1)] || 'border-box'; };
         // Bottom layer first: the background color (it uses the LAST clip), then images from back to front!
@@ -225,18 +321,19 @@
                 name: (all.length > 1 ? (i === all.length - 1 ? 'Gloss' : 'Gradient ' + (i + 1)) : 'Gradient') + (L.clip !== 'border-box' ? ' (' + L.clip.replace('-box', '') + ')' : '')
             }));
         });
-        if (!shapes.length) shapes.push(Object.assign({}, base, { fillType: 'none', fill: '#00000000', name: 'Box' }));
+        if (!shapes.length && isMain) shapes.push(Object.assign({}, base, { fillType: 'none', fill: '#00000000', name: 'Box' }));
         // Shadows go on the bottom shape, the border becomes the top shape's stroke!
         const drop = M.shadows.find(function (s) { return !s.inset; });
         const inner = M.shadows.find(function (s) { return s.inset; });
-        if (drop) shapes[0].effects = Object.assign(shapes[0].effects || {}, { drop: { dx: drop.dx, dy: drop.dy, blur: drop.blur, color: drop.color } });
-        if (inner) shapes[shapes.length - 1].effects = Object.assign(shapes[shapes.length - 1].effects || {}, { inner: { dx: inner.dx, dy: inner.dy, blur: inner.blur, color: inner.color } });
+        if (!shapes.length && (drop || inner)) shapes.push(Object.assign({}, base, { fillType: 'color', fill: '#ffffff00', name: 'Shadow' }));
+        if (drop && shapes.length) shapes[0].effects = Object.assign(shapes[0].effects || {}, { drop: { dx: drop.dx, dy: drop.dy, blur: drop.blur, color: drop.color } });
+        if (inner && shapes.length) shapes[shapes.length - 1].effects = Object.assign(shapes[shapes.length - 1].effects || {}, { inner: { dx: inner.dx, dy: inner.dy, blur: inner.blur, color: inner.color } });
         if (M.borderW > 0 && alphaOf(M.borderColor) > 0) {
             const top = shapes[shapes.length - 1];
             const bw = M.borderW;
             // CSS borders sit INSIDE the box; SVG strokes straddle the edge, so inset by half!
             const ring = Object.assign({}, base, { x: x0 + bw / 2, y: y0 + bw / 2, width: Math.max(1, M.w - bw), height: Math.max(1, M.h - bw), rx: Math.max(0, M.radius - bw / 2), fillType: 'none', fill: '#00000000', strokeType: 'color', stroke: toHex8(M.borderColor), strokeWidth: bw, name: 'Border' });
-            if (top.fillType === 'none') Object.assign(top, ring); else shapes.push(ring);
+            if (top && top.fillType === 'none') Object.assign(top, ring); else shapes.push(ring);
         }
         if (M.outlineW > 0 && alphaOf(M.outlineColor) > 0) {
             const ow = M.outlineW, out = M.outlineOffset + ow / 2;
@@ -246,16 +343,66 @@
             if (M.opacity < 1) s.opacity = M.opacity;
             if (+M.blur) s.blur = +M.blur;
         });
-        if (text) {
-            const ts = M.textShadows[0];
-            // the label's middle goes exactly where the browser put the text's middle!
-            const anchor = 'middle';
-            const tx = M.textLeft !== null ? x0 + M.textLeft + M.textWidth / 2 : x0 + M.w / 2;
-            const t = { type: 'text', text: text, fontSize: M.fontSize, fontFamily: M.fontFamily || 'JetBrains Mono', fontWeight: M.fontWeight, textAlign: anchor, x: tx, y: y0 + M.h / 2 + M.fontSize * 0.35, fill: toHex8(M.color) || '#000000ff', fillType: 'color', stroke: '#ffffff00', strokeType: 'none', strokeWidth: 0, opacity: M.opacity < 1 ? M.opacity : 1, blur: 0, rotation: 0, name: 'Label' };
-            if (ts) t.effects = { drop: { dx: ts.dx, dy: ts.dy, blur: ts.blur, color: ts.color } };
-            shapes.push(t);
-        }
-        return { shapes: shapes, w: M.w, h: M.h };
+        return shapes;
+    }
+    // The text, with its middle exactly where the browser put the text's middle!
+    function labelShape(M, x0, y0, text) {
+        const ts = M.textShadows[0];
+        const tx = M.textLeft !== null ? x0 + M.textLeft + M.textWidth / 2 : x0 + M.w / 2;
+        const ty = M.textTop !== null ? y0 + M.textTop + M.textHeight / 2 + M.fontSize * 0.35 : y0 + M.h / 2 + M.fontSize * 0.35;
+        const t = { type: 'text', text: text, fontSize: M.fontSize, fontFamily: M.fontFamily || 'JetBrains Mono', fontWeight: M.fontWeight, textAlign: 'middle', x: tx, y: ty, fill: toHex8(M.color) || '#000000ff', fillType: 'color', stroke: '#ffffff00', strokeType: 'none', strokeWidth: 0, opacity: M.opacity < 1 ? M.opacity : 1, blur: 0, rotation: 0, name: 'Label' };
+        if (ts) t.effects = { drop: { dx: ts.dx, dy: ts.dy, blur: ts.blur, color: ts.color } };
+        return t;
+    }
+    function convert(css, text, x0, y0) {
+        const S = stage(css, text);
+        try {
+            const nodes = [S.el, S.parts.before, S.parts.after].filter(Boolean);
+            // transforms are read first, then switched off so every box is measured upright
+            const tf = nodes.map(function (n) { return readTransform(getComputedStyle(n)); });
+            nodes.forEach(function (n) { n.style.transform = 'none'; });
+            const origin = S.el.getBoundingClientRect();
+            const M = measurePart(S.el, S.textNode, origin, true);
+            const mainTf = tf[0];
+            const below = [], above = [];
+            const main = boxShapes(M, x0, y0, true);
+            const label = text ? [labelShape(M, x0, y0, text)] : [];
+            const pseudo = { before: [], after: [] };
+            ['before', 'after'].forEach(function (k) {
+                const sp = S.parts[k];
+                if (!sp) return;
+                const P = measurePart(sp, sp.firstChild, origin, false);
+                if (P.hidden) return;
+                const px = x0 + P.ox, py = y0 + P.oy;
+                const list = boxShapes(P, px, py, false);
+                if (sp.textContent) list.push(labelShape(P, px, py, sp.textContent));
+                const own = tf[nodes.indexOf(sp)];
+                list.forEach(function (s) {
+                    s.name = (k === 'before' ? '::before ' : '::after ') + (s.name || '');
+                    if (M.opacity < 1) s.opacity = (s.opacity === undefined ? 1 : s.opacity) * M.opacity;
+                    if (own.rot) s.rotation = own.rot;
+                    if (own.dx || own.dy) moveObject(s, own.dx, own.dy);
+                });
+                // (a ::before/::after with a negative z-index sits under the element's own background)
+                (P.zIndex < 0 ? below : pseudo[k]).push.apply(P.zIndex < 0 ? below : pseudo[k], list);
+            });
+            const shapes = below.concat(main, pseudo.before, label, pseudo.after, above);
+            // the element's own transform turns everything (its ::before/::after turn with it)
+            if (mainTf.rot || mainTf.dx || mainTf.dy) {
+                const mid = { x: x0 + M.w / 2, y: y0 + M.h / 2 };
+                shapes.forEach(function (s) {
+                    if (mainTf.rot) {
+                        const bb = shapeBBox(s), c = { x: bb.x + bb.w / 2, y: bb.y + bb.h / 2 };
+                        const c2 = rotPt(c, mainTf.rot, mid);
+                        moveObject(s, c2.x - c.x, c2.y - c.y);
+                        s.rotation = (s.rotation || 0) + mainTf.rot;
+                    }
+                    if (mainTf.dx || mainTf.dy) moveObject(s, mainTf.dx, mainTf.dy);
+                });
+            }
+            const bounds = unionBBox(shapes.map(shapeBBox));
+            return { shapes: shapes, w: M.w, h: M.h, bounds: bounds };
+        } finally { S.done(); }
     }
 
     /* ---------- A tiny painter for the live SVG preview ---------- */
@@ -321,7 +468,7 @@
         dlg.innerHTML =
             '<div class="c2s-dlg" role="dialog" aria-label="CSS to SVG">' +
             '<div class="c2s-head"><b>CSS to SVG</b><button type="button" class="c2s-x" title="Close">✕</button></div>' +
-            '<p class="c2s-sub">Paste CSS (just the declarations, or a whole <code>.rule { … }</code>) and get real, editable Inkpath shapes! Backgrounds, gradients, borders, rounding, box-shadows and text all convert!</p>' +
+            '<p class="c2s-sub">Paste CSS (just the declarations, or whole rules like <code>.highlight { … }</code>: their names do not matter: every rule styles this one thing) and get real, editable Inkpath shapes! Backgrounds, gradients, borders, rounding, box-shadows, text, <code>var(--…)</code> variables and <code>::before</code> / <code>::after</code> all convert!</p>' +
             '<div class="c2s-presets"></div>' +
             '<div class="c2s-grid"><div class="c2s-col"><label>CSS</label><textarea id="c2s-css" spellcheck="false"></textarea><label>Text (optional)</label><input id="c2s-text" maxlength="80" spellcheck="false"></div>' +
             '<div class="c2s-col"><label>CSS preview</label><div class="c2s-stage" id="c2s-html"></div><label>SVG result <span id="c2s-count"></span></label><div class="c2s-stage"><svg id="c2s-svg" xmlns="http://www.w3.org/2000/svg"></svg></div></div></div>' +
@@ -346,20 +493,25 @@
         dlg.addEventListener('mousedown', function (e) { if (e.target === dlg) close(); });
         dlg.addEventListener('keydown', function (e) { e.stopPropagation(); if (e.key === 'Escape') close(); });
     }
+    let liveStyle = null;
     function update() {
         const css = dlg.querySelector('#c2s-css').value;
         const text = dlg.querySelector('#c2s-text').value;
         const html = dlg.querySelector('#c2s-html');
         html.innerHTML = '';
+        // the CSS preview is the real thing: every rule, variables, ::before and ::after
+        if (!liveStyle) { liveStyle = document.createElement('style'); document.head.appendChild(liveStyle); }
+        try { liveStyle.textContent = scopedCss(parseRules(css), '.c2s-live', true); } catch (e) { liveStyle.textContent = ''; }
         const el = document.createElement('div');
-        el.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;box-sizing:border-box;white-space:pre;font-family:"JetBrains Mono",monospace;' + cleanCss(css);
+        el.className = 'c2s-live';
         el.textContent = text;
         html.appendChild(el);
         let res;
         try { res = convert(css, text, 20, 20); } catch (e) { dlg.querySelector('#c2s-msg').textContent = 'Could not read that CSS!'; return; }
         const svg = dlg.querySelector('#c2s-svg');
-        svg.setAttribute('viewBox', '0 0 ' + Math.ceil(res.w + 40) + ' ' + Math.ceil(res.h + 40));
-        svg.setAttribute('width', Math.min(320, res.w + 40));
+        const b = res.bounds, pad = 20;
+        svg.setAttribute('viewBox', Math.floor(b.x - pad) + ' ' + Math.floor(b.y - pad) + ' ' + Math.ceil(b.w + pad * 2) + ' ' + Math.ceil(b.h + pad * 2));
+        svg.setAttribute('width', Math.min(320, b.w + pad * 2));
         paint(svg, res.shapes);
         dlg.querySelector('#c2s-count').textContent = '(' + res.shapes.length + ' shape' + (res.shapes.length === 1 ? '' : 's') + ')';
         dlg.querySelector('#c2s-msg').textContent = '';
@@ -367,7 +519,6 @@
     function insert() {
         const css = dlg.querySelector('#c2s-css').value;
         const text = dlg.querySelector('#c2s-text').value;
-        const probe = measure(css, text);
         // Drop it in the middle of what you can SEE (zoom + pan included)!
         let cx = CANVAS_BOUNDS.width / 2, cy = CANVAS_BOUNDS.height / 2;
         try {
@@ -378,8 +529,10 @@
             const q = pt.matrixTransform(m);
             cx = Math.max(0, Math.min(CANVAS_BOUNDS.width, q.x)); cy = Math.max(0, Math.min(CANVAS_BOUNDS.height, q.y));
         } catch (e) {}
-        const x0 = Math.round(cx - probe.w / 2), y0 = Math.round(cy - probe.h / 2);
-        const res = convert(css, text, x0, y0);
+        // (the middle of everything, ::before and ::after included)
+        const res = convert(css, text, 0, 0), b = res.bounds;
+        const dx = Math.round(cx - (b.x + b.w / 2)), dy = Math.round(cy - (b.y + b.h / 2));
+        res.shapes.forEach(function (s) { moveObject(s, dx, dy); });
         pushHistory(true);
         const first = objects.length;
         res.shapes.forEach(function (s) { objects.push(s); });
