@@ -1,6 +1,6 @@
 import { createCalls } from './rtc.js';
 import { mountCallUI } from './call-ui.js';
-import { createNets, NETS } from './nets.js';
+import { createNets, NETS } from './nets.js?v=20261201w';
 // Phosphor LIVE! Zero-setup chat: public MQTT relays, local identity, no accounts!
 // Open the page, pick a name, create or join a Space with a code. That's it!
 
@@ -530,6 +530,99 @@ function isSenderOwner(code, senderId) {
     return senderId === s.owner;
 }
 
+// ---------- Staff (owner + admins) and blocked words! ----------
+// The owner names admins with /admin @name and takes it back with /demote @name! Admins moderate like the
+// owner (kick, ban, unban, warn, delete, blocked words) but can't touch the owner or each other! Over WebRTC
+// every message comes from the browser that sent it, so a forged admin action never gets through!
+// Blocked words (/blockword AGPL, /unblockword MIT) stop anyone but staff from posting them!
+let pendingStaff = {}; // code -> [{from, st}] frames that arrived before the Space knew its owner!
+
+function staffOf(code) {
+    const s = spaces.find(x => x.code === code) || {};
+    return {
+        admins: Array.isArray(s.admins) ? s.admins : [],
+        adminsAt: Number(s.adminsAt) || 0,
+        words: Array.isArray(s.blockwords) ? s.blockwords : [],
+        wordsAt: Number(s.wordsAt) || 0,
+    };
+}
+function isAdminId(code, id) { return !!id && staffOf(code).admins.some(a => a.id === id); }
+function isStaffId(code, id) { return isSenderOwner(code, id) || isAdminId(code, id); }
+function canModerate(code) { return !!code && (isSpaceOwner(code) || (!!me && isAdminId(code, me.clientId))); }
+
+function cleanAdmins(list) {
+    return (Array.isArray(list) ? list : []).filter(a => a && typeof a.id === 'string' && a.id).slice(0, 50)
+        .map(a => ({ id: a.id.slice(0, 64), name: String(a.name || '?').slice(0, 24) }));
+}
+function cleanWords(list) {
+    const seen = new Set();
+    return (Array.isArray(list) ? list : []).map(w => String(w || '').trim().slice(0, 40)).filter(w => {
+        const k = w.toLowerCase();
+        if (!w || seen.has(k)) return false;
+        seen.add(k);
+        return true;
+    }).slice(0, 200);
+}
+// Save new admins and/or blocked words, then tell everyone linked right now!
+function setStaff(code, patch) {
+    const s = spaces.find(x => x.code === code);
+    if (!s) return;
+    if (patch.admins) { s.admins = cleanAdmins(patch.admins); s.adminsAt = Math.max((Number(s.adminsAt) || 0) + 1, Number(patch.at) || 0); }
+    if (patch.words) { s.blockwords = cleanWords(patch.words); s.wordsAt = Math.max((Number(s.wordsAt) || 0) + 1, Number(patch.at) || 0); }
+    saveSpaces();
+    try { nets.pushStaff(code); } catch (e) {}
+    if (code === activeCode) { try { updateMembersPanel(); } catch (e) {} }
+}
+// A linked browser shared the Space's staff list: the owner decides admins, staff decide blocked words!
+function onStaffFrame(code, from, st) {
+    if (!spaces.some(x => x.code === code)) return;
+    const s = spaces.find(x => x.code === code);
+    if (!s.owner) {
+        const list = (pendingStaff[code] = pendingStaff[code] || []).filter(p => p.from !== from);
+        list.push({ from, st });
+        pendingStaff[code] = list.slice(-10);
+        return;
+    }
+    const cur = staffOf(code);
+    let changed = false;
+    if (isSenderOwner(code, from) && Number(st.adminsAt) > cur.adminsAt) {
+        s.admins = cleanAdmins(st.admins);
+        s.adminsAt = Number(st.adminsAt);
+        changed = true;
+    }
+    if (isStaffId(code, from) && Number(st.wordsAt) > cur.wordsAt) {
+        s.blockwords = cleanWords(st.words);
+        s.wordsAt = Number(st.wordsAt);
+        changed = true;
+    }
+    if (!changed) return;
+    saveSpaces();
+    if (code === activeCode) { try { updateMembersPanel(); } catch (e) {} }
+}
+// The directory card just told us the owner: look at staff lists that arrived too early!
+function replayPendingStaff(code) {
+    const list = pendingStaff[code];
+    if (!list) return;
+    delete pendingStaff[code];
+    list.forEach(p => onStaffFrame(code, p.from, p.st));
+}
+
+function blockedWordIn(code, text) {
+    const t = String(text || '');
+    if (!t) return null;
+    for (const w of staffOf(code).words) {
+        const re = new RegExp('(^|[^\\p{L}\\p{N}])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '(?=$|[^\\p{L}\\p{N}])', 'iu');
+        if (re.test(t)) return w;
+    }
+    return null;
+}
+// Staff may always post; everyone else's messages with a blocked word never show up!
+function blockedMessage(code, m) {
+    if (!m || isStaffId(code, m.from)) return false;
+    const fileName = m.file && m.file.name ? ' ' + m.file.name : '';
+    return !!blockedWordIn(code, String(m.body || '') + ' ' + String(m.subject || '') + fileName);
+}
+
 function splitTarget(rest) {
     let r = String(rest || '').trim().replace(/^@/, '');
     if (!r) return null;
@@ -558,6 +651,9 @@ function resolveTarget(name) {
 
 function modFallback(action, targetName, ownerName) {
     if (action === 'warn') return '🔒 Private notice for @' + targetName + ' — update Phosphor to view!';
+    if (action === 'admin') return '🛡 ' + ownerName + ' made @' + targetName + ' an admin!';
+    if (action === 'demote') return '🛡 ' + ownerName + ' demoted @' + targetName + '!';
+    if (action === 'blockword' || action === 'unblockword') return '🚫 ' + ownerName + ' changed the blocked words!';
     if (action === 'kick') return '🔨 ' + ownerName + ' kicked @' + targetName + '!';
     if (action === 'ban') return '🔨 ' + ownerName + ' banned @' + targetName + '!';
     return '🔓 ' + ownerName + ' unbanned @' + targetName + '!';
@@ -628,13 +724,38 @@ function onModMessage(code, m) {
     const mod = (m.mod && typeof m.mod === 'object') ? m.mod : null;
     if (!mod) return;
     const action = String(mod.action || '');
-    if (!['kick', 'ban', 'unban', 'warn', 'delete'].includes(action)) return;
-    if (!isSenderOwner(code, m.from)) return; // forged or unverifiable: ignore!
+    if (!['kick', 'ban', 'unban', 'warn', 'delete', 'admin', 'demote', 'blockword', 'unblockword'].includes(action)) return;
+    // Only staff moderate, only the owner hands out or takes back admin, and admins can't touch the owner or each other!
+    const byOwner = isSenderOwner(code, m.from);
+    if (!byOwner && !isAdminId(code, m.from)) return; // forged or unverifiable: ignore!
+    if (!byOwner && (action === 'admin' || action === 'demote')) return;
     const space = spaces.find(s => s.code === code);
     const sname = (space && space.name) || code;
-    const ownerName = (space && space.ownerName) || m.name;
+    const ownerName = byOwner ? ((space && space.ownerName) || m.name) : String(m.name || 'An admin').slice(0, 24);
     const target = mod.target || {};
     const tname = String(target.name || '?').slice(0, 24);
+    if (!byOwner && target.id && isStaffId(code, target.id)) return;
+    if (action === 'blockword' || action === 'unblockword') {
+        const word = String(mod.text || '').trim().slice(0, 40);
+        if (!word) return;
+        const words = staffOf(code).words.filter(w => w.toLowerCase() !== word.toLowerCase());
+        if (action === 'blockword') words.push(word);
+        setStaff(code, { words, at: m.at });
+        addSysNotice(code, ownerName + (action === 'blockword' ? ' blocked the word “' : ' unblocked the word “') + word + '”!', m.id);
+        return;
+    }
+    if (action === 'admin' || action === 'demote') {
+        if (!target.id) return;
+        const admins = staffOf(code).admins.filter(a => a.id !== target.id);
+        if (action === 'admin') admins.push({ id: target.id, name: tname });
+        setStaff(code, { admins, at: m.at });
+        const isMeT = me && target.id === me.clientId;
+        addSysNotice(code, action === 'admin'
+            ? (isMeT ? ownerName + ' made you an admin! You can now /kick, /ban, /warn, /delete and /blockword!' : ownerName + ' made @' + tname + ' an admin!')
+            : (isMeT ? ownerName + ' removed your admin powers!' : ownerName + ' demoted @' + tname + '!'), m.id);
+        if (code === activeCode) { try { refreshStaffUi(); } catch (e) {} }
+        return;
+    }
     const isMe = (target.id && me && target.id === me.clientId)
         || (!target.id && me && tname.toLowerCase() === me.name.toLowerCase());
     const reason = String(mod.text || '').trim().slice(0, 200);
@@ -716,12 +837,86 @@ function checkModTarget(target, splitName) {
         uiSound('error');
         return false;
     }
+    if (!isSpaceOwner(activeCode) && target.id && isAdminId(activeCode, target.id)) {
+        showLocalNotice('@' + target.name + ' is an admin too! Only the owner can moderate admins!');
+        uiSound('error');
+        return false;
+    }
+    return true;
+}
+
+// ---------- /admin, /demote, /blockword, /unblockword ----------
+function refreshStaffUi() {
+    try { updateMembersPanel(); } catch (e) {}
+}
+
+function doAdminCmd(cmd, rest) {
+    const st = staffOf(activeCode);
+    if (!rest) {
+        showLocalNotice(st.admins.length ? 'Admins: ' + st.admins.map(a => '@' + a.name).join(', ') + '!' : 'No admins yet! The owner can add one with /admin @name!');
+        return true;
+    }
+    if (!isSpaceOwner(activeCode)) {
+        showLocalNotice('Only the Space owner can use /' + cmd + '!');
+        uiSound('error');
+        return true;
+    }
+    const split = splitTarget(rest);
+    if (!split) {
+        showLocalNotice('Who? Try /' + cmd + ' @name!');
+        uiSound('error');
+        return true;
+    }
+    const target = resolveTarget(split.name);
+    if (!checkModTarget(target, split.name)) return true;
+    if (!target.id) {
+        showLocalNotice('Could not tell who @' + target.name + ' is! They need to post or be online here first!');
+        uiSound('error');
+        return true;
+    }
+    const already = isAdminId(activeCode, target.id);
+    if (cmd === 'admin' && already) { showLocalNotice('@' + target.name + ' is already an admin!'); return true; }
+    if (cmd === 'demote' && !already) { showLocalNotice('@' + target.name + ' is not an admin!'); return true; }
+    const msg = sendMod(activeCode, cmd, target, '');
+    if (!msg) return true;
+    const admins = st.admins.filter(a => a.id !== target.id);
+    if (cmd === 'admin') admins.push({ id: target.id, name: target.name });
+    setStaff(activeCode, { admins, at: msg.at });
+    addSysNotice(activeCode, cmd === 'admin' ? 'You made @' + target.name + ' an admin!' : 'You demoted @' + target.name + '!', msg.id);
+    uiSound('send');
+    return true;
+}
+
+function doBlockwordCmd(cmd, rest) {
+    const st = staffOf(activeCode);
+    let word = String(rest || '').trim();
+    if (word.length >= 2 && /^["'“]/.test(word) && /["'”]$/.test(word)) word = word.slice(1, -1).trim();
+    if (!word) {
+        showLocalNotice(st.words.length ? 'Blocked words: ' + st.words.join(', ') + '!' : 'No blocked words yet! Try /blockword AGPL!');
+        return true;
+    }
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /' + cmd + '!');
+        uiSound('error');
+        return true;
+    }
+    word = word.slice(0, 40);
+    const has = st.words.some(w => w.toLowerCase() === word.toLowerCase());
+    if (cmd === 'blockword' && has) { showLocalNotice('“' + word + '” is already blocked!'); return true; }
+    if (cmd === 'unblockword' && !has) { showLocalNotice('“' + word + '” is not blocked!'); return true; }
+    const msg = sendMod(activeCode, cmd, { id: null, name: '' }, word);
+    if (!msg) return true;
+    const words = st.words.filter(w => w.toLowerCase() !== word.toLowerCase());
+    if (cmd === 'blockword') words.push(word);
+    setStaff(activeCode, { words, at: msg.at });
+    addSysNotice(activeCode, (cmd === 'blockword' ? 'You blocked the word “' : 'You unblocked the word “') + word + '”!', msg.id);
+    uiSound('send');
     return true;
 }
 
 function doKickBan(cmd, rest) {
-    if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /' + cmd + '!');
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /' + cmd + '!');
         uiSound('error');
         return true;
     }
@@ -741,8 +936,8 @@ function doKickBan(cmd, rest) {
 }
 
 function doWarnCmd(rest) {
-    if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /warn!');
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /warn!');
         uiSound('error');
         return true;
     }
@@ -770,8 +965,8 @@ function doWarnCmd(rest) {
 }
 
 function doUnbanCmd(rest) {
-    if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /unban!');
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /unban!');
         uiSound('error');
         return true;
     }
@@ -887,8 +1082,8 @@ function deleteLocalMessages(code, ids) {
 }
 
 function doDeleteCmd(rest) {
-    if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /delete!');
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /delete!');
         uiSound('error');
         return true;
     }
@@ -927,13 +1122,17 @@ function handleSlashCommand(raw) {
     if (!m) return true;
     const cmd = m[1].toLowerCase();
     const rest = (m[2] || '').trim();
-    if (!['kick', 'ban', 'unban', 'warn', 'delete'].includes(cmd)) {
-        showLocalNotice('Unknown command! Try /kick, /ban, /unban, /warn, or /delete!');
+    if (!['kick', 'ban', 'unban', 'warn', 'delete', 'admin', 'demote', 'admins', 'blockword', 'unblockword', 'blockwords'].includes(cmd)) {
+        showLocalNotice('Unknown command! Try /kick, /ban, /unban, /warn, /delete, /admin, /demote, /blockword or /unblockword!');
         uiSound('error');
         return true;
     }
     if (!activeCode) return true;
     try { closeMentionMenu(); } catch (e) {}
+    if (cmd === 'admins') return doAdminCmd('admin', '');
+    if (cmd === 'blockwords') return doBlockwordCmd('blockword', '');
+    if (cmd === 'admin' || cmd === 'demote') return doAdminCmd(cmd, rest);
+    if (cmd === 'blockword' || cmd === 'unblockword') return doBlockwordCmd(cmd, rest);
     if (cmd === 'warn') return doWarnCmd(rest);
     if (cmd === 'unban') return doUnbanCmd(rest);
     if (cmd === 'delete') return doDeleteCmd(rest);
@@ -1107,6 +1306,8 @@ function switchName() {
 function loadSpaces() {
     spaces = storeGet('phosphor_spaces', []);
     if (!Array.isArray(spaces)) spaces = [];
+    // WebRTC only: Spaces from the EMQX / RabbitMQ / shared-relay days move over (and forget any login)!
+    spaces.forEach(s => { s.net = 'webrtc'; delete s.rmq; delete s.netAuto; });
 }
 function saveSpaces() {
     storeSet('phosphor_spaces', spaces);
@@ -1184,14 +1385,12 @@ function openSpaceModal() {
     uiSound('open');
     document.getElementById('new-space-name').value = '';
     document.getElementById('new-space-desc').value = '';
-    setNetPick('new', 'emqx');
     document.getElementById('space-modal').style.display = 'flex';
 }
 
 function openJoinModal() {
     uiSound('open');
     document.getElementById('join-code').value = '';
-    setNetPick('join', 'auto');
     document.getElementById('join-modal').style.display = 'flex';
 }
 
@@ -1206,10 +1405,8 @@ function createSpace() {
     const name = document.getElementById('new-space-name').value.trim().slice(0, 40);
     if (name.length < 2) { alert('Name your Space (2+ chars)!'); uiSound('error'); return; }
     const description = document.getElementById('new-space-desc').value.trim().slice(0, 200);
-    const pick = readNetPick('new');
-    if (!pick) return;
     const code = newCode();
-    spaces.push(Object.assign({ code, name, description, mine: true, owner: me.clientId, ownerName: me.name }, pick));
+    spaces.push({ code, name, description, mine: true, owner: me.clientId, ownerName: me.name, net: 'webrtc' });
     saveSpaces();
     publishDir(code, name, description);
     closeModals();
@@ -1222,10 +1419,6 @@ function inviteUrl(code) {
     try {
         const u = new URL('invite.html', location.href);
         u.searchParams.set('code', code);
-        const s = spaces.find(x => x.code === code);
-        if (s && NETS[s.net]) u.searchParams.set('net', s.net);
-        // RabbitMQ logins ride in the #hash, which browsers never send to any server!
-        if (s && s.net === 'rabbitmq' && s.rmq) u.hash = 'rmq=' + btoa(unescape(encodeURIComponent(JSON.stringify(s.rmq))));
         return u.toString();
     } catch (e) {
         return 'invite.html?code=' + encodeURIComponent(code);
@@ -1259,98 +1452,24 @@ function clearInviteCodeFromUrl() {
 
 function joinSpace() {
     const code = document.getElementById('join-code').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
-    const pick = readNetPick('join');
-    if (pick === null) return;
-    joinSpaceByCode(code, pick);
+    joinSpaceByCode(code);
 }
 
-// ---------- Space networks (EMQX, RabbitMQ, WebRTC) ----------
-const RMQ_LAST = 'phosphor_rmq_last';
-function setNetPick(which, net) {
-    const box = document.getElementById(which + '-space-net');
-    if (!box) return;
-    box.querySelectorAll('[data-net]').forEach(b => b.classList.toggle('on', b.getAttribute('data-net') === net));
-    const rf = document.getElementById(which + '-rmq');
-    rf.hidden = net !== 'rabbitmq';
-    if (net === 'rabbitmq') {
-        const last = storeGet(RMQ_LAST, {}) || {};
-        const u = document.getElementById(which + '-rmq-url');
-        if (!u.value) u.value = last.url || '';
-        const n = document.getElementById(which + '-rmq-user');
-        if (!n.value) n.value = last.user || '';
-    }
-    const hint = document.getElementById(which + '-net-hint');
-    if (hint) hint.innerText = NETS[net] ? NETS[net].blurb : 'Phosphor asks the Space which network it uses!';
-}
-function wireNetPickers() {
-    ['new', 'join'].forEach(which => {
-        const box = document.getElementById(which + '-space-net');
-        if (!box || box.dataset.wired) return;
-        box.dataset.wired = '1';
-        box.addEventListener('click', (e) => {
-            const b = e.target.closest('[data-net]');
-            if (b) { uiSound('click'); setNetPick(which, b.getAttribute('data-net')); }
-        });
-    });
-}
-// {net, rmq?} for the picked network, {} for auto, null when the RabbitMQ form is not ready!
-function readNetPick(which) {
-    const on = document.querySelector('#' + which + '-space-net .on');
-    const net = on ? on.getAttribute('data-net') : 'emqx';
-    if (net === 'auto') return {};
-    if (net !== 'rabbitmq') return { net };
-    const url = document.getElementById(which + '-rmq-url').value.trim();
-    const user = document.getElementById(which + '-rmq-user').value.trim();
-    const pass = document.getElementById(which + '-rmq-pass').value;
-    if (!/^wss?:\/\/.+/i.test(url)) { alert('Give the RabbitMQ Web MQTT address, like wss://rabbit.example.com:15676/ws!'); uiSound('error'); return null; }
-    storeSet(RMQ_LAST, { url, user });
-    return { net, rmq: { url: url.slice(0, 300), user: user.slice(0, 120), pass: pass.slice(0, 200) } };
-}
-// Move a Space to another network, carrying its subscriptions along!
-function setSpaceNet(s, net, rmq) {
-    const topics = [topicMsg(s.code)];
-    if (s.code === activeCode) topics.push(ROOT + '/presence/' + s.code + '/+');
-    const watching = s.code === activeCode;
-    try { if (watching) calls.watch(null); } catch (e) {}
-    try { mesh.unsubscribe(topics); } catch (e) {}
-    s.net = net;
-    if (rmq) s.rmq = rmq;
-    delete s.netAuto;
-    saveSpaces();
-    try { mesh.subscribe(topics); } catch (e) {}
-    try { if (watching) calls.watch(s.code); } catch (e) {}
-    renderSpaces();
-    updateNetChip();
-    if (watching) heartbeat();
-}
-// The chip in the chat header: which road this Space's messages take!
+// ---------- Space network (WebRTC only!) ----------
+// Every Space talks browser to browser! The chip in the chat header shows how many direct links are open!
 function updateNetChip() {
     const chip = document.getElementById('net-chip');
     if (!chip) return;
     if (!activeCode) { chip.hidden = true; return; }
     const st = nets.status(activeCode);
     chip.hidden = false;
-    const n = NETS[st.net];
-    chip.className = 'net-chip' + (st.net ? ' net-' + st.net : '') + (st.ok ? ' ok' : ' bad');
-    chip.innerHTML = '<i></i>' + esc((n ? n.icon + ' ' : '') + st.label) + (st.net === 'webrtc' ? ' · ' + (st.peers || 0) : '');
-    chip.title = st.detail + (st.net === 'rabbitmq' ? ' Click to change the server or login!' : '');
+    chip.className = 'net-chip net-webrtc ok';
+    chip.innerHTML = '<i></i>' + esc(NETS.webrtc.icon + ' ' + st.label) + ' · ' + (st.peers || 0);
+    chip.title = st.detail;
 }
 function editSpaceNet() {
-    const s = spaces.find(x => x.code === activeCode);
-    if (!s) return;
-    const st = nets.status(s.code);
-    if (s.net !== 'rabbitmq') { phToast(st.label + ': ' + st.detail); return; }
-    const cur = s.rmq || {};
-    const url = prompt('RabbitMQ Web MQTT address (wss://host:15676/ws)!', cur.url || '');
-    if (url === null) return;
-    if (!/^wss?:\/\/.+/i.test(url.trim())) { phToast('That address needs to start with wss://!'); return; }
-    const user = prompt('Username (leave empty for none, use vhost:user for a vhost)!', cur.user || '');
-    if (user === null) return;
-    const pass = user.trim() ? prompt('Password!', cur.pass || '') : '';
-    if (pass === null) return;
-    nets.resetLink(s.code);
-    setSpaceNet(s, 'rabbitmq', { url: url.trim().slice(0, 300), user: user.trim().slice(0, 120), pass: String(pass).slice(0, 200) });
-    phToast('Reconnecting to RabbitMQ!');
+    const st = nets.status(activeCode);
+    phToast(st.label + ': ' + st.detail);
 }
 // A WebRTC peer handed over its recent history: merge what we missed!
 function mergeSyncedHistory(code, items) {
@@ -1360,7 +1479,9 @@ function mergeSyncedHistory(code, items) {
     let added = 0;
     for (const it of items) {
         if (!it || typeof it.id !== 'string' || have.has(it.id) || typeof it.body !== 'string' || typeof it.from !== 'string') continue;
+        if (!it.body || !it.from || it.kind === 'sys' || it.kind === 'warn') continue; // system notes + private warnings stay with their owner!
         const clean = { id: it.id.slice(0, 64), from: it.from.slice(0, 64), name: String(it.name || '?').slice(0, 24), body: it.body.slice(0, 2000), at: Number(it.at) || Date.now(), mentions: Array.isArray(it.mentions) ? it.mentions.slice(0, 20) : [] };
+        if (blockedMessage(code, Object.assign({ file: it.file }, clean))) continue;
         if (it.kind === 'file' && it.file && typeof it.file === 'object') {
             const f = it.file;
             clean.kind = 'file';
@@ -1378,7 +1499,7 @@ function mergeSyncedHistory(code, items) {
     if (code === activeCode) renderHistory();
 }
 
-function joinSpaceByCode(rawCode, pick) {
+function joinSpaceByCode(rawCode) {
     const code = String(rawCode || '').trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     if (code.length < 4) { alert('That code looks too short!'); uiSound('error'); return false; }
     if (isBanned(code)) {
@@ -1387,10 +1508,7 @@ function joinSpaceByCode(rawCode, pick) {
         return false;
     }
     if (!spaces.some(s => s.code === code)) {
-        const base = { code, name: code, description: 'Resolving…', mine: false };
-        // A picked network (or one from the invite link) wins, otherwise the directory tells us!
-        if (pick && NETS[pick.net]) Object.assign(base, pick); else base.netAuto = true;
-        spaces.push(base);
+        spaces.push({ code, name: code, description: 'Resolving…', mine: false, net: 'webrtc' });
         saveSpaces();
     }
     closeModals();
@@ -1401,28 +1519,15 @@ function joinSpaceByCode(rawCode, pick) {
     return true;
 }
 
-function invitePickFromUrl() {
-    try {
-        const net = new URLSearchParams(location.search).get('net');
-        if (!NETS[net]) return {};
-        if (net !== 'rabbitmq') return { net };
-        const m = /rmq=([^&]+)/.exec(location.hash || '');
-        const r = m ? JSON.parse(decodeURIComponent(escape(atob(m[1])))) : {};
-        const url = typeof r.url === 'string' && /^wss?:\/\//i.test(r.url) ? r.url.slice(0, 300) : '';
-        return { net, rmq: { url, user: String(r.user || '').slice(0, 120), pass: String(r.pass || '').slice(0, 200) } };
-    } catch (e) { return {}; }
-}
-
 function consumePendingInvite() {
     const code = getInviteCodeFromUrl();
     if (!code) return;
-    const pick = invitePickFromUrl();
     if (isBanned(code)) {
         alert('You are banned from this Space!');
         clearInviteCodeFromUrl();
         return;
     }
-    if (joinSpaceByCode(code, pick)) clearInviteCodeFromUrl();
+    if (joinSpaceByCode(code)) clearInviteCodeFromUrl();
     else {
         try {
             document.getElementById('join-code').value = code;
@@ -1436,11 +1541,9 @@ function publishDir(code, name, description) {
     mesh.publish(ROOT + '/dir/' + code, JSON.stringify(Object.assign({ name, description, at: Date.now(), owner: me.clientId, ownerName: me.name }, dirNet(code))), true);
 }
 
-// The directory says which network a Space uses (never a password)!
-function dirNet(code) {
-    const s = spaces.find(x => x.code === code);
-    if (!s || !NETS[s.net]) return {};
-    return s.net === 'rabbitmq' ? { net: s.net, rmq: { url: (s.rmq && s.rmq.url) || '' } } : { net: s.net };
+// The directory card says the Space talks over WebRTC!
+function dirNet() {
+    return { net: 'webrtc' };
 }
 
 // ---------- Chat ----------
@@ -1575,7 +1678,7 @@ function updateMembersPanel() {
     if (me && !list.some(x => x.id === me.clientId)) list.unshift({ id: me.clientId, name: me.name });
     list.sort((a, b) => (inCall.has(b.id) - inCall.has(a.id)) || String(a.name).localeCompare(String(b.name)));
     const html = '<div class="mp-head">Online — ' + list.length + '</div>' + list.map(x =>
-        `<div class="mp-row${inCall.has(x.id) ? ' calling' : ''}"><span class="av" style="--h:${avatarHue(x.id)}">${esc((String(x.name || '?').trim().charAt(0) || '?').toUpperCase())}</span><span class="mp-name">${esc(x.name)}${me && x.id === me.clientId ? ' (you)' : ''}</span>${inCall.has(x.id) ? '<span class="mp-call" title="In the call">🔊</span>' : ''}</div>`).join('');
+        `<div class="mp-row${inCall.has(x.id) ? ' calling' : ''}"><span class="av" style="--h:${avatarHue(x.id)}">${esc((String(x.name || '?').trim().charAt(0) || '?').toUpperCase())}</span><span class="mp-name">${esc(x.name)}${me && x.id === me.clientId ? ' (you)' : ''}</span>${isSenderOwner(activeCode, x.id) ? '<span class="mp-role" title="Space owner">👑</span>' : isAdminId(activeCode, x.id) ? '<span class="mp-role" title="Admin">🛡</span>' : ''}${inCall.has(x.id) ? '<span class="mp-call" title="In the call">🔊</span>' : ''}</div>`).join('');
     if (panel._html !== html) { panel._html = html; panel.innerHTML = html; }
 }
 
@@ -2312,6 +2415,7 @@ function onChatMessage(code, payload) {
     if (seenIds.size > 500) seenIds = new Set([...seenIds].slice(-300));
     if (m.kind === 'mod') { onModMessage(code, m); return; }
     m.body = String(m.body).slice(0, 2000);
+    if (blockedMessage(code, m)) return; // a blocked word: it never shows up!
     if (!Array.isArray(m.mentions)) m.mentions = [];
     if (m.kind === 'file') {
         const f = (m.file && typeof m.file === 'object') ? m.file : null;
@@ -2346,15 +2450,6 @@ function onDirMessage(code, payload) {
     try { d = JSON.parse(payload); } catch (e) { return; }
     if (!d || !d.name) return;
     const s = spaces.find(x => x.code === code);
-    // Blind joins (code only) learn the Space's network from the directory!
-    if (s && !s.mine && s.netAuto && NETS[d.net]) {
-        let rmq = null;
-        if (d.net === 'rabbitmq') {
-            const url = d.rmq && typeof d.rmq.url === 'string' ? d.rmq.url.slice(0, 300) : '';
-            rmq = { url: /^wss?:\/\//i.test(url) ? url : '', user: '', pass: '' };
-        }
-        setSpaceNet(s, d.net, rmq);
-    }
     if (s && !s.mine) {
         s.name = String(d.name).slice(0, 40);
         s.description = String(d.description || '').slice(0, 200);
@@ -2363,6 +2458,7 @@ function onDirMessage(code, payload) {
             s.ownerName = String(d.ownerName || '').slice(0, 24);
         }
         saveSpaces();
+        replayPendingStaff(code);
         renderSpaces();
         if (code === activeCode) {
             document.getElementById('chat-name').innerText = '# ' + s.name;
@@ -2524,7 +2620,7 @@ function preferredRelay() {
     return null;
 }
 
-// Hands Space-network topics to their own road, returns the shared-relay rest!
+// Space messages + presence go over WebRTC, the rest (handshakes, directory cards, call setup) rides the relay!
 function splitRoutes(topics, op) {
     const rest = [];
     for (const t of (Array.isArray(topics) ? topics : [topics])) {
@@ -2534,18 +2630,16 @@ function splitRoutes(topics, op) {
     return rest;
 }
 
-// Can this Space send right now? (WebRTC Spaces always can: history syncs to whoever links later!)
-function spaceLive(code) {
-    const st = nets.status(code);
-    if (!st.net) return mesh.connected;
-    return st.net === 'webrtc' ? true : st.ok;
+// Can this Space send right now? Always: history syncs to whoever links later!
+function spaceLive() {
+    return true;
 }
 
 const mesh = {
     get connected() { return !!preferredRelay(); },
     get via() { const p = preferredRelay(); return p ? p.host : null; },
     publish(topic, payload, retain) {
-        // EMQX, RabbitMQ and WebRTC Spaces take their own road!
+        // Space messages + presence go browser to browser!
         const own = nets.route(topic);
         if (own) { own.publish(topic, payload, retain); return; }
         const p = preferredRelay();
@@ -2972,6 +3066,9 @@ function sendMessage(e) {
     }
     if (body.startsWith('/')) {
         handleSlashCommand(body);
+        input.value = '';
+        resetMentionComposer();
+        updateKdTypingIcon();
         return false;
     }
     // Mention flow: picking from the @ menu never sends, it stages a chip!
@@ -2981,6 +3078,12 @@ function sendMessage(e) {
         stageMention(unstaged.name, unstaged.id);
         closeMentionMenu();
         uiSound('click');
+        return false;
+    }
+    const blocked = activeCode && !canModerate(activeCode) ? blockedWordIn(activeCode, body) : null;
+    if (blocked) {
+        showLocalNotice('“' + blocked + '” is a blocked word in this Space! Your message was not sent!');
+        uiSound('error');
         return false;
     }
     if (!activeCode || !spaceLive(activeCode)) {
@@ -3066,7 +3169,6 @@ function enterApp() {
     initMentions();
     initFilter();
     loadBans();
-    wireNetPickers();
     try { consumePendingInvite(); } catch (e) {}
     if (!enterApp.callsMounted) { enterApp.callsMounted = true; renderCalls = mountCallUI(calls, { me: () => me, activeCode: () => activeCode, esc }); }
 }
@@ -3090,10 +3192,13 @@ const calls = createCalls({
 let netChangeQueued = false;
 const nets = createNets({
     root: ROOT,
+    label: 'phosphor',
     me: () => me,
     spaceOf: (c) => spaces.find(s => s.code === c),
+    staff: (c) => { const st = staffOf(c); return { admins: st.admins, adminsAt: st.adminsAt, words: st.words, wordsAt: st.wordsAt }; },
+    onStaff: (c, from, st) => onStaffFrame(c, from, st),
     deliver: (t, p) => meshRoute(t, p, null),
-    // Signaling for WebRTC Spaces rides the shared relay (p2p topics never route elsewhere)!
+    // The handshake notes ride the relay (p2p topics never route elsewhere)!
     sig: { publish: (t, p) => mesh.publish(t, p, false), subscribe: (t) => mesh.subscribe(t), unsubscribe: (t) => mesh.unsubscribe(t) },
     history: (c) => loadHist(c),
     onSync: (c, items) => mergeSyncedHistory(c, items),

@@ -1,95 +1,29 @@
-// Space networks! Every Space picks how its messages travel:
-//   emqx     - its own link to the public EMQX broker (broker.emqx.io)!
-//   rabbitmq - a RabbitMQ server with the Web MQTT plugin (wss://host:15676/ws), with an optional login!
-//   webrtc   - straight between browsers over DataChannels! The shared relay only carries the
-//              "how do I reach you" notes, the messages themselves never touch a server!
-// Spaces made before networks existed (no `net`) keep the shared relay network!
-import { MiniMqtt } from './mqtt.js';
+// WebRTC only! Every Space's messages, presence, files and moderation travel straight between
+// browsers over DataChannels! The shared relay only carries the "how do I reach you" notes
+// (offers, answers, network hints), the Space's directory card and call setup, never a message!
+// Peers may only speak for themselves: a message whose `from` is not the browser that sent it
+// is dropped, so moderation (owner + admins) can actually be trusted!
+// (Shared by Phosphor and Antimony: antimony/nets.js is a copy!)
 
 export const NETS = {
-    emqx: { label: 'EMQX', icon: '☁', blurb: 'Public EMQX broker! Fast and always on!' },
-    rabbitmq: { label: 'RabbitMQ', icon: '🐇', blurb: 'Your own RabbitMQ server (Web MQTT plugin)!' },
     webrtc: { label: 'WebRTC', icon: '⇄', blurb: 'Browser to browser! Messages skip the servers!' },
 };
-export const EMQX_URL = 'wss://broker.emqx.io:8084/mqtt';
 
 const ICE = [{ urls: 'stun:stun.l.google.com:19302' }, { urls: 'stun:stun1.l.google.com:19302' }];
 const FRAG = 48000;        // DataChannel messages stay well under the 256 KB browser limit!
 const P2P_PING_MS = 10000;
 const P2P_GONE_MS = 32000;
-const QUEUE_MAX = 300;
 
 export function createNets(h) {
-    // h: { root, me(), spaceOf(code), deliver(topic, payload), sig: {publish, subscribe, unsubscribe},
-    //      history(code), onSync(code, items), onChange(), toast(msg) }
+    // h: { root, label, me(), spaceOf(code), deliver(topic, payload), sig: {publish, subscribe, unsubscribe},
+    //      history(code), onSync(code, items), staff(code), onStaff(code, fromId, state), onChange(), toast(msg) }
     const R = h.root;
 
-    // Which Space a topic belongs to, and whether it is the shared directory!
+    // Which Space a topic belongs to!
     function parse(topic) {
         const rest = topic.startsWith(R + '/') ? topic.slice(R.length + 1) : '';
         const [kind, code, extra] = rest.split('/');
         return { kind, code, extra };
-    }
-    function netOf(code) { const s = h.spaceOf(code); return s && NETS[s.net] ? s.net : ''; }
-
-    /* ---------- MQTT links (EMQX + RabbitMQ) ---------- */
-    const links = new Map(); // key -> link
-    function linkKey(s) { return s.net === 'emqx' ? 'emqx' : 'rmq|' + ((s.rmq && s.rmq.url) || '') + '|' + ((s.rmq && s.rmq.user) || ''); }
-    function makeLink(key, url, user, pass, label) {
-        const link = { key, url, user, pass, label, mqtt: null, subs: new Set(), queue: [], tries: 0, timer: null, error: '', closed: false };
-        link.dial = () => {
-            clearTimeout(link.timer);
-            if (link.closed || !h.me()) return;
-            let m;
-            try { m = new MiniMqtt(url, { clientId: h.me().clientId + '_' + Date.now().toString(36), keepalive: 60, username: user || undefined, password: pass || undefined }); }
-            catch (e) { link.error = 'Bad server address!'; h.onChange(); return; }
-            link.mqtt = m;
-            const fail = setTimeout(() => { if (!m.connected) { try { m.close(); } catch (e) {} } }, 8000);
-            m.onopen = () => {
-                clearTimeout(fail);
-                link.tries = 0; link.error = '';
-                if (link.subs.size) try { m.subscribe([...link.subs]); } catch (e) {}
-                const q = link.queue.splice(0);
-                q.forEach(([t, p, r]) => { try { m.publish(t, p, r); } catch (e) {} });
-                h.onChange();
-            };
-            m.onmessage = (t, p) => h.deliver(t, p);
-            m.onerror = (e) => { if (e && /refused/i.test(String(e.message))) link.error = 'The server refused the login!'; };
-            m.onclose = () => {
-                clearTimeout(fail);
-                if (link.mqtt !== m) return;
-                link.mqtt = null;
-                if (!link.error) link.error = 'Reconnecting…';
-                h.onChange();
-                if (link.closed) return;
-                link.tries++;
-                link.timer = setTimeout(link.dial, Math.min(30000, 1000 * Math.pow(2, Math.min(link.tries, 5))));
-            };
-            try { m.connect(); } catch (e) { link.error = 'Bad server address!'; link.mqtt = null; h.onChange(); }
-        };
-        link.connected = () => !!(link.mqtt && link.mqtt.connected);
-        link.publish = (t, p, r) => {
-            if (link.connected()) { try { link.mqtt.publish(t, p, r); return; } catch (e) {} }
-            link.queue.push([t, p, r]);
-            if (link.queue.length > QUEUE_MAX) link.queue.shift();
-        };
-        link.subscribe = (list) => { list.forEach((t) => link.subs.add(t)); if (link.connected()) try { link.mqtt.subscribe(list); } catch (e) {} };
-        link.unsubscribe = (list) => { list.forEach((t) => link.subs.delete(t)); if (link.connected()) try { link.mqtt.unsubscribe(list); } catch (e) {} };
-        link.close = () => { link.closed = true; clearTimeout(link.timer); try { if (link.mqtt) link.mqtt.close(); } catch (e) {} link.mqtt = null; };
-        links.set(key, link);
-        link.dial();
-        return link;
-    }
-    function linkFor(code) {
-        const s = h.spaceOf(code);
-        if (!s) return null;
-        if (s.net === 'rabbitmq' && !(s.rmq && /^wss?:\/\//i.test(s.rmq.url || ''))) return null;
-        const key = linkKey(s);
-        if (links.has(key)) return links.get(key);
-        if (s.net === 'emqx') return makeLink(key, EMQX_URL, '', '', 'EMQX');
-        let host = s.rmq.url;
-        try { host = new URL(s.rmq.url).host; } catch (e) {}
-        return makeLink(key, s.rmq.url, s.rmq.user || '', s.rmq.pass || '', host);
     }
 
     /* ---------- WebRTC DataChannel mesh ---------- */
@@ -145,13 +79,19 @@ export function createNets(h) {
         };
         return peer;
     }
+    function staffFrame(code) {
+        try { const s = h.staff && h.staff(code); return s ? { t: 'staff', s } : null; } catch (e) { return null; }
+    }
     function wireChannel(r, peer, dc) {
         peer.dc = dc;
         dc.onopen = () => {
             peer.open = true;
-            // Late joiners get my presence and the recent history right away!
+            // Late joiners get the Space's admins + blocked words, my presence and the recent history right away!
+            const st = staffFrame(r.code);
+            if (st) sendTo(peer, st);
             r.retained.forEach((payload, topic) => sendTo(peer, { t: 'pub', topic, p: payload }));
-            const items = (h.history(r.code) || []).slice(-60).filter((m) => !(m.file && m.file.chunked));
+            // (never system notes or private warnings: those belong to this browser alone!)
+            const items = (h.history(r.code) || []).filter((m) => m && m.kind !== 'sys' && m.kind !== 'warn' && !(m.file && m.file.chunked)).slice(-60);
             if (items.length) sendTo(peer, { t: 'sync', items });
             h.onChange();
         };
@@ -182,14 +122,21 @@ export function createNets(h) {
             return;
         }
         if (m.t === 'pub' && typeof m.topic === 'string' && typeof m.p === 'string') {
-            // Peers may only speak for THIS Space, and only post their own presence!
+            // Peers may only speak for THIS Space, only post their own presence, and only send their own messages!
             const t = parse(m.topic);
             if (t.code !== r.code) return;
             if (t.kind === 'presence' && t.extra !== peer.id) return;
             if (t.kind !== 'msg' && t.kind !== 'presence') return;
+            if (t.kind === 'msg') {
+                let body;
+                try { body = JSON.parse(m.p); } catch (e) { return; }
+                if (!body || body.from !== peer.id) return;
+            }
             h.deliver(m.topic, m.p);
         } else if (m.t === 'sync' && Array.isArray(m.items)) {
             h.onSync(r.code, m.items.slice(-60));
+        } else if (m.t === 'staff' && m.s && typeof m.s === 'object') {
+            try { if (h.onStaff) h.onStaff(r.code, peer.id, m.s); } catch (e) {}
         }
     }
     async function onSignal(code, payload) {
@@ -210,7 +157,7 @@ export function createNets(h) {
             if ((!known || stale) && me.clientId < m.from) {
                 const peer = makePeer(r, m.from, m.name);
                 peer.born = Date.now();
-                wireChannel(r, peer, peer.pc.createDataChannel('phosphor', { ordered: true }));
+                wireChannel(r, peer, peer.pc.createDataChannel(h.label || 'radii', { ordered: true }));
                 try {
                     await peer.pc.setLocalDescription(await peer.pc.createOffer());
                     signal(code, { t: 'offer', to: m.from, sdp: peer.pc.localDescription.sdp });
@@ -243,57 +190,45 @@ export function createNets(h) {
         if (retain) r.retained.set(topic, payload);
         r.peers.forEach((p) => sendTo(p, { t: 'pub', topic, p: payload }));
     }
+    // Admins or blocked words changed: tell everyone linked right now!
+    function pushStaff(code) {
+        const r = p2p.get(code);
+        const st = staffFrame(code);
+        if (r && st) r.peers.forEach((p) => sendTo(p, st));
+    }
 
     /* ---------- The router the app's mesh object asks ---------- */
-    // Returns null when a topic should use the shared relay network!
+    // Returns null for the topics the relay still carries: handshakes, directory cards and call setup!
     function route(topic) {
         const t = parse(topic);
-        if (!t.code || t.kind === 'dir' || t.kind === 'p2p') return null;
-        const net = netOf(t.code);
-        if (!net) return null;
-        if (net === 'webrtc') {
-            if (t.kind === 'rtc') return null; // call signaling rides the shared relay too!
-            return {
-                publish: (tp, p, r) => p2pPublish(t.code, tp, p, r),
-                subscribe: () => { room(t.code); },
-                unsubscribe: () => {},
-            };
-        }
-        return linkFor(t.code) || { publish() {}, subscribe() {}, unsubscribe() {} };
+        if (!t.code || !h.spaceOf(t.code)) return null;
+        if (t.kind !== 'msg' && t.kind !== 'presence') return null;
+        return {
+            publish: (tp, p, r) => p2pPublish(t.code, tp, p, r),
+            subscribe: () => { room(t.code); },
+            unsubscribe: () => {},
+        };
     }
 
-    // Keep rooms + links matching the Space list (call after spaces change)!
+    // Keep rooms matching the Space list (call after spaces change)!
     function sync(spaces) {
-        const wantRooms = new Set(spaces.filter((s) => s.net === 'webrtc').map((s) => s.code));
-        p2p.forEach((_, code) => { if (!wantRooms.has(code)) closeRoom(code); });
-        if (h.me()) wantRooms.forEach((code) => room(code));
-        const wantLinks = new Set(spaces.filter((s) => s.net === 'emqx' || s.net === 'rabbitmq').map(linkKey));
-        links.forEach((l, key) => { if (!wantLinks.has(key)) { l.close(); links.delete(key); } });
+        const want = new Set(spaces.map((s) => s.code));
+        p2p.forEach((_, code) => { if (!want.has(code)) closeRoom(code); });
+        if (h.me()) want.forEach((code) => room(code));
     }
-    // The shared relay came back: say hello again so rooms re-form!
+    // The relay came back: say hello again so rooms re-form!
     function rehello() { p2p.forEach((_, code) => signal(code, { t: 'hello' })); }
 
     function status(code) {
-        const s = h.spaceOf(code);
-        if (!s || !NETS[s.net]) return { net: '', label: 'Relay network', ok: true, detail: 'Shared Phosphor relays!' };
-        const n = NETS[s.net];
-        if (s.net === 'webrtc') {
-            const r = p2p.get(code);
-            const open = r ? [...r.peers.values()].filter((p) => p.open).length : 0;
-            return { net: s.net, label: n.label, ok: true, peers: open, detail: open ? open + ' direct ' + (open === 1 ? 'link' : 'links') + '!' : 'Waiting for someone to link with!' };
-        }
-        if (s.net === 'rabbitmq' && !(s.rmq && s.rmq.url)) return { net: s.net, label: n.label, ok: false, detail: 'Needs a server address! Click to set it!' };
-        const l = linkFor(code);
-        const ok = !!(l && l.connected());
-        return { net: s.net, label: n.label, ok, detail: ok ? 'Live via ' + l.label + '!' : ((l && l.error) || 'Connecting…') };
+        const n = NETS.webrtc;
+        const r = p2p.get(code);
+        const open = r ? [...r.peers.values()].filter((p) => p.open).length : 0;
+        return { net: 'webrtc', label: n.label, ok: true, peers: open, detail: open ? open + ' direct ' + (open === 1 ? 'link' : 'links') + '!' : 'Waiting for someone to link with!' };
+    }
+    function peers(code) {
+        const r = p2p.get(code);
+        return r ? [...r.peers.values()].filter((p) => p.open).map((p) => p.id) : [];
     }
 
-    // Forget a link so new login details take effect!
-    function resetLink(code) {
-        const s = h.spaceOf(code);
-        if (!s) return;
-        links.forEach((l, key) => { if (key.startsWith('rmq|')) { l.close(); links.delete(key); } });
-    }
-
-    return { route, onSignal, sync, rehello, status, resetLink, closeAll: () => { [...p2p.keys()].forEach(closeRoom); links.forEach((l) => l.close()); links.clear(); } };
+    return { route, onSignal, sync, rehello, status, peers, pushStaff, closeAll: () => { [...p2p.keys()].forEach(closeRoom); } };
 }

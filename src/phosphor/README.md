@@ -12,33 +12,18 @@ Talk together, live — **no signup, no password, no setup, no commands!**
 
 ## How does it work with no server?!
 
-Your browser talks straight to a free public MQTT relay over WebSockets!
-Everyone meets on ONE central relay by default, so near + far devices always
-overlap! Backup relays idle in the background and take over instantly if
-central drops, then hand traffic back when it returns! Messages fly
-room-to-room live, Space directories + presence ride on retained topics,
-and your name, Spaces, and recent messages live in `localStorage`!
+Every Space talks **WebRTC only**: messages, files, presence and moderation go
+straight from browser to browser over DataChannels, never through a server!
+Browsers can't find each other on their own, so a free public MQTT relay carries
+just the little "how do I reach you" notes (offers, answers, network hints), the
+Space's directory card (its name and owner) and call setup! Whoever links up later
+gets the last 60 messages handed over directly by someone already there!
 
 - No accounts: your identity is a random ID + name in this browser!
 - No history server: the last 100 messages per Space stay on your devices!
-- Public relays: anyone with a Space code can read that Space — it's a
-  cozy public park, not a vault! Don't share secrets!
-
-## Space networks!
-
-Every new Space picks how its messages travel:
-
-- **☁ EMQX** — its own link to the public EMQX broker (`broker.emqx.io`)! Zero setup!
-- **🐇 RabbitMQ** — your own RabbitMQ server with the Web MQTT plugin
-  (`rabbitmq-plugins enable rabbitmq_web_mqtt`, then `wss://host:15676/ws`)!
-  Add a username (`vhost:user` for a vhost) and password if the server needs one!
-  Invite links carry the login in their `#` part, which browsers never send to servers!
-- **⇄ WebRTC** — browser to browser over DataChannels! The relays only carry the
-  connection notes, never the messages! Whoever links up later gets the last 60
-  messages handed over directly!
-
-Joining by code? Pick **Auto** and Phosphor asks the Space's directory card which
-network it uses! Older Spaces keep the shared relay network!
+- Someone has to be online: messages travel only between browsers that are open!
+- Anyone with a Space code can join and read that Space, so don't share secrets!
+- No TURN server, so some strict networks can't link directly!
 
 ## Calls!
 
@@ -47,21 +32,33 @@ browsers (WebRTC, encrypted with DTLS-SRTP) with mute, camera and screen sharing
 Everyone links to everyone, so calls shine with up to about 6 people! There is no
 TURN server, so some strict networks can't connect directly!
 
-## Space owner commands!
+## Moderation: owner, admins and blocked words!
 
-The Space creator can moderate from the message bar! Enforcement is
-cooperative (every client obeys what it can verify), so it keeps honest
-rooms tidy rather than stopping determined spoofers!
+The Space creator is the **owner** 👑 and can name **admins** 🛡! Over WebRTC every
+message comes from the browser that really sent it, so nobody can fake an owner or
+admin action!
+
+Owner only:
+
+- `/admin @name` — make them an admin! `/admin` on its own lists the admins!
+- `/demote @name` — take their admin powers back!
+
+Owner and admins:
 
 - `/kick @name [reason]` — remove them (they can rejoin with the code)!
 - `/ban @name [reason]` — remove and block them until `/unban`!
 - `/unban @name` — lift the ban!
 - `/warn @name "message"` — private warning card only they can see,
-  with full Keydown formatting! (Public relays carry it, so treat it
-  like a loud whisper, not a sealed letter!)
+  with full Keydown formatting!
 - `/delete 1-3&5` — delete messages by number (top is 1, `-` for ranges,
   `&` for multiples, combinable like `1-10&7-3&6-8`)! Every bubble shows
   its number, and every device deletes the same messages!
+- `/blockword AGPL` — nobody but the owner and admins can post that word (or
+  phrase) anymore! Matching ignores capitals and only hits whole words!
+- `/unblockword MIT` — allow it again! `/blockword` on its own lists them!
+
+Admins can't moderate the owner or each other! The admin list and blocked words
+travel with the Space, so people who join later get them from the owner or an admin!
 
 ## Mention filter!
 
@@ -74,6 +71,7 @@ typing them out still notifies them — hiding only cleans up suggestions!
 
 - `index.html` — the whole page!
 - `styles.css` — the glow!
-- `mqtt.js` — tiny dependency-free MQTT-over-WebSocket client!
+- `mqtt.js` — tiny dependency-free MQTT-over-WebSocket client (for the handshake notes only)!
+- `nets.js` — the WebRTC DataChannel mesh every Space talks over!
 - `app.js` — identity, Spaces, presence, live chat, mentions, file + folder sharing!
 - `sound.js` — tiny Web Audio synth for UI sounds (no audio files)! Click the speaker icon to mute!

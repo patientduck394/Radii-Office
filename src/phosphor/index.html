@@ -71,7 +71,7 @@
                 </div>
                 <div id="members-bar" class="members-bar" style="display:none;"></div>
                 <div id="messages" class="messages"></div>
-                <div class="kd-hint">Keydown works here! Try <b>**bold**</b>, =Y=gel=Y=, #G#chip#, ~S~glow~S~! The paperclip shares files (instant up to 2 MB, streaming to 8 MB), the folder button zips folders! Owner: /kick, /ban, /unban, /warn @user, /delete 1-3&5!</div>
+                <div class="kd-hint">Keydown works here! Try <b>**bold**</b>, =Y=gel=Y=, #G#chip#, ~S~glow~S~! The paperclip shares files (instant up to 2 MB, streaming to 8 MB), the folder button zips folders! Owner + admins: /kick, /ban, /unban, /warn @user, /delete 1-3&5, /blockword AGPL, /unblockword MIT! Owner: /admin @user, /demote @user!</div>
                 <div class="composer-anchor">
                     <div id="mention-menu" class="mention-menu" style="display:none;"></div>
                     <div id="mention-chips" class="mention-chips" style="display:none;"></div>
@@ -104,19 +104,7 @@
                     <label>Description</label>
                     <input type="text" id="new-space-desc" placeholder="What is it about?" maxlength="200">
                 </div>
-                <div class="control-group">
-                    <label>Network</label>
-                    <div id="new-space-net" class="net-pick"><button type="button" class="net-opt" data-net="emqx"><b>☁ EMQX</b><span>Public broker</span></button><button type="button" class="net-opt" data-net="rabbitmq"><b>🐇 RabbitMQ</b><span>Your server</span></button><button type="button" class="net-opt" data-net="webrtc"><b>⇄ WebRTC</b><span>Browser to browser</span></button></div>
-                    <div id="new-net-hint" class="net-hint"></div>
-                    <div id="new-rmq" class="rmq-fields" hidden>
-                        <input type="url" id="new-rmq-url" placeholder="wss://rabbit.example.com:15676/ws" maxlength="300" autocomplete="off">
-                        <div class="rmq-row">
-                            <input type="text" id="new-rmq-user" placeholder="Username (or vhost:user)" maxlength="120" autocomplete="off">
-                            <input type="password" id="new-rmq-pass" placeholder="Password" maxlength="200" autocomplete="new-password">
-                        </div>
-                        <div class="net-hint">Needs the RabbitMQ Web MQTT plugin! Invite links carry this login (in the link's #part), so share them only with friends!</div>
-                    </div>
-                </div>
+                <div class="net-hint">⇄ WebRTC! Messages go straight from browser to browser!</div>
             </div>
             <div class="modal-actions">
                 <button class="action-btn" onclick="createSpace()">Create!</button>
@@ -134,19 +122,7 @@
                     <label>Invite Code</label>
                     <input type="text" id="join-code" placeholder="e.g. AB12CD34!" maxlength="16">
                 </div>
-                <div class="control-group">
-                    <label>Network</label>
-                    <div id="join-space-net" class="net-pick four"><button type="button" class="net-opt" data-net="auto"><b>✨ Auto</b><span>Ask the Space</span></button><button type="button" class="net-opt" data-net="emqx"><b>☁ EMQX</b><span>Public broker</span></button><button type="button" class="net-opt" data-net="rabbitmq"><b>🐇 RabbitMQ</b><span>Your server</span></button><button type="button" class="net-opt" data-net="webrtc"><b>⇄ WebRTC</b><span>Browser to browser</span></button></div>
-                    <div id="join-net-hint" class="net-hint"></div>
-                    <div id="join-rmq" class="rmq-fields" hidden>
-                        <input type="url" id="join-rmq-url" placeholder="wss://rabbit.example.com:15676/ws" maxlength="300" autocomplete="off">
-                        <div class="rmq-row">
-                            <input type="text" id="join-rmq-user" placeholder="Username (or vhost:user)" maxlength="120" autocomplete="off">
-                            <input type="password" id="join-rmq-pass" placeholder="Password" maxlength="200" autocomplete="new-password">
-                        </div>
-                        <div class="net-hint">Needs the RabbitMQ Web MQTT plugin! Invite links carry this login (in the link's #part), so share them only with friends!</div>
-                    </div>
-                </div>
+                <div class="net-hint">⇄ WebRTC! Messages go straight from browser to browser!</div>
             </div>
             <div class="modal-actions">
                 <button class="action-btn" onclick="joinSpace()">Join!</button>
@@ -180,7 +156,7 @@
     <script src="sound.js"></script>
     <script src="keydown.js?v=20261201h"></script>
     <script type="module">
-        import './app.js';
+        import './app.js?v=20261201w';
     </script>
 </body>
 </html>

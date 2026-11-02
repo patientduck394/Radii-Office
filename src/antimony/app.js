@@ -1,7 +1,9 @@
 // Antimony BOARDS! Zero-setup broadcast boards: moderators post, everyone looks!
+// Posts travel WebRTC only (browser to browser); the public relays carry just the handshake notes + directory cards!
 // Open the page, pick a name, create or join a Space with a code. That's it!
 
 import { MiniMqtt } from './mqtt.js';
+import { createNets, NETS } from './nets.js?v=20261201w';
 
 const ROOT = 'radii-antimony/v1';
 // ONE central meeting-point relay + automatic backups! Everyone prefers the
@@ -527,6 +529,99 @@ function isSenderOwner(code, senderId) {
     return senderId === s.owner;
 }
 
+// ---------- Staff (owner + admins) and blocked words! ----------
+// The owner names admins with /admin @name and takes it back with /demote @name! Admins moderate like the
+// owner (kick, ban, unban, warn, delete, blocked words) but can't touch the owner or each other! Over WebRTC
+// every message comes from the browser that sent it, so a forged admin action never gets through!
+// Blocked words (/blockword AGPL, /unblockword MIT) stop anyone but staff from posting them!
+let pendingStaff = {}; // code -> [{from, st}] frames that arrived before the Space knew its owner!
+
+function staffOf(code) {
+    const s = spaces.find(x => x.code === code) || {};
+    return {
+        admins: Array.isArray(s.admins) ? s.admins : [],
+        adminsAt: Number(s.adminsAt) || 0,
+        words: Array.isArray(s.blockwords) ? s.blockwords : [],
+        wordsAt: Number(s.wordsAt) || 0,
+    };
+}
+function isAdminId(code, id) { return !!id && staffOf(code).admins.some(a => a.id === id); }
+function isStaffId(code, id) { return isSenderOwner(code, id) || isAdminId(code, id); }
+function canModerate(code) { return !!code && (isSpaceOwner(code) || (!!me && isAdminId(code, me.clientId))); }
+
+function cleanAdmins(list) {
+    return (Array.isArray(list) ? list : []).filter(a => a && typeof a.id === 'string' && a.id).slice(0, 50)
+        .map(a => ({ id: a.id.slice(0, 64), name: String(a.name || '?').slice(0, 24) }));
+}
+function cleanWords(list) {
+    const seen = new Set();
+    return (Array.isArray(list) ? list : []).map(w => String(w || '').trim().slice(0, 40)).filter(w => {
+        const k = w.toLowerCase();
+        if (!w || seen.has(k)) return false;
+        seen.add(k);
+        return true;
+    }).slice(0, 200);
+}
+// Save new admins and/or blocked words, then tell everyone linked right now!
+function setStaff(code, patch) {
+    const s = spaces.find(x => x.code === code);
+    if (!s) return;
+    if (patch.admins) { s.admins = cleanAdmins(patch.admins); s.adminsAt = Math.max((Number(s.adminsAt) || 0) + 1, Number(patch.at) || 0); }
+    if (patch.words) { s.blockwords = cleanWords(patch.words); s.wordsAt = Math.max((Number(s.wordsAt) || 0) + 1, Number(patch.at) || 0); }
+    saveSpaces();
+    try { nets.pushStaff(code); } catch (e) {}
+    if (code === activeCode) { try { updateMembersPanel(); } catch (e) {} }
+}
+// A linked browser shared the Space's staff list: the owner decides admins, staff decide blocked words!
+function onStaffFrame(code, from, st) {
+    if (!spaces.some(x => x.code === code)) return;
+    const s = spaces.find(x => x.code === code);
+    if (!s.owner) {
+        const list = (pendingStaff[code] = pendingStaff[code] || []).filter(p => p.from !== from);
+        list.push({ from, st });
+        pendingStaff[code] = list.slice(-10);
+        return;
+    }
+    const cur = staffOf(code);
+    let changed = false;
+    if (isSenderOwner(code, from) && Number(st.adminsAt) > cur.adminsAt) {
+        s.admins = cleanAdmins(st.admins);
+        s.adminsAt = Number(st.adminsAt);
+        changed = true;
+    }
+    if (isStaffId(code, from) && Number(st.wordsAt) > cur.wordsAt) {
+        s.blockwords = cleanWords(st.words);
+        s.wordsAt = Number(st.wordsAt);
+        changed = true;
+    }
+    if (!changed) return;
+    saveSpaces();
+    if (code === activeCode) { try { updateMembersPanel(); } catch (e) {} }
+}
+// The directory card just told us the owner: look at staff lists that arrived too early!
+function replayPendingStaff(code) {
+    const list = pendingStaff[code];
+    if (!list) return;
+    delete pendingStaff[code];
+    list.forEach(p => onStaffFrame(code, p.from, p.st));
+}
+
+function blockedWordIn(code, text) {
+    const t = String(text || '');
+    if (!t) return null;
+    for (const w of staffOf(code).words) {
+        const re = new RegExp('(^|[^\\p{L}\\p{N}])' + w.replace(/[.*+?^${}()|[\]\\]/g, '\\function splitTarget(rest) {') + '(?=$|[^\\p{L}\\p{N}])', 'iu');
+        if (re.test(t)) return w;
+    }
+    return null;
+}
+// Staff may always post; everyone else's messages with a blocked word never show up!
+function blockedMessage(code, m) {
+    if (!m || isStaffId(code, m.from)) return false;
+    const fileName = m.file && m.file.name ? ' ' + m.file.name : '';
+    return !!blockedWordIn(code, String(m.body || '') + ' ' + String(m.subject || '') + fileName);
+}
+
 function splitTarget(rest) {
     let r = String(rest || '').trim().replace(/^@/, '');
     if (!r) return null;
@@ -555,6 +650,9 @@ function resolveTarget(name) {
 
 function modFallback(action, targetName, ownerName) {
     if (action === 'warn') return '🔒 Private notice for @' + targetName + ' — update Antimony to view!';
+    if (action === 'admin') return '🛡 ' + ownerName + ' made @' + targetName + ' an admin!';
+    if (action === 'demote') return '🛡 ' + ownerName + ' demoted @' + targetName + '!';
+    if (action === 'blockword' || action === 'unblockword') return '🚫 ' + ownerName + ' changed the blocked words!';
     if (action === 'kick') return '🔨 ' + ownerName + ' kicked @' + targetName + '!';
     if (action === 'ban') return '🔨 ' + ownerName + ' banned @' + targetName + '!';
     return '🔓 ' + ownerName + ' unbanned @' + targetName + '!';
@@ -625,13 +723,38 @@ function onModMessage(code, m) {
     const mod = (m.mod && typeof m.mod === 'object') ? m.mod : null;
     if (!mod) return;
     const action = String(mod.action || '');
-    if (!['kick', 'ban', 'unban', 'warn', 'delete'].includes(action)) return;
-    if (!isSenderOwner(code, m.from)) return; // forged or unverifiable: ignore!
+    if (!['kick', 'ban', 'unban', 'warn', 'delete', 'admin', 'demote', 'blockword', 'unblockword'].includes(action)) return;
+    // Only staff moderate, only the owner hands out or takes back admin, and admins can't touch the owner or each other!
+    const byOwner = isSenderOwner(code, m.from);
+    if (!byOwner && !isAdminId(code, m.from)) return; // forged or unverifiable: ignore!
+    if (!byOwner && (action === 'admin' || action === 'demote')) return;
     const space = spaces.find(s => s.code === code);
     const sname = (space && space.name) || code;
-    const ownerName = (space && space.ownerName) || m.name;
+    const ownerName = byOwner ? ((space && space.ownerName) || m.name) : String(m.name || 'An admin').slice(0, 24);
     const target = mod.target || {};
     const tname = String(target.name || '?').slice(0, 24);
+    if (!byOwner && target.id && isStaffId(code, target.id)) return;
+    if (action === 'blockword' || action === 'unblockword') {
+        const word = String(mod.text || '').trim().slice(0, 40);
+        if (!word) return;
+        const words = staffOf(code).words.filter(w => w.toLowerCase() !== word.toLowerCase());
+        if (action === 'blockword') words.push(word);
+        setStaff(code, { words, at: m.at });
+        addSysNotice(code, ownerName + (action === 'blockword' ? ' blocked the word “' : ' unblocked the word “') + word + '”!', m.id);
+        return;
+    }
+    if (action === 'admin' || action === 'demote') {
+        if (!target.id) return;
+        const admins = staffOf(code).admins.filter(a => a.id !== target.id);
+        if (action === 'admin') admins.push({ id: target.id, name: tname });
+        setStaff(code, { admins, at: m.at });
+        const isMeT = me && target.id === me.clientId;
+        addSysNotice(code, action === 'admin'
+            ? (isMeT ? ownerName + ' made you an admin! You can now /kick, /ban, /warn, /delete and /blockword!' : ownerName + ' made @' + tname + ' an admin!')
+            : (isMeT ? ownerName + ' removed your admin powers!' : ownerName + ' demoted @' + tname + '!'), m.id);
+        if (code === activeCode) { try { refreshStaffUi(); } catch (e) {} }
+        return;
+    }
     const isMe = (target.id && me && target.id === me.clientId)
         || (!target.id && me && tname.toLowerCase() === me.name.toLowerCase());
     const reason = String(mod.text || '').trim().slice(0, 200);
@@ -713,12 +836,87 @@ function checkModTarget(target, splitName) {
         uiSound('error');
         return false;
     }
+    if (!isSpaceOwner(activeCode) && target.id && isAdminId(activeCode, target.id)) {
+        showLocalNotice('@' + target.name + ' is an admin too! Only the owner can moderate admins!');
+        uiSound('error');
+        return false;
+    }
     return true;
 }
 
-function doKickBan(cmd, rest) {
+// ---------- /admin, /demote, /blockword, /unblockword ----------
+function refreshStaffUi() {
+    try { refreshComposer(); updateMeta(); } catch (e) {}
+}
+
+function doAdminCmd(cmd, rest) {
+    const st = staffOf(activeCode);
+    if (!rest) {
+        showLocalNotice(st.admins.length ? 'Admins: ' + st.admins.map(a => '@' + a.name).join(', ') + '!' : 'No admins yet! The owner can add one with /admin @name!');
+        return true;
+    }
     if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /' + cmd + '!');
+        showLocalNotice('Only the Space owner and admins can use /' + cmd + '!');
+        uiSound('error');
+        return true;
+    }
+    const split = splitTarget(rest);
+    if (!split) {
+        showLocalNotice('Who? Try /' + cmd + ' @name!');
+        uiSound('error');
+        return true;
+    }
+    const target = resolveTarget(split.name);
+    if (!checkModTarget(target, split.name)) return true;
+    if (!target.id) {
+        showLocalNotice('Could not tell who @' + target.name + ' is! They need to post or be online here first!');
+        uiSound('error');
+        return true;
+    }
+    const already = isAdminId(activeCode, target.id);
+    if (cmd === 'admin' && already) { showLocalNotice('@' + target.name + ' is already an admin!'); return true; }
+    if (cmd === 'demote' && !already) { showLocalNotice('@' + target.name + ' is not an admin!'); return true; }
+    const msg = sendMod(activeCode, cmd, target, '');
+    if (!msg) return true;
+    const admins = st.admins.filter(a => a.id !== target.id);
+    if (cmd === 'admin') admins.push({ id: target.id, name: target.name });
+    setStaff(activeCode, { admins, at: msg.at });
+    addSysNotice(activeCode, cmd === 'admin' ? 'You made @' + target.name + ' an admin!' : 'You demoted @' + target.name + '!', msg.id);
+    uiSound('send');
+    return true;
+}
+
+function doBlockwordCmd(cmd, rest) {
+    const st = staffOf(activeCode);
+    let word = String(rest || '').trim();
+    if (word.length >= 2 && /^["'“]/.test(word) && /["'”]$/.test(word)) word = word.slice(1, -1).trim();
+    if (!word) {
+        showLocalNotice(st.words.length ? 'Blocked words: ' + st.words.join(', ') + '!' : 'No blocked words yet! Try /blockword AGPL!');
+        return true;
+    }
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /' + cmd + '!');
+        uiSound('error');
+        return true;
+    }
+    word = word.slice(0, 40);
+    const has = st.words.some(w => w.toLowerCase() === word.toLowerCase());
+    if (cmd === 'blockword' && has) { showLocalNotice('“' + word + '” is already blocked!'); return true; }
+    if (cmd === 'unblockword' && !has) { showLocalNotice('“' + word + '” is not blocked!'); return true; }
+    const msg = sendMod(activeCode, cmd, { id: null, name: '' }, word);
+    if (!msg) return true;
+    const words = st.words.filter(w => w.toLowerCase() !== word.toLowerCase());
+    if (cmd === 'blockword') words.push(word);
+    setStaff(activeCode, { words, at: msg.at });
+    addSysNotice(activeCode, (cmd === 'blockword' ? 'You blocked the word “' : 'You unblocked the word “') + word + '”!', msg.id);
+    uiSound('send');
+    return true;
+}
+
+
+function doKickBan(cmd, rest) {
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /' + cmd + '!');
         uiSound('error');
         return true;
     }
@@ -738,8 +936,8 @@ function doKickBan(cmd, rest) {
 }
 
 function doWarnCmd(rest) {
-    if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /warn!');
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /warn!');
         uiSound('error');
         return true;
     }
@@ -767,8 +965,8 @@ function doWarnCmd(rest) {
 }
 
 function doUnbanCmd(rest) {
-    if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /unban!');
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /unban!');
         uiSound('error');
         return true;
     }
@@ -884,8 +1082,8 @@ function deleteLocalMessages(code, ids) {
 }
 
 function doDeleteCmd(rest) {
-    if (!isSpaceOwner(activeCode)) {
-        showLocalNotice('Only the Space owner can use /delete!');
+    if (!canModerate(activeCode)) {
+        showLocalNotice('Only the Space owner and admins can use /delete!');
         uiSound('error');
         return true;
     }
@@ -924,13 +1122,17 @@ function handleSlashCommand(raw) {
     if (!m) return true;
     const cmd = m[1].toLowerCase();
     const rest = (m[2] || '').trim();
-    if (!['kick', 'ban', 'unban', 'warn', 'delete'].includes(cmd)) {
-        showLocalNotice('Unknown command! Try /kick, /ban, /unban, /warn, or /delete!');
+    if (!['kick', 'ban', 'unban', 'warn', 'delete', 'admin', 'demote', 'admins', 'blockword', 'unblockword', 'blockwords'].includes(cmd)) {
+        showLocalNotice('Unknown command! Try /kick, /ban, /unban, /warn, /delete, /admin, /demote, /blockword or /unblockword!');
         uiSound('error');
         return true;
     }
     if (!activeCode) return true;
     try { closeMentionMenu(); } catch (e) {}
+    if (cmd === 'admins') return doAdminCmd('admin', '');
+    if (cmd === 'blockwords') return doBlockwordCmd('blockword', '');
+    if (cmd === 'admin' || cmd === 'demote') return doAdminCmd(cmd, rest);
+    if (cmd === 'blockword' || cmd === 'unblockword') return doBlockwordCmd(cmd, rest);
     if (cmd === 'warn') return doWarnCmd(rest);
     if (cmd === 'unban') return doUnbanCmd(rest);
     if (cmd === 'delete') return doDeleteCmd(rest);
@@ -1104,9 +1306,12 @@ function switchName() {
 function loadSpaces() {
     spaces = storeGet('antimony_spaces', []);
     if (!Array.isArray(spaces)) spaces = [];
+    // WebRTC only: boards from the shared-relay days move over!
+    spaces.forEach(s => { s.net = 'webrtc'; });
 }
 function saveSpaces() {
     storeSet('antimony_spaces', spaces);
+    try { nets.sync(spaces); } catch (e) {}
 }
 
 function newCode() {
@@ -1200,7 +1405,7 @@ function closeModals() {
 // hides, files hide, sending refuses — only the owner publishes posts!
 function refreshComposer() {
     try {
-        const mod = !!activeCode && isSpaceOwner(activeCode);
+        const mod = !!activeCode && canModerate(activeCode);
         const anchor = document.getElementById('composer-anchor');
         if (anchor) anchor.style.display = mod ? '' : 'none';
         const note = document.getElementById('read-only-note');
@@ -1236,7 +1441,7 @@ function syncPostFab() {
     try {
         const fab = dockEl('post-fab');
         if (!fab) return;
-        const mod = !!activeCode && isSpaceOwner(activeCode);
+        const mod = !!activeCode && canModerate(activeCode);
         fab.style.display = (mod && !isDockOpen()) ? '' : 'none';
     } catch (e) {}
 }
@@ -1283,7 +1488,7 @@ function clearDraft() {
 }
 
 function openPostModal() {
-    if (!isSpaceOwner(activeCode)) {
+    if (!canModerate(activeCode)) {
         showLocalNotice('Only moderators can post here! Enjoy the board!');
         uiSound('error');
         return false;
@@ -1590,7 +1795,7 @@ function insertPostMention() {
 }
 
 function schedulePost() {
-    if (!isSpaceOwner(activeCode)) {
+    if (!canModerate(activeCode)) {
         showLocalNotice('Only moderators can post here! Enjoy the board!');
         uiSound('error');
         return false;
@@ -1608,7 +1813,7 @@ function schedulePost() {
     const tone = postTone;
     postTimer = setTimeout(() => {
         postTimer = null;
-        if (!me || activeCode !== code || !isSpaceOwner(code)) return;
+        if (!me || activeCode !== code || !canModerate(code)) return;
         try { resetMentionComposer(); } catch (e) {}
         const ok = deliverChatBody(body, { subject, tone });
         if (!ok) {
@@ -1689,7 +1894,7 @@ function publishPost() {
     const body = ta ? ta.value.trim() : '';
     const subject = subj ? subj.value.trim().slice(0, 120) : '';
     if (!body) { alert('Write something first!'); uiSound('error'); return false; }
-    if (!isSpaceOwner(activeCode)) {
+    if (!canModerate(activeCode)) {
         showLocalNotice('Only moderators can post here! Enjoy the board!');
         uiSound('error');
         return false;
@@ -1773,6 +1978,34 @@ function clearInviteCodeFromUrl() {
 function joinSpace() {
     const code = document.getElementById('join-code').value.trim().toUpperCase().replace(/[^A-Z0-9]/g, '');
     joinSpaceByCode(code);
+}
+
+// A WebRTC peer handed over its recent history: merge what we missed!
+function mergeSyncedHistory(code, items) {
+    if (!spaces.some(s => s.code === code)) return;
+    const hist = loadHist(code);
+    const have = new Set(hist.map(m => m.id));
+    let added = 0;
+    for (const it of items) {
+        if (!it || typeof it.id !== 'string' || have.has(it.id) || typeof it.body !== 'string' || typeof it.from !== 'string') continue;
+        if (!it.body || !it.from || it.kind === 'sys' || it.kind === 'warn') continue; // system notes + private warnings stay with their owner!
+        const clean = { id: it.id.slice(0, 64), from: it.from.slice(0, 64), name: String(it.name || '?').slice(0, 24), body: it.body.slice(0, 2000), subject: String(it.subject || '').slice(0, 120), tone: cleanTone(it.tone), at: Number(it.at) || Date.now(), mentions: Array.isArray(it.mentions) ? it.mentions.slice(0, 20) : [] };
+        if (blockedMessage(code, Object.assign({ file: it.file }, clean))) continue;
+        if (it.kind === 'file' && it.file && typeof it.file === 'object') {
+            const f = it.file;
+            clean.kind = 'file';
+            clean.file = { name: String(f.name || 'file').slice(0, 120), size: f.size, type: String(f.type || '').slice(0, 80) };
+            if (typeof f.data === 'string' && f.data.startsWith('data:') && f.data.length <= MAX_FILE_DATA_CHARS) clean.file.data = f.data;
+            else clean.file.expired = true;
+        }
+        hist.push(clean);
+        have.add(clean.id);
+        added++;
+    }
+    if (!added) return;
+    hist.sort((a, b) => (a.at || 0) - (b.at || 0));
+    saveHist(code, hist);
+    if (code === activeCode) renderHistory();
 }
 
 function joinSpaceByCode(rawCode) {
@@ -1897,7 +2130,7 @@ function isUnresolved(code) {
 function updateMeta() {
     const online = [...members.values()].filter(m => m.online).length;
     const space = spaces.find(s => s.code === activeCode);
-    const names = [...members.values()].filter(m => m.online).map(m => m.name).slice(0, 12).join(', ');
+    const names = [...members.entries()].filter(([, m]) => m.online).map(([id, m]) => m.name + (isSenderOwner(activeCode, id) ? ' 👑' : isAdminId(activeCode, id) ? ' 🛡' : '')).slice(0, 12).join(', ');
     const metaEl = document.getElementById('chat-meta');
     if (space && space.name === space.code && !space.mine) {
         const live = relaysConnected().length;
@@ -2024,7 +2257,7 @@ function shareFile(el) {
     const f = el && el.files && el.files[0];
     if (el) el.value = '';
     if (!f) return false;
-    if (!isSpaceOwner(activeCode)) {
+    if (!canModerate(activeCode)) {
         showLocalNotice('Only moderators can post here! Enjoy the board!');
         uiSound('error');
         return false;
@@ -2069,7 +2302,7 @@ function shareFolder(el) {
     const files = el && el.files ? [...el.files] : [];
     if (el) el.value = '';
     if (!files.length) return false;
-    if (!isSpaceOwner(activeCode)) {
+    if (!canModerate(activeCode)) {
         showLocalNotice('Only moderators can post here! Enjoy the board!');
         uiSound('error');
         return false;
@@ -2664,6 +2897,9 @@ function onChatMessage(code, payload) {
     if (seenIds.size > 500) seenIds = new Set([...seenIds].slice(-300));
     if (m.kind === 'mod') { onModMessage(code, m); return; }
     m.body = String(m.body).slice(0, 2000);
+    // Boards: only the owner and admins post (once we know who the owner is)!
+    { const sp = spaces.find(x => x.code === code); if (sp && sp.owner && !isStaffId(code, m.from)) return; }
+    if (blockedMessage(code, m)) return; // a blocked word: it never shows up!
     if (!Array.isArray(m.mentions)) m.mentions = [];
     if (m.kind === 'file') {
         const f = (m.file && typeof m.file === 'object') ? m.file : null;
@@ -2706,6 +2942,8 @@ function onDirMessage(code, payload) {
             s.ownerName = String(d.ownerName || '').slice(0, 24);
         }
         saveSpaces();
+        replayPendingStaff(code);
+        if (code === activeCode) { try { refreshComposer(); } catch (e) {} }
         renderSpaces();
         if (code === activeCode) {
             document.getElementById('chat-name').innerText = '# ' + s.name;
@@ -2799,7 +3037,7 @@ function flushOutbox() {
         const list = o[code];
         if (!Array.isArray(list) || !list.length) { delete o[code]; continue; }
         if (isBanned(code) || !spaces.some(s => s.code === code)) { delete o[code]; continue; }
-        if (!isSpaceOwner(code)) { delete o[code]; continue; } // viewers never publish!
+        if (!canModerate(code)) { delete o[code]; continue; } // viewers never publish!
         while (list.length) {
             const entry = list[0];
             const msg = {
@@ -2876,16 +3114,29 @@ function preferredRelay() {
     return null;
 }
 
+// Board posts + presence go over WebRTC, the rest (handshakes, directory cards) rides the relay!
+function splitRoutes(topics, op) {
+    const rest = [];
+    for (const t of (Array.isArray(topics) ? topics : [topics])) {
+        const own = nets.route(t);
+        if (own) own[op]([t]); else rest.push(t);
+    }
+    return rest;
+}
+
 const mesh = {
     get connected() { return !!preferredRelay(); },
     get via() { const p = preferredRelay(); return p ? p.host : null; },
     publish(topic, payload, retain) {
+        // Posts + presence go browser to browser!
+        const own = nets.route(topic);
+        if (own) { own.publish(topic, payload, retain); return; }
         const p = preferredRelay();
         if (!p) throw new Error('No relay!');
         p.mqtt.publish(topic, payload, retain);
     },
     subscribe(topics) {
-        const list = Array.isArray(topics) ? topics : [topics];
+        const list = splitRoutes(topics, 'subscribe');
         for (const t of list) wantedSubs.add(t);
         const p = preferredRelay();
         if (p) {
@@ -2893,7 +3144,7 @@ const mesh = {
         }
     },
     unsubscribe(topics) {
-        const list = Array.isArray(topics) ? topics : [topics];
+        const list = splitRoutes(topics, 'unsubscribe');
         for (const t of list) wantedSubs.delete(t);
         const p = preferredRelay();
         if (p) {
@@ -2911,6 +3162,7 @@ function syncSubscription() {
 }
 
 function meshRoute(topic, payload, fromEntry) {
+    if (topic.startsWith(ROOT + '/p2p/')) { nets.onSignal(topic.slice((ROOT + '/p2p/').length), payload); return; }
     if (topic.startsWith(ROOT + '/msg/')) {
         onChatMessage(topic.slice((ROOT + '/msg/').length), payload);
         bridgePacket(topic, payload, fromEntry, false);
@@ -3217,6 +3469,7 @@ function dialRelay(entry) {
             if (subs.length) m.subscribe(subs);
         } catch (e) {}
         publishAllMyDirs();
+        try { nets.sync(spaces); nets.rehello(); } catch (e) {}
         if (first) uiSound('connect');
         refreshConn();
         renderSpaces();
@@ -3294,7 +3547,7 @@ function sendMessage(e) {
     const input = document.getElementById('send-input');
     const body = input.value.trim();
     if (!body) return false;
-    if (!isSpaceOwner(activeCode)) {
+    if (!canModerate(activeCode)) {
         showLocalNotice('Only moderators can post here! Enjoy the board!');
         uiSound('error');
         return false;
@@ -3306,6 +3559,9 @@ function sendMessage(e) {
     }
     if (body.startsWith('/')) {
         handleSlashCommand(body);
+        input.value = '';
+        resetMentionComposer();
+        updateKdTypingIcon();
         return false;
     }
     // Mention flow: picking from the @ menu never sends, it stages a chip!
@@ -3345,7 +3601,7 @@ function cleanTone(t) {
 function deliverChatBody(rawBody, extra) {
     const body = String(rawBody || '').trim().slice(0, 2000);
     if (!body) return false;
-    if (!isSpaceOwner(activeCode)) {
+    if (!canModerate(activeCode)) {
         showLocalNotice('Only moderators can post here! Enjoy the board!');
         uiSound('error');
         return false;
@@ -3424,6 +3680,23 @@ function enterApp() {
     loadBans();
     try { consumePendingInvite(); } catch (e) {}
 }
+
+// ---------- Board network (WebRTC only!) ----------
+const nets = createNets({
+    root: ROOT,
+    label: 'antimony',
+    me: () => me,
+    spaceOf: (c) => spaces.find(s => s.code === c),
+    staff: (c) => { const st = staffOf(c); return { admins: st.admins, adminsAt: st.adminsAt, words: st.words, wordsAt: st.wordsAt }; },
+    onStaff: (c, from, st) => onStaffFrame(c, from, st),
+    deliver: (t, p) => meshRoute(t, p, null),
+    // The handshake notes ride the relay (p2p topics never route elsewhere)!
+    sig: { publish: (t, p) => mesh.publish(t, p, false), subscribe: (t) => mesh.subscribe(t), unsubscribe: (t) => mesh.unsubscribe(t) },
+    history: (c) => loadHist(c),
+    onSync: (c, items) => mergeSyncedHistory(c, items),
+    toast: (m) => showLocalNotice(m),
+    onChange: () => {},
+});
 
 // Inline handlers (the page uses onclick)!
 Object.assign(window, {
