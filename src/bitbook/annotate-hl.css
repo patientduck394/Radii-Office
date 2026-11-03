@@ -144,7 +144,7 @@ mark.an-hl.an-s-sl {
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
 }
-/* Color Ink: no strip, no box, just the words written in the color (deep shade, bold)! #R#text#! */
+/* Color Ink: no strip, no box, just the words written in the color (deep shade, bold)! #R(text) */
 mark.an-hl.an-s-ink {
     padding: 0;
     margin: 0;
