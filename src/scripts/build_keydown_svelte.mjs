@@ -150,13 +150,14 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     // the toolbar keeps the caret where it was in the text
     const keep = (e) => e.preventDefault();
     function cmd(name) { canvas.focus(); document.execCommand(name); }
-    function highlight(code, color) {
+    // style: '' for a gel highlight, ' an-s-ink' for Color Ink (#R(text): the words written in the color)
+    function highlight(code, color, style = '') {
         menu = '';
         const sel = window.getSelection();
         if (!sel.rangeCount || sel.isCollapsed || !canvas.contains(sel.anchorNode)) return;
         const r = sel.getRangeAt(0);
         const mark = document.createElement('mark');
-        mark.className = 'an-hl an-hl-' + color;
+        mark.className = 'an-hl an-hl-' + color + style;
         mark.setAttribute('spellcheck', 'false');
         try { r.surroundContents(mark); } catch (e) { mark.appendChild(r.extractContents()); r.insertNode(mark); }
         ed.insertHtml('');
@@ -217,6 +218,12 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
                                 <button type="button" class="kdb-swatch kdb-sw-{color}" title={color} aria-label={color + ' highlight'} onmousedown={keep} onclick={() => highlight(code, color)}></button>
                             {/each}
                         </div>
+                        <div class="kdb-menu-label" title="Select some words first! Keydown: #R(text)">Color Ink</div>
+                        <div class="kdb-swatch-row">
+                            {#each HIGHLIGHTS as [code, color] (code)}
+                                <button type="button" class="kdb-swatch kdb-ink kdb-sw-{color}" title={color + ' ink'} aria-label={color + ' ink'} onmousedown={keep} onclick={() => highlight(code, color, ' an-s-ink')}>A</button>
+                            {/each}
+                        </div>
                         <div class="kdb-menu-label">Skills</div>
                         {#each (typeof window !== 'undefined' && window.Keydown ? window.Keydown.skills : []) as s (s.name)}
                             <button type="button" class="kdb-item" onmousedown={keep} onclick={() => skill(s.name)}>{s.label}</button>
@@ -251,6 +258,16 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
                     <div class="kdb-menu kdb-swatches">
                         {#each HIGHLIGHTS as [code, color] (code)}
                             <button type="button" class="kdb-swatch kdb-sw-{color}" title={color} aria-label={color} onmousedown={keep} onclick={() => highlight(code, color)}></button>
+                        {/each}
+                    </div>
+                {/if}
+            </span>
+            <span class="kdb-pop">
+                <button type="button" class="kdb-btn" title="Color Ink: the words written in the color (select some words first; Keydown #R(text))" aria-expanded={menu === 'ink'} onmousedown={keep} onclick={() => (menu = menu === 'ink' ? '' : 'ink')}><b class="kdb-ink-glyph">A</b> Ink</button>
+                {#if menu === 'ink'}
+                    <div class="kdb-menu kdb-swatches">
+                        {#each HIGHLIGHTS as [code, color] (code)}
+                            <button type="button" class="kdb-swatch kdb-ink kdb-sw-{color}" title={color + ' ink'} aria-label={color + ' ink'} onmousedown={keep} onclick={() => highlight(code, color, ' an-s-ink')}>A</button>
                         {/each}
                     </div>
                 {/if}
@@ -389,6 +406,19 @@ ${engine.replace(/^/gm, '        ').replace(/\$\{version\}/g, '')}
     .kdb-sw-purple { background: radial-gradient(circle at 35% 30%, #e9d5ff, #a855f7); }
     .kdb-sw-pink { background: radial-gradient(circle at 35% 30%, #fbcfe8, #ec4899); }
     .kdb-sw-slate { background: radial-gradient(circle at 35% 30%, #e2e8f0, #64748b); }
+    /* Color Ink swatches: a white button with the letter written in the ink */
+    .kdb-swatch.kdb-ink { background: linear-gradient(180deg, #ffffff, #f1f5f9); font: 800 15px/1 system-ui, sans-serif; padding: 0; display: inline-flex; align-items: center; justify-content: center; }
+    .kdb-ink-glyph { color: #dc2626; font-weight: 800; }
+    .kdb-swatch.kdb-ink.kdb-sw-red { color: #dc2626; }
+    .kdb-swatch.kdb-ink.kdb-sw-orange { color: #ea580c; }
+    .kdb-swatch.kdb-ink.kdb-sw-yellow { color: #caa604; }
+    .kdb-swatch.kdb-ink.kdb-sw-lime { color: #65a30d; }
+    .kdb-swatch.kdb-ink.kdb-sw-green { color: #059669; }
+    .kdb-swatch.kdb-ink.kdb-sw-cyan { color: #26a3b1; }
+    .kdb-swatch.kdb-ink.kdb-sw-blue { color: #2563eb; }
+    .kdb-swatch.kdb-ink.kdb-sw-purple { color: #9333ea; }
+    .kdb-swatch.kdb-ink.kdb-sw-pink { color: #db2777; }
+    .kdb-swatch.kdb-ink.kdb-sw-slate { color: #6f6f6f; }
     .kdb-glass {
         position: relative;
         border-radius: 13px;

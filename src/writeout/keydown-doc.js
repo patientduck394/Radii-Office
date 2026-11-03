@@ -96,6 +96,7 @@
     }
 
     function mathHtml(tex, display) {
+        tex = String(tex).replace(/\u00A0/g, ' ');
         const inner = typeof root.kdMathHTML === 'function' ? root.kdMathHTML(tex, display) : '<code class="kd-math-src">' + esc((display ? '$$' : '$') + tex + (display ? '$$' : '$')) + '</code>';
         const tag = display ? 'div' : 'span';
         return '<' + tag + ' class="kd-math' + (display ? ' kd-math-display' : '') + '" contenteditable="false" data-tex="' + esc(tex) + '" data-display="' + (display ? '1' : '0') + '" title="Double-click to edit this equation!">' + inner + '</' + tag + '>';
@@ -1236,6 +1237,23 @@
 
     // One line becomes what it says: "# " a heading, "* " a bullet, "> " a quote, ::block{...}, $$math$$, a footnote,
     // a {{notice}} or a picture. Returns the new element (null when it is plain text). Enter and Re-format both use it!
+    // A line's text as it was typed, with the bits a half-finished format pass may have changed put back
+    // (an escaped \ shows one backslash, *italics* and **bold** lost their stars); plain spans just give their text
+    function lineSource(el) {
+        let out = '';
+        el.childNodes.forEach((n) => {
+            if (n.nodeType === 3) { out += n.nodeValue; return; }
+            if (n.nodeType !== 1) return;
+            const t = n.tagName;
+            if (t === 'BR') { out += '\n'; return; }
+            if (n.classList.contains('kd-esc')) { out += '\\' + n.textContent; return; }
+            if (t === 'EM' || t === 'I') { out += '*' + lineSource(n) + '*'; return; }
+            if (t === 'STRONG' || t === 'B') { out += '**' + lineSource(n) + '**'; return; }
+            if (t === 'CODE') { out += '`' + n.textContent + '`'; return; }
+            out += lineSource(n);
+        });
+        return out;
+    }
     function lineToBlock(b) {
         const text = b.textContent.replace(/​/g, '');
         let m;
@@ -1279,6 +1297,13 @@
         let html = null;
         if (!b.children.length && /^\s*::[a-z]+(\{[^}]*\})?\s*$/.test(text)) html = blockFromLine(text);
         else if (!b.children.length && (/^\s*\$\$([\s\S]+)\$\$\s*$/.test(text) || ((m = /^\s*\{\{([^{}]+)\}\}\s*$/.exec(text)) && !INLINE_TAGS[tplName(m[1])]) || /^\s*!\[([^\]]*)\]\(([^)\s]+)\)\s*$/.test(text))) html = textToHtml(text.trim(), { notes: {} });
+        // a $...$ line that is in pieces (split text, spans, a <br> at the end): read the line's own Keydown source
+        if (!html && b.children.length && /^\s*\$\$[\s\S]+\$\$\s*$/.test(text) && dollars(text) === 2 &&
+            !b.querySelector('img, video, audio, iframe, table, figure, .kd-math, .kd-tpl, [contenteditable="false"]') && !Array.from(b.children).some((c) => LINE_BLOCK.test(c.tagName))) {
+            const src = lineSource(b).replace(/\u200B/g, '').trim();
+            const mm = /^\$\$([\s\S]+)\$\$/.exec(src);
+            if (mm && mm[1].trim() && dollars(src) === 2) html = mathHtml(mm[1].trim(), true);
+        }
         if (html) {
             const tpl = document.createElement('template');
             tpl.innerHTML = html;
@@ -1363,6 +1388,7 @@
     const LEFTOVER = /@(?:[a-z0-9]+)(?:-[1-5])?@(?=\S)|!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|#([\^+:;])(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\1|%(?:1\d|20|[1-9])%(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])%|\^\^(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\^(?!\^)|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
     function reformat(root) {
         let n = 0;
+        root.normalize();
         n += mergeMathLines(root);
         const fenced = fencedTexts(root);
         const hasFenced = (el) => { const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); for (let t = w.nextNode(); t; t = w.nextNode()) if (fenced.has(t)) return true; return false; };
