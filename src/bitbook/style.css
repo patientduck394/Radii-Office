@@ -11385,3 +11385,31 @@ mark.an-hl-slate.an-s-ul, mark.an-hl-slate.an-s-st { --capL: url("data:image/svg
     ::-webkit-scrollbar { display: none !important; width: 0 !important; height: 0 !important; }
     html, body, * { scrollbar-width: none !important; -ms-overflow-style: none !important; }
 }
+/* The Writeout Annotator's own pens, as Annotate styles Keydown can write: #Y.marker(text), #C.glow(text), #R.lasso(text)! */
+/* Marker: a translucent fill with soft rounded ends, a touch darker at the bottom like real ink */
+mark.an-hl.an-s-mk {
+    padding: 0 .12em;
+    margin: 0 -.12em;
+    border: 0;
+    border-radius: .25em .45em .3em .5em;
+    box-shadow: none;
+    background: linear-gradient(180deg, color-mix(in srgb, var(--hl-c) 38%, transparent) 0%, color-mix(in srgb, var(--hl-c) 62%, transparent) 100%);
+}
+/* Glow Pen: the words light up in the color (no fill, no line) */
+mark.an-hl.an-s-gl {
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    text-shadow: 0 0 .25em var(--hl-c), 0 0 .6em color-mix(in srgb, var(--hl-c) 70%, transparent);
+}
+/* Lasso: a hand-drawn dashed loop around the words */
+mark.an-hl.an-s-ls {
+    padding: 0 .35em;
+    margin: 0 -.35em;
+    border: 2px dashed var(--hl-edge);
+    border-radius: 999px;
+    background: none;
+    box-shadow: none;
+}

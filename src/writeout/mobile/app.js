@@ -816,6 +816,8 @@ if (canvas) {
                 { open: '#' + k + '#', close: '#]', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-cb' },
                 { open: '#' + k + '#', close: '#-', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-sl' },
                 { open: '#' + k + '(', close: ')', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-ink' },
+                // every other Annotate style by name: #R.halo(text), #B.neon(text), #Y.marker(text)...
+                ...[["marker"," an-s-mk"],["glow"," an-s-gl"],["lasso"," an-s-ls"],["halo"," an-s-ha"],["spotlight"," an-s-gf"],["accent"," an-s-ga"],["bubble"," an-s-gb"],["dusk"," an-s-dk"],["prism"," an-s-pr"],["complement"," an-s-cm"],["ticket"," an-s-tk"],["neon"," an-s-nn"],["stamp"," an-s-sm"],["washi"," an-s-tp"],["checker"," an-s-ck"],["halftone"," an-s-ht"],["aurora"," an-s-au"],["mild"," an-s-ml"],["wrap"," an-s-gw"],["belt"," an-s-bt"],["bucket"," an-s-bk"],["torpedo"," an-s-tr"],["bottle"," an-s-bo"],["packet"," an-s-pk"],["capsule"," an-s-cs"],["frost"," an-s-fr"],["pixel"," an-s-px"],["flag"," an-s-fl"],["gem"," an-s-gm"]].map(([name, cls]) => ({ open: '#' + k + '.' + name + '(', close: ')', tagName: 'mark', className: 'an-hl an-hl-' + c + cls })),
             ]),
             { open: '=Y=',  close: '=Y=',  className: 'gel-orb gel-y' },
             { open: '=R=',  close: '=R=',  className: 'gel-orb gel-r' },
