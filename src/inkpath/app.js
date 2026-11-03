@@ -223,10 +223,7 @@ function toggleFxPopup(evt) {
     const popup = document.getElementById('fx-popup');
     if (!popup) return;
     const willShow = popup.style.display === 'none' || popup.style.display === '';
-    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
+    document.querySelectorAll('.color-popup').forEach(el => { el.style.display = 'none'; }); // (every color popup, including the pattern ones)
     if (willShow) { syncFxColorUI(); popup.style.display = 'flex'; }
 }
 
@@ -440,7 +437,7 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     document.addEventListener("click", (e) => {
-        ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup', 'fx-popup'].forEach(id => {
+        Array.from(document.querySelectorAll('.color-popup')).map(el => el.id).forEach(id => {
             const popup = document.getElementById(id);
             if (!popup || popup.style.display === 'none' || popup.style.display === '') return;
             if (popup.contains(e.target)) return;
@@ -527,10 +524,7 @@ window.addEventListener('DOMContentLoaded', () => {
         if (e.key === 'Escape') {
             closeOpsPopup();
             closeEditPopup();
-            ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup', 'fx-popup'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
+            document.querySelectorAll('.color-popup').forEach(el => { el.style.display = 'none'; }); // (every color popup, including the pattern ones)
             return;
         }
         const t = e.target;
@@ -2349,7 +2343,7 @@ function applyColorToProp(prop, hex8) {
             const stops = getStrokeStops(o);
             stops[stops.length - 1].c = hex8;
             mirrorStrokeStops(o);
-        } else if (prop === 'patternBg' && window.inkpathExtras) {
+        } else if (/^pattern/.test(prop) && window.inkpathExtras) {
             window.inkpathExtras.deep(o, prop, hex8);
         } else {
             o[prop] = hex8;
@@ -2661,10 +2655,7 @@ function toggleColorPopup(popupId, evt) {
     const popup = document.getElementById(popupId);
     if (!popup) return;
     const willShow = popup.style.display === 'none' || popup.style.display === '';
-    ['stroke-popup', 'stroke2-popup', 'fill-popup', 'fill2-popup', 'pbg-popup', 'fx-popup'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-    });
+    document.querySelectorAll('.color-popup').forEach(el => { el.style.display = 'none'; }); // (every color popup, including the pattern ones)
     if (willShow) popup.style.display = 'flex';
 }
 function toggleFillPopup(evt) { toggleColorPopup('fill-popup', evt); }

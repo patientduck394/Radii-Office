@@ -58,9 +58,9 @@
         m.appendChild(s);
         return m;
     }
-    function patternEl(obj, id) {
+    function patternEl(obj, id, over) {
         const size = Math.max(3, num(obj.patternSize, 12)), ang = num(obj.patternAngle, 0);
-        const c1 = obj.fill || '#a305ffff', c2 = obj.patternBg || obj.fill2 || '#ffffff00';
+        const c1 = (over && over.c1) || obj.fill || '#a305ffff', c2 = (over && over.c2 !== undefined) ? over.c2 : (obj.patternBg || obj.fill2 || '#ffffff00');
         const k = obj.patternKind || 'stripes';
         const s = size, h = size / 2, q = size / 4;
         // (most tiles are square; the honeycomb needs a tile as wide as one hexagon and as tall as three of its sides)
@@ -99,6 +99,41 @@
         else line('M0 ' + h + 'Q' + q + ' 0 ' + h + ' ' + h + 'T' + s + ' ' + h, Math.max(1, s * 0.13));
         return p;
     }
+    // a two-color gradient for a pattern's lines or background (linear, with an angle, or radial)
+    function gradientFor(kind, id, a, b, angle) {
+        const g = svgEl(kind === 'radial' ? 'radialGradient' : 'linearGradient', { id: id });
+        if (kind !== 'radial' && typeof applyGradientAngle === 'function') applyGradientAngle(g, angle || 0, 1);
+        [[0, a], [1, b]].forEach(([o, c]) => { const st = stopStyle(c, '#000000ff'); g.appendChild(svgEl('stop', { offset: o, 'stop-color': st.color, 'stop-opacity': st.opacity })); });
+        return g;
+    }
+    // A pattern whose lines and/or background fade from one color to another across the WHOLE shape.
+    // (A gradient inside an ordinary pattern would start over in every tile, so the pattern is ONE tile the size of the shape:
+    // the background is a gradient rectangle, and the lines are the small pattern used as a mask over a gradient rectangle.)
+    function layeredPattern(obj, id) {
+        const fgG = obj.patternFgGrad, bgG = obj.patternBgGrad;
+        if (!fgG && !bgG) return false;
+        const bb = shapeBBox(obj);
+        if (!(bb.w > 0 && bb.h > 0)) return false;
+        const c1 = obj.fill || '#a305ffff', c1b = obj.patternFg2 || '#38bdf8ff';
+        const c2 = obj.patternBg || obj.fill2 || '#ffffff00', c2b = obj.patternBg2 || '#bae6fdff';
+        const W = bb.w, H = bb.h;
+        const outer = svgEl('pattern', { id: id, patternUnits: 'userSpaceOnUse', x: bb.x, y: bb.y, width: W, height: H });
+        if (bgG) { defs.appendChild(gradientFor(bgG, id + '-bg', c2, c2b, obj.patternBgAngle)); outer.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-bg)' })); }
+        else outer.appendChild(svgEl('rect', { width: W, height: H, fill: c2 }));
+        if (fgG) {
+            defs.appendChild(patternEl(obj, id + '-in', { c1: '#ffffff', c2: '#00000000' }));
+            const mk = svgEl('mask', { id: id + '-mk', maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: W, height: H });
+            mk.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-in)' }));
+            defs.appendChild(mk);
+            defs.appendChild(gradientFor(fgG, id + '-fg', c1, c1b, obj.patternFgAngle));
+            outer.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-fg)', mask: 'url(#' + id + '-mk)' }));
+        } else {
+            defs.appendChild(patternEl(obj, id + '-in', { c1: c1, c2: '#00000000' }));
+            outer.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-in)' }));
+        }
+        defs.appendChild(outer);
+        return true;
+    }
     // called for every shape app.js draws (el: the SVG element, obj: its data, idp: an id that is unique to it)
     function apply(el, obj, idp) {
         if (!el || !obj) return;
@@ -128,7 +163,7 @@
             // pattern fill
             if (obj.fillType === 'pattern') {
                 const pid = 'pat-' + id;
-                defs.appendChild(patternEl(obj, pid));
+                if (!layeredPattern(obj, pid)) defs.appendChild(patternEl(obj, pid));
                 el.setAttribute('fill', 'url(#' + pid + ')');
             }
             if (t === 'text') {
@@ -260,22 +295,24 @@
         ui.pAngle = range(0, 180, 1, (v) => setProp('patternAngle', v || '', true));
         ui.pAngleLbl = make('label', null, 'Pattern angle (0°)');
         const pag = make('div', { class: 'control-group' }); pag.appendChild(ui.pAngleLbl); pag.appendChild(ui.pAngle); pt.appendChild(pag);
-        // the background color uses Inkpath's own color picker (the same popup as Fill Color: H, S, V, A, hex, pick from canvas)
-        const bgGroup = make('div', { class: 'control-group', id: 'grp-pattern-bg', style: 'position:relative;' });
-        bgGroup.appendChild(make('label', null, 'Pattern background (the lines use Fill Color 1)'));
-        const holder = make('div');
-        holder.innerHTML =
-            '<button type="button" id="pbg-swatch" class="color-swatch" title="Pick the pattern background color">--</button>' +
-            '<div id="pbg-popup" class="color-popup" style="display:none;">' +
-            ['h|H|0|360|0|°', 's|S|0|100|0|%', 'v|V|0|100|100|%', 'a|A|0|100|100|%'].map((r) => { const [k, l, mn, mx, val, u] = r.split('|'); return '<div class="popup-row"><label>' + l + ' <span id="val-pbg-' + k + '">' + val + '</span>' + u + '</label><input type="range" id="insp-pbg-' + k + '" min="' + mn + '" max="' + mx + '" step="1" value="' + val + '"></div>'; }).join('') +
-            '<div class="popup-preview-row"><span id="pbg-preview" class="popup-preview"></span><input id="pbg-hex" class="popup-hex-input" value="#ffffffff" spellcheck="false" autocomplete="off" maxlength="9"></div>' +
-            '<button type="button" class="popup-pick-btn" id="pbg-pick">Pick from canvas</button></div>';
-        while (holder.firstChild) bgGroup.appendChild(holder.firstChild);
-        pt.appendChild(bgGroup);
-        bgGroup.querySelector('#pbg-swatch').addEventListener('click', (e) => toggleColorPopup('pbg-popup', e));
-        ['h', 's', 'v', 'a'].forEach((k) => bgGroup.querySelector('#insp-pbg-' + k).addEventListener('input', pbgFromHSVA));
-        bgGroup.querySelector('#pbg-hex').addEventListener('change', () => setColorFromHex('pbg', 'patternBg'));
-        bgGroup.querySelector('#pbg-pick').addEventListener('click', (e) => pickFromCanvas('pbg', 'patternBg', e));
+        // The pattern's colors: the lines use Fill Color 1 (its button gets a gradient toggle, below), the background has its own button.
+        // The toggle next to a color button cycles Full (one plain color) > Linear > Radial; a gradient shows a second color (and an angle).
+        ui.fgToggle = gradToggle('fg');
+        const fillSwatch = $('fill-swatch');
+        if (fillSwatch && fillSwatch.parentNode) { const row = make('div', { class: 'pgrad-row' }); fillSwatch.parentNode.insertBefore(row, fillSwatch); row.appendChild(fillSwatch); row.appendChild(ui.fgToggle); }
+        ui.fg2 = colorPicker('pfg2', 'patternFg2', 'Lines color 2 (the lines fade to this)', 'Pick the second color of the lines gradient');
+        pt.appendChild(ui.fg2.group);
+        ui.fgAngle = range(0, 360, 1, (v) => setProp('patternFgAngle', v || '', true));
+        ui.fgAngleLbl = make('label', null, 'Lines gradient angle (0°)');
+        ui.fgAngleGrp = make('div', { class: 'control-group' }); ui.fgAngleGrp.appendChild(ui.fgAngleLbl); ui.fgAngleGrp.appendChild(ui.fgAngle); pt.appendChild(ui.fgAngleGrp);
+        ui.bg = colorPicker('pbg', 'patternBg', 'Pattern background', 'Pick the pattern background color');
+        ui.bgToggle = gradToggle('bg'); ui.bg.row.appendChild(ui.bgToggle);
+        pt.appendChild(ui.bg.group);
+        ui.bg2 = colorPicker('pbg2', 'patternBg2', 'Background color 2 (the background fades to this)', 'Pick the second color of the background gradient');
+        pt.appendChild(ui.bg2.group);
+        ui.bgAngle = range(0, 360, 1, (v) => setProp('patternBgAngle', v || '', true));
+        ui.bgAngleLbl = make('label', null, 'Background gradient angle (0°)');
+        ui.bgAngleGrp = make('div', { class: 'control-group' }); ui.bgAngleGrp.appendChild(ui.bgAngleLbl); ui.bgAngleGrp.appendChild(ui.bgAngle); pt.appendChild(ui.bgAngleGrp);
         fx.appendChild(pt); ui.patternBox = pt;
         // gradient size and repeat
         const gd = make('div', { id: 'grp-extras-gradient' });
@@ -296,13 +333,62 @@
         }
     }
 
-    // the pattern background's popup (the sliders): same behavior as the Fill Color popup
-    function pbgFromHSVA() {
-        const c = updateColorFromHSVA('pbg', 'patternBg');
+    // a color button that opens Inkpath's own color picker popup (H, S, V, A sliders, hex, Pick from canvas), the same as Fill Color
+    function colorPicker(prefix, prop, label, hint) {
+        const group = make('div', { class: 'control-group', style: 'position:relative;' });
+        group.appendChild(make('label', null, label));
+        const row = make('div', { class: 'pgrad-row' });
+        const holder = make('div');
+        holder.innerHTML =
+            '<button type="button" id="' + prefix + '-swatch" class="color-swatch" title="' + hint + '">--</button>' +
+            '<div id="' + prefix + '-popup" class="color-popup" style="display:none;">' +
+            ['h|H|0|360|0|°', 's|S|0|100|0|%', 'v|V|0|100|100|%', 'a|A|0|100|100|%'].map((r) => { const [k, l, mn, mx, val, u] = r.split('|'); return '<div class="popup-row"><label>' + l + ' <span id="val-' + prefix + '-' + k + '">' + val + '</span>' + u + '</label><input type="range" id="insp-' + prefix + '-' + k + '" min="' + mn + '" max="' + mx + '" step="1" value="' + val + '"></div>'; }).join('') +
+            '<div class="popup-preview-row"><span id="' + prefix + '-preview" class="popup-preview"></span><input id="' + prefix + '-hex" class="popup-hex-input" value="#ffffffff" spellcheck="false" autocomplete="off" maxlength="9"></div>' +
+            '<button type="button" class="popup-pick-btn" id="' + prefix + '-pick">Pick from canvas</button></div>';
+        const swatch = holder.firstElementChild;
+        row.appendChild(swatch); group.appendChild(row);
+        while (holder.firstChild) group.appendChild(holder.firstChild);
+        swatch.addEventListener('click', (e) => toggleColorPopup(prefix + '-popup', e));
+        ['h', 's', 'v', 'a'].forEach((k) => group.querySelector('#insp-' + prefix + '-' + k).addEventListener('input', () => colorChanged(prefix, prop)));
+        group.querySelector('#' + prefix + '-hex').addEventListener('change', () => setColorFromHex(prefix, prop));
+        group.querySelector('#' + prefix + '-pick').addEventListener('click', (e) => pickFromCanvas(prefix, prop, e));
+        return { group: group, row: row, swatch: swatch };
+    }
+    function colorChanged(prefix, prop) {
+        const c = updateColorFromHSVA(prefix, prop);
         if (c === null) return;
-        picked().forEach((o) => deep(o, 'patternBg', c));
+        picked().forEach((o) => deep(o, prop, c));
         render();
-        const pop = $('pbg-popup'); if (pop) pop.style.display = 'flex';
+        const pop = $(prefix + '-popup'); if (pop) pop.style.display = 'flex';
+    }
+    // the gradient toggle next to a color button: an icon shows the current kind, a click goes to the next one
+    const GRAD_NAMES = { '': 'Full (one plain color)', linear: 'Linear gradient', radial: 'Radial gradient' };
+    const GRAD_NEXT = { '': 'linear', linear: 'radial', radial: '' };
+    function gradIcon(mode, slot) {
+        const head = '<svg viewBox="0 0 16 16" width="22" height="22" aria-hidden="true">';
+        if (mode === 'linear') return head + '<defs><linearGradient id="pgi-' + slot + '-l" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FF60C5"/><stop offset="1" stop-color="#38bdf8"/></linearGradient></defs><rect x="2" y="2" width="12" height="12" rx="3" fill="url(#pgi-' + slot + '-l)"/></svg>';
+        if (mode === 'radial') return head + '<defs><radialGradient id="pgi-' + slot + '-r"><stop offset="0" stop-color="#FF60C5"/><stop offset="1" stop-color="#38bdf8"/></radialGradient></defs><circle cx="8" cy="8" r="6" fill="url(#pgi-' + slot + '-r)"/></svg>';
+        return head + '<rect x="2" y="2" width="12" height="12" rx="3" fill="currentColor"/></svg>';
+    }
+    function gradToggle(slot) {
+        const key = slot === 'fg' ? 'patternFgGrad' : 'patternBgGrad', key2 = slot === 'fg' ? 'patternFg2' : 'patternBg2', dflt = slot === 'fg' ? '#38bdf8ff' : '#bae6fdff';
+        const b = make('button', { type: 'button', class: 'pgrad-btn', 'data-slot': slot });
+        b.addEventListener('click', (e) => {
+            e.stopPropagation(); e.preventDefault();
+            const f = leaves(first())[0] || {}, next = GRAD_NEXT[f[key] || ''];
+            if (next) picked().forEach((o) => leaves(o).forEach((x) => { if (!x[key2]) x[key2] = dflt; }));
+            setProp(key, next, true);
+        });
+        paintToggle(b, '');
+        return b;
+    }
+    function paintToggle(b, mode) {
+        if (!b) return;
+        const slot = b.getAttribute('data-slot'), what = slot === 'fg' ? 'Lines' : 'Background';
+        b.innerHTML = gradIcon(mode, slot);
+        b.classList.toggle('on', !!mode);
+        b.title = what + ' color: ' + GRAD_NAMES[mode] + ' (click for ' + GRAD_NAMES[GRAD_NEXT[mode]].toLowerCase() + ')';
+        b.setAttribute('aria-label', b.title);
     }
     // a style value goes to every shape inside a group, too (app.js calls this when a color is picked)
     function deep(o, prop, value) { leaves(o).forEach((x) => { x[prop] = value; }); }
@@ -350,11 +436,20 @@
         const isPattern = f.fillType === 'pattern', isGrad = f.fillType === 'linear' || f.fillType === 'radial';
         show(ui.patternBox, isPattern); show(ui.gradBox, isGrad);
         if (ui.patternBtn) ui.patternBtn.classList.toggle('active', isPattern);
+        show(ui.fgToggle, isPattern);
         if (isPattern) {
             ui.pKind.value = f.patternKind || 'stripes';
             ui.pSize.value = f.patternSize || 12; ui.pSizeLbl.textContent = 'Pattern size (' + (f.patternSize || 12) + 'px)';
             ui.pAngle.value = f.patternAngle || 0; ui.pAngleLbl.textContent = 'Pattern angle (' + (f.patternAngle || 0) + '°)';
             syncColorPopup('pbg', f.patternBg || f.fill2 || '#ffffffff', '#ffffffff');
+            syncColorPopup('pfg2', f.patternFg2 || '#38bdf8ff', '#38bdf8ff');
+            syncColorPopup('pbg2', f.patternBg2 || '#bae6fdff', '#bae6fdff');
+            paintToggle(ui.fgToggle, f.patternFgGrad || ''); paintToggle(ui.bgToggle, f.patternBgGrad || '');
+            show(ui.fg2.group, !!f.patternFgGrad); show(ui.fgAngleGrp, f.patternFgGrad === 'linear');
+            show(ui.bg2.group, !!f.patternBgGrad); show(ui.bgAngleGrp, f.patternBgGrad === 'linear');
+            ui.fgAngle.value = f.patternFgAngle || 0; ui.fgAngleLbl.textContent = 'Lines gradient angle (' + (f.patternFgAngle || 0) + '°)';
+            ui.bgAngle.value = f.patternBgAngle || 0; ui.bgAngleLbl.textContent = 'Background gradient angle (' + (f.patternBgAngle || 0) + '°)';
+            const fl = $('fill-color-label'); if (fl) fl.innerText = f.patternFgGrad ? 'Lines Color 1' : 'Lines Color';
         }
         if (isGrad) {
             const size = f.fillType === 'linear' ? Math.round((f.fillScale || 1) * 100) : Math.round(((f.fillRadial && f.fillRadial.rx) ? f.fillRadial.rx * 200 : 100));
