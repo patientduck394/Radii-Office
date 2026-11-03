@@ -175,3 +175,20 @@ button { cursor: pointer; }
     #zr-gizmo { width: 84px; height: 84px; }
     .zr-num { display: none; }
 }
+
+/* ---------- icons (SVG line drawings) ---------- */
+.zi { width: 1.15em; height: 1.15em; flex: none; vertical-align: -0.2em; }
+.zr-seg button, .zr-toggle, .zr-mini, .zr-btn { display: inline-flex; align-items: center; justify-content: center; gap: 5px; }
+.zr-tabs button { display: flex; align-items: center; justify-content: center; color: #cfd6de; }
+.zr-tabs button .zi { width: 18px; height: 18px; }
+.zr-tabs button[aria-selected="true"] { color: var(--zr-lime); }
+.zr-quick button span .zi { width: 20px; height: 20px; }
+.zr-row .ic .zi, .zr-row .tw .zi, .zr-row .eye .zi { width: 14px; height: 14px; vertical-align: -2px; }
+.zr-row .ic { color: #b8c0c9; }
+.zr-row.active .ic, .zr-row.sel .ic { color: var(--zr-lime); }
+.zr-row .eye { color: #cfd6de; display: inline-flex; }
+.zi-cam { color: var(--zr-lime); width: 13px; height: 13px; }
+.zr-menu button .i { display: inline-flex; color: #b8c0c9; }
+.zr-menu button:hover .i { color: var(--zr-lime); }
+.zr-props h3 .zi { width: 14px; height: 14px; vertical-align: -2px; }
+.zr-key .zi { color: #ffe066; }

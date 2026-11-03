@@ -99,12 +99,16 @@
         else line('M0 ' + h + 'Q' + q + ' 0 ' + h + ' ' + h + 'T' + s + ' ' + h, Math.max(1, s * 0.13));
         return p;
     }
-    // a two-color gradient for a pattern's lines or background (linear, with an angle, or radial)
-    function gradientFor(kind, id, a, b, angle) {
+    // a gradient for a pattern's lines or background (linear, with an angle, or radial): color 1, any steps between, color 2
+    function gradientFor(kind, id, a, b, angle, mids) {
         const g = svgEl(kind === 'radial' ? 'radialGradient' : 'linearGradient', { id: id });
         if (kind !== 'radial' && typeof applyGradientAngle === 'function') applyGradientAngle(g, angle || 0, 1);
-        [[0, a], [1, b]].forEach(([o, c]) => { const st = stopStyle(c, '#000000ff'); g.appendChild(svgEl('stop', { offset: o, 'stop-color': st.color, 'stop-opacity': st.opacity })); });
+        [[0, a]].concat(cleanSteps(mids).map((m) => [m.o, m.c]), [[1, b]]).forEach(([o, c]) => { const st = stopStyle(c, '#000000ff'); g.appendChild(svgEl('stop', { offset: o, 'stop-color': st.color, 'stop-opacity': st.opacity })); });
         return g;
+    }
+    // the steps between a pattern gradient's two colors: [{ o: 0..1, c: '#rrggbbaa' }], sorted, bad ones dropped
+    function cleanSteps(list) {
+        return (Array.isArray(list) ? list : []).filter((m) => m && isFinite(m.o) && typeof m.c === 'string').map((m) => ({ o: Math.min(0.99, Math.max(0.01, +m.o)), c: m.c })).sort((x, y) => x.o - y.o);
     }
     // A pattern whose lines and/or background fade from one color to another across the WHOLE shape.
     // (A gradient inside an ordinary pattern would start over in every tile, so the pattern is ONE tile the size of the shape:
@@ -118,14 +122,14 @@
         const c2 = obj.patternBg || obj.fill2 || '#ffffff00', c2b = obj.patternBg2 || '#bae6fdff';
         const W = bb.w, H = bb.h;
         const outer = svgEl('pattern', { id: id, patternUnits: 'userSpaceOnUse', x: bb.x, y: bb.y, width: W, height: H });
-        if (bgG) { defs.appendChild(gradientFor(bgG, id + '-bg', c2, c2b, obj.patternBgAngle)); outer.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-bg)' })); }
+        if (bgG) { defs.appendChild(gradientFor(bgG, id + '-bg', c2, c2b, obj.patternBgAngle, obj.patternBgStops)); outer.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-bg)' })); }
         else outer.appendChild(svgEl('rect', { width: W, height: H, fill: c2 }));
         if (fgG) {
             defs.appendChild(patternEl(obj, id + '-in', { c1: '#ffffff', c2: '#00000000' }));
             const mk = svgEl('mask', { id: id + '-mk', maskUnits: 'userSpaceOnUse', x: 0, y: 0, width: W, height: H });
             mk.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-in)' }));
             defs.appendChild(mk);
-            defs.appendChild(gradientFor(fgG, id + '-fg', c1, c1b, obj.patternFgAngle));
+            defs.appendChild(gradientFor(fgG, id + '-fg', c1, c1b, obj.patternFgAngle, obj.patternFgStops));
             outer.appendChild(svgEl('rect', { width: W, height: H, fill: 'url(#' + id + '-fg)', mask: 'url(#' + id + '-mk)' }));
         } else {
             defs.appendChild(patternEl(obj, id + '-in', { c1: c1, c2: '#00000000' }));
@@ -302,6 +306,8 @@
         if (fillSwatch && fillSwatch.parentNode) { const row = make('div', { class: 'pgrad-row' }); fillSwatch.parentNode.insertBefore(row, fillSwatch); row.appendChild(fillSwatch); row.appendChild(ui.fgToggle); }
         ui.fg2 = colorPicker('pfg2', 'patternFg2', 'Lines color 2 (the lines fade to this)', 'Pick the second color of the lines gradient');
         pt.appendChild(ui.fg2.group);
+        ui.fgSteps = stepTrack('fg');
+        pt.appendChild(ui.fgSteps.group);
         ui.fgAngle = range(0, 360, 1, (v) => setProp('patternFgAngle', v || '', true));
         ui.fgAngleLbl = make('label', null, 'Lines gradient angle (0°)');
         ui.fgAngleGrp = make('div', { class: 'control-group' }); ui.fgAngleGrp.appendChild(ui.fgAngleLbl); ui.fgAngleGrp.appendChild(ui.fgAngle); pt.appendChild(ui.fgAngleGrp);
@@ -310,6 +316,8 @@
         pt.appendChild(ui.bg.group);
         ui.bg2 = colorPicker('pbg2', 'patternBg2', 'Background color 2 (the background fades to this)', 'Pick the second color of the background gradient');
         pt.appendChild(ui.bg2.group);
+        ui.bgSteps = stepTrack('bg');
+        pt.appendChild(ui.bgSteps.group);
         ui.bgAngle = range(0, 360, 1, (v) => setProp('patternBgAngle', v || '', true));
         ui.bgAngleLbl = make('label', null, 'Background gradient angle (0°)');
         ui.bgAngleGrp = make('div', { class: 'control-group' }); ui.bgAngleGrp.appendChild(ui.bgAngleLbl); ui.bgAngleGrp.appendChild(ui.bgAngle); pt.appendChild(ui.bgAngleGrp);
@@ -370,6 +378,87 @@
         if (mode === 'radial') return head + '<defs><radialGradient id="pgi-' + slot + '-r"><stop offset="0" stop-color="#FF60C5"/><stop offset="1" stop-color="#38bdf8"/></radialGradient></defs><circle cx="8" cy="8" r="6" fill="url(#pgi-' + slot + '-r)"/></svg>';
         return head + '<rect x="2" y="2" width="12" height="12" rx="3" fill="currentColor"/></svg>';
     }
+    // Gradient steps: a bar showing the gradient, a marker for each step between color 1 and color 2
+    // (drag to move it, click the bar to add one there), + Step / - Step, and a color picker for the selected step
+    const STEP_KEY = { fg: 'patternFgStops', bg: 'patternBgStops' };
+    function stepTrack(slot) {
+        const key = STEP_KEY[slot], what = slot === 'fg' ? 'Lines' : 'Background';
+        if (!ui.stepSel) ui.stepSel = { fg: -1, bg: -1 };
+        const grp = make('div', { class: 'control-group pstep-group' });
+        grp.appendChild(make('label', null, what + ' gradient steps'));
+        const track = make('div', { class: 'pstep-track', title: 'Click the bar to add a step there; drag a step to move it', role: 'group', 'aria-label': what + ' gradient steps' });
+        track.style.cssText = 'position:relative;height:22px;border-radius:8px;border:1px solid rgba(0,0,0,.35);margin:4px 8px 6px;cursor:copy;box-shadow:inset 0 1px 2px rgba(0,0,0,.25);';
+        grp.appendChild(track);
+        const btns = make('div', { style: 'display:flex;gap:6px;flex-wrap:wrap;' });
+        const add = make('button', { type: 'button', class: 'action-btn pstep-add', title: 'Add a step in the widest gap' }, '+ Step');
+        const del = make('button', { type: 'button', class: 'action-btn pstep-del', title: 'Remove the selected step' }, '− Step');
+        [add, del].forEach((b) => { b.style.cssText = 'flex:1;min-width:0;padding:4px 8px;'; btns.appendChild(b); });
+        grp.appendChild(btns);
+        const pick = colorPicker(slot === 'fg' ? 'pfgs' : 'pbgs', slot === 'fg' ? 'patternFgStep' : 'patternBgStep', 'Selected step color', 'Pick the selected step\'s color');
+        grp.appendChild(pick.group);
+        const ends = () => { const f = leaves(first())[0] || {}; return slot === 'fg' ? [f.fill || '#a305ffff', f.patternFg2 || '#38bdf8ff'] : [f.patternBg || f.fill2 || '#ffffff00', f.patternBg2 || '#bae6fdff']; };
+        const colorAt = (t) => {
+            const f = leaves(first())[0] || {}, e = ends();
+            const all = [{ o: 0, c: e[0] }].concat(cleanSteps(f[key]), [{ o: 1, c: e[1] }]);
+            return typeof sampleGradientAt === 'function' ? sampleGradientAt(all, t) : e[0];
+        };
+        const change = (fn, history) => { const list = picked(); if (!list.length) return; if (history !== false) pushHistory(false); list.forEach((o) => leaves(o).forEach((x) => { x[key] = Array.isArray(x[key]) ? x[key] : []; fn(x[key]); if (!x[key].length) delete x[key]; })); render(); };
+        const addAt = (t) => {
+            const c = colorAt(t);
+            change((st) => st.push({ o: t, c: c }));
+            const f = leaves(first())[0] || {};
+            ui.stepSel[slot] = (f[key] || []).length - 1;
+            render();
+        };
+        add.addEventListener('click', () => {
+            const f = leaves(first())[0] || {};
+            const pts = [0].concat(cleanSteps(f[key]).map((m) => m.o), [1]);
+            let best = 0.5, gap = -1;
+            for (let i = 1; i < pts.length; i++) if (pts[i] - pts[i - 1] > gap) { gap = pts[i] - pts[i - 1]; best = (pts[i] + pts[i - 1]) / 2; }
+            addAt(Math.round(best * 1000) / 1000);
+        });
+        del.addEventListener('click', () => {
+            const i = ui.stepSel[slot];
+            if (i < 0) { if (typeof showToast === 'function') showToast('Pick a step on the bar first!'); return; }
+            change((st) => st.splice(i, 1));
+            ui.stepSel[slot] = -1;
+            render();
+        });
+        track.addEventListener('click', (e) => {
+            if (e.target !== track) return;
+            const r = track.getBoundingClientRect();
+            addAt(Math.round(Math.min(0.99, Math.max(0.01, (e.clientX - r.left) / r.width)) * 1000) / 1000);
+        });
+        track.addEventListener('pointerdown', (e) => {
+            const m = e.target.closest && e.target.closest('.pstep-marker');
+            if (!m) return;
+            e.preventDefault();
+            const i = +m.dataset.i;
+            ui.stepSel[slot] = i;
+            pushHistory(false);
+            const r = track.getBoundingClientRect();
+            const move = (ev) => { const o = Math.round(Math.min(0.99, Math.max(0.01, (ev.clientX - r.left) / r.width)) * 1000) / 1000; change((st) => { if (st[i]) st[i].o = o; }, false); };
+            const up = () => { window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up); render(); };
+            window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
+            render();
+        });
+        return { group: grp, track: track, picker: pick, del: del, slot: slot };
+    }
+    function paintSteps(t, f) {
+        if (!t) return;
+        const show = (node, on) => { if (node) node.style.display = on ? '' : 'none'; };
+        const key = STEP_KEY[t.slot], list = Array.isArray(f[key]) ? f[key] : [];
+        const e = t.slot === 'fg' ? [f.fill || '#a305ffff', f.patternFg2 || '#38bdf8ff'] : [f.patternBg || f.fill2 || '#ffffff00', f.patternBg2 || '#bae6fdff'];
+        const all = [{ o: 0, c: e[0] }].concat(cleanSteps(list), [{ o: 1, c: e[1] }]);
+        // (a checkerboard under the bar shows see-through colors)
+        t.track.style.background = 'linear-gradient(to right, ' + all.map((m) => m.c + ' ' + Math.round(m.o * 1000) / 10 + '%').join(', ') + '), repeating-conic-gradient(#cbd5e1 0 25%, #ffffff 0 50%) 0 0 / 10px 10px';
+        let sel = ui.stepSel[t.slot];
+        if (sel >= list.length) sel = ui.stepSel[t.slot] = -1;
+        t.track.innerHTML = list.map((m, i) => '<button type="button" class="pstep-marker" data-i="' + i + '" title="Step ' + (i + 1) + ' (' + Math.round(m.o * 100) + '%)" aria-label="Gradient step ' + (i + 1) + '" style="position:absolute;top:50%;left:' + (m.o * 100) + '%;width:14px;height:26px;margin:-13px 0 0 -7px;padding:0;border-radius:6px;cursor:ew-resize;background:' + m.c + ';border:2px solid ' + (i === sel ? '#0ea5e9' : '#ffffff') + ';box-shadow:0 0 0 1px rgba(0,0,0,.55)' + (i === sel ? ',0 0 0 4px rgba(14,165,233,.35)' : '') + ';"></button>').join('');
+        show(t.picker.group, sel >= 0);
+        t.del.disabled = sel < 0;
+        if (sel >= 0) syncColorPopup(t.slot === 'fg' ? 'pfgs' : 'pbgs', list[sel].c, '#ffffffff');
+    }
     function gradToggle(slot) {
         const key = slot === 'fg' ? 'patternFgGrad' : 'patternBgGrad', key2 = slot === 'fg' ? 'patternFg2' : 'patternBg2', dflt = slot === 'fg' ? '#38bdf8ff' : '#bae6fdff';
         const b = make('button', { type: 'button', class: 'pgrad-btn', 'data-slot': slot });
@@ -391,7 +480,14 @@
         b.setAttribute('aria-label', b.title);
     }
     // a style value goes to every shape inside a group, too (app.js calls this when a color is picked)
-    function deep(o, prop, value) { leaves(o).forEach((x) => { x[prop] = value; }); }
+    function deep(o, prop, value) {
+        if (prop === 'patternFgStep' || prop === 'patternBgStep') {
+            const slot = prop === 'patternFgStep' ? 'fg' : 'bg', key = STEP_KEY[slot], i = ui.stepSel ? ui.stepSel[slot] : -1;
+            leaves(o).forEach((x) => { if (Array.isArray(x[key]) && x[key][i]) x[key][i].c = value; });
+            return;
+        }
+        leaves(o).forEach((x) => { x[prop] = value; });
+    }
 
     // bring the controls in line with what is selected
     function sync() {
@@ -447,6 +543,9 @@
             paintToggle(ui.fgToggle, f.patternFgGrad || ''); paintToggle(ui.bgToggle, f.patternBgGrad || '');
             show(ui.fg2.group, !!f.patternFgGrad); show(ui.fgAngleGrp, f.patternFgGrad === 'linear');
             show(ui.bg2.group, !!f.patternBgGrad); show(ui.bgAngleGrp, f.patternBgGrad === 'linear');
+            show(ui.fgSteps.group, !!f.patternFgGrad); show(ui.bgSteps.group, !!f.patternBgGrad);
+            if (f.patternFgGrad) paintSteps(ui.fgSteps, f);
+            if (f.patternBgGrad) paintSteps(ui.bgSteps, f);
             ui.fgAngle.value = f.patternFgAngle || 0; ui.fgAngleLbl.textContent = 'Lines gradient angle (' + (f.patternFgAngle || 0) + '°)';
             ui.bgAngle.value = f.patternBgAngle || 0; ui.bgAngleLbl.textContent = 'Background gradient angle (' + (f.patternBgAngle || 0) + '°)';
             const fl = $('fill-color-label'); if (fl) fl.innerText = f.patternFgGrad ? 'Lines Color 1' : 'Lines Color';

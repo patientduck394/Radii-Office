@@ -29,6 +29,80 @@ const STORE = 'zonerider_scene_v1';
 const PREFS = 'zonerider_prefs_v1';
 const LIME = 0xc5ff11, ORANGE = 0xffa63d;
 const round = (v, d = 3) => Math.round(v * 10 ** d) / 10 ** d;
+// The icons: small line drawings (SVG paths on a 24 x 24 grid; parts starting with "F:" are filled), the same on every system
+const ICONS = {
+    "move": "M12 3v18M3 12h18M12 3 9.5 5.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l-2.5 2.5",
+    "rotate": "M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5",
+    "scale": "M4 14v6h6M4 20l7-7M20 10V4h-6M20 4l-7 7",
+    "magnet": "M6 4v8a6 6 0 0 0 12 0V4h-4v8a2 2 0 0 1-4 0V4zM6 8h4M14 8h4",
+    "wire": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 3c-2.5 2.5-3.5 5.5-3.5 9s1 6.5 3.5 9M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9M3 12h18",
+    "solid": "F:M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z",
+    "material": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z|F:M12 3a9 9 0 0 1 0 18z",
+    "sun": "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8",
+    "object": "M4 4h16v16H4zM9 9h6v6H9z",
+    "shape": "M12 3l9 9-9 9-9-9z",
+    "ball": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM9 7.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z",
+    "bulb": "M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9V16h7v-2.1A6 6 0 0 0 12 3z",
+    "globe": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c3 3 3.5 15 0 18M12 3c-3 3-3.5 15 0 18",
+    "camera": "M3 8h4l2-3h6l2 3h4v12H3zM12 10a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z",
+    "video": "M3 7h12v10H3zM15 10.5l6-3.5v10l-6-3.5",
+    "film": "M4 4h16v16H4zM4 9h16M4 15h16M8 4v5M16 4v5M8 15v5M16 15v5",
+    "first": "M6 5v14|F:M19 5l-10 7 10 7z",
+    "last": "M18 5v14|F:M5 5l10 7-10 7z",
+    "play": "F:M7 4l13 8-13 8z",
+    "pause": "M8 4v16M16 4v16",
+    "key": "F:M12 4l8 8-8 8-8-8z",
+    "unkey": "M12 4l8 8-8 8-8-8z",
+    "chevRight": "M9 6l6 6-6 6",
+    "chevDown": "M6 9l6 6 6-6",
+    "eye": "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z",
+    "eyeOff": "M3 3l18 18M10.6 5.1A10 10 0 0 1 12 5c6 0 10 7 10 7a17 17 0 0 1-3 3.6M6.6 6.6C3.9 8.4 2 12 2 12s4 7 10 7a9.7 9.7 0 0 0 5.4-1.6M9.9 9.9a3 3 0 0 0 4.2 4.2",
+    "cube": "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5",
+    "sphere": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12c0 2 4 3.5 9 3.5s9-1.5 9-3.5",
+    "icosphere": "M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 3l-4 9h8zM8 12l-4 4.5M16 12l4 4.5M8 12l4 9 4-9",
+    "cylinder": "M5 6c0 1.7 3.1 3 7 3s7-1.3 7-3-3.1-3-7-3-7 1.3-7 3v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6",
+    "cone": "M12 3L5 18c0 1.7 3.1 3 7 3s7-1.3 7-3z",
+    "torus": "M12 4a9 8 0 1 0 0 16 9 8 0 0 0 0-16zM12 9.5a3.5 2.5 0 1 0 0 5 3.5 2.5 0 0 0 0-5z",
+    "torusknot": "M4.5 12c0-3 2-5 4-5 4.5 0 2.5 10 7 10 2 0 4-2 4-5s-2-5-4-5c-4.5 0-2.5 10-7 10-2 0-4-2-4-5z",
+    "plane": "M3 15l9-5 9 5-9 5z",
+    "capsule": "M8 7a4 4 0 0 1 8 0v10a4 4 0 0 1-8 0z",
+    "spot": "M8 3h8l3 9H5zM7 16l-2 4M12 16v5M17 16l2 4",
+    "empty": "M12 4v16M4 12h16M12 4l-2 2M12 4l2 2",
+    "mesh": "M12 4l9 16H3z",
+    "group": "M3 7h11v11H3zM10 3h11v11",
+    "plus": "M12 5v14M5 12h14",
+    "folder": "M3 6h6l2 2h10v11H3z",
+    "save": "M5 3h11l3 3v15H5zM8 3v5h8M8 21v-7h8v7",
+    "import": "M12 3v12M7 10l5 5 5-5M4 21h16",
+    "export": "M12 15V3M7 8l5-5 5 5M4 21h16",
+    "newtab": "M3 5h18v14H3zM3 9h18M12 12v5M9.5 14.5h5",
+    "undo": "M9 7L4 12l5 5M4 12h11a5 5 0 0 1 0 10h-3",
+    "redo": "M15 7l5 5-5 5M20 12H9a5 5 0 0 0 0 10h3",
+    "duplicate": "M8 8h12v12H8zM16 8V4H4v12h4",
+    "trash": "M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13M10 11v6M14 11v6",
+    "edit": "M12 3l9 9-9 9-9-9zM12 3v18M3 12h18",
+    "merge": "M6 4l6 6 6-6M12 10v11",
+    "smooth": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z",
+    "flat": "M12 3l8 5v8l-8 5-8-5V8z",
+    "check": "M5 12l5 5 9-11",
+    "origin": "M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zM12 2v4M12 18v4M2 12h4M18 12h4",
+    "floor": "M4 21h16M12 3v13M8 12l4 4 4-4",
+    "parent": "M6 20v-9a4 4 0 0 1 4-4h9M15 3l4 4-4 4",
+    "unparent": "M18 20v-9a4 4 0 0 0-4-4H5M9 3L5 7l4 4",
+    "gear": "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1",
+    "keyboard": "M2 6h20v12H2zM6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10",
+    "info": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v6M12 7.5v.01",
+    "home": "M3 11l9-8 9 8M5 9.5V21h14V9.5",
+    "x": "M6 6l12 12M18 6L6 18"
+};
+function ico(name, cls) {
+    const d = ICONS[name];
+    if (!d) return '';
+    const parts = d.split('|').map((p) => (p.startsWith('F:') ? '<path d="' + p.slice(2) + '" fill="currentColor" stroke="none"/>' : '<path d="' + p + '"/>')).join('');
+    return '<svg class="zi' + (cls ? ' ' + cls : '') + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + parts + '</svg>';
+}
+// buttons in the page ask for an icon with data-icon="name"
+document.querySelectorAll('[data-icon]').forEach((el) => { el.insertAdjacentHTML('afterbegin', ico(el.dataset.icon)); });
 
 /* ==================================================================
    RENDERER, SCENE, CAMERAS
@@ -95,23 +169,23 @@ let lastDrag = 0;
    PRIMITIVES
    ================================================================== */
 const PRIMS = {
-    cube: { label: 'Cube', icon: '■', params: { width: 2, height: 2, depth: 2, widthSegments: 1, heightSegments: 1, depthSegments: 1 },
+    cube: { label: 'Cube', icon: 'cube', params: { width: 2, height: 2, depth: 2, widthSegments: 1, heightSegments: 1, depthSegments: 1 },
         make: (p) => new THREE.BoxGeometry(p.width, p.height, p.depth, p.widthSegments, p.heightSegments, p.depthSegments) },
-    sphere: { label: 'UV Sphere', icon: '●', params: { radius: 1, widthSegments: 32, heightSegments: 16 },
+    sphere: { label: 'UV Sphere', icon: 'sphere', params: { radius: 1, widthSegments: 32, heightSegments: 16 },
         make: (p) => new THREE.SphereGeometry(p.radius, p.widthSegments, p.heightSegments) },
-    icosphere: { label: 'Ico Sphere', icon: '⬢', params: { radius: 1, detail: 2 },
+    icosphere: { label: 'Ico Sphere', icon: 'icosphere', params: { radius: 1, detail: 2 },
         make: (p) => new THREE.IcosahedronGeometry(p.radius, p.detail) },
-    cylinder: { label: 'Cylinder', icon: '▮', params: { radiusTop: 1, radiusBottom: 1, height: 2, radialSegments: 32, heightSegments: 1 },
+    cylinder: { label: 'Cylinder', icon: 'cylinder', params: { radiusTop: 1, radiusBottom: 1, height: 2, radialSegments: 32, heightSegments: 1 },
         make: (p) => new THREE.CylinderGeometry(p.radiusTop, p.radiusBottom, p.height, p.radialSegments, p.heightSegments) },
-    cone: { label: 'Cone', icon: '▲', params: { radius: 1, height: 2, radialSegments: 32 },
+    cone: { label: 'Cone', icon: 'cone', params: { radius: 1, height: 2, radialSegments: 32 },
         make: (p) => new THREE.ConeGeometry(p.radius, p.height, p.radialSegments) },
-    torus: { label: 'Torus', icon: '◎', params: { radius: 1, tube: 0.3, radialSegments: 16, tubularSegments: 48 },
+    torus: { label: 'Torus', icon: 'torus', params: { radius: 1, tube: 0.3, radialSegments: 16, tubularSegments: 48 },
         make: (p) => new THREE.TorusGeometry(p.radius, p.tube, p.radialSegments, p.tubularSegments) },
-    torusknot: { label: 'Torus Knot', icon: '∞', params: { radius: 1, tube: 0.3, tubularSegments: 128, radialSegments: 16, p: 2, q: 3 },
+    torusknot: { label: 'Torus Knot', icon: 'torusknot', params: { radius: 1, tube: 0.3, tubularSegments: 128, radialSegments: 16, p: 2, q: 3 },
         make: (p) => new THREE.TorusKnotGeometry(p.radius, p.tube, p.tubularSegments, p.radialSegments, p.p, p.q) },
-    plane: { label: 'Plane', icon: '▭', params: { width: 2, depth: 2, widthSegments: 1, depthSegments: 1 },
+    plane: { label: 'Plane', icon: 'plane', params: { width: 2, depth: 2, widthSegments: 1, depthSegments: 1 },
         make: (p) => new THREE.PlaneGeometry(p.width, p.depth, p.widthSegments, p.depthSegments).rotateX(-Math.PI / 2) },
-    capsule: { label: 'Capsule', icon: '⬮', params: { radius: 0.6, length: 1.2, capSegments: 8, radialSegments: 24 },
+    capsule: { label: 'Capsule', icon: 'capsule', params: { radius: 0.6, length: 1.2, capSegments: 8, radialSegments: 24 },
         make: (p) => new THREE.CapsuleGeometry(p.radius, p.length, p.capSegments, p.radialSegments) }
 };
 function cleanParam(k, v) {
@@ -803,20 +877,34 @@ function animationClips() {
     });
     return tracks.length ? [new THREE.AnimationClip('Zonerider', -1, tracks)] : [];
 }
-function exportAs(kind) {
+// While exporting: lights at their full power (the Solid view dims them) and without their hidden aim helpers
+// (a glTF light shines down its own -Z, just like Zonerider's, so Godot, Blender and others aim it the same way)
+function exportReady() {
+    rememberLights();
+    const undoList = [];
+    world.traverse((o) => {
+        if (!o.isLight) return;
+        if (o.userData.zrIntensity != null) { const was = o.intensity; o.intensity = o.userData.zrIntensity; undoList.push(() => { o.intensity = was; }); }
+        const t = o.children.find((c) => c.name === '__target');
+        if (t) { o.remove(t); undoList.push(() => { o.add(t); o.target = t; }); }
+    });
+    return () => undoList.reverse().forEach((f) => f());
+}
+async function exportAs(kind) {
     if (state.mode === 'edit') setMode('object');
     const only = state.selected.length ? state.selected : null;
-    const target = only ? (() => { const g = new THREE.Group(); g.name = 'Selection'; only.forEach((o) => g.add(o.clone())); return g; })() : world;
+    const done = exportReady();
     try {
+        const target = only ? (() => { const g = new THREE.Group(); g.name = 'Selection'; only.forEach((o) => g.add(o.clone())); return g; })() : world;
         if (kind === 'glb' || kind === 'gltf') {
-            new GLTFExporter().parse(target, (res) => {
-                if (kind === 'glb') download('scene.glb', res, 'model/gltf-binary');
-                else download('scene.gltf', JSON.stringify(res, null, 1), 'model/gltf+json');
-                toast('Exported scene.' + kind + (only ? ' (just the selection)' : '') + '!');
-            }, (err) => toast('Export failed: ' + (err && err.message || err)), { binary: kind === 'glb', animations: only ? [] : animationClips(), onlyVisible: true });
+            const res = await new GLTFExporter().parseAsync(target, { binary: kind === 'glb', animations: only ? [] : animationClips(), onlyVisible: true });
+            if (kind === 'glb') download('scene.glb', res, 'model/gltf-binary');
+            else download('scene.gltf', JSON.stringify(res, null, 1), 'model/gltf+json');
+            toast('Exported scene.' + kind + (only ? ' (just the selection)' : '') + '!');
         } else if (kind === 'obj') { download('scene.obj', new OBJExporter().parse(target), 'text/plain'); toast('Exported scene.obj!'); }
         else if (kind === 'stl') { download('scene.stl', new STLExporter().parse(target, { binary: true }), 'model/stl'); toast('Exported scene.stl!'); }
-    } catch (e) { toast('Export failed: ' + e.message); }
+    } catch (e) { toast('Export failed: ' + (e && e.message || e)); }
+    finally { done(); applyWorld(); }
 }
 $('zr-file').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) readFile(f); e.target.value = ''; });
 function pickFile(accept) { const i = $('zr-file'); i.accept = accept || '.zr,.json,.glb,.gltf,.obj,.stl'; i.click(); }
@@ -968,7 +1056,7 @@ function goFrame(f, quiet) {
 let playT = 0, playAcc = 0;
 function play(on) {
     state.playing = on === undefined ? !state.playing : on;
-    $('zr-play').textContent = state.playing ? '⏸' : '▶';
+    $('zr-play').innerHTML = ico(state.playing ? 'pause' : 'play');
     playT = performance.now(); playAcc = 0;
 }
 function drawKeys() {
@@ -1059,7 +1147,7 @@ function hint(m) { const h = $('zr-view-hint'); h.textContent = m; h.classList.t
 function dialog(title, html, buttons) {
     const back = document.createElement('div');
     back.className = 'zr-dlg-back';
-    back.innerHTML = '<div class="zr-dlg" role="dialog" aria-label="' + esc(title) + '"><header><span>' + esc(title) + '</span><button type="button" class="zr-mini" data-x>✕</button></header><div class="body">' + html + '</div><div class="foot"></div></div>';
+    back.innerHTML = '<div class="zr-dlg" role="dialog" aria-label="' + esc(title) + '"><header><span>' + esc(title) + '</span><button type="button" class="zr-mini" data-x aria-label="Close">' + ico('x') + '</button></header><div class="body">' + html + '</div><div class="foot"></div></div>';
     const foot = back.querySelector('.foot');
     return new Promise((resolve) => {
         const close = (v) => { back.remove(); document.removeEventListener('keydown', onKey, true); resolve(v); };
@@ -1079,23 +1167,23 @@ function confirmDlg(title, text, ok) { return dialog(title, '<p>' + esc(text) + 
 
 const MENUS = {
     file: () => [
-        ['New Scene', 'Ctrl N', () => newScene(), '✦'], ['Open…', 'Ctrl O', () => pickFile('.zr,.json'), '📂'], ['Save (.zr)', 'Ctrl S', saveFile, '💾'], '-',
-        ['Import glTF / GLB…', '', () => pickFile('.glb,.gltf'), '⬇'], ['Import OBJ…', '', () => pickFile('.obj'), '⬇'], ['Import STL…', '', () => pickFile('.stl'), '⬇'], '-',
-        ['Export GLB', '', () => exportAs('glb'), '⬆'], ['Export glTF', '', () => exportAs('gltf'), '⬆'], ['Export OBJ', '', () => exportAs('obj'), '⬆'], ['Export STL (3D printing)', '', () => exportAs('stl'), '⬆'], '-',
-        ['New file in a new tab', '', () => { if (window.RadiiFile) RadiiFile.open(); }, '🗂']
+        ['New Scene', 'Ctrl N', () => newScene(), 'plus'], ['Open…', 'Ctrl O', () => pickFile('.zr,.json'), 'folder'], ['Save (.zr)', 'Ctrl S', saveFile, 'save'], '-',
+        ['Import glTF / GLB…', '', () => pickFile('.glb,.gltf'), 'import'], ['Import OBJ…', '', () => pickFile('.obj'), 'import'], ['Import STL…', '', () => pickFile('.stl'), 'import'], '-',
+        ['Export GLB', '', () => exportAs('glb'), 'export'], ['Export glTF', '', () => exportAs('gltf'), 'export'], ['Export OBJ', '', () => exportAs('obj'), 'export'], ['Export STL (3D printing)', '', () => exportAs('stl'), 'export'], '-',
+        ['New file in a new tab', '', () => { if (window.RadiiFile) RadiiFile.open(); }, 'newtab']
     ],
-    edit: () => [['Undo', 'Ctrl Z', undo, '↶'], ['Redo', 'Ctrl Shift Z', redo, '↷'], '-', ['Select All', 'A', () => selectAll(true), ''], ['Select None', 'Alt A', () => selectAll(false), ''], '-', ['Duplicate', 'Shift D', duplicate, '⧉'], ['Delete', 'X', del, '🗑']],
+    edit: () => [['Undo', 'Ctrl Z', undo, 'undo'], ['Redo', 'Ctrl Shift Z', redo, 'redo'], '-', ['Select All', 'A', () => selectAll(true), ''], ['Select None', 'Alt A', () => selectAll(false), ''], '-', ['Duplicate', 'Shift D', duplicate, 'duplicate'], ['Delete', 'X', del, 'trash']],
     add: () => [['#Mesh']].concat(Object.keys(PRIMS).map((k) => [PRIMS[k].label, '', () => addPrim(k), PRIMS[k].icon]))
-        .concat(['-', ['#Light'], ['Point Light', '', () => addLight('point'), '💡'], ['Sun', '', () => addLight('sun'), '☀'], ['Spot Light', '', () => addLight('spot'), '🔦'], '-', ['Camera', '', addCamera, '🎥'], ['Empty', '', addEmpty, '✛']]),
+        .concat(['-', ['#Light'], ['Point Light', '', () => addLight('point'), 'bulb'], ['Sun', '', () => addLight('sun'), 'sun'], ['Spot Light', '', () => addLight('spot'), 'spot'], '-', ['Camera', '', addCamera, 'video'], ['Empty', '', addEmpty, 'empty']]),
     object: () => [
-        ['Move', 'G', () => setTool('translate'), '✥'], ['Rotate', 'R', () => setTool('rotate'), '⟳'], ['Scale', 'S', () => setTool('scale'), '⤢'], '-',
-        ['Edit Mode (vertices)', 'Tab', () => setMode(state.mode === 'edit' ? 'object' : 'edit'), '◇'], ['Merge Vertices', 'M', editMerge, '⊕'], '-',
-        ['Shade Smooth', '', () => setShade(true), '◐'], ['Shade Flat', '', () => setShade(false), '◆'],
-        ['Apply Transform', 'Ctrl A', applyTransform, '✓'], ['Origin to Geometry', '', originToGeometry, '⊙'], ['Drop to Floor', '', snapToFloor, '⤓'], '-',
-        ['Parent (to active)', 'Ctrl P', parentSel, '⤴'], ['Clear Parent', 'Alt P', clearParent, '⤵'], '-',
-        ['Hide', 'H', () => hideSel(true), '🙈'], ['Show Hidden', 'Alt H', () => hideSel(false), '👁'], '-',
-        ['Insert Keyframe', 'I', insertKey, '◆'], ['Delete Keyframe', 'Alt I', removeKey, '◇'], '-',
-        ['Set as Scene Camera', '', () => { if (state.active && state.active.isCamera) { state.sceneCamera = state.active.uuid; changed(); toast(state.active.name + ' is the scene camera!'); } else toast('Select a camera first!'); }, '🎥']
+        ['Move', 'G', () => setTool('translate'), 'move'], ['Rotate', 'R', () => setTool('rotate'), 'rotate'], ['Scale', 'S', () => setTool('scale'), 'scale'], '-',
+        ['Edit Mode (vertices)', 'Tab', () => setMode(state.mode === 'edit' ? 'object' : 'edit'), 'edit'], ['Merge Vertices', 'M', editMerge, 'merge'], '-',
+        ['Shade Smooth', '', () => setShade(true), 'smooth'], ['Shade Flat', '', () => setShade(false), 'flat'],
+        ['Apply Transform', 'Ctrl A', applyTransform, 'check'], ['Origin to Geometry', '', originToGeometry, 'origin'], ['Drop to Floor', '', snapToFloor, 'floor'], '-',
+        ['Parent (to active)', 'Ctrl P', parentSel, 'parent'], ['Clear Parent', 'Alt P', clearParent, 'unparent'], '-',
+        ['Hide', 'H', () => hideSel(true), 'eyeOff'], ['Show Hidden', 'Alt H', () => hideSel(false), 'eye'], '-',
+        ['Insert Keyframe', 'I', insertKey, 'key'], ['Delete Keyframe', 'Alt I', removeKey, 'unkey'], '-',
+        ['Set as Scene Camera', '', () => { if (state.active && state.active.isCamera) { state.sceneCamera = state.active.uuid; changed(); toast(state.active.name + ' is the scene camera!'); } else toast('Select a camera first!'); }, 'video']
     ],
     view: () => [
         ['Front', '1', () => view('front')], ['Right', '3', () => view('right')], ['Top', '7', () => view('top')], ['Back', 'Ctrl 1', () => view('back')], ['Left', 'Ctrl 3', () => view('left')], ['Bottom', 'Ctrl 7', () => view('bottom')], '-',
@@ -1103,8 +1191,8 @@ const MENUS = {
         ['Outliner', 'T', () => togglePanel('left')], ['Properties', 'N', () => togglePanel('right')], '-',
         ['Wireframe', 'Z', () => setShading('wire')], ['Solid', '', () => setShading('solid')], ['Material Preview', '', () => setShading('material')], ['Rendered', '', () => setShading('rendered')]
     ],
-    render: () => [['Render Image', 'F12', renderImage, '📷'], ['Render Animation (video)', 'Ctrl F12', renderAnimation, '🎞'], '-', ['Render Settings…', '', () => { setTab('render'); togglePanel('right', true); }, '⚙']],
-    help: () => [['Keyboard Shortcuts', '?', shortcuts, '⌨'], ['About Zonerider', '', about, 'ⓘ'], ['Radii Office Home', '', () => { location.href = '/'; }, '⌂']]
+    render: () => [['Render Image', 'F12', renderImage, 'camera'], ['Render Animation (video)', 'Ctrl F12', renderAnimation, 'film'], '-', ['Render Settings…', '', () => { setTab('render'); togglePanel('right', true); }, 'gear']],
+    help: () => [['Keyboard Shortcuts', '?', shortcuts, 'keyboard'], ['About Zonerider', '', about, 'info'], ['Radii Office Home', '', () => { location.href = '/'; }, 'home']]
 };
 const menuEl = $('zr-menu');
 let menuFor = null;
@@ -1116,7 +1204,7 @@ function openMenu(name, anchor) {
         if (it === '-') { menuEl.appendChild(document.createElement('hr')); return; }
         if (it[0][0] === '#') { const h = document.createElement('div'); h.className = 'h'; h.textContent = it[0].slice(1); menuEl.appendChild(h); return; }
         const b = document.createElement('button'); b.type = 'button'; b.setAttribute('role', 'menuitem');
-        b.innerHTML = '<span class="i">' + esc(it[3] || '') + '</span><span>' + esc(it[0]) + '</span>' + (it[1] ? '<span class="k">' + esc(it[1]) + '</span>' : '');
+        b.innerHTML = '<span class="i">' + ico(it[3]) + '</span><span>' + esc(it[0]) + '</span>' + (it[1] ? '<span class="k">' + esc(it[1]) + '</span>' : '');
         b.addEventListener('click', () => { closeMenu(); it[2](); });
         menuEl.appendChild(b);
     });
@@ -1159,7 +1247,7 @@ function selectAll(on) {
    OUTLINER
    ================================================================== */
 const collapsed = new Set();
-const ICON = (o) => o.isMesh ? '▲' : o.isPointLight ? '💡' : o.isDirectionalLight ? '☀' : o.isSpotLight ? '🔦' : o.isCamera ? '🎥' : o.isGroup || o.children.length ? '▣' : '✛';
+const ICON = (o) => o.isMesh ? 'mesh' : o.isPointLight ? 'bulb' : o.isDirectionalLight ? 'sun' : o.isSpotLight ? 'spot' : o.isCamera ? 'video' : o.isGroup || o.children.length ? 'group' : 'empty';
 function renderOutliner() {
     const box = $('zr-outliner');
     const rows = [];
@@ -1170,8 +1258,8 @@ function renderOutliner() {
             const sel = state.selected.includes(c), act = state.active === c;
             const cam = c.isCamera && c.uuid === state.sceneCamera;
             rows.push('<div class="zr-row' + (sel ? ' sel' : '') + (act ? ' active' : '') + '" role="treeitem" data-id="' + c.uuid + '" style="padding-left:' + (6 + depth * 14) + 'px">' +
-                '<span class="tw" data-tw>' + (kids.length ? (collapsed.has(c.uuid) ? '▸' : '▾') : '') + '</span><span class="ic">' + ICON(c) + '</span><span class="nm" title="Double-click to rename">' + esc(c.name || '(unnamed)') + (cam ? ' 🎬' : '') + '</span>' +
-                '<button type="button" class="eye' + (c.visible ? '' : ' off') + '" data-eye title="Show / hide">' + (c.visible ? '👁' : '◌') + '</button></div>');
+                '<span class="tw" data-tw>' + (kids.length ? ico(collapsed.has(c.uuid) ? 'chevRight' : 'chevDown') : '') + '</span><span class="ic">' + ico(ICON(c)) + '</span><span class="nm" title="Double-click to rename">' + esc(c.name || '(unnamed)') + (cam ? ' ' + ico('camera', 'zi-cam') : '') + '</span>' +
+                '<button type="button" class="eye' + (c.visible ? '' : ' off') + '" data-eye title="Show / hide">' + ico(c.visible ? 'eye' : 'eyeOff') + '</button></div>');
             if (kids.length && !collapsed.has(c.uuid)) walk(c, depth + 1);
         });
     };
@@ -1199,8 +1287,8 @@ $('zr-outliner').addEventListener('dblclick', (e) => {
     inp.addEventListener('blur', () => done(true));
 });
 $('zr-collapse-all').addEventListener('click', () => { world.traverse((o) => { if (o !== world && o.children.length) collapsed.add(o.uuid); }); dirty.outliner = true; });
-$('zr-quick').innerHTML = Object.keys(PRIMS).map((k) => '<button type="button" data-add="' + k + '" title="Add a ' + PRIMS[k].label + '"><span>' + PRIMS[k].icon + '</span>' + PRIMS[k].label + '</button>').join('') +
-    '<button type="button" data-add="point" title="Add a point light"><span>💡</span>Light</button><button type="button" data-add="sun" title="Add a sun"><span>☀</span>Sun</button><button type="button" data-add="camera" title="Add a camera"><span>🎥</span>Camera</button>';
+$('zr-quick').innerHTML = Object.keys(PRIMS).map((k) => '<button type="button" data-add="' + k + '" title="Add a ' + PRIMS[k].label + '"><span>' + ico(PRIMS[k].icon) + '</span>' + PRIMS[k].label + '</button>').join('') +
+    '<button type="button" data-add="point" title="Add a point light"><span>' + ico('bulb') + '</span>Light</button><button type="button" data-add="sun" title="Add a sun"><span>' + ico('sun') + '</span>Sun</button><button type="button" data-add="camera" title="Add a camera"><span>' + ico('video') + '</span>Camera</button>';
 $('zr-quick').addEventListener('click', (e) => {
     const b = e.target.closest('[data-add]'); if (!b) return;
     if (state.mode === 'edit') setMode('object');
@@ -1242,12 +1330,12 @@ function renderProps() {
         if (!o) h = none;
         else {
             const r = o.rotation;
-            h = '<h3>' + esc(ICON(o)) + ' ' + esc(o.name) + '</h3>' + field('Name', '<input type="text" data-bind="name" value="' + esc(o.name) + '">') +
+            h = '<h3>' + ico(ICON(o)) + ' ' + esc(o.name) + '</h3>' + field('Name', '<input type="text" data-bind="name" value="' + esc(o.name) + '">') +
                 vecRow('Location', 'position', o.position.toArray()) + vecRow('Rotation °', 'rotation', [r.x / DEG, r.y / DEG, r.z / DEG], 5) + vecRow('Scale', 'scale', o.scale.toArray()) +
                 '<label class="zr-check"><input type="checkbox" data-bind="visible"' + (o.visible ? ' checked' : '') + '> Visible</label>' +
                 (o.isMesh ? '<label class="zr-check"><input type="checkbox" data-bind="castShadow"' + (o.castShadow ? ' checked' : '') + '> Casts shadows</label><label class="zr-check"><input type="checkbox" data-bind="receiveShadow"' + (o.receiveShadow ? ' checked' : '') + '> Receives shadows</label>' : '') +
-                (o.isCamera ? '<h3>Camera</h3>' + rangeRow('Field of view', 'fov', o.fov, 10, 120, 1) + '<div class="zr-btnrow"><button type="button" class="zr-btn" data-act="scenecam">' + (o.uuid === state.sceneCamera ? '✓ Scene camera' : 'Make scene camera') + '</button><button type="button" class="zr-btn" data-act="lookthrough">Look through (0)</button></div>' : '') +
-                '<h3>Animation</h3><div class="zr-btnrow"><button type="button" class="zr-btn" data-act="key">◆ Insert keyframe (I)</button><button type="button" class="zr-btn" data-act="clearkeys">Clear all keys</button></div>' +
+                (o.isCamera ? '<h3>Camera</h3>' + rangeRow('Field of view', 'fov', o.fov, 10, 120, 1) + '<div class="zr-btnrow"><button type="button" class="zr-btn" data-act="scenecam">' + (o.uuid === state.sceneCamera ? ico('check') + ' Scene camera' : 'Make scene camera') + '</button><button type="button" class="zr-btn" data-act="lookthrough">Look through (0)</button></div>' : '') +
+                '<h3>Animation</h3><div class="zr-btnrow"><button type="button" class="zr-btn" data-act="key">' + ico('key') + ' Insert keyframe (I)</button><button type="button" class="zr-btn" data-act="clearkeys">Clear all keys</button></div>' +
                 '<p class="zr-note">' + ((o.userData.zr && o.userData.zr.keys || []).length) + ' keyframe(s)' + (o.parent && o.parent !== world ? ', parent: ' + esc(o.parent.name) : '') + '!</p>';
         }
     } else if (state.tab === 'shape') {
@@ -1277,7 +1365,7 @@ function renderProps() {
         if (!l) h = none.replace('something', 'a light');
         else h = '<h3>' + esc(l.name) + '</h3>' + colorRow('Color', 'l.color', hex(l.color)) + rangeRow('Power', 'l.power', lightPower(l), 0, l.isDirectionalLight ? 20 : 500, l.isDirectionalLight ? 0.1 : 1) +
             (l.isSpotLight ? rangeRow('Cone angle °', 'l.angle', round(l.angle / DEG, 1), 1, 89, 1) + rangeRow('Soft edge', 'l.penumbra', l.penumbra, 0, 1, 0.01) : '') +
-            (l.isPointLight || l.isSpotLight ? rangeRow('Range (0 = ∞)', 'l.distance', l.distance, 0, 200, 0.5) : '') +
+            (l.isPointLight || l.isSpotLight ? rangeRow('Range (0 = no limit)', 'l.distance', l.distance, 0, 200, 0.5) : '') +
             '<label class="zr-check"><input type="checkbox" data-bind="l.castShadow"' + (l.castShadow ? ' checked' : '') + '> Casts shadows</label><p class="zr-note">Lights you add light the Rendered view (Z)! Material Preview adds a soft studio light!</p>';
     } else if (state.tab === 'world') {
         const W = state.worldSet;
@@ -1290,7 +1378,7 @@ function renderProps() {
         h = '<h3>Output</h3>' + field('Width', '<input type="number" data-bind="r.w" min="16" max="8192" value="' + R.w + '">') + field('Height', '<input type="number" data-bind="r.h" min="16" max="8192" value="' + R.h + '">') +
             '<div class="zr-btnrow">' + [['HD', 1280, 720], ['Full HD', 1920, 1080], ['4K', 3840, 2160], ['Square', 1080, 1080], ['Phone', 1080, 1920]].map((p) => '<button type="button" class="zr-btn" data-res="' + p[1] + 'x' + p[2] + '">' + p[0] + '</button>').join('') + '</div>' +
             '<label class="zr-check"><input type="checkbox" data-bind="r.shadows"' + (R.shadows ? ' checked' : '') + '> Shadows</label><label class="zr-check"><input type="checkbox" data-bind="r.transparent"' + (R.transparent ? ' checked' : '') + '> Transparent background (PNG)</label>' +
-            '<p class="zr-note">Camera: ' + (c ? esc(c.name) : 'none, so the viewport is used') + '!</p><div class="zr-btnrow"><button type="button" class="zr-btn primary" data-act="render">📷 Render Image (F12)</button><button type="button" class="zr-btn" data-act="renderanim">🎞 Render Animation</button></div>';
+            '<p class="zr-note">Camera: ' + (c ? esc(c.name) : 'none, so the viewport is used') + '!</p><div class="zr-btnrow"><button type="button" class="zr-btn primary" data-act="render">' + ico('camera') + ' Render Image (F12)</button><button type="button" class="zr-btn" data-act="renderanim">' + ico('film') + ' Render Animation</button></div>';
     }
     el.innerHTML = h;
 }
