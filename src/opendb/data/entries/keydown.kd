@@ -40,7 +40,7 @@ Start a line with one of these and a space:
 
 ## Gel highlights
 
-Six of the Annotator's tools, as tags: `#R#text##` is a highlight strip, `#R#text#_` a gel underline, `#R#text#~` a gel strike, `#R#text#=` a glossy Gel Box, `#R#text#]` Corner Brackets and `#R#text#-` a Gel Select. They come in 13 colors:
+Seven of the Annotator's tools, as tags: `#R#text##` is a highlight strip, `#R#text#_` a gel underline, `#R#text#~` a gel strike, `#R#text#=` a glossy Gel Box, `#R#text#]` Corner Brackets, `#R#text#-` a Gel Select and `#R#text#!` Color Ink (the words written in the color). They come in 13 colors:
 
 * `#R#` red: #R#highlight## #R#underline#_ #R#strike#~ #R#box#= #R#brackets#] #R#select#-
 * `#O#` orange: #O#highlight## #O#underline#_ #O#strike#~ #O#box#= #O#brackets#] #O#select#-

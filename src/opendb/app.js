@@ -336,7 +336,7 @@
         const cats = (list) => list.map(([name, items]) => ({ name, items })).filter((c) => c.items.length);
         return [
             { name: 'Annotate styles', cats: cats([['Gel Highlights  #color#text##', ends('##')], ['Gel Underlines  #color#text#_', ends('#_')], ['Gel Strikes  #color#text#~', ends('#~')],
-                ['Gel Boxes  #color#text#=', ends('#=')], ['Corner Brackets  #color#text#]', ends('#]')], ['Gel Selects  #color#text#-', ends('#-')]]) },
+                ['Gel Boxes  #color#text#=', ends('#=')], ['Corner Brackets  #color#text#]', ends('#]')], ['Gel Selects  #color#text#-', ends('#-')], ['Color Inks  #color#text#!', ends('#!')]]) },
             { name: 'Gel Orb cousins', cats: cats([['Gel Beacons  =+color+=text=+color+=', cls(/^gel-beacon-chip /)]]) },
             { name: 'Bubble Chip cousins', cats: cats([['Bubble Chips  #color#text#', cls(/^gel-bubble-chip /)], ['Gloss Pills  %color%text%', cls(/^gel-pill-chip /)], ['Gel Flags  #%color%text%', cls(/^gel-flag-chip /)],
                 ['Gel Tabs  #^color^text^', cls(/^gel-tab-chip /)], ['Gel Drops  #+color+text+', cls(/^gel-drop-chip /)], ['Gel Splits  #:color:text:', cls(/^gel-split-chip /)],

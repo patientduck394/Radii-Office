@@ -856,6 +856,7 @@ if (canvas) {
                 { open: '#' + k + '#', close: '#=', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-bx' },
                 { open: '#' + k + '#', close: '#]', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-cb' },
                 { open: '#' + k + '#', close: '#-', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-sl' },
+                { open: '#' + k + '#', close: '#!', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-ink' },
             ]),
             { open: '=Y=',  close: '=Y=',  className: 'gel-orb gel-y' },
             { open: '=R=',  close: '=R=',  className: 'gel-orb gel-r' },

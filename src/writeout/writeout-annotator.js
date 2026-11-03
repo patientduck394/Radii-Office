@@ -25,7 +25,7 @@
         ['lime', '#84cc16', '#65a30d'], ['green', '#10b981', '#059669'], ['turquoise', '#30e5cd', '#26b1a5'], ['teal', '#06b6d4', '#0891b2'],
         ['cyan', '#30d3e5', '#26a3b1'], ['blue', '#3b82f6', '#2563eb'], ['purple', '#a855f7', '#9333ea'], ['pink', '#ec4899', '#db2777'], ['slate', '#b4b4b4', '#6f6f6f']
     ];
-    const BITBOOK = { strip: '', ul: ' an-s-ul', st: ' an-s-st' };
+    const BITBOOK = { strip: '', ul: ' an-s-ul', st: ' an-s-st', ink: ' an-s-ink' };
     function classFor(pen, color) { return pen in BITBOOK ? 'an-hl an-hl-' + color + BITBOOK[pen] : 'wa-hl wa-' + pen + ' an-hl-' + color; }
     const MARKS = 'mark.wa-hl, mark.an-hl';
     const state = Object.assign({ pen: 'strip', color: 'yellow' }, (function () { try { return JSON.parse(localStorage.getItem('writeout_annotator') || '{}') || {}; } catch (e) { return {}; } })());
@@ -42,7 +42,7 @@
         'mark.wa-glow{text-shadow:0 0 .25em var(--hl-c),0 0 .6em color-mix(in srgb,var(--hl-c) 70%,transparent)}',
         // Lasso: a hand-drawn dashed loop around the words
         'mark.wa-lasso{border:2px dashed var(--hl-edge);border-radius:999px;padding:0 .35em;margin:0 -.35em}',
-        // Color Ink: the words themselves are written in the color
+        // Color Ink is a Keydown style now (#R#text#!, mark.an-s-ink in annotate-hl.css); this rule only styles marks made before that
         'mark.wa-ink{color:var(--hl-edge);font-weight:700}',
         'mark.wa-hl[data-note],mark.an-hl[data-note]{cursor:help}',
         'mark.wa-hl[data-note]::after,mark.an-hl[data-note]::after{content:"✎";font-size:.6em;vertical-align:super;margin-left:.1em;color:var(--hl-edge);font-weight:800}',
@@ -195,7 +195,7 @@
         const box = document.createElement('div');
         box.innerHTML = '<div class="wa-list">' + groups.map(function (g, i) {
             const cl = ' ' + g.cls + ' ';
-            const penId = / wa-hl /.test(cl) ? ((cl.match(/ wa-(marker|glow|lasso|ink) /) || [])[1] || 'marker') : / an-s-ul /.test(cl) ? 'ul' : / an-s-st /.test(cl) ? 'st' : 'strip';
+            const penId = / wa-hl /.test(cl) ? ((cl.match(/ wa-(marker|glow|lasso|ink) /) || [])[1] || 'marker') : / an-s-ul /.test(cl) ? 'ul' : / an-s-st /.test(cl) ? 'st' : / an-s-ink /.test(cl) ? 'ink' : 'strip';
             const pen = (PENS.find(function (p) { return p[0] === penId; }) || ['', 'Highlight'])[1];
             const col = ((cl.match(/ an-hl-([a-z]+) /) || [])[1]) || 'yellow';
             return '<button type="button" class="wa-item wa-c-' + col + '" data-i="' + i + '"><span class="wa-swatch"></span><span><b>' + esc(g.text.slice(0, 120)) + (g.text.length > 120 ? '…' : '') + '</b><br><small>' + esc(pen + ' · ' + col) + (g.note ? ' · ✎ ' + esc(g.note.slice(0, 80)) : '') + '</small></span></button>';
