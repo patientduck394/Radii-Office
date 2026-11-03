@@ -305,17 +305,11 @@
         try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {}
         try { if (typeof kdRenderOutline === 'function') kdRenderOutline(); } catch (e) {}
     }
-    function unformatDoc() {
-        if (!window.kdDoc || !kdCanvas()) return;
-        const n = kdDoc.unformat(kdCanvas());
-        kdAfterChange();
-        OS.toast(n ? 'Un-formatted ' + n + ' piece' + (n === 1 ? '' : 's') + '! Fix any mistakes, then press Re-format!' : 'There is no Keydown formatting on this page!');
-    }
-    // Re-format formats EVERY page tab: the open one on screen, the others off-screen, saved back into their tabs!
-    function reformatOtherPages() {
-        const out = { pages: 0, problems: [] };
-        if (typeof kdTabs === 'undefined' || !Array.isArray(kdTabs) || typeof kdActiveTab !== 'function') return out;
-        const act = kdActiveTab();
+    // Un-format, like Re-format, takes in every page tab (the others off-screen, saved back into their tabs)
+    function eachOtherPage(fn) {
+        let changed = 0, total = 0;
+        if (typeof kdTabs === 'undefined' || !Array.isArray(kdTabs) || typeof kdActiveTab !== 'function') return { pages: 0, total: 0, problems: [] };
+        const act = kdActiveTab(), problems = [];
         const box = document.createElement('div');
         box.setAttribute('contenteditable', 'false');
         box.setAttribute('aria-hidden', 'true');
@@ -325,17 +319,27 @@
             kdTabs.forEach(function (t) {
                 if (!t || t === act || !t.html) return;
                 box.innerHTML = t.html;
-                const rr = kdDoc.reformat(box);
-                const html = box.innerHTML;
-                if (html !== t.html) { t.html = html; out.pages++; }
-                rr.problems.forEach(function (p) { out.problems.push({ tag: p.tag, line: p.line, page: t.name }); });
+                const r = fn(box, t);
+                if (typeof r === 'number') total += r;
+                else if (r && r.problems) r.problems.forEach(function (p) { problems.push({ tag: p.tag, line: p.line, page: t.name }); });
+                if (box.innerHTML !== t.html) { t.html = box.innerHTML; changed++; }
             });
         } catch (e) {}
         box.remove();
-        if (out.pages) { try { kdSaveTabs(); } catch (e) {} }
+        if (changed) { try { kdSaveTabs(); } catch (e) {} }
         try { if (typeof kdRenderTabs === 'function') kdRenderTabs(); } catch (e) {}
-        return out;
+        return { pages: changed, total: total, problems: problems };
     }
+    function unformatDoc() {
+        if (!window.kdDoc || !kdCanvas()) return;
+        const others = eachOtherPage(function (box) { return kdDoc.unformat(box); });
+        const n = kdDoc.unformat(kdCanvas()) + others.total;
+        kdAfterChange();
+        const many = typeof kdTabs !== 'undefined' && Array.isArray(kdTabs) && kdTabs.length > 1;
+        OS.toast(n ? 'Un-formatted ' + n + ' piece' + (n === 1 ? '' : 's') + (many ? ' on all ' + kdTabs.length + ' pages' : '') + '! Fix any mistakes, then press Re-format!' : 'There is no Keydown formatting ' + (many ? 'on any page' : 'on this page') + '!');
+    }
+    // Re-format formats EVERY page tab: the open one on screen, the others off-screen, saved back into their tabs!
+    function reformatOtherPages() { return eachOtherPage(function (box) { return kdDoc.reformat(box); }); }
     function reformatDoc() {
         if (!window.kdDoc || !kdCanvas()) return;
         // the other pages first, so the red underlines that stay on screen belong to the open page

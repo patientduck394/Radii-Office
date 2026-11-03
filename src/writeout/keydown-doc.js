@@ -499,7 +499,9 @@
         // duplex chips come back as ~DH-B~one|two|three~
         if (d && el.classList.contains('aero-duplex-input-chassis')) return d[0] + Array.from(el.children).map((b) => b.textContent.replace(/\u200B/g, '').trim()).join('|') + d[1];
         if (d && d[2] === 'span') {
-            const label = el.getAttribute('data-label') || (el.querySelector('span') && !/^(gel-|aero-tag|spark|liquid|glossy|cyber|embossed)/.test(d[3]) ? el.querySelector('span').textContent : el.textContent);
+            // (math, bold, highlights... inside a chip keep their own tags, so un-formatting never loses an equation)
+            const rich = !el.getAttribute('data-label') && el.querySelector('.kd-math, mark.an-hl, strong, b, em, i, code, .kd-esc');
+            const label = rich ? Array.from(el.childNodes).map(inlineText).join('') : el.getAttribute('data-label') || (el.querySelector('span') && !/^(gel-|aero-tag|spark|liquid|glossy|cyber|embossed)/.test(d[3]) ? el.querySelector('span').textContent : el.textContent);
             return d[0] + String(label).replace(/​/g, '').trim() + d[1];
         }
         // the toolbar's colors, fonts, sizes and weights: [words]{color=#dc2626 font="Georgia"} (line by line, since a style never spans lines)
@@ -1064,6 +1066,8 @@
             t.parentNode.replaceChild(tpl.content, t);
             changed = true;
         });
+        // tags cut apart by spans ("*#TU(" in one piece, "tensor product)*" in another): the whole line, in one go
+        if (!lineEl2 && block !== canvas && !cell && /^(DIV|P|LI|H[1-6]|BLOCKQUOTE)$/.test(block.tagName) && rebuildLine(block, canvas, fencedTexts(canvas))) changed = true;
         if (!changed && !lineEl2) return false;
         // the caret goes after the line's last piece (outside any new chip), ready for the new line;
         // a whole block (a panel, a picture, centered math) gets the caret right after it
@@ -1254,6 +1258,57 @@
         });
         return out;
     }
+    // The line as Keydown text: its own text as typed, plain spans read through, formatted pieces (bold, chips, math,
+    // links, colors...) written back as their tags. null when the line holds something that has no Keydown form.
+    function lineKeydown(el, root, noStyles) {
+        let out = '';
+        for (const n of Array.from(el.childNodes)) {
+            if (n.nodeType === 3) { out += n.nodeValue; continue; }
+            if (n.nodeType !== 1) continue;
+            const t = n.tagName;
+            if (t === 'BR') { out += '\n'; continue; }
+            if (n.classList.contains('kd-esc')) { out += '\\' + n.textContent; continue; }
+            // (a span with no class and no Keydown-able style, like the leftovers of a paste, is just its text)
+            const plain = (t === 'SPAN' || t === 'FONT') && !n.className && !styleAttrs(n) && Array.from(n.attributes).every((x) => /^(style|dir|lang|class)$/.test(x.name));
+            if (plain) { const inner = lineKeydown(n, root, noStyles); if (inner === null) return null; out += inner; continue; }
+            if (t === 'SPAN' || t === 'FONT') {
+                if (styleAttrs(n) && !n.className) { const inner = lineKeydown(n, root, noStyles); if (inner === null) return null; if (noStyles) { out += inner; continue; } out += inner.split('\n').map((p) => (/[^\s]/.test(p) ? '[' + p + ']' + styleAttrs(n) : p)).join('\n'); continue; }
+            }
+            if (isKeydownInline(n, root)) { out += inlineText(n); continue; }
+            return null;
+        }
+        return out;
+    }
+    function rebuildCutLines(root) {
+        let n = 0;
+        const fenced = fencedTexts(root);
+        Array.from(root.querySelectorAll('div, p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th')).forEach((b) => { if (rebuildLine(b, root, fenced)) n++; });
+        return n;
+    }
+    function rebuildLine(b, root, fenced) {
+        {
+            if (!root.contains(b) || !b.children.length || b.querySelector('div, p, li, ul, ol, table, h1, h2, h3, h4, h5, h6, blockquote, pre')) return;
+            if (b.closest('pre, code, .kd-math, .kd-tpl, figure') || isProtected(b, root)) return;
+            if (Array.from(b.querySelectorAll('*')).some((x) => x.tagName !== 'BR' && !x.closest('.kd-math') && isProtected(x, root))) return;
+            const w = document.createTreeWalker(b, NodeFilter.SHOW_TEXT);
+            for (let t = w.nextNode(); t; t = w.nextNode()) if (fenced.has(t)) return;
+            const before = b.textContent.replace(/[\u200B\s]/g, '').length;
+            // (first keeping the toolbar's colors; when a colored piece cuts a tag in two, once more without them)
+            let tpl = null;
+            for (const noStyles of [false, true]) {
+                const src = lineKeydown(b, root, noStyles);
+                if (src === null || !/[#*=~`&$@%^+:;!\[{]/.test(src)) return;
+                const t2 = document.createElement('template');
+                t2.innerHTML = inline(src, { notes: {} });
+                // only when the rebuild actually turned some tags into formatting (tag characters were used up)
+                if (t2.content.textContent.replace(/[\u200B\s]/g, '').length < before) { tpl = t2; break; }
+            }
+            if (!tpl) return;
+            while (b.firstChild) b.firstChild.remove();
+            b.appendChild(tpl.content);
+            return true;
+        }
+    }
     function lineToBlock(b) {
         const text = b.textContent.replace(/​/g, '');
         let m;
@@ -1385,7 +1440,7 @@
     }
 
     // Re-format: format the whole document again, then check it for tags that could not be formatted
-    const LEFTOVER = /@(?:[a-z0-9]+)(?:-[1-5])?@(?=\S)|!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|#([\^+:;])(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\1|%(?:1\d|20|[1-9])%(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])%|\^\^(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\^(?!\^)|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
+    const LEFTOVER = /@(?:[a-z0-9]+)(?:-[1-5])?@(?=\S)|!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|#([\^+:;])(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\1|%(?:1\d|20|[1-9])%(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])%|\^\^(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\^(?!\^)|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|#(?:GL|TU|PR|PK|SL|[ROYLGTCB])\(|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
     function reformat(root) {
         let n = 0;
         root.normalize();
@@ -1410,6 +1465,9 @@
             n += tpl.content.querySelectorAll('*').length ? 1 : 0;
             t.parentNode.replaceChild(tpl.content, t);
         });
+        // a line whose tags are cut apart by spans (pasted or recolored text: "*#TU(" in one piece, "tensor product)*" in
+        // another) never formats piece by piece: read the whole line back as Keydown and format it in one go
+        n += rebuildCutLines(root);
         return { formatted: n, problems: checkKeydown(root) };
     }
     // The check: tags still sitting in the text after formatting are mistakes (a missing closing tag, a typo...)
