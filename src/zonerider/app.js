@@ -1464,9 +1464,7 @@ function renderProps() {
         const col = COLLECTIONS.find((c) => c.id === state.fxCollection) || COLLECTIONS[0];
         h = '<h3>' + ico('sparkle') + ' Effect presets</h3><div class="zr-colls">' + COLLECTIONS.map((c) => '<button type="button" class="zr-coll' + (c === col ? ' on' : '') + '" data-coll="' + c.id + '">' + esc(c.name) + '</button>').join('') + '</div>' +
             '<div class="zr-presets">' + col.presets.map((p, i) => '<button type="button" class="zr-preset" data-preset-fx="' + i + '" title="' + esc(p.name) + '"><img alt="" src="' + presetThumb(col.id, i) + '"><span>' + esc(p.name) + '</span></button>').join('') + '</div>' +
-            '<label class="zr-check"><input type="checkbox" data-bind="x.fxApplyMat"' + (state.fxApplyMat ? ' checked' : '') + '> Material (for the selected objects)</label>' +
-            '<label class="zr-check"><input type="checkbox" data-bind="x.fxApplyScene"' + (state.fxApplyScene ? ' checked' : '') + '> Scene look (sky, mist, light color, screen effects)</label>' +
-            '<p class="zr-note">' + (state.selected.some((o) => o.isMesh || o.children.length) ? 'Click a look to apply it!' : 'Select an object to give it the material too!') + ' Ctrl+Z undoes it!</p>';
+            '<p class="zr-note">' + (state.selected.some((o) => o.isMesh || o.children.length) ? 'Click a look to give the selected objects its material!' : 'Select an object, then click a look to give it that material!') + ' Your sky, lights and screen effects stay as they are (the World tab has those). Ctrl+Z undoes it!</p>';
     } else if (state.tab === 'render') {
         const R = state.renderSet, c = sceneCameraObj();
         h = '<h3>Output</h3>' + field('Width', '<input type="number" data-bind="r.w" min="16" max="8192" value="' + R.w + '">') + field('Height', '<input type="number" data-bind="r.h" min="16" max="8192" value="' + R.h + '">') +
@@ -1596,24 +1594,23 @@ function setMaterial(m, P) {
     }
     m.needsUpdate = true;
 }
+// A preset gives the selected objects its MATERIAL only: your sky, mist, lights and screen effects stay as they are
+// (the preview still shows the look in its own little scene)
 function applyPreset(colId, i) {
     const col = COLLECTIONS.find((c) => c.id === colId), p = col && col.presets[i];
     if (!p) return;
+    const meshes = [];
+    state.selected.forEach((o) => o.traverse((x) => { if (x.isMesh && !Array.isArray(x.material)) meshes.push(x); }));
+    if (!meshes.length) { toast('Select an object first, then pick a look for it!'); return; }
     commit();
-    let n = 0;
-    if (state.fxApplyMat) state.selected.forEach((o) => o.traverse((x) => {
-        if (!x.isMesh || Array.isArray(x.material)) return;
+    meshes.forEach((x) => {
         if (!x.material.isMeshPhysicalMaterial) x.material = newMaterial();
-        setMaterial(x.material, p.mat); n++;
-    }));
-    if (state.fxApplyScene) {
-        Object.assign(state.worldSet, p.world);
-        state.fxSet = Object.assign({}, FX_DEFAULTS, p.fx);
-        if (p.light) world.traverse((o) => { if (o.isLight) o.color.set(p.light); });
-        if (state.shading !== 'rendered') setShading('rendered');
-    }
+        setMaterial(x.material, p.mat);
+    });
+    // (Solid and Wire hide materials, so the viewport switches to Material Preview to show it)
+    if (state.shading === 'solid' || state.shading === 'wire') setShading('material');
     changed();
-    toast(p.name + (n ? ' on ' + n + ' object' + (n === 1 ? '' : 's') : '') + (state.fxApplyScene ? ', with its scene look' : '') + '!');
+    toast(p.name + ' on ' + meshes.length + ' object' + (meshes.length === 1 ? '' : 's') + '!');
 }
 const thumbCache = new Map();
 let thumbKit = null;

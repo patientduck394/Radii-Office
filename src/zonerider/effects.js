@@ -1,7 +1,7 @@
 /* =====================================================================
    Zonerider effect presets: 10 collections of 5 looks each!
-   A preset sets the selected objects' MATERIAL and the scene's LOOK (sky, mist, reflections, light color)
-   and its screen EFFECTS (glow, exposure, color grading, vignette), all in one click.
+   A preset gives the selected objects its MATERIAL. Its world, light and fx below only dress its preview
+   thumbnail (the sky, mist, light color and screen effects it was designed with); your scene keeps its own.
 
    mat:   color, metalness, roughness, clearcoat, opacity, transmission (glass), ior, thickness,
           iridescence (soap-bubble sheen), sheen (velvet), emissive + emissiveIntensity (glow)
