@@ -34,6 +34,7 @@ places =
     , Place "phosphor" "Phosphor" "Messaging"
     , Place "hexa" "Hexa" "Calendar"
     , Place "taskra" "Taskra" "To-dos"
+    , Place "zonerider" "Zonerider" "3D editor"
     , Place "antimony" "Antimony" "Live posts"
     , Place "waterflow" "Waterflow" "Note workspace"
     , Place "products" "Products" "Every app"

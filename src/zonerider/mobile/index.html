@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" data-os-phone>
+<head>
+    <!-- Made by scripts/build_mobile.mjs from /zonerider/index.html: edit that page, not this one! -->
+    <base href="../">
+    <script>
+    (function () {
+        // remember that this phone uses the New style for zonerider
+        try { localStorage.setItem('radii-mobile-style-zonerider', 'new'); } catch (e) {}
+        // with <base>, a link like href="#/e/qubit" would jump to the desktop page: keep it on this page
+        document.addEventListener('click', function (e) {
+            var a = e.target && e.target.closest && e.target.closest('a[href^="#"]');
+            if (!a || e.defaultPrevented || a.target) return;
+            var h = a.getAttribute('href');
+            if (!h || h.length < 2) return;
+            e.preventDefault();
+            location.hash = h.slice(1);
+        });
+    })();
+    </script>
+    <script src="radii-file.js?v=20261042"></script>
+    <script>RadiiFile.scope(/^zonerider_scene/);</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Zonerider - Radii Office</title>
+    <meta name="description" content="Zonerider: a 3D editor in your browser. Model with primitives and vertices, light, animate with keyframes, render, and export glTF, OBJ and STL!">
+    <meta name="theme-color" content="#c5ff11">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="/zonerider/favicon-96.png">
+    <link rel="apple-touch-icon" href="/zonerider/apple-touch-icon.png">
+    <link rel="stylesheet" href="style.css?v=20261103b">
+    <script src="/offline.js?v=20261132g" defer></script>
+    <script src="/phone-drawer.js?v=20261201k" defer></script>
+    <script type="importmap">
+    { "imports": { "three": "./vendor/three.module.min.js", "three/addons/": "./vendor/addons/" } }
+    </script>
+</head>
+<body>
+    <div class="zr-app" id="zr-app">
+        <!-- Menu bar -->
+        <header class="zr-top">
+            <a class="zr-brand" href="/" title="Radii Office home"><img src="favicon.svg" alt="" width="22" height="22"><b>Zonerider</b></a>
+            <nav class="zr-menus" id="zr-menus" aria-label="Menus">
+                <button type="button" data-menu="file">File</button>
+                <button type="button" data-menu="edit">Edit</button>
+                <button type="button" data-menu="add">Add</button>
+                <button type="button" data-menu="object">Object</button>
+                <button type="button" data-menu="view">View</button>
+                <button type="button" data-menu="render">Render</button>
+                <button type="button" data-menu="help">Help</button>
+            </nav>
+            <div class="zr-seg" id="zr-mode" role="group" aria-label="Mode">
+                <button type="button" data-mode="object" aria-pressed="true" title="Object Mode (Tab)">Object</button>
+                <button type="button" data-mode="edit" title="Edit Mode: move vertices (Tab)">Edit</button>
+            </div>
+            <div class="zr-seg" id="zr-tools" role="group" aria-label="Transform tool">
+                <button type="button" data-tool="translate" aria-pressed="true" title="Move (G)">✥ Move</button>
+                <button type="button" data-tool="rotate" title="Rotate (R)">⟳ Rotate</button>
+                <button type="button" data-tool="scale" title="Scale (S)">⤢ Scale</button>
+            </div>
+            <div class="zr-seg" id="zr-space" role="group" aria-label="Transform space">
+                <button type="button" data-space="world" aria-pressed="true" title="Global axes">Global</button>
+                <button type="button" data-space="local" title="The object's own axes">Local</button>
+            </div>
+            <button type="button" class="zr-toggle" id="zr-snap" aria-pressed="false" title="Snap: move in 0.25 steps, rotate in 15° steps, scale in 0.1 steps (hold Ctrl while dragging to snap once)">🧲 Snap</button>
+            <span class="zr-spacer"></span>
+            <div class="zr-seg" id="zr-shading" role="group" aria-label="Viewport shading (Z)">
+                <button type="button" data-shade="wire" title="Wireframe">◯ Wire</button>
+                <button type="button" data-shade="solid" aria-pressed="true" title="Solid">● Solid</button>
+                <button type="button" data-shade="material" title="Material Preview">◐ Material</button>
+                <button type="button" data-shade="rendered" title="Rendered: your lights and shadows">☀ Rendered</button>
+            </div>
+        </header>
+
+        <!-- Outliner -->
+        <aside class="zr-left" id="zr-left">
+            <div class="zr-panel-head">Outliner <button type="button" class="zr-mini" id="zr-collapse-all" title="Collapse all">▸</button></div>
+            <div class="zr-outliner" id="zr-outliner" role="tree" aria-label="Scene objects"></div>
+            <div class="zr-panel-head">Add</div>
+            <div class="zr-quick" id="zr-quick"></div>
+        </aside>
+
+        <!-- Viewport -->
+        <main class="zr-view" id="zr-view">
+            <canvas id="zr-canvas" tabindex="0" aria-label="3D viewport"></canvas>
+            <canvas id="zr-gizmo" width="120" height="120" title="Click an axis to look along it"></canvas>
+            <div class="zr-view-info" id="zr-view-info">User Perspective</div>
+            <div class="zr-view-hint" id="zr-view-hint"></div>
+            <div class="zr-drop" id="zr-drop">Drop a .glb, .gltf, .obj, .stl or .zr file to bring it in!</div>
+        </main>
+
+        <!-- Properties -->
+        <aside class="zr-right" id="zr-right">
+            <div class="zr-tabs" id="zr-tabs" role="tablist">
+                <button type="button" data-tab="object" aria-selected="true" title="Object">▣</button>
+                <button type="button" data-tab="shape" title="Shape">◆</button>
+                <button type="button" data-tab="material" title="Material">◉</button>
+                <button type="button" data-tab="light" title="Light">💡</button>
+                <button type="button" data-tab="world" title="World">🌐</button>
+                <button type="button" data-tab="render" title="Render">📷</button>
+            </div>
+            <div class="zr-props" id="zr-props"></div>
+        </aside>
+
+        <!-- Timeline -->
+        <footer class="zr-bottom">
+            <div class="zr-timeline" id="zr-timeline">
+                <button type="button" class="zr-mini" id="zr-first" title="First frame (Shift+←)">⏮</button>
+                <button type="button" class="zr-mini" id="zr-play" title="Play / pause (Space)">▶</button>
+                <button type="button" class="zr-mini" id="zr-last" title="Last frame (Shift+→)">⏭</button>
+                <button type="button" class="zr-mini zr-key" id="zr-key" title="Insert keyframe for the selected objects (I)">◆ Key</button>
+                <button type="button" class="zr-mini" id="zr-unkey" title="Delete the keyframe here (Alt+I)">◇ Unkey</button>
+                <div class="zr-track" id="zr-track"><div class="zr-keys" id="zr-keys"></div><input type="range" id="zr-frame" min="1" max="120" value="1" aria-label="Frame"></div>
+                <label class="zr-num">Frame <input type="number" id="zr-frame-n" min="0" value="1"></label>
+                <label class="zr-num">End <input type="number" id="zr-end" min="2" value="120"></label>
+                <label class="zr-num">FPS <input type="number" id="zr-fps" min="1" max="120" value="24"></label>
+            </div>
+            <div class="zr-status" id="zr-status"></div>
+        </footer>
+    </div>
+
+    <div class="zr-menu" id="zr-menu" role="menu" hidden></div>
+    <div class="zr-toast" id="zr-toast" role="status" aria-live="polite"></div>
+    <input type="file" id="zr-file" accept=".zr,.json,.glb,.gltf,.obj,.stl" hidden>
+
+    <script type="module" src="app.js?v=20261103b"></script>
+</body>
+</html>

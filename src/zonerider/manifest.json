@@ -1,0 +1,16 @@
+{
+  "name": "Zonerider — Radii Office 3D",
+  "short_name": "Zonerider",
+  "description": "A 3D editor in your browser: model, light, animate, render and export glTF, OBJ and STL.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "landscape",
+  "background_color": "#16181b",
+  "theme_color": "#c5ff11",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
+}
