@@ -874,6 +874,103 @@
         try { if (window.BitLang && window.BitLang.hydrate) window.BitLang.hydrate(holder); } catch (e) {}
         return 'line';
     }
+    /* ---------- A display equation typed over several lines ----------
+       "$a = b \\\\" Enter "c = d$": Enter on the line that closes it (or Re-format) turns the whole run into one centered
+       equation, with the lines between kept as typed (LaTeX line breaks and all)! */
+    const dollars = (t) => (String(t).match(/\$\$/g) || []).length;
+    const MATH_MAX = 400;
+    // the line (index) where the equation closed by line "at" was opened, or -1
+    function mathStart(lines, at) {
+        const t = lines[at].text.trim();
+        if (!/\$\$/.test(t) || dollars(t) !== 1) return -1;
+        for (let k = at - 1; k >= 0 && at - k <= MATH_MAX; k--) {
+            const s = lines[k].text.trim(), c = dollars(s);
+            if (c === 1 && /^\$\$/.test(s)) return k;
+            if (c > 0) return -1;
+        }
+        return -1;
+    }
+    const mathTex = (lines, start, at) => lines.slice(start, at + 1).map((ln) => ln.text.replace(/\s+$/, '')).join('\n').trim().replace(/^\$\$/, '').replace(/\$\$/, '').trim();
+    // swaps lines start..at for some html (the same swap the typed-out Program block uses)
+    function replaceLineRange(canvas, lines, start, at, html) {
+        const topOf = (n) => { while (n && n.parentNode !== canvas) n = n.parentNode; return n; };
+        const first = topOf(lines[start].nodes[0]), last = topOf(lines[at].nodes[lines[at].nodes.length - 1]);
+        const whole = first && last && first.nodeType === 1 && last.nodeType === 1 && LINE_BLOCK.test(first.tagName) && LINE_BLOCK.test(last.tagName) &&
+            !first.contains(lines[at].nodes[0]) && !last.contains(lines[start].nodes[0]);
+        const editable = canvas.getAttribute('contenteditable') === 'false' || !!canvas.querySelector(':scope > [contenteditable="true"]');
+        const holder = document.createElement('div');
+        if (editable) holder.setAttribute('contenteditable', 'true');
+        holder.innerHTML = html;
+        const r = document.createRange();
+        if (whole) { r.setStartBefore(first); r.setEndAfter(last); }
+        else { r.setStart(lines[start].nodes[0], 0); const z = lines[at].nodes[lines[at].nodes.length - 1]; r.setEnd(z, z.nodeValue.length); }
+        r.deleteContents();
+        r.insertNode(holder);
+        return { holder: holder, editable: editable };
+    }
+    const lineIdx = (lines, nodes) => lines.findIndex((ln) => ln.nodes.some((n) => nodes.some((x) => x === n || (x.nodeType === 1 && x.contains(n)))));
+    // is line "at" in the middle of (or the start of) an equation that is still open? Then Enter must not format it
+    function inOpenMath(lines, at) {
+        let open = false;
+        for (let k = 0; k < at; k++) if (dollars(lines[k].text) % 2 === 1) open = !open;
+        const c = dollars(lines[at].text);
+        return open ? c % 2 === 0 : c % 2 === 1;
+    }
+    function mathAt(canvas, nodes) {
+        const lines = docLines(canvas);
+        const at = lineIdx(lines, nodes);
+        if (at < 1) return false;
+        const start = mathStart(lines, at);
+        if (start < 0) return false;
+        const tex = mathTex(lines, start, at);
+        if (!tex) return false;
+        const put = replaceLineRange(canvas, lines, start, at, mathHtml(tex, true));
+        const next = document.createElement('div');
+        if (put.editable) next.setAttribute('contenteditable', 'true');
+        next.appendChild(document.createTextNode('\u200B'));
+        put.holder.after(next);
+        const sel = window.getSelection();
+        const c2 = document.createRange();
+        c2.setStart(next.firstChild, 1); c2.collapse(true);
+        sel.removeAllRanges(); sel.addRange(c2);
+        try { next.focus({ preventScroll: true }); sel.removeAllRanges(); sel.addRange(c2); } catch (e) {}
+        return 'line';
+    }
+    // Re-format: every multi-line equation on the page
+    function mergeMathLines(root) {
+        let n = 0;
+        // the shape Un-format leaves: one block holding "$ ... (newline) ... $" in a single piece of text
+        {
+            const fenced0 = fencedTexts(root);
+            Array.from(root.querySelectorAll('div, p')).forEach((b) => {
+                if (!b.isConnected || b.children.length || b.closest('pre, code, .kd-math, .kd-tpl, figure')) return;
+                const t = b.textContent.replace(/\u200B/g, '');
+                const m = /^\s*\$\$([\s\S]+)\$\$\s*$/.exec(t);
+                if (!m || dollars(t) !== 2 || !/\n/.test(m[1]) || !m[1].trim()) return;
+                if (Array.from(b.childNodes).some((x) => fenced0.has(x))) return;
+                const tpl = document.createElement('template');
+                tpl.innerHTML = mathHtml(m[1].trim(), true);
+                b.replaceWith(tpl.content);
+                n++;
+            });
+        }
+        for (let guard = 0; guard < 300; guard++) {
+            const lines = docLines(root), fenced = fencedTexts(root);
+            const skip = (ln) => ln.nodes.some((x) => fenced.has(x) || (x.parentElement && x.parentElement.closest('pre, code, .kd-math, .kd-tpl, figure')));
+            let found = null;
+            for (let k = 1; k < lines.length && !found; k++) {
+                if (skip(lines[k])) continue;
+                const s = mathStart(lines, k);
+                if (s >= 0 && !lines.slice(s, k + 1).some(skip)) found = [s, k];
+            }
+            if (!found) break;
+            const tex = mathTex(lines, found[0], found[1]);
+            if (!tex) break;
+            replaceLineRange(root, lines, found[0], found[1], mathHtml(tex, true));
+            n++;
+        }
+        return n;
+    }
     function inFence(node, root) {
         const set = fencedTexts(root);
         if (node.nodeType === 3) return set.has(node);
@@ -922,7 +1019,16 @@
         rest.setStart(r.startContainer, r.startOffset);
         rest.setEndAfter(nodes[nodes.length - 1]);
         if (!cell && rest.toString().replace(/[\s\u200B\u00A0]/g, '') !== '') return false;
-        // the line itself first: "# Title", "* item", "> quote", ::block{...}, $$math$$... becomes what it says
+        // a display equation typed over several lines: the closing $ turns them all into one; lines in the middle stay as typed
+        {
+            const mLines = docLines(canvas), mAt = lineIdx(mLines, nodes);
+            if (mAt >= 0 && mLines[mAt].text.indexOf('$') >= 0 || (mAt > 0 && inOpenMath(mLines, mAt))) {
+                const done = mathAt(canvas, nodes);
+                if (done) return done;
+                if (inOpenMath(mLines, mAt)) return false;
+            }
+        }
+        // the line itself first: "# Title", "* item", "> quote", ::block{...}, $math$... becomes what it says
         let lineEl2 = null;
         const runText = nodes.map((n) => n.textContent).join('').replace(/\u200B/g, '');
         if (/^\s*(#{1,4}\s+\S|\*\s+\S|>\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
@@ -1257,6 +1363,7 @@
     const LEFTOVER = /@(?:[a-z0-9]+)(?:-[1-5])?@(?=\S)|!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|#([\^+:;])(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\1|%(?:1\d|20|[1-9])%(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])%|\^\^(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\^(?!\^)|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
     function reformat(root) {
         let n = 0;
+        n += mergeMathLines(root);
         const fenced = fencedTexts(root);
         const hasFenced = (el) => { const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); for (let t = w.nextNode(); t; t = w.nextNode()) if (fenced.has(t)) return true; return false; };
         const blocks = Array.from(root.querySelectorAll('div, p')).filter((b) => !hasFenced(b)).filter((b) => !b.closest('pre, code, figure, [contenteditable="false"] [contenteditable="false"], .kd-math, .kd-tpl') && !isProtected(b, root) && !b.closest(BLOCK_SEL) &&
