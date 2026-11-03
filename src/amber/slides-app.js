@@ -734,6 +734,7 @@ function renderThumbnails() {
                 mini.textContent = plain || "Text";
                 if (el.textAlign) mini.style.textAlign = el.textAlign;
                 if (el.fontFamily) mini.style.fontFamily = el.fontFamily;
+                if (el.lineHeight) mini.style.lineHeight = String(el.lineHeight);
             }
             live.appendChild(mini);
         });
@@ -830,6 +831,7 @@ function renderActiveSlide() {
         textSpan.className = "slide-text-content";
         if (el.textAlign) textSpan.style.textAlign = el.textAlign;
         if (el.fontFamily) div.style.fontFamily = el.fontFamily;
+        if (el.lineHeight) div.style.lineHeight = String(el.lineHeight);
         // Only editable when selected AND double-clicked!
         textSpan.contentEditable = isEditing ? "true" : "false";
         textSpan.innerHTML = el.content;
@@ -1364,6 +1366,7 @@ function sanitizeKaElement(raw) {
         } : null,
         textAlign: ['left', 'center', 'right', 'justify'].includes(raw.textAlign) ? raw.textAlign : null,
         fontFamily: typeof raw.fontFamily === 'string' ? raw.fontFamily.slice(0, 80) : null,
+        lineHeight: (typeof raw.lineHeight === 'number' && raw.lineHeight >= 0.5 && raw.lineHeight <= 5) ? raw.lineHeight : null,
         morphId: typeof raw.morphId === 'string' ? raw.morphId.slice(0, 80) : null,
         anims: sanitizeKaAnims(raw)
     };

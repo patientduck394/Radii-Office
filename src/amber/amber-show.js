@@ -93,6 +93,7 @@
             div.style.fontSize = el.fontSize || '18px';
             div.style.color = el.color || '#ffffff';
             if (el.fontFamily) div.style.fontFamily = el.fontFamily;
+            if (el.lineHeight) div.style.lineHeight = String(el.lineHeight);
             if (el.type === 'shape' && typeof getSvgShapeMarkup === 'function') {
                 const svg = document.createElement('div');
                 svg.className = 'slide-svg-container';
@@ -546,6 +547,7 @@
         start: start, exit: exit, next: next, prev: prev,
         preview: previewSlide, stopPreview: stopPreview, previewElement: previewElement,
         EFFECTS: EFFECTS, TRANSITIONS: TRANSITIONS, buildSteps: buildSteps, entries: entries,
-        prefs: prefs, savePrefs: savePrefs, isShowing: function () { return !!show; }
+        prefs: prefs, savePrefs: savePrefs, isShowing: function () { return !!show; },
+        state: function () { return show ? { index: show.index, step: show.step, steps: show.steps.length, ended: show.ended } : null; }
     };
 })();

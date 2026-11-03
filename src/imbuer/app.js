@@ -670,6 +670,7 @@ function newSheet(name, rows, cols) {
         id: uid(), name, rows: rows || 100, cols: cols || 26,
         data: {}, styles: {}, notes: {}, colW: {}, rowH: {}, hiddenRows: {}, hiddenCols: {},
         freeze: { r: 0, c: 0 }, cf: [], charts: [], sparks: {}, filter: null, tabColor: null,
+        validation: [], merges: [], links: {},
     };
 }
 

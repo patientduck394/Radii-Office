@@ -495,6 +495,7 @@
             return Math.min(pageCount, Math.max(1, Math.floor(((r.top - box.top) / ratio) / (pageDims().h + GAP)) + 1));
         }
     };
+    const PLUS = function () { return window.WriteoutPlus || {}; };
     const PRO = function () { return window.WriteoutPro || {}; };
 
     function setPagesView(on) { prefs.pages = !!on; savePrefs(); applyView(); }
@@ -752,7 +753,11 @@
                     { big: true, icon: 'bringFront', label: 'Image\non Top', title: 'Add image on top of document (from your computer or OpenDB)', menu: function () { return [{ label: 'Picture from your computer...', icon: 'image', run: function () { if (window.DocOverlay) window.DocOverlay.pickFile(); } }, { label: 'OpenDB image...', icon: 'search', run: function () { if (window.DocOverlay) window.DocOverlay.pickOpenDB(); } }]; } },
                     { big: true, icon: 'attach', label: 'File', run: function () { insertKind('file'); } }
                 ] },
-                { label: 'Links', items: [{ big: true, icon: 'link', label: 'Link', run: insertLink }] },
+                { label: 'Links', items: [{ big: true, icon: 'link', label: 'Link', run: insertLink }, { big: true, icon: 'pages', label: 'Bookmark', title: 'Name a place in the document!', run: function () { if (PLUS().bookmark) PLUS().bookmark(); } }] },
+                { label: 'Header & Footer', items: [
+                    { big: true, icon: 'pages', label: 'Header &\nFooter', title: 'Text and page numbers at the top and bottom of every page!', run: function () { if (PLUS().headerFooter) PLUS().headerFooter(); } },
+                    { big: true, icon: 'font', label: 'Drop\nCap', title: 'A big first letter!', menu: function () { return PLUS().dropCapMenu ? PLUS().dropCapMenu() : []; } }
+                ] },
                 { label: 'Math', items: [{ big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } }] },
                 { label: 'Text', items: [{ stack: [
                     { sm: true, icon: 'calendar', label: 'Date', run: function () { insertKind('date'); } },
@@ -783,6 +788,11 @@
                         { sm: true, icon: 'newDoc', label: 'New Page Tab', run: newPage }
                     ] }
                 ] },
+                { label: 'Page Background', items: [
+                    { big: true, icon: 'background', label: 'Watermark', menu: function () { return PLUS().watermarkMenu ? PLUS().watermarkMenu() : []; } },
+                    { big: true, icon: 'margins', label: 'Page\nBorder', menu: function () { return PLUS().borderMenu ? PLUS().borderMenu() : []; } }
+                ] },
+                { label: 'Spacing', items: [{ big: true, icon: 'indent', label: 'Line\nSpacing', menu: function () { return PLUS().lineSpacingMenu ? PLUS().lineSpacingMenu() : []; } }] },
                 { label: 'Paragraph', items: [{ stack: [
                     { sm: true, icon: 'indent', label: 'Indent', run: function () { if (typeof fmtIndentBlocks === 'function') fmtIndentBlocks(1); } },
                     { sm: true, icon: 'outdent', label: 'Outdent', run: function () { if (typeof fmtIndentBlocks === 'function') fmtIndentBlocks(-1); } }
@@ -798,6 +808,15 @@
                 { label: 'Footnotes', items: [
                     { big: true, icon: 'numbers', label: 'Insert\nFootnote', title: 'Add a numbered note at the caret; the note text goes at the end of the document!', run: function () { if (PRO().insertFootnote) PRO().insertFootnote(); } }
                 ] },
+                { label: 'Cross-references', items: [
+                    { big: true, icon: 'link', label: 'Cross-\nreference', title: 'Link to a heading or bookmark, by its text or page number!', run: function () { if (PLUS().crossRef) PLUS().crossRef(); } },
+                    { stack: [{ sm: true, icon: 'reset', label: 'Update Refs', run: function () { if (PLUS().updateXrefs) { const n = PLUS().updateXrefs(); OS.toast(n ? n + ' updated!' : 'All up to date!'); } } }] }
+                ] },
+                { label: 'Citations', items: [
+                    { big: true, icon: 'notes', label: 'Insert\nCitation', menu: function () { return PLUS().citeMenu ? PLUS().citeMenu() : []; } },
+                    { big: true, icon: 'folder', label: 'Sources', run: function () { if (PLUS().sources) PLUS().sources(); } },
+                    { big: true, icon: 'bullets', label: 'Bibliography', title: 'APA, MLA or Chicago, built from the sources you cited!', run: function () { if (PLUS().bibliography) PLUS().bibliography(); } }
+                ] },
                 { label: 'Mail Merge', items: [
                     { big: true, icon: 'folder', label: 'Mail\nMerge', title: 'One letter, many copies: fill «fields» from a Mainkey database (.kb), CSV or JSON!', run: function () { if (PRO().mailMerge) PRO().mailMerge(); } },
                     { big: true, icon: 'attach', label: 'Merge\nField', menu: function () { return PRO().fieldMenu ? PRO().fieldMenu() : []; } }
@@ -810,6 +829,20 @@
                     { big: true, icon: 'numbers', label: 'Word\nCount', run: wordCount },
                     { big: true, icon: 'search', label: 'Find &\nReplace', run: function () { findDialog(true); } }
                 ] },
+                { label: 'Comments', items: [
+                    { big: true, icon: 'annotate', label: 'New\nComment', title: 'Pin a note to the selected text!', run: function () { if (PLUS().newComment) PLUS().newComment(); } },
+                    { stack: [{ check: true, label: 'Show Comments', get: function () { return PLUS().commentsOn ? PLUS().commentsOn() : false; }, set: function (v) { if (PLUS().showComments) PLUS().showComments(v); } }] }
+                ] },
+                { label: 'Tracking', items: [
+                    { big: true, icon: 'pen', label: 'Track\nChanges', title: 'Mark every insertion and deletion so you can accept or reject it!', run: function () { if (PLUS().setTracking) PLUS().setTracking(!PLUS().tracking()); }, checked: function () { return PLUS().tracking ? PLUS().tracking() : false; } },
+                    { stack: [
+                        { sm: true, icon: 'check', label: 'Accept All', run: function () { if (PLUS().acceptAll) PLUS().acceptAll(); } },
+                        { sm: true, icon: 'x', label: 'Reject All', run: function () { if (PLUS().rejectAll) PLUS().rejectAll(); } },
+                        { sm: true, icon: 'search', label: 'Next Change', run: function () { if (PLUS().nextChange) PLUS().nextChange(); } }
+                    ] },
+                    { big: true, icon: 'web', label: 'Markup', menu: function () { return [{ label: 'All Markup', run: function () { PLUS().showMarkup('all'); } }, { label: 'Simple (hide deletions)', run: function () { PLUS().showMarkup('simple'); } }, { label: 'No Markup', run: function () { PLUS().showMarkup('none'); } }]; } }
+                ] },
+                { label: 'Speech', items: [{ big: true, icon: 'play', label: 'Read\nAloud', title: 'Hear your document, sentence by sentence!', run: function () { if (PLUS().reading && PLUS().reading()) PLUS().stopRead(); else if (PLUS().readAloud) PLUS().readAloud(); } }] },
                 { label: 'Keydown', items: [
                     { big: true, icon: 'code', label: 'Un-\nformat', title: 'Show every Keydown tag as plain text, so formatting mistakes are easy to spot!', run: unformatDoc },
                     { big: true, icon: 'check', label: 'Re-\nformat', title: 'Format the whole page again and check it for tags that could not be formatted!', run: reformatDoc }

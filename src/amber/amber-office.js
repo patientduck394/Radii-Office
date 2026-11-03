@@ -22,6 +22,7 @@
     function office() { return document.body.classList.contains('os-office'); }
 
     /* ---------- Model helpers ---------- */
+    const PLUS = function () { return window.AmberPlus || {}; };
     function slide() { return slides[activeSlideIndex]; }
     function activeEl() {
         if (!activeElementId) return null;
@@ -778,7 +779,8 @@
                     { stack: [
                         { sm: true, icon: 'cut', label: 'Cut', run: function () { copyEl(true); } },
                         { sm: true, icon: 'copy', label: 'Copy', run: function () { copyEl(false); } },
-                        { sm: true, icon: 'duplicate', label: 'Duplicate', run: duplicateEl }
+                        { sm: true, icon: 'duplicate', label: 'Duplicate', run: duplicateEl },
+                        { sm: true, icon: 'brush', label: 'Format Painter', title: 'Copy how the selected object looks, then click another to paint it!', run: function () { if (PLUS().formatPainter) PLUS().formatPainter(); }, checked: function () { return PLUS().painting ? PLUS().painting() : false; } }
                     ] }
                 ] },
                 { label: 'Slides', items: [
@@ -817,6 +819,7 @@
                         { icon: 'bullets', title: 'Bullets (adds • to each line)', run: needEl(function (el) { saveState(); const lines = String(el.content || '').split(/<br\s*\/?>/i); const has = lines.every(function (l) { return /^\s*•/.test(l); }); el.content = lines.map(function (l) { return has ? l.replace(/^\s*•\s?/, '') : '• ' + l; }).join('<br>'); refresh(); }) }
                     ]
                 ] }] },
+                { label: 'Spacing', items: [{ big: true, icon: 'aJustify', label: 'Line\nSpacing', menu: function () { return PLUS().lineSpacingMenu ? PLUS().lineSpacingMenu() : []; } }] },
                 { label: 'Drawing', items: [
                     { big: true, icon: 'shapes', label: 'Shapes', menu: shapesMenu },
                     { big: true, icon: 'bringFront', label: 'Arrange', menu: arrangeMenu },
@@ -832,6 +835,11 @@
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Slides', items: [{ big: true, icon: 'newSlide', label: 'New\nSlide', run: function () { newSlide('content'); }, menu: function () { return Object.keys(LAYOUTS).map(function (k) { return { label: LAYOUTS[k].label, icon: 'slide', run: function () { newSlide(k); } }; }); } }] },
                 { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { if (window.amberInsertTable) window.amberInsertTable(); } }] },
+                { label: 'Charts', items: [
+                    { big: true, icon: 'table', label: 'Chart', title: 'Column, bar, line, area, pie or donut chart from a little table of numbers!', run: function () { if (PLUS().chartDialog) PLUS().chartDialog(); } },
+                    { stack: [{ sm: true, icon: 'pen', label: 'Edit Chart', title: 'Or just double-click the chart!', run: function () { if (PLUS().editChart) PLUS().editChart(); } }] }
+                ] },
+                { label: 'Header & Footer', items: [{ big: true, icon: 'numbers', label: 'Footer &\nNumbers', title: 'Footer text, slide numbers and the date on every slide!', run: function () { if (PLUS().footerDialog) PLUS().footerDialog(); } }] },
                 { label: 'Illustrations', items: [
                     { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
                     { big: true, icon: 'shapes', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
@@ -898,7 +906,8 @@
             id: 'show', label: 'Slide Show', groups: [
                 { label: 'Start Slide Show', items: [
                     { big: true, icon: 'play', label: 'From\nBeginning', kbd: 'F5', run: function () { SHOW.start(0); } },
-                    { big: true, icon: 'playFrom', label: 'From Current\nSlide', run: function () { SHOW.start(activeSlideIndex); } }
+                    { big: true, icon: 'playFrom', label: 'From Current\nSlide', run: function () { SHOW.start(activeSlideIndex); } },
+                    { big: true, icon: 'notes', label: 'Presenter\nView', title: 'A second window with your notes, the next slide and a timer! During the show use L laser, D pen, H highlighter, E erase!', run: function () { if (PLUS().presenterView) PLUS().presenterView(); } }
                 ] },
                 { label: 'Set Up', items: [
                     { big: true, icon: 'eye', label: 'Hide\nSlide', run: toggleHidden, checked: function () { return !!slide().hidden; } },
