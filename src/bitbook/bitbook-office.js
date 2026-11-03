@@ -681,6 +681,11 @@
         },
         {
             id: 'view', label: 'View', groups: [
+                { label: 'Editing', items: [
+                    { big: true, icon: 'eye', label: 'View', title: 'Read the page, fully formatted (no editing)!', run: function () { if (window.KdModes) KdModes.set('view'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'view'; } },
+                    { big: true, icon: 'pen', label: 'Visual', title: 'Edit the formatted page!', run: function () { if (window.KdModes) KdModes.set('visual'); }, checked: function () { return !window.KdModes || KdModes.get() === 'visual'; } },
+                    { big: true, icon: 'code', label: 'Source', title: 'Edit the page as Keydown text! Going back formats all of it!', run: function () { if (window.KdModes) KdModes.set('source'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'source'; } }
+                ] },
                 { label: 'Views', items: [
                     { big: true, icon: 'fullscreen', label: 'Full Page\nView', title: 'Just the page (Esc to exit)!', run: function () { setFull(true); } }
                 ] },

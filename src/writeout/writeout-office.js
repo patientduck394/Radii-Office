@@ -349,6 +349,8 @@
         const many = typeof kdTabs !== 'undefined' && Array.isArray(kdTabs) && kdTabs.length > 1;
         const here = (typeof kdActiveTab === 'function' && kdActiveTab()) ? kdActiveTab().name : 'this page';
         const all = r.problems.map(function (p) { return { tag: p.tag, line: p.line, page: here }; }).concat(others.problems);
+        if (r.errors && r.errors.length) { OS.dialog('Re-format hit a problem', '<p class="os-dlg-text">Re-format formatted everything it could, but ' + r.errors.length + ' part' + (r.errors.length === 1 ? '' : 's') + ' of this page hit an error! Please send this to Claude:</p><pre class="os-dlg-text" style="white-space:pre-wrap;max-height:200px;overflow:auto;font-size:11px">' + OS.esc(r.errors.slice(0, 5).join('\n')) + '</pre>', [{ label: 'Got it!', primary: true, value: true }]); return; }
+        if (r.skipped && r.skipped.length) { OS.dialog('Some text was left alone', '<p class="os-dlg-text">Re-format did not touch ' + r.skipped.length + ' piece' + (r.skipped.length === 1 ? '' : 's') + ' of text with Keydown in them, on purpose. Here is why (if that looks wrong, send this list to Claude!):</p><ul class="os-dlg-text" style="max-height:260px;overflow:auto;margin:0;padding-left:20px;font-size:12px">' + r.skipped.map(function (k) { return '<li><code>' + OS.esc(k.text) + '</code><br>because ' + OS.esc(k.why) + '</li>'; }).join('') + '</ul>', [{ label: 'Got it!', primary: true, value: true }]); return; }
         if (!all.length) { OS.toast(many ? 'Formatted all ' + kdTabs.length + ' pages, and every Keydown tag checks out!' : 'Formatted the whole page, and every Keydown tag checks out!'); return; }
         OS.dialog('Keydown check', '<p class="os-dlg-text">' + all.length + ' tag' + (all.length === 1 ? ' could' : 's could') + ' not be formatted!' + (r.problems.length ? ' The ones on this page are underlined in red.' : '') + ' A closing tag may be missing or mistyped:</p><ul class="os-dlg-text" style="max-height:260px;overflow:auto;margin:0;padding-left:20px">' +
             all.slice(0, 50).map(function (p) { return '<li>' + (many ? '<b>' + OS.esc(p.page) + ':</b> ' : '') + '<code>' + OS.esc(p.tag) + '</code> in “' + OS.esc(p.line) + '”</li>'; }).join('') + '</ul>', [{ label: 'Got it!', primary: true, value: true }]);
@@ -899,6 +901,11 @@
         },
         {
             id: 'view', label: 'View', groups: [
+                { label: 'Editing', items: [
+                    { big: true, icon: 'eye', label: 'View', title: 'Read the page, fully formatted (no editing)!', run: function () { if (window.KdModes) KdModes.set('view'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'view'; } },
+                    { big: true, icon: 'pen', label: 'Visual', title: 'Edit the formatted page!', run: function () { if (window.KdModes) KdModes.set('visual'); }, checked: function () { return !window.KdModes || KdModes.get() === 'visual'; } },
+                    { big: true, icon: 'code', label: 'Source', title: 'Edit the page as Keydown text! Going back formats all of it!', run: function () { if (window.KdModes) KdModes.set('source'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'source'; } }
+                ] },
                 { label: 'Views', items: [
                     { big: true, icon: 'pages', label: 'Pages', title: 'Print Layout: separate pages!', run: function () { setPagesView(true); }, checked: function () { return prefs.pages; } },
                     { big: true, icon: 'web', label: 'Continuous', title: 'One long page, like Word\'s Web Layout!', run: function () { setPagesView(false); }, checked: function () { return !prefs.pages; } },

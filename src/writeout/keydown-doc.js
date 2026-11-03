@@ -417,6 +417,15 @@
                     '<figcaption>' + esc(m[1] || target) + '</figcaption></figure>');
                 continue;
             }
+            if (/^\$\$/.test(t) && (t.match(/\$\$/g) || []).length === 1) {
+                // $$ ... (more lines) ... $$: one centered equation
+                let j = i + 1;
+                while (j < lines.length && j - i <= 400 && (lines[j].match(/\$\$/g) || []).length === 0) j++;
+                if (j < lines.length && (lines[j].match(/\$\$/g) || []).length === 1 && /\$\$\s*$/.test(lines[j])) {
+                    const tex = [t].concat(lines.slice(i + 1, j + 1)).join('\n').replace(/^\$\$/, '').replace(/\$\$\s*$/, '').trim();
+                    if (tex) { out.push(mathHtml(tex, true)); i = j; continue; }
+                }
+            }
             if (/^\$\$[\s\S]*\$\$$/.test(t)) { out.push(mathHtml(t.slice(2, -2).trim(), true)); continue; }
             if (/^::[a-z]+(\{[^}]*\})?$/.test(t) && blockFromLine(t)) { out.push(blockFromLine(t)); continue; }
             out.push(ind('<div>' + inline(t, opts) + '</div>'));
@@ -430,7 +439,9 @@
     // Plain words that only look like Keydown (#R#x##, **y**) keep their symbols as themselves when the file opens: \#R\#x\#\#
     const MAYBE_TAG = /[#*~=%!@^_+;[\]{}$`|\\<>&]/;
     const unEsc = (h) => h.replace(/<span class="kd-esc">([^<]*)<\/span>/g, '$1');
+    let RAW_TEXT = false;
     function asPlain(raw) {
+        if (RAW_TEXT) return raw;
         const t = raw.replace(/\$/g, '\\$');
         if (!MAYBE_TAG.test(raw) || unEsc(inline(t, { notes: {} })) === esc(raw)) return t;
         return raw.replace(/[#*~=%!@^_+;[\]{}$`|\\<>&]/g, '\\$&');
@@ -681,6 +692,11 @@
         return indexP;
     }
     // An OpenDB entry, ready for Writeout's or Bitbook's editor: title, summary, then the text!
+    // Source mode: the whole page as Keydown text, exactly as typed (tags that never got formatted stay tags)
+    function sourceOf(el) {
+        RAW_TEXT = true;
+        try { return htmlToText(el.innerHTML); } finally { RAW_TEXT = false; }
+    }
     function toEditorHtml(fileText) {
         const doc = parse(fileText);
         const needIndex = /\[\[|media:/.test(doc.body);
@@ -891,14 +907,14 @@
         return 'line';
     }
     /* ---------- A display equation typed over several lines ----------
-       "$a = b \\\\" Enter "c = d$": Enter on the line that closes it (or Re-format) turns the whole run into one centered
+       "$$a = b \\" Enter "c = d$$": Enter on the line that closes it (or Re-format) turns the whole run into one centered
        equation, with the lines between kept as typed (LaTeX line breaks and all)! */
     const dollars = (t) => (String(t).match(/\$\$/g) || []).length;
     const MATH_MAX = 400;
     // the line (index) where the equation closed by line "at" was opened, or -1
     function mathStart(lines, at) {
         const t = lines[at].text.trim();
-        if (!/\$\$/.test(t) || dollars(t) !== 1) return -1;
+        if (!/\$\$$/.test(t) || dollars(t) !== 1) return -1;
         for (let k = at - 1; k >= 0 && at - k <= MATH_MAX; k--) {
             const s = lines[k].text.trim(), c = dollars(s);
             if (c === 1 && /^\$\$/.test(s)) return k;
@@ -906,7 +922,7 @@
         }
         return -1;
     }
-    const mathTex = (lines, start, at) => lines.slice(start, at + 1).map((ln) => ln.text.replace(/\s+$/, '')).join('\n').trim().replace(/^\$\$/, '').replace(/\$\$/, '').trim();
+    const mathTex = (lines, start, at) => lines.slice(start, at + 1).map((ln) => ln.text.replace(/\s+$/, '')).join('\n').trim().replace(/^\$\$/, '').replace(/\$\$$/, '').trim();
     // swaps lines start..at for some html (the same swap the typed-out Program block uses)
     function replaceLineRange(canvas, lines, start, at, html) {
         const topOf = (n) => { while (n && n.parentNode !== canvas) n = n.parentNode; return n; };
@@ -1035,10 +1051,10 @@
         rest.setStart(r.startContainer, r.startOffset);
         rest.setEndAfter(nodes[nodes.length - 1]);
         if (!cell && rest.toString().replace(/[\s\u200B\u00A0]/g, '') !== '') return false;
-        // a display equation typed over several lines: the closing $ turns them all into one; lines in the middle stay as typed
+        // a display equation typed over several lines: the closing $$ turns them all into one; lines in the middle stay as typed
         {
             const mLines = docLines(canvas), mAt = lineIdx(mLines, nodes);
-            if (mAt >= 0 && mLines[mAt].text.indexOf('$') >= 0 || (mAt > 0 && inOpenMath(mLines, mAt))) {
+            if (mAt >= 0 && mLines[mAt].text.indexOf('$$') >= 0 || (mAt > 0 && inOpenMath(mLines, mAt))) {
                 const done = mathAt(canvas, nodes);
                 if (done) return done;
                 if (inOpenMath(mLines, mAt)) return false;
@@ -1065,7 +1081,9 @@
             if (n.nodeType === 3) texts.push(n);
             else if (n.nodeType === 1 && !n.matches(SKIP)) {
                 const w = document.createTreeWalker(n, NodeFilter.SHOW_TEXT);
-                for (let t = w.nextNode(); t; t = w.nextNode()) if (!(t.parentElement && t.parentElement.closest(SKIP))) texts.push(t);
+                // (look for code, links and widgets only up to the line: the page itself is contenteditable=false too)
+                const skipped = (t) => { for (let e = t.parentElement; e && e !== block && e !== canvas; e = e.parentElement) if (e.matches(SKIP)) return true; return false; };
+                for (let t = w.nextNode(); t; t = w.nextNode()) if (!skipped(t)) texts.push(t);
             }
         });
         let changed = false;
@@ -1171,11 +1189,38 @@
     const KD_DATA = /^data-(kd|tex|display|label|text)/;
     function isProtected(el, root) {
         for (let n = el; n && n !== root && n.nodeType === 1; n = n.parentElement) {
+            // (Writeout's own wrappers carry data- labels but are no widget: a tracked insertion, a comment, a bookmark)
+            if (n.matches && n.matches('ins.wo-ins, span.wo-cmt, span.wo-bm')) continue;
             if (Array.from(n.attributes).some((a) => a.name.startsWith('data-') && !KD_DATA.test(a.name))) return true;
             if (n.getAttribute('contenteditable') === 'false' && !/^(UL|OL|TABLE|TBODY|THEAD|TR)$/.test(n.tagName) &&
                 !n.classList.contains('kd-math') && !n.classList.contains('kd-tpl') && !n.matches(BLOCK_SEL) && !n.hasAttribute('data-kd-media')) return true;
         }
         return false;
+    }
+    // Why Re-format leaves this text alone (null: it doesn't): the reason, in words, naming what is in the way
+    function skipReason(t, root, fenced) {
+        if (fenced.has(t)) return 'it is inside a ``` code fence (an earlier line opens one and nothing closes it)';
+        for (let n = t.parentElement; n && n !== root && n.nodeType === 1; n = n.parentElement) {
+            if (/^(CODE|PRE)$/.test(n.tagName)) return 'it is inside code (<' + n.tagName.toLowerCase() + '>)';
+            if (n.classList.contains('kd-math')) return null;
+            if (n.matches && n.matches('ins.wo-ins, span.wo-cmt, span.wo-bm')) continue;
+            const d = Array.from(n.attributes).find((a) => a.name.startsWith('data-') && !KD_DATA.test(a.name));
+            if (d) return 'it is inside <' + n.tagName.toLowerCase() + (n.className ? ' class="' + String(n.className).slice(0, 60) + '"' : '') + '> which has ' + d.name;
+            if (n.getAttribute('contenteditable') === 'false' && !/^(UL|OL|TABLE|TBODY|THEAD|TR)$/.test(n.tagName) && !n.classList.contains('kd-tpl') && !n.matches(BLOCK_SEL) && !n.hasAttribute('data-kd-media'))
+                return 'it is inside a locked <' + n.tagName.toLowerCase() + (n.className ? ' class="' + String(n.className).slice(0, 60) + '"' : '') + '> (contenteditable=false)';
+        }
+        return null;
+    }
+    function skippedTags(root) {
+        const out = [], fenced = fencedTexts(root);
+        const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+        for (let t = w.nextNode(); t; t = w.nextNode()) {
+            if (!/\$\$|\*[^\s*][^*]*\*|#[A-Z]{1,2}[#(.]/.test(t.nodeValue)) continue;
+            const why = skipReason(t, root, fenced);
+            if (why) out.push({ text: t.nodeValue.replace(/\s+/g, ' ').trim().slice(0, 80), why: why });
+            if (out.length >= 30) break;
+        }
+        return out;
     }
     function isKeydownInline(el, root) {
         if (el.closest('pre') || isProtected(el, root)) return false;
@@ -1295,7 +1340,7 @@
     function rebuildCutLines(root) {
         let n = 0;
         const fenced = fencedTexts(root);
-        Array.from(root.querySelectorAll('div, p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th')).forEach((b) => { if (rebuildLine(b, root, fenced)) n++; });
+        Array.from(root.querySelectorAll('div, p, li, h1, h2, h3, h4, h5, h6, blockquote, td, th')).forEach((b) => { try { if (rebuildLine(b, root, fenced)) n++; } catch (e) { try { console.error('[Keydown] could not rebuild a line', e); } catch (x) {} } });
         return n;
     }
     function rebuildLine(b, root, fenced) {
@@ -1369,7 +1414,7 @@
         if (!html && b.children.length && /^\s*\$\$[\s\S]+\$\$\s*$/.test(text) && dollars(text) === 2 &&
             !b.querySelector('img, video, audio, iframe, table, figure, .kd-math, .kd-tpl, [contenteditable="false"]') && !Array.from(b.children).some((c) => LINE_BLOCK.test(c.tagName))) {
             const src = lineSource(b).replace(/\u200B/g, '').trim();
-            const mm = /^\$\$([\s\S]+)\$\$/.exec(src);
+            const mm = /^\$\$([\s\S]+)\$\$$/.exec(src);
             if (mm && mm[1].trim() && dollars(src) === 2) html = mathHtml(mm[1].trim(), true);
         }
         if (html) {
@@ -1456,19 +1501,20 @@
     const LEFTOVER = /@(?:[a-z0-9]+)(?:-[1-5])?@(?=\S)|!?#(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBWA])#|#([\^+:;])(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\1|%(?:1\d|20|[1-9])%(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])%|\^\^(?:GL|TU|PR|PK|SL|BK|FG|[ROYLGTCBW])\^(?!\^)|=(?:MG|LM|AQ|SL|[YRGCBVPO])=|~[A-Z0-9]{1,5}(?:-[A-Z]{1,2})?~|#(?:GL|TU|PR|PK|SL|[ROYLGTCB])\.?[a-z]*\(|\*\*|\{\{|\}\}|\[\[|\]\]|\$\$/g;
     function reformat(root) {
         let n = 0;
+        const errors = [];
         root.normalize();
-        n += mergeMathLines(root);
+        try { n += mergeMathLines(root); } catch (e) { errors.push(e); }
         const fenced = fencedTexts(root);
         const hasFenced = (el) => { const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); for (let t = w.nextNode(); t; t = w.nextNode()) if (fenced.has(t)) return true; return false; };
         const blocks = Array.from(root.querySelectorAll('div, p')).filter((b) => !hasFenced(b)).filter((b) => !b.closest('pre, code, figure, [contenteditable="false"] [contenteditable="false"], .kd-math, .kd-tpl') && !isProtected(b, root) && !b.closest(BLOCK_SEL) &&
             !Array.from(b.children).some((c) => LINE_BLOCK.test(c.tagName) || c.tagName === 'BR' && b.childNodes.length > 1 && c !== b.lastChild));
-        blocks.forEach((b) => { if (lineToBlock(b)) n++; });
+        blocks.forEach((b) => { try { if (lineToBlock(b)) n++; } catch (e) { errors.push(e); } });
         // every text piece left: chips, highlights, bold, math, footnotes...
         const SKIP_RE = 'code, pre, a, .kd-math, .kd-tpl, figure, [contenteditable="false"] [contenteditable="false"]';
         const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
         const texts = [];
         for (let t = walker.nextNode(); t; t = walker.nextNode()) if (!fenced.has(t) && !(t.parentElement && (t.parentElement.closest(SKIP_RE) || isProtected(t.parentElement, root)))) texts.push(t);
-        texts.forEach((t) => {
+        texts.forEach((t) => { try {
             const text = t.nodeValue;
             if (!/[#*=~`&$[{!@%^+:;\\]/.test(text)) return;
             const html = inline(text, { notes: {} });
@@ -1477,11 +1523,16 @@
             tpl.innerHTML = html;
             n += tpl.content.querySelectorAll('*').length ? 1 : 0;
             t.parentNode.replaceChild(tpl.content, t);
-        });
+        } catch (e) { errors.push(e); } });
         // a line whose tags are cut apart by spans (pasted or recolored text: "*#TU(" in one piece, "tensor product)*" in
         // another) never formats piece by piece: read the whole line back as Keydown and format it in one go
-        n += rebuildCutLines(root);
-        return { formatted: n, problems: checkKeydown(root) };
+        try { n += rebuildCutLines(root); } catch (e) { errors.push(e); }
+        let problems = [];
+        try { problems = checkKeydown(root); } catch (e) { errors.push(e); }
+        if (errors.length) { try { console.error('[Keydown] Re-format hit ' + errors.length + ' error(s):', errors); } catch (e) {} }
+        let skipped = [];
+        try { skipped = skippedTags(root); } catch (e) {}
+        return { formatted: n, problems: problems, errors: errors.map((e) => String(e && e.message || e)), skipped: skipped };
     }
     // The check: tags still sitting in the text after formatting are mistakes (a missing closing tag, a typo...)
     function checkKeydown(root) {
@@ -1756,5 +1807,5 @@
         document.head.appendChild(st);
     }
 
-    root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), parse, isKeydownText, formatLine, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, toFileText, fromFileText, styleCss, atTableHtml: (spec, opts) => { const t = readAtTable(String(spec), 0); return t ? atTableHtml(t, Object.assign({ notes: {} }, opts)) : null; }, HL_COLORS };
+    root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), sourceOf, parse, isKeydownText, formatLine: (c) => { try { return formatLine(c); } catch (e) { try { console.error('[Keydown] Enter formatting failed', e); root.kdLastError = e; } catch (x) {} return false; } }, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, toFileText, fromFileText, styleCss, atTableHtml: (spec, opts) => { const t = readAtTable(String(spec), 0); return t ? atTableHtml(t, Object.assign({ notes: {} }, opts)) : null; }, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);
