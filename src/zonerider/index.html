@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <script src="radii-file.js?v=20261042"></script>
-    <script>RadiiFile.scope(/^zonerider_scene/);</script>
+    <script>RadiiFile.scope(/^(zonerider_scene|zonerider_collab_backup)/);</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Zonerider - Radii Office</title>
@@ -12,7 +12,8 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="icon" type="image/png" sizes="96x96" href="/zonerider/favicon-96.png">
     <link rel="apple-touch-icon" href="/zonerider/apple-touch-icon.png">
-    <link rel="stylesheet" href="style.css?v=20261103c">
+    <link rel="stylesheet" href="radii-collab.css?v=20261103a">
+    <link rel="stylesheet" href="style.css?v=20261103g">
     <script src="/offline.js?v=20261132g" defer></script>
     <script src="/phone-drawer.js?v=20261201k" defer></script>
     <script type="importmap">
@@ -40,7 +41,7 @@
             <div class="zr-seg" id="zr-tools" role="group" aria-label="Transform tool">
                 <button type="button" data-tool="translate" data-icon="move" aria-pressed="true" title="Move (G)">Move</button>
                 <button type="button" data-tool="rotate" data-icon="rotate" title="Rotate (R)">Rotate</button>
-                <button type="button" data-tool="scale" data-icon="scale" title="Scale (S)">Scale</button>
+                <button type="button" data-tool="scale" data-icon="scale" title="Scale (Shift+S)">Scale</button>
             </div>
             <div class="zr-seg" id="zr-space" role="group" aria-label="Transform space">
                 <button type="button" data-space="world" aria-pressed="true" title="Global axes">Global</button>
@@ -80,7 +81,7 @@
                 <button type="button" data-tab="shape" data-icon="shape" title="Shape" aria-label="Shape"></button>
                 <button type="button" data-tab="material" data-icon="ball" title="Material" aria-label="Material"></button>
                 <button type="button" data-tab="light" data-icon="bulb" title="Light" aria-label="Light"></button>
-                <button type="button" data-tab="world" data-icon="globe" title="World" aria-label="World"></button>
+                <button type="button" data-tab="effects" data-icon="sparkle" title="Effect presets" aria-label="Effect presets"></button><button type="button" data-tab="world" data-icon="globe" title="World" aria-label="World"></button>
                 <button type="button" data-tab="render" data-icon="camera" title="Render" aria-label="Render"></button>
             </div>
             <div class="zr-props" id="zr-props"></div>
@@ -107,6 +108,7 @@
     <div class="zr-toast" id="zr-toast" role="status" aria-live="polite"></div>
     <input type="file" id="zr-file" accept=".zr,.json,.glb,.gltf,.obj,.stl" hidden>
 
-    <script type="module" src="app.js?v=20261103d"></script>
+    <script src="radii-collab.js?v=20261103a"></script>
+    <script type="module" src="app.js?v=20261103g"></script>
 </body>
 </html>

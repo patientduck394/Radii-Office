@@ -21,6 +21,13 @@ import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 import { STLLoader } from 'three/addons/loaders/STLLoader.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { mergeVertices } from 'three/addons/utils/BufferGeometryUtils.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { COLLECTIONS, FX_DEFAULTS, GradeShader } from './effects.js';
+import { installCollab } from './collab.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -93,7 +100,9 @@ const ICONS = {
     "keyboard": "M2 6h20v12H2zM6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10",
     "info": "M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 11v6M12 7.5v.01",
     "home": "M3 11l9-8 9 8M5 9.5V21h14V9.5",
-    "x": "M6 6l12 12M18 6L6 18"
+    "x": "M6 6l12 12M18 6L6 18",
+    "people": "M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21v-1a6 6 0 0 1 12 0v1M16 3.5a4 4 0 0 1 0 7.5M22 21v-1a6 6 0 0 0-4-5.6",
+    "sparkle": "M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"
 };
 function ico(name, cls) {
     const d = ICONS[name];
@@ -158,7 +167,9 @@ const state = {
     selected: [], active: null,
     frame: 1, end: 120, fps: 24, playing: false,
     sceneCamera: null,                          // uuid of the camera used for rendering
-    worldSet: { bg: '#3a3a3a', env: true, envStrength: 1, ambient: 0.25, fog: false, fogColor: '#3a3a3a', fogDensity: 0.02 },
+    worldSet: { bg: '#3a3a3a', bg2: '', env: true, envStrength: 1, ambient: 0.25, fog: false, fogColor: '#3a3a3a', fogDensity: 0.02 },
+    fxSet: Object.assign({}, FX_DEFAULTS),           // screen effects (Rendered view and renders)
+    fxCollection: 'aero', fxApplyMat: true, fxApplyScene: true,
     renderSet: { w: 1920, h: 1080, shadows: true, transparent: false },
     edit: null                                  // Edit Mode: { mesh, points, picked:Set }
 };
@@ -360,7 +371,7 @@ gizmo.addEventListener('dragging-changed', (e) => {
     if (e.value) { commit(); if (state.mode === 'edit') editDragStart(); }
     else { lastDrag = performance.now(); if (state.mode === 'edit') editDragEnd(); changed(); }
 });
-gizmo.addEventListener('objectChange', () => { if (state.mode === 'edit') editDragMove(); dirty.propValues = true; });
+gizmo.addEventListener('objectChange', () => { if (state.mode === 'edit') editDragMove(); else tellRoom(true); dirty.propValues = true; });
 function applySnap() {
     gizmo.setTranslationSnap(state.snap ? 0.25 : null);
     gizmo.setRotationSnap(state.snap ? 15 * DEG : null);
@@ -376,6 +387,7 @@ function select(list, active) {
     dirty.outliner = dirty.props = true;
     status();
     drawKeys();
+    try { if (window.RadiiCollab && collab) RadiiCollab.cursorMoved(); } catch (e) {}
 }
 function setTool(t) {
     state.tool = t;
@@ -459,7 +471,7 @@ function setMode(m) {
         state.edit.wire = wire;
         gizmo.detach();
         state.mode = 'edit';
-        hint('Edit Mode: click vertices (Shift adds), A selects all, then drag the gizmo. M merges them. Tab goes back!');
+        hint('Edit Mode: click vertices (Shift adds), Ctrl+A selects all, then drag the gizmo. M merges them. Tab goes back!');
     } else {
         const ed = state.edit;
         if (ed) {
@@ -548,7 +560,12 @@ function editDragMove() {
     for (const i of ed.picked) { arr.setXYZ(k++, pos.getX(i), pos.getY(i), pos.getZ(i)); }
     arr.needsUpdate = true;
 }
-function editDragEnd() { editStart = null; editRefresh(); }
+function editDragEnd() {
+    editStart = null;
+    // (a new geometry version, so the room sends the moved vertices)
+    const z = state.edit && state.edit.mesh.userData.zr; if (z) z.gv = (z.gv || 0) + 1;
+    editRefresh();
+}
 function editMerge() {
     const ed = state.edit;
     if (!ed || ed.picked.size < 2) { toast('Pick two or more vertices to merge!'); return; }
@@ -589,7 +606,8 @@ function applyWorld(forRender) {
     headlight.intensity = s === 'material' ? 0.6 : 1.7;
     scene.environment = s === 'material' ? studioEnv : (own && W.env ? studioEnv : null);
     scene.environmentIntensity = own ? W.envStrength : 1;
-    scene.background = new THREE.Color(own ? W.bg : (s === 'wire' ? '#2e2e2e' : '#3a3a3a'));
+    scene.background = own && W.bg2 ? skyTexture(W.bg, W.bg2) : new THREE.Color(own ? W.bg : (s === 'wire' ? '#2e2e2e' : '#3a3a3a'));
+    renderer.toneMappingExposure = own ? (state.fxSet.exposure || 1) : 1;
     scene.fog = own && W.fog ? new THREE.FogExp2(W.fogColor, W.fogDensity) : null;
     renderer.shadowMap.enabled = own && state.renderSet.shadows;
     ambient.intensity = own ? W.ambient : 0;
@@ -598,6 +616,42 @@ function applyWorld(forRender) {
     world.traverse((o) => { if (o.isLight) o.intensity = o.userData.zrIntensity != null ? (own || s === 'material' ? o.userData.zrIntensity : 0) : o.intensity; });
 }
 const ambient = new THREE.AmbientLight(0xffffff, 0);
+
+/* ---------- screen effects: glow (bloom), then tone mapping, then color grading and vignette ---------- */
+function makeComposer(r) {
+    const c = new EffectComposer(r);
+    const rp = new RenderPass(scene, persp);
+    const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.6, 0.4, 0.8);
+    const grade = new ShaderPass(GradeShader);
+    grade.uniforms.tint.value = new THREE.Color('#ffffff');
+    c.addPass(rp); c.addPass(bloom); c.addPass(new OutputPass()); c.addPass(grade);
+    return { c, rp, bloom, grade };
+}
+function fxActive() { const F = state.fxSet; return !!(F.bloom || F.saturation !== 1 || F.contrast !== 1 || F.tintAmount > 0 || F.vignette > 0); }
+function syncFx(k, camera) {
+    const F = state.fxSet;
+    k.rp.camera = camera;
+    k.bloom.enabled = !!F.bloom;
+    // (the presets' numbers are friendly ones: half strength and a tight radius keep the glow around bright things, not the whole screen)
+    k.bloom.strength = F.bloomStrength * 0.5; k.bloom.threshold = Math.max(0.5, F.bloomThreshold); k.bloom.radius = 0.12;
+    k.grade.uniforms.saturation.value = F.saturation; k.grade.uniforms.contrast.value = F.contrast;
+    k.grade.uniforms.tint.value.set(F.tint || '#ffffff'); k.grade.uniforms.tintAmount.value = F.tintAmount; k.grade.uniforms.vignette.value = F.vignette;
+}
+const viewFx = makeComposer(renderer);
+// a two-color sky (top to bottom), drawn once per pair of colors
+const skyCache = new Map();
+function skyTexture(top, bottom) {
+    const key = top + bottom;
+    if (skyCache.has(key)) return skyCache.get(key);
+    const cv = document.createElement('canvas'); cv.width = 4; cv.height = 256;
+    const g = cv.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 256);
+    gr.addColorStop(0, top); gr.addColorStop(1, bottom);
+    g.fillStyle = gr; g.fillRect(0, 0, 4, 256);
+    const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace;
+    if (skyCache.size > 40) skyCache.clear();
+    skyCache.set(key, t);
+    return t;
+}
 scene.add(ambient);
 function lightPower(l, v) {
     if (v === undefined) return l.userData.zrIntensity != null ? l.userData.zrIntensity : l.intensity;
@@ -746,7 +800,7 @@ function serialize() {
     saved.forEach(([o, i]) => { o.intensity = i; });
     return {
         format: 'zonerider', version: 1, scene: json,
-        settings: { world: state.worldSet, render: state.renderSet, frame: state.frame, end: state.end, fps: state.fps, sceneCamera: state.sceneCamera },
+        settings: { world: state.worldSet, render: state.renderSet, fx: state.fxSet, comments: state.comments || [], frame: state.frame, end: state.end, fps: state.fps, sceneCamera: state.sceneCamera },
         selected: state.selected.map((o) => o.uuid), active: state.active ? state.active.uuid : null
     };
 }
@@ -767,6 +821,9 @@ function restore(data, keepView) {
     const s = data.settings || {};
     Object.assign(state.worldSet, s.world || {});
     Object.assign(state.renderSet, s.render || {});
+    state.fxSet = Object.assign({}, FX_DEFAULTS, s.fx || {});
+    state.comments = s.comments || [];
+    if (!s.world || s.world.bg2 === undefined) state.worldSet.bg2 = '';
     state.end = s.end || state.end; state.fps = s.fps || state.fps; state.sceneCamera = s.sceneCamera || null;
     setFrameRange();
     const byId = new Map(); world.traverse((o) => byId.set(o.uuid, o));
@@ -784,6 +841,27 @@ function changed(quiet) {
     dirty.outliner = dirty.props = true;
     status(); drawKeys();
     rememberLights(); applyWorld();
+    tellRoom();
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(autosave, 600);
+}
+// live collaboration: every local change goes to the room (Radii Collab compares and sends only what changed)
+let collab = null, roomT = 0;
+function tellRoom(soon) {
+    const RC = window.RadiiCollab;
+    if (!collab || !RC || !RC.isLive || !RC.isLive() || RC.isApplying()) return;
+    if (soon) { const now = performance.now(); if (now - roomT < 90) return; roomT = now; }
+    RC.changed();
+}
+// after someone else's change: redraw everything that depends on the scene (but no undo step, and no echo)
+function afterRemote() {
+    syncHelpers();
+    const inWorld = (o) => { for (let p = o; p; p = p.parent) if (p === world) return true; return false; };
+    const keep = state.selected.filter(inWorld);
+    select(keep, keep.includes(state.active) ? state.active : keep[keep.length - 1]);
+    rememberLights(); applyWorld(); setFrameRange();
+    dirty.outliner = dirty.props = true;
+    status(); drawKeys();
     clearTimeout(saveTimer);
     saveTimer = setTimeout(autosave, 600);
 }
@@ -791,7 +869,7 @@ function autosave() {
     try { localStorage.setItem(STORE, snapshot()); }
     catch (e) { toast('This scene is too big to keep in the browser: use File, Save to keep it!'); }
 }
-function savePrefs() { try { localStorage.setItem(PREFS, JSON.stringify({ shading: state.shading, snap: state.snap, tool: state.tool, space: state.space, left: !$('zr-app').classList.contains('zr-no-left'), right: !$('zr-app').classList.contains('zr-no-right') })); } catch (e) {} }
+function savePrefs() { try { localStorage.setItem(PREFS, JSON.stringify({ fxCollection: state.fxCollection, fxApplyMat: state.fxApplyMat, fxApplyScene: state.fxApplyScene, shading: state.shading, snap: state.snap, tool: state.tool, space: state.space, left: !$('zr-app').classList.contains('zr-no-left'), right: !$('zr-app').classList.contains('zr-no-right') })); } catch (e) {} }
 function download(name, data, type) {
     const blob = data instanceof Blob ? data : new Blob([data], { type: type || 'application/octet-stream' });
     const a = document.createElement('a');
@@ -1086,7 +1164,9 @@ function withRenderSetup(fn) {
 function offRenderer(w, h) {
     const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true, alpha: !!state.renderSet.transparent });
     r.setPixelRatio(1); r.setSize(w, h, false);
-    r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping;
+    r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = state.fxSet.exposure || 1;
+    // (screen effects ride along, except on a see-through background)
+    if (fxActive() && !state.renderSet.transparent) { r.zrFx = makeComposer(r); r.zrFx.c.setSize(w, h); }
     r.shadowMap.enabled = !!state.renderSet.shadows; r.shadowMap.type = THREE.PCFSoftShadowMap;
     return r;
 }
@@ -1096,7 +1176,8 @@ function renderImage() {
         const r = offRenderer(w, h);
         const bg = scene.background;
         if (state.renderSet.transparent) scene.background = null;
-        r.render(scene, renderCamera(w, h));
+        const rc = renderCamera(w, h);
+        if (r.zrFx) { syncFx(r.zrFx, rc); r.zrFx.c.render(); } else r.render(scene, rc);
         scene.background = bg;
         const u = r.domElement.toDataURL('image/png');
         r.dispose();
@@ -1123,7 +1204,7 @@ async function renderAnimation() {
     hint('Rendering the animation… ' + state.end + ' frames!');
     for (let f = 1; f <= state.end; f++) {
         goFrame(f, true);
-        withRenderSetup(() => r.render(scene, renderCamera(w, h)));
+        withRenderSetup(() => { const rc = renderCamera(w, h); if (r.zrFx) { syncFx(r.zrFx, rc); r.zrFx.c.render(); } else r.render(scene, rc); });
         if (track.requestFrame) track.requestFrame();
         await new Promise((res) => setTimeout(res, 1000 / state.fps));
         if (f % 10 === 0) hint('Rendering the animation… frame ' + f + ' of ' + state.end + '!');
@@ -1170,16 +1251,16 @@ const MENUS = {
         ['New Scene', 'Ctrl N', () => newScene(), 'plus'], ['Open…', 'Ctrl O', () => pickFile('.zr,.json'), 'folder'], ['Save (.zr)', 'Ctrl S', saveFile, 'save'], '-',
         ['Import glTF / GLB…', '', () => pickFile('.glb,.gltf'), 'import'], ['Import OBJ…', '', () => pickFile('.obj'), 'import'], ['Import STL…', '', () => pickFile('.stl'), 'import'], '-',
         ['Export GLB', '', () => exportAs('glb'), 'export'], ['Export glTF', '', () => exportAs('gltf'), 'export'], ['Export OBJ', '', () => exportAs('obj'), 'export'], ['Export STL (3D printing)', '', () => exportAs('stl'), 'export'], '-',
-        ['New file in a new tab', '', () => { if (window.RadiiFile) RadiiFile.open(); }, 'newtab']
+        ['Share and collaborate…', '', () => { if (window.RadiiCollab) RadiiCollab.toggle('people'); }, 'people'], ['New file in a new tab', '', () => { if (window.RadiiFile) RadiiFile.open(); }, 'newtab']
     ],
-    edit: () => [['Undo', 'Ctrl Z', undo, 'undo'], ['Redo', 'Ctrl Shift Z', redo, 'redo'], '-', ['Select All', 'A', () => selectAll(true), ''], ['Select None', 'Alt A', () => selectAll(false), ''], '-', ['Duplicate', 'Shift D', duplicate, 'duplicate'], ['Delete', 'X', del, 'trash']],
+    edit: () => [['Undo', 'Ctrl Z', undo, 'undo'], ['Redo', 'Ctrl Shift Z', redo, 'redo'], '-', ['Select All', 'Ctrl A', () => selectAll(true), ''], ['Select None', 'Alt A', () => selectAll(false), ''], '-', ['Duplicate', 'Shift D', duplicate, 'duplicate'], ['Delete', 'X', del, 'trash']],
     add: () => [['#Mesh']].concat(Object.keys(PRIMS).map((k) => [PRIMS[k].label, '', () => addPrim(k), PRIMS[k].icon]))
         .concat(['-', ['#Light'], ['Point Light', '', () => addLight('point'), 'bulb'], ['Sun', '', () => addLight('sun'), 'sun'], ['Spot Light', '', () => addLight('spot'), 'spot'], '-', ['Camera', '', addCamera, 'video'], ['Empty', '', addEmpty, 'empty']]),
     object: () => [
-        ['Move', 'G', () => setTool('translate'), 'move'], ['Rotate', 'R', () => setTool('rotate'), 'rotate'], ['Scale', 'S', () => setTool('scale'), 'scale'], '-',
+        ['Move', 'G', () => setTool('translate'), 'move'], ['Rotate', 'R', () => setTool('rotate'), 'rotate'], ['Scale', 'Shift S', () => setTool('scale'), 'scale'], '-',
         ['Edit Mode (vertices)', 'Tab', () => setMode(state.mode === 'edit' ? 'object' : 'edit'), 'edit'], ['Merge Vertices', 'M', editMerge, 'merge'], '-',
         ['Shade Smooth', '', () => setShade(true), 'smooth'], ['Shade Flat', '', () => setShade(false), 'flat'],
-        ['Apply Transform', 'Ctrl A', applyTransform, 'check'], ['Origin to Geometry', '', originToGeometry, 'origin'], ['Drop to Floor', '', snapToFloor, 'floor'], '-',
+        ['Apply Transform', 'Ctrl Shift A', applyTransform, 'check'], ['Origin to Geometry', '', originToGeometry, 'origin'], ['Drop to Floor', '', snapToFloor, 'floor'], '-',
         ['Parent (to active)', 'Ctrl P', parentSel, 'parent'], ['Clear Parent', 'Alt P', clearParent, 'unparent'], '-',
         ['Hide', 'H', () => hideSel(true), 'eyeOff'], ['Show Hidden', 'Alt H', () => hideSel(false), 'eye'], '-',
         ['Insert Keyframe', 'I', insertKey, 'key'], ['Delete Keyframe', 'Alt I', removeKey, 'unkey'], '-',
@@ -1222,7 +1303,7 @@ $('zr-menus').addEventListener('mouseover', (e) => { const b = e.target.closest(
 let lastMouse = { x: 200, y: 200 };
 canvas.addEventListener('pointermove', (e) => { lastMouse = { x: e.clientX, y: e.clientY }; });
 function shortcuts() {
-    const rows = [['Click / Shift+click', 'Select / add to the selection'], ['Drag (left)', 'Orbit the view'], ['Right or middle drag', 'Pan'], ['Wheel / pinch', 'Zoom'], ['G  R  S', 'Move, rotate, scale'], ['Shift A', 'Add menu'], ['X  or  Delete', 'Delete'], ['Shift D', 'Duplicate'], ['A  /  Alt A', 'Select all / none'], ['H  /  Alt H', 'Hide / show hidden'], ['Tab', 'Edit Mode (vertices) on and off'], ['M', 'Merge the picked vertices'], ['Z', 'Next viewport shading'], ['1  3  7  (Ctrl for the opposite)', 'Front, right, top view'], ['5', 'Perspective / orthographic'], ['0', 'Look through the scene camera'], ['F  or  .', 'Frame the selection'], ['Home', 'Frame everything'], ['I  /  Alt I', 'Insert / delete a keyframe'], ['Space', 'Play / pause'], ['← →', 'Previous / next frame'], ['Ctrl A', 'Apply transform'], ['Ctrl P  /  Alt P', 'Parent / clear parent'], ['F12', 'Render image'], ['Ctrl Z  /  Ctrl Shift Z', 'Undo / redo'], ['Ctrl S  /  Ctrl O', 'Save / open a .zr scene'], ['T  /  N', 'Outliner / properties'], ['Ctrl (while dragging)', 'Snap once']];
+    const rows = [['Click / Shift+click', 'Select / add to the selection'], ['Drag (left)', 'Orbit the view'], ['Right or middle drag', 'Pan'], ['Wheel / pinch', 'Zoom'], ['W A S D  (and Q / E)', 'Fly the view: forward, left, back, right (down / up)'], ['G  R  Shift S', 'Move, rotate, scale'], ['Shift A', 'Add menu'], ['X  or  Delete', 'Delete'], ['Shift D', 'Duplicate'], ['Ctrl A  /  Alt A', 'Select all / none'], ['H  /  Alt H', 'Hide / show hidden'], ['Tab', 'Edit Mode (vertices) on and off'], ['M', 'Merge the picked vertices'], ['Z', 'Next viewport shading'], ['1  3  7  (Ctrl for the opposite)', 'Front, right, top view'], ['5', 'Perspective / orthographic'], ['0', 'Look through the scene camera'], ['F  or  .', 'Frame the selection'], ['Home', 'Frame everything'], ['I  /  Alt I', 'Insert / delete a keyframe'], ['Space', 'Play / pause'], ['← →', 'Previous / next frame'], ['Ctrl Shift A', 'Apply transform'], ['Ctrl P  /  Alt P', 'Parent / clear parent'], ['F12', 'Render image'], ['Ctrl Z  /  Ctrl Shift Z', 'Undo / redo'], ['Ctrl S  /  Ctrl O', 'Save / open a .zr scene'], ['T  /  N', 'Outliner / properties'], ['Ctrl (while dragging)', 'Snap once']];
     dialog('Keyboard shortcuts', '<table>' + rows.map((r) => '<tr><td>' + esc(r[0]) + '</td><td>' + esc(r[1]) + '</td></tr>').join('') + '</table>');
 }
 function about() {
@@ -1355,7 +1436,7 @@ function renderProps() {
         else {
             h = '<h3>Material</h3><div class="zr-btnrow">' + Object.keys(PRESETS).map((p) => '<button type="button" class="zr-btn" data-preset="' + p + '">' + p + '</button>').join('') + '</div>' +
                 colorRow('Color', 'm.color', hex(m.color)) + rangeRow('Metallic', 'm.metalness', m.metalness, 0, 1, 0.01) + rangeRow('Roughness', 'm.roughness', m.roughness, 0, 1, 0.01) +
-                (m.isMeshPhysicalMaterial ? rangeRow('Clearcoat', 'm.clearcoat', m.clearcoat, 0, 1, 0.01) : '') +
+                (m.isMeshPhysicalMaterial ? rangeRow('Clearcoat', 'm.clearcoat', m.clearcoat, 0, 1, 0.01) + rangeRow('Glass (see-through)', 'm.transmission', m.transmission, 0, 1, 0.01) + rangeRow('Glass thickness', 'm.thickness', m.thickness, 0, 4, 0.05) + rangeRow('Bubble shimmer', 'm.iridescence', m.iridescence, 0, 1, 0.01) + rangeRow('Velvet sheen', 'm.sheen', m.sheen, 0, 1, 0.01) : '') +
                 rangeRow('Opacity', 'm.opacity', m.opacity, 0, 1, 0.01) + colorRow('Glow color', 'm.emissive', hex(m.emissive)) + rangeRow('Glow strength', 'm.emissiveIntensity', m.emissiveIntensity, 0, 10, 0.1) +
                 '<label class="zr-check"><input type="checkbox" data-bind="m.wireframe"' + (m.wireframe ? ' checked' : '') + '> Wireframe</label><label class="zr-check"><input type="checkbox" data-bind="m.flatShading"' + (m.flatShading ? ' checked' : '') + '> Flat shading</label><label class="zr-check"><input type="checkbox" data-bind="m.doubleSide"' + (m.side === THREE.DoubleSide ? ' checked' : '') + '> Both sides</label>' +
                 '<p class="zr-note">Materials show in Material Preview and Rendered (Z)!</p>';
@@ -1369,10 +1450,23 @@ function renderProps() {
             '<label class="zr-check"><input type="checkbox" data-bind="l.castShadow"' + (l.castShadow ? ' checked' : '') + '> Casts shadows</label><p class="zr-note">Lights you add light the Rendered view (Z)! Material Preview adds a soft studio light!</p>';
     } else if (state.tab === 'world') {
         const W = state.worldSet;
-        h = '<h3>World</h3>' + colorRow('Background', 'w.bg', W.bg) + '<label class="zr-check"><input type="checkbox" data-bind="w.env"' + (W.env ? ' checked' : '') + '> Studio reflections</label>' +
+        const F = state.fxSet;
+        h = '<h3>World</h3>' + colorRow('Sky (top)', 'w.bg', W.bg) + colorRow('Sky (bottom)', 'w.bg2', W.bg2 || W.bg) + '<label class="zr-check"><input type="checkbox" data-bind="w.gradient"' + (W.bg2 ? ' checked' : '') + '> Two-color sky</label>' + '<label class="zr-check"><input type="checkbox" data-bind="w.env"' + (W.env ? ' checked' : '') + '> Studio reflections</label>' +
             rangeRow('Reflection strength', 'w.envStrength', W.envStrength, 0, 3, 0.05) + rangeRow('Ambient light', 'w.ambient', W.ambient, 0, 3, 0.05) +
             '<label class="zr-check"><input type="checkbox" data-bind="w.fog"' + (W.fog ? ' checked' : '') + '> Mist (fog)</label>' + colorRow('Mist color', 'w.fogColor', W.fogColor) + rangeRow('Mist density', 'w.fogDensity', W.fogDensity, 0, 0.2, 0.002) +
-            '<p class="zr-note">The world shows in the Rendered view and in renders!</p>';
+            '<h3>Screen effects</h3><label class="zr-check"><input type="checkbox" data-bind="f.bloom"' + (F.bloom ? ' checked' : '') + '> Glow (bloom)</label>' +
+            rangeRow('Glow strength', 'f.bloomStrength', F.bloomStrength, 0, 3, 0.05) + rangeRow('Glow from brightness', 'f.bloomThreshold', F.bloomThreshold, 0, 1, 0.01) +
+            rangeRow('Exposure', 'f.exposure', F.exposure, 0.2, 3, 0.05) + rangeRow('Saturation', 'f.saturation', F.saturation, 0, 2, 0.01) + rangeRow('Contrast', 'f.contrast', F.contrast, 0.5, 1.6, 0.01) +
+            colorRow('Tint', 'f.tint', F.tint) + rangeRow('Tint amount', 'f.tintAmount', F.tintAmount, 0, 1, 0.01) + rangeRow('Dark corners', 'f.vignette', F.vignette, 0, 1, 0.01) +
+            '<div class="zr-btnrow"><button type="button" class="zr-btn" data-act="fxreset">Reset effects</button></div>' +
+            '<p class="zr-note">The world and screen effects show in the Rendered view (Z) and in renders!</p>';
+    } else if (state.tab === 'effects') {
+        const col = COLLECTIONS.find((c) => c.id === state.fxCollection) || COLLECTIONS[0];
+        h = '<h3>' + ico('sparkle') + ' Effect presets</h3><div class="zr-colls">' + COLLECTIONS.map((c) => '<button type="button" class="zr-coll' + (c === col ? ' on' : '') + '" data-coll="' + c.id + '">' + esc(c.name) + '</button>').join('') + '</div>' +
+            '<div class="zr-presets">' + col.presets.map((p, i) => '<button type="button" class="zr-preset" data-preset-fx="' + i + '" title="' + esc(p.name) + '"><img alt="" src="' + presetThumb(col.id, i) + '"><span>' + esc(p.name) + '</span></button>').join('') + '</div>' +
+            '<label class="zr-check"><input type="checkbox" data-bind="x.fxApplyMat"' + (state.fxApplyMat ? ' checked' : '') + '> Material (for the selected objects)</label>' +
+            '<label class="zr-check"><input type="checkbox" data-bind="x.fxApplyScene"' + (state.fxApplyScene ? ' checked' : '') + '> Scene look (sky, mist, light color, screen effects)</label>' +
+            '<p class="zr-note">' + (state.selected.some((o) => o.isMesh || o.children.length) ? 'Click a look to apply it!' : 'Select an object to give it the material too!') + ' Ctrl+Z undoes it!</p>';
     } else if (state.tab === 'render') {
         const R = state.renderSet, c = sceneCameraObj();
         h = '<h3>Output</h3>' + field('Width', '<input type="number" data-bind="r.w" min="16" max="8192" value="' + R.w + '">') + field('Height', '<input type="number" data-bind="r.h" min="16" max="8192" value="' + R.h + '">') +
@@ -1425,7 +1519,7 @@ function applyProp(t, final) {
     if (!b) return;
     const val = t.type === 'checkbox' ? t.checked : t.type === 'range' || t.type === 'number' ? Number(t.value) : t.value;
     if (t.type === 'range') t.title = t.value;
-    const isColor = /^(m\.color|m\.emissive|l\.color|w\.bg|w\.fogColor)$/.test(b);
+    const isColor = /^(m\.color|m\.emissive|l\.color|w\.bg|w\.bg2|w\.fogColor|f\.tint)$/.test(b);
     if (isColor && !/^#[0-9a-f]{6}$/i.test(String(val).trim())) return;
     beginPropEdit();
     const [ns, key] = b.indexOf('.') > 0 ? b.split('.') : ['o', b];
@@ -1445,8 +1539,15 @@ function applyProp(t, final) {
         else if (key === 'power') lightPower(o, val);
         else if (key === 'angle') { o.angle = val * DEG; syncIcon(o); }
         else o[key] = val;
-    } else if (ns === 'w') { state.worldSet[key] = isColor ? val.trim() : val; applyWorld(); }
+    } else if (ns === 'w') {
+        if (key === 'gradient') state.worldSet.bg2 = val ? (state.worldSet.bg2 || '#ffffff') : '';
+        else if (key === 'bg2') state.worldSet.bg2 = val.trim();
+        else state.worldSet[key] = isColor ? val.trim() : val;
+        applyWorld();
+        if (key === 'gradient') dirty.props = true;
+    } else if (ns === 'f') { state.fxSet[key] = isColor ? val.trim() : val; applyWorld(); }
     else if (ns === 'r') { state.renderSet[key] = val; applyWorld(); }
+    else if (ns === 'x') { state[key] = val; savePrefs(); }
     if (isColor) { const row = t.closest('.zr-field'); const chip = row && row.querySelector('.zr-chip'); if (chip) chip.style.background = val; }
     if (final) changed();
 }
@@ -1466,6 +1567,10 @@ props.addEventListener('click', (e) => {
         changed(); toast(pr.dataset.preset + '!');
         return;
     }
+    const coll = e.target.closest('[data-coll]');
+    if (coll) { state.fxCollection = coll.dataset.coll; dirty.props = true; savePrefs(); return; }
+    const pf = e.target.closest('[data-preset-fx]');
+    if (pf) { applyPreset(state.fxCollection, Number(pf.dataset.presetFx)); return; }
     const res = e.target.closest('[data-res]');
     if (res) { const [w, h] = res.dataset.res.split('x').map(Number); state.renderSet.w = w; state.renderSet.h = h; changed(); return; }
     const a = e.target.closest('[data-act]');
@@ -1474,10 +1579,77 @@ props.addEventListener('click', (e) => {
         key: insertKey, clearkeys: () => { commit(); state.selected.forEach((x) => { if (x.userData.zr) delete x.userData.zr.keys; }); changed(); },
         scenecam: () => { state.sceneCamera = o.uuid; changed(); }, lookthrough: lookThroughSceneCamera,
         smooth: () => setShade(true), flat: () => setShade(false), apply: applyTransform, origin: originToGeometry, floor: snapToFloor,
-        render: renderImage, renderanim: renderAnimation
+        render: renderImage, renderanim: renderAnimation,
+        fxreset: () => { commit(); state.fxSet = Object.assign({}, FX_DEFAULTS); applyWorld(); changed(); }
     })[a.dataset.act]();
 });
 $('zr-tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab); });
+
+/* ---------- applying a preset, and its little preview ---------- */
+function setMaterial(m, P) {
+    m.color.set(P.color); m.metalness = P.metalness; m.roughness = P.roughness;
+    m.opacity = P.opacity; m.transparent = P.opacity < 1;
+    m.emissive.set(P.emissive); m.emissiveIntensity = P.emissiveIntensity;
+    if (m.isMeshPhysicalMaterial) {
+        m.clearcoat = P.clearcoat; m.transmission = P.transmission; m.thickness = P.thickness; m.ior = P.ior;
+        m.iridescence = P.iridescence; m.sheen = P.sheen; m.sheenColor.set(P.color);
+    }
+    m.needsUpdate = true;
+}
+function applyPreset(colId, i) {
+    const col = COLLECTIONS.find((c) => c.id === colId), p = col && col.presets[i];
+    if (!p) return;
+    commit();
+    let n = 0;
+    if (state.fxApplyMat) state.selected.forEach((o) => o.traverse((x) => {
+        if (!x.isMesh || Array.isArray(x.material)) return;
+        if (!x.material.isMeshPhysicalMaterial) x.material = newMaterial();
+        setMaterial(x.material, p.mat); n++;
+    }));
+    if (state.fxApplyScene) {
+        Object.assign(state.worldSet, p.world);
+        state.fxSet = Object.assign({}, FX_DEFAULTS, p.fx);
+        if (p.light) world.traverse((o) => { if (o.isLight) o.color.set(p.light); });
+        if (state.shading !== 'rendered') setShading('rendered');
+    }
+    changed();
+    toast(p.name + (n ? ' on ' + n + ' object' + (n === 1 ? '' : 's') : '') + (state.fxApplyScene ? ', with its scene look' : '') + '!');
+}
+const thumbCache = new Map();
+let thumbKit = null;
+function presetThumb(colId, i) {
+    const key = colId + ':' + i;
+    if (thumbCache.has(key)) return thumbCache.get(key);
+    const p = COLLECTIONS.find((c) => c.id === colId).presets[i];
+    try {
+        if (!thumbKit) {
+            const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+            r.setPixelRatio(1); r.setSize(112, 112, false);
+            r.outputColorSpace = THREE.SRGBColorSpace; r.toneMapping = THREE.ACESFilmicToneMapping;
+            const sc = new THREE.Scene();
+            const env = new THREE.PMREMGenerator(r).fromScene(new RoomEnvironment(), 0.04).texture;
+            const ball = new THREE.Mesh(new THREE.SphereGeometry(1, 48, 32), new THREE.MeshPhysicalMaterial());
+            const knot = new THREE.Mesh(new THREE.TorusGeometry(0.62, 0.16, 16, 48), ball.material);
+            knot.position.set(0, 0, 0.55); knot.rotation.x = 1.1;
+            const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(2, 3, 3);
+            const amb = new THREE.AmbientLight(0xffffff, 0.3);
+            sc.add(ball, sun, amb);
+            const c = new THREE.PerspectiveCamera(32, 1, 0.1, 50); c.position.set(0, 0.4, 4.2); c.lookAt(0, 0, 0);
+            thumbKit = { r, sc, env, ball, sun, amb, c };
+        }
+        const k = thumbKit, Wd = p.world;
+        setMaterial(k.ball.material, p.mat);
+        k.sc.environment = Wd.env ? k.env : null;
+        k.sc.environmentIntensity = Wd.envStrength;
+        k.sc.background = Wd.bg2 ? (() => { const cv = document.createElement('canvas'); cv.width = 4; cv.height = 64; const g = cv.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 64); gr.addColorStop(0, Wd.bg); gr.addColorStop(1, Wd.bg2); g.fillStyle = gr; g.fillRect(0, 0, 4, 64); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })() : new THREE.Color(Wd.bg);
+        k.sun.color.set(p.light || '#ffffff'); k.amb.intensity = Wd.ambient + 0.15;
+        k.r.toneMappingExposure = p.fx.exposure || 1;
+        k.r.render(k.sc, k.c);
+        const url = k.r.domElement.toDataURL('image/png');
+        thumbCache.set(key, url);
+        return url;
+    } catch (e) { return ''; }
+}
 
 /* ==================================================================
    STATUS BAR
@@ -1498,6 +1670,44 @@ function status() {
 /* ==================================================================
    KEYBOARD (Blender-style)
    ================================================================== */
+/* ---------- WASD: fly the view (what you look through, not a camera object) ----------
+   W / S forward and back, A / D left and right, Q / E down and up, for as long as the keys are held.
+   The speed follows how far you are from what you look at, so it feels the same up close and far away. */
+const FLY_KEYS = { KeyW: 1, KeyA: 1, KeyS: 1, KeyD: 1, KeyQ: 1, KeyE: 1 };
+const flying = new Set();
+let flyT = 0;
+function typingIn(t) { return t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable); }
+document.addEventListener('keydown', (e) => {
+    if (!FLY_KEYS[e.code] || e.metaKey || e.ctrlKey || e.altKey || e.shiftKey || typingIn(e.target) || document.querySelector('.zr-dlg-back')) return;
+    e.preventDefault();
+    e.stopImmediatePropagation();
+    if (!flying.size) flyT = performance.now();
+    flying.add(e.code);
+    if (viewName !== 'User') { viewName = 'User'; info(); }
+}, true);
+document.addEventListener('keyup', (e) => { flying.delete(e.code); });
+window.addEventListener('blur', () => flying.clear());
+const flyV = new THREE.Vector3(), flyF = new THREE.Vector3(), flyR = new THREE.Vector3();
+function flyStep(now) {
+    if (!flying.size) return;
+    const dt = Math.min(0.1, (now - flyT) / 1000); flyT = now;
+    const dist = Math.max(0.5, cam.position.distanceTo(orbit.target));
+    const speed = dist * 0.9 + 0.5;
+    cam.getWorldDirection(flyF);
+    flyR.crossVectors(flyF, cam.up).normalize();
+    flyV.set(0, 0, 0);
+    if (flying.has('KeyW')) flyV.add(flyF);
+    if (flying.has('KeyS')) flyV.sub(flyF);
+    if (flying.has('KeyD')) flyV.add(flyR);
+    if (flying.has('KeyA')) flyV.sub(flyR);
+    if (flying.has('KeyE')) flyV.y += 1;
+    if (flying.has('KeyQ')) flyV.y -= 1;
+    if (!flyV.lengthSq()) return;
+    flyV.normalize().multiplyScalar(speed * dt);
+    cam.position.add(flyV);
+    orbit.target.add(flyV);
+}
+
 document.addEventListener('keydown', (e) => {
     const t = e.target;
     if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
@@ -1509,7 +1719,8 @@ document.addEventListener('keydown', (e) => {
     if (mod && k.toLowerCase() === 's') return go(saveFile);
     if (mod && k.toLowerCase() === 'o') return go(() => pickFile('.zr,.json'));
     if (mod && k.toLowerCase() === 'n') return go(() => newScene());
-    if (mod && k.toLowerCase() === 'a') return go(applyTransform);
+    if (mod && e.shiftKey && k.toLowerCase() === 'a') return go(applyTransform);
+    if (mod && k.toLowerCase() === 'a') return go(() => selectAll(true));
     if (mod && k.toLowerCase() === 'p') return go(parentSel);
     if (k === 'F12') return go(mod ? renderAnimation : renderImage);
     if (mod && k === '1') return go(() => view('back'));
@@ -1526,6 +1737,7 @@ document.addEventListener('keydown', (e) => {
     if (e.shiftKey) {
         if (k === 'A' || k === 'a') return go(() => openMenu('add', lastMouse));
         if (k === 'D' || k === 'd') return go(duplicate);
+        if (k === 'S' || k === 's') return go(() => setTool('scale'));
         if (k === 'ArrowLeft') return go(() => goFrame(1));
         if (k === 'ArrowRight') return go(() => goFrame(state.end));
         return;
@@ -1533,9 +1745,7 @@ document.addEventListener('keydown', (e) => {
     switch (k) {
         case 'g': case 'G': return go(() => setTool('translate'));
         case 'r': case 'R': return go(() => setTool('rotate'));
-        case 's': case 'S': return go(() => setTool('scale'));
         case 'x': case 'X': case 'Delete': case 'Backspace': return go(del);
-        case 'a': case 'A': return go(() => selectAll(true));
         case 'h': case 'H': return go(() => hideSel(true));
         case 'Tab': return go(() => setMode(state.mode === 'edit' ? 'object' : 'edit'));
         case 'm': case 'M': return go(editMerge);
@@ -1585,6 +1795,7 @@ $('zr-unkey').addEventListener('click', removeKey);
 function resize() {
     const w = viewEl.clientWidth || 1, h = viewEl.clientHeight || 1;
     renderer.setSize(w, h, false);
+    viewFx.c.setPixelRatio(renderer.getPixelRatio()); viewFx.c.setSize(w, h);
     persp.aspect = w / h; persp.updateProjectionMatrix();
     const hh = ortho.userData.h || cam.position.distanceTo(orbit.target) * Math.tan(persp.fov * DEG / 2);
     ortho.top = hh; ortho.bottom = -hh; ortho.left = -hh * w / h; ortho.right = hh * w / h; ortho.updateProjectionMatrix();
@@ -1598,6 +1809,7 @@ function frame(now) {
         const step = 1000 / state.fps;
         if (playAcc >= step) { const n = Math.floor(playAcc / step); playAcc -= n * step; goFrame(state.frame + n > state.end ? 1 : state.frame + n, true); status(); }
     }
+    flyStep(now);
     orbit.update();
     // orthographic zoom follows the wheel (OrbitControls dollies the camera; we turn that distance into a size)
     if (cam.isOrthographicCamera) {
@@ -1619,10 +1831,12 @@ function frame(now) {
     renderer.clear();
     const ov = scene.overrideMaterial, bg = scene.background, hv = helpers.visible, gv = gizmoHelper.visible;
     helpers.visible = false; gizmoHelper.visible = false;
-    renderer.render(scene, cam);
+    if (state.shading === 'rendered' && fxActive()) { syncFx(viewFx, cam); viewFx.c.render(); }
+    else renderer.render(scene, cam);
     scene.overrideMaterial = null; scene.background = null; world.visible = false; helpers.visible = hv; gizmoHelper.visible = gv;
     renderer.render(scene, cam);
     world.visible = true; scene.background = bg; scene.overrideMaterial = ov;
+    if (collab) collab.frame(cam, viewEl.clientWidth, viewEl.clientHeight);
     drawGizmo();
 }
 function isShown(o) { for (let p = o; p; p = p.parent) if (!p.visible) return false; return true; }
@@ -1633,6 +1847,9 @@ function isShown(o) { for (let p = o; p; p = p.parent) if (!p.visible) return fa
 try {
     const p = JSON.parse(localStorage.getItem(PREFS) || '{}');
     if (p.shading) state.shading = p.shading;
+    if (p.fxCollection) state.fxCollection = p.fxCollection;
+    if (p.fxApplyMat === false) state.fxApplyMat = false;
+    if (p.fxApplyScene === false) state.fxApplyScene = false;
     if (p.snap) { state.snap = true; $('zr-snap').setAttribute('aria-pressed', 'true'); }
     if (p.tool) setTool(p.tool);
     if (p.space) setSpace(p.space);
@@ -1651,4 +1868,6 @@ if (!started) { newScene(false); undoStack.length = 0; }
 setFrameRange();
 info();
 requestAnimationFrame((t) => { playT = t; frame(t); });
-window.Zonerider = { THREE, scene, world, state, addPrim, addLight, addCamera, addEmpty, select, setMode, setShading, setTool, view, insertKey, goFrame, serialize, restore, exportAs, renderImage, undo, redo, editSelectAll, editMerge, del, duplicate, frameObjects };
+collab = installCollab({ THREE, world, state, helpers, PRIMS, primGeometry, attachTarget, rememberLights, byUuid, select, setMode, frameObjects, serialize, restore, changed, afterRemote, FX_DEFAULTS, gizmoDragging: () => gizmo.dragging });
+if (collab) { const b = collab.button({ cls: 'zr-share' }); const shade = $('zr-shading'); shade.parentNode.insertBefore(b, shade); }
+window.Zonerider = { collab: () => collab, viewCam: () => cam, viewTarget: () => orbit.target, THREE, scene, world, state, addPrim, addLight, addCamera, addEmpty, select, setMode, setShading, setTool, view, insertKey, goFrame, serialize, restore, exportAs, renderImage, undo, redo, editSelectAll, editMerge, del, duplicate, frameObjects };
