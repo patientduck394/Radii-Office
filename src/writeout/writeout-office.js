@@ -311,13 +311,43 @@
         kdAfterChange();
         OS.toast(n ? 'Un-formatted ' + n + ' piece' + (n === 1 ? '' : 's') + '! Fix any mistakes, then press Re-format!' : 'There is no Keydown formatting on this page!');
     }
+    // Re-format formats EVERY page tab: the open one on screen, the others off-screen, saved back into their tabs!
+    function reformatOtherPages() {
+        const out = { pages: 0, problems: [] };
+        if (typeof kdTabs === 'undefined' || !Array.isArray(kdTabs) || typeof kdActiveTab !== 'function') return out;
+        const act = kdActiveTab();
+        const box = document.createElement('div');
+        box.setAttribute('contenteditable', 'false');
+        box.setAttribute('aria-hidden', 'true');
+        box.style.cssText = 'position:absolute;left:-100000px;top:0;width:800px;visibility:hidden;pointer-events:none';
+        document.body.appendChild(box);
+        try {
+            kdTabs.forEach(function (t) {
+                if (!t || t === act || !t.html) return;
+                box.innerHTML = t.html;
+                const rr = kdDoc.reformat(box);
+                const html = box.innerHTML;
+                if (html !== t.html) { t.html = html; out.pages++; }
+                rr.problems.forEach(function (p) { out.problems.push({ tag: p.tag, line: p.line, page: t.name }); });
+            });
+        } catch (e) {}
+        box.remove();
+        if (out.pages) { try { kdSaveTabs(); } catch (e) {} }
+        try { if (typeof kdRenderTabs === 'function') kdRenderTabs(); } catch (e) {}
+        return out;
+    }
     function reformatDoc() {
         if (!window.kdDoc || !kdCanvas()) return;
+        // the other pages first, so the red underlines that stay on screen belong to the open page
+        const others = reformatOtherPages();
         const r = kdDoc.reformat(kdCanvas());
         kdAfterChange();
-        if (!r.problems.length) { OS.toast('Formatted the whole page, and every Keydown tag checks out!'); return; }
-        OS.dialog('Keydown check', '<p class="os-dlg-text">' + r.problems.length + ' tag' + (r.problems.length === 1 ? ' could' : 's could') + ' not be formatted! They are underlined in red on the page. A closing tag may be missing or mistyped:</p><ul class="os-dlg-text" style="max-height:260px;overflow:auto;margin:0;padding-left:20px">' +
-            r.problems.slice(0, 50).map(function (p) { return '<li><code>' + OS.esc(p.tag) + '</code> in “' + OS.esc(p.line) + '”</li>'; }).join('') + '</ul>', [{ label: 'Got it!', primary: true, value: true }]);
+        const many = typeof kdTabs !== 'undefined' && Array.isArray(kdTabs) && kdTabs.length > 1;
+        const here = (typeof kdActiveTab === 'function' && kdActiveTab()) ? kdActiveTab().name : 'this page';
+        const all = r.problems.map(function (p) { return { tag: p.tag, line: p.line, page: here }; }).concat(others.problems);
+        if (!all.length) { OS.toast(many ? 'Formatted all ' + kdTabs.length + ' pages, and every Keydown tag checks out!' : 'Formatted the whole page, and every Keydown tag checks out!'); return; }
+        OS.dialog('Keydown check', '<p class="os-dlg-text">' + all.length + ' tag' + (all.length === 1 ? ' could' : 's could') + ' not be formatted!' + (r.problems.length ? ' The ones on this page are underlined in red.' : '') + ' A closing tag may be missing or mistyped:</p><ul class="os-dlg-text" style="max-height:260px;overflow:auto;margin:0;padding-left:20px">' +
+            all.slice(0, 50).map(function (p) { return '<li>' + (many ? '<b>' + OS.esc(p.page) + ':</b> ' : '') + '<code>' + OS.esc(p.tag) + '</code> in “' + OS.esc(p.line) + '”</li>'; }).join('') + '</ul>', [{ label: 'Got it!', primary: true, value: true }]);
     }
     function wordCount() {
         const s = stats();
