@@ -804,10 +804,6 @@
                 { label: 'Lists', items: [
                     { big: true, icon: 'bullets', label: 'Bulleted\nList', run: function () { list(false); } },
                     { big: true, icon: 'numbers', label: 'Numbered\nList', run: function () { list(true); } }
-                ] },
-                { label: 'Gadgets', items: [
-                    { big: true, icon: 'dice', label: 'Calculator', title: 'Insert a little calculator gadget!', run: function () { if (typeof insertApplet === 'function') insertApplet('calculator'); save(); } },
-                    { big: true, icon: 'annotate', label: 'Sticky\nNote', title: 'Insert a sticky note gadget!', run: function () { if (typeof insertApplet === 'function') insertApplet('notes'); save(); } }
                 ] }
             ]
         },
