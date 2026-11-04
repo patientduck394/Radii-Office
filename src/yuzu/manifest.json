@@ -1,0 +1,16 @@
+{
+  "name": "Yuzu — Radii Office Mail",
+  "short_name": "Yuzu",
+  "description": "An email app: an inbox, folders, search, compose, with Keydown in every message and two looks to use it in.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#eaf2ff",
+  "theme_color": "#0065ff",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
+}

@@ -1,0 +1,47 @@
+/* =====================================================================
+   Yuzu's Outlook layout! (body.os-office) Light page, blue chrome,
+   the app's own inbox in the middle. Yuzu Classic stays untouched!
+   ===================================================================== */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #eaf2ff;
+    color: #0b1b33;
+}
+body.os-office.os-dark { background: #0a1630; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .yz-sidebar { display: none !important; }
+body.os-office .yz-main {
+    grid-column: 1;
+    grid-row: 2;
+    height: auto;
+    min-height: 0;
+    width: auto;
+    animation: osFade 0.3s;
+    color: #0b1b33;
+}
+body.os-office .yz-search-bar { padding: 14px 22px 8px; }
+body.os-office .yz-search-icon { color: #6b7fa3; }
+body.os-office .yz-search-bar input { color: #0b1b33; border-color: #c8dcff; background: #fff; backdrop-filter: none; box-shadow: 0 1px 3px rgba(0, 101, 255, 0.1); }
+body.os-office .yz-search-bar input::placeholder { color: #8092b3; }
+body.os-office .yz-search-bar input:focus { border-color: #0065ff; }
+
+body.os-office .yz-list-pane, body.os-office .yz-reading-pane { box-shadow: 0 1px 3px rgba(0, 101, 255, 0.12); border-color: #d3e0fa; }
+body.os-office .yz-list-pane { background: #fff; color: #0b1b33; }
+body.os-office .yz-list-head { color: #0052cc; border-color: #e3ecff; }
+body.os-office .yz-list-count { color: #8092b3; }
+body.os-office .yz-row:hover { background: #f0f6ff; }
+body.os-office .yz-row.on { background: #e3efff; border-color: #c8dcff; }
+body.os-office .yz-row-date, body.os-office .yz-row-snip { color: #8092b3; }
+body.os-office .yz-row.unread::before { background: #0065ff; box-shadow: 0 0 6px rgba(0, 101, 255, 0.6); }
+body.os-office .yz-star { color: #c3d2ef; }
+body.os-office .yz-star.on, body.os-office .yz-star:hover { color: #f5a623; }
+body.os-office .yz-empty { color: #8092b3; }
+
+.yz-bs-doc img { width: 36px; height: 36px; }
+.yz-layout-btn { margin-top: 2px; }
+.os-dlg.yz-layout-dlg { width: 560px; }

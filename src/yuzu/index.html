@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="radii-file.js?v=20261042"></script>
+    <script>RadiiFile.scope(/^(yuzu_mail_v1$)/);</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yuzu - Radii Office</title>
+    <meta name="description" content="Yuzu: an email app with an inbox, folders, search and Keydown in every message, in Radii Office's New ribbon look or the original Yuzu Classic look!">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../phosphor/keydown.css?v=20261204g">
+    <link rel="stylesheet" href="../writeout/annotate-hl.css?v=20261204g">
+    <link rel="stylesheet" href="style.css?v=20261204i">
+    <link rel="stylesheet" href="office-shell.css?v=20261132r">
+    <link rel="stylesheet" href="yuzu-office.css?v=20261204i">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/png" sizes="96x96" href="favicon-96.png">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <script src="/offline.js?v=20261132g" defer></script>
+    <script src="/phone-drawer.js?v=20261201k" defer></script>
+</head>
+<body>
+
+    <nav class="yz-sidebar">
+        <div class="yz-brand">
+            <img src="favicon.svg" alt="" width="26" height="26"><h2>Yuzu</h2>
+        </div>
+
+        <button type="button" class="yz-compose-btn" id="yz-compose-btn">✎ Compose</button>
+
+        <div class="yz-folders" id="yz-folders"></div>
+
+        <div class="yz-sidebar-actions">
+            <button type="button" class="yz-btn" id="yz-export-btn">⬇ Export .YZ</button>
+            <button type="button" class="yz-btn" id="yz-import-btn">📂 Import .YZ</button>
+            <input type="file" id="yz-import-input" accept=".yz,.json" hidden>
+        </div>
+    </nav>
+
+    <main class="yz-main">
+        <div class="yz-search-bar">
+            <svg viewBox="0 0 24 24" class="yz-search-icon" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15 15l5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="search" id="yz-search" placeholder="Search mail…" aria-label="Search mail">
+        </div>
+        <div class="yz-workspace">
+            <section class="yz-list-pane">
+                <div class="yz-list-head"><span id="yz-list-title">Inbox</span><span class="yz-list-count" id="yz-list-count"></span></div>
+                <div class="yz-list" id="yz-list"></div>
+            </section>
+            <section class="yz-reading-pane" id="yz-reading"></section>
+        </div>
+    </main>
+
+    <div class="yz-toast" id="yz-toast" role="status"></div>
+
+    <script src="../phosphor/keydown.js?v=20261204g"></script>
+    <script src="office-shell.js?v=20261204i"></script>
+    <!-- Yuzu itself: the app, then its ribbon, in order! -->
+    <script src="app.js?v=20261204i"></script>
+    <script src="office.js?v=20261204i"></script>
+</body>
+</html>

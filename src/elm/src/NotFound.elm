@@ -35,6 +35,7 @@ places =
     , Place "hexa" "Hexa" "Calendar"
     , Place "taskra" "Taskra" "To-dos"
     , Place "zonerider" "Zonerider" "3D editor"
+    , Place "yuzu" "Yuzu" "Email"
     , Place "antimony" "Antimony" "Live posts"
     , Place "waterflow" "Waterflow" "Note workspace"
     , Place "products" "Products" "Every app"

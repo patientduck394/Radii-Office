@@ -15,7 +15,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = [
     ['writeout', 'mobile/new', '/writeout/mobile/'],
     ['bitbook', 'mobile/new', '/bitbook/mobile/'],
-    ...['amber', 'imbuer', 'omicron', 'cabinet', 'mainkey', 'inkpath', 'peeker', 'phosphor', 'antimony', 'formly', 'hexa', 'taskra', 'zonerider', 'waterflow', 'opendb']
+    ...['amber', 'imbuer', 'omicron', 'cabinet', 'mainkey', 'inkpath', 'peeker', 'phosphor', 'antimony', 'formly', 'hexa', 'taskra', 'zonerider', 'waterflow', 'opendb', 'yuzu']
         .map((a) => [a, 'mobile', null]),
 ];
 
