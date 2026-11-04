@@ -48,6 +48,8 @@
                     { label: 'Sync now', icon: 'reset', run: () => app.sync() },
                     { label: 'Sign out', icon: 'x', run: () => app.disconnect() },
                 ] : [
+                    { label: 'Get a @radii-office.com address', icon: 'mail', run: () => (window.YuzuMail.configured('yuzu') ? app.openYuzu('create') : app.openSetup('yuzu')) },
+                    { label: 'Sign in with a Yuzu address', icon: 'user', run: () => (window.YuzuMail.configured('yuzu') ? app.openYuzu('login') : app.openSetup('yuzu')) },
                     { label: 'Sign in with Google', icon: 'user', run: () => app.connect('google') },
                     { label: 'Sign in with Microsoft', icon: 'user', run: () => app.connect('microsoft') },
                     { label: 'Set up sign-in…', icon: 'gear', run: () => app.openSetup() },

@@ -1,0 +1,18 @@
+name = "yuzu-mail"
+main = "index.js"
+compatibility_date = "2025-09-01"
+
+[vars]
+DOMAIN = "radii-office.com"
+# websites allowed to call this API (comma separated); localhost is always allowed for testing
+ORIGINS = "https://radii-office.com,https://radii-office.pages.dev"
+
+# the database: run  npx wrangler d1 create yuzu-mail  and paste its database_id here
+[[d1_databases]]
+binding = "DB"
+database_name = "yuzu-mail"
+database_id = "PASTE-YOUR-DATABASE-ID-HERE"
+
+# sending to addresses outside radii-office.com (Cloudflare Email Sending, turn it on for the domain in the dashboard first)
+[[send_email]]
+name = "EMAIL"

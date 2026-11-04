@@ -223,3 +223,13 @@ html, body {
 .yz-steps { padding-left: 20px; line-height: 1.55; font-size: 13.5px; }
 .yz-modal input[type=text] { width: 100%; box-sizing: border-box; padding: 9px 12px; border-radius: 8px; border: 1px solid #d3e0fa; font: 13px 'JetBrains Mono', monospace; }
 .yz-modal code { background: #eef4ff; padding: 1px 5px; border-radius: 4px; font-size: 12px; overflow-wrap: anywhere; }
+.yz-signin-yuzu { background: #0065ff; border-color: #0048bf; color: #fff; }
+.yz-signin-yuzu:hover { background: #1a75ff; border-color: #0048bf; }
+.yz-addr { display: flex; align-items: center; gap: 6px; }
+.yz-addr input { flex: 1; min-width: 0; }
+.yz-addr b { color: #44557a; white-space: nowrap; }
+.yz-ok { color: #067a3b; }
+.yz-field .yz-error { margin: 0; }
+.yz-modal-card .yz-btn { color: #0b1b33; background: #eef4ff; border: 1px solid #c8d6f2; }
+.yz-modal-card .yz-btn:hover { background: #dbe9ff; }
+.yz-modal-card .yz-btn.yz-primary { color: #fff; background: #0065ff; border-color: #0048bf; }

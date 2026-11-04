@@ -3,5 +3,6 @@
 // which keeps them only in your own browser.) Setup steps are in that window!
 window.YUZU_CONFIG = {
     google: '',     // like 1234567890-abcdef.apps.googleusercontent.com
-    microsoft: ''   // like 00000000-0000-0000-0000-000000000000 (the Application (client) ID)
+    microsoft: '',  // like 00000000-0000-0000-0000-000000000000 (the Application (client) ID)
+    api: ''         // the address of the Yuzu mail server (yuzu/worker/), like https://yuzu-mail.you.workers.dev, for name@radii-office.com addresses
 };

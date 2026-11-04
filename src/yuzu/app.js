@@ -9,8 +9,10 @@
     const uid = (p) => p + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
     const STORAGE_KEY = 'yuzu_mail_v1';
     const FOLDERS = { inbox: 'Inbox', starred: 'Starred', sent: 'Sent', drafts: 'Drafts', trash: 'Trash' };
-    const PROVIDERS = { google: 'Google', microsoft: 'Microsoft' };
+    const PROVIDERS = { yuzu: 'Yuzu', google: 'Google', microsoft: 'Microsoft' };
+    const DOMAIN = ((window.YUZU_CONFIG || {}).domain || 'radii-office.com');
     const LOGO = {
+        yuzu: '<img src="favicon.svg" alt="" width="20" height="20">',
         google: '<svg viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>',
         microsoft: '<svg viewBox="0 0 23 23" aria-hidden="true"><path fill="#f35325" d="M1 1h10v10H1z"/><path fill="#81bc06" d="M12 1h10v10H12z"/><path fill="#05a6f0" d="M1 12h10v10H1z"/><path fill="#ffba08" d="M12 12h10v10H12z"/></svg>',
     };
@@ -83,17 +85,19 @@
         if (e && YuzuMail && e instanceof YuzuMail.Expired) { state.error = msg; render(); }
         toast(msg);
     }
-    async function connect(provider) {
-        if (!window.YuzuMail) return;
-        if (!YuzuMail.configured(provider)) { openSetup(provider); return; }
+    async function connect(provider, creds) {
+        if (!window.YuzuMail) return false;
+        if (!YuzuMail.configured(provider)) { openSetup(provider); return false; }
+        if (provider === 'yuzu' && !creds) { openYuzu(); return false; }
         try {
-            const acct = await YuzuMail.connect(provider);
+            const acct = await YuzuMail.connect(provider, creds);
             state.account = acct; state.error = '';
             Object.keys(remote).forEach((k) => delete remote[k]);
             save(); rebuild(); closeModal(); render();
             toast('Signed in as ' + acct.email + '!');
             sync(true);
-        } catch (e) { showError(e); }
+            return true;
+        } catch (e) { showError(e); return false; }
     }
     function disconnect() {
         if (window.YuzuMail) YuzuMail.disconnect();
@@ -287,7 +291,9 @@
         return back;
     }
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
-    const signInButtons = () => ['google', 'microsoft'].map((p) => '<button type="button" class="yz-signin" data-signin="' + p + '">' + LOGO[p] + '<span>Sign in with ' + PROVIDERS[p] + '</span></button>').join('');
+    const yuzuButtons = () => '<button type="button" class="yz-signin yz-signin-yuzu" data-yuzu="create">' + LOGO.yuzu + '<span>Get your @' + esc(DOMAIN) + ' address</span></button>' +
+        '<button type="button" class="yz-signin" data-yuzu="login">' + LOGO.yuzu + '<span>Sign in with a Yuzu address</span></button>';
+    const signInButtons = () => yuzuButtons() + ['google', 'microsoft'].map((p) => '<button type="button" class="yz-signin" data-signin="' + p + '">' + LOGO[p] + '<span>Sign in with ' + PROVIDERS[p] + '</span></button>').join('');
     function openAccounts() {
         const a = state.account;
         const m = modal('Your mail account',
@@ -298,20 +304,54 @@
             '<p class="yz-note small"><button type="button" class="yz-link" data-setup>Set up sign-in</button> (the one-time settings that let this copy of Yuzu talk to Google and Microsoft)</p>');
         m.addEventListener('click', (e) => {
             const s = e.target.closest('[data-signin]'); if (s) connect(s.dataset.signin);
+            const y = e.target.closest('[data-yuzu]'); if (y) { if (YuzuMail.configured('yuzu')) openYuzu(y.dataset.yuzu === 'login' ? 'login' : 'create'); else openSetup('yuzu'); }
             if (e.target.closest('[data-out]')) disconnect();
             if (e.target.closest('[data-setup]')) openSetup();
+        });
+    }
+    function openYuzu(mode) {
+        mode = mode === 'login' ? 'login' : 'create';
+        const create = mode === 'create';
+        const m = modal(create ? 'Get your Yuzu address' : 'Sign in with your Yuzu address',
+            '<p class="yz-note">' + (create ? 'Pick a name and a password and you get your own <b>name@' + esc(DOMAIN) + '</b> address, free, to send and receive real email!' : 'Use the name and password you made for your Yuzu address.') + '</p>' +
+            '<form id="yz-yuzu-form" autocomplete="on">' +
+            (create ? '<label class="yz-field"><span>Your name <small>(shown to the people you write to)</small></span><input id="yz-yz-name" type="text" autocomplete="name" maxlength="60"></label>' : '') +
+            '<label class="yz-field"><span>Address</span><span class="yz-addr"><input id="yz-yz-user" type="text" autocomplete="username" spellcheck="false" autocapitalize="none" maxlength="60" placeholder="example"><b>@' + esc(DOMAIN) + '</b></span></label>' +
+            (create ? '<p class="yz-note small" id="yz-yz-avail" aria-live="polite">&nbsp;</p>' : '') +
+            '<label class="yz-field"><span>Password' + (create ? ' <small>(at least 8 characters)</small>' : '') + '</span><input id="yz-yz-pass" type="password" autocomplete="' + (create ? 'new-password' : 'current-password') + '" maxlength="200"></label>' +
+            '<p class="yz-note yz-error" id="yz-yz-err" role="alert" hidden></p>' +
+            '<div class="yz-modal-actions"><button type="submit" class="yz-btn yz-primary" id="yz-yz-go">' + (create ? 'Create my address' : 'Sign in') + '</button><button type="button" class="yz-btn" data-switch>' + (create ? 'I already have one' : 'Make a new address') + '</button></div></form>');
+        const err = m.querySelector('#yz-yz-err'), go = m.querySelector('#yz-yz-go'), user = m.querySelector('#yz-yz-user');
+        const userName = () => user.value.trim().toLowerCase().replace(new RegExp('@' + DOMAIN.replace(/\./g, '\\.') + '$'), '');
+        let t = 0;
+        if (create) user.addEventListener('input', () => {
+            clearTimeout(t); const av = m.querySelector('#yz-yz-avail'), u = userName();
+            if (u.length < 3) { av.className = 'yz-note small'; av.textContent = ' '; return; }
+            av.className = 'yz-note small'; av.textContent = 'Checking…';
+            t = setTimeout(() => YuzuMail.yuzuAvailable(u).then((r) => { if (userName() !== u) return; av.className = 'yz-note small ' + (r.available ? 'yz-ok' : 'yz-error'); av.textContent = r.available ? '✓ ' + r.email + ' is free!' : r.reason; }).catch(() => { av.textContent = ' '; }), 350);
+        });
+        m.addEventListener('click', (e) => { if (e.target.closest('[data-switch]')) openYuzu(create ? 'login' : 'create'); });
+        m.querySelector('#yz-yuzu-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            err.hidden = true; go.disabled = true; const label = go.textContent; go.textContent = 'One moment…';
+            try {
+                const acct = await YuzuMail.connect('yuzu', { create, username: userName(), password: m.querySelector('#yz-yz-pass').value, name: create ? m.querySelector('#yz-yz-name').value : '' });
+                state.account = acct; state.error = ''; Object.keys(remote).forEach((k) => delete remote[k]);
+                save(); rebuild(); closeModal(); render(); toast((create ? 'Welcome! Your address is ' : 'Signed in as ') + acct.email + '!'); sync(true);
+            } catch (ex) { err.textContent = ex.message || String(ex); err.hidden = false; go.disabled = false; go.textContent = label; }
         });
     }
     function openSetup(want) {
         const ids = YuzuMail.ids(), origin = YuzuMail.origin(), redirect = YuzuMail.redirectUri();
         const m = modal('Set up sign-in',
-            '<p class="yz-note">' + (want ? '<b>' + PROVIDERS[want] + ' sign-in is not set up yet.</b> ' : '') + 'Google and Microsoft each need a free "app" registration for Yuzu, done once by whoever hosts it. You get a <b>client ID</b> (it is public, not a secret): paste it below. It is kept only in this browser. (The site owner can also put it in <code>yuzu/config.js</code> so everyone gets it.)</p>' +
-            '<details' + (want !== 'microsoft' ? ' open' : '') + '><summary>Google (Gmail)</summary><ol class="yz-steps"><li>Open <b>console.cloud.google.com</b>, make a project, and turn on the <b>Gmail API</b>.</li><li>In <b>OAuth consent screen</b>, choose External and add your own address as a <b>test user</b> (needed until Google verifies the app).</li><li>In <b>Credentials</b>, create an <b>OAuth client ID</b> of type <b>Web application</b>.</li><li>Under <b>Authorized JavaScript origins</b> add <code>' + esc(origin) + '</code>.</li><li>Copy the <b>Client ID</b> here:</li></ol><input id="yz-id-google" type="text" spellcheck="false" placeholder="1234567890-abc.apps.googleusercontent.com" value="' + esc(ids.google) + '"></details>' +
+            '<p class="yz-note">' + (want ? '<b>' + (want === 'yuzu' ? 'The Yuzu mail server is' : PROVIDERS[want] + ' sign-in is') + ' not set up yet.</b> ' : '') + 'Yuzu addresses need the Yuzu mail server (below), and Google and Microsoft each need a free "app" registration for Yuzu, done once by whoever hosts it. You get a <b>client ID</b> (it is public, not a secret): paste it below. It is kept only in this browser. (The site owner can also put it in <code>yuzu/config.js</code> so everyone gets it.)</p>' +
+            '<details' + (want === 'yuzu' ? ' open' : '') + '><summary>Yuzu addresses (name@' + esc(DOMAIN) + ')</summary><ol class="yz-steps"><li>In <code>yuzu/worker/</code> (included with Yuzu) follow <b>README.md</b>: make the database, turn on Email Routing and Email Sending for <b>' + esc(DOMAIN) + '</b>, set the <b>SECRET</b> and deploy the Worker.</li><li>Copy the address the deploy prints (like <code>https://yuzu-mail.you.workers.dev</code>) here:</li></ol><input id="yz-id-api" type="text" spellcheck="false" placeholder="https://yuzu-mail.example.workers.dev" value="' + esc(ids.api) + '"></details>' +
+            '<details' + (want === 'google' ? ' open' : '') + '><summary>Google (Gmail)</summary><ol class="yz-steps"><li>Open <b>console.cloud.google.com</b>, make a project, and turn on the <b>Gmail API</b>.</li><li>In <b>OAuth consent screen</b>, choose External and add your own address as a <b>test user</b> (needed until Google verifies the app).</li><li>In <b>Credentials</b>, create an <b>OAuth client ID</b> of type <b>Web application</b>.</li><li>Under <b>Authorized JavaScript origins</b> add <code>' + esc(origin) + '</code>.</li><li>Copy the <b>Client ID</b> here:</li></ol><input id="yz-id-google" type="text" spellcheck="false" placeholder="1234567890-abc.apps.googleusercontent.com" value="' + esc(ids.google) + '"></details>' +
             '<details' + (want === 'microsoft' ? ' open' : '') + '><summary>Microsoft (Outlook, Hotmail, Microsoft 365)</summary><ol class="yz-steps"><li>Open <b>portal.azure.com</b> → <b>App registrations</b> → <b>New registration</b>.</li><li>Pick <b>Accounts in any organizational directory and personal Microsoft accounts</b>.</li><li>Set the redirect: platform <b>Single-page application</b>, address <code>' + esc(redirect) + '</code>.</li><li>In <b>API permissions</b> add <b>Microsoft Graph</b> → <b>Delegated</b>: <code>Mail.ReadWrite</code>, <code>Mail.Send</code>, <code>User.Read</code>.</li><li>Copy the <b>Application (client) ID</b> here:</li></ol><input id="yz-id-microsoft" type="text" spellcheck="false" placeholder="00000000-0000-0000-0000-000000000000" value="' + esc(ids.microsoft) + '"></details>' +
             '<div class="yz-modal-actions"><button type="button" class="yz-btn yz-primary" data-save>Save</button><button type="button" class="yz-btn" data-x>Cancel</button></div>', true);
         m.addEventListener('click', (e) => {
             if (!e.target.closest('[data-save]')) return;
-            YuzuMail.setClientIds($('yz-id-google').value, $('yz-id-microsoft').value);
+            YuzuMail.setClientIds($('yz-id-google').value, $('yz-id-microsoft').value, $('yz-id-api').value);
             closeModal(); render(); toast('Saved! Now press Sign in!');
             if (want && YuzuMail.configured(want)) openAccounts();
         });
@@ -365,7 +405,7 @@
         if (!m) {
             el.innerHTML = state.account
                 ? '<div class="yz-placeholder"><span class="yz-placeholder-icon" aria-hidden="true">✉️</span><p>Pick a message to read it, or write a new one!</p>' + (!online() ? '<button type="button" class="yz-signin" data-open-accounts>Sign in again</button>' : '') + '</div>'
-                : '<div class="yz-welcome"><img src="favicon.svg" alt="" width="72" height="72"><h2>Welcome to Yuzu!</h2><p>Sign in with your own account to read your inbox and send real email, with Keydown in every message you write!</p><div class="yz-modal-actions col">' + signInButtons() + '</div><p class="yz-note small">Yuzu never sees your password, and mail is loaded straight from Google or Microsoft: it is not kept on this device. <button type="button" class="yz-link" data-setup>Set up sign-in</button></p></div>';
+                : '<div class="yz-welcome"><img src="favicon.svg" alt="" width="72" height="72"><h2>Welcome to Yuzu!</h2><p>Get your own free @' + esc(DOMAIN) + ' address, or sign in with Google or Microsoft, to read your inbox and send real email, with Keydown in every message you write!</p><div class="yz-modal-actions col">' + signInButtons() + '</div><p class="yz-note small">Mail is loaded into this page and is not kept on this device, and Google and Microsoft sign-ins never show Yuzu your password. <button type="button" class="yz-link" data-setup>Set up sign-in</button></p></div>';
             return;
         }
         const who = m.folder === 'sent' ? m.to : m.from;
@@ -411,6 +451,7 @@
         document.addEventListener('click', (e) => {
             if (e.target.closest('#yz-modal')) return;
             const so = e.target.closest('[data-signin]'); if (so) { connect(so.dataset.signin); return; }
+            const yz = e.target.closest('[data-yuzu]'); if (yz) { if (YuzuMail.configured('yuzu')) openYuzu(yz.dataset.yuzu === 'login' ? 'login' : 'create'); else openSetup('yuzu'); return; }
             if (e.target.closest('[data-setup]')) { openSetup(); return; }
             if (e.target.closest('[data-open-accounts]')) { openAccounts(); return; }
             const folderBtn = e.target.closest('[data-folder]');
@@ -449,7 +490,7 @@
         emails, byId, inFolder, unreadCount, visibleEmails,
         setFolder, setQuery, openEmail, toggleStar, deleteEmail, restoreEmail, emptyTrash, sync,
         openCompose, closeCompose, saveDraft, send, reply, forward, editDraft,
-        connect, disconnect, openAccounts, openSetup, myEmail,
+        connect, disconnect, openAccounts, openSetup, openYuzu, myEmail,
         exportYZ, importYZ, exportEML, toast, plain, kdHtml, dateStr, nameOf,
     };
 })();

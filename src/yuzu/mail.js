@@ -12,10 +12,10 @@
         let o = {};
         try { o = JSON.parse(localStorage.getItem(CFG_KEY) || '{}') || {}; } catch (e) { o = {}; }
         const d = window.YUZU_CONFIG || {};
-        return { google: String(o.google || d.google || '').trim(), microsoft: String(o.microsoft || d.microsoft || '').trim() };
+        return { google: String(o.google || d.google || '').trim(), microsoft: String(o.microsoft || d.microsoft || '').trim(), api: String(o.api || d.api || '').trim().replace(/\/+$/, '') };
     }
-    const clientId = (p) => ids()[p] || '';
-    function setClientIds(g, m) { try { localStorage.setItem(CFG_KEY, JSON.stringify({ google: String(g || '').trim(), microsoft: String(m || '').trim() })); } catch (e) {} }
+    const clientId = (p) => ids()[p === 'yuzu' ? 'api' : p] || '';
+    function setClientIds(g, m, api) { try { localStorage.setItem(CFG_KEY, JSON.stringify({ google: String(g || '').trim(), microsoft: String(m || '').trim(), api: String(api || '').trim().replace(/\/+$/, '') })); } catch (e) {} }
 
     /* ---------- the token, kept for this browser tab only ---------- */
     const SESSION_KEY = 'yuzu_session';
@@ -244,7 +244,40 @@
     /* ==================================================================
        the one set of calls Yuzu uses, for either provider
        ================================================================== */
+    /* ---------- a Yuzu address (name@radii-office.com): Radii Office's own mail server, signed in with a name and password ---------- */
+    async function yfetch(path, opt, noAuth) {
+        const api = clientId('yuzu');
+        if (!api) throw new Error('The Yuzu mail server is not set up yet!');
+        const headers = Object.assign({ 'Content-Type': 'application/json' }, noAuth ? {} : { Authorization: 'Bearer ' + (await token()) });
+        let r;
+        try { r = await fetch(api + path, Object.assign({}, opt, { headers })); } catch (e) { throw new Error('Could not reach the Yuzu mail server, so check your connection!'); }
+        let j = null;
+        try { j = await r.json(); } catch (e) { j = null; }
+        if (r.status === 401 && !noAuth) throw expired();
+        if (!r.ok) throw new Error((j && j.error) || 'The Yuzu mail server said no (' + r.status + ')!');
+        return j;
+    }
+    async function yuzuConnect(c) {
+        c = c || {};
+        const j = await yfetch(c.create ? '/api/signup' : '/api/login', { method: 'POST', body: JSON.stringify({ username: c.username, password: c.password, name: c.name }) }, true);
+        setSession({ provider: 'yuzu', token: j.token, expires: j.expires });
+        return { provider: 'yuzu', email: j.email, name: j.name || j.email };
+    }
+    async function yuzuList(folder) {
+        const j = await yfetch('/api/messages?folder=' + encodeURIComponent(folder));
+        return (j.messages || []).map((m) => Object.assign({}, m, { remote: true, provider: 'yuzu', threadId: '' }));
+    }
+    const yPatch = (m, body) => yfetch('/api/messages/' + m.id, { method: 'PATCH', body: JSON.stringify(body) });
+    const yuzuAvailable = (u) => yfetch('/api/available?u=' + encodeURIComponent(u), null, true);
+
     const P = {
+        yuzu: {
+            connect: yuzuConnect, list: yuzuList,
+            setRead: (m, v) => yPatch(m, { read: !!v }), setStar: (m, v) => yPatch(m, { starred: !!v }),
+            trash: (m) => yPatch(m, { folder: 'trash' }), untrash: (m) => yPatch(m, { folder: 'restore' }),
+            remove: (m) => yfetch('/api/messages/' + m.id, { method: 'DELETE' }),
+            send: (o) => yfetch('/api/send', { method: 'POST', body: JSON.stringify({ to: o.to, subject: o.subject, text: o.text, html: o.html }) }),
+        },
         google: {
             connect: googleConnect, list: googleList,
             setRead: (m, v) => (v ? gModify(m, [], ['UNREAD']) : gModify(m, ['UNREAD'], [])),
@@ -269,7 +302,7 @@
     window.YuzuMail = {
         clientId, setClientIds, configured: (p) => !!clientId(p), hasSession, ids,
         redirectUri, origin: () => location.origin,
-        async connect(p) { const a = await need(p).connect(); return a; },
+        async connect(p, creds) { const a = await need(p).connect(creds); return a; }, yuzuAvailable,
         disconnect() {
             const s = session;
             setSession(null);
