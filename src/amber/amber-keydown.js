@@ -249,9 +249,23 @@
         '';
     document.head.appendChild(st);
 
+    // Keydown Next (custom @style tags, {{live values}}, ::blocks) on every slide's text boxes (not the one being typed in)
+    function next(rootEl) {
+        if (!window.KeydownNext || !rootEl) return;
+        rootEl.querySelectorAll('.slide-text-content').forEach(function (span) {
+            if (span.contentEditable === 'true') return;
+            try { window.KeydownNext.apply(span, { editing: false }); } catch (e) {}
+        });
+    }
+    (function () {
+        const orig = window.renderActiveSlide;
+        if (typeof orig === 'function') window.renderActiveSlide = function () { const r = orig.apply(this, arguments); next(document.getElementById('slide-canvas')); return r; };
+    })();
+
     window.AmberKeydown = {
         reformat: reformat, unformat: unformat, textBox: textBoxDialog, stylesMenu: stylesMenu, guide: guide,
         onBlur: function (v) { if (v === undefined) return prefs.onBlur; prefs.onBlur = !!v; savePrefs(); },
-        format: function (html) { return work(html, function (b) { return KD().reformat(b); }).html; }
+        format: function (html) { return work(html, function (b) { return KD().reformat(b); }).html; },
+        next: next
     };
 })();

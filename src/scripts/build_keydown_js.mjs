@@ -95,6 +95,8 @@ const css = KEYDOWN_CSS;
 let portable = must(read('phosphor/keydown.js'), 'function kdEnsureUniqueStyles() {', 'function kdEnsureUniqueStyles() { return;');
 // the document engine: OpenDB lives at the site, and the marketplace tags join its tag list (so they save back as Keydown too)
 let docEngine = read('writeout/keydown-doc.js');
+// Keydown Next (keydown-next.js) is its own IIFE that finds window.kdDoc itself: just append its source
+const nextJs = read('writeout/keydown-next.js'); // a self-contained IIFE, safe to splice in as-is
 docEngine = must(docEngine, "const OPENDB = SCRIPT ? new URL('../opendb/', SCRIPT).href : '../opendb/';", "const OPENDB = '" + SITE + "opendb/';");
 docEngine = must(docEngine, '    const ORDER = TRIGGERS.slice()', '    (root.__KD_EXTRA_TRIGGERS || []).forEach((t) => TRIGGERS.push(t));\n    const ORDER = TRIGGERS.slice()');
 // the Skills that act when clicked (dice, timer, flashcard, capsule): the chip makers + actions, without the phone sheets
@@ -198,6 +200,9 @@ ${table}
 
 /* ===== The document engine (from writeout/keydown-doc.js) ===== */
 ${docEngine}
+
+/* ===== Keydown Next: custom @style tags, {{live values}} and ::chart / ::poll / ::quiz / ::timer / ::map / ::scene (from writeout/keydown-next.js) ===== */
+${nextJs}
 
 /* ===== Keydown.js: the friendly front door ===== */
 ${api}

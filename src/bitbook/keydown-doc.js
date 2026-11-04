@@ -269,13 +269,14 @@
         s = atTables(s, opts, stash);
         // `code` is taken literally, so nothing inside it turns into links, math or chips
         s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code>' + esc(t) + '</code>'));
+        // {{templates}} and Keydown Next's {{live values}} before math, so a "$" inside them stays a "$"
+        s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplHtml(raw, false)));
         s = s.replace(/\\\$/g, () => stash('<span class="kd-esc">$</span>'));
         s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => stash(mathHtml(t.trim(), true)));
         s = s.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (_, pre, t) => pre + stash(mathHtml(t, false)));
         // a backslash keeps the next symbol as itself (\#R#x# stays "#R#x#"), and \\ is one backslash; letters and digits are never touched
         s = s.replace(/\\([^A-Za-z0-9\s])/g, (_, c) => stash('<span class="kd-esc">' + esc(c) + '</span>'));
         s = s.replace(new RegExp(SKILL_RE), (m, name, raw) => { if (!SKILL_NAMES.test(name)) return m; const h = skillHtml(name, parseParams(raw.replace(/\\"/g, '"'))); return h ? stash(h) : m; });
-        s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplHtml(raw, false)));
         // [[id]] shows the entry's title; data-kd-auto remembers that, so it saves back as [[id]] (unless you change the words)
         s = s.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, label) => {
             const text = label || (opts.title && opts.title(id)) || id;
@@ -453,6 +454,8 @@
         const kids = () => Array.from(el.childNodes).map(inlineText).join('');
         const tag = el.tagName;
         if (el.hasAttribute('data-kd-tpl')) return '{{' + el.getAttribute('data-kd-tpl') + '}}';
+        // Keydown Next (keydown-next.js): blocks, live values and @style lines save as the text they were made from
+        if (el.classList.contains('kdx') && el.hasAttribute('data-kd-src')) return el.getAttribute('data-kd-src');
         // an escaped symbol saves with its backslash, so it stays plain next time too
         if (el.classList.contains('kd-esc')) return '\\' + el.textContent;
         if (el.matches(SKILL_SEL) && !el.classList.contains('bl-prog')) return skillToText(el);
@@ -573,6 +576,7 @@
             if (el.classList.contains('kd-overlay')) { const t = inlineText(el); if (t) push(t); return; }
             if (el.matches(BLOCK_SEL) && !el.parentElement.closest(BLOCK_SEL)) { const bk = blockOf(el); if (bk) { push(blockLine(bk)); return; } }
             if (el.hasAttribute('data-kd-tpl') && el.classList.contains('kd-tpl-block')) { push('{{' + el.getAttribute('data-kd-tpl') + '}}'); return; }
+            if (el.classList.contains('kdx') && el.hasAttribute('data-kd-src') && /^(DIV|P)$/.test(tag)) { flush(); el.getAttribute('data-kd-src').split('\n').forEach((l) => lines.push(l)); return; }
             if (el.classList.contains('kd-math') && el.getAttribute('data-display') === '1') { push('$$' + (el.getAttribute('data-tex') || '') + '$$'); return; }
             if (el.hasAttribute('data-kd-media')) {
                 const cap = el.querySelector('figcaption');

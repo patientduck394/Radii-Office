@@ -86,6 +86,7 @@ function upgrade(root) {
     inkLayers(root);
     try { pmSweep(); tcSweep(); } catch (e) {}
     try { ensureMath(root); } catch (e) {}
+    try { if (window.KeydownNext) window.KeydownNext.apply(root, { editing: root.isContentEditable || (root.closest && !!root.closest('[contenteditable="true"]')) }); } catch (e) {}
     return root;
 }
 

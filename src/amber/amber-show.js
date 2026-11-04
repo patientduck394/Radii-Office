@@ -115,6 +115,8 @@
             root.appendChild(div);
             map[el.id] = div;
         });
+        // Keydown Next: live values, custom tags and ::blocks in the show too
+        try { if (window.AmberKeydown && window.AmberKeydown.next) window.AmberKeydown.next(root); } catch (e) {}
         // the slide's Annotate drawing, on top of everything (amber-annotate.js)
         try { if (window.AmberAnnotate) { const ink = window.AmberAnnotate.showLayer(slide); if (ink) root.insertAdjacentHTML('beforeend', ink); } } catch (e) {}
         return { root: root, bg: bg, map: map, slide: slide };

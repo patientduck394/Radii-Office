@@ -305,10 +305,11 @@
         const stash = (html) => { store.push(html); return '\u0001' + (store.length - 1) + '\u0001'; };
         let s = String(text);
         s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code class="kd-code">' + esc(t) + '</code>'));
+        // {{templates}} and {{live values}} first, so a "$" inside them is never read as math
+        s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplInline(raw)));
         s = s.replace(/\\\$/g, () => stash('$'));
         s = s.replace(/\$\$([\s\S]+?)\$\$/g, (_, t) => stash(tex(t.trim(), true)));
         s = s.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (_, pre, t) => pre + stash(tex(t, false)));
-        s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplInline(raw)));
         s = s.replace(/\[\[([a-z0-9-]+)(?:\|([^\]]+))?\]\]/g, (_, id, label) => {
             const e = byId.get(id);
             const text = esc(label || (e ? e.title : id));
@@ -703,6 +704,7 @@
             '<div class="side-box"><h2>Tags</h2>' + tagLinks(e.tags) + '<p class="hint" style="margin-top:10px">Created ' + esc(e.created) + (e.updated && e.updated !== e.created ? ' · updated ' + esc(e.updated) : '') + (e.authors && e.type !== 'paper' ? '<br>By ' + esc(e.authors.join(', ')) : '') + '</p></div>' +
             (links.length ? '<div class="side-box"><h2>What links here</h2><ul>' + links.map((l) => '<li><a href="#/e/' + l.id + '">' + esc(l.title) + '</a></li>').join('') + '</ul></div>' : '');
         view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(lite ? lite.desc : e.body, e) + '</div>' + (lite ? '<div id="lite-preview" class="lite-preview"></div>' + liteFilesHtml(lite.files) : '') + '</article><aside class="side">' + side + '</aside></div>';
+        next(view.querySelector('.entry-main .kd-doc'));
         if (lite) {
             wireLiteButtons(view, lite.files);
             litePreview($('lite-preview'), lite.files, e.preview);
@@ -735,6 +737,8 @@
             (lite ? '<div id="lite-preview" class="lite-preview"></div>' + liteFilesHtml(lite.files) : '<div class="kd-doc">' + renderKd(e.body, e) + '</div>') + '<p class="hint">Public domain (CC0) on OpenDB!</p></div>';
         if (lite) { wireLiteButtons(view, lite.files); litePreview($('lite-preview'), lite.files, e.preview); }
     }
+    // Keydown Next (writeout/keydown-next.js): custom @style tags, {{live values}} and ::chart / ::poll / ::quiz / ::timer / ::map / ::scene blocks
+    function next(el) { try { if (el && window.KeydownNext) window.KeydownNext.apply(el, { editing: false }); } catch (e) { console.warn('[KeydownNext]', e); } }
     function extOf(e) { const m = /\.([a-z0-9]+)$/i.exec(e.file || ''); return m ? '.' + m[1] : e.ext ? '.' + e.ext : MEDIA_EXT[e.mime] || ''; }
     function clean(e) { const o = Object.assign({}, e); delete o.local; delete o.dataUrl; return o; }
 
@@ -901,6 +905,7 @@
             const img = type === 'media' && (e.dataUrl || e.file) ? '<figure class="figure">' + mediaTag(e, e.dataUrl || mediaSrc(e), e.title || '') + '</figure>' : '';
             const head = type === 'paper' ? '<p class="authors">' + esc(e.authors.join(', ')) + '</p>' + (e.abstract ? '<div class="abstract"><b>Abstract</b>' + esc(e.abstract) + '</div>' : '') : '<p class="lead">' + esc(e.summary) + '</p>';
             $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(type === 'lite' ? get('f-body') : e.body, e) + '</div>' + (type === 'lite' ? liteFilesHtml(liteUsed(), true) : '');
+            next($('preview').querySelector('.kd-doc'));
             livePreview();
         }
         function syncType() {

@@ -2045,6 +2045,41 @@ Smaller packs that each add one style:
 * **Links**: in OpenDB, `[[entry-name]]` links to another entry, and `[[entry-name|other words]]` changes the words shown.
 * **Templates**: in OpenDB, notices like `{{stub}}` and `{{citation needed}}` mark entries that need work. See the [Templates](#/templates) page.
 
+## Keydown Next
+
+The newest step for Keydown: three things at once, working everywhere Keydown works (Writeout, Bitbook, Amber, OpenDB, Keydown.js and the Svelte components).
+
+### Custom tags
+
+Invent your own Keydown tag right inside a document! A line starting with `@style` defines it:
+
+```
+@style ~~sale~~ { background: linear-gradient(#ff8a00, #e52e71); color: #fff; border-radius: 999px; padding: 0 10px; }
+```
+
+Then write `~~sale~~text~~sale~~` anywhere after it, and it draws with that CSS: ~~sale~~50% off~~sale~~! The opening and closing marks can differ, like `@style <<star <<end { ... }`, and `&::before { ... }` / `&::after { ... }` inside the braces add a little shine or icon. The definition travels with the document (it saves back to its own `@style` line), so a style you invent is yours to keep, share, or put in an OpenDB lite.
+
+### Live values
+
+Write a little arithmetic right in the text, and it calculates:
+
+* `{{price = 4.50}}` sets a value (it stays hidden while reading, and shows as a small chip while editing).
+* `{{price * qty}}`, `{{money(price * qty, "$")}}`, `{{round(x, 2)}}` and more show a result.
+* `{{today}}`, `{{days_until("2026-12-25")}}`, `{{year}}` read the date.
+* `{{check paid}}`, `{{counter tickets = 2}}` and `{{slider temp = 27 from 20 to 34}}` are things you can click, and the totals around them update right away.
+
+For example: {{price = 4.50}} {{qty = 3}} Tickets: {{qty}} × {{money(price, "$")}} = **{{money(price * qty, "$")}}**!
+
+### Interactive blocks
+
+A line from `::name` to `::end` becomes something you can use, right in the text:
+
+* `::chart bar|line|area|pie|donut Title` then a `| table | of | numbers |` draws a chart.
+* `::poll Question` then `* option` lines becomes something readers can vote on.
+* `::quiz Question` then `* option` lines, with `* [x] option` marking the right answer.
+* `::scene` holds a Zonerider scene (or a link to a `.zr`, `.glb` or `.gltf` file) and shows it in 3D.
+* `::timer 5:00 Label` and `::map 38.72, -9.14 13 Lisbon` are one line each, no `::end` needed.
+
 ## Tables
 
 Writeout and Bitbook have two ways to write a table.
