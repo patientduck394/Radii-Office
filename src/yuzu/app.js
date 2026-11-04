@@ -1,7 +1,7 @@
 // Yuzu! An email app, all in your browser: an inbox, folders, search, starring, drafts and compose, with
 // Keydown in every message (bold, gel orbs, highlights, links...) and a .YZ file you can back up or move with!
-// No real mail server here: Yuzu starts with a friendly demo inbox, and everything you do after that is
-// saved right in this browser (and exported/imported as a .YZ file whenever you like)!
+// No real mail server here: Yuzu starts with an empty mailbox, and everything you do is saved
+// right in this browser (and exported/imported as a .YZ file whenever you like)!
 (function () {
     'use strict';
 
@@ -12,47 +12,31 @@
     const ME = { name: 'You', email: 'you@yuzu.mail' };
     const FOLDERS = { inbox: 'Inbox', starred: 'Starred', sent: 'Sent', drafts: 'Drafts', trash: 'Trash' };
 
-    /* ---------- a friendly demo inbox, the first time Yuzu opens ---------- */
-    function seed() {
-        const days = (n) => new Date(Date.now() - n * 86400000).toISOString();
-        return [
-            { id: uid('m'), folder: 'inbox', from: 'Marina Costa <marina@dolphins.swim>', to: ME.email, subject: 'Pool party this Saturday!', date: days(0.2), read: false, starred: true,
-                body: '# Pool party!\nEveryone\'s invited this **Saturday** at =B=noon=B=! Bring a towel and some #O.marker(sunscreen)!\n\n* The main pool opens at 10\n* Lessons run until 1\n* The slide is open all day!\n\nSee you there!' },
-            { id: uid('m'), folder: 'inbox', from: 'Kai Lindqvist <kai@sharks.swim>', to: ME.email, subject: 'Lane 4 is booked for tomorrow', date: days(0.6), read: false, starred: false,
-                body: 'Hi!\n\nJust confirming: **Lane 4**, tomorrow at 7:00, for the 100m freestyle practice! I\'ll bring the stopwatch.\n\nKai' },
-            { id: uid('m'), folder: 'inbox', from: 'Radii Office <team@radii-office.com>', to: ME.email, subject: 'Welcome to Yuzu!', date: days(1), read: true, starred: true,
-                body: '# Welcome to Yuzu!\nThanks for trying the newest app in #B(Radii Office)! A few things worth knowing:\n\n* Every message supports **Keydown**, so =G=gel orbs=G=, #R(colored ink) and even `code` work right in the body!\n* Switch between the **New** ribbon look and the **original** Yuzu Classic look any time, from the Layout menu!\n* Nothing leaves your browser: everything is saved locally, and you can always export a `.YZ` backup!\n\nEnjoy!' },
-            { id: uid('m'), folder: 'inbox', from: 'Ana Ruiz <ana@otters.swim>', to: ME.email, subject: 'Re: Saturday swim meet results', date: days(1.4), read: true, starred: false,
-                body: 'Great results across the board! =B=Congratulations=B= to everyone who swam a personal best!\n\nFull times are on the board by the lockers.' },
-            { id: uid('m'), folder: 'inbox', from: 'Pool Maintenance <noreply@pool.local>', to: ME.email, subject: 'Diving pool closed for repairs', date: days(2), read: true, starred: false,
-                body: 'The diving pool will be #R(closed) Monday through Wednesday while the board is repaired! The main and kids pools are open as usual!' },
-            { id: uid('m'), folder: 'inbox', from: 'Tomás Reyes <tomas@dolphins.swim>', to: ME.email, subject: 'Relay team for next month?', date: days(3), read: true, starred: false,
-                body: 'Are you in for the relay team next month? We need one more swimmer for the medley!\n\nLet me know by Friday!' },
-            { id: uid('m'), folder: 'inbox', from: 'Zoe Park <zoe@seals.swim>', to: ME.email, subject: 'Thanks for the lesson tips!', date: days(4), read: true, starred: false,
-                body: 'That tip about the flip turn made such a difference, thank you!! My times are already better!' },
-            { id: uid('m'), folder: 'sent', from: ME.email, to: 'Kai Lindqvist <kai@sharks.swim>', subject: 'Re: Lane 4 is booked for tomorrow', date: days(0.5), read: true, starred: false,
-                body: 'Perfect, see you at **7**!' },
-            { id: uid('m'), folder: 'sent', from: ME.email, to: 'Ana Ruiz <ana@otters.swim>', subject: 'Great meet today!', date: days(1.3), read: true, starred: false,
-                body: 'That was such a fun meet! Thanks for organizing everything!' },
-            { id: uid('m'), folder: 'drafts', from: ME.email, to: '', subject: 'Question about the winter schedule', date: days(0.1), read: true, starred: false,
-                body: 'Hi! I was wondering if the pool schedule changes for winter, since' },
-        ];
-    }
-
     /* ---------- state + storage ---------- */
     const state = { folder: 'inbox', emails: [], activeId: null, query: '', compose: null, view: 'list' };
+    // Yuzu used to start with ten demo messages: a one-time cleanup removes exactly those (matched by sender and subject), never anything you wrote
+    const DEMO = ['Marina Costa <marina@dolphins.swim>|Pool party this Saturday!', 'Kai Lindqvist <kai@sharks.swim>|Lane 4 is booked for tomorrow', 'Radii Office <team@radii-office.com>|Welcome to Yuzu!',
+        'Ana Ruiz <ana@otters.swim>|Re: Saturday swim meet results', 'Pool Maintenance <noreply@pool.local>|Diving pool closed for repairs', 'Tomás Reyes <tomas@dolphins.swim>|Relay team for next month?',
+        'Zoe Park <zoe@seals.swim>|Thanks for the lesson tips!', 'you@yuzu.mail|Re: Lane 4 is booked for tomorrow', 'you@yuzu.mail|Great meet today!', 'you@yuzu.mail|Question about the winter schedule'];
+    const isDemo = (m) => DEMO.includes(m.from + '|' + m.subject);
     function load() {
         try {
             const raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) { const data = JSON.parse(raw); if (Array.isArray(data.emails)) { state.emails = data.emails; return; } }
-        } catch (e) { /* ignore and fall through to the seed */ }
-        state.emails = seed();
-        save();
+            if (raw) {
+                const data = JSON.parse(raw);
+                if (Array.isArray(data.emails)) {
+                    state.emails = data.demoRemoved ? data.emails : data.emails.filter((m) => !isDemo(m));
+                    if (!data.demoRemoved) save();
+                    return;
+                }
+            }
+        } catch (e) { /* ignore and start empty */ }
+        state.emails = [];
     }
     let saveTimer = 0;
     function save() {
         clearTimeout(saveTimer);
-        saveTimer = setTimeout(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ emails: state.emails })); } catch (e) { toast('This browser\'s storage is full, so the newest changes could not be saved!'); } }, 150);
+        saveTimer = setTimeout(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify({ emails: state.emails, demoRemoved: true })); } catch (e) { toast('This browser\'s storage is full, so the newest changes could not be saved!'); } }, 150);
     }
 
     /* ---------- little helpers the ribbon (office.js) also needs ---------- */
