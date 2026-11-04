@@ -23,6 +23,7 @@
 
     /* ---------- Model helpers ---------- */
     const PLUS = function () { return window.AmberPlus || {}; };
+    const KDA = function () { return window.AmberKeydown || null; };
     function slide() { return slides[activeSlideIndex]; }
     function activeEl() {
         if (!activeElementId) return null;
@@ -854,7 +855,38 @@
                         { sm: true, icon: 'star', label: 'Big Title', run: function () { insertText('BIG TITLE', { fontSize: '48px', width: 420, height: 64, left: 150, top: 150, textAlign: 'center' }); } }
                     ] }
                 ] },
+                { label: 'Annotate', items: [
+                    { big: true, icon: 'annotate', label: 'Annotate\n(Draw)', title: 'Draw right on the slide with Gel Ink, Felt Pen, Highlighter, Neon, Crayon and the Theme Packs!', run: function () { if (window.AmberAnnotate) window.AmberAnnotate.start(); }, checked: function () { return window.AmberAnnotate ? window.AmberAnnotate.isOn() : false; } },
+                    { stack: [
+                        { sm: true, icon: 'x', label: 'Clear Slide Drawing', run: function () { if (window.AmberAnnotate) window.AmberAnnotate.clearSlide(); } },
+                        { sm: true, icon: 'trash', label: 'Clear All Drawings', run: function () { if (window.AmberAnnotate) window.AmberAnnotate.clearAll(); } }
+                    ] }
+                ] },
                 { label: 'Extensions', items: [{ big: true, icon: 'store', label: 'Marketplace', run: function () { if (window.AmberMarketplace) window.AmberMarketplace.open(); } }] }
+            ]
+        },
+        {
+            id: 'keydown', label: 'Keydown', groups: [
+                { label: 'Format', items: [
+                    { big: true, icon: 'sparkle', label: 'Re-format\nSlide', title: 'Format every Keydown tag on this slide, and check them!', run: function () { if (KDA()) KDA().reformat('slide'); } },
+                    { stack: [
+                        { sm: true, icon: 'pages', label: 'Re-format All Slides', run: function () { if (KDA()) KDA().reformat('all'); } },
+                        { sm: true, icon: 'textbox', label: 'Re-format Text Box', run: function () { if (KDA()) KDA().reformat('box'); } },
+                        { sm: true, icon: 'check', label: 'Format When I Click Away', title: 'Keydown in a text box formats when you press Enter, and (with this on) when you click away from it!', run: function () { if (KDA()) { KDA().onBlur(!KDA().onBlur()); OS.sync(); } }, checked: function () { return KDA() ? KDA().onBlur() : false; } }
+                    ] }
+                ] },
+                { label: 'Un-format', items: [
+                    { big: true, icon: 'code', label: 'Un-format\nSlide', title: 'Show every Keydown tag on this slide as plain text, so mistakes are easy to fix!', run: function () { if (KDA()) KDA().unformat('slide'); } },
+                    { stack: [
+                        { sm: true, icon: 'pages', label: 'Un-format All Slides', run: function () { if (KDA()) KDA().unformat('all'); } },
+                        { sm: true, icon: 'textbox', label: 'Un-format Text Box', run: function () { if (KDA()) KDA().unformat('box'); } }
+                    ] }
+                ] },
+                { label: 'Write', items: [
+                    { big: true, icon: 'textbox', label: 'Keydown\nText Box', title: 'Write Keydown and see it live, then put it on the slide (or edit the selected box as Keydown)!', run: function () { if (KDA()) KDA().textBox(); } },
+                    { big: true, icon: 'palette', label: 'Keydown\nStyles', title: 'Every Keydown style, by category: select words in a text box, then pick one!', menu: function (b) { return KDA() ? KDA().stylesMenu(b) : []; } }
+                ] },
+                { label: 'Help', items: [{ big: true, icon: 'help', label: 'Keydown\nGuide', title: 'Every Keydown tag, with a preview!', run: function () { if (KDA()) KDA().guide(); } }] }
             ]
         },
         {

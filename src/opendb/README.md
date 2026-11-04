@@ -1,7 +1,7 @@
 # OpenDB!
 
-A free, open-access database of **articles** (like Wikipedia), **media** (like Wikimedia Commons)
-and **papers** (like arXiv). Everything in it is dedicated to the public domain under
+A free, open-access database of **articles** (like Wikipedia), **media** (like Wikimedia Commons),
+**papers** (like arXiv) and **lites** (shared code and files, like GitHub Gists). Everything in it is dedicated to the public domain under
 [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/): copy, change and reuse anything,
 for any purpose, with no credit needed!
 
@@ -71,3 +71,33 @@ Press **Contribute**, write the entry with a live preview, and tick the CC0 box!
 Review proposed entries for accuracy, sources and the right to dedicate them to the public domain,
 then merge and run `node scripts/build_opendb.mjs`. The build refuses entries that aren't CC0, whose id
 doesn't match the file name, or whose media file is missing.
+
+## Lites
+
+A lite is code or any text files shared together, like a Gist: `type: lite`, a Keydown description, then
+each file fenced with `~~~ file: name.ext` and a closing `~~~` (use more tildes than any line inside the file starts with).
+Lite pages show every file with line numbers and colors, with Copy, Raw and Download buttons, a ZIP of all of them,
+**Fork** (your own copy to change, which remembers where it came from with `fork: other-lite`) and **Embed**
+(an `<iframe>` of `#/embed/<id>` for other sites).
+
+```text
+---
+id: hello-world
+type: lite
+title: Hello world
+summary: The smallest program, twice.
+tags: [example]
+created: 2026-11-03
+authors: [Your Name]
+license: CC0-1.0
+---
+Two ways to say **hello**!
+
+~~~ file: hello.js
+console.log('Hello!');
+~~~
+
+~~~ file: hello.py
+print("Hello!")
+~~~
+```

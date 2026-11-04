@@ -24,6 +24,7 @@ var BITBOOK_SHELL = [
   'images-glue.js?v=20261131v',
   'drawio-plugin.js?v=20261132f',
   'inkpath-kv-plugin.js?v=20261202a',
+  'zonerider-scene.js?v=20261204a',
   'radii-file.js?v=20261042',
   'radii-collab.js?v=20261202c',
   'radii-collab.css?v=20261042',

@@ -1,0 +1,68 @@
+---
+format: keydown-text
+id: poolside-water-gdshader
+type: lite
+title: Poolside water shader (Godot 4)
+summary: A sunny swimming-pool surface for Godot 4 and Zonerider, with moving caustics in cyan and blue and warm orange glints.
+tags: [godot, shader, poolside, zonerider, 3d]
+created: 2026-11-03
+updated: 2026-11-03
+authors: [OpenDB contributors]
+license: CC0-1.0
+---
+A **Poolside** water surface as a #C#Godot 4# spatial shader! Put it on a plane (a `PlaneMesh` in Godot, or **Add, Plane** in [Zonerider](https://radii-office.com/zonerider/)) and it shimmers by itself.
+
+* `deep` and `shallow` are the two blues of the water
+* `glint` is the warm orange of sunlight on the ripples
+* `speed` and `scale` change how fast and how big the caustics are
+
+In Zonerider, select the plane and, in its **Godot shader** section, choose **Open .gdshader…** and pick `poolside_water.gdshader`! Fork this lite to make your own colors!
+
+~~~ file: poolside_water.gdshader
+shader_type spatial;
+render_mode specular_schlick_ggx;
+
+uniform vec4 deep : source_color = vec4(0.02, 0.36, 0.72, 1.0);
+uniform vec4 shallow : source_color = vec4(0.13, 0.83, 0.93, 1.0);
+uniform vec4 glint : source_color = vec4(0.98, 0.57, 0.24, 1.0);
+uniform float speed : hint_range(0.0, 3.0) = 0.6;
+uniform float scale : hint_range(1.0, 20.0) = 6.0;
+
+// soft cells that drift: the bright lines between them look like pool caustics
+float caustic(vec2 p, float t) {
+	vec2 i = floor(p);
+	vec2 f = fract(p);
+	float best = 1.0;
+	for (int y = -1; y <= 1; y++) {
+		for (int x = -1; x <= 1; x++) {
+			vec2 g = vec2(float(x), float(y));
+			vec2 o = fract(sin(vec2(dot(i + g, vec2(127.1, 311.7)), dot(i + g, vec2(269.5, 183.3)))) * 43758.5453);
+			o = 0.5 + 0.5 * sin(t + 6.2831 * o);
+			best = min(best, length(g + o - f));
+		}
+	}
+	return best;
+}
+
+void fragment() {
+	float t = TIME * speed;
+	float c = caustic(UV * scale, t);
+	float lines = pow(1.0 - c, 6.0);
+	vec3 water = mix(deep.rgb, shallow.rgb, smoothstep(0.0, 0.9, UV.y + 0.15 * sin(t + UV.x * 4.0)));
+	ALBEDO = water + lines * 0.55;
+	EMISSION = glint.rgb * smoothstep(0.82, 1.0, lines) * 0.9;
+	ROUGHNESS = 0.08;
+	METALLIC = 0.0;
+	SPECULAR = 0.7;
+}
+~~~
+
+~~~ file: README.kd
+# Poolside water
+
+A Godot 4 spatial shader, public domain (CC0)!
+
+* Godot: make a ShaderMaterial, load poolside_water.gdshader, and set it on a PlaneMesh
+* Zonerider: select the plane, then Godot shader, Open .gdshader
+* Colors: cyan and blue water, orange glints
+~~~

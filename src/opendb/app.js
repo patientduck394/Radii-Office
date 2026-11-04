@@ -7,8 +7,9 @@
     const REPO = 'patientduck394/Radii-Office';
     const BRANCH = 'main';
     const REPO_DIR = 'src/opendb/data';
-    const TYPES = { article: 'Article', media: 'Media', paper: 'Paper' };
-    const PLURAL = { article: 'Articles', media: 'Media', paper: 'Papers' };
+    const TYPES = { article: 'Article', media: 'Media', paper: 'Paper', lite: 'Lite' };
+    const PLURAL = { article: 'Articles', media: 'Media', paper: 'Papers', lite: 'Lites' };
+    const ADD_ONE = { article: 'an article', media: 'a file', paper: 'a paper', lite: 'a lite' };
 
     const $ = (id) => document.getElementById(id);
     const view = $('view');
@@ -46,7 +47,7 @@
     function all() { return Array.from(byId.values()); }
     function linksIn(e) {
         const out = new Set();
-        const text = (e.body || '') + '\n' + (e.abstract || '');
+        const text = (e.type === 'lite' ? liteSplit(e.body).desc : (e.body || '')) + '\n' + (e.abstract || '');
         let m;
         const re = /\[\[([a-z0-9-]+)(?:\|[^\]]*)?\]\]|\]\(media:([a-z0-9-]+)\)/g;
         while ((m = re.exec(text))) out.add(m[1] || m[2]);
@@ -176,6 +177,109 @@
         if (k === 'audio') return '<span class="' + cls + ' audio-thumb" aria-hidden="true">🎵' + (e.duration ? '<small>' + clock(e.duration) + '</small>' : '') + '</span>';
         if (k === 'video') return '<span class="' + cls + ' video-thumb"><video muted preload="metadata" src="' + esc(mediaSrc(e)) + '#t=0.5" aria-hidden="true"></video><span class="play">▶</span>' + (e.duration ? '<small>' + clock(e.duration) + '</small>' : '') + '</span>';
         return '<img class="' + cls + '" src="' + esc(mediaSrc(e)) + '" alt="' + esc(cls === 'thumb' ? '' : e.title) + '" loading="lazy">';
+    }
+
+    /* ---------- Lites: code and files to share, like Gists! ---------- */
+    // A lite is an entry whose body is a Keydown description followed by its files, each one fenced like this
+    // (the fence is always longer than any run of ~ that starts a line inside the file):
+    //   ~~~ file: hello.js
+    //   console.log('Hi!');
+    //   ~~~
+    const LITE_RE = /^(~{3,})[ \t]*file:[ \t]*([^\n]+?)[ \t]*\n([\s\S]*?)\n\1[ \t]*$/gm;
+    function liteSplit(body) {
+        const files = [];
+        const desc = String(body || '').replace(/\r/g, '').replace(LITE_RE, (_, f, name, code) => { files.push({ name: name.trim(), code }); return ''; }).trim();
+        return { desc, files };
+    }
+    function liteJoin(desc, files) {
+        return [String(desc || '').trim()].concat((files || []).map((f) => {
+            const code = String(f.code || '').replace(/\r/g, '').replace(/\n+$/, '');
+            const runs = (code.match(/^~+/gm) || []).map((x) => x.length + 1);
+            const fence = '~'.repeat(Math.max(3, ...runs));
+            return fence + ' file: ' + String(f.name).trim() + '\n' + code + '\n' + fence;
+        })).filter(Boolean).join('\n\n');
+    }
+    const liteExt = (name) => ((/\.([a-z0-9]+)$/i.exec(name || '') || [])[1] || '').toLowerCase();
+    const LITE_LANGS = { js: 'JavaScript', mjs: 'JavaScript', cjs: 'JavaScript', jsx: 'JavaScript', ts: 'TypeScript', tsx: 'TypeScript', py: 'Python', jl: 'Julia', html: 'HTML', htm: 'HTML', css: 'CSS',
+        json: 'JSON', kd: 'Keydown', kn: 'Keydown', md: 'Markdown', gdshader: 'Godot Shader', gd: 'GDScript', glsl: 'GLSL', frag: 'GLSL', vert: 'GLSL', rs: 'Rust', go: 'Go', c: 'C', h: 'C', cpp: 'C++', cs: 'C#',
+        java: 'Java', kt: 'Kotlin', swift: 'Swift', rb: 'Ruby', lua: 'Lua', php: 'PHP', sh: 'Shell', bash: 'Shell', zsh: 'Shell', sql: 'SQL', svelte: 'Svelte', vue: 'Vue', elm: 'Elm', toml: 'TOML',
+        yaml: 'YAML', yml: 'YAML', xml: 'XML', svg: 'SVG', zr: 'Zonerider scene', kv: 'Inkpath drawing', csv: 'CSV', txt: 'Text', bl: 'BitLang', r: 'R', pas: 'Pascal' };
+    const liteLang = (name) => LITE_LANGS[liteExt(name)] || (liteExt(name) ? liteExt(name).toUpperCase() : 'Text');
+    // A small highlighter for any language: comments, strings, numbers, keywords and (in markup) tags
+    const LITE_KW = new Set(('and as async await bool break case catch class const continue def default defer del do elif else elseif end enum export extends false final finally float fn for from func function '
+        + 'global if impl import in int interface is lambda let local match mut new nil none None not null or package pass pub raise return self shader_type render_mode static struct super switch then this '
+        + 'throw true True False try type uniform use var varying vec2 vec3 vec4 mat4 sampler2D void where while with yield').split(' '));
+    function liteHighlight(code, name) {
+        const ext = liteExt(name);
+        if (/^(txt|md|kd|kn|csv)$/.test(ext) || !ext) return esc(code);
+        const hash = /^(py|sh|bash|zsh|rb|jl|yaml|yml|toml|r|pl|conf|ini|gd)$/.test(ext);
+        const markup = /^(html|htm|xml|svg|svelte|vue)$/.test(ext);
+        const comments = [markup ? '<!--[\\s\\S]*?-->' : '', hash ? '#[^\\n]*' : '/\\*[\\s\\S]*?\\*/|//[^\\n]*', /^(sql|lua|elm)$/.test(ext) ? '--[^\\n]*' : ''].filter(Boolean).join('|');
+        const re = new RegExp([
+            '(' + comments + ')',
+            '("(?:\\\\.|[^"\\\\\\n])*"|\'(?:\\\\.|[^\'\\\\\\n])*\'|`(?:\\\\.|[^`\\\\])*`)',
+            '(' + (markup ? '</?[A-Za-z][\\w:-]*|/?>' : '(?!)') + ')',
+            '(\\b(?:0x[0-9a-fA-F]+|\\d+(?:\\.\\d+)?(?:[eE][+-]?\\d+)?)\\b)',
+            '([A-Za-z_$][\\w$]*)',
+        ].join('|'), 'g');
+        let out = '', last = 0, m;
+        while ((m = re.exec(code))) {
+            if (!m[0]) { re.lastIndex++; continue; }
+            out += esc(code.slice(last, m.index));
+            const t = esc(m[0]);
+            if (m[1]) out += '<span class="lt-c">' + t + '</span>';
+            else if (m[2]) out += '<span class="lt-s">' + t + '</span>';
+            else if (m[3]) out += '<span class="lt-t">' + t + '</span>';
+            else if (m[4]) out += '<span class="lt-n">' + t + '</span>';
+            else if (m[5] && LITE_KW.has(m[5])) out += '<span class="lt-k">' + t + '</span>';
+            else out += t;
+            last = re.lastIndex;
+        }
+        return out + esc(code.slice(last));
+    }
+    const liteSize = (code) => { const b = new Blob([code]).size; return b > 1024 ? (b / 1024).toFixed(1) + ' KB' : b + ' bytes'; };
+    const LITE_ICON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h8l4.5 4.5v12.5H6z" fill="#fff" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14 3.5V8h4.5M9.5 13l-2 2 2 2M14.5 13l2 2-2 2" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    function liteFilesHtml(files, editable) {
+        if (!files.length) return '<div class="empty">No files yet!</div>';
+        return '<div class="lite-files">' + files.map((f, i) => {
+            const n = f.code.split('\n').length;
+            return '<section class="lite-file" id="lite-file-' + i + '"><header class="lite-head"><span class="lite-name">' + LITE_ICON + esc(f.name) + '</span><span class="lite-lang">' + esc(liteLang(f.name)) + '</span><span class="lite-size">' + n + ' line' + (n === 1 ? '' : 's') + ' · ' + liteSize(f.code) + '</span>' +
+                (editable ? '' : '<span class="lite-btns"><button type="button" class="gel small plain" data-lite="copy" data-i="' + i + '">Copy</button><button type="button" class="gel small plain" data-lite="raw" data-i="' + i + '">Raw</button><button type="button" class="gel small plain" data-lite="dl" data-i="' + i + '">Download</button></span>') +
+                '</header><div class="lite-code"><pre class="lite-nums" aria-hidden="true">' + Array.from({ length: n }, (_, k) => k + 1).join('\n') + '</pre><pre class="lite-src"><code>' + liteHighlight(f.code, f.name) + '</code></pre></div></section>';
+        }).join('') + '</div>';
+    }
+    // A .zip of every file (stored as they are: small code files gain little from squeezing)
+    const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1; t[n] = c >>> 0; } return t; })();
+    function crc32(b) { let c = 0xffffffff; for (let i = 0; i < b.length; i++) c = CRC_T[(c ^ b[i]) & 0xff] ^ (c >>> 8); return (c ^ 0xffffffff) >>> 0; }
+    function zipFiles(files) {
+        const enc = new TextEncoder(), parts = [], dir = [];
+        const put = (dv, list) => list.forEach(([o, v, w]) => (w === 4 ? dv.setUint32(o, v >>> 0, true) : dv.setUint16(o, v, true)));
+        let off = 0, dirSize = 0;
+        files.forEach((f) => {
+            const name = enc.encode(f.name), data = enc.encode(f.code), crc = crc32(data);
+            const head = new DataView(new ArrayBuffer(30));
+            put(head, [[0, 0x04034b50, 4], [4, 20, 2], [6, 0x0800, 2], [8, 0, 2], [10, 0, 2], [12, 0x21, 2], [14, crc, 4], [18, data.length, 4], [22, data.length, 4], [26, name.length, 2], [28, 0, 2]]);
+            const cen = new DataView(new ArrayBuffer(46));
+            put(cen, [[0, 0x02014b50, 4], [4, 20, 2], [6, 20, 2], [8, 0x0800, 2], [10, 0, 2], [12, 0, 2], [14, 0x21, 2], [16, crc, 4], [20, data.length, 4], [24, data.length, 4], [28, name.length, 2], [30, 0, 2], [32, 0, 2], [34, 0, 2], [36, 0, 2], [38, 0, 4], [42, off, 4]]);
+            parts.push(head.buffer, name, data);
+            dir.push(cen.buffer, name);
+            off += 30 + name.length + data.length;
+            dirSize += 46 + name.length;
+        });
+        const end = new DataView(new ArrayBuffer(22));
+        put(end, [[0, 0x06054b50, 4], [8, files.length, 2], [10, files.length, 2], [12, dirSize, 4], [16, off, 4]]);
+        return new Blob(parts.concat(dir, [end.buffer]), { type: 'application/zip' });
+    }
+    function wireLiteButtons(root, files) {
+        root.querySelectorAll('[data-lite]').forEach((b) => {
+            b.onclick = () => {
+                const f = files[+b.dataset.i];
+                if (!f) return;
+                if (b.dataset.lite === 'copy') copy(f.code);
+                else if (b.dataset.lite === 'dl') download(f.name, f.code, 'text/plain');
+                else window.open(URL.createObjectURL(new Blob([f.code], { type: 'text/plain;charset=utf-8' })), '_blank', 'noopener');
+            };
+        });
     }
 
     /* ---------- Keydown (the Radii Office formatting language) + LaTeX + OpenDB links ---------- */
@@ -429,7 +533,7 @@
         const n = e.id ? (backlinks.get(e.id) || new Set()).size : 0;
         const arg = named.reason || args[0] || '';
         return {
-            type: e.type, noun: { article: 'article', media: 'file', paper: 'paper' }[e.type] || 'entry',
+            type: e.type, noun: { article: 'article', media: 'file', paper: 'paper', lite: 'lite' }[e.type] || 'entry',
             args, named, arg, argHtml: esc(arg),
             edit: (text) => (e.id ? '<a href="#/edit/' + esc(e.id) + '">' + text + '</a>' : text),
             reason: () => (arg ? ' <i>Reason: ' + esc(arg) + '</i>' : ''),
@@ -468,7 +572,7 @@
         if (!words.length) return [];
         return all().map((e) => {
             const title = e.title.toLowerCase(), tags = (e.tags || []).join(' ').toLowerCase(), sum = (e.summary || '').toLowerCase();
-            const body = (plain(e.body) + ' ' + (e.abstract || '')).toLowerCase();
+            const body = (e.type === 'lite' ? (() => { const L = liteSplit(e.body); return plain(L.desc) + ' ' + L.files.map((f) => f.name + ' ' + f.code.slice(0, 4000)).join(' '); })() : plain(e.body) + ' ' + (e.abstract || '')).toLowerCase();
             let score = 0;
             for (const w of words) {
                 let hit = false;
@@ -484,7 +588,7 @@
         }).filter(Boolean).sort((a, b) => b.score - a.score || a.e.title.localeCompare(b.e.title));
     }
     function snippet(e, q) {
-        const text = plain(e.body) || e.summary || '';
+        const text = plain(e.type === 'lite' ? liteSplit(e.body).desc : e.body) || e.summary || '';
         const w = q.toLowerCase().split(/\s+/).find((x) => x.length > 1 && text.toLowerCase().includes(x));
         if (!w) return esc(e.summary || text.slice(0, 180));
         const at = text.toLowerCase().indexOf(w);
@@ -500,7 +604,7 @@
     function itemRow(e, q) {
         const thumb = e.type === 'media' ? mediaThumb(e, 'thumb') : '';
         return '<a class="item" href="#/e/' + e.id + '">' + thumb + '<div><span class="item-title">' + esc(e.title) + '</span>' + badge(e) +
-            '<p>' + (q ? snippet(e, q) : esc(e.summary)) + '</p><div class="meta">' + (e.type === 'paper' ? esc((e.authors || []).join(', ')) + ' · ' + esc((e.categories || []).join(', ')) + ' · ' : '') + 'Updated ' + esc(e.updated || e.created) + '</div></div></a>';
+            '<p>' + (q ? snippet(e, q) : esc(e.summary)) + '</p><div class="meta">' + (e.type === 'lite' ? (() => { const fl = liteSplit(e.body).files; return fl.length + ' file' + (fl.length === 1 ? '' : 's') + ': ' + esc(fl.slice(0, 4).map((f) => f.name).join(', ') + (fl.length > 4 ? '…' : '')) + ' · '; })() : '') + (e.type === 'paper' ? esc((e.authors || []).join(', ')) + ' · ' + esc((e.categories || []).join(', ')) + ' · ' : '') + 'Updated ' + esc(e.updated || e.created) + '</div></div></a>';
     }
     function tile(e) { return '<a class="tile" href="#/e/' + e.id + '">' + mediaThumb(e, 'tile-media') + '<b>' + esc(e.title) + '</b>' + (e.local ? badge(e) : '') + '</a>'; }
     const byUpdated = (a, b) => String(b.updated || b.created).localeCompare(String(a.updated || a.created)) || a.title.localeCompare(b.title);
@@ -508,7 +612,7 @@
     /* ---------- Pages ---------- */
     function pageHome() {
         const list = all();
-        const counts = { article: 0, media: 0, paper: 0 };
+        const counts = { article: 0, media: 0, paper: 0, lite: 0 };
         list.forEach((e) => { counts[e.type]++; });
         const articles = list.filter((e) => e.type === 'article');
         const day = Math.floor(Date.now() / 86400000);
@@ -519,13 +623,13 @@
         const section = (type, icon) => {
             const items = list.filter((e) => e.type === type).sort(byUpdated).slice(0, 4);
             return '<div class="card collection"><h2>' + icon + ' <a href="#/browse/' + type + '">' + PLURAL[type] + '</a></h2><p class="muted">' +
-                { article: 'Encyclopedia entries that explain a topic!', media: 'Pictures, music and videos that are free to reuse!', paper: 'Research papers and preprints, ready to cite!' }[type] +
+                { article: 'Encyclopedia entries that explain a topic!', media: 'Pictures, music and videos that are free to reuse!', paper: 'Research papers and preprints, ready to cite!', lite: 'Code and files to share, like Gists!' }[type] +
                 '</p><div class="list">' + (items.length ? items.map((e) => itemRow(e)).join('') : '<div class="empty">Nothing here yet!</div>') + '</div><a href="#/browse/' + type + '">See all ' + counts[type] + ' →</a></div>';
         };
         view.innerHTML =
-            '<section class="hero"><h1>Knowledge with no strings attached!</h1><p>OpenDB is a free database of articles, media and papers. Every entry is in the public domain under CC0, so you can copy, change and reuse anything, for anything!</p>' +
-            '<div class="stats"><span class="stat">' + counts.article + ' articles</span><span class="stat">' + counts.media + ' media files</span><span class="stat">' + counts.paper + ' papers</span><span class="stat">100% CC0</span></div></section>' +
-            '<div class="grid3">' + section('article', '📖') + section('media', '🖼️') + section('paper', '📄') + '</div>' +
+            '<section class="hero"><h1>Knowledge with no strings attached!</h1><p>OpenDB is a free database of articles, media, papers and lites (shared code). Every entry is in the public domain under CC0, so you can copy, change and reuse anything, for anything!</p>' +
+            '<div class="stats"><span class="stat">' + counts.article + ' articles</span><span class="stat">' + counts.media + ' media files</span><span class="stat">' + counts.paper + ' papers</span><span class="stat">' + counts.lite + ' lites</span><span class="stat">100% CC0</span></div></section>' +
+            '<div class="grid3">' + section('article', '📖') + section('media', '🖼️') + section('paper', '📄') + section('lite', '🧩') + '</div>' +
             '<div class="home-row"><div class="card featured"><h2>Featured article</h2>' + (featured ? '<h3><a href="#/e/' + featured.id + '">' + esc(featured.title) + '</a></h3><p class="lead">' + esc(featured.summary) + '</p><a class="gel small" href="#/e/' + featured.id + '">Read it!</a>' : '<p>No articles yet!</p>') + '</div>' +
             '<div class="card side-box"><h2>Explore by topic</h2>' + tagLinks(topTags) + '<p class="hint" style="margin-top:12px">Know something worth sharing? <a href="#/new/article">Write an entry</a> and give it to everyone!</p></div></div>';
     }
@@ -534,8 +638,8 @@
         const sort = params.get('sort') || (type === 'media' ? 'title' : 'title');
         let list = all().filter((e) => e.type === type);
         list.sort(sort === 'updated' ? byUpdated : (a, b) => a.title.localeCompare(b.title));
-        const head = '<h1 class="page">' + PLURAL[type] + '</h1><p class="muted">' + list.length + ' ' + (type === 'media' ? 'files' : PLURAL[type].toLowerCase()) + ', all public domain!</p>' +
-            '<div class="filters"><label>Sort by <select id="sort"><option value="title"' + (sort === 'title' ? ' selected' : '') + '>Title</option><option value="updated"' + (sort === 'updated' ? ' selected' : '') + '>Recently updated</option></select></label><a class="gel small green" href="#/new/' + type + '">＋ Add ' + (type === 'media' ? 'a file' : 'a' + (type === 'article' ? 'n article' : ' paper')) + '</a></div>';
+        const head = '<h1 class="page">' + PLURAL[type] + '</h1><p class="muted">' + list.length + ' ' + (type === 'media' ? 'files' : PLURAL[type].toLowerCase()) + ', all public domain!' + (type === 'lite' ? ' A lite is code or text files shared together, like a Gist: copy them, download them, or fork one to make it your own!' : '') + '</p>' +
+            '<div class="filters"><label>Sort by <select id="sort"><option value="title"' + (sort === 'title' ? ' selected' : '') + '>Title</option><option value="updated"' + (sort === 'updated' ? ' selected' : '') + '>Recently updated</option></select></label><a class="gel small green" href="#/new/' + type + '">＋ Add ' + ADD_ONE[type] + '</a></div>';
         const body = type === 'media' ? '<div class="media-grid">' + list.map(tile).join('') + '</div>' : '<div class="list">' + list.map((e) => itemRow(e)).join('') + '</div>';
         view.innerHTML = '<div class="card">' + head + (list.length ? body : '<div class="empty">Nothing here yet! Be the first to add one!</div>') + '</div>';
         $('sort').onchange = (ev) => { location.hash = '#/browse/' + type + '?sort=' + ev.target.value; };
@@ -561,6 +665,7 @@
             return;
         }
         document.title = e.title + ' - OpenDB';
+        const lite = e.type === 'lite' ? liteSplit(e.body) : null;
         const top = '<div class="crumbs"><a href="#/browse/' + e.type + '">' + PLURAL[e.type] + '</a> › ' + esc(e.title) + '</div>' +
             '<h1 class="page">' + esc(e.title) + badge(e) + '</h1>';
         let head = '';
@@ -568,7 +673,7 @@
             head = '<p class="authors">' + esc((e.authors || []).join(', ')) + ' · <span class="muted">' + esc((e.categories || []).join(', ')) + ' · ' + esc(e.created) + '</span></p>' +
                 '<div class="abstract"><b>Abstract</b>' + esc(e.abstract) + '</div>';
         } else {
-            head = '<p class="lead">' + esc(e.summary) + '</p>';
+            head = '<p class="lead">' + esc(e.summary) + '</p>' + (e.fork ? '<p class="hint lite-forked">Forked from ' + inline('[[' + e.fork + ']]', { order: [] }) + '!</p>' : '');
             if (e.type === 'media') {
                 const still = mediaKind(e) === 'image';
                 head += '<figure class="figure">' + (still ? '<a href="' + esc(mediaSrc(e)) + '" target="_blank" rel="noopener">' : '') + mediaTag(e, mediaSrc(e), e.title) + (still ? '</a>' : '') +
@@ -582,12 +687,23 @@
             '<div class="side-box cc0-box"><p><a class="cc0" href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a><b>No rights reserved!</b> Copy, change, translate and use this for anything, even commercially, with no credit needed!</p></div>' +
             '<div class="side-box"><div class="actions">' +
             (e.type === 'media' ? '<a class="gel small" href="' + esc(mediaSrc(e)) + '" download="' + esc(e.id + extOf(e)) + '">⬇ Download file</a>' : '') +
+            (lite ? '<button class="gel small" id="lite-zip">⬇ Download ZIP</button><a class="gel small green" href="#/new/lite?fork=' + e.id + '" title="Make your own copy to change!">⑂ Fork</a><button class="gel small plain" id="lite-embed">&lt;/&gt; Embed</button>' : '') +
             '<button class="gel small plain" id="cite">❝ Cite</button><button class="gel small plain" id="dl-md">⬇ .kd</button><button class="gel small plain" id="dl-json">⬇ JSON</button><a class="gel small plain" href="#/edit/' + e.id + '">✎ Edit</a>' +
             (e.local ? '<button class="gel small plain" id="del-local">🗑 Remove</button>' : '<a class="gel small plain" href="https://github.com/' + REPO + '/commits/' + BRANCH + '/' + REPO_DIR + '/entries/' + e.id + '.kd" target="_blank" rel="noopener noreferrer">🕘 History</a>') +
             '</div></div>' +
+            (lite && lite.files.length > 1 ? '<div class="side-box"><h2>Files</h2><ul class="lite-toc">' + lite.files.map((f, i) => '<li><a href="#lite-file-' + i + '" data-scroll>' + esc(f.name) + '</a></li>').join('') + '</ul></div>' : '') +
             '<div class="side-box"><h2>Tags</h2>' + tagLinks(e.tags) + '<p class="hint" style="margin-top:10px">Created ' + esc(e.created) + (e.updated && e.updated !== e.created ? ' · updated ' + esc(e.updated) : '') + (e.authors && e.type !== 'paper' ? '<br>By ' + esc(e.authors.join(', ')) : '') + '</p></div>' +
             (links.length ? '<div class="side-box"><h2>What links here</h2><ul>' + links.map((l) => '<li><a href="#/e/' + l.id + '">' + esc(l.title) + '</a></li>').join('') + '</ul></div>' : '');
-        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(e.body, e) + '</div></article><aside class="side">' + side + '</aside></div>';
+        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(lite ? lite.desc : e.body, e) + '</div>' + (lite ? liteFilesHtml(lite.files) : '') + '</article><aside class="side">' + side + '</aside></div>';
+        if (lite) {
+            wireLiteButtons(view, lite.files);
+            $('lite-zip').onclick = () => downloadUrl(e.id + '.zip', URL.createObjectURL(zipFiles(lite.files)), true);
+            $('lite-embed').onclick = () => {
+                const url = location.href.split('#')[0] + '#/embed/' + e.id;
+                const code = '<iframe src="' + url + '" title="' + esc(e.title) + '" width="100%" height="420" style="border:0;border-radius:12px"></iframe>';
+                modal('Embed “' + e.title + '”', '<p class="hint">Paste this into any web page to show the files there!</p><pre id="embed-code">' + esc(code) + '</pre><button class="gel small plain" data-copy="embed-code">Copy code</button><p class="hint">Or share the link: <a href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(url) + '</a></p>');
+            };
+        }
         $('cite').onclick = () => showCite(e);
         $('dl-md').onclick = () => download(e.id + '.kd', toKdFile(e), 'text/plain');
         $('dl-json').onclick = () => download(e.id + '.json', JSON.stringify(clean(e), null, 2), 'application/json');
@@ -598,6 +714,17 @@
             toast('Removed from this device!');
             location.hash = '#/mine';
         };
+    }
+    // #/embed/<id>: just a lite's files (or an entry's text), for an <iframe> on another site
+    function pageEmbed(id) {
+        const e = byId.get(id);
+        document.body.classList.add('odb-embed');
+        if (!e) { view.innerHTML = '<div class="card empty">No entry called “' + esc(id) + '”!</div>'; return; }
+        const lite = e.type === 'lite' ? liteSplit(e.body) : null;
+        const full = location.href.split('#')[0] + '#/e/' + e.id;
+        view.innerHTML = '<div class="card lite-embed"><div class="lite-embed-top"><b>' + esc(e.title) + '</b><a href="' + esc(full) + '" target="_blank" rel="noopener">Open in OpenDB ↗</a></div>' +
+            (lite ? liteFilesHtml(lite.files) : '<div class="kd-doc">' + renderKd(e.body, e) + '</div>') + '<p class="hint">Public domain (CC0) on OpenDB!</p></div>';
+        if (lite) wireLiteButtons(view, lite.files);
     }
     function extOf(e) { const m = /\.([a-z0-9]+)$/i.exec(e.file || ''); return m ? '.' + m[1] : e.ext ? '.' + e.ext : MEDIA_EXT[e.mime] || ''; }
     function clean(e) { const o = Object.assign({}, e); delete o.local; delete o.dataUrl; return o; }
@@ -664,6 +791,7 @@
         if (e.type === 'paper') h.push('abstract: ' + yamlStr(String(e.abstract || '').replace(/\s*\n\s*/g, ' ')));
         h.push('tags: ' + yamlList(e.tags));
         if (e.type === 'paper') h.push('categories: ' + yamlList(e.categories));
+        if (e.fork) h.push('fork: ' + e.fork);
         h.push('created: ' + e.created, 'updated: ' + (e.updated || e.created), 'authors: ' + yamlList(e.authors), 'license: CC0-1.0');
         if (e.type === 'media') { h.push('file: media/' + e.id + extOf(e), 'mime: ' + (e.mime || '')); if (e.width) h.push('width: ' + e.width, 'height: ' + e.height); if (e.duration) h.push('duration: ' + Math.round(e.duration * 10) / 10); }
         Object.entries(e.infobox || {}).forEach(([k, v]) => h.push('infobox.' + String(k).replace(/[:\n]/g, ' ').trim() + ': ' + yamlStr(String(v).replace(/\n/g, ' '))));
@@ -679,10 +807,22 @@
             id: params.get('id') || slug(params.get('title') || ''), type, title: params.get('title') || (params.get('id') ? params.get('id').replace(/-/g, ' ').replace(/^./, (c) => c.toUpperCase()) : ''),
             summary: '', body: '', tags: [], authors: [], categories: [], abstract: '', infobox: {}, created: today(),
         };
-        let idTouched = !!(base || params.get('id'));
+        // ⑂ Fork: a copy of someone's lite to change and share again (it remembers where it came from)
+        const forkOf = !base && params.get('fork') ? byId.get(params.get('fork')) : null;
+        if (forkOf && forkOf.type === 'lite') {
+            type = 'lite';
+            let n = forkOf.id + '-fork', k = 2;
+            while (byId.has(n)) n = forkOf.id + '-fork-' + k++;
+            Object.assign(d, { id: n, type: 'lite', title: forkOf.title + ' (fork)', summary: forkOf.summary || '', body: forkOf.body || '', tags: (forkOf.tags || []).slice(), fork: forkOf.id });
+        }
+        let liteFiles = [];
+        if (type === 'lite') { const sp = liteSplit(d.body); d.body = sp.desc; liteFiles = sp.files; }
+        if (!liteFiles.length) liteFiles = [{ name: '', code: '' }];
+        let idTouched = !!(base || params.get('id') || forkOf);
         const infoboxText = Object.entries(d.infobox || {}).map(([k, v]) => k + ': ' + v).join('\n');
         view.innerHTML = '<div class="editor"><div class="card form" id="form">' +
             '<h1 class="page">' + (base ? 'Edit “' + esc(base.title) + '”' : 'Contribute') + '</h1>' +
+            (forkOf ? '<p class="hint lite-forked">You are forking <a href="#/e/' + forkOf.id + '">' + esc(forkOf.title) + '</a>: change anything, then save or publish it as your own lite!</p>' : '') +
             (base ? '' : '<div class="seg" id="types">' + Object.keys(TYPES).map((t) => '<button type="button" data-type="' + t + '" class="' + (t === type ? 'on' : '') + '">' + TYPES[t] + '</button>').join('') + '</div>') +
             '<label class="field">Title<input id="f-title" maxlength="140" value="' + esc(d.title) + '"></label>' +
             '<label class="field">Address <small>(lowercase letters, numbers and dashes; this becomes the link #/e/…)</small><input id="f-id" maxlength="60" value="' + esc(d.id) + '"' + (base ? ' disabled' : '') + '></label>' +
@@ -690,8 +830,10 @@
             '<div id="media-fields" hidden><label class="field">File <small>(pictures: PNG, JPEG, SVG, WebP or GIF up to 2 MB; music: MP3, OGG or WAV; videos: MP4, MOV or MKV, up to 20 MB)</small><input id="f-file" type="file" accept="image/*,audio/*,video/*,.mp3,.ogg,.wav,.mp4,.mov,.mkv"></label><p class="hint" id="file-info"></p></div>' +
             '<div id="paper-fields" hidden><label class="field">Abstract<textarea id="f-abstract">' + esc(d.abstract) + '</textarea></label>' +
             '<label class="field">Categories <small>(comma separated, arXiv style like cs.PL, math.NT, q-bio.PE)</small><input id="f-categories" value="' + esc((d.categories || []).join(', ')) + '"></label></div>' +
-            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, [text](https://example.com) web links, ![caption](media:file-id), footnotes [^1], <a href="#/templates" target="_blank">templates</a> like {{stub}})</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
+            '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' || type === 'lite' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, [text](https://example.com) web links, ![caption](media:file-id), footnotes [^1], <a href="#/templates" target="_blank">templates</a> like {{stub}})</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
             '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button><span class="hl-wrap"><button type="button" class="gel small plain" id="add-hl" aria-haspopup="true" aria-expanded="false" title="Highlights and the Bubble Chip cousins, with a preview of every color!">🖍 Highlight</button></span><button type="button" class="gel small plain" id="add-tpl" title="Stub notices, citation needed, file improvement and more!">⚑ Add a template</button><button type="button" class="gel small plain" id="open-file" title="An OpenDB entry, a Writeout document or a Bitbook note!">📂 Open .kd / .kn</button><input type="file" id="f-open" accept=".kd,.kn,.md,.txt" hidden></div>' +
+            '<div id="lite-fields" hidden><p class="field-title">Files <small>(code or any text: give each one a name with its ending, like hello.js, style.css or water.gdshader)</small></p><div id="lite-list" class="lite-edit-list"></div>' +
+            '<div class="actions"><button type="button" class="gel small plain" id="lite-add">＋ Add a file</button><button type="button" class="gel small plain" id="lite-open">📂 Add files from this device</button><input type="file" id="lite-pick" multiple hidden></div></div>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
             '<label class="field">Infobox <small>(optional, one “Label: value” per line)</small><textarea id="f-infobox" style="min-height:70px">' + esc(infoboxText) + '</textarea></label>' +
@@ -713,6 +855,7 @@
                 created: d.created || today(), updated: today(), license: 'CC0-1.0',
             };
             if (type === 'paper') { e.abstract = get('f-abstract').trim(); e.categories = list('f-categories'); }
+            if (type === 'lite') { e.body = liteJoin(get('f-body'), liteUsed()); if (d.fork) e.fork = d.fork; }
             if (type === 'media' && file) Object.assign(e, { mime: file.mime, width: file.width, height: file.height }, file.duration ? { duration: file.duration } : {}, file.ext ? { ext: file.ext } : {}, file.dataUrl ? { dataUrl: file.dataUrl } : {}, file.file ? { file: file.file } : {});
             return e;
         }
@@ -725,6 +868,18 @@
             if (type === 'paper' && !e.abstract) p.push('Papers need an abstract!');
             if (type === 'media' && !(e.dataUrl || e.file)) p.push('Choose a file to share!');
             if (type === 'article' && e.body.trim().length < 40) p.push('Write a little more of the article (at least a couple of sentences)!');
+            if (type === 'lite') {
+                const fl = liteUsed(), names = new Set();
+                if (!fl.length) p.push('Add at least one file!');
+                fl.forEach((f) => {
+                    const n = f.name.trim();
+                    if (!n) p.push('Every file needs a name, like hello.js!');
+                    else if (!/^[^\/\\:*?"<>|]+$/.test(n)) p.push('The file name “' + n + '” has a character that file names cannot use!');
+                    else if (names.has(n.toLowerCase())) p.push('Two files are called “' + n + '”!');
+                    names.add(n.toLowerCase());
+                    if (!f.code.trim()) p.push('“' + (n || 'A file') + '” is empty!');
+                });
+            }
             if (!$('f-cc0').checked) p.push('Tick the public domain (CC0) box: everything in OpenDB is free for everyone!');
             if (publishing && type === 'media' && !e.dataUrl) p.push('Choose the file again so it can be included!');
             return p;
@@ -734,13 +889,59 @@
             const fake = Object.assign({}, e, { local: true });
             const img = type === 'media' && (e.dataUrl || e.file) ? '<figure class="figure">' + mediaTag(e, e.dataUrl || mediaSrc(e), e.title || '') + '</figure>' : '';
             const head = type === 'paper' ? '<p class="authors">' + esc(e.authors.join(', ')) + '</p>' + (e.abstract ? '<div class="abstract"><b>Abstract</b>' + esc(e.abstract) + '</div>' : '') : '<p class="lead">' + esc(e.summary) + '</p>';
-            $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(e.body, e) + '</div>';
+            $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(type === 'lite' ? get('f-body') : e.body, e) + '</div>' + (type === 'lite' ? liteFilesHtml(liteUsed(), true) : '');
         }
         function syncType() {
             $('media-fields').hidden = type !== 'media';
             $('paper-fields').hidden = type !== 'paper';
+            $('lite-fields').hidden = type !== 'lite';
+            if (type === 'lite') drawLite();
             preview();
         }
+        // Lite files: a name and a box of text each, as many as you like
+        function liteUsed() { return liteFiles.filter((f) => f.name.trim() || f.code.trim()).map((f) => ({ name: f.name.trim(), code: f.code })); }
+        function drawLite() {
+            $('lite-list').innerHTML = liteFiles.map((f, i) => '<div class="lite-edit" data-i="' + i + '"><div class="lite-edit-head"><input class="lite-fname" placeholder="name.ext (like hello.js)" maxlength="80" value="' + esc(f.name) + '" aria-label="File ' + (i + 1) + ' name">' +
+                '<span class="lite-lang">' + esc(liteLang(f.name)) + '</span><button type="button" class="gel small plain lite-del"' + (liteFiles.length < 2 ? ' disabled' : '') + ' aria-label="Remove file ' + (i + 1) + '">Remove</button></div>' +
+                '<textarea class="lite-fcode" spellcheck="false" aria-label="File ' + (i + 1) + ' contents" placeholder="Paste or type the file here!">' + esc(f.code) + '</textarea></div>').join('');
+        }
+        $('lite-list').addEventListener('input', (ev) => {
+            const row = ev.target.closest('.lite-edit');
+            if (!row) return;
+            const f = liteFiles[+row.dataset.i];
+            if (ev.target.classList.contains('lite-fname')) { f.name = ev.target.value; row.querySelector('.lite-lang').textContent = liteLang(f.name); }
+            else if (ev.target.classList.contains('lite-fcode')) f.code = ev.target.value;
+        });
+        // Tab types a tab in a file (Escape first, then Tab, moves on like everywhere else)
+        let liteEsc = false;
+        $('lite-list').addEventListener('keydown', (ev) => {
+            if (!ev.target.classList.contains('lite-fcode')) return;
+            if (ev.key === 'Escape') { liteEsc = true; return; }
+            if (ev.key === 'Tab' && !ev.shiftKey && !liteEsc) { ev.preventDefault(); ev.target.setRangeText('\t', ev.target.selectionStart, ev.target.selectionEnd, 'end'); ev.target.dispatchEvent(new Event('input', { bubbles: true })); }
+            liteEsc = false;
+        });
+        $('lite-list').addEventListener('click', (ev) => {
+            const b = ev.target.closest('.lite-del');
+            if (!b || liteFiles.length < 2) return;
+            liteFiles.splice(+b.closest('.lite-edit').dataset.i, 1);
+            drawLite(); preview();
+        });
+        $('lite-add').onclick = () => { liteFiles.push({ name: '', code: '' }); drawLite(); const all = $('lite-list').querySelectorAll('.lite-fname'); all[all.length - 1].focus(); };
+        $('lite-open').onclick = () => $('lite-pick').click();
+        $('lite-pick').onchange = (ev) => {
+            const picked = Array.from(ev.target.files || []);
+            ev.target.value = '';
+            const big = picked.filter((f) => f.size > 512 * 1024);
+            if (big.length) toast(big.map((f) => f.name).join(', ') + ' is over 512 KB, so it was left out!');
+            Promise.all(picked.filter((f) => f.size <= 512 * 1024).map((f) => f.text().then((code) => ({ name: f.name, code })))).then((got) => {
+                if (!got.length) return;
+                if (liteFiles.length === 1 && !liteFiles[0].name && !liteFiles[0].code) liteFiles = [];
+                liteFiles = liteFiles.concat(got);
+                if (!get('f-title')) { $('f-title').value = got[0].name.replace(/\.[^.]+$/, '').replace(/[-_]+/g, ' '); if (!idTouched) $('f-id').value = slug(get('f-title')); }
+                drawLite(); preview();
+                toast('Added ' + got.length + ' file' + (got.length === 1 ? '' : 's') + '!');
+            });
+        };
         $('form').addEventListener('input', (ev) => {
             if (ev.target.id === 'f-title' && !idTouched) $('f-id').value = slug(get('f-title'));
             if (ev.target.id === 'f-id') idTouched = true;
@@ -753,7 +954,7 @@
             type = b.dataset.type;
             history.replaceState(null, '', '#/new/' + type);
             $('types').querySelectorAll('button').forEach((x) => x.classList.toggle('on', x === b));
-            $('form').querySelector('#f-body').closest('label').firstChild.textContent = (type === 'paper' ? 'Full text' : type === 'media' ? 'Description' : 'Article') + ' ';
+            $('form').querySelector('#f-body').closest('label').firstChild.textContent = (type === 'paper' ? 'Full text' : type === 'media' || type === 'lite' ? 'Description' : 'Article') + ' ';
             syncType();
         };
         $('f-file').onchange = (ev) => {
@@ -876,7 +1077,7 @@
         $('add-tpl').onclick = () => {
             const box = $('f-body');
             const s0 = box.selectionStart, s1 = box.selectionEnd;
-            modal('Add a template', '<p class="hint">Pick a notice to add to this ' + ({ article: 'article', media: 'file', paper: 'paper' }[type]) + '! Things after a <code>|</code> are details you can change!</p>' +
+            modal('Add a template', '<p class="hint">Pick a notice to add to this ' + ({ article: 'article', media: 'file', paper: 'paper', lite: 'lite' }[type]) + '! Things after a <code>|</code> are details you can change!</p>' +
                 TPL_GROUPS.map((g) => '<b class="tpl-pick-group">' + g + '</b><div class="tpl-picks">' + TEMPLATES.filter((t) => t.group === g).map((t) =>
                     '<button type="button" class="tpl-pick" data-tpl="' + esc(t.name) + '"><code>' + esc(tplUsage(t)) + '</code><span>' + esc(t.hint) + '</span></button>').join('') + '</div>').join(''));
             $('modal-body').onclick = (ev) => {
@@ -993,8 +1194,10 @@
             view.innerHTML = '<div class="card empty"><h1 class="page">OpenDB could not load its data!</h1><p>' + esc(loadError) + '</p></div>';
             return;
         }
+        if (parts[0] !== 'embed') document.body.classList.remove('odb-embed');
         switch (parts[0]) {
             case '': pageHome(); break;
+            case 'embed': pageEmbed(parts[1] || ''); return;
             case 'browse': TYPES[parts[1]] ? pageBrowse(parts[1], params) : pageHome(); break;
             case 'e': pageEntry(parts[1] || ''); break;
             case 'tag': pageTag(parts[1] || ''); break;

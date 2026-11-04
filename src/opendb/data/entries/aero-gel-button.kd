@@ -1,0 +1,75 @@
+---
+format: keydown-text
+id: aero-gel-button
+type: lite
+title: Frutiger Aero gel button
+summary: A glossy, see-through gel button in pure HTML and CSS, with a shine on top and a soft glow when you press it.
+tags: [css, html, frutiger aero, design, button]
+created: 2026-11-03
+updated: 2026-11-03
+authors: [OpenDB contributors]
+license: CC0-1.0
+---
+The classic [[frutiger-aero|Frutiger Aero]] =B=gel button=B=, made with two files and no pictures! The shine is a second gradient on top, and the glow is a box shadow.
+
+Open `gel-button.html` in a browser to see it, or copy the CSS into your own page!
+
+~~~ file: gel-button.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gel button</title>
+    <link rel="stylesheet" href="gel-button.css">
+</head>
+<body>
+    <button class="gel">Click me!</button>
+    <button class="gel gel-green">Go!</button>
+</body>
+</html>
+~~~
+
+~~~ file: gel-button.css
+body {
+    display: flex;
+    gap: 16px;
+    justify-content: center;
+    padding: 60px;
+    background: linear-gradient(180deg, #bfe6ff, #effaff);
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+
+/* the gel: a bright top half, a deeper bottom half, and a white shine */
+.gel {
+    --a: #7fd3ff;
+    --b: #0a74c9;
+    position: relative;
+    padding: 12px 30px;
+    border: 1px solid rgba(0, 60, 120, 0.45);
+    border-radius: 999px;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 40, 90, 0.5);
+    background: linear-gradient(180deg, var(--a) 0%, var(--b) 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 4px 12px rgba(10, 116, 201, 0.35);
+    cursor: pointer;
+    overflow: hidden;
+}
+.gel::before {
+    content: "";
+    position: absolute;
+    left: 6%;
+    right: 6%;
+    top: 2px;
+    height: 48%;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.1));
+    pointer-events: none;
+}
+.gel:hover { filter: brightness(1.08); }
+.gel:active { box-shadow: inset 0 2px 6px rgba(0, 40, 90, 0.45), 0 0 18px rgba(127, 211, 255, 0.9); }
+.gel:focus-visible { outline: 3px solid #ffb347; outline-offset: 3px; }
+.gel-green { --a: #b6f08a; --b: #2e9a1c; }
+~~~

@@ -388,7 +388,7 @@
 
     /* ---------- the layer in the note ---------- */
     // the page being drawn on: Bitbook's note, or any element handed to start() (Keydown.js editors, KeydownBox...)
-    let target = null, onStop = null;
+    let target = null, onStop = null, toLocal = null;
     const ed = () => target || document.getElementById('wysiwyg-canvas');
     function fit(layer) {
         const c = ed();
@@ -537,6 +537,8 @@ body.ank-on #wysiwyg-canvas, body.ank-on .ank-target { user-select: none; -webki
         // (a different page starts its own undo list)
         if (el && el.nodeType === 1) { if (el !== start.last) undo = []; start.last = el; target = el; el.classList.add('ank-target'); }
         onStop = opts && typeof opts.onStop === 'function' ? opts.onStop : null;
+        // (opts.toLocal(event) -> [x, y] in the page's own pixels, for a page that is zoomed or scaled)
+        toLocal = opts && typeof opts.toLocal === 'function' ? opts.toLocal : null;
         if (!ed()) return;
         buildBar();
         on = true;
@@ -555,13 +557,19 @@ body.ank-on #wysiwyg-canvas, body.ank-on .ank-target { user-select: none; -webki
         // an empty layer leaves the note
         if (layer && !strokesOf(layer).length) { layer.remove(); saved(); }
         const done = onStop;
-        target = null; onStop = null;
+        target = null; onStop = null; toLocal = null;
         if (done) { try { done(); } catch (e) {} }
     }
 
     // drawing: points are smoothed as they come, so the line flows
     let cur = null;
-    function local(layer, e) { const r = layer.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+    // (a zoomed page, like Amber's slide, is drawn bigger than its own size: points are scaled back to the page's own pixels)
+    function local(layer, e) {
+        if (toLocal) { try { const p = toLocal(e); if (p) return p; } catch (err) {} }
+        const r = layer.getBoundingClientRect();
+        const sx = r.width / (parseFloat(layer.getAttribute('width')) || r.width) || 1, sy = r.height / (parseFloat(layer.getAttribute('height')) || r.height) || 1;
+        return [(e.clientX - r.left) / sx, (e.clientY - r.top) / sy];
+    }
     function eraseAt(layer, e) {
         const hits = document.elementsFromPoint(e.clientX, e.clientY);
         const g = hits.map((h) => h.closest && h.closest('g.ank-stroke')).find((x) => x && layer.contains(x));

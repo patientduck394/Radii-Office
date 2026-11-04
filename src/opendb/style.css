@@ -383,3 +383,39 @@ body {
 @media (max-width: 600px) {
     .kd-doc [class*="-chip"], .kd-doc .us-chip { white-space: normal !important; max-width: 100%; text-align: center; }
 }
+
+/* ---------- Lites: shared code and files, like Gists! ---------- */
+.badge.lite { background: #0e7490; }
+.lite-files { display: flex; flex-direction: column; gap: 16px; margin-top: 18px; }
+.lite-file { border: 1px solid #b9d5ec; border-radius: 14px; overflow: hidden; background: #fbfdff; box-shadow: 0 3px 10px rgba(0, 60, 120, 0.08); }
+.lite-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 8px 12px; background: linear-gradient(180deg, #ffffff 0%, #e6f3fd 100%); border-bottom: 1px solid #cfe2f3; font: 13px var(--sans); }
+.lite-name { display: inline-flex; align-items: center; gap: 6px; font: 700 14px var(--mono); color: var(--ink); }
+.lite-name svg { width: 18px; height: 18px; color: var(--blue); flex: none; }
+.lite-lang { font: 700 10.5px var(--sans); letter-spacing: 0.04em; text-transform: uppercase; padding: 2px 8px; border-radius: 999px; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.lite-size { color: #5b7590; font-size: 12px; }
+.lite-btns { margin-left: auto; display: flex; gap: 6px; }
+.lite-code { display: grid; grid-template-columns: auto minmax(0, 1fr); overflow: auto; max-height: 560px; background: #fff; }
+.lite-code pre { margin: 0; padding: 10px 12px; font: 13px/1.55 var(--mono); white-space: pre; tab-size: 4; background: none; border: 0; border-radius: 0; box-shadow: none; }
+.lite-nums { text-align: right; color: #94a9bd; user-select: none; border-right: 1px solid #e3eef8; background: #f6fafe; position: sticky; left: 0; }
+.lite-src code { font: inherit; background: none; padding: 0; color: #12263a; }
+.lt-c { color: #5f7d5a; font-style: italic; }
+.lt-s { color: #b4530c; }
+.lt-n { color: #7c3aed; }
+.lt-k { color: #0b67b2; font-weight: 700; }
+.lt-t { color: #0e7490; font-weight: 700; }
+.lite-toc { margin: 0; padding-left: 18px; font: 13px var(--mono); }
+.lite-forked { margin-top: -6px; }
+.field-title { margin: 6px 0 6px; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.field-title small { font-weight: 400; }
+.lite-edit-list { display: flex; flex-direction: column; gap: 12px; }
+.lite-edit { border: 1px solid #b9d5ec; border-radius: 12px; overflow: hidden; background: #fbfdff; }
+.lite-edit-head { display: flex; align-items: center; gap: 8px; padding: 6px 8px; background: linear-gradient(180deg, #fff, #eaf5fe); border-bottom: 1px solid #cfe2f3; }
+.lite-fname { flex: 1; min-width: 0; font: 600 14px var(--mono); padding: 6px 10px; border-radius: 8px; border: 1px solid #b9d5ec; background: #fff; color: var(--ink); }
+.lite-fcode { display: block; box-sizing: border-box; width: 100%; min-height: 180px; resize: vertical; border: 0; padding: 10px 12px; font: 13px/1.55 var(--mono); tab-size: 4; white-space: pre; overflow: auto; background: #fff; color: var(--ink); }
+.lite-fcode:focus, .lite-fname:focus { outline: 2px solid #38bdf8; outline-offset: -2px; }
+/* #/embed/<id>: only the files, for an <iframe> on another site */
+body.odb-embed .top, body.odb-embed .foot { display: none; }
+body.odb-embed .view { padding: 8px; max-width: none; }
+.lite-embed-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font: 15px var(--sans); }
+.lite-embed .lite-files { margin-top: 10px; }
+@media (max-width: 640px) { .lite-btns { margin-left: 0; width: 100%; } }

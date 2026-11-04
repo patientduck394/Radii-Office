@@ -115,6 +115,8 @@
             root.appendChild(div);
             map[el.id] = div;
         });
+        // the slide's Annotate drawing, on top of everything (amber-annotate.js)
+        try { if (window.AmberAnnotate) { const ink = window.AmberAnnotate.showLayer(slide); if (ink) root.insertAdjacentHTML('beforeend', ink); } } catch (e) {}
         return { root: root, bg: bg, map: map, slide: slide };
     }
 

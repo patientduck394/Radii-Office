@@ -35,6 +35,8 @@ const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&':
 const DEG = Math.PI / 180;
 const STORE = 'zonerider_scene_v1';
 const PREFS = 'zonerider_prefs_v1';
+// ?embed=1 in a frame: Writeout and Bitbook's 3D Scene block (it never touches the scene saved in this browser)
+const EMBED = new URLSearchParams(location.search).has('embed') && window.parent !== window;
 const LIME = 0xc5ff11, ORANGE = 0xffa63d;
 const round = (v, d = 3) => Math.round(v * 10 ** d) / 10 ** d;
 // The icons: small line drawings (SVG paths on a 24 x 24 grid; parts starting with "F:" are filled), the same on every system
@@ -883,6 +885,7 @@ function afterRemote() {
     saveTimer = setTimeout(autosave, 600);
 }
 function autosave() {
+    if (EMBED) return;
     try { localStorage.setItem(STORE, snapshot()); }
     catch (e) { toast('This scene is too big to keep in the browser: use File, Save to keep it!'); }
 }
@@ -2099,13 +2102,56 @@ setShading(state.shading);
 resize();
 let started = false;
 try {
-    const saved = localStorage.getItem(STORE);
+    const saved = EMBED ? null : localStorage.getItem(STORE);
     if (saved) { restore(JSON.parse(saved), false); started = true; }
 } catch (e) { console.warn('[Zonerider] could not reopen the saved scene', e); }
 if (!started) { newScene(false); undoStack.length = 0; }
 setFrameRange();
 info();
 requestAnimationFrame((t) => { playT = t; frame(t); });
-collab = installCollab({ hydrateGd, THREE, world, state, helpers, PRIMS, primGeometry, attachTarget, rememberLights, byUuid, select, setMode, frameObjects, serialize, restore, changed, afterRemote, FX_DEFAULTS, gizmoDragging: () => gizmo.dragging });
+collab = EMBED ? null : installCollab({ hydrateGd, THREE, world, state, helpers, PRIMS, primGeometry, attachTarget, rememberLights, byUuid, select, setMode, frameObjects, serialize, restore, changed, afterRemote, FX_DEFAULTS, gizmoDragging: () => gizmo.dragging });
 if (collab) { const b = collab.button({ cls: 'zr-share' }); const shade = $('zr-shading'); shade.parentNode.insertBefore(b, shade); }
+/* ==================================================================
+   EMBED: Writeout and Bitbook open Zonerider in a frame to make a 3D Scene block!
+   The page sends { zr: 'load', scene } (scene null = a fresh one), and Done sends back
+   { zr: 'done', scene, png } (the .zr scene and a picture of it), Cancel sends { zr: 'cancel' }.
+   ================================================================== */
+function embedPicture() {
+    const v = $('zr-view').getBoundingClientRect();
+    const w = 960, h = Math.max(360, Math.min(720, Math.round(w * (v.height / Math.max(1, v.width)) || 540)));
+    return withRenderSetup(() => {
+        const r = offRenderer(w, h);
+        const rc = renderCamera(w, h);
+        if (r.zrFx) { syncFx(r.zrFx, rc); r.zrFx.c.render(); } else r.render(scene, rc);
+        const u = r.domElement.toDataURL('image/jpeg', 0.88);
+        r.dispose();
+        return u;
+    });
+}
+if (EMBED) {
+    document.body.classList.add('zr-embedded');
+    const brand = document.querySelector('.zr-brand');
+    if (brand) { brand.target = '_blank'; brand.rel = 'noopener'; }
+    const box = document.createElement('div');
+    box.className = 'zr-embed-btns';
+    box.innerHTML = '<button type="button" class="zr-btn" id="zr-embed-cancel">Cancel</button><button type="button" class="zr-btn primary" id="zr-embed-done" title="Put this scene in your document!">Done</button>';
+    document.querySelector('.zr-top').appendChild(box);
+    // (every message carries the page's token from #t=..., so only the page that opened this frame listens)
+    const token = (/[#&]t=([\w-]+)/.exec(location.hash) || [])[1] || '';
+    const tell = (msg) => window.parent.postMessage(Object.assign({ t: token }, msg), location.origin);
+    $('zr-embed-cancel').onclick = () => tell({ zr: 'cancel' });
+    $('zr-embed-done').onclick = () => {
+        if (state.mode === 'edit') setMode('object');
+        let png = '';
+        try { png = embedPicture(); } catch (e) { console.warn('[Zonerider] the picture failed', e); }
+        tell({ zr: 'done', scene: serialize(), png });
+    };
+    window.addEventListener('message', (ev) => {
+        if (ev.origin !== location.origin || !ev.data || ev.data.zr !== 'load' || ev.data.t !== token) return;
+        try { if (ev.data.scene) restore(ev.data.scene, false); else newScene(false); }
+        catch (e) { toast('That scene could not be opened: ' + e.message); newScene(false); }
+        undoStack.length = 0; redoStack.length = 0;
+    });
+    tell({ zr: 'ready' });
+}
 window.Zonerider = { gd: { parseGd, openGdText, applyObjectShader, applyScreenShader, gdCheck, EXAMPLES, error: () => gdError }, collab: () => collab, viewCam: () => cam, viewTarget: () => orbit.target, THREE, scene, world, state, addPrim, addLight, addCamera, addEmpty, select, setMode, setShading, setTool, view, insertKey, goFrame, serialize, restore, exportAs, renderImage, undo, redo, editSelectAll, editMerge, del, duplicate, frameObjects };

@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', 'opendb', 'data');
 const ENTRIES = path.join(ROOT, 'entries');
-const TYPES = new Set(['article', 'media', 'paper']);
+const TYPES = new Set(['article', 'media', 'paper', 'lite']);
+// a lite's files: ~~~ file: name.ext, the file, then the same ~~~ again (the same rule as opendb/app.js)
+const LITE_RE = /^(~{3,})[ \t]*file:[ \t]*([^\n]+?)[ \t]*\n([\s\S]*?)\n\1[ \t]*$/gm;
 const LISTS = new Set(['tags', 'authors', 'categories']);
 
 function parseValue(raw) {
@@ -39,7 +41,7 @@ function check(entry, file) {
     const base = path.basename(file, '.kd');
     if (entry.id !== base) problems.push('id "' + entry.id + '" must match the file name "' + base + '"');
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(String(entry.id))) problems.push('id must use lowercase letters, digits and dashes');
-    if (!TYPES.has(entry.type)) problems.push('type must be article, media or paper');
+    if (!TYPES.has(entry.type)) problems.push('type must be article, media, paper or lite');
     ['title', 'summary', 'created'].forEach((k) => { if (!entry[k]) problems.push(k + ' is missing'); });
     if (entry.license !== 'CC0-1.0') problems.push('license must be CC0-1.0 (everything in OpenDB is public domain)');
     if (entry.type === 'media') {
@@ -47,6 +49,11 @@ function check(entry, file) {
         else if (!fs.existsSync(path.join(ROOT, entry.file))) problems.push('the file ' + entry.file + ' does not exist');
     }
     if (entry.type === 'paper' && !entry.abstract) problems.push('papers need an abstract');
+    if (entry.type === 'lite') {
+        const names = [...String(entry.body || '').replace(/\r/g, '').matchAll(LITE_RE)].map((m) => m[2].trim());
+        if (!names.length) problems.push('lites need at least one file (~~~ file: name.ext ... ~~~)');
+        if (new Set(names.map((n) => n.toLowerCase())).size !== names.length) problems.push('two files in this lite have the same name');
+    }
     if (problems.length) throw new Error(file + ':\n  - ' + problems.join('\n  - '));
 }
 

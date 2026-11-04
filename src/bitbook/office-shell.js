@@ -95,6 +95,7 @@
         stop: '<rect x="6" y="6" width="12" height="12" rx="1.5"/>',
         textbox: '<rect x="3" y="5" width="18" height="14" rx="1.5" stroke-dasharray="2.5 2"/><path d="M8 9h8M12 9v7"/>',
         shapes: '<circle cx="8" cy="8" r="4.5"/><rect x="11" y="11" width="10" height="10" rx="1.5"/><path d="M3 21l4-7 4 7z"/>',
+        cube: '<path d="M12 2.8l8 4.4v9.6l-8 4.4-8-4.4V7.2z"/><path d="M4 7.2l8 4.4 8-4.4M12 11.6v9.6"/>',
         bringFront: '<rect x="3" y="3" width="11" height="11" rx="1.5" opacity=".5"/><rect x="10" y="10" width="11" height="11" rx="1.5" fill="currentColor" fill-opacity=".25"/>',
         sendBack: '<rect x="3" y="3" width="11" height="11" rx="1.5" fill="currentColor" fill-opacity=".25"/><rect x="10" y="10" width="11" height="11" rx="1.5" opacity=".5"/>',
         grid: '<path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/>',

@@ -1428,8 +1428,16 @@ function sanitizeKaSlide(raw) {
         transition: sanitizeKaTransition(raw.transition),
         notes: typeof raw.notes === 'string' ? raw.notes.slice(0, 20000) : '',
         hidden: raw.hidden === true,
-        comments: sanitizeKaComments(raw.comments)
+        comments: sanitizeKaComments(raw.comments),
+        ...sanitizeKaInk(raw.ink)
     };
+}
+// Annotate drawings (amber-annotate.js): strokes of { t ink, c color, w width, d path in slide pixels }
+function sanitizeKaInk(raw) {
+    if (!Array.isArray(raw)) return {};
+    const ink = raw.filter((s) => s && typeof s.d === 'string' && s.d.length < 200000 && /^[MLQl0-9 .\-]+$/.test(s.d)).slice(0, 2000)
+        .map((s) => ({ t: String(s.t || 'pen').slice(0, 40), c: String(s.c || 'red').slice(0, 20), w: Math.max(0.5, Math.min(60, parseFloat(s.w) || 4)), d: s.d }));
+    return ink.length ? { ink } : {};
 }
 
 function exportKaFile() {

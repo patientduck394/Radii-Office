@@ -214,3 +214,8 @@ button { cursor: pointer; }
 .zr-gderr { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; background: #3b0d12; color: #fecaca; font: 12px/1.45 ui-monospace, Menlo, monospace; white-space: pre-wrap; border: 1px solid #7f1d1d; }
 .zr-preset { position: relative; }
 .zr-ptag { position: absolute; top: 6px; right: 6px; padding: 1px 6px; border-radius: 999px; font: 700 9.5px system-ui, sans-serif; font-style: normal; color: var(--zr-lime-ink); background: linear-gradient(180deg, #f1ffb3, var(--zr-lime)); box-shadow: 0 1px 3px rgba(0,0,0,.5); }
+
+/* inside Writeout or Bitbook's 3D Scene editor */
+.zr-embed-btns { display: flex; gap: 6px; margin-left: 4px; }
+.zr-embed-btns .zr-btn { padding: 5px 14px; }
+body.zr-embedded .zr-share { display: none; }
