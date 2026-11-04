@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'eb6691ae1706';
+const VERSION = '3d28badb719c';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","be6cfb7f37"],
@@ -235,8 +235,8 @@ const CORE = [["/","be6cfb7f37"],
   ["/omicron/radii-file.js?v=20261042","3bdadf1b3d"],
   ["/omicron/radii-images.js?v=20261131v","7a2dad017b"],
   ["/omicron/style.css?v=20261202k","811b69a9ed"],
-  ["/opendb/","5a3dc5a9e3"],
-  ["/opendb/app.js?v=20261204b","2822c7cf00"],
+  ["/opendb/","b55474d1ac"],
+  ["/opendb/app.js?v=20261204c","ff62cc9988"],
   ["/opendb/data/entries/aero-bubbles.kd","4105e5a668"],
   ["/opendb/data/entries/aero-css-theme.kd","b0c990b455"],
   ["/opendb/data/entries/aero-gel-button.kd","80d5f65502"],
@@ -289,7 +289,7 @@ const CORE = [["/","be6cfb7f37"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","d18f862d9f"],
+  ["/opendb/data/index.json","f98a8be593"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],
@@ -317,10 +317,10 @@ const CORE = [["/","be6cfb7f37"],
   ["/opendb/icons/question.png","8084f6ed28"],
   ["/opendb/icons/stub.png","38ce429149"],
   ["/opendb/icons/tip.png","8a14710d15"],
-  ["/opendb/index.html","5a3dc5a9e3"],
-  ["/opendb/lite-preview.js?v=20261204b","6eaac2da87"],
-  ["/opendb/mobile/","23144c92d6"],
-  ["/opendb/mobile/index.html","23144c92d6"],
+  ["/opendb/index.html","b55474d1ac"],
+  ["/opendb/lite-preview.js?v=20261204c","7864990b54"],
+  ["/opendb/mobile/","0660bd60cd"],
+  ["/opendb/mobile/index.html","0660bd60cd"],
   ["/opendb/style.css?v=20261204b","12d0e5e322"],
   ["/peeker/","9fb88c337e"],
   ["/peeker/apple-touch-icon.png","5fa59ee1f8"],

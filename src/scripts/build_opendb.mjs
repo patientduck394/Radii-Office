@@ -53,7 +53,7 @@ function check(entry, file) {
         const names = [...String(entry.body || '').replace(/\r/g, '').matchAll(LITE_RE)].map((m) => m[2].trim());
         if (!names.length) problems.push('lites need at least one file (~~~ file: name.ext ... ~~~)');
         if (new Set(names.map((n) => n.toLowerCase())).size !== names.length) problems.push('two files in this lite have the same name');
-        if (entry.preview && !['auto', 'html', 'css', 'svelte', 'python', 'zonerider', 'none'].includes(entry.preview)) problems.push('preview must be auto, html, css, svelte, python, zonerider or none');
+        if (entry.preview && !['auto', 'html', 'css', 'svelte', 'python', 'zonerider', 'godot', 'keydown', 'none'].includes(entry.preview)) problems.push('preview must be auto, html, css, svelte, python, zonerider, godot, keydown or none');
     }
     if (problems.length) throw new Error(file + ':\n  - ' + problems.join('\n  - '));
 }

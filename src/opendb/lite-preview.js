@@ -18,9 +18,11 @@
         css: { label: 'CSS', test: (f) => has(f, /^css$/) },
         svelte: { label: 'Svelte', test: (f) => has(f, /^svelte$/) },
         python: { label: 'Python', test: (f) => has(f, /^py$/) },
-        zonerider: { label: 'Zonerider scene', test: (f) => has(f, /^(zr|gltf)$/) }
+        zonerider: { label: 'Zonerider scene', test: (f) => has(f, /^(zr|gltf)$/) },
+        godot: { label: 'Godot shader', test: (f) => has(f, /^gdshader$/) },
+        keydown: { label: 'Keydown', test: (f) => has(f, /^(kd|kn|md)$/) }
     };
-    const ORDER = ['html', 'svelte', 'zonerider', 'python', 'css'];
+    const ORDER = ['html', 'svelte', 'zonerider', 'godot', 'python', 'css', 'keydown'];
     function kinds(files) { return ORDER.filter((k) => KINDS[k].test(files || [])); }
     // the lite's own choice (preview: header) when it fits its files, otherwise the best one it has
     function auto(files, chosen) {
@@ -191,7 +193,68 @@
             '<\/script></body></html>';
     }
 
-    const DOCS = { html: pageDoc, css: cssDoc, svelte: svelteDoc, python: pythonDoc, zonerider: sceneDoc };
+    /* ---------- Godot shader (.gdshader) on a 3D shape, with Zonerider's own translator ---------- */
+    function godotDoc(files) {
+        const T = 'https://cdn.jsdelivr.net/npm/three@' + THREE;
+        // (zonerider/gdshader.js is served to any page, so the sandboxed frame can import it from here)
+        const GD = location.origin + '/zonerider/gdshader.js';
+        return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><style>html,body{margin:0;height:100%;overflow:hidden;background:#2b2f35}canvas{display:block;width:100%;height:100%;touch-action:none}' +
+            '#msg{position:absolute;left:10px;bottom:8px;right:10px;font:12px system-ui,sans-serif;color:#c5ff11;text-shadow:0 1px 2px #000;white-space:pre-wrap}#msg.err{color:#fecaca;background:rgba(59,13,18,.92);padding:6px 8px;border-radius:8px;font-family:ui-monospace,Menlo,monospace;text-shadow:none}' +
+            '#ui{position:absolute;right:8px;top:8px;display:flex;gap:6px}select{font:12px system-ui;padding:3px 6px;border-radius:6px;background:#1b1e22;color:#e6e9ee;border:1px solid #8fc400}</style>' +
+            '<script type="importmap">' + JSON.stringify({ imports: { three: T + '/build/three.module.min.js', 'three/addons/': T + '/examples/jsm/', gdshader: GD } }) + '<\/script></head><body><canvas id="c"></canvas><div id="ui"></div><div id="msg">Loading the shader…</div>' +
+            filesJson(files) + '<script type="module">' +
+            'import * as THREE from "three"; import { OrbitControls } from "three/addons/controls/OrbitControls.js"; import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";' +
+            'const msg = document.getElementById("msg"), ui = document.getElementById("ui");' +
+            'const files = JSON.parse(document.getElementById("lite-files").textContent).filter((f) => /\\.gdshader$/i.test(f.name));' +
+            'let G; try { G = await import("gdshader"); } catch (e) { msg.className = "err"; msg.textContent = "The shader translator could not load! " + e.message; throw e; }' +
+            'const canvas = document.getElementById("c");' +
+            'const renderer = new THREE.WebGLRenderer({ canvas, antialias: true }); renderer.setPixelRatio(Math.min(2, devicePixelRatio || 1)); renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping;' +
+            'let shaderError = ""; renderer.debug.onShaderError = (gl, prog, vs, fs) => { shaderError = [gl.getShaderInfoLog(vs), gl.getShaderInfoLog(fs)].join("\\n").split("\\n").filter((l) => /error/i.test(l)).map((l) => l.replace(/^ERROR:\\s*\\d+:\\d+:\\s*/i, "")).slice(0, 5).join("\\n") || "The shader could not be compiled!"; };' +
+            'const scene = new THREE.Scene(); scene.background = new THREE.Color("#2b2f35"); scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;' +
+            'const sun = new THREE.DirectionalLight(0xffffff, 2.2); sun.position.set(3, 4, 2.5); scene.add(sun, new THREE.AmbientLight(0xffffff, 0.25));' +
+            'const floor = new THREE.Mesh(new THREE.PlaneGeometry(8, 8).rotateX(-Math.PI / 2), new THREE.MeshStandardMaterial({ color: "#3b4048", roughness: 0.9 })); floor.position.y = -1.3; scene.add(floor);' +
+            'const SHAPES = { sphere: () => new THREE.SphereGeometry(1, 64, 40), cube: () => new THREE.BoxGeometry(1.5, 1.5, 1.5, 24, 24, 24), knot: () => new THREE.TorusKnotGeometry(0.8, 0.28, 200, 32), plane: () => new THREE.PlaneGeometry(2.4, 2.4, 64, 64).rotateX(-Math.PI / 2) };' +
+            'const mesh = new THREE.Mesh(SHAPES.sphere(), new THREE.MeshPhysicalMaterial({ color: "#cccccc" })); scene.add(mesh);' +
+            'const camera = new THREE.PerspectiveCamera(40, 1, 0.05, 100); camera.position.set(2.6, 1.8, 3.6);' +
+            'const controls = new OrbitControls(camera, canvas); controls.enableDamping = true;' +
+            'const rt = new THREE.WebGLRenderTarget(4, 4); const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2)); const quadScene = new THREE.Scene(); quadScene.add(quad); const quadCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);' +
+            'let screen = null;' +
+            'function draw() { if (screen) { renderer.setRenderTarget(rt); renderer.render(scene, camera); renderer.setRenderTarget(null); screen.uniforms.tDiffuse.value = rt.texture; quad.material = screen; renderer.render(quadScene, quadCam); } else renderer.render(scene, camera); }' +
+            'function show(f) {' +
+            '  shaderError = ""; screen = null;' +
+            '  try {' +
+            '    const p = G.parseGd(f.code);' +
+            '    if (p.type === "spatial") { const m = p.modes.includes("unshaded") ? new THREE.MeshBasicMaterial() : new THREE.MeshPhysicalMaterial({ color: "#cccccc", roughness: 0.5 }); G.applySpatial(m, p); mesh.material = m; }' +
+            '    else { mesh.material = new THREE.MeshPhysicalMaterial({ color: "#cccccc", roughness: 0.4, clearcoat: 1 }); screen = G.screenMaterial(p); }' +
+            '    draw();' +
+            '    if (shaderError) throw new Error(shaderError);' +
+            '    msg.className = ""; msg.textContent = f.name + " (" + (p.type === "spatial" ? "on the shape" : "on the whole picture") + "): drag to turn, scroll to zoom!";' +
+            '  } catch (e) { msg.className = "err"; msg.textContent = f.name + ": " + (e && e.message || e); screen = null; mesh.material = new THREE.MeshPhysicalMaterial({ color: "#cccccc" }); }' +
+            '}' +
+            'const shape = document.createElement("select"); shape.setAttribute("aria-label", "Shape"); [["sphere", "Sphere"], ["cube", "Cube"], ["knot", "Torus knot"], ["plane", "Plane"]].forEach(([v, t]) => shape.add(new Option(t, v))); shape.onchange = () => { mesh.geometry.dispose(); mesh.geometry = SHAPES[shape.value](); }; ui.appendChild(shape);' +
+            'let cur = files[0];' +
+            'if (files.length > 1) { const s = document.createElement("select"); s.setAttribute("aria-label", "Shader"); files.forEach((f, i) => s.add(new Option(f.name, i))); s.onchange = () => { cur = files[+s.value]; show(cur); }; ui.appendChild(s); }' +
+            'const size = () => { renderer.setSize(innerWidth, innerHeight, false); camera.aspect = innerWidth / Math.max(1, innerHeight); camera.updateProjectionMatrix(); renderer.getDrawingBufferSize(G.gdRes.value); rt.setSize(G.gdRes.value.x, G.gdRes.value.y); }; addEventListener("resize", size); size();' +
+            'show(cur);' +
+            'renderer.setAnimationLoop((t) => { G.gdTime.value = t / 1000; controls.update(); draw(); });' +
+            '<\/script></body></html>';
+    }
+
+    /* ---------- Keydown (.kd, .kn, .md) drawn the way OpenDB draws its entries ---------- */
+    function keydownDoc(files) {
+        const render = window.OpenDB && window.OpenDB.renderKd;
+        const list = files.filter((f) => /\.(kd|kn|md)$/i.test(f.name));
+        const css = ['/phosphor/keydown.css', '/writeout/annotate-hl.css', '/writeout/unique-styles.css', '/opendb/style.css'].map((u) => '<link rel="stylesheet" href="' + location.origin + u + '">').join('') +
+            '<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">';
+        // a file's header between --- lines is left out, like OpenDB and Writeout do
+        const body = (f) => { const m = /^---\r?\n[\s\S]*?\r?\n---\r?\n?([\s\S]*)$/.exec(f.code); return m ? m[1] : f.code; };
+        return '<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">' + css +
+            '<style>html,body{background:#fff !important}body{margin:0;padding:18px 22px}.lp-file{font:700 11px system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:#0369a1;margin:18px 0 6px;border-bottom:1px solid #cfe2f3}.lp-file:first-child{margin-top:0}</style></head><body>' +
+            list.map((f) => (list.length > 1 ? '<div class="lp-file">' + esc(f.name) + '</div>' : '') + '<div class="kd-doc">' + (render ? render(body(f), { type: 'article' }) : '<pre>' + esc(f.code) + '</pre>') + '</div>').join('') +
+            '</body></html>';
+    }
+
+    const DOCS = { html: pageDoc, css: cssDoc, svelte: svelteDoc, python: pythonDoc, zonerider: sceneDoc, godot: godotDoc, keydown: keydownDoc };
     // (scripts and pop-up questions only: no same-origin, so the preview cannot reach OpenDB or anything saved there)
     const SANDBOX = 'allow-scripts allow-modals allow-forms allow-popups';
 

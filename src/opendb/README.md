@@ -80,7 +80,7 @@ Lite pages show every file with line numbers and colors, with Copy, Raw and Down
 **Fork** (your own copy to change, which remembers where it came from with `fork: other-lite`) and **Embed**
 (an `<iframe>` of `#/embed/<id>` for other sites).
 
-**Previews** (`opendb/lite-preview.js`) run a lite's files on its page, each in a sandboxed frame that cannot reach OpenDB: a **Web page** (the .html with its own .css, .js and .svg put in), **CSS** on a sample page, **Svelte** components (compiled in the browser, App.svelte mounted), a **Python** terminal (Pyodide: main.py runs, then a >>> prompt) and a **Zonerider scene** (.zr or .gltf in 3D). Choose one with `preview: html | css | svelte | python | zonerider | none` in the header; without it the best one the files allow is shown.
+**Previews** (`opendb/lite-preview.js`) run a lite's files on its page, each in a sandboxed frame that cannot reach OpenDB: a **Web page** (the .html with its own .css, .js and .svg put in), **CSS** on a sample page, **Svelte** components (compiled in the browser, App.svelte mounted), a **Python** terminal (Pyodide: main.py runs, then a >>> prompt) and a **Zonerider scene** (.zr or .gltf in 3D), a **Godot shader** (.gdshader live on a 3D shape) and **Keydown** (.kd, .kn, .md drawn like an entry). Choose one with `preview: html | css | svelte | python | zonerider | godot | keydown | none` in the header; without it the best one the files allow is shown.
 
 ```text
 ---
