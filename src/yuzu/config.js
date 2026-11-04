@@ -4,5 +4,5 @@
 window.YUZU_CONFIG = {
     google: '',     // like 1234567890-abcdef.apps.googleusercontent.com
     microsoft: '',  // like 00000000-0000-0000-0000-000000000000 (the Application (client) ID)
-    api: ''         // the address of the Yuzu mail server (yuzu/worker/), like https://yuzu-mail.you.workers.dev, for name@radii-office.com addresses
+    api: 'https://yuzu-mail.patientduck0394.workers.dev/'         // the address of the Yuzu mail server (yuzu/worker/), like https://yuzu-mail.you.workers.dev, for name@radii-office.com addresses
 };

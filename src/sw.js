@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '9828648606a1';
+const VERSION = '331e52768e75';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","58da38f5af"],
@@ -289,7 +289,7 @@ const CORE = [["/","58da38f5af"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","f15782e3b5"],
+  ["/opendb/data/index.json","cd502b35e6"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],
@@ -435,7 +435,7 @@ const CORE = [["/","58da38f5af"],
   ["/yuzu/app.js?v=20261205c","fa86bc5119"],
   ["/yuzu/apple-touch-icon.png","f5fc3ad6b3"],
   ["/yuzu/auth.html","988825e1aa"],
-  ["/yuzu/config.js?v=20261205c","8468ab9b2a"],
+  ["/yuzu/config.js?v=20261205c","50e6f244fe"],
   ["/yuzu/favicon-96.png","4dc6e73704"],
   ["/yuzu/favicon.svg","d950817834"],
   ["/yuzu/index.html","3e542b270b"],

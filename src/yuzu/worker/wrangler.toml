@@ -11,7 +11,7 @@ ORIGINS = "https://radii-office.com,https://radii-office.pages.dev"
 [[d1_databases]]
 binding = "DB"
 database_name = "yuzu-mail"
-database_id = "PASTE-YOUR-DATABASE-ID-HERE"
+database_id = "32d9bbf0-83a2-42f3-9b3d-ec73c82f74f1"
 
 # sending to addresses outside radii-office.com (Cloudflare Email Sending, turn it on for the domain in the dashboard first)
 [[send_email]]
