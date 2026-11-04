@@ -359,7 +359,18 @@
         for (let i = 0; i < lines.length; i++) {
             let t = lines[i].trim();
             let m;
-            const tabs = Math.min(8, (/^\t*/.exec(lines[i]) || [''])[0].length);
+            // a pipe table is checked first (| a | b | rows with a | --- | line), so a leading | on any other line can be an indent
+            if (/^\|.*\|(\{[a-z]+\})?$/.test(t)) {
+                const block = [];
+                let j = i;
+                while (j < lines.length && /^\|.*\|(\{[a-z]+\})?$/.test(lines[j].trim())) block.push(lines[j++].trim());
+                const html = tableHtml(block, opts);
+                if (html) { endList(); out.push(html); i = j - 1; continue; }
+            }
+            // each | (or old-style tab) at the start of a line is one indent step
+            const lead = (/^[\t|]*/.exec(t) || [''])[0].length;
+            const tabs = Math.min(8, lead);
+            if (lead) t = t.slice(lead).trim();
             // {align=center} at the start of a line lines it up like the toolbar's align buttons
             const am = /^\{align=(left|center|right|justify)\}\s*/.exec(t);
             const align = am ? am[1] : '';
@@ -386,13 +397,6 @@
             if (t.startsWith(AT_TABLE)) {
                 const at = readAtTable(t, 0);
                 if (at && at.end === t.length) { endList(); out.push(ind(atTableHtml(at, opts))); continue; }
-            }
-            if (/^\|.*\|(\{[a-z]+\})?$/.test(t)) {
-                const block = [];
-                let j = i;
-                while (j < lines.length && /^\|.*\|(\{[a-z]+\})?$/.test(lines[j].trim())) block.push(lines[j++].trim());
-                const html = tableHtml(block, opts);
-                if (html) { endList(); out.push(html); i = j - 1; continue; }
             }
             if ((m = /^\*\s+(\S.*)$/.exec(t))) { (list = list || []).push('<li>' + inline(m[1], opts) + '</li>'); continue; }
             endList();
@@ -556,7 +560,7 @@
         return only && LINE_SPANS[String(only.className).trim()] ? only : null;
     }
     // a plain line that starts like a heading, bullet, quote, block, table, fence or footnote keeps that start as itself
-    const LINE_MARK = /^(#{1,4}\s|\*\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
+    const LINE_MARK = /^(\||#{1,4}\s|\*\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
     const plainLine = (l) => (LINE_MARK.test(l) ? '\\' + l : l);
     const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && el.style.marginLeft) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
     function htmlToText(html) {
@@ -591,7 +595,7 @@
             }
             if (/^H[1-6]$/.test(tag)) {
                 const n = el.classList.contains('mega-header') ? 4 : Math.min(3, +tag[1]);
-                push('\t'.repeat(indentOf(el)) + alignOf(el) + '#'.repeat(n) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
+                push('|'.repeat(indentOf(el)) + alignOf(el) + '#'.repeat(n) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
                 return;
             }
             if (tag === 'UL' || tag === 'OL') {
@@ -601,7 +605,7 @@
                 });
                 return;
             }
-            if (tag === 'BLOCKQUOTE') { push('\t'.repeat(indentOf(el)) + alignOf(el) + '> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
+            if (tag === 'BLOCKQUOTE') { push('|'.repeat(indentOf(el)) + alignOf(el) + '> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
             if (tag === 'TABLE') {
                 flush();
                 const rows = Array.from(el.rows);
@@ -627,14 +631,14 @@
                 const hasBlocks = Array.from(el.children).some((c) => BLOCK.test(c.tagName) || c.classList.contains('kd-math-display') || c.hasAttribute('data-kd-media') || c.classList.contains('bl-prog'));
                 if (hasBlocks) { Array.from(el.childNodes).forEach(walk); flush(); return; }
                 const ls = lineSpanOf(el);
-                if (ls) { lines.push((LINE_SPANS[String(ls.className).trim()] === '* ' ? '' : '\t'.repeat(indentOf(el)) + alignOf(el)) + LINE_SPANS[String(ls.className).trim()] + kidsText(ls).replace(/\n+/g, ' ').trim()); return; }
+                if (ls) { lines.push((LINE_SPANS[String(ls.className).trim()] === '* ' ? '' : '|'.repeat(indentOf(el)) + alignOf(el)) + LINE_SPANS[String(ls.className).trim()] + kidsText(ls).replace(/\n+/g, ' ').trim()); return; }
                 const t = kidsText(el).replace(/\s+$/, '');
                 if (t.trim() === '') lines.push('');
                 else {
                     // (only a line that starts with typed words: a template or chip at the start is real Keydown)
                     const first = Array.from(el.childNodes).find((n) => !(n.nodeType === 3 && !n.nodeValue.trim()));
                     const typed = !!first && first.nodeType === 3;
-                    t.split('\n').forEach((l, k) => lines.push(l.trim() ? '\t'.repeat(indentOf(el)) + alignOf(el) + (typed || k > 0 ? plainLine(l.trim()) : l.trim()) : ''));
+                    t.split('\n').forEach((l, k) => lines.push(l.trim() ? '|'.repeat(indentOf(el)) + alignOf(el) + (typed || k > 0 ? plainLine(l.trim()) : l.trim()) : ''));
                 }
                 return;
             }

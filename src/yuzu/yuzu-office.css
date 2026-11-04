@@ -45,3 +45,6 @@ body.os-office .yz-empty { color: #8092b3; }
 .yz-bs-doc img { width: 36px; height: 36px; }
 .yz-layout-btn { margin-top: 2px; }
 .os-dlg.yz-layout-dlg { width: 560px; }
+
+/* sign-in pop-ups sit above the ribbon shell */
+.yz-modal-back { z-index: 100000; }

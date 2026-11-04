@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signing in to Yuzu…</title>
+    <style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;font:16px system-ui,sans-serif;background:#eaf2ff;color:#0b1b33}</style>
+</head>
+<body>
+    <p id="msg">Finishing your sign-in…</p>
+    <script>
+    // Microsoft sends the sign-in answer here (the redirect address registered for Yuzu); it goes straight back to the Yuzu window that opened this one
+    (function () {
+        var q = new URLSearchParams(location.search);
+        var out = { type: 'yuzu-auth', code: q.get('code') || '', state: q.get('state') || '', error: q.get('error') || '', error_description: (q.get('error_description') || '').split('\r')[0] };
+        try {
+            if (window.opener) { window.opener.postMessage(out, location.origin); document.getElementById('msg').textContent = out.error ? 'Sign-in did not finish. You can close this window!' : 'Signed in! This window will close…'; setTimeout(function () { window.close(); }, 400); }
+            else document.getElementById('msg').textContent = 'Open Yuzu and press Sign in to start!';
+        } catch (e) { document.getElementById('msg').textContent = 'You can close this window and go back to Yuzu!'; }
+    })();
+    </script>
+</body>
+</html>

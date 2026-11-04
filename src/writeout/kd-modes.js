@@ -85,9 +85,21 @@
         src.addEventListener('blur', function () { if (srcTimer) { clearTimeout(srcTimer); srcTimer = 0; build(src.value); } });
         src.addEventListener('keydown', function (e) {
             if (e.key === 'Tab' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+                // Tab puts one | at the start of each picked line (one | is one indent step), and Shift+Tab takes one away!
                 e.preventDefault();
-                const a = src.selectionStart, b = src.selectionEnd;
-                src.setRangeText('    ', a, b, 'end');
+                const v = src.value, a = src.selectionStart, z = src.selectionEnd;
+                const from = v.lastIndexOf('\n', a - 1) + 1;
+                let to = v.indexOf('\n', z > a && v.charAt(z - 1) === '\n' ? z - 1 : z);
+                if (to < 0) to = v.length;
+                let moved = 0, first = 0;
+                const out = v.slice(from, to).split('\n').map(function (ln, k) {
+                    if (!e.shiftKey) { if (k === 0) first = 1; moved++; return '|' + ln; }
+                    const m = /^[\t|]/.test(ln); if (m) { if (k === 0) first = -1; moved--; return ln.slice(1); }
+                    return ln;
+                }).join('\n');
+                src.setRangeText(out, from, to, 'preserve');
+                const na = Math.max(from, a + first), nz = Math.max(na, z + moved);
+                src.setSelectionRange(na, nz);
                 src.dispatchEvent(new Event('input'));
             }
         });

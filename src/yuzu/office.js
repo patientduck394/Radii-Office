@@ -13,6 +13,7 @@
 
     const backstage = [
         { id: 'new', label: 'New Message', icon: 'newDoc', action: () => app.openCompose() },
+        { id: 'account', label: 'Accounts', icon: 'user', action: () => { OS.closeBackstage(); app.openAccounts(); } },
         { id: 'home', label: 'Home', icon: 'home', render: (b) => {
             const h = new Date().getHours();
             const greet = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
@@ -40,6 +41,18 @@
         { id: 'home', label: 'Home', groups: [
             { label: 'New', items: [
                 { big: true, icon: 'newDoc', label: 'New\nMessage', run: () => app.openCompose() },
+            ] },
+            { label: 'Account', items: [
+                { big: true, icon: 'user', label: 'Account', menu: () => app.state.account ? [
+                    { label: app.state.account.email, icon: 'user', run: () => app.openAccounts() },
+                    { label: 'Sync now', icon: 'reset', run: () => app.sync() },
+                    { label: 'Sign out', icon: 'x', run: () => app.disconnect() },
+                ] : [
+                    { label: 'Sign in with Google', icon: 'user', run: () => app.connect('google') },
+                    { label: 'Sign in with Microsoft', icon: 'user', run: () => app.connect('microsoft') },
+                    { label: 'Set up sign-in…', icon: 'gear', run: () => app.openSetup() },
+                ] },
+                { big: true, icon: 'reset', label: 'Sync', run: () => app.sync() },
             ] },
             { label: 'Respond', items: [
                 { big: true, icon: 'reply', label: 'Reply', run: () => { if (app.state.activeId) app.reply(app.state.activeId); else OS.toast('Open a message first!'); } },
@@ -83,14 +96,14 @@
         theme: { accent: '#0065ff', 'accent-d': '#0048bf', 'accent-l': '#dbe9ff', title: '#0052cc', gel1: '#4d94ff', gel2: '#0065ff',
             'gel-border': '#a3c7ff', 'gel-glow': 'rgba(0, 101, 255, 0.45)', glow: 'rgba(219, 233, 255, 0.9)', 'thumb-bg': '#001a4d' },
         editor: () => null,
-        title: () => 'My Mailbox',
+        title: () => (app.state.account ? app.state.account.email : 'Not signed in'),
         qat: [
             { icon: 'newDoc', title: 'New message', run: () => app.openCompose() },
             { icon: 'save', title: 'Export .YZ', run: () => { app.exportYZ(); OS.flashSaved('Saved!'); } },
         ],
         tabs: tabs,
         backstage: backstage,
-        status: () => ['<b>' + app.inFolder('inbox').length + '</b> in Inbox', '<b>' + app.unreadCount('inbox') + '</b> unread', 'Folder <b>' + OS.esc(app.FOLDERS[app.state.folder]) + '</b>'],
+        status: () => [app.state.account ? '<b>' + OS.esc(app.state.account.email) + '</b>' + (app.online() ? '' : ' (sign in again)') : 'Not signed in', '<b>' + app.inFolder('inbox').length + '</b> in Inbox', '<b>' + app.unreadCount('inbox') + '</b> unread', 'Folder <b>' + OS.esc(app.FOLDERS[app.state.folder]) + '</b>'],
         views: Object.keys(app.FOLDERS).map((f) => ({ icon: 'folder', title: app.FOLDERS[f], run: () => { app.setFolder(f); sync(); }, active: () => folderIs(f) })),
         searchExtra: (q) => app.emails()
             .filter((m) => m.folder !== 'trash')
