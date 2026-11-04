@@ -14,6 +14,7 @@
   {"id": "hexa", "name": "Hexa", "icon": "hexa/icon-512.png"},
   {"id": "taskra", "name": "Taskra", "icon": "taskra/icon-512.png"},
   {"id": "zonerider", "name": "Zonerider", "icon": "zonerider/icon-512.png"},
+  {"id": "yuzu", "name": "Yuzu", "icon": "yuzu/icon-512.png"},
   {"id": "antimony", "name": "Antimony", "icon": "antimony/favicon.svg"},
   {"id": "waterflow", "name": "Waterflow", "icon": "waterflow/favicon.png"}
 ]
