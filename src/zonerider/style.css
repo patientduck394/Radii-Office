@@ -206,3 +206,11 @@ button { cursor: pointer; }
 /* ---------- collaboration ---------- */
 .zr-peer { position: absolute; transform: translate(-50%, -130%); padding: 2px 8px; border-radius: 999px; color: #fff; font: 700 11px system-ui, sans-serif; white-space: nowrap; pointer-events: none; box-shadow: 0 2px 6px rgba(0,0,0,.4); text-shadow: 0 1px 1px rgba(0,0,0,.35); }
 .zr-share { margin-right: 4px; }
+
+/* ---------- Godot shader editor ---------- */
+.zr-dlg.zr-dlg-wide { width: min(980px, 100%); }
+.zr-code { display: block; box-sizing: border-box; width: 100%; height: min(52vh, 460px); resize: vertical; margin: 8px 0 0; padding: 10px 12px; border-radius: 10px; border: 1px solid #3a3f47; background: #0f1114; color: #e6f7c8; font: 12.5px/1.55 ui-monospace, SFMono-Regular, Menlo, monospace; tab-size: 4; white-space: pre; }
+.zr-code:focus { outline: none; border-color: var(--zr-lime); }
+.zr-gderr { margin: 8px 0 0; padding: 8px 10px; border-radius: 8px; background: #3b0d12; color: #fecaca; font: 12px/1.45 ui-monospace, Menlo, monospace; white-space: pre-wrap; border: 1px solid #7f1d1d; }
+.zr-preset { position: relative; }
+.zr-ptag { position: absolute; top: 6px; right: 6px; padding: 1px 6px; border-radius: 999px; font: 700 9.5px system-ui, sans-serif; font-style: normal; color: var(--zr-lime-ink); background: linear-gradient(180deg, #f1ffb3, var(--zr-lime)); box-shadow: 0 1px 3px rgba(0,0,0,.5); }

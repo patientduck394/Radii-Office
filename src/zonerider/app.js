@@ -28,6 +28,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
 import { COLLECTIONS, FX_DEFAULTS, GradeShader } from './effects.js';
 import { installCollab } from './collab.js';
+import { parseGd, applySpatial, screenMaterial, uniformValue, gdTime, gdRes, EXAMPLES, gpuName, LIVE } from './gdshader.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -123,6 +124,11 @@ renderer.outputColorSpace = THREE.SRGBColorSpace;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+let gdError = '';
+renderer.debug.onShaderError = (gl, program, vs, fs) => {
+    const log = [gl.getShaderInfoLog(vs), gl.getShaderInfoLog(fs), gl.getProgramInfoLog(program)].filter(Boolean).join('\n');
+    gdError = log.split('\n').filter((l) => /error/i.test(l)).map((l) => l.replace(/^ERROR:\s*\d+:\d+:\s*/i, '')).slice(0, 6).join('\n') || 'The shader could not be compiled!';
+};
 const scene = new THREE.Scene();
 const world = new THREE.Group();           // everything you make (this is what gets saved and exported)
 world.name = 'Scene';
@@ -169,6 +175,7 @@ const state = {
     sceneCamera: null,                          // uuid of the camera used for rendering
     worldSet: { bg: '#3a3a3a', bg2: '', env: true, envStrength: 1, ambient: 0.25, fog: false, fogColor: '#3a3a3a', fogDensity: 0.02 },
     fxSet: Object.assign({}, FX_DEFAULTS),           // screen effects (Rendered view and renders)
+    screenShader: null,                                // a Godot canvas_item shader on the whole picture: { src, values }
     fxCollection: 'aero', fxApplyMat: true, fxApplyScene: true,
     renderSet: { w: 1920, h: 1080, shadows: true, transparent: false },
     edit: null                                  // Edit Mode: { mesh, points, picked:Set }
@@ -627,7 +634,7 @@ function makeComposer(r) {
     c.addPass(rp); c.addPass(bloom); c.addPass(new OutputPass()); c.addPass(grade);
     return { c, rp, bloom, grade };
 }
-function fxActive() { const F = state.fxSet; return !!(F.bloom || F.saturation !== 1 || F.contrast !== 1 || F.tintAmount > 0 || F.vignette > 0); }
+function fxActive() { const F = state.fxSet; return !!(state.screenShader || F.bloom || F.saturation !== 1 || F.contrast !== 1 || F.tintAmount > 0 || F.vignette > 0); }
 function syncFx(k, camera) {
     const F = state.fxSet;
     k.rp.camera = camera;
@@ -636,6 +643,14 @@ function syncFx(k, camera) {
     k.bloom.strength = F.bloomStrength * 0.5; k.bloom.threshold = Math.max(0.5, F.bloomThreshold); k.bloom.radius = 0.12;
     k.grade.uniforms.saturation.value = F.saturation; k.grade.uniforms.contrast.value = F.contrast;
     k.grade.uniforms.tint.value.set(F.tint || '#ffffff'); k.grade.uniforms.tintAmount.value = F.tintAmount; k.grade.uniforms.vignette.value = F.vignette;
+    // the Godot screen shader: rebuilt when its code changes, its values follow the panel
+    const S = state.screenShader, key = S ? S.src : '';
+    if (k.gdKey !== key) {
+        if (k.gd) { k.c.removePass(k.gd); k.gd.material.dispose(); k.gd = null; }
+        if (S) { try { k.gd = new ShaderPass(screenMaterial(parseGd(S.src), S.values)); k.c.insertPass(k.gd, 3); } catch (e) { k.gd = null; } }
+        k.gdKey = key;
+    }
+    if (k.gd && S) { try { const p = parseGd(S.src), live = LIVE.get(k.gd.material); p.uniforms.forEach((u) => { if (!u.screen && live[gpuName(u)] && S.values && u.name in S.values) live[gpuName(u)].value = uniformValue(u, S.values[u.name]); }); } catch (e) {} }
 }
 const viewFx = makeComposer(renderer);
 // a two-color sky (top to bottom), drawn once per pair of colors
@@ -800,7 +815,7 @@ function serialize() {
     saved.forEach(([o, i]) => { o.intensity = i; });
     return {
         format: 'zonerider', version: 1, scene: json,
-        settings: { world: state.worldSet, render: state.renderSet, fx: state.fxSet, comments: state.comments || [], frame: state.frame, end: state.end, fps: state.fps, sceneCamera: state.sceneCamera },
+        settings: { world: state.worldSet, render: state.renderSet, fx: state.fxSet, screenShader: state.screenShader, comments: state.comments || [], frame: state.frame, end: state.end, fps: state.fps, sceneCamera: state.sceneCamera },
         selected: state.selected.map((o) => o.uuid), active: state.active ? state.active.uuid : null
     };
 }
@@ -818,11 +833,13 @@ function restore(data, keepView) {
         if (o.isLight) { attachTarget(o); if (o.userData.zrIntensity != null) o.intensity = o.userData.zrIntensity; if (o.shadow) o.shadow.mapSize.set(2048, 2048); }
         if (o.isMesh && z && z.prim && PRIMS[z.prim]) { o.geometry.dispose(); o.geometry = primGeometry(z.prim, Object.assign({}, PRIMS[z.prim].params, z.params || {})); }
     });
+    hydrateAll();
     const s = data.settings || {};
     Object.assign(state.worldSet, s.world || {});
     Object.assign(state.renderSet, s.render || {});
     state.fxSet = Object.assign({}, FX_DEFAULTS, s.fx || {});
     state.comments = s.comments || [];
+    state.screenShader = s.screenShader || null;
     if (!s.world || s.world.bg2 === undefined) state.worldSet.bg2 = '';
     state.end = s.end || state.end; state.fps = s.fps || state.fps; state.sceneCamera = s.sceneCamera || null;
     setFrameRange();
@@ -905,10 +922,11 @@ function newScene(ask = true) {
 function readFile(file) {
     const name = file.name.toLowerCase();
     const reader = new FileReader();
-    const asText = /\.(zr|json|obj|gltf)$/.test(name);
+    const asText = /\.(zr|json|obj|gltf|gdshader)$/.test(name);
     reader.onload = () => {
         try {
             if (/\.(zr|json)$/.test(name)) { commit(); restore(JSON.parse(reader.result)); toast('Opened ' + file.name + '!'); return; }
+            if (/\.gdshader$/.test(name)) { openGdText(reader.result, file.name); return; }
             if (/\.(glb|gltf)$/.test(name)) {
                 new GLTFLoader().parse(reader.result, '', (gltf) => { importGroup(gltf.scene, file.name); }, (err) => toast('Could not read that glTF: ' + (err && err.message || err)));
                 return;
@@ -985,7 +1003,7 @@ async function exportAs(kind) {
     finally { done(); applyWorld(); }
 }
 $('zr-file').addEventListener('change', (e) => { const f = e.target.files[0]; if (f) readFile(f); e.target.value = ''; });
-function pickFile(accept) { const i = $('zr-file'); i.accept = accept || '.zr,.json,.glb,.gltf,.obj,.stl'; i.click(); }
+function pickFile(accept) { const i = $('zr-file'); i.accept = accept || '.zr,.json,.glb,.gltf,.obj,.stl,.gdshader'; i.click(); }
 viewEl.addEventListener('dragover', (e) => { e.preventDefault(); $('zr-drop').classList.add('on'); });
 viewEl.addEventListener('dragleave', (e) => { if (!viewEl.contains(e.relatedTarget)) $('zr-drop').classList.remove('on'); });
 viewEl.addEventListener('drop', (e) => { e.preventDefault(); $('zr-drop').classList.remove('on'); const f = e.dataTransfer.files[0]; if (f) readFile(f); });
@@ -1013,6 +1031,7 @@ function duplicate() {
         });
         c.name = uniqueName(o.name.replace(/\.\d{3}$/, ''));
         c.position.x += 0.5; c.position.z += 0.5;
+        hydrateAll(c);
         (o.parent || world).add(c);
         return c;
     });
@@ -1249,8 +1268,8 @@ function confirmDlg(title, text, ok) { return dialog(title, '<p>' + esc(text) + 
 const MENUS = {
     file: () => [
         ['New Scene', 'Ctrl N', () => newScene(), 'plus'], ['Open…', 'Ctrl O', () => pickFile('.zr,.json'), 'folder'], ['Save (.zr)', 'Ctrl S', saveFile, 'save'], '-',
-        ['Import glTF / GLB…', '', () => pickFile('.glb,.gltf'), 'import'], ['Import OBJ…', '', () => pickFile('.obj'), 'import'], ['Import STL…', '', () => pickFile('.stl'), 'import'], '-',
-        ['Export GLB', '', () => exportAs('glb'), 'export'], ['Export glTF', '', () => exportAs('gltf'), 'export'], ['Export OBJ', '', () => exportAs('obj'), 'export'], ['Export STL (3D printing)', '', () => exportAs('stl'), 'export'], '-',
+        ['Import glTF / GLB…', '', () => pickFile('.glb,.gltf'), 'import'], ['Import OBJ…', '', () => pickFile('.obj'), 'import'], ['Import STL…', '', () => pickFile('.stl'), 'import'], ['Open .gdshader (Godot shader)…', '', () => pickFile('.gdshader'), 'sparkle'], '-',
+        ['Export GLB', '', () => exportAs('glb'), 'export'], ['Export glTF', '', () => exportAs('gltf'), 'export'], ['Export OBJ', '', () => exportAs('obj'), 'export'], ['Export STL (3D printing)', '', () => exportAs('stl'), 'export'], ['Export shader (.gdshader)', '', () => { const m = selectedMeshes().find((x) => x.material.userData.gdshader); if (m) download((m.name || 'material') + '.gdshader', m.material.userData.gdshader, 'text/plain'); else if (state.screenShader) download('screen.gdshader', state.screenShader.src, 'text/plain'); else toast('Select an object with a shader first!'); }, 'export'], '-',
         ['Share and collaborate…', '', () => { if (window.RadiiCollab) RadiiCollab.toggle('people'); }, 'people'], ['New file in a new tab', '', () => { if (window.RadiiFile) RadiiFile.open(); }, 'newtab']
     ],
     edit: () => [['Undo', 'Ctrl Z', undo, 'undo'], ['Redo', 'Ctrl Shift Z', redo, 'redo'], '-', ['Select All', 'Ctrl A', () => selectAll(true), ''], ['Select None', 'Alt A', () => selectAll(false), ''], '-', ['Duplicate', 'Shift D', duplicate, 'duplicate'], ['Delete', 'X', del, 'trash']],
@@ -1439,7 +1458,12 @@ function renderProps() {
                 (m.isMeshPhysicalMaterial ? rangeRow('Clearcoat', 'm.clearcoat', m.clearcoat, 0, 1, 0.01) + rangeRow('Glass (see-through)', 'm.transmission', m.transmission, 0, 1, 0.01) + rangeRow('Glass thickness', 'm.thickness', m.thickness, 0, 4, 0.05) + rangeRow('Bubble shimmer', 'm.iridescence', m.iridescence, 0, 1, 0.01) + rangeRow('Velvet sheen', 'm.sheen', m.sheen, 0, 1, 0.01) : '') +
                 rangeRow('Opacity', 'm.opacity', m.opacity, 0, 1, 0.01) + colorRow('Glow color', 'm.emissive', hex(m.emissive)) + rangeRow('Glow strength', 'm.emissiveIntensity', m.emissiveIntensity, 0, 10, 0.1) +
                 '<label class="zr-check"><input type="checkbox" data-bind="m.wireframe"' + (m.wireframe ? ' checked' : '') + '> Wireframe</label><label class="zr-check"><input type="checkbox" data-bind="m.flatShading"' + (m.flatShading ? ' checked' : '') + '> Flat shading</label><label class="zr-check"><input type="checkbox" data-bind="m.doubleSide"' + (m.side === THREE.DoubleSide ? ' checked' : '') + '> Both sides</label>' +
-                '<p class="zr-note">Materials show in Material Preview and Rendered (Z)!</p>';
+                '<p class="zr-note">Materials show in Material Preview and Rendered (Z)!</p>' +
+                '<h3>Godot shader (.gdshader)</h3>' + (m.userData.gdshader
+                    ? '<p class="zr-note">' + esc((/shader_type\s+\w+;[\s\S]*?(?:render_mode[^;]*;)?/.exec(m.userData.gdshader) || [''])[0].replace(/\s+/g, ' ').slice(0, 90)) + '</p>' + gdControls(m.userData.gdshader, m.userData.gdu, 'obj') +
+                      '<div class="zr-btnrow"><button type="button" class="zr-btn" data-act="gdedit">Edit code…</button><button type="button" class="zr-btn" data-act="gdsave">Download .gdshader</button><button type="button" class="zr-btn" data-act="gdremove">Remove shader</button></div>'
+                    : '<p class="zr-note">Give it special effects with a Godot spatial shader: write one, open a .gdshader file, or start from an example!</p><div class="zr-btnrow"><button type="button" class="zr-btn primary" data-act="gdnew">Write a shader…</button><button type="button" class="zr-btn" data-act="gdopen">Open .gdshader…</button></div>' +
+                      '<div class="zr-btnrow">' + EXAMPLES.spatial.map((e, i) => '<button type="button" class="zr-btn" data-gdquick="obj:' + i + '">' + esc(e[0]) + '</button>').join('') + '</div>');
         }
     } else if (state.tab === 'light') {
         const l = o && o.isLight ? o : null;
@@ -1459,11 +1483,15 @@ function renderProps() {
             rangeRow('Exposure', 'f.exposure', F.exposure, 0.2, 3, 0.05) + rangeRow('Saturation', 'f.saturation', F.saturation, 0, 2, 0.01) + rangeRow('Contrast', 'f.contrast', F.contrast, 0.5, 1.6, 0.01) +
             colorRow('Tint', 'f.tint', F.tint) + rangeRow('Tint amount', 'f.tintAmount', F.tintAmount, 0, 1, 0.01) + rangeRow('Dark corners', 'f.vignette', F.vignette, 0, 1, 0.01) +
             '<div class="zr-btnrow"><button type="button" class="zr-btn" data-act="fxreset">Reset effects</button></div>' +
+            '<h3>Screen shader (.gdshader)</h3>' + (state.screenShader
+                ? gdControls(state.screenShader.src, state.screenShader.values, 'screen') + '<div class="zr-btnrow"><button type="button" class="zr-btn" data-act="gdsedit">Edit code…</button><button type="button" class="zr-btn" data-act="gdssave">Download .gdshader</button><button type="button" class="zr-btn" data-act="gdsremove">Remove</button></div>'
+                : '<p class="zr-note">A Godot canvas_item shader that changes the whole picture: CRT, pixels, color shifts, water...</p><div class="zr-btnrow"><button type="button" class="zr-btn" data-act="gdsnew">Write one…</button><button type="button" class="zr-btn" data-act="gdopen">Open .gdshader…</button></div>' +
+                  '<div class="zr-btnrow">' + EXAMPLES.canvas_item.map((e, i) => '<button type="button" class="zr-btn" data-gdquick="screen:' + i + '">' + esc(e[0]) + '</button>').join('') + '</div>') +
             '<p class="zr-note">The world and screen effects show in the Rendered view (Z) and in renders!</p>';
     } else if (state.tab === 'effects') {
         const col = COLLECTIONS.find((c) => c.id === state.fxCollection) || COLLECTIONS[0];
         h = '<h3>' + ico('sparkle') + ' Effect presets</h3><div class="zr-colls">' + COLLECTIONS.map((c) => '<button type="button" class="zr-coll' + (c === col ? ' on' : '') + '" data-coll="' + c.id + '">' + esc(c.name) + '</button>').join('') + '</div>' +
-            '<div class="zr-presets">' + col.presets.map((p, i) => '<button type="button" class="zr-preset" data-preset-fx="' + i + '" title="' + esc(p.name) + '"><img alt="" src="' + presetThumb(col.id, i) + '"><span>' + esc(p.name) + '</span></button>').join('') + '</div>' +
+            '<div class="zr-presets">' + col.presets.map((p, i) => '<button type="button" class="zr-preset" data-preset-fx="' + i + '" title="' + esc(p.name) + '"><img alt="" src="' + presetThumb(col.id, i) + '"><span>' + esc(p.name) + '</span>' + (p.shader ? '<i class="zr-ptag">shader</i>' : '') + '</button>').join('') + '</div>' +
             '<p class="zr-note">' + (state.selected.some((o) => o.isMesh || o.children.length) ? 'Click a look to give the selected objects its material!' : 'Select an object, then click a look to give it that material!') + ' Your sky, lights and screen effects stay as they are (the World tab has those). Ctrl+Z undoes it!</p>';
     } else if (state.tab === 'render') {
         const R = state.renderSet, c = sceneCameraObj();
@@ -1494,6 +1522,35 @@ props.addEventListener('input', (e) => applyProp(e.target, false));
 props.addEventListener('change', (e) => { applyProp(e.target, true); propCommitted = false; });
 function applyProp(t, final) {
     const o = state.active;
+    // a Godot shader's uniform
+    const gdb = t.dataset.bind && /^gd[ar]?:/.test(t.dataset.bind) ? t.dataset.bind.split(':') : null;
+    if (gdb) {
+        const [kind, where, name] = gdb, store = where === 'screen' ? (state.screenShader && state.screenShader.values) : ((selectedMeshes()[0] || {}).material || { userData: {} }).userData.gdu;
+        const src = where === 'screen' ? state.screenShader && state.screenShader.src : (selectedMeshes()[0] || { material: { userData: {} } }).material.userData.gdshader;
+        let u = null; try { u = parseGd(src).uniforms.find((x) => x.name === name); } catch (e) {}
+        if (!u) return;
+        const cur = store && name in store ? store[name] : u.def;
+        let v;
+        if (kind === 'gd') { if (!/^#[0-9a-f]{6}$/i.test(String(t.value).trim())) return; const c = new THREE.Color(String(t.value).trim()); v = [c.r, c.g, c.b].concat(Array.isArray(cur) && cur.length === 4 ? [cur[3]] : []); const chip = t.closest('.zr-field') && t.closest('.zr-field').querySelector('.zr-chip'); if (chip) chip.style.background = t.value; }
+        else if (kind === 'gda') { v = (Array.isArray(cur) ? cur.slice() : [1, 1, 1, 1]); v[3] = Number(t.value); t.title = t.value; }
+        else { v = Number(t.value); if (u.type === 'int' || u.type === 'uint') v = Math.round(v); t.title = t.value; }
+        if (!propCommitted) { commit(); propCommitted = true; }
+        setGdValue(where, name, v, final);
+        return;
+    }
+    if (t.dataset.gdu) {
+        const where = t.dataset.gdw, name = t.dataset.gdu;
+        if (!propCommitted) { commit(); propCommitted = true; }
+        if (t.type === 'checkbox') setGdValue(where, name, t.checked, final);
+        else if (t.type === 'number') setGdValue(where, name, Number(t.value) || 0, final);
+        return;
+    }
+    const gv = t.closest('[data-gdvec]');
+    if (gv) {
+        if (!propCommitted) { commit(); propCommitted = true; }
+        setGdValue(gv.dataset.gdw, gv.dataset.gdu, Array.from(gv.querySelectorAll('input')).map((i) => Number(i.value) || 0), final);
+        return;
+    }
     const vec = t.closest('[data-vec]');
     if (vec && o) {
         beginPropEdit();
@@ -1565,6 +1622,22 @@ props.addEventListener('click', (e) => {
         changed(); toast(pr.dataset.preset + '!');
         return;
     }
+    const gq = e.target.closest('[data-gdquick]');
+    if (gq) {
+        const [where, i] = gq.dataset.gdquick.split(':'), ex = EXAMPLES[where === 'screen' ? 'canvas_item' : 'spatial'][+i];
+        try {
+            if (where === 'screen') applyScreenShader(ex[1]); else { const m = selectedMeshes(); if (!m.length) { toast('Select an object first!'); return; } applyObjectShader(ex[1], m); }
+            toast(ex[0] + ' shader on!');
+        } catch (err) { shaderEditor(where === 'screen' ? 'canvas_item' : 'spatial', ex[1], err.message); }
+        return;
+    }
+    const gimg = e.target.closest('[data-gdimg]');
+    if (gimg) {
+        const inp = document.createElement('input'); inp.type = 'file'; inp.accept = 'image/*';
+        inp.onchange = () => { const f = inp.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { commit(); setGdValue(gimg.dataset.gdw, gimg.dataset.gdu, r.result, true); hydrateAll(); dirty.props = true; }; r.readAsDataURL(f); };
+        inp.click();
+        return;
+    }
     const coll = e.target.closest('[data-coll]');
     if (coll) { state.fxCollection = coll.dataset.coll; dirty.props = true; savePrefs(); return; }
     const pf = e.target.closest('[data-preset-fx]');
@@ -1578,10 +1651,162 @@ props.addEventListener('click', (e) => {
         scenecam: () => { state.sceneCamera = o.uuid; changed(); }, lookthrough: lookThroughSceneCamera,
         smooth: () => setShade(true), flat: () => setShade(false), apply: applyTransform, origin: originToGeometry, floor: snapToFloor,
         render: renderImage, renderanim: renderAnimation,
-        fxreset: () => { commit(); state.fxSet = Object.assign({}, FX_DEFAULTS); applyWorld(); changed(); }
+        fxreset: () => { commit(); state.fxSet = Object.assign({}, FX_DEFAULTS); applyWorld(); changed(); },
+        gdnew: () => shaderEditor('spatial', ''), gdopen: () => pickFile('.gdshader'),
+        gdedit: () => shaderEditor('spatial', o.material.userData.gdshader), gdsave: () => download((o.name || 'material') + '.gdshader', o.material.userData.gdshader, 'text/plain'),
+        gdremove: () => { selectedMeshes().filter((x) => x.material.userData.gdshader).forEach(removeObjectShader); },
+        gdsnew: () => shaderEditor('canvas_item', ''), gdsedit: () => shaderEditor('canvas_item', state.screenShader.src),
+        gdssave: () => download('screen.gdshader', state.screenShader.src, 'text/plain'),
+        gdsremove: () => { commit(); state.screenShader = null; changed(); }
     })[a.dataset.act]();
 });
 $('zr-tabs').addEventListener('click', (e) => { const b = e.target.closest('[data-tab]'); if (b) setTab(b.dataset.tab); });
+
+/* ---------- Godot shaders on objects ---------- */
+// (re)attaches a material's saved .gdshader (after opening a file, undo, duplicate or a collaborator's change)
+function hydrateGd(m) {
+    if (!m || !m.userData || !m.userData.gdshader) return;
+    try { const p = parseGd(m.userData.gdshader); if (p.type === 'spatial') applySpatial(m, p, m.userData.gdu || {}); } catch (e) { console.warn('[Zonerider] shader', e); }
+}
+function hydrateAll(root) { (root || world).traverse((o) => { if (o.isMesh) (Array.isArray(o.material) ? o.material : [o.material]).forEach(hydrateGd); }); }
+// renders a tiny test so a mistake comes back as a message instead of an invisible object
+const gdProbe = { rt: new THREE.WebGLRenderTarget(4, 4), scene: new THREE.Scene(), cam: new THREE.PerspectiveCamera() };
+gdProbe.scene.add(new THREE.DirectionalLight(0xffffff, 1));
+function gdCheck(material, screen) {
+    gdError = '';
+    const mesh = new THREE.Mesh(screen ? new THREE.PlaneGeometry(2, 2) : new THREE.SphereGeometry(1, 8, 6), material);
+    gdProbe.scene.add(mesh);
+    const was = renderer.getRenderTarget();
+    try { renderer.setRenderTarget(gdProbe.rt); renderer.render(gdProbe.scene, gdProbe.cam); }
+    catch (e) { gdError = gdError || String(e.message || e); }
+    finally { renderer.setRenderTarget(was); gdProbe.scene.remove(mesh); mesh.geometry.dispose(); }
+    return gdError;
+}
+// a spatial shader goes on the selected meshes (unshaded ones get a light-free material underneath)
+function applyObjectShader(src, targets) {
+    const p = parseGd(src);
+    if (p.type !== 'spatial') throw new Error('That is a screen shader (canvas_item): it goes in the World tab!');
+    const unshaded = p.modes.includes('unshaded');
+    const make = (old) => {
+        const m = unshaded ? new THREE.MeshBasicMaterial() : (old && old.isMeshPhysicalMaterial ? old.clone() : newMaterial());
+        if (old && old.color && m.color) m.color.copy(old.color);
+        m.userData = Object.assign({}, old && old.userData ? JSON.parse(JSON.stringify(old.userData)) : {}, { gdshader: src, gdu: (old && old.userData && old.userData.gdshader === src && old.userData.gdu) || {} });
+        applySpatial(m, p, m.userData.gdu);
+        return m;
+    };
+    const test = make(targets[0] && targets[0].material);
+    const err = gdCheck(test);
+    if (err) throw new Error(err);
+    commit();
+    targets.forEach((o, i) => { o.material = i === 0 ? test : make(o.material); });
+    if (state.shading === 'solid' || state.shading === 'wire') setShading('material');
+    changed();
+}
+function removeObjectShader(o) {
+    const old = o.material;
+    commit();
+    const m = newMaterial(old && old.color ? old.color.getHex() : 0xcccccc);
+    o.material = m;
+    changed();
+}
+function applyScreenShader(src) {
+    const p = parseGd(src);
+    if (p.type !== 'canvas_item') throw new Error('That is an object shader (spatial): select objects and use the Material tab!');
+    const err = gdCheck(screenMaterial(p, {}), true);
+    if (err) throw new Error(err);
+    commit();
+    const old = state.screenShader;
+    state.screenShader = { src, values: old && old.src === src ? old.values : {} };
+    if (state.shading !== 'rendered') setShading('rendered');
+    changed();
+}
+// a .gdshader file: objects or the screen, depending on its shader_type
+function openGdText(text, name) {
+    let p;
+    try { p = parseGd(text); } catch (e) { toast(e.message); return; }
+    try {
+        if (p.type === 'canvas_item') { applyScreenShader(text); toast((name || 'The shader') + ' is on the screen now (Rendered view)!'); return; }
+        const meshes = selectedMeshes();
+        if (!meshes.length) { toast('Select the objects for ' + (name || 'this shader') + ' first, then open it again!'); return; }
+        applyObjectShader(text, meshes);
+        toast((name || 'The shader') + ' is on ' + meshes.length + ' object' + (meshes.length === 1 ? '' : 's') + '!');
+    } catch (e) { shaderEditor(p.type, text, e.message); }
+}
+function selectedMeshes() { const out = []; state.selected.forEach((o) => o.traverse((x) => { if (x.isMesh && !Array.isArray(x.material)) out.push(x); })); return out; }
+// the code editor: write or fix a .gdshader, with the compiler's message when something is wrong
+function shaderEditor(kind, src, error) {
+    const isScreen = kind === 'canvas_item';
+    const ex = EXAMPLES[isScreen ? 'canvas_item' : 'spatial'];
+    const html = '<p class="zr-note">' + (isScreen ? 'A <b>canvas_item</b> shader changes the whole picture (it shows in the Rendered view and in renders)!' : 'A <b>spatial</b> shader goes on the selected objects! Zonerider\'s lights still shine on it unless it says render_mode unshaded!') + ' It is Godot 4\'s shading language, so the same file works in Godot!</p>' +
+        '<div class="zr-btnrow">' + ex.map((e, i) => '<button type="button" class="zr-btn" data-gdex="' + i + '">' + esc(e[0]) + '</button>').join('') + '</div>' +
+        '<textarea class="zr-code" spellcheck="false" aria-label="Shader code">' + esc(src || ex[0][1]) + '</textarea>' +
+        '<pre class="zr-gderr"' + (error ? '' : ' hidden') + '>' + esc(error || '') + '</pre>';
+    dialog(isScreen ? 'Screen shader (.gdshader)' : 'Object shader (.gdshader)', html, [
+        { label: 'Cancel', value: null },
+        { label: 'Download .gdshader', stay: true, run: (b) => download((isScreen ? 'screen' : 'material') + '.gdshader', b.querySelector('.zr-code').value, 'text/plain') },
+        { label: 'Apply', primary: true, stay: true, run: (b) => {
+            const code = b.querySelector('.zr-code').value, err = b.querySelector('.zr-gderr');
+            try {
+                if (isScreen) applyScreenShader(code);
+                else { const m = selectedMeshes(); if (!m.length) throw new Error('Select an object first!'); applyObjectShader(code, m); }
+                err.hidden = true;
+                b.remove();
+                toast('Shader applied!');
+            } catch (e) { err.hidden = false; err.textContent = e.message; }
+        } }
+    ]);
+    setTimeout(() => {
+        const back = document.querySelector('.zr-dlg-back:last-of-type');
+        if (!back) return;
+        back.querySelector('.zr-dlg').classList.add('zr-dlg-wide');
+        back.addEventListener('click', (e) => { const b = e.target.closest('[data-gdex]'); if (b) back.querySelector('.zr-code').value = ex[+b.dataset.gdex][1]; });
+        back.querySelector('.zr-code').addEventListener('keydown', (e) => {
+            e.stopPropagation();
+            if (e.key === 'Tab') { e.preventDefault(); const t = e.target, a = t.selectionStart; t.setRangeText('\t', a, t.selectionEnd, 'end'); }
+        });
+    }, 0);
+}
+// the controls for a shader's uniforms (sliders for hint_range, colors for source_color, numbers, checkboxes, images)
+function gdControls(src, values, where) {
+    let p;
+    try { p = parseGd(src); } catch (e) { return '<p class="zr-note">' + esc(e.message) + '</p>'; }
+    const list = p.uniforms.filter((u) => !u.screen);
+    if (!list.length) return '<p class="zr-note">This shader has no uniforms to adjust!</p>';
+    const val = (u) => (values && u.name in values ? values[u.name] : u.def);
+    const attr = 'data-gdw="' + where + '" data-gdu="';
+    return list.map((u) => {
+        const v = val(u), label = u.name.replace(/_/g, ' ');
+        if (u.type === 'bool') return '<label class="zr-check"><input type="checkbox" ' + attr + esc(u.name) + '"' + (v ? ' checked' : '') + '> ' + esc(label) + '</label>';
+        if (u.type === 'sampler2D') return field(esc(label), '<button type="button" class="zr-btn" ' + attr + esc(u.name) + '" data-gdimg="1">' + (typeof v === 'string' && v.startsWith('data:') ? 'Change image…' : 'Choose image…') + '</button>');
+        if (Array.isArray(v) && u.color) {
+            const hexv = '#' + new THREE.Color(v[0], v[1], v[2]).getHexString();
+            return colorRow(esc(label), 'gd:' + where + ':' + u.name, hexv) + (v.length === 4 ? rangeRow(esc(label) + ' alpha', 'gda:' + where + ':' + u.name, v[3], 0, 1, 0.01) : '');
+        }
+        if (Array.isArray(v)) return field(esc(label), '<div class="zr-vec" ' + attr + esc(u.name) + '" data-gdvec="1" style="grid-template-columns:repeat(' + v.length + ',minmax(0,1fr))">' + v.map((x) => '<input type="number" step="0.1" value="' + round(x) + '">').join('') + '</div>');
+        const isInt = u.type === 'int' || u.type === 'uint';
+        if (u.min != null && u.max != null) return rangeRow(esc(label), 'gdr:' + where + ':' + u.name, v, u.min, u.max, u.step || (isInt ? 1 : (u.max - u.min) / 200));
+        return field(esc(label), '<input type="number" ' + attr + esc(u.name) + '" step="' + (isInt ? 1 : 0.1) + '" value="' + v + '">');
+    }).join('');
+}
+// a uniform changed in the panel: saved with the material (or the scene), and sent to the GPU right away
+function setGdValue(where, name, value, final) {
+    if (where === 'screen') {
+        if (!state.screenShader) return;
+        state.screenShader.values = Object.assign({}, state.screenShader.values, { [name]: value });
+    } else {
+        const p0 = selectedMeshes();
+        p0.forEach((o) => {
+            const m = o.material;
+            if (!m.userData.gdshader) return;
+            m.userData.gdu = Object.assign({}, m.userData.gdu, { [name]: value });
+            try {
+                const p = parseGd(m.userData.gdshader), u = p.uniforms.find((x) => x.name === name), live = LIVE.get(m);
+                if (u && live && live[gpuName(u)]) live[gpuName(u)].value = uniformValue(u, value);
+            } catch (e) {}
+        });
+    }
+    if (final) changed();
+}
 
 /* ---------- applying a preset, and its little preview ---------- */
 function setMaterial(m, P) {
@@ -1604,13 +1829,19 @@ function applyPreset(colId, i) {
     if (!meshes.length) { toast('Select an object first, then pick a look for it!'); return; }
     commit();
     meshes.forEach((x) => {
-        if (!x.material.isMeshPhysicalMaterial) x.material = newMaterial();
+        // a look without a shader replaces any shader the object had
+        if (!x.material.isMeshPhysicalMaterial || (!p.shader && x.material.userData.gdshader)) x.material = newMaterial();
         setMaterial(x.material, p.mat);
     });
+    // a look that is a Godot shader: the material underneath, then the shader on top (its sliders appear in the Material tab)
+    if (p.shader) {
+        try { applyObjectShader(p.shader, meshes); }
+        catch (e) { toast('That look\'s shader could not run here: ' + e.message.split('\n')[0]); }
+    }
     // (Solid and Wire hide materials, so the viewport switches to Material Preview to show it)
     if (state.shading === 'solid' || state.shading === 'wire') setShading('material');
     changed();
-    toast(p.name + ' on ' + meshes.length + ' object' + (meshes.length === 1 ? '' : 's') + '!');
+    toast(p.name + (p.shader ? ' (a Godot shader)' : '') + ' on ' + meshes.length + ' object' + (meshes.length === 1 ? '' : 's') + '!');
 }
 const thumbCache = new Map();
 let thumbKit = null;
@@ -1635,7 +1866,15 @@ function presetThumb(colId, i) {
             thumbKit = { r, sc, env, ball, sun, amb, c };
         }
         const k = thumbKit, Wd = p.world;
-        setMaterial(k.ball.material, p.mat);
+        if (!k.phys) k.phys = k.ball.material;
+        let mat = k.phys;
+        if (p.shader) {
+            const sp = parseGd(p.shader);
+            mat = sp.modes.includes('unshaded') ? new THREE.MeshBasicMaterial() : new THREE.MeshPhysicalMaterial();
+            if (mat.isMeshPhysicalMaterial) setMaterial(mat, p.mat);
+            applySpatial(mat, sp, {});
+        } else setMaterial(mat, p.mat);
+        k.ball.material = mat;
         k.sc.environment = Wd.env ? k.env : null;
         k.sc.environmentIntensity = Wd.envStrength;
         k.sc.background = Wd.bg2 ? (() => { const cv = document.createElement('canvas'); cv.width = 4; cv.height = 64; const g = cv.getContext('2d'), gr = g.createLinearGradient(0, 0, 0, 64); gr.addColorStop(0, Wd.bg); gr.addColorStop(1, Wd.bg2); g.fillStyle = gr; g.fillRect(0, 0, 4, 64); const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; return t; })() : new THREE.Color(Wd.bg);
@@ -1793,6 +2032,7 @@ function resize() {
     const w = viewEl.clientWidth || 1, h = viewEl.clientHeight || 1;
     renderer.setSize(w, h, false);
     viewFx.c.setPixelRatio(renderer.getPixelRatio()); viewFx.c.setSize(w, h);
+    renderer.getDrawingBufferSize(gdRes.value);
     persp.aspect = w / h; persp.updateProjectionMatrix();
     const hh = ortho.userData.h || cam.position.distanceTo(orbit.target) * Math.tan(persp.fov * DEG / 2);
     ortho.top = hh; ortho.bottom = -hh; ortho.left = -hh * w / h; ortho.right = hh * w / h; ortho.updateProjectionMatrix();
@@ -1801,6 +2041,7 @@ new ResizeObserver(resize).observe(viewEl);
 let lastOrthoDist = 0;
 function frame(now) {
     requestAnimationFrame(frame);
+    gdTime.value = now / 1000;
     if (state.playing) {
         playAcc += now - playT; playT = now;
         const step = 1000 / state.fps;
@@ -1865,6 +2106,6 @@ if (!started) { newScene(false); undoStack.length = 0; }
 setFrameRange();
 info();
 requestAnimationFrame((t) => { playT = t; frame(t); });
-collab = installCollab({ THREE, world, state, helpers, PRIMS, primGeometry, attachTarget, rememberLights, byUuid, select, setMode, frameObjects, serialize, restore, changed, afterRemote, FX_DEFAULTS, gizmoDragging: () => gizmo.dragging });
+collab = installCollab({ hydrateGd, THREE, world, state, helpers, PRIMS, primGeometry, attachTarget, rememberLights, byUuid, select, setMode, frameObjects, serialize, restore, changed, afterRemote, FX_DEFAULTS, gizmoDragging: () => gizmo.dragging });
 if (collab) { const b = collab.button({ cls: 'zr-share' }); const shade = $('zr-shading'); shade.parentNode.insertBefore(b, shade); }
-window.Zonerider = { collab: () => collab, viewCam: () => cam, viewTarget: () => orbit.target, THREE, scene, world, state, addPrim, addLight, addCamera, addEmpty, select, setMode, setShading, setTool, view, insertKey, goFrame, serialize, restore, exportAs, renderImage, undo, redo, editSelectAll, editMerge, del, duplicate, frameObjects };
+window.Zonerider = { gd: { parseGd, openGdText, applyObjectShader, applyScreenShader, gdCheck, EXAMPLES, error: () => gdError }, collab: () => collab, viewCam: () => cam, viewTarget: () => orbit.target, THREE, scene, world, state, addPrim, addLight, addCamera, addEmpty, select, setMode, setShading, setTool, view, insertKey, goFrame, serialize, restore, exportAs, renderImage, undo, redo, editSelectAll, editMerge, del, duplicate, frameObjects };

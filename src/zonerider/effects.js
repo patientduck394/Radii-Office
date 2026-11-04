@@ -106,3 +106,230 @@ export const GradeShader = {
         '}'
     ].join('\n')
 };
+
+/* ---------- Looks that are real Godot shaders (.gdshader, spatial): animated, and the same file works in Godot ---------- */
+const PROP = 'varying vec3 p3;\n\nvoid vertex() {\n\tp3 = VERTEX;\n}\n';
+const FRES = 'float fresnel(vec3 n, vec3 v, float p) {\n\treturn pow(1.0 - clamp(dot(n, v), 0.0, 1.0), p);\n}\n';
+const NOISE3 = `float hash3(vec3 p) {
+\treturn fract(sin(dot(p, vec3(17.1, 31.7, 47.3))) * 43758.5453);
+}
+float noise3(vec3 p) {
+\tvec3 i = floor(p), f = fract(p);
+\tf = f * f * (3.0 - 2.0 * f);
+\treturn mix(mix(mix(hash3(i), hash3(i + vec3(1.0, 0.0, 0.0)), f.x), mix(hash3(i + vec3(0.0, 1.0, 0.0)), hash3(i + vec3(1.0, 1.0, 0.0)), f.x), f.y),
+\t\tmix(mix(hash3(i + vec3(0.0, 0.0, 1.0)), hash3(i + vec3(1.0, 0.0, 1.0)), f.x), mix(hash3(i + vec3(0.0, 1.0, 1.0)), hash3(i + vec3(1.0, 1.0, 1.0)), f.x), f.y), f.z);
+}
+`;
+const neon = (rgb) => `shader_type spatial;
+render_mode unshaded;
+
+uniform vec4 neon : source_color = vec4(${rgb}, 1.0);
+uniform float brightness : hint_range(0.5, 3.0) = 1.6;
+uniform float flicker : hint_range(0.0, 1.0) = 0.15;
+
+void fragment() {
+\tfloat core = pow(clamp(dot(NORMAL, VIEW), 0.0, 1.0), 2.0);
+\tfloat on = 1.0 - flicker * step(0.97, fract(sin(floor(TIME * 12.0) * 91.7) * 43758.5));
+\tALBEDO = mix(neon.rgb, vec3(1.0), core * 0.85) * on * brightness;
+}
+`;
+const SHADERS = {
+    'Pool Tile': `shader_type spatial;
+
+uniform vec4 water : source_color = vec4(0.13, 0.83, 0.93, 1.0);
+uniform vec4 deep : source_color = vec4(0.01, 0.41, 0.63, 1.0);
+uniform vec4 grout : source_color = vec4(0.92, 0.97, 1.0, 1.0);
+uniform float tiles : hint_range(2.0, 40.0) = 10.0;
+uniform float speed : hint_range(0.0, 3.0) = 0.8;
+
+${PROP}
+float caustic(vec2 p, float t) {
+\tvec2 q = p;
+\tfloat c = 0.0;
+\tfor (int i = 0; i < 4; i++) {
+\t\tq += vec2(sin(q.y * 1.7 + t * (1.0 + float(i) * 0.3)), cos(q.x * 1.3 - t * (0.8 + float(i) * 0.2))) * 0.6;
+\t\tc += 1.0 / (1.0 + 18.0 * abs(sin(q.x + q.y)));
+\t}
+\treturn c / 4.0;
+}
+
+void fragment() {
+\tvec2 g = abs(fract(UV * tiles) - 0.5);
+\tfloat line = smoothstep(0.44, 0.47, max(g.x, g.y));
+\tfloat c = caustic((p3.xz + p3.y * 0.5) * 5.0, TIME * speed);
+\tvec3 base = mix(deep.rgb, water.rgb, 0.55 + 0.45 * c);
+\tALBEDO = mix(base, grout.rgb, line * 0.8);
+\tEMISSION = water.rgb * pow(c, 3.0) * 0.6;
+\tROUGHNESS = 0.12;
+}
+`,
+    'Sunset Float': `shader_type spatial;
+
+uniform vec4 orange : source_color = vec4(0.98, 0.57, 0.24, 1.0);
+uniform vec4 cream : source_color = vec4(1.0, 0.85, 0.65, 1.0);
+uniform vec4 sky : source_color = vec4(0.13, 0.74, 0.97, 1.0);
+uniform float stripes : hint_range(2.0, 24.0) = 8.0;
+
+${FRES}
+void fragment() {
+\tfloat s = smoothstep(0.45, 0.55, fract(UV.x * stripes));
+\tALBEDO = mix(orange.rgb, cream.rgb, s * 0.55);
+\tEMISSION = sky.rgb * fresnel(NORMAL, VIEW, 3.0) * 0.8;
+\tROUGHNESS = 0.18;
+}
+`,
+    'Chlorine Glow': `shader_type spatial;
+
+uniform vec4 glow : source_color = vec4(0.13, 0.83, 0.93, 1.0);
+uniform vec4 base : source_color = vec4(0.03, 0.57, 0.7, 1.0);
+uniform float speed : hint_range(0.0, 4.0) = 1.2;
+
+${PROP}
+${FRES}
+void fragment() {
+\tfloat r = length(p3.xz);
+\tfloat w = 0.5 + 0.5 * sin(r * 14.0 - TIME * speed * 3.0) * sin(p3.y * 9.0 + TIME * speed);
+\tALBEDO = base.rgb * 0.5;
+\tEMISSION = glow.rgb * (0.4 + 1.4 * w * w + fresnel(NORMAL, VIEW, 2.0) * 1.5);
+\tROUGHNESS = 0.1;
+}
+`,
+    'Lifeguard': `shader_type spatial;
+
+uniform vec4 orange : source_color = vec4(0.98, 0.45, 0.09, 1.0);
+uniform vec4 band : source_color = vec4(0.05, 0.52, 0.78, 1.0);
+uniform float bands : hint_range(1.0, 8.0) = 4.0;
+
+${PROP}
+void fragment() {
+\tfloat a = atan(p3.z, p3.x) / TAU + 0.5;
+\tALBEDO = mix(orange.rgb, band.rgb, step(0.5, fract(a * bands)));
+\tfloat grain = fract(sin(dot(floor(UV * 300.0), vec2(12.9898, 78.233))) * 43758.5453);
+\tROUGHNESS = 0.55 + grain * 0.1;
+}
+`,
+    'Deep End': `shader_type spatial;
+
+uniform vec4 surface : source_color = vec4(0.05, 0.65, 0.91, 1.0);
+uniform vec4 depth : source_color = vec4(0.01, 0.13, 0.33, 1.0);
+uniform float wave : hint_range(0.0, 0.2) = 0.05;
+uniform float speed : hint_range(0.0, 4.0) = 1.0;
+
+varying vec3 p3;
+
+void vertex() {
+\tVERTEX += NORMAL * (sin(VERTEX.x * 4.0 + TIME * speed) + cos(VERTEX.z * 5.0 + TIME * speed * 1.3)) * wave;
+\tp3 = VERTEX;
+}
+
+${FRES}
+void fragment() {
+\tfloat f = fresnel(NORMAL, VIEW, 2.5);
+\tfloat sparkle = pow(max(0.0, sin(p3.x * 18.0 + TIME * 2.0) * sin(p3.z * 16.0 - TIME * 1.6)), 24.0);
+\tALBEDO = mix(depth.rgb, surface.rgb, f);
+\tEMISSION = vec3(0.9, 0.95, 1.0) * sparkle * 0.8 + surface.rgb * f * 0.3;
+\tROUGHNESS = 0.05;
+\tMETALLIC = 0.1;
+}
+`,
+    'Bubble Sky': `shader_type spatial;
+render_mode cull_disabled;
+
+uniform vec4 tint : source_color = vec4(0.37, 0.78, 1.0, 1.0);
+uniform float film : hint_range(0.0, 3.0) = 1.2;
+uniform float clarity : hint_range(0.0, 1.0) = 0.75;
+
+void fragment() {
+\tfloat f = 1.0 - clamp(dot(NORMAL, VIEW), 0.0, 1.0);
+\tvec3 rainbow = 0.5 + 0.5 * cos(TAU * (fract(f * film + TIME * 0.05) + vec3(0.0, 0.33, 0.67)));
+\tALBEDO = mix(tint.rgb, rainbow, f);
+\tEMISSION = rainbow * pow(f, 3.0) * 0.6;
+\tALPHA = mix(1.0 - clarity, 1.0, pow(f, 1.5));
+\tROUGHNESS = 0.02;
+}
+`,
+    'Vista Aurora': `shader_type spatial;
+
+uniform vec4 color_one : source_color = vec4(0.13, 0.83, 0.93, 1.0);
+uniform vec4 color_two : source_color = vec4(0.3, 0.9, 0.5, 1.0);
+uniform float speed : hint_range(0.0, 2.0) = 0.4;
+
+${PROP}
+void fragment() {
+\tfloat band = sin(p3.y * 3.0 + sin(p3.x * 2.0 + TIME * speed) * 1.5 + TIME * speed * 1.7);
+\tALBEDO = vec3(0.02, 0.15, 0.2);
+\tEMISSION = mix(color_one.rgb, color_two.rgb, 0.5 + 0.5 * sin(p3.x + TIME * speed)) * smoothstep(0.2, 1.0, band) * 1.6;
+\tROUGHNESS = 0.3;
+}
+`,
+    'Pink Neon': neon('1.0, 0.18, 0.58'),
+    'Cyan Neon': neon('0.0, 0.9, 1.0'),
+    'Laser Lime': neon('0.77, 1.0, 0.07'),
+    'Vapor Sunset': `shader_type spatial;
+render_mode unshaded, cull_disabled;
+
+uniform vec4 top_color : source_color = vec4(1.0, 0.85, 0.3, 1.0);
+uniform vec4 bottom_color : source_color = vec4(0.93, 0.25, 0.6, 1.0);
+uniform float cuts : hint_range(2.0, 20.0) = 9.0;
+
+${PROP}
+void fragment() {
+\tfloat y = clamp(p3.y * 0.5 + 0.5, 0.0, 1.0);
+\tfloat stripe = step(0.5 + (1.0 - y) * 0.45, fract(y * cuts - TIME * 0.2));
+\tif (y < 0.55 && stripe > 0.5) {
+\t\tdiscard;
+\t}
+\tALBEDO = mix(bottom_color.rgb, top_color.rgb, y);
+}
+`,
+    'Grid Glow': `shader_type spatial;
+
+uniform vec4 line_color : source_color = vec4(0.91, 0.47, 0.98, 1.0);
+uniform vec4 fill : source_color = vec4(0.12, 0.03, 0.25, 1.0);
+uniform float cells : hint_range(2.0, 40.0) = 12.0;
+uniform float speed : hint_range(0.0, 2.0) = 0.3;
+
+void fragment() {
+\tvec2 g = abs(fract(UV * cells + vec2(0.0, TIME * speed)) - 0.5);
+\tfloat l = 1.0 - smoothstep(0.0, 0.06, 0.5 - max(g.x, g.y));
+\tALBEDO = fill.rgb;
+\tEMISSION = line_color.rgb * l * 2.0;
+\tROUGHNESS = 0.3;
+}
+`,
+    'Nebula': `shader_type spatial;
+
+uniform vec4 color_one : source_color = vec4(0.49, 0.23, 0.93, 1.0);
+uniform vec4 color_two : source_color = vec4(0.86, 0.15, 0.47, 1.0);
+uniform float speed : hint_range(0.0, 1.0) = 0.08;
+
+${PROP}
+${NOISE3}
+void fragment() {
+\tvec3 q = p3 * 2.0 + vec3(TIME * speed);
+\tfloat n = noise3(q) * 0.5 + noise3(q * 2.1) * 0.3 + noise3(q * 4.3) * 0.2;
+\tfloat stars = step(0.985, hash3(floor(p3 * 60.0)));
+\tALBEDO = vec3(0.02);
+\tEMISSION = mix(color_one.rgb, color_two.rgb, n) * smoothstep(0.35, 0.8, n) * 2.0 + vec3(stars) * 1.5;
+\tROUGHNESS = 0.4;
+}
+`,
+    'Sun Plasma': `shader_type spatial;
+
+uniform vec4 hot : source_color = vec4(1.0, 0.9, 0.4, 1.0);
+uniform vec4 deep : source_color = vec4(0.9, 0.2, 0.0, 1.0);
+uniform float speed : hint_range(0.0, 2.0) = 0.25;
+
+${PROP}
+${NOISE3}
+void fragment() {
+\tvec3 q = p3 * 3.0 + vec3(0.0, TIME * speed, TIME * speed * 0.6);
+\tfloat n = noise3(q) * 0.55 + noise3(q * 2.3) * 0.3 + noise3(q * 5.1) * 0.15;
+\tALBEDO = deep.rgb * 0.3;
+\tEMISSION = mix(deep.rgb, hot.rgb, n) * (1.2 + n);
+\tROUGHNESS = 0.9;
+}
+`
+};
+// attach each shader to its look
+COLLECTIONS.forEach((c) => c.presets.forEach((p) => { if (SHADERS[p.name]) p.shader = SHADERS[p.name]; }));

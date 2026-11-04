@@ -38,7 +38,7 @@ export function installCollab(Z) {
     /* ---------- Snapshot: the scene as units ---------- */
     function snapshot() {
         const out = {
-            settings: { world: state.worldSet, render: state.renderSet, fx: state.fxSet, end: state.end, fps: state.fps, sceneCamera: state.sceneCamera, comments: state.comments || [] }
+            settings: { world: state.worldSet, render: state.renderSet, fx: state.fxSet, screenShader: state.screenShader || null, end: state.end, fps: state.fps, sceneCamera: state.sceneCamera, comments: state.comments || [] }
         };
         Z.rememberLights();
         world.traverse((o) => {
@@ -100,6 +100,7 @@ export function installCollab(Z) {
             const mk = JSON.stringify(v.mat);
             if (mk !== was.mk) {
                 const mm = Array.isArray(v.mat) ? v.mat.map((m) => matLoader.parse(m)) : matLoader.parse(v.mat);
+                (Array.isArray(mm) ? mm : [mm]).forEach((x) => Z.hydrateGd(x));
                 o.material = mm;
                 was.mk = mk;
             }
@@ -136,6 +137,7 @@ export function installCollab(Z) {
             state.end = s.end || state.end; state.fps = s.fps || state.fps;
             state.sceneCamera = s.sceneCamera || null;
             state.comments = s.comments || [];
+            state.screenShader = s.screenShader || null;
         }
         const keys = Object.keys(changed).filter((k) => k.indexOf('ob:') === 0);
         const placed = [];
