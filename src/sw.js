@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '3d28badb719c';
+const VERSION = '218f8ffc3604';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","be6cfb7f37"],
@@ -177,16 +177,16 @@ const CORE = [["/","be6cfb7f37"],
   ["/imbuer/ribbon.js?v=20261128","1806bd6f5d"],
   ["/imbuer/style.css?v=20261202k","db50b9dde9"],
   ["/index.html","be6cfb7f37"],
-  ["/inkpath/","98b5f8a0ff"],
+  ["/inkpath/","f6929bdb10"],
   ["/inkpath/app.js?v=20261202q","076d967e6a"],
   ["/inkpath/apple-touch-icon.png","be49b899f3"],
   ["/inkpath/bezmath.js","344ed5f815"],
   ["/inkpath/collab-inkpath.js?v=20261042","80b49895b7"],
-  ["/inkpath/css2svg.js?v=20261202e","fafa3bd2d8"],
+  ["/inkpath/css2svg.js?v=20261204d","198ba068a1"],
   ["/inkpath/favicon-96.png","4af36efa9d"],
-  ["/inkpath/index.html","98b5f8a0ff"],
-  ["/inkpath/mobile/","0c9f5558a6"],
-  ["/inkpath/mobile/index.html","0c9f5558a6"],
+  ["/inkpath/index.html","f6929bdb10"],
+  ["/inkpath/mobile/","f961989dff"],
+  ["/inkpath/mobile/index.html","f961989dff"],
   ["/inkpath/radii-collab.css?v=20261042","8b8ee6cb67"],
   ["/inkpath/radii-collab.js?v=20261203e","5d8b424495"],
   ["/inkpath/radii-file.js?v=20261042","3bdadf1b3d"],
@@ -289,7 +289,7 @@ const CORE = [["/","be6cfb7f37"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","f98a8be593"],
+  ["/opendb/data/index.json","b52f3e25fe"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],

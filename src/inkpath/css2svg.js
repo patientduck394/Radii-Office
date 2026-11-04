@@ -676,17 +676,29 @@
         const now = rotPt(local, s.rotation, getCenter(s));
         moveObject(s, was.x - now.x, was.y - now.y);
     }
+    // The CSS rules for "this box starts its own stacking context" (the ones a pasted style can use)
+    function makesStack(cs) {
+        const positioned = cs.position && cs.position !== 'static';
+        return cs.isolation === 'isolate' ||
+            (positioned && cs.zIndex !== 'auto') || cs.position === 'fixed' || cs.position === 'sticky' ||
+            parseFloat(cs.opacity) < 1 ||
+            (cs.transform && cs.transform !== 'none') || (cs.filter && cs.filter !== 'none') || (cs.backdropFilter && cs.backdropFilter !== 'none') ||
+            (cs.mixBlendMode && cs.mixBlendMode !== 'normal') || (cs.clipPath && cs.clipPath !== 'none') || (cs.maskImage && cs.maskImage !== 'none') ||
+            /\b(paint|layout|strict|content)\b/.test(cs.contain || '') || /\b(transform|opacity|filter|z-index|isolation)\b/.test(cs.willChange || '');
+    }
     function convert(css, text, x0, y0) {
         const S = stage(css, text);
         try {
             const nodes = [S.el, S.parts.before, S.parts.after].filter(Boolean);
+            // does the element start its own stacking context? (read before transforms are switched off below)
+            const ownStack = makesStack(getComputedStyle(S.el));
             // transforms are read first, then switched off so every box is measured upright
             const tf = nodes.map(function (n) { return readTransform(getComputedStyle(n)); });
             nodes.forEach(function (n) { n.style.transform = 'none'; });
             const origin = S.el.getBoundingClientRect();
             const M = measurePart(S.el, S.textNode, origin, true);
             const mainTf = tf[0];
-            const below = [];
+            const below = [], between = [];
             const main = boxShapes(M, x0, y0, true);
             const label = text ? [labelShape(M, x0, y0, text)] : [];
             const pseudo = { before: [], after: [] };
@@ -706,10 +718,12 @@
                     if (own.rot) turnAbout(s, own.rot, mid);
                     if (own.dx || own.dy) moveObject(s, own.dx, own.dy);
                 });
-                // (a ::before/::after with a negative z-index sits under the element's own background)
-                if (P.zIndex < 0) below.push.apply(below, list); else pseudo[k].push.apply(pseudo[k], list);
+                // A ::before/::after with a negative z-index: when the element starts its own stacking context
+                // (isolation: isolate, a z-index, opacity, a transform...), it paints ABOVE the element's background
+                // but under its text (the classic gloss highlight); otherwise it goes under the element's background
+                if (P.zIndex < 0) (ownStack ? between : below).push.apply(ownStack ? between : below, list); else pseudo[k].push.apply(pseudo[k], list);
             });
-            const shapes = below.concat(main, pseudo.before, label, pseudo.after);
+            const shapes = below.concat(main, between, pseudo.before, label, pseudo.after);
             // the element's own transform turns everything (its ::before/::after turn with it)
             if (mainTf.rot || mainTf.dx || mainTf.dy) {
                 const mid = { x: x0 + M.w / 2, y: y0 + M.h / 2 };
