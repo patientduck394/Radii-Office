@@ -233,3 +233,22 @@ html, body {
 .yz-modal-card .yz-btn { color: #0b1b33; background: #eef4ff; border: 1px solid #c8d6f2; }
 .yz-modal-card .yz-btn:hover { background: #dbe9ff; }
 .yz-modal-card .yz-btn.yz-primary { color: #fff; background: #0065ff; border-color: #0048bf; }
+
+/* SVG icons, a conversation's messages, and folded quotes */
+.yz-ico { width: 1.15em; height: 1.15em; flex: none; vertical-align: -0.22em; }
+.yz-ico.yz-fill, .yz-star.on .yz-ico { fill: currentColor; }
+.yz-btn, .yz-compose-btn { display: inline-flex; align-items: center; justify-content: center; gap: 7px; }
+.yz-btn:has(> .yz-ico:only-child) { padding-left: 9px; padding-right: 9px; }
+.yz-folder-icon { display: inline-flex; align-items: center; justify-content: center; font-size: 17px; }
+.yz-star .yz-ico { width: 17px; height: 17px; vertical-align: middle; }
+.yz-placeholder-icon .yz-ico { width: 56px; height: 56px; opacity: 0.55; stroke-width: 1.5; }
+.yz-btn.yz-on { color: #b86e00; }
+.yz-thread-count { display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 4px; border-radius: 999px; background: #0065ff; color: #fff; font: 700 11px/18px system-ui, sans-serif; text-align: center; vertical-align: 1px; }
+.yz-thread { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+.yz-msg { border: 1px solid #dbe6fb; border-radius: 12px; padding: 10px 14px; background: #fff; }
+.yz-msg:not(.on) { cursor: pointer; background: #f7faff; }
+.yz-msg:not(.on):hover { background: #eef4ff; }
+.yz-msg.on { border-color: #4d94ff; box-shadow: 0 0 0 2px rgba(0, 101, 255, 0.12); }
+.yz-msg .yz-read-meta { margin-top: 0; }
+.yz-quote { margin: 8px 0 2px; border-left: 3px solid #c8d6f2; padding-left: 10px; color: #5b6e93; }
+.yz-quote summary { cursor: pointer; color: #0065ff; font-size: 12.5px; }

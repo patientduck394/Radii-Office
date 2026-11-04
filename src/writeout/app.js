@@ -4516,8 +4516,8 @@ function fmtAlignBlocks(align) {
     fmtSyncAlignButtons();
 }
 
-// Indent is a real block indent: a left margin on the whole line (2.5rem a step, up to 8 steps),
-// so wrapped lines stay indented and Keydown at the start of a line keeps working!
+// Indent pushes in the first line of the block (text-indent, 2.5rem a step, up to 8 steps), like a Tab in a paragraph:
+// the wrapped lines stay at the normal margin, and Keydown at the start of a line keeps working!
 // dir is 1 / -1 (or 'in' / 'out' from the mobile toolbar). Outdent at step 0 also strips one old-style leading tab!
 function fmtIndentBlocks(dir) {
     if (typeof canvas === 'undefined' || !canvas) return;
@@ -4568,7 +4568,7 @@ function fmtIndentBlocks(dir) {
         if (b && b !== canvas && canvas.contains(b)) blocks.push(b);
     }
     const level = function (b) {
-        const m = /^([\d.]+)r?em$/.exec(b.style.marginLeft || '');
+        const m = /^([\d.]+)r?em$/.exec(b.style.textIndent || b.style.marginLeft || '');
         return m ? Math.round(parseFloat(m[1]) / STEP) : 0;
     };
     blocks.forEach(function (b) {
@@ -4587,7 +4587,9 @@ function fmtIndentBlocks(dir) {
         }
         const n = Math.max(0, Math.min(MAX, was + (dir > 0 ? 1 : -1)));
         // rem, so a big heading lines up with the text around it
-        b.style.marginLeft = n ? (n * STEP) + 'rem' : '';
+        // only the first line is pushed in, like a Tab in a paragraph (an old block margin becomes a first-line indent)
+        b.style.marginLeft = '';
+        b.style.textIndent = n ? (n * STEP) + 'rem' : '';
         if (!b.getAttribute('style')) b.removeAttribute('style');
     });
     // put the selection back exactly where it was (wrapping a line can move it)

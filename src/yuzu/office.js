@@ -6,6 +6,8 @@
     const OS = window.OfficeShell;
     if (!app || !OS) return;
 
+    // the app's own SVG icons join the shell's icon set, so the ribbon, folder menu and views use them too
+    Object.keys(app.PATHS).forEach((k) => { if (!OS.icons['yz-' + k]) OS.icons['yz-' + k] = app.PATHS[k]; });
     const sync = () => OS.sync();
     const cards = (items) => OS.bsCards(items);
     const inFolderOrAll = (f) => (f === 'starred' ? app.emails().filter((m) => m.starred && m.folder !== 'trash') : app.inFolder(f));
@@ -59,15 +61,15 @@
             { label: 'Respond', items: [
                 { big: true, icon: 'reply', label: 'Reply', run: () => { if (app.state.activeId) app.reply(app.state.activeId); else OS.toast('Open a message first!'); } },
                 { stack: [
-                    { sm: true, icon: 'export', label: 'Forward', run: () => { if (app.state.activeId) app.forward(app.state.activeId); else OS.toast('Open a message first!'); } },
+                    { sm: true, icon: 'yz-forward', label: 'Forward', run: () => { if (app.state.activeId) app.forward(app.state.activeId); else OS.toast('Open a message first!'); } },
                 ] },
             ] },
             { label: 'Manage', items: [
                 { big: true, icon: 'star', label: 'Star', run: () => { if (app.state.activeId) app.toggleStar(app.state.activeId); } },
                 { big: true, icon: 'trash', label: 'Delete', run: () => { if (app.state.activeId) app.deleteEmail(app.state.activeId); else OS.toast('Open a message first!'); } },
             ] },
-            { label: 'Folders', items: [{ big: true, icon: 'folder', label: 'Folder', menu: () => Object.keys(app.FOLDERS).map((f) => ({
-                label: app.FOLDERS[f], checked: folderIs(f), icon: 'folder', run: () => { app.setFolder(f); sync(); },
+            { label: 'Folders', items: [{ big: true, icon: 'yz-inbox', label: 'Folder', menu: () => Object.keys(app.FOLDERS).map((f) => ({
+                label: app.FOLDERS[f], checked: folderIs(f), icon: 'yz-' + f, run: () => { app.setFolder(f); sync(); },
             })) }] },
             { label: 'Layout', items: [{ big: true, icon: 'layout', label: 'Layout', menu: () => [
                 { label: 'Outlook', checked: true, icon: 'layout', run: () => OS.setLayout('office') },
@@ -76,7 +78,7 @@
         ] },
         { id: 'view', label: 'View', groups: [
             { label: 'Show', items: Object.keys(app.FOLDERS).map((f) => ({
-                big: true, icon: 'folder', label: app.FOLDERS[f], run: () => { app.setFolder(f); sync(); }, checked: () => folderIs(f),
+                big: true, icon: 'yz-' + f, label: app.FOLDERS[f], run: () => { app.setFolder(f); sync(); }, checked: () => folderIs(f),
             })) },
         ] },
         { id: 'help', label: 'Help', groups: [
@@ -106,7 +108,7 @@
         tabs: tabs,
         backstage: backstage,
         status: () => [app.state.account ? '<b>' + OS.esc(app.state.account.email) + '</b>' + (app.online() ? '' : ' (sign in again)') : 'Not signed in', '<b>' + app.inFolder('inbox').length + '</b> in Inbox', '<b>' + app.unreadCount('inbox') + '</b> unread', 'Folder <b>' + OS.esc(app.FOLDERS[app.state.folder]) + '</b>'],
-        views: Object.keys(app.FOLDERS).map((f) => ({ icon: 'folder', title: app.FOLDERS[f], run: () => { app.setFolder(f); sync(); }, active: () => folderIs(f) })),
+        views: Object.keys(app.FOLDERS).map((f) => ({ icon: 'yz-' + f, title: app.FOLDERS[f], run: () => { app.setFolder(f); sync(); }, active: () => folderIs(f) })),
         searchExtra: (q) => app.emails()
             .filter((m) => m.folder !== 'trash')
             .filter((m) => (m.subject || '').toLowerCase().includes(q) || (m.from || '').toLowerCase().includes(q))
@@ -120,7 +122,7 @@
         const b = document.createElement('button');
         b.type = 'button';
         b.className = 'yz-btn yz-layout-btn';
-        b.textContent = '🧩 Layout';
+        b.innerHTML = app.ico('layout') + '<span>Layout</span>';
         b.addEventListener('click', () => {
             const box = document.createElement('div');
             box.innerHTML = '<p class="os-dlg-text">Pick a layout! Your mailbox stays exactly the same!</p>';

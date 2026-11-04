@@ -376,7 +376,7 @@
             const align = am ? am[1] : '';
             if (am) t = t.slice(am[0].length);
             const ind = (h) => {
-                const st = (tabs ? 'margin-left: ' + tabs * 2.5 + 'rem;' : '') + (align ? ' text-align: ' + align + ';' : '');
+                const st = (tabs ? 'text-indent: ' + tabs * 2.5 + 'rem;' : '') + (align ? ' text-align: ' + align + ';' : '');
                 return st ? h.replace(/^<(\w+)/, '<$1 style="' + st.trim() + '"') : h;
             };
             if ((m = /^@@program(?:="((?:[^"\\]|\\.)*)")?=```$/.exec(t))) {
@@ -562,7 +562,7 @@
     // a plain line that starts like a heading, bullet, quote, block, table, fence or footnote keeps that start as itself
     const LINE_MARK = /^(\||#{1,4}\s|\*\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
     const plainLine = (l) => (LINE_MARK.test(l) ? '\\' + l : l);
-    const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && el.style.marginLeft) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
+    const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && (el.style.textIndent || el.style.marginLeft)) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
     function htmlToText(html) {
         const box = document.createElement('div');
         box.innerHTML = String(html || '');
@@ -883,7 +883,7 @@
         // the code, with each line's indent (spaces, or the editor's own indent steps) kept
         const body = lines.slice(start + 1, at).map((ln) => {
             const blk = ln.key && ln.key !== canvas ? ln.key : null;
-            const steps = blk ? Math.round((parseFloat(blk.style.marginLeft) || 0) / 2.5) : 0;
+            const steps = blk ? Math.round((parseFloat(blk.style.textIndent || blk.style.marginLeft) || 0) / 2.5) : 0;
             return '    '.repeat(steps) + ln.text.replace(/\s+$/, '');
         });
         const m = PROGRAM_OPEN.exec(lines[start].text.trim());
@@ -1379,7 +1379,7 @@
         const text = b.textContent.replace(/​/g, '');
         let m;
         // (the new heading / item / quote keeps the line's indent)
-        const make = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; if (b.hasAttribute('contenteditable')) el.setAttribute('contenteditable', 'true'); if (b.style && b.style.marginLeft) el.style.marginLeft = b.style.marginLeft; return el; };
+        const make = (tag, cls) => { const el = document.createElement(tag); if (cls) el.className = cls; if (b.hasAttribute('contenteditable')) el.setAttribute('contenteditable', 'true'); if (b.style && b.style.textIndent) el.style.textIndent = b.style.textIndent; else if (b.style && b.style.marginLeft) el.style.marginLeft = b.style.marginLeft; return el; };
         // move the line's own nodes in, dropping the "# " / "* " / "> " in front
         const takeRest = (el, prefixLen) => {
             let skip = prefixLen;
@@ -1470,7 +1470,7 @@
         if (hit.block) {
             const d = document.createElement('div');
             if (hit.el.hasAttribute('contenteditable')) d.setAttribute('contenteditable', hit.el.getAttribute('contenteditable'));
-            if (hit.el.style.marginLeft) d.style.marginLeft = hit.el.style.marginLeft;
+            if (hit.el.style.textIndent) d.style.textIndent = hit.el.style.textIndent; else if (hit.el.style.marginLeft) d.style.marginLeft = hit.el.style.marginLeft;
             d.appendChild(document.createElement('br'));
             hit.el.replaceWith(d);
             r.setStart(d, 0);

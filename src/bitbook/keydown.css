@@ -6146,5 +6146,6 @@
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
 }
 
-/* An indented line (a | at the start in Keydown text) keeps a right margin too, and long text wraps inside the page */
+/* An indented line (a | at the start in Keydown text) pushes in only its first line, and long text wraps inside the page */
+[style*="text-indent"]:is(div, p, h1, h2, h3, h4, blockquote, li) { overflow-wrap: anywhere; }
 [style*="margin-left"]:is(div, p, h1, h2, h3, h4, blockquote, li, table) { margin-right: 1.5rem; overflow-wrap: anywhere; }

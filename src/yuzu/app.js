@@ -9,6 +9,28 @@
     const uid = (p) => p + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
     const STORAGE_KEY = 'yuzu_mail_v1';
     const FOLDERS = { inbox: 'Inbox', starred: 'Starred', sent: 'Sent', drafts: 'Drafts', trash: 'Trash' };
+    // line icons (SVG, they take the text colour), one set for the whole app
+    const PATHS = {
+        inbox: '<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.7 4H7.3a2 2 0 0 0-1.8 1.1z"/>',
+        starred: '<path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+        star: '<path d="M12 2l3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1z"/>',
+        sent: '<path d="M22 2 11 13"/><path d="M22 2l-7 20-4-9-9-4z"/>',
+        drafts: '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/>',
+        trash: '<path d="M3 6h18M8 6V4a1 1 0 0 1 1-1h6a1 1 0 0 1 1 1v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6"/>',
+        reply: '<path d="M9 14 4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>',
+        forward: '<path d="m15 14 5-5-5-5"/><path d="M4 20v-7a4 4 0 0 1 4-4h12"/>',
+        download: '<path d="M12 3v12M7 10l5 5 5-5M4 21h16"/>',
+        upload: '<path d="M12 15V3M7 8l5-5 5 5M4 21h16"/>',
+        sync: '<path d="M21 12a9 9 0 0 1-15.5 6.2L3 16"/><path d="M3 21v-5h5"/><path d="M3 12A9 9 0 0 1 18.5 5.8L21 8"/><path d="M21 3v5h-5"/>',
+        layout: '<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/>',
+        close: '<path d="M18 6 6 18M6 6l12 12"/>',
+        restore: '<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
+        check: '<path d="M20 6 9 17l-5-5"/>',
+        mail: '<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/>',
+        compose: '<path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.1 2.1 0 0 1 3 3L12 15l-4 1 1-4z"/>',
+        edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+    };
+    const ico = (n, fill) => '<svg class="yz-ico" viewBox="0 0 24 24" fill="' + (fill ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (PATHS[n] || '') + '</svg>';
     const PROVIDERS = { yuzu: 'Yuzu', google: 'Google', microsoft: 'Microsoft' };
     const DOMAIN = ((window.YUZU_CONFIG || {}).domain || 'radii-office.com');
     const LOGO = {
@@ -77,6 +99,20 @@
     const kdHtml = (kd) => (typeof window.kdRender === 'function' ? window.kdRender(kd) : '<p>' + esc(kd).replace(/\n/g, '<br>') + '</p>');
     // mail from other people is shown as plain text (links clickable), never run through Keydown
     const plainHtml = (t) => esc(t).replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)&])/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
+    // the "> quoted" lines of a reply fold away (the earlier messages are right above it in the conversation)
+    const foldQuotes = (text) => {
+        const lines = String(text || '').split('\n'), out = [];
+        for (let i = 0; i < lines.length; i++) {
+            if (/^\s*>/.test(lines[i])) {
+                const block = [];
+                while (i < lines.length && /^\s*>/.test(lines[i])) block.push(lines[i++].replace(/^\s*>\s?/, ''));
+                i--;
+                if (out.length && /wrote:\s*$/.test(out[out.length - 1])) block.unshift(out.pop());
+                out.push('\u0001' + block.join('\n') + '\u0002');
+            } else out.push(lines[i]);
+        }
+        return plainHtml(out.join('\n').replace(/\n*(\u0001[\s\S]*?\u0002)\n*/g, '$1')).replace(/\u0001([\s\S]*?)\u0002/g, '<details class="yz-quote"><summary>Show earlier messages</summary>$1</details>');
+    };
     const bodyText = (m) => (m.remote ? m.body : plain(m.body));
 
     /* ---------- the mail account ---------- */
@@ -118,8 +154,27 @@
         if (!state.account) { toast('Sign in first!'); return; }
         if (!online()) { state.error = 'Sign in again to load your mail!'; render(); return; }
         await loadFolder(state.folder);
-        if (first && state.folder !== 'inbox') loadFolder('inbox');
+        if (first) ensureThread();
         if (!first && !state.error) toast('Up to date!');
+    }
+
+    /* ---------- conversations: a message and every reply to it, in order ---------- */
+    const normSubject = (s) => String(s || '').replace(/^\s*((re|fwd?|aw|sv)\s*:\s*)+/i, '').replace(/\s+/g, ' ').trim().toLowerCase();
+    function threadKey(m) {
+        if (m.threadId) return m.provider + ':' + m.threadId;
+        const n = normSubject(m.subject);
+        return !n || n === '(no subject)' ? 'id:' + m.id : 's:' + n;
+    }
+    // every message of the same conversation (drafts and Trash stay out, unless you opened a Trash message)
+    function threadOf(m) {
+        if (!m || m.folder === 'trash' || m.folder === 'drafts') return m ? [m] : [];
+        const k = threadKey(m);
+        return state.emails.filter((x) => x.folder !== 'trash' && x.folder !== 'drafts' && threadKey(x) === k).sort((a, b) => new Date(a.date) - new Date(b.date));
+    }
+    // replies live in Sent as well as the Inbox, so load both quietly when a conversation opens
+    function ensureThread() {
+        if (!online()) return;
+        ['inbox', 'sent'].filter((f) => !remote[f]).forEach((f) => YuzuMail.list(state.account.provider, f).then((l) => { remote[f] = l; rebuild(); render(); }).catch(() => {}));
     }
 
     /* ---------- reading and managing mail ---------- */
@@ -135,6 +190,7 @@
     function openEmail(id) {
         state.activeId = id;
         const m = byId(id);
+        ensureThread();
         if (m && !m.read) { m.read = true; if (m.remote) remoteDo(m, () => YuzuMail.setRead(state.account.provider, m, true)).catch(showError); else save(); }
         render();
     }
@@ -284,7 +340,7 @@
         closeModal();
         const back = document.createElement('div');
         back.id = 'yz-modal'; back.className = 'yz-modal-back'; back.setAttribute('role', 'dialog'); back.setAttribute('aria-modal', 'true'); back.setAttribute('aria-label', title);
-        back.innerHTML = '<div class="yz-modal-card' + (wide ? ' wide' : '') + '"><div class="yz-modal-head"><h2>' + esc(title) + '</h2><button type="button" class="yz-btn" data-x aria-label="Close">✕</button></div><div class="yz-modal-body">' + html + '</div></div>';
+        back.innerHTML = '<div class="yz-modal-card' + (wide ? ' wide' : '') + '"><div class="yz-modal-head"><h2>' + esc(title) + '</h2><button type="button" class="yz-btn" data-x aria-label="Close">' + ico('close') + '</button></div><div class="yz-modal-body">' + html + '</div></div>';
         back.addEventListener('click', (e) => { if (e.target === back || e.target.closest('[data-x]')) closeModal(); });
         document.body.appendChild(back);
         const first = back.querySelector('input, button:not([data-x])'); if (first) first.focus();
@@ -328,7 +384,7 @@
             clearTimeout(t); const av = m.querySelector('#yz-yz-avail'), u = userName();
             if (u.length < 3) { av.className = 'yz-note small'; av.textContent = ' '; return; }
             av.className = 'yz-note small'; av.textContent = 'Checking…';
-            t = setTimeout(() => YuzuMail.yuzuAvailable(u).then((r) => { if (userName() !== u) return; av.className = 'yz-note small ' + (r.available ? 'yz-ok' : 'yz-error'); av.textContent = r.available ? '✓ ' + r.email + ' is free!' : r.reason; }).catch(() => { av.textContent = ' '; }), 350);
+            t = setTimeout(() => YuzuMail.yuzuAvailable(u).then((r) => { if (userName() !== u) return; av.className = 'yz-note small ' + (r.available ? 'yz-ok' : 'yz-error'); av.innerHTML = r.available ? ico('check') + ' ' + esc(r.email) + ' is free!' : esc(r.reason); }).catch(() => { av.textContent = ' '; }), 350);
         });
         m.addEventListener('click', (e) => { if (e.target.closest('[data-switch]')) openYuzu(create ? 'login' : 'create'); });
         m.querySelector('#yz-yuzu-form').addEventListener('submit', async (e) => {
@@ -358,7 +414,7 @@
     }
 
     /* ---------- drawing the sidebar, list and reading pane (shared by both looks: the ribbon layout just re-skins it with CSS) ---------- */
-    const folderIcon = (f) => ({ inbox: '📥', starred: '⭐', sent: '📤', drafts: '📝', trash: '🗑️' }[f] || '📁');
+    const folderIcon = (f) => ico(f);
     function renderAccount() {
         const el = $('yz-account');
         if (!el) return;
@@ -392,8 +448,8 @@
             return '<button type="button" class="yz-row' + (!m.read ? ' unread' : '') + (m.id === state.activeId ? ' on' : '') + '" data-id="' + esc(m.id) + '">' +
                 '<span class="yz-avatar" style="background:' + avatarColor(who) + '">' + esc(initials(who)) + '</span>' +
                 '<span class="yz-row-mid"><span class="yz-row-top"><span class="yz-row-from">' + esc(nameOf(who) || '(no recipient)') + '</span><span class="yz-row-date">' + dateStr(m.date) + '</span></span>' +
-                '<span class="yz-row-subject">' + esc(m.subject || '(No subject)') + '</span><span class="yz-row-snip">' + esc(bodyText(m).replace(/\s+/g, ' ').slice(0, 90)) + '</span></span>' +
-                '<button type="button" class="yz-star' + (m.starred ? ' on' : '') + '" data-star="' + esc(m.id) + '" aria-label="' + (m.starred ? 'Remove star' : 'Star this message') + '" aria-pressed="' + m.starred + '">★</button>' +
+                '<span class="yz-row-subject">' + esc(m.subject || '(No subject)') + (threadOf(m).length > 1 ? ' <span class="yz-thread-count" title="Messages in this conversation">' + threadOf(m).length + '</span>' : '') + '</span><span class="yz-row-snip">' + esc(bodyText(m).replace(/\s+/g, ' ').slice(0, 90)) + '</span></span>' +
+                '<span role="button" tabindex="0" class="yz-star' + (m.starred ? ' on' : '') + '" data-star="' + esc(m.id) + '" aria-label="' + (m.starred ? 'Remove star' : 'Star this message') + '" aria-pressed="' + m.starred + '">' + ico('star', m.starred) + '</span>' +
                 '</button>';
         }).join('');
     }
@@ -404,35 +460,46 @@
         const m = byId(state.activeId);
         if (!m) {
             el.innerHTML = state.account
-                ? '<div class="yz-placeholder"><span class="yz-placeholder-icon" aria-hidden="true">✉️</span><p>Pick a message to read it, or write a new one!</p>' + (!online() ? '<button type="button" class="yz-signin" data-open-accounts>Sign in again</button>' : '') + '</div>'
+                ? '<div class="yz-placeholder"><span class="yz-placeholder-icon" aria-hidden="true">' + ico('mail') + '</span><p>Pick a message to read it, or write a new one!</p>' + (!online() ? '<button type="button" class="yz-signin" data-open-accounts>Sign in again</button>' : '') + '</div>'
                 : '<div class="yz-welcome"><img src="favicon.svg" alt="" width="72" height="72"><h2>Welcome to Yuzu!</h2><p>Get your own free @' + esc(DOMAIN) + ' address, or sign in with Google or Microsoft, to read your inbox and send real email, with Keydown in every message you write!</p><div class="yz-modal-actions col">' + signInButtons() + '</div><p class="yz-note small">Mail is loaded into this page and is not kept on this device, and Google and Microsoft sign-ins never show Yuzu your password. <button type="button" class="yz-link" data-setup>Set up sign-in</button></p></div>';
             return;
         }
-        const who = m.folder === 'sent' ? m.to : m.from;
         const isDraft = m.folder === 'drafts';
+        const thread = threadOf(m);
+        const btn = (act, icon, label, cls) => '<button type="button" class="yz-btn' + (cls ? ' ' + cls : '') + '" data-act="' + act + '">' + ico(icon) + '<span>' + label + '</span></button>';
+        const card = (x) => {
+            const who = x.folder === 'sent' ? x.to : x.from;
+            const open = x.id === m.id;
+            return '<article class="yz-msg' + (open ? ' on' : '') + '" data-msg="' + esc(x.id) + '">' +
+                '<div class="yz-read-meta"><span class="yz-avatar" style="background:' + avatarColor(who) + '">' + esc(initials(who)) + '</span>' +
+                '<div><b>' + esc(x.folder === 'sent' ? 'You' : nameOf(who) || '(no recipient)') + '</b><span class="yz-read-addr">' + (x.folder === 'sent' ? 'to ' + esc(x.to) : esc(who)) + '</span></div>' +
+                '<span class="yz-read-date">' + new Date(x.date).toLocaleString() + '</span></div>' +
+                (x.remote ? '<div class="yz-read-body yz-plain">' + foldQuotes(x.body) + '</div>' : '<div class="yz-read-body keydown-doc">' + kdHtml(x.body) + '</div>') + '</article>';
+        };
         el.innerHTML =
             '<div class="yz-read-top">' +
-                '<h2 class="yz-read-subject">' + esc(m.subject || '(No subject)') + '</h2>' +
+                '<h2 class="yz-read-subject">' + esc(m.subject || '(No subject)') + (thread.length > 1 ? ' <span class="yz-thread-count" title="Messages in this conversation">' + thread.length + '</span>' : '') + '</h2>' +
                 '<div class="yz-read-actions">' +
-                    (isDraft ? '<button type="button" class="yz-btn" data-act="edit">✎ Edit draft</button>' : m.folder === 'trash' ? '<button type="button" class="yz-btn" data-act="restore">Restore</button>' : '<button type="button" class="yz-btn" data-act="reply">↩ Reply</button><button type="button" class="yz-btn" data-act="forward">➦ Forward</button>') +
-                    (isDraft ? '' : '<button type="button" class="yz-btn" data-act="star">' + (m.starred ? '★ Starred' : '☆ Star') + '</button>') +
-                    '<button type="button" class="yz-btn" data-act="eml">⬇ .eml</button>' +
-                    '<button type="button" class="yz-btn yz-danger" data-act="delete">' + (m.folder === 'trash' ? '🗑 Delete forever' : '🗑 Delete') + '</button>' +
+                    (isDraft ? btn('edit', 'edit', 'Edit draft') : m.folder === 'trash' ? btn('restore', 'restore', 'Restore') : btn('reply', 'reply', 'Reply') + btn('forward', 'forward', 'Forward')) +
+                    (isDraft ? '' : btn('star', 'star', m.starred ? 'Starred' : 'Star', m.starred ? 'yz-on' : '').replace('<svg class="yz-ico"', m.starred ? '<svg class="yz-ico yz-fill"' : '<svg class="yz-ico"')) +
+                    btn('eml', 'download', '.eml') +
+                    btn('delete', 'trash', m.folder === 'trash' ? 'Delete forever' : 'Delete', 'yz-danger') +
                 '</div></div>' +
-            '<div class="yz-read-meta"><span class="yz-avatar" style="background:' + avatarColor(who) + '">' + esc(initials(who)) + '</span>' +
-                '<div><b>' + esc(nameOf(who) || '(no recipient)') + '</b><span class="yz-read-addr">' + esc(who) + '</span></div>' +
-                '<span class="yz-read-date">' + new Date(m.date).toLocaleString() + '</span></div>' +
-            (m.remote ? '<div class="yz-read-body yz-plain">' + plainHtml(m.body) + '</div>' : '<div class="yz-read-body keydown-doc">' + kdHtml(m.body) + '</div>');
+            '<div class="yz-thread">' + thread.map(card).join('') + '</div>';
         const on = (a, fn) => { const b = el.querySelector('[data-act="' + a + '"]'); if (b) b.addEventListener('click', fn); };
         on('reply', () => reply(m.id)); on('forward', () => forward(m.id)); on('star', () => toggleStar(m.id)); on('eml', () => exportEML(m.id));
         on('delete', () => deleteEmail(m.id)); on('restore', () => restoreEmail(m.id)); on('edit', () => editDraft(m.id));
+        // clicking another message of the conversation makes it the one Reply, Star and Delete work on
+        el.querySelectorAll('.yz-msg:not(.on)').forEach((c) => c.addEventListener('click', () => openEmail(c.dataset.msg)));
+        const here = el.querySelector('.yz-msg.on');
+        if (here && thread.length > 1 && here !== el.querySelector('.yz-msg')) { try { here.scrollIntoView({ block: 'nearest' }); } catch (e) {} }
     }
     function renderComposeInto(el) {
         const c = state.compose || { to: '', subject: '', body: '' };
         const a = state.account;
         el.innerHTML =
             '<div class="yz-compose">' +
-                '<div class="yz-compose-top"><h2>New message</h2><button type="button" class="yz-btn" id="yz-compose-close" aria-label="Close">✕</button></div>' +
+                '<div class="yz-compose-top"><h2>New message</h2><button type="button" class="yz-btn" id="yz-compose-close" aria-label="Close">' + ico('close') + '</button></div>' +
                 '<div class="yz-from">From <b>' + (a ? esc(a.email) : 'not signed in') + '</b>' + (a ? '' : ' <button type="button" class="yz-link" data-open-accounts>Sign in to send</button>') + '</div>' +
                 '<label class="yz-field"><span>To <small>(separate several addresses with commas)</small></span><input id="yz-compose-to" type="text" placeholder="name@example.com" value="' + esc(c.to) + '"></label>' +
                 '<label class="yz-field"><span>Subject</span><input id="yz-compose-subject" type="text" placeholder="Subject" value="' + esc(c.subject) + '"></label>' +
@@ -447,7 +514,13 @@
         $('yz-compose-body').addEventListener('input', () => { $('yz-compose-preview').innerHTML = kdHtml($('yz-compose-body').value); });
     }
 
+    // the buttons written in index.html get their SVG icons here
+    function fixStatic() {
+        const set = (id, icon, label) => { const b = $(id); if (b) b.innerHTML = ico(icon) + '<span>' + label + '</span>'; };
+        set('yz-compose-btn', 'compose', 'Compose'); set('yz-sync-btn', 'sync', 'Sync mail'); set('yz-export-btn', 'download', 'Export .YZ'); set('yz-import-btn', 'upload', 'Import .YZ');
+    }
     function wire() {
+        fixStatic();
         document.addEventListener('click', (e) => {
             if (e.target.closest('#yz-modal')) return;
             const so = e.target.closest('[data-signin]'); if (so) { connect(so.dataset.signin); return; }
@@ -461,6 +534,7 @@
             const row = e.target.closest('.yz-row');
             if (row) { state.view = 'list'; openEmail(row.dataset.id); return; }
         });
+        document.addEventListener('keydown', (e) => { const st = e.target.closest && e.target.closest('[data-star]'); if (st && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); toggleStar(st.dataset.star); } });
         const search = $('yz-search');
         if (search) search.addEventListener('input', () => setQuery(search.value));
         const composeBtn = $('yz-compose-btn');
@@ -490,7 +564,7 @@
         emails, byId, inFolder, unreadCount, visibleEmails,
         setFolder, setQuery, openEmail, toggleStar, deleteEmail, restoreEmail, emptyTrash, sync,
         openCompose, closeCompose, saveDraft, send, reply, forward, editDraft,
-        connect, disconnect, openAccounts, openSetup, openYuzu, myEmail,
+        connect, disconnect, openAccounts, openSetup, openYuzu, myEmail, ico, PATHS, threadOf,
         exportYZ, importYZ, exportEML, toast, plain, kdHtml, dateStr, nameOf,
     };
 })();
