@@ -29,62 +29,6 @@ export const COLLECTIONS = [
         { name: 'Chlorine Glow', mat: M({ color: '#0891b2', roughness: 0.1, clearcoat: 1, emissive: '#22d3ee', emissiveIntensity: 1.3 }), world: W({ bg: '#082f49', bg2: '#0e7490', envStrength: 0.8, ambient: 0.2 }), light: '#67e8f9', fx: FX({ bloom: true, bloomStrength: 0.9, bloomThreshold: 0.6, saturation: 1.2, vignette: 0.3 }) },
         { name: 'Lifeguard', mat: M({ color: '#f97316', roughness: 0.6 }), world: W({ bg: '#7dd3fc', bg2: '#f0f9ff', ambient: 0.45 }), light: '#ffffff', fx: FX({ saturation: 1.1, contrast: 1.08 }) },
         { name: 'Deep End', mat: M({ color: '#0369a1', roughness: 0.05, clearcoat: 1, transmission: 0.35, thickness: 1.5 }), world: W({ bg: '#0c4a6e', bg2: '#0284c7', ambient: 0.25, fog: true, fogColor: '#075985', fogDensity: 0.04 }), light: '#7dd3fc', fx: FX({ saturation: 1.1, tint: '#0ea5e9', tintAmount: 0.12, vignette: 0.3 }) }
-    ] },
-    { id: 'metal', name: 'Chrome & Metal', presets: [
-        { name: 'Mirror Chrome', mat: M({ color: '#f1f5f9', metalness: 1, roughness: 0.03 }), world: W({ bg: '#1e293b', bg2: '#94a3b8', envStrength: 1.4, ambient: 0.2 }), light: '#ffffff', fx: FX({ bloom: true, bloomStrength: 0.3, bloomThreshold: 0.9, contrast: 1.1 }) },
-        { name: 'Brushed Steel', mat: M({ color: '#cbd5e1', metalness: 1, roughness: 0.35 }), world: W({ bg: '#334155', bg2: '#64748b', ambient: 0.25 }), light: '#e2e8f0', fx: FX({ contrast: 1.05, saturation: 0.9 }) },
-        { name: 'Gold', mat: M({ color: '#ffcf5a', metalness: 1, roughness: 0.18 }), world: W({ bg: '#1c1917', bg2: '#57534e', envStrength: 1.3, ambient: 0.2 }), light: '#fff1d6', fx: FX({ bloom: true, bloomStrength: 0.35, bloomThreshold: 0.85, saturation: 1.1, vignette: 0.25 }) },
-        { name: 'Copper', mat: M({ color: '#e8885a', metalness: 1, roughness: 0.25 }), world: W({ bg: '#292524', bg2: '#78716c', ambient: 0.2 }), light: '#ffe4d1', fx: FX({ saturation: 1.1, tint: '#f97316', tintAmount: 0.05 }) },
-        { name: 'Gunmetal', mat: M({ color: '#4b5563', metalness: 1, roughness: 0.3, clearcoat: 0.6 }), world: W({ bg: '#0f172a', bg2: '#1f2937', ambient: 0.2 }), light: '#cbd5e1', fx: FX({ contrast: 1.15, saturation: 0.85, vignette: 0.35 }) }
-    ] },
-    { id: 'neon', name: 'Neon Night', presets: [
-        { name: 'Pink Neon', mat: M({ color: '#2a0a1f', roughness: 0.3, emissive: '#ff2d95', emissiveIntensity: 1.6 }), world: W({ bg: '#07020d', bg2: '#1e0b2e', env: false, ambient: 0.05 }), light: '#ff5fb0', fx: FX({ bloom: true, bloomStrength: 1.6, bloomThreshold: 0.3, saturation: 1.25, vignette: 0.45 }) },
-        { name: 'Cyan Neon', mat: M({ color: '#031c24', roughness: 0.3, emissive: '#00e5ff', emissiveIntensity: 1.6 }), world: W({ bg: '#02060d', bg2: '#082032', env: false, ambient: 0.05 }), light: '#5ff6ff', fx: FX({ bloom: true, bloomStrength: 1.6, bloomThreshold: 0.3, saturation: 1.25, vignette: 0.45 }) },
-        { name: 'Purple Haze', mat: M({ color: '#3b0764', roughness: 0.2, clearcoat: 1, emissive: '#a855f7', emissiveIntensity: 1.2 }), world: W({ bg: '#12001f', bg2: '#4c1d95', env: false, ambient: 0.1, fog: true, fogColor: '#2e1065', fogDensity: 0.05 }), light: '#c084fc', fx: FX({ bloom: true, bloomStrength: 1.2, bloomThreshold: 0.45, saturation: 1.2, vignette: 0.4 }) },
-        { name: 'Laser Lime', mat: M({ color: '#0b1400', roughness: 0.25, emissive: '#c5ff11', emissiveIntensity: 1.5 }), world: W({ bg: '#030502', bg2: '#11200a', env: false, ambient: 0.05 }), light: '#d9ff6b', fx: FX({ bloom: true, bloomStrength: 1.5, bloomThreshold: 0.35, saturation: 1.2, vignette: 0.45 }) },
-        { name: 'Arcade', mat: M({ color: '#1e1b4b', roughness: 0.15, clearcoat: 1, iridescence: 1 }), world: W({ bg: '#0b0820', bg2: '#312e81', envStrength: 0.9, ambient: 0.1 }), light: '#f472b6', fx: FX({ bloom: true, bloomStrength: 0.9, bloomThreshold: 0.5, saturation: 1.3, contrast: 1.1, vignette: 0.35 }) }
-    ] },
-    { id: 'glass', name: 'Glass & Crystal', presets: [
-        { name: 'Clear Glass', mat: M({ color: '#ffffff', roughness: 0, transmission: 1, thickness: 1, ior: 1.5, clearcoat: 1 }), world: W({ bg: '#e2e8f0', bg2: '#ffffff', envStrength: 1.4, ambient: 0.4 }), light: '#ffffff', fx: FX({ exposure: 1.1 }) },
-        { name: 'Frosted Glass', mat: M({ color: '#f1f5f9', roughness: 0.45, transmission: 1, thickness: 1.2 }), world: W({ bg: '#cbd5e1', bg2: '#f8fafc', ambient: 0.4 }), light: '#ffffff', fx: FX({ exposure: 1.05, saturation: 0.95 }) },
-        { name: 'Ruby', mat: M({ color: '#e11d48', roughness: 0.02, transmission: 0.9, thickness: 1.5, ior: 1.77, clearcoat: 1 }), world: W({ bg: '#1c0a10', bg2: '#4c0519', envStrength: 1.3, ambient: 0.15 }), light: '#ffe4e6', fx: FX({ bloom: true, bloomStrength: 0.5, bloomThreshold: 0.75, saturation: 1.2, vignette: 0.3 }) },
-        { name: 'Sapphire', mat: M({ color: '#2563eb', roughness: 0.02, transmission: 0.9, thickness: 1.5, ior: 1.77, clearcoat: 1 }), world: W({ bg: '#0a1128', bg2: '#1e3a8a', envStrength: 1.3, ambient: 0.15 }), light: '#dbeafe', fx: FX({ bloom: true, bloomStrength: 0.5, bloomThreshold: 0.75, saturation: 1.2, vignette: 0.3 }) },
-        { name: 'Emerald', mat: M({ color: '#10b981', roughness: 0.02, transmission: 0.9, thickness: 1.5, ior: 1.58, clearcoat: 1 }), world: W({ bg: '#03140d', bg2: '#065f46', envStrength: 1.3, ambient: 0.15 }), light: '#d1fae5', fx: FX({ bloom: true, bloomStrength: 0.5, bloomThreshold: 0.75, saturation: 1.2, vignette: 0.3 }) }
-    ] },
-    { id: 'pastel', name: 'Pastel Toy', presets: [
-        { name: 'Bubblegum', mat: M({ color: '#f9a8d4', roughness: 0.35, clearcoat: 0.6 }), world: W({ bg: '#fce7f3', bg2: '#fff7fb', ambient: 0.55 }), light: '#fff1f7', fx: FX({ exposure: 1.1, saturation: 1.05 }) },
-        { name: 'Mint', mat: M({ color: '#99f6e4', roughness: 0.35, clearcoat: 0.6 }), world: W({ bg: '#ccfbf1', bg2: '#f0fdfa', ambient: 0.55 }), light: '#f0fdfa', fx: FX({ exposure: 1.1 }) },
-        { name: 'Lavender', mat: M({ color: '#c4b5fd', roughness: 0.35, clearcoat: 0.6 }), world: W({ bg: '#ede9fe', bg2: '#faf5ff', ambient: 0.55 }), light: '#f5f3ff', fx: FX({ exposure: 1.1 }) },
-        { name: 'Peach', mat: M({ color: '#fdba74', roughness: 0.4, sheen: 1 }), world: W({ bg: '#ffedd5', bg2: '#fff7ed', ambient: 0.55 }), light: '#fff7ed', fx: FX({ exposure: 1.1 }) },
-        { name: 'Butter', mat: M({ color: '#fde68a', roughness: 0.4, clearcoat: 0.4 }), world: W({ bg: '#fef9c3', bg2: '#fffbeb', ambient: 0.55 }), light: '#fffbeb', fx: FX({ exposure: 1.1 }) }
-    ] },
-    { id: 'nature', name: 'Nature', presets: [
-        { name: 'Moss', mat: M({ color: '#4d7c0f', roughness: 0.95, sheen: 1 }), world: W({ bg: '#bef264', bg2: '#ecfccb', ambient: 0.35, fog: true, fogColor: '#d9f99d', fogDensity: 0.02 }), light: '#fefce8', fx: FX({ saturation: 1.05, tint: '#65a30d', tintAmount: 0.05 }) },
-        { name: 'Stone', mat: M({ color: '#a8a29e', roughness: 0.9 }), world: W({ bg: '#d6d3d1', bg2: '#f5f5f4', ambient: 0.4 }), light: '#fafaf9', fx: FX({ saturation: 0.85, contrast: 1.05 }) },
-        { name: 'Sand Dune', mat: M({ color: '#e7c38a', roughness: 0.95 }), world: W({ bg: '#fbbf24', bg2: '#fef3c7', ambient: 0.4, fog: true, fogColor: '#fde68a', fogDensity: 0.03 }), light: '#fff3d6', fx: FX({ exposure: 1.1, tint: '#f59e0b', tintAmount: 0.08 }) },
-        { name: 'Ocean', mat: M({ color: '#0e7490', roughness: 0.05, clearcoat: 1, transmission: 0.3, thickness: 2 }), world: W({ bg: '#0284c7', bg2: '#bae6fd', ambient: 0.35 }), light: '#e0f2fe', fx: FX({ saturation: 1.1 }) },
-        { name: 'Autumn Leaf', mat: M({ color: '#c2410c', roughness: 0.7, sheen: 0.6 }), world: W({ bg: '#fdba74', bg2: '#fff7ed', ambient: 0.35 }), light: '#ffedd5', fx: FX({ saturation: 1.15, tint: '#ea580c', tintAmount: 0.08, vignette: 0.2 }) }
-    ] },
-    { id: 'studio', name: 'Studio Product', presets: [
-        { name: 'White Studio', mat: M({ color: '#f8fafc', roughness: 0.35, clearcoat: 0.5 }), world: W({ bg: '#ffffff', bg2: '#e2e8f0', envStrength: 1.2, ambient: 0.5 }), light: '#ffffff', fx: FX({ exposure: 1.15, contrast: 1.05 }) },
-        { name: 'Black Studio', mat: M({ color: '#111827', roughness: 0.2, clearcoat: 1 }), world: W({ bg: '#0b0b0d', bg2: '#27272a', envStrength: 1.1, ambient: 0.1 }), light: '#ffffff', fx: FX({ contrast: 1.15, vignette: 0.4 }) },
-        { name: 'Clay Render', mat: M({ color: '#d6c7b8', roughness: 1 }), world: W({ bg: '#e7e5e4', bg2: '#fafaf9', env: false, ambient: 0.6 }), light: '#ffffff', fx: FX({ saturation: 0.8 }) },
-        { name: 'Matte Plastic', mat: M({ color: '#ef4444', roughness: 0.7 }), world: W({ bg: '#f1f5f9', bg2: '#ffffff', ambient: 0.45 }), light: '#ffffff', fx: FX({ exposure: 1.05 }) },
-        { name: 'Glossy Plastic', mat: M({ color: '#3b82f6', roughness: 0.12, clearcoat: 1 }), world: W({ bg: '#e0f2fe', bg2: '#ffffff', envStrength: 1.3, ambient: 0.4 }), light: '#ffffff', fx: FX({ bloom: true, bloomStrength: 0.25, bloomThreshold: 0.9, exposure: 1.05, saturation: 1.1 }) }
-    ] },
-    { id: 'vapor', name: 'Vaporwave', presets: [
-        { name: 'Vapor Sunset', mat: M({ color: '#f472b6', roughness: 0.2, clearcoat: 1, iridescence: 0.6 }), world: W({ bg: '#3b0764', bg2: '#fb7185', ambient: 0.3 }), light: '#fbcfe8', fx: FX({ bloom: true, bloomStrength: 0.7, bloomThreshold: 0.6, saturation: 1.25, tint: '#c026d3', tintAmount: 0.1, vignette: 0.3 }) },
-        { name: 'Marble Bust', mat: M({ color: '#f5f5f4', roughness: 0.25, clearcoat: 0.8, transmission: 0.12, thickness: 1 }), world: W({ bg: '#67e8f9', bg2: '#f0abfc', ambient: 0.4 }), light: '#fdf4ff', fx: FX({ saturation: 1.15, exposure: 1.05 }) },
-        { name: 'Grid Glow', mat: M({ color: '#1e1b4b', roughness: 0.3, emissive: '#e879f9', emissiveIntensity: 1.6 }), world: W({ bg: '#0f0326', bg2: '#581c87', env: false, ambient: 0.1 }), light: '#22d3ee', fx: FX({ bloom: true, bloomStrength: 1.3, bloomThreshold: 0.4, saturation: 1.3, vignette: 0.4 }) },
-        { name: 'Teal & Pink', mat: M({ color: '#2dd4bf', roughness: 0.2, clearcoat: 1 }), world: W({ bg: '#f9a8d4', bg2: '#99f6e4', ambient: 0.4 }), light: '#fdf2f8', fx: FX({ saturation: 1.2 }) },
-        { name: 'CRT Green', mat: M({ color: '#022c22', roughness: 0.4, emissive: '#4ade80', emissiveIntensity: 1.4 }), world: W({ bg: '#020a05', bg2: '#052e16', env: false, ambient: 0.08 }), light: '#86efac', fx: FX({ bloom: true, bloomStrength: 1.1, bloomThreshold: 0.45, saturation: 0.9, tint: '#22c55e', tintAmount: 0.2, vignette: 0.55, contrast: 1.15 }) }
-    ] },
-    { id: 'space', name: 'Cosmic', presets: [
-        { name: 'Nebula', mat: M({ color: '#7c3aed', roughness: 0.25, clearcoat: 1, iridescence: 1, emissive: '#db2777', emissiveIntensity: 0.6 }), world: W({ bg: '#020014', bg2: '#3b0764', envStrength: 0.7, ambient: 0.08 }), light: '#c4b5fd', fx: FX({ bloom: true, bloomStrength: 1, bloomThreshold: 0.5, saturation: 1.3, vignette: 0.5 }) },
-        { name: 'Moon Rock', mat: M({ color: '#9ca3af', roughness: 1 }), world: W({ bg: '#000000', bg2: '#111827', env: false, ambient: 0.05 }), light: '#ffffff', fx: FX({ contrast: 1.25, saturation: 0.6, vignette: 0.4 }) },
-        { name: 'Sun Plasma', mat: M({ color: '#7c2d12', roughness: 0.6, emissive: '#fb923c', emissiveIntensity: 1.8 }), world: W({ bg: '#0c0400', bg2: '#431407', env: false, ambient: 0.05 }), light: '#fdba74', fx: FX({ bloom: true, bloomStrength: 1.8, bloomThreshold: 0.25, saturation: 1.2, vignette: 0.45 }) },
-        { name: 'Ice Planet', mat: M({ color: '#cffafe', roughness: 0.1, clearcoat: 1, transmission: 0.6, thickness: 2, ior: 1.31 }), world: W({ bg: '#020617', bg2: '#0c4a6e', envStrength: 1.2, ambient: 0.1 }), light: '#e0f2fe', fx: FX({ bloom: true, bloomStrength: 0.6, bloomThreshold: 0.7, saturation: 1.1, vignette: 0.4 }) },
-        { name: 'Black Hole', mat: M({ color: '#000000', metalness: 1, roughness: 0.02, iridescence: 1 }), world: W({ bg: '#000000', bg2: '#1e1b4b', envStrength: 1.5, ambient: 0 }), light: '#a78bfa', fx: FX({ bloom: true, bloomStrength: 0.9, bloomThreshold: 0.5, contrast: 1.2, vignette: 0.6 }) }
     ] }
 ];
 export const FX_DEFAULTS = FX({});
@@ -118,19 +62,6 @@ float noise3(vec3 p) {
 \tf = f * f * (3.0 - 2.0 * f);
 \treturn mix(mix(mix(hash3(i), hash3(i + vec3(1.0, 0.0, 0.0)), f.x), mix(hash3(i + vec3(0.0, 1.0, 0.0)), hash3(i + vec3(1.0, 1.0, 0.0)), f.x), f.y),
 \t\tmix(mix(hash3(i + vec3(0.0, 0.0, 1.0)), hash3(i + vec3(1.0, 0.0, 1.0)), f.x), mix(hash3(i + vec3(0.0, 1.0, 1.0)), hash3(i + vec3(1.0, 1.0, 1.0)), f.x), f.y), f.z);
-}
-`;
-const neon = (rgb) => `shader_type spatial;
-render_mode unshaded;
-
-uniform vec4 neon : source_color = vec4(${rgb}, 1.0);
-uniform float brightness : hint_range(0.5, 3.0) = 1.6;
-uniform float flicker : hint_range(0.0, 1.0) = 0.15;
-
-void fragment() {
-\tfloat core = pow(clamp(dot(NORMAL, VIEW), 0.0, 1.0), 2.0);
-\tfloat on = 1.0 - flicker * step(0.97, fract(sin(floor(TIME * 12.0) * 91.7) * 43758.5));
-\tALBEDO = mix(neon.rgb, vec3(1.0), core * 0.85) * on * brightness;
 }
 `;
 const SHADERS = {
@@ -262,74 +193,305 @@ void fragment() {
 \tROUGHNESS = 0.3;
 }
 `,
-    'Pink Neon': neon('1.0, 0.18, 0.58'),
-    'Cyan Neon': neon('0.0, 0.9, 1.0'),
-    'Laser Lime': neon('0.77, 1.0, 0.07'),
-    'Vapor Sunset': `shader_type spatial;
-render_mode unshaded, cull_disabled;
-
-uniform vec4 top_color : source_color = vec4(1.0, 0.85, 0.3, 1.0);
-uniform vec4 bottom_color : source_color = vec4(0.93, 0.25, 0.6, 1.0);
-uniform float cuts : hint_range(2.0, 20.0) = 9.0;
-
-${PROP}
-void fragment() {
-\tfloat y = clamp(p3.y * 0.5 + 0.5, 0.0, 1.0);
-\tfloat stripe = step(0.5 + (1.0 - y) * 0.45, fract(y * cuts - TIME * 0.2));
-\tif (y < 0.55 && stripe > 0.5) {
-\t\tdiscard;
-\t}
-\tALBEDO = mix(bottom_color.rgb, top_color.rgb, y);
-}
-`,
-    'Grid Glow': `shader_type spatial;
-
-uniform vec4 line_color : source_color = vec4(0.91, 0.47, 0.98, 1.0);
-uniform vec4 fill : source_color = vec4(0.12, 0.03, 0.25, 1.0);
-uniform float cells : hint_range(2.0, 40.0) = 12.0;
-uniform float speed : hint_range(0.0, 2.0) = 0.3;
-
-void fragment() {
-\tvec2 g = abs(fract(UV * cells + vec2(0.0, TIME * speed)) - 0.5);
-\tfloat l = 1.0 - smoothstep(0.0, 0.06, 0.5 - max(g.x, g.y));
-\tALBEDO = fill.rgb;
-\tEMISSION = line_color.rgb * l * 2.0;
-\tROUGHNESS = 0.3;
-}
-`,
-    'Nebula': `shader_type spatial;
-
-uniform vec4 color_one : source_color = vec4(0.49, 0.23, 0.93, 1.0);
-uniform vec4 color_two : source_color = vec4(0.86, 0.15, 0.47, 1.0);
-uniform float speed : hint_range(0.0, 1.0) = 0.08;
-
-${PROP}
-${NOISE3}
-void fragment() {
-\tvec3 q = p3 * 2.0 + vec3(TIME * speed);
-\tfloat n = noise3(q) * 0.5 + noise3(q * 2.1) * 0.3 + noise3(q * 4.3) * 0.2;
-\tfloat stars = step(0.985, hash3(floor(p3 * 60.0)));
-\tALBEDO = vec3(0.02);
-\tEMISSION = mix(color_one.rgb, color_two.rgb, n) * smoothstep(0.35, 0.8, n) * 2.0 + vec3(stars) * 1.5;
-\tROUGHNESS = 0.4;
-}
-`,
-    'Sun Plasma': `shader_type spatial;
-
-uniform vec4 hot : source_color = vec4(1.0, 0.9, 0.4, 1.0);
-uniform vec4 deep : source_color = vec4(0.9, 0.2, 0.0, 1.0);
-uniform float speed : hint_range(0.0, 2.0) = 0.25;
-
-${PROP}
-${NOISE3}
-void fragment() {
-\tvec3 q = p3 * 3.0 + vec3(0.0, TIME * speed, TIME * speed * 0.6);
-\tfloat n = noise3(q) * 0.55 + noise3(q * 2.3) * 0.3 + noise3(q * 5.1) * 0.15;
-\tALBEDO = deep.rgb * 0.3;
-\tEMISSION = mix(deep.rgb, hot.rgb, n) * (1.2 + n);
-\tROUGHNESS = 0.9;
-}
-`
 };
 // attach each shader to its look
 COLLECTIONS.forEach((c) => c.presets.forEach((p) => { if (SHADERS[p.name]) p.shader = SHADERS[p.name]; }));
+
+/* ---------- 17 more styles each for Frutiger Aero and Poolside ----------
+   Most are Godot shaders made from the templates below (each template is an ordinary .gdshader with its own
+   uniforms, so every style still gets sliders and color pickers, and downloads as a file Godot can use).
+   Poolside keeps to cyan / blue and orange. */
+const rgb = (hex) => { const n = parseInt(hex.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255].map((v) => (v / 255).toFixed(3)).join(', '); };
+const col = (name, hex) => 'uniform vec4 ' + name + ' : source_color = vec4(' + rgb(hex) + ', 1.0);';
+const T = {
+    // light ripples dancing over a surface (optionally on tiles)
+    caustic: (water, deep, tiles, scale) => `shader_type spatial;
+
+${col('water', water)}
+${col('deep', deep)}
+uniform float tiles : hint_range(0.0, 40.0) = ${tiles.toFixed(1)};
+uniform float scale : hint_range(1.0, 12.0) = ${scale.toFixed(1)};
+uniform float speed : hint_range(0.0, 3.0) = 0.8;
+
+${PROP}
+float caustic(vec2 p, float t) {
+\tvec2 q = p;
+\tfloat c = 0.0;
+\tfor (int i = 0; i < 4; i++) {
+\t\tq += vec2(sin(q.y * 1.7 + t * (1.0 + float(i) * 0.3)), cos(q.x * 1.3 - t * (0.8 + float(i) * 0.2))) * 0.6;
+\t\tc += 1.0 / (1.0 + 18.0 * abs(sin(q.x + q.y)));
+\t}
+\treturn c / 4.0;
+}
+
+void fragment() {
+\tfloat c = caustic((p3.xz + p3.y * 0.5) * scale, TIME * speed);
+\tvec3 base = mix(deep.rgb, water.rgb, 0.5 + 0.5 * c);
+\tif (tiles > 0.5) {
+\t\tvec2 g = abs(fract(UV * tiles) - 0.5);
+\t\tbase = mix(base, vec3(0.93, 0.98, 1.0), smoothstep(0.44, 0.47, max(g.x, g.y)) * 0.7);
+\t}
+\tALBEDO = base;
+\tEMISSION = water.rgb * pow(c, 3.0) * 0.7;
+\tROUGHNESS = 0.1;
+}
+`,
+    // two colors in bands (around the object, or along it), glossy, with an optional rim light
+    stripes: (one, two, count, around, rim, rough) => `shader_type spatial;
+
+${col('color_one', one)}
+${col('color_two', two)}
+${col('rim_color', rim)}
+uniform float stripes : hint_range(1.0, 30.0) = ${count.toFixed(1)};
+uniform float softness : hint_range(0.0, 0.5) = 0.04;
+uniform float rim_strength : hint_range(0.0, 2.0) = 0.6;
+
+${PROP}
+${FRES}
+void fragment() {
+\tfloat t = ${around ? 'atan(p3.z, p3.x) / TAU + 0.5' : 'UV.x'};
+\tfloat s = smoothstep(0.5 - softness, 0.5 + softness, fract(t * stripes));
+\tALBEDO = mix(color_one.rgb, color_two.rgb, s);
+\tEMISSION = rim_color.rgb * fresnel(NORMAL, VIEW, 3.0) * rim_strength;
+\tROUGHNESS = ${rough.toFixed(2)};
+}
+`,
+    // a surface that moves like water
+    waves: (surface, depth, wave) => SHADERS['Deep End'].replace('vec4(0.05, 0.65, 0.91, 1.0)', 'vec4(' + rgb(surface) + ', 1.0)').replace('vec4(0.01, 0.13, 0.33, 1.0)', 'vec4(' + rgb(depth) + ', 1.0)').replace('= 0.05;', '= ' + wave.toFixed(2) + ';'),
+    // glossy gel: a bright highlight across the top, a soft inner glow at the edges (Aero buttons)
+    gel: (color, glow) => `shader_type spatial;
+
+${col('gel', color)}
+${col('glow', glow)}
+uniform float shine : hint_range(0.0, 2.0) = 1.0;
+uniform float edge_glow : hint_range(0.0, 2.0) = 0.8;
+
+${FRES}
+void fragment() {
+\tvec3 n = (INV_VIEW_MATRIX * vec4(NORMAL, 0.0)).xyz;
+\tfloat top = smoothstep(0.35, 0.75, n.y);
+\tALBEDO = mix(gel.rgb, vec3(1.0), top * 0.45 * shine);
+\tEMISSION = glow.rgb * fresnel(NORMAL, VIEW, 2.5) * edge_glow;
+\tROUGHNESS = 0.06;
+\tCLEARCOAT = 1.0;
+}
+`,
+    // a color fade from the top of the object to the bottom
+    gradient: (top, bottom, rough, glow) => `shader_type spatial;
+
+${col('top_color', top)}
+${col('bottom_color', bottom)}
+uniform float height : hint_range(0.5, 6.0) = 2.0;
+uniform float glow : hint_range(0.0, 2.0) = ${glow.toFixed(2)};
+
+${PROP}
+void fragment() {
+\tfloat y = clamp(p3.y / height + 0.5, 0.0, 1.0);
+\tvec3 c = mix(bottom_color.rgb, top_color.rgb, smoothstep(0.0, 1.0, y));
+\tALBEDO = c;
+\tEMISSION = c * glow;
+\tROUGHNESS = ${rough.toFixed(2)};
+}
+`,
+    // pie segments around the object (a beach ball)
+    segments: (a, b, c, n) => `shader_type spatial;
+
+${col('color_one', a)}
+${col('color_two', b)}
+${col('color_three', c)}
+uniform float segments : hint_range(3.0, 12.0) = ${n.toFixed(1)};
+
+${PROP}
+void fragment() {
+\tfloat k = floor((atan(p3.z, p3.x) / TAU + 0.5) * segments);
+\tfloat m = mod(k, 3.0);
+\tvec3 c = m < 0.5 ? color_one.rgb : (m < 1.5 ? color_two.rgb : color_three.rgb);
+\tfloat cap = smoothstep(0.82, 0.86, abs(normalize(p3).y));
+\tALBEDO = mix(c, vec3(1.0), cap);
+\tROUGHNESS = 0.25;
+}
+`,
+    // little square tiles in two colors
+    checker: (a, b, cells) => `shader_type spatial;
+
+${col('color_one', a)}
+${col('color_two', b)}
+uniform float cells : hint_range(2.0, 60.0) = ${cells.toFixed(1)};
+
+void fragment() {
+\tvec2 c = floor(UV * cells);
+\tfloat k = mod(c.x + c.y, 2.0);
+\tfloat jitter = fract(sin(dot(c, vec2(12.9898, 78.233))) * 43758.5453) * 0.15;
+\tvec2 g = abs(fract(UV * cells) - 0.5);
+\tfloat line = smoothstep(0.42, 0.47, max(g.x, g.y));
+\tALBEDO = mix(mix(color_one.rgb, color_two.rgb, k) * (0.92 + jitter), vec3(0.9, 0.96, 1.0), line * 0.6);
+\tROUGHNESS = 0.15;
+}
+`,
+    // soft clouds drifting across a sky
+    clouds: (sky, cloud, speed) => `shader_type spatial;
+
+${col('sky', sky)}
+${col('cloud', cloud)}
+uniform float speed : hint_range(0.0, 1.0) = ${speed.toFixed(2)};
+uniform float cover : hint_range(0.0, 1.0) = 0.5;
+
+${PROP}
+${NOISE3}
+void fragment() {
+\tvec3 q = p3 * 1.6 + vec3(TIME * speed, 0.0, TIME * speed * 0.4);
+\tfloat n = noise3(q) * 0.55 + noise3(q * 2.2) * 0.3 + noise3(q * 4.7) * 0.15;
+\tfloat c = smoothstep(1.0 - cover - 0.15, 1.0 - cover + 0.2, n);
+\tALBEDO = mix(sky.rgb, cloud.rgb, c);
+\tEMISSION = mix(sky.rgb * 0.15, cloud.rgb * 0.35, c);
+\tROUGHNESS = 0.6;
+}
+`,
+    // twinkling points of light over a base color
+    sparkle: (base, spark, density) => `shader_type spatial;
+
+${col('base', base)}
+${col('spark', spark)}
+uniform float density : hint_range(10.0, 200.0) = ${density.toFixed(1)};
+uniform float twinkle : hint_range(0.0, 6.0) = 2.0;
+
+${PROP}
+${NOISE3}
+void fragment() {
+\tvec3 cell = floor(p3 * density * 0.1);
+\tfloat h = hash3(cell);
+\tfloat on = step(0.93, h) * (0.5 + 0.5 * sin(TIME * twinkle + h * 40.0));
+\tALBEDO = base.rgb;
+\tEMISSION = spark.rgb * on * 3.0;
+\tROUGHNESS = 0.2;
+\tMETALLIC = 0.3;
+}
+`,
+    // swirls of two colors (a Windows wallpaper)
+    swirl: (a, b, speed) => `shader_type spatial;
+
+${col('color_one', a)}
+${col('color_two', b)}
+uniform float twist : hint_range(0.0, 8.0) = 3.0;
+uniform float speed : hint_range(0.0, 1.0) = ${speed.toFixed(2)};
+
+${PROP}
+void fragment() {
+\tfloat r = length(p3.xz);
+\tfloat a = atan(p3.z, p3.x) + r * twist - TIME * speed;
+\tfloat s = 0.5 + 0.5 * sin(a * 3.0 + p3.y * 2.0);
+\tALBEDO = mix(color_one.rgb, color_two.rgb, s);
+\tEMISSION = mix(color_one.rgb, color_two.rgb, s) * 0.25;
+\tROUGHNESS = 0.1;
+}
+`,
+    // glowing lines like light on a night pool
+    glowlines: (base, line, speed) => `shader_type spatial;
+
+${col('base', base)}
+${col('line_color', line)}
+uniform float speed : hint_range(0.0, 3.0) = ${speed.toFixed(2)};
+uniform float width : hint_range(4.0, 60.0) = 22.0;
+
+${PROP}
+void fragment() {
+\tvec2 q = p3.xz * 3.0 + p3.y;
+\tq += vec2(sin(q.y * 1.3 + TIME * speed), cos(q.x * 1.1 - TIME * speed * 0.8)) * 0.7;
+\tfloat l = 1.0 / (1.0 + width * abs(sin(q.x + q.y)));
+\tALBEDO = base.rgb;
+\tEMISSION = line_color.rgb * l * 2.0;
+\tROUGHNESS = 0.15;
+}
+`,
+    // rays fanning out from the top (sunbeams)
+    rays: (a, b) => `shader_type spatial;
+render_mode unshaded;
+
+${col('light_color', a)}
+${col('sky', b)}
+uniform float rays : hint_range(4.0, 40.0) = 14.0;
+uniform float speed : hint_range(0.0, 1.0) = 0.15;
+
+${PROP}
+void fragment() {
+\tfloat a = atan(p3.x, p3.y - 1.5);
+\tfloat r = 0.5 + 0.5 * sin(a * rays + TIME * speed * 6.0);
+\tfloat up = clamp(p3.y * 0.4 + 0.5, 0.0, 1.0);
+\tALBEDO = mix(sky.rgb, light_color.rgb, r * up) * (0.85 + 0.3 * up);
+}
+`,
+    // a rainbow ring at the edges (a lens flare)
+    rim: (base, strength) => `shader_type spatial;
+
+${col('base', base)}
+uniform float strength : hint_range(0.0, 3.0) = ${strength.toFixed(2)};
+uniform float spread : hint_range(0.5, 6.0) = 2.0;
+
+${FRES}
+void fragment() {
+\tfloat f = fresnel(NORMAL, VIEW, spread);
+\tvec3 rainbow = 0.5 + 0.5 * cos(TAU * (f * 1.5 + vec3(0.0, 0.33, 0.67)));
+\tALBEDO = base.rgb;
+\tEMISSION = rainbow * f * strength;
+\tROUGHNESS = 0.03;
+}
+`,
+    // soft foam ridges along the length (a pool noodle)
+    ridges: (color, count) => `shader_type spatial;
+
+${col('foam', color)}
+uniform float ridges : hint_range(2.0, 24.0) = ${count.toFixed(1)};
+
+${PROP}
+void fragment() {
+\tfloat a = atan(p3.z, p3.x) / TAU + 0.5;
+\tfloat r = 0.5 + 0.5 * cos(a * ridges * TAU);
+\tALBEDO = foam.rgb * (0.78 + 0.22 * r);
+\tROUGHNESS = 0.75 - 0.25 * r;
+}
+`
+};
+// world / light / fx for a style's preview only (the look of the little ball behind it)
+const AW = (bg, bg2) => W({ bg, bg2, envStrength: 1.3, ambient: 0.4 });
+const AF = (o) => FX(Object.assign({ bloom: true, bloomStrength: 0.4, saturation: 1.12, exposure: 1.08 }, o || {}));
+const ADD = {
+    aero: [
+        { name: 'Aqua Button', mat: M({ color: '#1e90ff', roughness: 0.05, clearcoat: 1 }), shader: T.gel('#1e90ff', '#9be7ff'), world: AW('#6cc8ff', '#eef9ff'), light: '#ffffff', fx: AF() },
+        { name: 'Sky Orb', mat: M({ color: '#7cc8ff', roughness: 0.4 }), shader: T.clouds('#3ea6ff', '#ffffff', 0.08), world: AW('#4fb4ff', '#e6f6ff'), light: '#ffffff', fx: AF() },
+        { name: 'Cloud Puff', mat: M({ color: '#ffffff', roughness: 0.8 }), shader: T.clouds('#cfeeff', '#ffffff', 0.04).replace('= 0.5;', '= 0.8;'), world: AW('#8fd3ff', '#ffffff'), light: '#ffffff', fx: AF({ exposure: 1.15 }) },
+        { name: 'Leaf Green', mat: M({ color: '#4ade80', roughness: 0.08, clearcoat: 1 }), shader: T.gel('#22c55e', '#d9ffb0'), world: AW('#86efac', '#f0fff4'), light: '#fbfff0', fx: AF() },
+        { name: 'Grass Field', mat: M({ color: '#65d26e', roughness: 0.6 }), shader: T.stripes('#3fbf4a', '#8be36f', 24, true, '#e8ffd0', 0.55), world: AW('#7dd3fc', '#d9f99d'), light: '#fffbe6', fx: AF({ bloom: false }) },
+        { name: 'Dew Drop', mat: M({ color: '#f0fbff', roughness: 0, clearcoat: 1, transmission: 1, thickness: 1.5, ior: 1.33 }), world: AW('#9fe2ff', '#ffffff'), light: '#ffffff', fx: AF({ exposure: 1.15 }) },
+        { name: 'Glass Panel', mat: M({ color: '#e0f4ff', roughness: 0.3, transmission: 0.95, thickness: 0.6 }), world: AW('#a5dcff', '#f5fbff'), light: '#ffffff', fx: AF({ bloom: false }) },
+        { name: 'Chrome Orb', mat: M({ color: '#dff3ff', metalness: 1, roughness: 0.04 }), world: AW('#5bbcff', '#ffffff'), light: '#ffffff', fx: AF({ bloomStrength: 0.3 }) },
+        { name: 'Sunbeam', mat: M({ color: '#fff7c2', roughness: 0.5 }), shader: T.rays('#fffbe0', '#7cc8ff'), world: AW('#7cc8ff', '#fff8dc'), light: '#fff8e1', fx: AF({ bloomStrength: 0.6 }) },
+        { name: 'Lens Flare', mat: M({ color: '#cdeeff', roughness: 0.03, clearcoat: 1 }), shader: T.rim('#2a9df4', 1.6), world: AW('#1e6fd6', '#bfe8ff'), light: '#ffffff', fx: AF({ bloomStrength: 0.7 }) },
+        { name: 'Ocean Wave', mat: M({ color: '#14b8c4', roughness: 0.05, clearcoat: 1 }), shader: T.waves('#2ad1d9', '#035e8f', 0.07), world: AW('#38bdf8', '#e0faff'), light: '#ffffff', fx: AF() },
+        { name: 'Fish Tank', mat: M({ color: '#2dd4bf', roughness: 0.1 }), shader: T.caustic('#5eead4', '#0f766e', 0, 4), world: AW('#14b8a6', '#ccfbf1'), light: '#f0fffd', fx: AF() },
+        { name: 'Vista Glow', mat: M({ color: '#0e7490', roughness: 0.25, clearcoat: 1 }), shader: SHADERS['Vista Aurora'].replace('vec4(0.3, 0.9, 0.5, 1.0)', 'vec4(0.6, 1.0, 0.35, 1.0)'), world: W({ bg: '#021c2b', bg2: '#0b5f74', envStrength: 0.9, ambient: 0.15 }), light: '#a5f3fc', fx: AF({ bloomStrength: 0.9, bloomThreshold: 0.6, vignette: 0.3 }) },
+        { name: 'Lime Gel', mat: M({ color: '#c5ff11', roughness: 0.06, clearcoat: 1 }), shader: T.gel('#a3e635', '#f4ffc0'), world: AW('#9be15d', '#f7ffe8'), light: '#fbfff0', fx: AF() },
+        { name: 'Wallpaper Swirl', mat: M({ color: '#38bdf8', roughness: 0.1, clearcoat: 1 }), shader: T.swirl('#0ea5e9', '#4ade80', 0.1), world: AW('#0284c7', '#a7f3d0'), light: '#ffffff', fx: AF() },
+        { name: 'Bokeh Lights', mat: M({ color: '#0c4a6e', roughness: 0.2 }), shader: T.sparkle('#0b3d63', '#bdf4ff', 120), world: W({ bg: '#082f49', bg2: '#0e7490', envStrength: 0.9, ambient: 0.15 }), light: '#e0f7ff', fx: AF({ bloomStrength: 0.9, bloomThreshold: 0.5 }) },
+        { name: 'Pearl', mat: M({ color: '#f8fbff', roughness: 0.15, clearcoat: 1, iridescence: 1, sheen: 0.5 }), world: AW('#c7e9ff', '#ffffff'), light: '#ffffff', fx: AF({ bloomStrength: 0.3 }) }
+    ],
+    pool: [
+        { name: 'Splash', mat: M({ color: '#22d3ee', roughness: 0.05, clearcoat: 1 }), shader: T.waves('#5ee7ff', '#0369a1', 0.1), world: AW('#38bdf8', '#e0f8ff'), light: '#fff3e0', fx: AF() },
+        { name: 'Inflatable Ring', mat: M({ color: '#fb923c', roughness: 0.15, clearcoat: 1 }), shader: T.stripes('#f97316', '#22d3ee', 8, true, '#fed7aa', 0.15), world: AW('#0ea5e9', '#bff0ff'), light: '#fff3e0', fx: AF() },
+        { name: 'Beach Ball', mat: M({ color: '#f97316', roughness: 0.25 }), shader: T.segments('#f97316', '#06b6d4', '#2563eb', 6), world: AW('#38bdf8', '#fde3c8'), light: '#fff3e0', fx: AF({ bloom: false }) },
+        { name: 'Diving Board', mat: M({ color: '#1d4ed8', roughness: 0.65 }), world: AW('#0ea5e9', '#e0f2fe'), light: '#fff7ed', fx: AF({ bloom: false }) },
+        { name: 'Pool Noodle', mat: M({ color: '#fb923c', roughness: 0.6 }), shader: T.ridges('#fb923c', 10), world: AW('#22d3ee', '#ecfeff'), light: '#fff7ed', fx: AF({ bloom: false }) },
+        { name: 'Sun Lounger', mat: M({ color: '#0ea5e9', roughness: 0.5 }), shader: T.stripes('#0284c7', '#fdba74', 6, false, '#bae6fd', 0.45), world: AW('#7dd3fc', '#ffedd5'), light: '#fff3e0', fx: AF({ bloom: false }) },
+        { name: 'Tile Mosaic', mat: M({ color: '#22d3ee', roughness: 0.15 }), shader: T.checker('#06b6d4', '#2563eb', 24), world: AW('#38bdf8', '#e0f8ff'), light: '#ffffff', fx: AF({ bloom: false }) },
+        { name: 'Ripple Floor', mat: M({ color: '#0284c7', roughness: 0.1 }), shader: T.caustic('#67e8f9', '#1e3a8a', 0, 3), world: AW('#0369a1', '#7dd3fc'), light: '#e0f7ff', fx: AF() },
+        { name: 'Orange Soda', mat: M({ color: '#fb923c', roughness: 0.04, clearcoat: 1, transmission: 0.75, thickness: 1.4 }), world: AW('#38bdf8', '#ffedd5'), light: '#fff7ed', fx: AF() },
+        { name: 'Cyan Glass', mat: M({ color: '#67e8f9', roughness: 0.02, clearcoat: 1, transmission: 0.95, thickness: 1.2 }), world: AW('#0ea5e9', '#ecfeff'), light: '#ffffff', fx: AF() },
+        { name: 'Lane Rope', mat: M({ color: '#f97316', roughness: 0.35 }), shader: T.stripes('#f97316', '#1d4ed8', 12, false, '#7dd3fc', 0.35), world: AW('#0ea5e9', '#cff6ff'), light: '#fff3e0', fx: AF({ bloom: false }) },
+        { name: 'Water Slide', mat: M({ color: '#0ea5e9', roughness: 0.04, clearcoat: 1 }), shader: T.gradient('#22d3ee', '#1d4ed8', 0.05, 0.15), world: AW('#38bdf8', '#fde7cf'), light: '#fff7ed', fx: AF() },
+        { name: 'Sunset Water', mat: M({ color: '#38bdf8', roughness: 0.08 }), shader: T.caustic('#fdba74', '#0369a1', 0, 3.5), world: W({ bg: '#0c4a6e', bg2: '#fb923c', envStrength: 1.1, ambient: 0.3 }), light: '#ffd8a8', fx: AF({ tint: '#fb923c', tintAmount: 0.06 }) },
+        { name: 'Wet Concrete', mat: M({ color: '#7aa6c2', roughness: 0.3, clearcoat: 0.8 }), world: AW('#7dd3fc', '#e0f2fe'), light: '#fff7ed', fx: AF({ bloom: false, saturation: 1 }) },
+        { name: 'Sparkle Surface', mat: M({ color: '#0ea5e9', roughness: 0.15 }), shader: T.sparkle('#0284c7', '#fed7aa', 90), world: AW('#0369a1', '#7dd3fc'), light: '#fff3e0', fx: AF({ bloomStrength: 0.7, bloomThreshold: 0.6 }) },
+        { name: 'Popsicle', mat: M({ color: '#fb923c', roughness: 0.12, clearcoat: 1 }), shader: T.gradient('#fb923c', '#06b6d4', 0.12, 0.1), world: AW('#7dd3fc', '#fff1e0'), light: '#fff7ed', fx: AF() },
+        { name: 'Night Swim', mat: M({ color: '#0c1e3a', roughness: 0.2 }), shader: T.glowlines('#071a33', '#22d3ee', 0.7), world: W({ bg: '#020617', bg2: '#0c4a6e', envStrength: 0.7, ambient: 0.1 }), light: '#67e8f9', fx: AF({ bloomStrength: 0.9, bloomThreshold: 0.5, vignette: 0.35 }) }
+    ]
+};
+COLLECTIONS.forEach((c) => { (ADD[c.id] || []).forEach((p) => c.presets.push(p)); });

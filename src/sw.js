@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '6a9b352c1927';
+const VERSION = '984a9fc36c19';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","be6cfb7f37"],
@@ -281,7 +281,7 @@ const CORE = [["/","be6cfb7f37"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
-  ["/opendb/data/index.json","42e7bdbc72"],
+  ["/opendb/data/index.json","8e9bbb6d5b"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],
@@ -419,15 +419,15 @@ const CORE = [["/","be6cfb7f37"],
   ["/writeout/writeout-office.js?v=20261203f","abb725de66"],
   ["/writeout/writeout-plus.js?v=20261202a","0c332f03f0"],
   ["/writeout/writeout-pro.js?v=20261121","caccf13976"],
-  ["/zonerider/","837f72193d"],
-  ["/zonerider/app.js?v=20261103j","b9cafb0e03"],
+  ["/zonerider/","21102a80e0"],
+  ["/zonerider/app.js?v=20261103k","b9cafb0e03"],
   ["/zonerider/apple-touch-icon.png","6f38090166"],
   ["/zonerider/favicon-96.png","025a0de241"],
   ["/zonerider/favicon.svg","08177e1e2b"],
-  ["/zonerider/index.html","837f72193d"],
+  ["/zonerider/index.html","21102a80e0"],
   ["/zonerider/manifest.json","3a0013873b"],
-  ["/zonerider/mobile/","904c772a1b"],
-  ["/zonerider/mobile/index.html","904c772a1b"],
+  ["/zonerider/mobile/","d649a9a0a3"],
+  ["/zonerider/mobile/index.html","d649a9a0a3"],
   ["/zonerider/radii-collab.css?v=20261103a","8b8ee6cb67"],
   ["/zonerider/radii-collab.js?v=20261103a","5d8b424495"],
   ["/zonerider/radii-file.js?v=20261042","3bdadf1b3d"],
