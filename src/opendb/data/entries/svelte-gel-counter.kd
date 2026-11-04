@@ -1,0 +1,58 @@
+---
+format: keydown-text
+id: svelte-gel-counter
+type: lite
+title: Svelte 5 gel counter
+summary: A tiny Svelte 5 app with two components, $state and $props, styled as a Frutiger Aero gel button.
+tags: [svelte, javascript, frutiger aero, example]
+created: 2026-11-04
+updated: 2026-11-04
+authors: [OpenDB contributors]
+license: CC0-1.0
+preview: svelte
+---
+Two **Svelte 5** components: `App.svelte` keeps the count with `$state`, and `GelButton.svelte` takes a `label` and an `onclick` with `$props`. Press **Start** in the preview and it is compiled right in your browser!
+
+~~~ file: App.svelte
+<script>
+    import GelButton from './GelButton.svelte';
+    let count = $state(0);
+    let double = $derived(count * 2);
+</script>
+
+<main>
+    <h1>Gel counter</h1>
+    <p>You pressed it <b>{count}</b> time{count === 1 ? '' : 's'} (double is {double})!</p>
+    <GelButton label="Press me!" onclick={() => count++} />
+    <GelButton label="Reset" green onclick={() => (count = 0)} />
+</main>
+
+<style>
+    main { font-family: "Segoe UI", system-ui, sans-serif; color: #10324d; }
+    h1 { color: #0a5c99; }
+</style>
+~~~
+
+~~~ file: GelButton.svelte
+<script>
+    let { label = 'Button', green = false, onclick } = $props();
+</script>
+
+<button class:green {onclick}>{label}</button>
+
+<style>
+    button {
+        margin-right: 8px;
+        padding: 9px 22px;
+        border: 1px solid rgba(0, 60, 120, 0.45);
+        border-radius: 999px;
+        color: #fff;
+        font: 700 16px system-ui, sans-serif;
+        text-shadow: 0 1px 2px rgba(0, 40, 90, 0.5);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 51%), linear-gradient(180deg, #7fd3ff, #0a74c9);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 3px 8px rgba(10, 116, 201, 0.3);
+        cursor: pointer;
+    }
+    .green { background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 51%), linear-gradient(180deg, #b6f08a, #2e9a1c); }
+</style>
+~~~

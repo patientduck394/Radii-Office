@@ -1,0 +1,53 @@
+---
+format: keydown-text
+id: aero-css-theme
+type: lite
+title: Frutiger Aero CSS theme
+summary: One stylesheet that gives plain HTML a glossy Frutiger Aero look, from headings and buttons to forms and tables.
+tags: [css, frutiger aero, design, theme]
+created: 2026-11-04
+updated: 2026-11-04
+authors: [OpenDB contributors]
+license: CC0-1.0
+preview: css
+---
+Drop `aero.css` into any page and plain HTML turns [[frutiger-aero|Frutiger Aero]]: sky gradients, =B=glossy buttons=B=, soft glass panels and bright links. The **Preview** shows it on a sample page with every common element!
+
+~~~ file: aero.css
+body {
+    background: linear-gradient(180deg, #bfe6ff 0%, #effaff 320px, #ffffff 100%);
+    color: #10324d;
+    font-family: "Segoe UI", system-ui, sans-serif;
+}
+h1, h2, h3 { color: #0a5c99; text-shadow: 0 1px 0 #fff; }
+h1 { border-bottom: 3px solid #7fd3ff; padding-bottom: 4px; }
+a { color: #0284c7; }
+mark { background: linear-gradient(180deg, #fff7c2, #ffe066); border-radius: 4px; padding: 0 3px; }
+code { background: #e0f2fe; border: 1px solid #bae6fd; border-radius: 6px; padding: 1px 5px; }
+
+button {
+    padding: 7px 18px;
+    border: 1px solid rgba(0, 60, 120, 0.45);
+    border-radius: 999px;
+    color: #fff;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 40, 90, 0.5);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 51%), linear-gradient(180deg, #7fd3ff, #0a74c9);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), 0 3px 8px rgba(10, 116, 201, 0.3);
+    cursor: pointer;
+}
+button.gel-green { background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 51%), linear-gradient(180deg, #b6f08a, #2e9a1c); }
+button:disabled { filter: grayscale(1); opacity: 0.6; }
+input, select, textarea {
+    padding: 6px 10px;
+    border: 1px solid #9cc9ea;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #ffffff, #f2f9ff);
+}
+blockquote { margin: 12px 0; padding: 10px 16px; border-left: 5px solid #38bdf8; border-radius: 10px; background: rgba(255, 255, 255, 0.7); }
+table { border-collapse: separate; border-spacing: 0; border: 1px solid #9cc9ea; border-radius: 12px; overflow: hidden; }
+th { background: linear-gradient(180deg, #7fd3ff, #2b8fdc); color: #fff; }
+th, td { padding: 6px 14px; }
+tr:nth-child(even) td { background: #eef8ff; }
+.card { margin-top: 14px; padding: 4px 16px 10px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.9); background: rgba(255, 255, 255, 0.6); box-shadow: 0 8px 24px rgba(0, 60, 120, 0.15); }
+~~~

@@ -1,0 +1,46 @@
+---
+format: keydown-text
+id: python-pool-calculator
+type: lite
+title: Python pool calculator
+summary: A small Python program in two files that works out how much water a swimming pool holds, with a terminal to try it.
+tags: [python, example, math]
+created: 2026-11-04
+updated: 2026-11-04
+authors: [OpenDB contributors]
+license: CC0-1.0
+preview: python
+---
+`main.py` uses the `pool` module from `pool.py` to work out a pool's volume and how long it takes to fill. Press **Start** in the preview: a real Python terminal runs `main.py`, then you can type more, like `pool.volume(10, 4, 1.5)`!
+
+~~~ file: main.py
+import pool
+
+print("Pool calculator!")
+for name, size in pool.POOLS.items():
+    litres = pool.volume(*size)
+    hours = pool.fill_hours(litres)
+    print(f"{name:>10}: {litres:>9,.0f} litres, about {hours:.1f} hours to fill")
+
+print("Try it yourself: pool.volume(10, 4, 1.5)")
+~~~
+
+~~~ file: pool.py
+"""Swimming pool numbers: sizes are length, width and depth in metres."""
+
+POOLS = {
+    "Backyard": (8, 4, 1.4),
+    "School": (25, 12.5, 1.8),
+    "Olympic": (50, 25, 2.0),
+}
+
+
+def volume(length, width, depth):
+    """How many litres a rectangular pool holds (1 cubic metre is 1000 litres)."""
+    return length * width * depth * 1000
+
+
+def fill_hours(litres, hose_litres_per_minute=20):
+    """How long a garden hose takes to fill it."""
+    return litres / hose_litres_per_minute / 60
+~~~

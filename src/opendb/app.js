@@ -270,6 +270,14 @@
         put(end, [[0, 0x06054b50, 4], [8, files.length, 2], [10, files.length, 2], [12, dirSize, 4], [16, off, 4]]);
         return new Blob(parts.concat(dir, [end.buffer]), { type: 'application/zip' });
     }
+    // the preview panel (opendb/lite-preview.js): the lite's choice (preview: header), or the best one its files allow
+    const PREVIEW_CHOICES = [['auto', 'Automatic (the best one the files allow)'], ['html', 'Web page (.html, with its .css and .js)'], ['css', 'CSS on a sample page'], ['svelte', 'Svelte components (App.svelte)'], ['python', 'Python terminal (main.py)'], ['zonerider', 'Zonerider scene (.zr or .gltf)'], ['none', 'No preview']];
+    function litePreview(box, files, chosen) {
+        if (!box) return;
+        const k = window.LitePreview ? window.LitePreview.auto(files, chosen) : null;
+        if (!k) { box.remove(); return; }
+        window.LitePreview.mount(box, files, k);
+    }
     function wireLiteButtons(root, files) {
         root.querySelectorAll('[data-lite]').forEach((b) => {
             b.onclick = () => {
@@ -694,9 +702,10 @@
             (lite && lite.files.length > 1 ? '<div class="side-box"><h2>Files</h2><ul class="lite-toc">' + lite.files.map((f, i) => '<li><a href="#lite-file-' + i + '" data-scroll>' + esc(f.name) + '</a></li>').join('') + '</ul></div>' : '') +
             '<div class="side-box"><h2>Tags</h2>' + tagLinks(e.tags) + '<p class="hint" style="margin-top:10px">Created ' + esc(e.created) + (e.updated && e.updated !== e.created ? ' · updated ' + esc(e.updated) : '') + (e.authors && e.type !== 'paper' ? '<br>By ' + esc(e.authors.join(', ')) : '') + '</p></div>' +
             (links.length ? '<div class="side-box"><h2>What links here</h2><ul>' + links.map((l) => '<li><a href="#/e/' + l.id + '">' + esc(l.title) + '</a></li>').join('') + '</ul></div>' : '');
-        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(lite ? lite.desc : e.body, e) + '</div>' + (lite ? liteFilesHtml(lite.files) : '') + '</article><aside class="side">' + side + '</aside></div>';
+        view.innerHTML = '<div class="entry"><article class="card entry-main">' + top + head + '<div class="kd-doc">' + renderKd(lite ? lite.desc : e.body, e) + '</div>' + (lite ? '<div id="lite-preview" class="lite-preview"></div>' + liteFilesHtml(lite.files) : '') + '</article><aside class="side">' + side + '</aside></div>';
         if (lite) {
             wireLiteButtons(view, lite.files);
+            litePreview($('lite-preview'), lite.files, e.preview);
             $('lite-zip').onclick = () => downloadUrl(e.id + '.zip', URL.createObjectURL(zipFiles(lite.files)), true);
             $('lite-embed').onclick = () => {
                 const url = location.href.split('#')[0] + '#/embed/' + e.id;
@@ -723,8 +732,8 @@
         const lite = e.type === 'lite' ? liteSplit(e.body) : null;
         const full = location.href.split('#')[0] + '#/e/' + e.id;
         view.innerHTML = '<div class="card lite-embed"><div class="lite-embed-top"><b>' + esc(e.title) + '</b><a href="' + esc(full) + '" target="_blank" rel="noopener">Open in OpenDB ↗</a></div>' +
-            (lite ? liteFilesHtml(lite.files) : '<div class="kd-doc">' + renderKd(e.body, e) + '</div>') + '<p class="hint">Public domain (CC0) on OpenDB!</p></div>';
-        if (lite) wireLiteButtons(view, lite.files);
+            (lite ? '<div id="lite-preview" class="lite-preview"></div>' + liteFilesHtml(lite.files) : '<div class="kd-doc">' + renderKd(e.body, e) + '</div>') + '<p class="hint">Public domain (CC0) on OpenDB!</p></div>';
+        if (lite) { wireLiteButtons(view, lite.files); litePreview($('lite-preview'), lite.files, e.preview); }
     }
     function extOf(e) { const m = /\.([a-z0-9]+)$/i.exec(e.file || ''); return m ? '.' + m[1] : e.ext ? '.' + e.ext : MEDIA_EXT[e.mime] || ''; }
     function clean(e) { const o = Object.assign({}, e); delete o.local; delete o.dataUrl; return o; }
@@ -792,6 +801,7 @@
         h.push('tags: ' + yamlList(e.tags));
         if (e.type === 'paper') h.push('categories: ' + yamlList(e.categories));
         if (e.fork) h.push('fork: ' + e.fork);
+        if (e.preview && e.preview !== 'auto') h.push('preview: ' + e.preview);
         h.push('created: ' + e.created, 'updated: ' + (e.updated || e.created), 'authors: ' + yamlList(e.authors), 'license: CC0-1.0');
         if (e.type === 'media') { h.push('file: media/' + e.id + extOf(e), 'mime: ' + (e.mime || '')); if (e.width) h.push('width: ' + e.width, 'height: ' + e.height); if (e.duration) h.push('duration: ' + Math.round(e.duration * 10) / 10); }
         Object.entries(e.infobox || {}).forEach(([k, v]) => h.push('infobox.' + String(k).replace(/[:\n]/g, ' ').trim() + ': ' + yamlStr(String(v).replace(/\n/g, ' '))));
@@ -833,6 +843,7 @@
             '<label class="field">' + (type === 'paper' ? 'Full text' : type === 'media' || type === 'lite' ? 'Description' : 'Article') + ' <small>(<a href="#" id="kd-guide">Keydown</a>: # Heading, ## Subheading, **bold**, *italic*, * list item, #G#chip#, =B=orb=B=, $math$, $$display math$$, [[other-entry]] links, [text](https://example.com) web links, ![caption](media:file-id), footnotes [^1], <a href="#/templates" target="_blank">templates</a> like {{stub}})</small><textarea id="f-body" class="body">' + esc(d.body) + '</textarea></label>' +
             '<div class="actions"><button type="button" class="gel small plain" id="add-math" title="Build an equation with buttons, no LaTeX needed!">Σ Insert math</button><span class="hl-wrap"><button type="button" class="gel small plain" id="add-hl" aria-haspopup="true" aria-expanded="false" title="Highlights and the Bubble Chip cousins, with a preview of every color!">🖍 Highlight</button></span><button type="button" class="gel small plain" id="add-tpl" title="Stub notices, citation needed, file improvement and more!">⚑ Add a template</button><button type="button" class="gel small plain" id="open-file" title="An OpenDB entry, a Writeout document or a Bitbook note!">📂 Open .kd / .kn</button><input type="file" id="f-open" accept=".kd,.kn,.md,.txt" hidden></div>' +
             '<div id="lite-fields" hidden><p class="field-title">Files <small>(code or any text: give each one a name with its ending, like hello.js, style.css or water.gdshader)</small></p><div id="lite-list" class="lite-edit-list"></div>' +
+            '<label class="field">Preview <small>(what runs on the lite’s page: a web page, CSS, Svelte, a Python terminal or a Zonerider scene)</small><select id="f-preview">' + PREVIEW_CHOICES.map((c) => '<option value="' + c[0] + '"' + ((d.preview || 'auto') === c[0] ? ' selected' : '') + '>' + c[1] + '</option>').join('') + '</select></label>' +
             '<div class="actions"><button type="button" class="gel small plain" id="lite-add">＋ Add a file</button><button type="button" class="gel small plain" id="lite-open">📂 Add files from this device</button><input type="file" id="lite-pick" multiple hidden></div></div>' +
             '<label class="field">Tags <small>(comma separated)</small><input id="f-tags" value="' + esc((d.tags || []).join(', ')) + '"></label>' +
             '<label class="field">Authors <small>(comma separated; any name you like, or leave it empty)</small><input id="f-authors" value="' + esc((d.authors || []).join(', ')) + '"></label>' +
@@ -841,7 +852,7 @@
             '<ul class="problems" id="problems"></ul>' +
             '<div class="actions"><button class="gel green" id="save-local">💾 Save on this device</button><button class="gel" id="publish">🌐 Publish for everyone</button><button class="gel plain" id="dl-file">⬇ Download file</button></div>' +
             '<p class="hint">Saving keeps it on this device and shows it in OpenDB for you right away! Publishing proposes it to the public repository, where a maintainer reviews it before everyone can see it!</p>' +
-            '</div><div class="card preview-card"><p class="muted" style="margin-bottom:8px">Live preview</p><div id="preview"></div></div></div>';
+            '</div><div class="card preview-card"><p class="muted" style="margin-bottom:8px">Live preview</p><div id="preview"></div><div id="lite-live" class="lite-preview"></div></div></div>';
 
         const get = (id) => $(id).value;
         const list = (id) => get(id).split(',').map((s) => s.trim()).filter(Boolean);
@@ -855,7 +866,7 @@
                 created: d.created || today(), updated: today(), license: 'CC0-1.0',
             };
             if (type === 'paper') { e.abstract = get('f-abstract').trim(); e.categories = list('f-categories'); }
-            if (type === 'lite') { e.body = liteJoin(get('f-body'), liteUsed()); if (d.fork) e.fork = d.fork; }
+            if (type === 'lite') { e.body = liteJoin(get('f-body'), liteUsed()); if (d.fork) e.fork = d.fork; if (get('f-preview') !== 'auto') e.preview = get('f-preview'); }
             if (type === 'media' && file) Object.assign(e, { mime: file.mime, width: file.width, height: file.height }, file.duration ? { duration: file.duration } : {}, file.ext ? { ext: file.ext } : {}, file.dataUrl ? { dataUrl: file.dataUrl } : {}, file.file ? { file: file.file } : {});
             return e;
         }
@@ -890,6 +901,7 @@
             const img = type === 'media' && (e.dataUrl || e.file) ? '<figure class="figure">' + mediaTag(e, e.dataUrl || mediaSrc(e), e.title || '') + '</figure>' : '';
             const head = type === 'paper' ? '<p class="authors">' + esc(e.authors.join(', ')) + '</p>' + (e.abstract ? '<div class="abstract"><b>Abstract</b>' + esc(e.abstract) + '</div>' : '') : '<p class="lead">' + esc(e.summary) + '</p>';
             $('preview').innerHTML = '<h1 class="page">' + esc(e.title || 'Untitled') + badge(fake) + '</h1>' + head + img + '<div class="kd-doc">' + renderKd(type === 'lite' ? get('f-body') : e.body, e) + '</div>' + (type === 'lite' ? liteFilesHtml(liteUsed(), true) : '');
+            livePreview();
         }
         function syncType() {
             $('media-fields').hidden = type !== 'media';
@@ -897,6 +909,23 @@
             $('lite-fields').hidden = type !== 'lite';
             if (type === 'lite') drawLite();
             preview();
+        }
+        // the lite's preview, rebuilt a moment after the files (or the Preview choice) stop changing
+        let liveT = 0, liveKey = '';
+        function livePreview() {
+            clearTimeout(liveT);
+            liveT = setTimeout(() => {
+                const box = $('lite-live');
+                if (!box) return;
+                const files = type === 'lite' ? liteUsed().filter((f) => f.name) : [];
+                const choice = $('f-preview') ? get('f-preview') : 'auto';
+                const key = JSON.stringify([files, choice]);
+                if (key === liveKey) return;
+                liveKey = key;
+                const k = window.LitePreview && files.length ? window.LitePreview.auto(files, choice) : null;
+                if (!k) { box.innerHTML = ''; return; }
+                window.LitePreview.mount(box, files, k);
+            }, 700);
         }
         // Lite files: a name and a box of text each, as many as you like
         function liteUsed() { return liteFiles.filter((f) => f.name.trim() || f.code.trim()).map((f) => ({ name: f.name.trim(), code: f.code })); }

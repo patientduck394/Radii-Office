@@ -419,3 +419,23 @@ body.odb-embed .view { padding: 8px; max-width: none; }
 .lite-embed-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; font: 15px var(--sans); }
 .lite-embed .lite-files { margin-top: 10px; }
 @media (max-width: 640px) { .lite-btns { margin-left: 0; width: 100%; } }
+
+/* ---------- Lite previews (opendb/lite-preview.js) ---------- */
+.lite-preview:empty { display: none; }
+.lite-preview { margin-top: 18px; }
+.lp { border: 1px solid #b9d5ec; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: 0 3px 10px rgba(0, 60, 120, 0.08); }
+.lp-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; padding: 6px 10px; background: linear-gradient(180deg, #ffffff 0%, #e6f3fd 100%); border-bottom: 1px solid #cfe2f3; font: 13px var(--sans); }
+.lp-title { color: var(--ink); margin-right: 6px; }
+.lp-tab, .lp-btn { font: 700 12px var(--sans); border: 1px solid transparent; background: none; color: #0369a1; padding: 4px 11px; border-radius: 999px; cursor: pointer; }
+.lp-tab:hover, .lp-btn:hover { background: rgba(255, 255, 255, 0.9); border-color: #bae6fd; }
+.lp-tab.on { color: #fff; background: linear-gradient(180deg, #38bdf8, #0284c7); border-color: #0369a1; }
+.lp-tab:focus-visible, .lp-btn:focus-visible { outline: 2px solid #f97316; outline-offset: 1px; }
+.lp-sp { flex: 1; }
+.lp-stage { position: relative; height: 440px; background: #f8fbff; resize: vertical; overflow: hidden; }
+.lp-stage:fullscreen { height: 100vh; resize: none; }
+.lp-frame { display: block; width: 100%; height: 100%; border: 0; background: #fff; }
+.lp-frame.lp-python { background: #0b1622; }
+.lp-frame.lp-zonerider { background: #2b2f35; }
+.lp-start { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 20px; text-align: center; color: #3b5770; }
+.lp-start p { margin: 0; max-width: 460px; }
+.preview-card .lite-preview .lp-stage { height: 320px; }
