@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '0b0235d15455';
+const VERSION = '5d12c0f3fa40';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","58da38f5af"],
@@ -289,7 +289,7 @@ const CORE = [["/","58da38f5af"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","25c7fd910b"],
+  ["/opendb/data/index.json","bc93e4a97e"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],
@@ -430,20 +430,20 @@ const CORE = [["/","58da38f5af"],
   ["/writeout/writeout-plus.js?v=20261202a","0c332f03f0"],
   ["/writeout/writeout-pro.js?v=20261121","caccf13976"],
   ["/writeout/zonerider-scene.js?v=20261204a","c58a7dc96c"],
-  ["/yuzu/","1863f57d5d"],
+  ["/yuzu/","0bc2f247d6"],
   ["/yuzu/app.js?v=20261204k","32f03ecea6"],
   ["/yuzu/apple-touch-icon.png","f5fc3ad6b3"],
   ["/yuzu/favicon-96.png","4dc6e73704"],
   ["/yuzu/favicon.svg","d950817834"],
-  ["/yuzu/index.html","1863f57d5d"],
+  ["/yuzu/index.html","0bc2f247d6"],
   ["/yuzu/manifest.json","6a73d971b5"],
-  ["/yuzu/mobile/","7ce4a5badf"],
-  ["/yuzu/mobile/index.html","7ce4a5badf"],
+  ["/yuzu/mobile/","f42d84e4ea"],
+  ["/yuzu/mobile/index.html","f42d84e4ea"],
   ["/yuzu/office-shell.css?v=20261132r","3d063a1163"],
   ["/yuzu/office-shell.js?v=20261204i","4bd30c5f19"],
   ["/yuzu/office.js?v=20261204i","ce48ba79dd"],
   ["/yuzu/radii-file.js?v=20261042","3bdadf1b3d"],
-  ["/yuzu/style.css?v=20261204i","a0b754a162"],
+  ["/yuzu/style.css?v=20261204k","ba6d4589ee"],
   ["/yuzu/yuzu-office.css?v=20261204i","05b4485394"],
   ["/zonerider/","9000ac535d"],
   ["/zonerider/app.js?v=20261204a","e545bff093"],
