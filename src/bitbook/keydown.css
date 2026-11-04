@@ -6149,3 +6149,5 @@
 /* An indented line (a | at the start in Keydown text) pushes in only its first line, and long text wraps inside the page */
 [style*="text-indent"]:is(div, p, h1, h2, h3, h4, blockquote, li) { overflow-wrap: anywhere; }
 [style*="margin-left"]:is(div, p, h1, h2, h3, h4, blockquote, li, table) { margin-right: 1.5rem; overflow-wrap: anywhere; }
+/* the first-line indent belongs to the line itself: inline-block things inside it (math, chips, orbs) must not inherit it */
+[style*="text-indent"] * { text-indent: 0; }
