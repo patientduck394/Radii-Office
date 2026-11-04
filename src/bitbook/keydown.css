@@ -5896,6 +5896,63 @@
 .gel-aero-black { --ae-c: #333333; --ae-l: #7d7d7d; --ae-e1: #000000; --ae-e2: #2c2c2c; }
 
 /* ========================================================
+   AERO GLASS CHIPS (++R=text++), AERO ORB CHIPS (++R*text++) and AERO GLOW CHIPS (++R^text++):
+   three cousins of the Aero chip, in the same 16 colors (they use its color classes, .gel-aero-red ...).
+   Glass: a see-through Vista pane tinted with the color, a colored rim, a white top shine, deep-colored text.
+   Orb: the glossy Aero pill with a glass bead on the left, its color glowing inside.
+   Glow: a dark glossy pill, like a Vista taskbar button, with the color glowing up from the bottom.
+   ======================================================== */
+.gel-aeroglass-chip, .gel-aeroorb-chip, .gel-aeroglow-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  position: relative; isolation: isolate;
+  padding: 1px 12px; margin: 0 2px; border-radius: 999px;
+  font-weight: 800; white-space: nowrap; vertical-align: middle;
+}
+.gel-aeroglass-chip {
+  border: 1.5px solid var(--ae-e2);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.35) 48%, transparent 52%),
+              linear-gradient(180deg, color-mix(in srgb, var(--ae-c) 16%, #ffffff) 0%, color-mix(in srgb, var(--ae-c) 34%, #ffffff) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85), inset 0 -3px 6px color-mix(in srgb, var(--ae-c) 30%, transparent), 0 2px 6px color-mix(in srgb, var(--ae-e1) 25%, transparent);
+  color: color-mix(in srgb, var(--ae-e1) 85%, #000000);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+}
+.gel-aeroglass-chip.gel-aero-white { color: #4a4a4a; }
+.gel-aeroglass-chip.gel-aero-black { background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.2) 48%, transparent 52%), linear-gradient(180deg, rgba(60, 60, 60, 0.35), rgba(20, 20, 20, 0.55)); color: #111111; }
+.gel-aeroorb-chip {
+  padding-left: 1.55em;
+  border: 2px solid transparent;
+  background: linear-gradient(180deg, var(--ae-c) 0%, var(--ae-c) 59%, var(--ae-l) 87%, var(--ae-l) 100%) padding-box,
+              linear-gradient(180deg, var(--ae-e1), var(--ae-e2)) border-box;
+  box-shadow: 0 2px 0 rgba(170, 170, 170, 0.55), 0 3px 6px rgba(0, 0, 0, 0.12);
+  color: var(--ae-ink, #ffffff);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.25);
+}
+.gel-aeroorb-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 10%; right: 10%; top: 4%; height: 33%; border-radius: 12% / 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.81) 0%, rgba(255, 255, 255, 0.81) 28%, rgba(255, 255, 255, 0.5) 100%);
+}
+/* the bead: white glass with the color glowing at its heart and a sharp highlight */
+.gel-aeroorb-chip::after {
+  content: ''; position: absolute; pointer-events: none;
+  left: 0.3em; top: 50%; width: 0.95em; height: 0.95em; transform: translateY(-50%); border-radius: 50%;
+  background: radial-gradient(circle at 34% 28%, #ffffff 0 16%, rgba(255, 255, 255, 0) 30%),
+              radial-gradient(circle at 50% 62%, var(--ae-l) 0%, var(--ae-c) 55%, var(--ae-e1) 100%);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+.gel-aeroglow-chip {
+  border: 1.5px solid color-mix(in srgb, var(--ae-e1) 60%, #000000);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.06) 46%, transparent 50%),
+              radial-gradient(120% 90% at 50% 115%, var(--ae-l) 0%, var(--ae-c) 32%, transparent 72%),
+              linear-gradient(180deg, #2c2f36 0%, #101216 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 8px color-mix(in srgb, var(--ae-c) 55%, transparent), 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  text-shadow: 0 0 6px color-mix(in srgb, var(--ae-l) 80%, transparent), 0 1px 1px rgba(0, 0, 0, 0.6);
+}
+.gel-aeroglow-chip.gel-aero-black { background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.06) 46%, transparent 50%), radial-gradient(120% 90% at 50% 115%, #9a9a9a 0%, #555555 32%, transparent 72%), linear-gradient(180deg, #2c2f36 0%, #101216 100%); }
+
+/* ========================================================
    LOGO CHIPS (;;B;text;;): chips made like the Radii Office app icons, in 16 colors (the 13 Annotate colors plus White, Fog and Black)!
    A softly rounded tile, solid color through its top third fading to a bright tint at the bottom,
    under a wide white gloss whose curved lower edge dips across the middle.
