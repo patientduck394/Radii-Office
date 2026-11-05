@@ -3199,3 +3199,70 @@
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
 }
+
+/* ========================================================
+   DIVIDER STYLES: ::divider{wavy} or ::divider{wavy|Section title}
+   aqua (the original strip), poolside, dual, notched, wavy, dotted, dashed, zigzag, glow, ruler, stitched, bubbles, scallop.
+   Every style can carry a title in the middle: the line runs on both sides of it.
+   ======================================================== */
+.kd-div { display: flex; align-items: center; gap: 14px; margin: 20px 0; min-height: 16px; }
+.kd-div-line { display: block; flex: 1 1 auto; width: 100%; min-width: 24px; position: relative; }
+.kd-div-label { flex: none; font-weight: 800; font-size: 0.85em; letter-spacing: 0.06em; text-transform: uppercase; color: #0b6b86; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8); white-space: nowrap; }
+.kd-div-aqua .kd-div-line { height: 6px; background: linear-gradient(90deg, transparent 0%, #06b6d4 20%, #10b981 50%, #06b6d4 80%, transparent 100%); border-radius: 3px; border: 1px solid rgba(255, 255, 255, 0.2); box-shadow: 0 3px 8px rgba(6, 182, 212, 0.25); box-sizing: content-box; }
+/* poolside: a pool lane rope, water on the bar and orange floats along it */
+.kd-div-poolside .kd-div-line { height: 12px; border-radius: 7px; border: 1px solid rgba(255, 255, 255, 0.75); box-sizing: border-box;
+  background: radial-gradient(circle at 50% 50%, #ffc088 0 2.5px, #f97316 3px 5px, transparent 5.5px) 0 50% / 30px 100% repeat-x,
+              linear-gradient(to bottom, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 55%),
+              linear-gradient(90deg, #00cfe8 0%, #0070ff 100%);
+  box-shadow: 0 3px 8px rgba(0, 112, 255, 0.3), inset 0 -2px 3px rgba(0, 60, 140, 0.25); }
+/* dual: a thick and a thin rail */
+.kd-div-dual .kd-div-line { height: 12px; filter: drop-shadow(0 2px 3px rgba(14, 165, 233, 0.3)); }
+.kd-div-dual .kd-div-line::before, .kd-div-dual .kd-div-line::after { content: ''; position: absolute; left: 0; right: 0; border-radius: 4px; }
+.kd-div-dual .kd-div-line::before { top: 0; height: 5px; background: linear-gradient(90deg, #22d3ee, #0ea5e9); box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6); }
+.kd-div-dual .kd-div-line::after { bottom: 0; height: 3px; background: linear-gradient(90deg, #0ea5e9, #2563eb); }
+/* notched: pointed ends and a V notch in the middle */
+.kd-div-notched { filter: drop-shadow(0 3px 4px rgba(14, 165, 233, 0.35)); }
+.kd-div-notched .kd-div-line { height: 14px; background: linear-gradient(to bottom, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 55%), linear-gradient(90deg, #0ea5e9, #22d3ee 50%, #0ea5e9);
+  clip-path: polygon(0 50%, 7px 0, calc(50% - 20px) 0, 50% 62%, calc(50% + 20px) 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 7px 100%); }
+.kd-div-notched.kd-div-labeled .kd-div-line:first-child { clip-path: polygon(0 50%, 7px 0, 100% 0, 100% 100%, 7px 100%); }
+.kd-div-notched.kd-div-labeled .kd-div-line:last-child { clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 0 100%); }
+/* wavy */
+.kd-div-wavy .kd-div-line { height: 14px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='14' viewBox='0 0 28 14'%3E%3Cpath d='M0 9 Q7 1 14 9 T28 9' fill='none' stroke='%230ea5e9' stroke-width='1.5' stroke-linecap='round' opacity='.55'/%3E%3Cpath d='M0 7 Q7 -1 14 7 T28 7' fill='none' stroke='%2322d3ee' stroke-width='3' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x 0 50% / 28px 14px; }
+/* dotted: little gel beads */
+.kd-div-dotted .kd-div-line { height: 12px; background: radial-gradient(circle at 35% 30%, #fff 0 1.2px, #5ee0f5 2px 3.4px, #0891b2 4px, transparent 4.6px) 0 50% / 18px 12px repeat-x; filter: drop-shadow(0 1px 1px rgba(8, 145, 178, 0.35)); }
+/* dashed: rounded dashes */
+.kd-div-dashed .kd-div-line { height: 8px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='8' viewBox='0 0 28 8'%3E%3Cline x1='4' y1='4' x2='20' y2='4' stroke='%230ea5e9' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x 0 50% / 28px 8px; }
+/* zigzag */
+.kd-div-zigzag .kd-div-line { height: 10px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='10' viewBox='0 0 16 10'%3E%3Cpolyline points='0,8 8,2 16,8' fill='none' stroke='%2322d3ee' stroke-width='2.6' stroke-linejoin='round' stroke-linecap='round'/%3E%3C/svg%3E") repeat-x 0 50% / 16px 10px; }
+/* glow: a neon line that fades out at both ends */
+.kd-div-glow .kd-div-line { height: 4px; border-radius: 4px; background: linear-gradient(90deg, transparent, #67e8f9 15%, #ffffff 50%, #67e8f9 85%, transparent); box-shadow: 0 0 10px #22d3ee, 0 0 24px rgba(34, 211, 238, 0.6); }
+/* ruler: tick marks */
+.kd-div-ruler .kd-div-line { height: 14px;
+  background: repeating-linear-gradient(90deg, #0891b2 0 1px, transparent 1px 8px) 0 100% / 100% 6px no-repeat,
+              repeating-linear-gradient(90deg, #0891b2 0 2px, transparent 2px 40px) 0 100% / 100% 12px no-repeat,
+              linear-gradient(#0891b2, #0891b2) 0 100% / 100% 2px no-repeat; }
+/* stitched: orange stitches */
+.kd-div-stitched .kd-div-line { height: 0; border-top: 3px dashed #f97316; border-radius: 2px; filter: drop-shadow(0 1px 0 rgba(255, 255, 255, 0.8)); }
+/* bubbles: bubbles rising in the water */
+.kd-div-bubbles .kd-div-line { height: 22px;
+  background: radial-gradient(circle at 35% 30%, #fff 0 1.5px, rgba(190, 245, 255, 0.75) 2.5px 5px, rgba(34, 211, 238, 0.55) 6px, transparent 6.6px) 6px 55% / 62px 22px repeat-x,
+              radial-gradient(circle at 35% 30%, #fff 0 1px, rgba(190, 245, 255, 0.75) 1.8px 3.6px, rgba(14, 165, 233, 0.5) 4.4px, transparent 5px) 30px 25% / 62px 22px repeat-x,
+              radial-gradient(circle at 35% 30%, #fff 0 0.8px, rgba(190, 245, 255, 0.75) 1.4px 2.6px, rgba(34, 211, 238, 0.5) 3.2px, transparent 3.8px) 48px 70% / 62px 22px repeat-x; }
+/* scallop: a row of little arcs */
+.kd-div-scallop .kd-div-line { height: 12px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12' viewBox='0 0 24 12'%3E%3Cpath d='M0 1 A12 9 0 0 0 24 1' fill='none' stroke='%230ea5e9' stroke-width='2.6'/%3E%3C/svg%3E") repeat-x 0 0 / 24px 12px; }
+
+/* ========================================================
+   AERO TOAST CHIPS (++R~text++): a chip that looks like Plume's toasts (its alert messages): a light tinted gradient,
+   a colored border, deep-colored bold text and a soft shadow, with a bit less padding so it fits in a line of text.
+   Same 16 colors as the other Aero chips (they use .gel-aero-red ...).
+   ======================================================== */
+.gel-aerotoast-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 2px; border-radius: 10px;
+  border: 2px solid #6bbcc6; border: 2px solid color-mix(in srgb, var(--ae-c) 62%, var(--ae-e1));
+  background: linear-gradient(180deg, #d9f3f6 0%, #f1fbfc 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 46%, #fff) 0%, color-mix(in srgb, var(--ae-l) 14%, #fff) 100%);
+  color: #063c42; color: color-mix(in srgb, var(--ae-e1) 55%, #000);
+  font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}

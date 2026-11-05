@@ -279,17 +279,50 @@
         } });
     }
 
+    // An edited equation tells whoever is listening (a Svelte component, a Plume piece, an editor): "kd-math-edited" bubbles up
+    // with { tex, display, el }, and editors outside Writeout's own page also get an "input" so they save the new text!
+    function announce(target, tex, display) {
+        try { target.dispatchEvent(new CustomEvent('kd-math-edited', { bubbles: true, detail: { tex: tex, display: !!display, el: target } })); } catch (e) {}
+        const own = document.getElementById('wysiwyg-canvas');
+        if (own && own.contains(target)) return;
+        try { target.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+    }
+    // Where each equation sits in a piece of Keydown text, in the order they are drawn (code spans and fences are skipped)!
+    function mathTokens(src) {
+        src = String(src == null ? '' : src);
+        const masked = src.replace(/```[\s\S]*?```/g, function (m) { return m.replace(/[^\n]/g, ' '); }).replace(/`[^`\n]*`/g, function (m) { return ' '.repeat(m.length); });
+        const out = [];
+        const re = /\$\$([\s\S]+?)\$\$|(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g;
+        let m;
+        while ((m = re.exec(masked))) {
+            if (m[1] !== undefined) out.push({ start: m.index, end: m.index + m[0].length, display: true, tex: m[1].trim() });
+            else out.push({ start: m.index + m[2].length, end: m.index + m[0].length, display: false, tex: m[3] });
+        }
+        return out;
+    }
+    // The text with its Nth equation swapped for new LaTeX (the text itself when there is no such equation)!
+    function replaceMath(src, index, tex, display) {
+        src = String(src == null ? '' : src);
+        const t = mathTokens(src)[index];
+        if (!t) return src;
+        const clean = String(tex).trim();
+        return src.slice(0, t.start) + (display ? '$$' + clean + '$$' : '$' + clean.replace(/\n+/g, ' ') + '$') + src.slice(t.end);
+    }
+
     // Double-click an equation to edit it in the same box!
     document.addEventListener('dblclick', function (e) {
         const el = e.target.closest && e.target.closest('.kd-math');
         if (!el) return;
         e.preventDefault();
         openBox({ tex: el.getAttribute('data-tex') || '', display: el.getAttribute('data-display') === '1', onDone: function (tex, disp) {
+            let target = el;
             if ((el.getAttribute('data-display') === '1') !== disp) {
                 const fresh = makeMath(tex, disp);
                 el.replaceWith(fresh);
+                target = fresh;
             } else { el.setAttribute('data-tex', tex); paint(el); }
             changed();
+            announce(target, tex, disp);
         } });
     });
 
@@ -307,4 +340,6 @@
     window.kdMathBox = openBox;
     window.kdMathRefresh = refreshAll;
     window.kdMathHTML = mathHTML;
+    window.kdMathTokens = mathTokens;
+    window.kdMathReplace = replaceMath;
 })();

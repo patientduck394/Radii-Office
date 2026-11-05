@@ -778,7 +778,7 @@
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Pages', items: [
                     { big: true, icon: 'newDoc', label: 'New\nPage', title: 'Add a page tab to this document', run: newPage },
-                    { big: true, icon: 'divider', label: 'Divider', run: function () { insertKind('divider'); paginateSoon(); } }
+                    { big: true, icon: 'divider', label: 'Divider', title: 'Insert a divider line: pick a style!', menu: function () { return KD_DIVIDER_STYLES.map(function (d) { return { label: d[1], icon: 'divider', run: function () { insertKind('divider:' + d[0]); paginateSoon(); } }; }); } }
                 ] },
                 { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } }] },
                 { label: 'Media', items: [

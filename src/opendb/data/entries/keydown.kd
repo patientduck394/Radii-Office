@@ -362,6 +362,27 @@ A soap bubble: clear in the middle, tinted toward its colored rim, with a big ro
 * `++FG!text++` ++FG!fog++
 * `++BK!text++` ++BK!black++
 
+## Aero toast chips
+
+A chip made like the messages (toasts) in Plume: a light tint melting down from the top, a colored border, deep bold words and a soft shadow, with a little less padding than a toast so it fits into a line of text. Written `++color~text++`, in the same 16 colors as the Aero chips:
+
+* `++R~text++` ++R~red++
+* `++O~text++` ++O~orange++
+* `++GL~text++` ++GL~gold++
+* `++Y~text++` ++Y~yellow++
+* `++L~text++` ++L~lime++
+* `++G~text++` ++G~green++
+* `++TU~text++` ++TU~turquoise++
+* `++T~text++` ++T~teal++
+* `++C~text++` ++C~cyan++
+* `++B~text++` ++B~blue++
+* `++PR~text++` ++PR~purple++
+* `++PK~text++` ++PK~pink++
+* `++SL~text++` ++SL~slate++
+* `++W~text++` ++W~white++
+* `++FG~text++` ++FG~fog++
+* `++BK~text++` ++BK~black++
+
 ## Logo chips
 
 Chips made like the Radii Office app icons: a softly rounded tile, solid color through its top third fading to a bright tint, under a wide white gloss with a curved lower edge. Written `;;color;text;;`, in 16 colors (the 13 Annotate colors plus white, fog and black):
@@ -1508,6 +1529,67 @@ A line that is only `::name` becomes a whole block, such as a glass panel, a cod
 
 ::divider
 
+### Divider styles
+
+`::divider` draws the aqua strip. Put a style in the braces for another look, like `::divider{wavy}`, and add a title after a `|` to run the line on both sides of it, like `::divider{poolside|Lap two}`. The styles are aqua, poolside, dual, notched, wavy, dotted, dashed, zigzag, glow, ruler, stitched, bubbles and scallop.
+
+`::divider{aqua}` the original aqua strip
+
+::divider{aqua}
+
+`::divider{poolside}` a pool lane rope: a water bar with orange floats
+
+::divider{poolside}
+
+`::divider{dual}` a thick and a thin rail
+
+::divider{dual}
+
+`::divider{notched}` pointed ends and a V notch in the middle
+
+::divider{notched}
+
+`::divider{wavy}` a rolling wave
+
+::divider{wavy}
+
+`::divider{dotted}` a row of gel beads
+
+::divider{dotted}
+
+`::divider{dashed}` rounded dashes
+
+::divider{dashed}
+
+`::divider{zigzag}` a zigzag
+
+::divider{zigzag}
+
+`::divider{glow}` a neon line that fades out at both ends
+
+::divider{glow}
+
+`::divider{ruler}` ruler tick marks
+
+::divider{ruler}
+
+`::divider{stitched}` orange stitches
+
+::divider{stitched}
+
+`::divider{bubbles}` bubbles rising in the water
+
+::divider{bubbles}
+
+`::divider{scallop}` a row of little arcs
+
+::divider{scallop}
+
+`::divider{notched|Chapter two}`
+
+::divider{notched|Chapter two}
+
+
 `::console{warning: low battery}`
 
 ::console{warning: low battery}
@@ -2040,7 +2122,7 @@ Smaller packs that each add one style:
 
 ## Extras in Writeout, Bitbook and OpenDB
 
-* **Math**: `$x^2$` writes math in a line, like $x^2 + y^2 = r^2$, and `$$ ... $$` gives a centered equation. An equation box with buttons helps you build it without knowing LaTeX.
+* **Math**: `$x^2$` writes math in a line, like $x^2 + y^2 = r^2$, and `$$ ... $$` gives a centered equation. An equation box with buttons helps you build it without knowing LaTeX. Double-click an equation anywhere (a Svelte component that only shows text, or a Plume piece too) and the same box opens to edit it; the new LaTeX is written back into the text it came from.
 * **Footnotes**: `[^1]` adds a numbered note, and a line starting with `[^1]:` gives its text.
 * **Links**: in OpenDB, `[[entry-name]]` links to another entry, and `[[entry-name|other words]]` changes the words shown.
 * **Templates**: in OpenDB, notices like `{{stub}}` and `{{citation needed}}` mark entries that need work. See the [Templates](#/templates) page.

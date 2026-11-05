@@ -1473,6 +1473,22 @@ if (canvas) {
             { open: '++W!', close: '++', className: 'gel-aerobubble-chip gel-aero-white' },
             { open: '++FG!', close: '++', className: 'gel-aerobubble-chip gel-aero-fog' },
             { open: '++BK!', close: '++', className: 'gel-aerobubble-chip gel-aero-black' },
+            { open: '++R~', close: '++', className: 'gel-aerotoast-chip gel-aero-red' },
+            { open: '++O~', close: '++', className: 'gel-aerotoast-chip gel-aero-orange' },
+            { open: '++GL~', close: '++', className: 'gel-aerotoast-chip gel-aero-gold' },
+            { open: '++Y~', close: '++', className: 'gel-aerotoast-chip gel-aero-yellow' },
+            { open: '++L~', close: '++', className: 'gel-aerotoast-chip gel-aero-lime' },
+            { open: '++G~', close: '++', className: 'gel-aerotoast-chip gel-aero-green' },
+            { open: '++TU~', close: '++', className: 'gel-aerotoast-chip gel-aero-turquoise' },
+            { open: '++T~', close: '++', className: 'gel-aerotoast-chip gel-aero-teal' },
+            { open: '++C~', close: '++', className: 'gel-aerotoast-chip gel-aero-cyan' },
+            { open: '++B~', close: '++', className: 'gel-aerotoast-chip gel-aero-blue' },
+            { open: '++PR~', close: '++', className: 'gel-aerotoast-chip gel-aero-purple' },
+            { open: '++PK~', close: '++', className: 'gel-aerotoast-chip gel-aero-pink' },
+            { open: '++SL~', close: '++', className: 'gel-aerotoast-chip gel-aero-slate' },
+            { open: '++W~', close: '++', className: 'gel-aerotoast-chip gel-aero-white' },
+            { open: '++FG~', close: '++', className: 'gel-aerotoast-chip gel-aero-fog' },
+            { open: '++BK~', close: '++', className: 'gel-aerotoast-chip gel-aero-black' },
             { open: '++R=', close: '++', className: 'gel-aeroglass-chip gel-aero-red' },
             { open: '++O=', close: '++', className: 'gel-aeroglass-chip gel-aero-orange' },
             { open: '++GL=', close: '++', className: 'gel-aeroglass-chip gel-aero-gold' },
@@ -6925,7 +6941,14 @@ function tcWireSkills() {
 
 // Drop one node at the caret (ranged selections collapse to the end first)!
 // One divider design everywhere (menu + typed share it)!
-function kdBuildDivider() {
+// The divider styles (::divider{poolside} and friends): Insert > Divider lists them!
+const KD_DIVIDER_STYLES = [['aqua', 'Aqua (original)'], ['poolside', 'Poolside'], ['dual', 'Dual'], ['notched', 'Notched'], ['wavy', 'Wavy'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['zigzag', 'Zigzag'], ['glow', 'Glow'], ['ruler', 'Ruler'], ['stitched', 'Stitched'], ['bubbles', 'Bubbles'], ['scallop', 'Scallop']];
+function kdBuildDivider(style) {
+    if (style && style !== 'aqua' && window.kdDoc && typeof window.kdDoc.blockFromLine === 'function') {
+        const t = document.createElement('template');
+        t.innerHTML = window.kdDoc.blockFromLine('::divider{' + style + '}') || '';
+        if (t.content.firstElementChild) return t.content.firstElementChild;
+    }
     const div = document.createElement('div');
     div.className = 'aero-liquid-divider';
     div.setAttribute('contenteditable', 'false');
@@ -6985,10 +7008,11 @@ function runInsertKind(kind) {
         fmtInsertTextAtCaret(new Date().toLocaleString());
     } else if (kind === 'date') {
         fmtInsertTextAtCaret(new Date().toLocaleDateString());
-    } else if (kind === 'divider') {
-        // Dividers render at the caret -- or the very end with no selection!
-        if (!fmtInsertNodeAtCaret(kdBuildDivider())) {
-            const node = kdBuildDivider();
+    } else if (kind === 'divider' || kind.indexOf('divider:') === 0) {
+        // Dividers render at the caret -- or the very end with no selection! (divider:wavy picks a style)
+        const dividerStyle = kind.indexOf(':') > 0 ? kind.split(':')[1] : '';
+        if (!fmtInsertNodeAtCaret(kdBuildDivider(dividerStyle))) {
+            const node = kdBuildDivider(dividerStyle);
             canvas.appendChild(node);
             try {
                 const caret = document.createRange();

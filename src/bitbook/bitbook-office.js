@@ -661,7 +661,7 @@
                 { label: 'Time Stamp', items: [{ stack: [
                     { sm: true, icon: 'calendar', label: 'Date', run: function () { insertKind('date'); } },
                     { sm: true, icon: 'clock', label: 'Date & Time', run: function () { insertKind('timestamp'); } },
-                    { sm: true, icon: 'divider', label: 'Divider', run: function () { insertKind('divider'); } }
+                    { sm: true, icon: 'divider', label: 'Divider', title: 'Insert a divider line: pick a style!', menu: function () { return KD_DIVIDER_STYLES.map(function (d) { return { label: d[1], icon: 'divider', run: function () { insertKind('divider:' + d[0]); } }; }); } }
                 ] }] },
                 { label: 'Symbols', items: [{ big: true, icon: 'symbol', label: 'Symbol', run: function () { insertKind('symbols'); } }] },
                 { label: 'Lists', items: [
