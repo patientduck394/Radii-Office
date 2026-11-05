@@ -17,3 +17,8 @@ cp rust/bezmath/target/wasm32-unknown-unknown/release/bezmath.wasm inkpath/bezma
 ```
 
 Verified: the WASM total matches the JS engine to 6e-14 on the sample curve!
+
+## keydown-core: Keydown's text engine
+`keydown-core/` is Keydown's text-to-HTML engine in Rust, compiled to `writeout/keydown-core.wasm` (switched on with
+`KeydownRust.enable()`, the JavaScript engine stays the reference and the fallback). See `keydown-core/README.md`;
+rebuild and check it with `node scripts/build_keydown_rust.mjs`.

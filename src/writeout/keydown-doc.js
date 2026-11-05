@@ -351,6 +351,13 @@
     }
 
     function textToHtml(src, opts) {
+        // The Rust text engine (rust/keydown-core, loaded by keydown-rust.js) draws the text when it is switched on and it
+        // handles all of it; anything it does not do yet comes back as null and the JavaScript below draws it as always
+        const rust = root.KeydownRust;
+        if (rust && rust.enabled && rust.ready && !(opts && opts.notes)) {
+            const h = rust.textToHtml(src);
+            if (h !== null) return h;
+        }
         opts = Object.assign({ notes: {} }, opts || {});
         const lines = String(src || '').replace(/\r/g, '').split('\n');
         const out = [];

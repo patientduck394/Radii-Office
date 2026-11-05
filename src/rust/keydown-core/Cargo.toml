@@ -1,0 +1,16 @@
+[package]
+name = "keydown-core"
+version = "0.1.0"
+edition = "2021"
+description = "Keydown's text engine in Rust: Keydown text to HTML, compiled to WebAssembly for the web (no dependencies)"
+publish = false
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[profile.release]
+opt-level = "s"
+lto = true
+panic = "abort"
+codegen-units = 1
+strip = true
