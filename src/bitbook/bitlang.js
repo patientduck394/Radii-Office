@@ -1092,6 +1092,83 @@
             if (i < 0) { rt.btns.push({ fn: f, content: c }); i = rt.btns.length - 1; }
             return '\u2063btn:' + i + '\u2063';
         });
+        // ---- effects: effect_saturation("++R+Text++", 0) wraps rich text (Keydown formatting) or an element (btn, textbox, skill...) in a CSS filter ----
+        // renderRT(effect_saturation("++R+Text++ ", 0) + "Normal text"): the chip turns gray, the rest stays as it is; effects can sit inside each other!
+        const FX = {
+            saturation: { css: 'saturate', def: 0, min: 0, max: 20, what: '0 is gray, 1 is normal, 2 is extra vivid' },
+            brightness: { css: 'brightness', def: 1.5, min: 0, max: 10, what: '0 is black, 1 is normal, 2 is twice as bright' },
+            contrast: { css: 'contrast', def: 1.5, min: 0, max: 10, what: '0 is flat gray, 1 is normal, 2 is punchy' },
+            grayscale: { css: 'grayscale', def: 1, min: 0, max: 1, what: '0 keeps the colors, 1 is fully gray' },
+            sepia: { css: 'sepia', def: 1, min: 0, max: 1, what: '0 is normal, 1 is an old brown photo' },
+            invert: { css: 'invert', def: 1, min: 0, max: 1, what: '0 is normal, 1 flips every color' },
+            hue: { css: 'hue-rotate', unit: 'deg', def: 180, min: -3600, max: 3600, what: 'the number of degrees to turn the colors around the color wheel' },
+            blur: { css: 'blur', unit: 'px', def: 2, min: 0, max: 40, what: 'how many pixels soft it gets' },
+            opacity: { css: 'opacity', def: 0.5, min: 0, max: 1, what: '0 is invisible, 1 is normal' }
+        };
+        const fxWrap = function (inner, filter) { return '<span class="bl-fx" style="filter: ' + filter + ';">' + inner + '</span>'; };
+        const fxContent = function (a, k, line, fname, example) {
+            const c = a.length ? a[0] : (k.content !== undefined ? k.content : null);
+            if (c === null || c === undefined) fail(line, fname + ' needs the content first (text with Keydown, or a btn, textbox...), like ' + example + '!');
+            if (typeof c === 'function' || c instanceof BitFn) fail(line, fname + ' wraps text or an element: put the btn(...) or the text inside it!');
+            return show0(c);
+        };
+        Object.keys(FX).forEach(function (name) {
+            const fx = FX[name];
+            def('effect_' + name, function (a, k, line) {
+                const fname = 'effect_' + name;
+                const inner = fxContent(a, k, line, fname, fname + '("Text", ' + fx.def + ')');
+                const raw = a.length > 1 ? a[1] : (k.amount !== undefined ? k.amount : fx.def);
+                if (typeof raw !== 'number' || !isFinite(raw)) fail(line, fname + ' needs a number after the content (' + fx.what + ')!');
+                const v = Math.max(fx.min, Math.min(fx.max, raw));
+                return fxWrap(inner, fx.css + '(' + v + (fx.unit || '') + ')');
+            });
+        });
+        // effect_shadow(content, x, y, blur, color): a soft shadow that follows the shape of the text or element
+        def('effect_shadow', function (a, k, line) {
+            const inner = fxContent(a, k, line, 'effect_shadow', 'effect_shadow("Text", 2, 2, 4, "rgba(0,0,0,0.5)")');
+            const n = function (i, key, d) { const v = a.length > i ? a[i] : (k[key] !== undefined ? k[key] : d); if (typeof v !== 'number' || !isFinite(v)) fail(line, 'effect_shadow needs numbers for the x, y and blur!'); return Math.max(-100, Math.min(100, v)); };
+            const color = String(a.length > 4 ? a[4] : (k.color !== undefined ? k.color : 'rgba(0,0,0,0.5)'));
+            if (!/^[#a-zA-Z0-9(),.% -]{1,40}$/.test(color)) fail(line, 'effect_shadow needs a color like "red", "#336699" or "rgba(0,0,0,0.5)"!');
+            return fxWrap(inner, 'drop-shadow(' + n(1, 'x', 2) + 'px ' + n(2, 'y', 2) + 'px ' + Math.max(0, n(3, 'blur', 4)) + 'px ' + color + ')');
+        });
+        // effect_tint(content, color, amount): the content takes on a color (its light and dark parts stay, like a colored glass over it);
+        // amount 0 is the original, 1 (the default) is fully tinted. The color is a name ("red", "slate"), a number (1 red ... 13 slate like annotate),
+        // "#336699" or "rgb(51, 102, 153)". A tiny SVG color filter does it, built right inside the text.
+        const TINTS = { red: '#ff2222', orange: '#ff7f22', gold: '#ffb300', yellow: '#ffd122', lime: '#9be000', green: '#04db00', turquoise: '#00d6a8', teal: '#00a8a8', cyan: '#00cedb', blue: '#2277ff', purple: '#9b30ff', pink: '#ff2fa8', slate: '#7f8ea3',
+            white: '#ffffff', black: '#000000', gray: '#888888', grey: '#888888', silver: '#c0c0c0', brown: '#8b5a2b', navy: '#10246b', magenta: '#ff00ff', violet: '#8a2be2', indigo: '#4b0082', maroon: '#800000', olive: '#808000', salmon: '#fa8072', coral: '#ff7f50', sky: '#38bdf8', mint: '#7dffc4', peach: '#ffb88c', lavender: '#b9a5ff' };
+        const tintRGB = function (v, line) {
+            let s = typeof v === 'number' ? (AN_COLORS[Math.round(v) - 1] || '') : String(v).trim().toLowerCase();
+            if (TINTS[s]) s = TINTS[s];
+            let m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/.exec(s);
+            if (m) { const h = m[1].length === 3 ? m[1].replace(/./g, '$&$&') : m[1]; return [parseInt(h.slice(0, 2), 16), parseInt(h.slice(2, 4), 16), parseInt(h.slice(4, 6), 16)]; }
+            m = /^rgb\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*\)$/.exec(s);
+            if (m) return [Math.min(255, +m[1]), Math.min(255, +m[2]), Math.min(255, +m[3])];
+            fail(line, 'effect_tint needs a color like "red", "slate", 4 (a number 1 to 13), "#336699" or "rgb(51, 102, 153)"!');
+        };
+        def('effect_tint', function (a, k, line) {
+            const inner = fxContent(a, k, line, 'effect_tint', 'effect_tint("Text", "red")');
+            const col = a.length > 1 ? a[1] : (k.color !== undefined ? k.color : null);
+            if (col === null) fail(line, 'effect_tint needs a color after the content, like effect_tint("Text", "red")!');
+            const rgb = tintRGB(col, line);
+            let amt = a.length > 2 ? a[2] : (k.amount !== undefined ? k.amount : 1);
+            if (typeof amt !== 'number' || !isFinite(amt)) fail(line, 'effect_tint needs a number from 0 to 1 for the amount!');
+            amt = Math.max(0, Math.min(1, amt));
+            // the color at full brightness (its strongest channel is 1), so a white part of the content becomes exactly that color
+            const mx = Math.max(rgb[0], rgb[1], rgb[2], 1);
+            const t = rgb.map(function (c) { return c / mx; });
+            const f = function (n) { return (Math.round(n * 10000) / 10000).toString(); };
+            const row = function (c, i) { const L = [0.2126, 0.7152, 0.0722]; return [0, 1, 2].map(function (j) { return f((i === j ? 1 - amt : 0) + amt * t[i] * L[j]); }).join(' ') + ' 0 0'; };
+            const id = 'bl-tint-' + rgb.map(function (c) { return ('0' + c.toString(16)).slice(-2); }).join('') + '-' + Math.round(amt * 100);
+            const defs = '<svg class="bl-fx-defs" width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute"><filter id="' + id + '" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="' + row(0, 0) + ' ' + row(1, 1) + ' ' + row(2, 2) + ' 0 0 0 1 0"/></filter></svg>';
+            return '<span class="bl-fx" style="filter: url(#' + id + ');">' + defs + inner + '</span>';
+        });
+        // effect(content, "saturate(0.5) blur(1px)"): several of the effects at once, written as a CSS filter (only the filter functions below)
+        def('effect', function (a, k, line) {
+            const inner = fxContent(a, k, line, 'effect', 'effect("Text", "saturate(0.5) blur(1px)")');
+            const css = String(a.length > 1 ? a[1] : (k.filter !== undefined ? k.filter : '')).trim();
+            if (!css || !/^(\s*(blur|brightness|contrast|grayscale|hue-rotate|invert|opacity|saturate|sepia|drop-shadow)\(\s*[#a-zA-Z0-9., %-]*(\(\s*[0-9., %-]*\)\s*)?[#a-zA-Z0-9., %-]*\)\s*)+$/i.test(css) || /url|expression/i.test(css)) fail(line, 'effect needs a filter like "saturate(0.5) blur(1px)": blur, brightness, contrast, grayscale, hue-rotate, invert, opacity, saturate, sepia or drop-shadow!');
+            return fxWrap(inner, css.replace(/"/g, ''));
+        });
         // ---- input ----
         // the old screen (canvas) is gone: programs only change the document
         ['size', 'width', 'height', 'clear', 'rect', 'circle', 'line', 'text', 'mouse_x', 'mouse_y', 'mouse_down'].forEach(function (n) {
@@ -1441,7 +1518,7 @@ fn guess(n):
     function newId() { return 'bl' + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
     // Syntax colors (editor + guide)!
-    const HL_BUILTINS = ('pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print renderRT skill btn remvar key beep stop floor ceil round abs sqrt sin cos tan atan2 PI inherit textbox counter beepbox annotate_highlight annotate_underline annotate_strikethrough annotate_box annotate_halo annotate_brackets annotate_spotlight annotate_accent annotate_bubble annotate_dusk annotate_prism annotate_complement annotate_ticket annotate_neon annotate_stamp annotate_tape annotate_checker annotate_halftone annotate_aurora annotate_mild annotate_wrap annotate_belt annotate_bucket annotate_torpedo annotate_bottle annotate_packet annotate_select annotate_capsule annotate_frost annotate_pixel annotate_flag annotate_gem lua mat_match mat_has mat_keys renderPT python sql sql_save sql_load lam vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split').split(' ');
+    const HL_BUILTINS = ('pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print renderRT skill btn remvar key beep stop floor ceil round abs sqrt sin cos tan atan2 PI inherit textbox counter beepbox annotate_highlight annotate_underline annotate_strikethrough annotate_box annotate_halo annotate_brackets annotate_spotlight annotate_accent annotate_bubble annotate_dusk annotate_prism annotate_complement annotate_ticket annotate_neon annotate_stamp annotate_tape annotate_checker annotate_halftone annotate_aurora annotate_mild annotate_wrap annotate_belt annotate_bucket annotate_torpedo annotate_bottle annotate_packet annotate_select annotate_capsule annotate_frost annotate_pixel annotate_flag annotate_gem lua mat_match mat_has mat_keys renderPT python sql sql_save sql_load lam vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split effect effect_saturation effect_brightness effect_contrast effect_grayscale effect_sepia effect_invert effect_hue effect_blur effect_opacity effect_shadow effect_tint').split(' ');
     const HL_EVENTS = ['onstart', 'onkey', 'onkeyup', 'onend'];
     const HL_RE = /(#[^\n]*)|(https?:\/\/[^\s"'\)\],]+)|((?<=\][ \t]*)">|~>)|("(?:[^"\\\n]|\\.)*"?|'(?:[^'\\\n]|\\.)*'?)|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_][A-Za-z0-9_]*\b)/g;
     function highlight(code) {
@@ -1579,6 +1656,19 @@ fn guess(n):
         const content = function () { return bbContent(el.kids, true); };
         switch (el.name) {
             case 'line': case 'row': case 'span': return content();
+            case 'effect': case 'fx': {
+                // <effect saturation="0" blur="2">...</effect>: the same effects as effect_saturation and friends, around everything inside
+                let ex = content();
+                ['saturation', 'brightness', 'contrast', 'grayscale', 'sepia', 'invert', 'hue', 'blur', 'opacity'].forEach(function (n) {
+                    const v = bbAttr(el, n, 'num');
+                    if (v !== null) ex = 'effect_' + n + '(' + ex + ', ' + v + ')';
+                });
+                const tn = bbAttr(el, 'tint', 'text');
+                if (tn !== null) { const ta = bbAttr(el, 'tintamount', 'num'); ex = 'effect_tint(' + ex + ', ' + tn + (ta !== null ? ', ' + ta : '') + ')'; }
+                const f = bbAttr(el, 'filter', 'text');
+                if (f !== null) ex = 'effect(' + ex + ', ' + f + ')';
+                return ex;
+            }
             case 'br': return '"<br>"';
             case 'pt': return 'renderPT(' + content() + ')';
             case 'btn': case 'button': {
@@ -2413,6 +2503,7 @@ A loose line of text becomes its own line too.
 <tr><td><code>&lt;btn do="fn"&gt;…&lt;/btn&gt;</code></td><td>A button that runs a function (or <code>stop</code>, or <code>do="lam(...)"</code>). Its contents are what it looks like.</td></tr>
 <tr><td><code>&lt;textbox var="x"&gt;hint&lt;/textbox&gt;</code></td><td>A textbox tied to a variable (<code>value="..."</code> to start with text).</td></tr>
 <tr><td><code>&lt;counter var="x" min="0" max="9"/&gt;</code></td><td>A number box tied to a variable.</td></tr>
+<tr><td><code>&lt;effect saturation="0" blur="1"&gt;…&lt;/effect&gt;</code></td><td>An effect around everything inside (saturation, brightness, contrast, grayscale, sepia, invert, hue, blur, opacity, tint="red" with tintamount="0.5", or filter="a CSS filter").</td></tr>
 <tr><td><code>&lt;annotate type="box" color="3"&gt;…&lt;/annotate&gt;</code></td><td>An Annotate highlight (any type, color by number or name).</td></tr>
 <tr><td><code>&lt;beepbox src="link" label="Song"/&gt;</code></td><td>A BeepBox song chip.</td></tr>
 <tr><td><code>&lt;pt&gt;…&lt;/pt&gt;</code></td><td>Plain text (no Keydown).</td></tr>
@@ -2442,6 +2533,30 @@ fn submit():
 fn go():
     renderRT("Going!", line=9)</pre>
 <p>The three buttons appear in one row (one output line). <code>&amp;</code> also works inside <code>renderRT(...)</code> to join text pieces, and the next component can be indented however you like. The last line of a row has no <code>&amp;</code>.</p>
+
+<h2>Effects: saturation, brightness, blur and more</h2>
+<p>An effect wraps text with Keydown formatting, or an element like a button or a text box, and changes how it looks. Everything outside it stays as it is:</p>
+<pre>fn onstart():
+    renderRT(effect_saturation("++R+Text++ ", 0) + "Normal text")     # the red chip turns gray
+    renderRT(effect_blur("**soft** words", 1.5) + " and sharp ones")
+    renderRT(effect_grayscale(btn(go, "#G#Go#"), 1) &amp; btn(go, "#G#Go#"))   # an element: the first button turns gray
+    renderRT(effect_brightness(effect_hue("++B+Hue turned++", 120), 1.4))   # effects can sit inside each other
+
+fn go():
+    print("clicked")</pre>
+<table>
+<tr><td><code>effect_saturation(x, n)</code></td><td>0 is gray, 1 is normal, 2 is extra vivid.</td></tr>
+<tr><td><code>effect_brightness(x, n)</code></td><td>0 is black, 1 is normal, 2 is twice as bright.</td></tr>
+<tr><td><code>effect_contrast(x, n)</code></td><td>0 is flat gray, 1 is normal, 2 is punchy.</td></tr>
+<tr><td><code>effect_grayscale(x, n)</code> <code>effect_sepia(x, n)</code> <code>effect_invert(x, n)</code></td><td>0 is normal, 1 is fully gray, brown or flipped.</td></tr>
+<tr><td><code>effect_hue(x, degrees)</code></td><td>Turns every color around the color wheel.</td></tr>
+<tr><td><code>effect_blur(x, pixels)</code></td><td>Makes it soft.</td></tr>
+<tr><td><code>effect_opacity(x, n)</code></td><td>0 is invisible, 1 is normal.</td></tr>
+<tr><td><code>effect_tint(x, color, n)</code></td><td>Colors it, like a colored glass over it: the light and dark parts stay. The color is a name (<code>"red"</code>, <code>"slate"</code>), a number 1 to 13 (like annotate), <code>"#336699"</code> or <code>"rgb(51, 102, 153)"</code>. <code>n</code> is how strong, from 0 (the original) to 1 (all the way, the default).</td></tr>
+<tr><td><code>effect_shadow(x, dx, dy, blur, color)</code></td><td>A soft shadow that follows the shape, like <code>effect_shadow("Hi", 2, 2, 4, "red")</code>.</td></tr>
+<tr><td><code>effect(x, "saturate(0.5) blur(1px)")</code></td><td>Several at once, written as a CSS filter (blur, brightness, contrast, grayscale, hue-rotate, invert, opacity, saturate, sepia, drop-shadow).</td></tr>
+</table>
+<p>The thing inside can be a text, a button (<code>btn</code>), a text box, a skill and so on: write the amount after it. In BBML, <code>&lt;effect saturation="0" blur="1"&gt;…&lt;/effect&gt;</code> does the same around everything inside it. Numbers outside the sensible range are kept inside it. If a Keydown tag starts before an effect and ends after it, it cannot be drawn: put the whole tag inside the effect.</p>
 
 <h2>Lambdas: lam(...)</h2>
 <p>A lambda is a little function written in one place. Put statements inside <code>lam(...)</code>, separated by <code>;</code>, and keep it in a variable (or hand it straight to a button):</p>
