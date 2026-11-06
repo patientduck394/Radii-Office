@@ -283,7 +283,7 @@ if (typeof document !== "undefined") {
 }
 
 // ::block triggers (exact cell match renders a full block)!
-const KD_BLOCKS = ["glass","bubble","alert","media","aqua","code","emerald","amber","crimson","amethyst","gsky","gemerald","gamber","gcrimson","foldout","divider","console","diff","horizon","waypoint","entry","draw"];
+const KD_BLOCKS = ["glass","bubble","alert","media","aqua","code","emerald","amber","crimson","amethyst","gsky","gemerald","gamber","gcrimson","foldout","divider","pagebreak","console","diff","horizon","waypoint","entry","draw"];
 // ::name{your text}: every block takes your own text (| splits a title from its text, or one line from the next)!
 const KD_BLOCK_BOXES = { aqua: ['', '🌊 Aqua notes...'], emerald: ['aqua-emerald-box', '🌿 Eco logs...'], amber: ['aqua-amber-box', '☀️ Highlights...'], crimson: ['aqua-crimson-box', '🚨 Urgent tasks...'], amethyst: ['aqua-amethyst-box', '🔮 Creative drafts...'] };
 const KD_BLOCK_PANELS = { gsky: ['panel-sky', '🔹 SKY COMPONENT', 'Sky log notes...'], gemerald: ['panel-emerald', '🌿 ECO COMPONENT', 'Organic project logs...'], gamber: ['panel-amber', '☀️ AMBER MATRIX', 'Highlights...'], gcrimson: ['panel-crimson', '🚨 ALERT MANIFEST', 'Urgent warnings...'] };
@@ -309,6 +309,7 @@ case 'alert': return '<div class="tactile-alert-plate"><div class="alert-icon-or
 case 'media': return '<div class="media-track-wrap"><span class="media-track-text">' + f(0, 'NOW PLAYING: Track_Audio_Stream.wav') + '</span><div class="media-control-orb"></div></div>';
 case 'foldout': return '<div class="aero-foldout-panel"><div class="foldout-panel-header"><div class="foldout-arrow-orb">▲</div><div class="foldout-panel-title-input">' + f(0, 'TITLE') + '</div></div><div class="foldout-panel-content"><p>' + f(1, 'TEXT') + '</p></div></div>';
 case 'divider': return kdDividerHtml(parts[0], parts[1], fmt);
+case 'pagebreak': return '<div class="kd-pagebreak" contenteditable="false" title="Page break: what comes after it starts on a new page!"><span>Page break</span></div>';
 case 'code': return '<div class="writedown-code-block"><div class="code-block-header"><span>CODE SPEC</span></div><pre class="code-block-content">' + lines(['// Write text lines here...']) + '</pre></div>';
 case 'console': return '<div class="writedown-console-block"><div class="console-block-header"><span>⚠️ SYSTEM DEBUG CONSOLE</span></div><pre class="console-block-content">' + lines(['error: Undefined reference tracking index bounds fault.']) + '</pre></div>';
 case 'diff': return '<div class="writedown-diff-block"><div class="diff-row-content">' + (parts.length ? parts : ['+ function initializeWorkspace() {', '- function setupOldEngine() {']).map((t) => { t = t.trim(); return '<p' + (t[0] === '+' ? ' class="diff-add"' : t[0] === '-' ? ' class="diff-del"' : '') + '>' + fmt(t) + '</p>'; }).join('') + '</div></div>';

@@ -296,7 +296,15 @@
 
     function insertKind(k) { if (typeof runInsertKind === 'function') runInsertKind(k); }
 
+    // New Page adds a real page: a page break, so the text after it starts on a fresh sheet (Ctrl/Cmd+Enter does the same)
     function newPage() {
+        const line = typeof kdInsertPageBreak === 'function' ? kdInsertPageBreak() : null;
+        save();
+        paginateSoon();
+        setTimeout(function () { paginate(); OS.sync(); try { if (line && line.scrollIntoView) line.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} OS.toast('Page ' + currentPage() + '!'); }, 60);
+    }
+    // the older page TABS (a document made of several tabs) are still here: New Tab adds one
+    function newTab() {
         const b = document.getElementById('tabs-add-btn');
         if (b) b.click();
     }
@@ -535,15 +543,18 @@
             sheets.innerHTML = '';
             ed.style.removeProperty('--wo-min-h');
             pageCount = Math.max(1, Math.ceil((ed.scrollHeight || 1) / pageDims().h));
+            pageList();
             return;
         }
+        // measure the text on its own: the last page count's height must not hold the document open (or pages could never go away)
+        zoomer.style.removeProperty('--wo-total-h');
         const d = pageDims();
         const m = MARGINS[prefs.margins] || MARGINS.normal;
         const H = d.h, P = d.h + GAP;
         const box = ed.getBoundingClientRect();
         const ratio = (box.height / (ed.offsetHeight || 1)) || 1;
         const top0 = box.top;
-        let idx = 0, lastBottom = m.t;
+        let idx = 0, lastBottom = m.t, forceTop = null;   // forceTop: where the line after a page break must start
         const kids = ed.children;
         for (let i = 0; i < kids.length; i++) {
             const kid = kids[i];
@@ -558,7 +569,12 @@
             const cTop = p * P + m.t;
             const cBottom = p * P + H - m.b;
             let target = null;
-            if (t > cBottom - 0.5) target = (p + 1) * P + m.t;          // starts in the bottom margin or the gap!
+            if (forceTop !== null) {
+                if (t < forceTop - 0.5) target = forceTop;                  // right after a page break: the top of the next page!
+                forceTop = null;
+            }
+            if (target !== null) { /* decided by the page break above */ }
+            else if (t > cBottom - 0.5) target = (p + 1) * P + m.t;          // starts in the bottom margin or the gap!
             else if (b > cBottom + 0.5 && h <= H - m.t - m.b) target = (p + 1) * P + m.t; // would straddle the page break!
             else if (p > 0 && t < cTop - 0.5) target = cTop;              // tucked into the top margin!
             if (target !== null) {
@@ -570,6 +586,8 @@
                 sheet.insertRule('#wysiwyg-canvas > :nth-child(' + idx + ') { margin-top: ' + (base + push).toFixed(1) + 'px !important; }', sheet.cssRules.length);
                 lastBottom = target + h;
             } else lastBottom = Math.max(lastBottom, b);
+            // a page break: the next line starts on the page after the one this break sits on
+            if (kid.classList && kid.classList.contains('kd-pagebreak')) forceTop = (Math.floor(((target !== null ? target : t) + 1) / P) + 1) * P + m.t;
         }
         // Bare text right inside the canvas still counts toward the height!
         const contentH = Math.max(lastBottom, (ed.scrollHeight || 0) - m.b - 2);
@@ -586,6 +604,51 @@
             }
             sheets._count = pageCount;
         }
+        pageList();
+    }
+
+    /* ---------- the Pages list in the side pane: every page of the document, click to jump there ---------- */
+    function pageList() {
+        const list = document.getElementById('doc-pages-list');
+        if (!list) return;
+        const breaks = ed.querySelectorAll('.kd-pagebreak').length;
+        const n = pagesOn() ? Math.max(pageCount, breaks + 1) : breaks + 1;
+        // the page the caret is on: by the sheet it sits on, or (without sheets) by the page breaks above it
+        let here = 1;
+        if (pagesOn()) here = currentPage();
+        else {
+            const s = window.getSelection();
+            if (s && s.rangeCount && ed.contains(s.anchorNode)) {
+                let top = s.anchorNode;
+                while (top && top.parentNode !== ed) top = top.parentNode;
+                for (let k = top && top.previousElementSibling; k; k = k.previousElementSibling) if (k.classList.contains('kd-pagebreak')) here++;
+            }
+        }
+        here = Math.min(here, n);
+        const key = n + ':' + here;
+        if (list._key === key) return;
+        list._key = key;
+        list.innerHTML = '';
+        for (let i = 1; i <= n; i++) {
+            const row = document.createElement('div');
+            row.className = 'tab-row';
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'outline-item' + (i === here ? ' active' : '');
+            b.textContent = 'Page ' + i;
+            b.title = 'Go to page ' + i;
+            b.addEventListener('click', function () { goToPage(i); });
+            row.appendChild(b);
+            list.appendChild(row);
+        }
+        // a document with only its first tab has nothing to switch between: the Tabs list stays out of the way
+        document.body.classList.toggle('wo-one-tab', document.querySelectorAll('#doc-tabs-list .tab-row').length <= 1);
+    }
+    function goToPage(i) {
+        if (pagesOn() && sheets && sheets.children[i - 1]) { sheets.children[i - 1].scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+        const brs = ed.querySelectorAll('.kd-pagebreak');
+        const target = i <= 1 ? ed.firstElementChild : (brs[i - 2] && brs[i - 2].nextElementSibling);
+        if (target && target.scrollIntoView) target.scrollIntoView({ block: 'start', behavior: 'smooth' });
     }
 
     let paginateQueued = false;
@@ -719,13 +782,13 @@
                 b.innerHTML = '<h1>' + greet() + '!</h1>';
                 b.appendChild(OS.bsCards([
                     { label: 'Blank document', hint: 'Start fresh!', preview: '<div class="os-card-prev wo-prev-blank"></div>', run: newDocument },
-                    { label: 'New page', hint: 'Add a page tab to this document!', icon: 'newDoc', run: newPage },
+                    { label: 'New page', hint: 'Add a page to this document: the text after it starts on a fresh sheet!', icon: 'newDoc', run: newPage },
                     { label: 'Open a .kd file', hint: 'Import a Writeout document!', icon: 'folder', run: openFile }
                 ]));
                 b.insertAdjacentHTML('beforeend', '<h2>This document</h2><div class="wo-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((kdActiveTab() || {}).name || 'Main') + '</b><span>' + OS.esc(statsLine()) + '</span></div></div>');
             }
         },
-        { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'Blank document', hint: 'Clears every page!', preview: '<div class="os-card-prev wo-prev-blank"></div>', run: newDocument }, { label: 'New page', hint: 'A fresh page tab, keeping the rest!', icon: 'newDoc', run: newPage }])); } },
+        { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'Blank document', hint: 'Clears every page and tab!', preview: '<div class="os-card-prev wo-prev-blank"></div>', run: newDocument }, { label: 'New page', hint: 'A fresh page after this one, keeping the rest!', icon: 'newDoc', run: newPage }])); } },
         { id: 'open', label: 'Open', icon: 'folder', render: function (b) { b.innerHTML = '<h1>Open</h1>'; b.appendChild(OS.bsCards([{ label: 'Browse…', hint: 'Open a .kd Writeout document!', icon: 'folder', run: openFile }])); b.insertAdjacentHTML('beforeend', '<p class="os-note">Your work also saves automatically in this browser!</p>'); } },
         { id: 'save', label: 'Save a Copy', icon: 'save', render: function (b) { b.innerHTML = '<h1>Save a Copy</h1>'; b.appendChild(OS.bsCards(DL.slice(0, 2).map(function (d) { return { label: d[1], hint: d[2], icon: d[3], run: function () { download(d[0]); } }; }))); } },
         { id: 'export', label: 'Export', icon: 'export', render: function (b) { b.innerHTML = '<h1>Export</h1>'; b.appendChild(OS.bsCards(DL.map(function (d) { return { label: d[1], hint: d[2], icon: d[3], run: function () { download(d[0]); } }; }))); } },
@@ -862,7 +925,7 @@
         {
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Pages', items: [
-                    { big: true, icon: 'newDoc', label: 'New\nPage', title: 'Add a page tab to this document', run: newPage },
+                    { big: true, icon: 'newDoc', label: 'New\nPage', title: 'Add a page to this document (Ctrl/Cmd+Enter): the text after it starts on a fresh sheet!', run: newPage },
                     { big: true, icon: 'divider', label: 'Divider', title: 'Insert a divider line: pick a style!', menu: function () { return KD_DIVIDER_STYLES.map(function (d) { return { label: d[1], icon: 'divider', run: function () { insertKind('divider:' + d[0]); paginateSoon(); } }; }); } }
                 ] },
                 { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } }] },
@@ -903,7 +966,7 @@
                     { big: true, icon: 'pages', label: 'Pages\nView', title: 'Show the document as separate pages, like Word\'s Print Layout!', run: function () { setPagesView(!prefs.pages); }, checked: function () { return prefs.pages; } },
                     { stack: [
                         { check: true, label: 'Page Numbers', get: function () { return prefs.numbers; }, set: function (v) { prefs.numbers = v; savePrefs(); applyView(); } },
-                        { sm: true, icon: 'newDoc', label: 'New Page Tab', run: newPage }
+                        { sm: true, icon: 'newDoc', label: 'New Tab', title: 'Add a tab: another set of pages in this document', run: newTab }
                     ] }
                 ] },
                 { label: 'Page Background', items: [
@@ -1112,6 +1175,9 @@
         const mod = e.metaKey || e.ctrlKey;
         if (mod && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'f') { e.preventDefault(); findDialog(false); }
     });
+    const pagesAdd = document.getElementById('pages-add-btn');
+    if (pagesAdd) pagesAdd.addEventListener('click', function () { newPage(); });
+    document.addEventListener('selectionchange', function () { if (ed.contains((window.getSelection() || {}).anchorNode || null)) pageList(); });
     // Page tabs re-render the canvas: re-paginate after every switch!
     const tabsList = document.getElementById('doc-tabs-list');
     if (tabsList) tabsList.addEventListener('click', function () { setTimeout(paginateSoon, 30); });

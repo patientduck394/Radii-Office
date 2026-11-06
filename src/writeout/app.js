@@ -147,6 +147,15 @@ if (!kdAmbientHidden()) initializeAmbientDroplets();
 // PART 4: KEYDOWN SHORTCUT & MACRO ENGINE (SECTION A)
 // ==========================================
 if (canvas) {
+    canvas.addEventListener('click', function (e) {
+        const pb = e.target && e.target.closest ? e.target.closest('.kd-pagebreak') : null;
+        if (!pb || !canvas.contains(pb)) return;
+        const r = document.createRange();
+        r.selectNode(pb);
+        const s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(r);
+    });
     canvas.addEventListener('keydown', function(e) {
         // --- TAB: Tab indents the line and Shift+Tab outdents it (inside code, Tab types a tab)! ---
         if (e.key === 'Tab' && !e.ctrlKey && !e.metaKey && !e.altKey && e.target && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
@@ -155,6 +164,17 @@ if (canvas) {
             const tabEl = tabAt && (tabAt.nodeType === 3 ? tabAt.parentElement : tabAt);
             if (!e.shiftKey && tabEl && tabEl.closest && tabEl.closest('pre')) { document.execCommand('insertText', false, '\t'); return; }
             if (typeof fmtIndentBlocks === 'function') fmtIndentBlocks(e.shiftKey ? -1 : 1);
+            return;
+        }
+        // --- PAGE BREAK: Backspace at the start of the line after it, Delete at the end of the line before it, or Delete on the selected break, take it away ---
+        if ((e.key === 'Backspace' || e.key === 'Delete') && !e.ctrlKey && !e.metaKey && !e.altKey && typeof kdRemovePageBreakAtCaret === 'function' && kdRemovePageBreakAtCaret(e.key === 'Backspace')) {
+            e.preventDefault();
+            return;
+        }
+        // --- PAGE BREAK: Ctrl/Cmd+Enter starts a new page, like Word! ---
+        if ((e.ctrlKey || e.metaKey) && !e.altKey && !e.shiftKey && e.key === 'Enter' && e.target && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+            e.preventDefault();
+            if (typeof runInsertKind === 'function') runInsertKind('pagebreak');
             return;
         }
         // --- DENT SHORTCUTS: Ctrl/Cmd+[ outdents, Ctrl/Cmd+] indents! ---
@@ -3417,6 +3437,96 @@ function kdBuildDivider(style) {
     return div;
 }
 
+// A page break: a line of its own in the document, and what comes after it starts on a new page!
+function kdBuildPageBreak() {
+    const t = document.createElement('template');
+    t.innerHTML = (window.kdDoc && kdDoc.blockFromLine) ? (kdDoc.blockFromLine('::pagebreak') || '') : '';
+    if (t.content.firstElementChild) return t.content.firstElementChild;
+    const div = document.createElement('div');
+    div.className = 'kd-pagebreak';
+    div.setAttribute('contenteditable', 'false');
+    div.innerHTML = '<span>Page break</span>';
+    return div;
+}
+// Puts a page break at the caret, always between two lines of the document (a line is split in two if the caret is inside it),
+// leaves the caret on the line after it, and returns that line
+function kdInsertPageBreak() {
+    if (typeof canvas === 'undefined' || !canvas) return null;
+    const node = kdBuildPageBreak();
+    const sel = window.getSelection();
+    const range = sel.rangeCount && canvas.contains(sel.anchorNode) ? sel.getRangeAt(0) : null;
+    const withBr = (el) => { if (el && !el.textContent.replace(/[\u200B\s]/g, '') && !el.querySelector('br, img, svg, input, table, video, audio')) el.appendChild(document.createElement('br')); };
+    let top = null, tail = null;
+    if (!range) canvas.appendChild(node);
+    else {
+        if (!sel.isCollapsed) range.collapse(false);
+        top = range.startContainer;
+        while (top && top.parentNode !== canvas) top = top.parentNode;
+        if (!top || top === canvas) range.insertNode(node);          // bare text right in the page: the text node is split
+        else if (/^(DIV|P|H1|H2|H3|H4|H5|H6|UL|OL|BLOCKQUOTE)$/.test(top.tagName)) {
+            const rest = document.createRange();
+            rest.setStart(range.startContainer, range.startOffset);
+            rest.setEnd(top, top.childNodes.length);
+            tail = top.cloneNode(false);                                   // the rest of the line moves to a copy of it, after the break
+            tail.removeAttribute('id');
+            tail.appendChild(rest.extractContents());
+            canvas.insertBefore(node, top.nextSibling);
+            canvas.insertBefore(tail, node.nextSibling);
+            withBr(top);
+        } else canvas.insertBefore(node, top.nextSibling);         // a table, picture, code box...: the break goes right after it
+    }
+    let next = node.nextElementSibling;
+    if (!next) { next = document.createElement('div'); next.innerHTML = '<br>'; canvas.appendChild(next); }
+    else if (next === tail) withBr(tail);
+    try {
+        const caret = document.createRange();
+        caret.setStart(next, 0);
+        caret.collapse(true);
+        sel.removeAllRanges();
+        sel.addRange(caret);
+    } catch (e) {}
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+    return next;
+}
+
+// Takes away the page break the caret is touching (true when there was one)
+function kdRemovePageBreakAtCaret(backward) {
+    if (typeof canvas === 'undefined' || !canvas) return false;
+    const sel = window.getSelection();
+    if (!sel.rangeCount || !canvas.contains(sel.anchorNode)) return false;
+    const r = sel.getRangeAt(0);
+    let pb = null;
+    if (!r.collapsed) {
+        // the break itself is selected (clicked)
+        if (r.startContainer === canvas && r.endContainer === canvas && r.endOffset - r.startOffset === 1) {
+            const n = canvas.childNodes[r.startOffset];
+            if (n && n.classList && n.classList.contains('kd-pagebreak')) pb = n;
+        }
+    } else {
+        let block = r.startContainer;
+        while (block && block.parentNode !== canvas) block = block.parentNode;
+        if (!block || block === canvas) return false;
+        const empty = (range) => !range.cloneContents().textContent.replace(/[\u200B\s]/g, '') && !range.cloneContents().querySelector('img, svg, input, video, audio, table, .kd-math');
+        if (backward) {
+            const before = document.createRange();
+            before.setStart(block, 0);
+            before.setEnd(r.startContainer, r.startOffset);
+            const prev = block.previousElementSibling;
+            if (prev && prev.classList.contains('kd-pagebreak') && empty(before)) pb = prev;
+        } else {
+            const after = document.createRange();
+            after.setStart(r.startContainer, r.startOffset);
+            after.setEnd(block, block.childNodes.length);
+            const next = block.nextElementSibling;
+            if (next && next.classList.contains('kd-pagebreak') && empty(after)) pb = next;
+        }
+    }
+    if (!pb) return false;
+    pb.remove();
+    if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
+    return true;
+}
+
 function fmtInsertNodeAtCaret(node) {
     if (typeof canvas === 'undefined' || !canvas || !node) return false;
     const sel = window.getSelection();
@@ -3470,6 +3580,8 @@ function runInsertKind(kind) {
         fmtInsertTextAtCaret(new Date().toLocaleString());
     } else if (kind === 'date') {
         fmtInsertTextAtCaret(new Date().toLocaleDateString());
+    } else if (kind === 'pagebreak') {
+        kdInsertPageBreak();
     } else if (kind === 'divider' || kind.indexOf('divider:') === 0) {
         // Dividers render at the caret -- or the very end with no selection! (divider:wavy picks a style)
         const dividerStyle = kind.indexOf(':') > 0 ? kind.split(':')[1] : '';
@@ -7817,8 +7929,8 @@ if (typeof canvas !== 'undefined' && canvas) {
     if (tabsAddBtn) tabsAddBtn.addEventListener('click', function () {
         playAeroClickSound(700, 0.1);
         let n = kdTabs.length + 1;
-        while (kdTabs.some(function (t) { return t.name === 'Page ' + n; })) n++;
-        kdTabs.push({ id: kdTabId(), name: 'Page ' + n, html: '' });
+        while (kdTabs.some(function (t) { return t.name === 'Tab ' + n; })) n++;
+        kdTabs.push({ id: kdTabId(), name: 'Tab ' + n, html: '' });
         kdSaveTabs();
         kdActivateTab(kdTabs[kdTabs.length - 1].id);
     });

@@ -31,11 +31,11 @@
     <title>Writeout - Radii Office</title>
     <!-- Universal Open-Source Vector Glyphs -->
     <link rel="stylesheet" href="style.css?v=20261202k">
-    <link rel="stylesheet" href="keydown.css?v=20261206a">
+    <link rel="stylesheet" href="keydown.css?v=20261206b">
     <link rel="stylesheet" href="marketplace.css?v=20260928">
     <link rel="stylesheet" href="settings.css?v=20260928">
     <link rel="stylesheet" href="office-shell.css?v=20261132r">
-    <link rel="stylesheet" href="writeout-office.css?v=20261206b">
+    <link rel="stylesheet" href="writeout-office.css?v=20261206c">
     <link rel="stylesheet" href="radii-collab.css?v=20261042">
     <link rel="icon" type="image/png" sizes="96x96" href="/writeout/favicon-96.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -103,14 +103,25 @@
 
         <!-- Pages + Outline scroll box (one tidy scroller!) -->
         <div class="side-scroll-box">
-        <!-- Document Tabs (pages inside one document!) -->
-        <div class="tabs-section side-section">
+        <!-- Pages: the real pages of the document (a page break adds one) -->
+        <div class="pages-section side-section">
             <div class="outline-head-row">
                 <h3 class="outline-heading">Pages</h3>
-                <button id="tabs-add-btn" class="outline-toggle" title="Add page">
+                <button id="pages-add-btn" class="outline-toggle" title="Add a page (Ctrl/Cmd+Enter): the text after it starts on a fresh page!">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
                 </button>
-                <button id="tabs-toggle-btn" class="outline-toggle" title="Collapse pages">
+            </div>
+            <div id="doc-pages-list" class="tabs-list"></div>
+        </div>
+
+        <!-- Document Tabs (separate sets of pages inside one document) -->
+        <div class="tabs-section side-section">
+            <div class="outline-head-row">
+                <h3 class="outline-heading">Tabs</h3>
+                <button id="tabs-add-btn" class="outline-toggle" title="Add tab">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14M5 12h14"/></svg>
+                </button>
+                <button id="tabs-toggle-btn" class="outline-toggle" title="Collapse tabs">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 9l6 6 6-6"/></svg>
                 </button>
             </div>
@@ -541,7 +552,8 @@
             <p style="margin: 0;"><b>🚪 Exiting formatting:</b> Press <code>Cmd/Ctrl+Shift+E</code> to hop out of any style, type <code>\</code> + space to break out to the right, or hit <code>Enter</code> inside an empty chip for a fresh line!</p>
             <p style="margin: 0;"><b>💾 YAML Export:</b> Save your workspace anytime into a clean <code>.kd</code> snapshot file.</p>
             <p style="margin: 0;"><b>⬇️ Download...:</b> Export your page as <code>.kd</code>, <code>.pdf</code>, <code>.docx</code>, <code>.odt</code>, <code>.txt</code>, <code>.epub</code>, <code>.jpg</code>, <code>.svg</code>, or a web <code>.zip</code>!</p>
-            <p style="margin: 0;"><b>📄 Pages:</b> Add tabs for separate documents — each keeps its own outline, and all travel inside one <code>.kd</code> file!</p>
+            <p style="margin: 0;"><b>📄 Pages:</b> New Page (or Ctrl/Cmd+Enter) adds a real page: a page break, so what comes after it starts on a fresh sheet! The Pages list on the left jumps to any page.</p>
+            <p style="margin: 0;"><b>🗂️ Tabs:</b> Add tabs for separate documents — each keeps its own pages and outline, and all travel inside one <code>.kd</code> file!</p>
         </div>
         <div style="margin-top: 24px; text-align: right;">
             <button onclick="document.getElementById('help-deck-dialog').close()" class="style-bar-btn" style="padding: 6px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;">Got It!</button>
@@ -644,7 +656,7 @@
 
     <script src="radii-table.js?v=20261202d"></script>
 
-    <script src="app.js?v=20261206a"></script>
+    <script src="app.js?v=20261206c"></script>
     <script src="chip-guard.js?v=20261202b"></script>
     <script src="overlay-image.js?v=20261202c"></script>
     <script src="marketplace.js?v=20260928"></script>
@@ -653,10 +665,10 @@
     <script src="image-resize.js?v=20261040"></script>
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script src="latex.js?v=20261206a"></script>
-    <script src="keydown-doc.js?v=20261206d"></script>
+    <script src="keydown-doc.js?v=20261206e"></script>
     <script src="keydown-next.js?v=20261204h"></script>
     <script src="office-shell.js?v=20261204a"></script>
-    <script src="writeout-office.js?v=20261206b"></script>
+    <script src="writeout-office.js?v=20261206c"></script>
     <script src="writeout-pro.js?v=20261121"></script>
     <script src="writeout-plus.js?v=20261202a"></script>
     <script src="kd-modes.js?v=20261205d"></script>

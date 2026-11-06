@@ -1529,6 +1529,10 @@ A line that is only `::name` becomes a whole block, such as a glass panel, a cod
 
 ::divider
 
+### Page breaks
+
+A line that is only `::pagebreak` is a page break. In Writeout's Pages view the text after it starts on a fresh page, and printing starts a new page there too. Writeout's New Page button (or Ctrl/Cmd+Enter) puts one at the caret, and Backspace at the start of the next line takes it away.
+
 ### Divider styles
 
 `::divider` draws the aqua strip. Put a style in the braces for another look, like `::divider{wavy}`, and add a title after a `|` to run the line on both sides of it, like `::divider{poolside|Lap two}`. The styles are aqua, poolside, dual, notched, wavy, dotted, dashed, zigzag, glow, ruler, stitched, bubbles and scallop.

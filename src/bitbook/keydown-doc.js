@@ -1162,6 +1162,7 @@
             case 'media': return '<div class="media-track-wrap"><span class="media-track-text">' + f(0, 'NOW PLAYING: Track_Audio_Stream.wav') + '</span><div class="media-control-orb"></div></div>';
             case 'foldout': return '<div class="aero-foldout-panel"><div class="foldout-panel-header"><div class="foldout-arrow-orb">▲</div><div class="foldout-panel-title-input">' + f(0, 'TITLE') + '</div></div><div class="foldout-panel-content"><p>' + f(1, 'TEXT') + '</p></div></div>';
             case 'divider': return kdDividerHtml(parts[0], parts[1], fmt);
+            case 'pagebreak': return '<div class="kd-pagebreak" contenteditable="false" title="Page break: what comes after it starts on a new page!"><span>Page break</span></div>';
             case 'code': return '<div class="writedown-code-block"><div class="code-block-header"><span>CODE SPEC</span></div><pre class="code-block-content">' + lines(['// Write text lines here...']) + '</pre></div>';
             case 'console': return '<div class="writedown-console-block"><div class="console-block-header"><span>⚠️ SYSTEM DEBUG CONSOLE</span></div><pre class="console-block-content">' + lines(['error: Undefined reference tracking index bounds fault.']) + '</pre></div>';
             case 'diff': return '<div class="writedown-diff-block"><div class="diff-row-content">' + (parts.length ? parts : ['+ function initializeWorkspace() {', '- function setupOldEngine() {']).map((t) => { t = t.trim(); return '<p' + (t[0] === '+' ? ' class="diff-add"' : t[0] === '-' ? ' class="diff-del"' : '') + '>' + fmt(t) + '</p>'; }).join('') + '</div></div>';
@@ -1185,6 +1186,7 @@
         if (c.contains('aqua-aero-box')) return [Object.keys(KD_BLOCK_BOXES).find((k) => KD_BLOCK_BOXES[k][0] && c.contains(KD_BLOCK_BOXES[k][0])) || 'aqua', [txt('.aqua-box-content')]];
         if (c.contains('aero-glass-panel')) return [Object.keys(KD_BLOCK_PANELS).find((k) => c.contains(KD_BLOCK_PANELS[k][0])) || 'gsky', [txt('.glass-panel-header'), txt('.glass-panel-content')]];
         if (c.contains('aero-foldout-panel')) return ['foldout', [txt('.foldout-panel-title-input'), txt('.foldout-panel-content')]];
+        if (c.contains('kd-pagebreak')) return ['pagebreak', []];
         if (c.contains('kd-div')) { const st = (Array.from(c).find((k) => /^kd-div-(?!labeled)/.test(k)) || 'kd-div-aqua').slice(7); const lab = txt('.kd-div-label'); return ['divider', lab ? [st, lab] : [st]]; }
         if (c.contains('aero-liquid-divider')) return ['divider', []];
         if (c.contains('writedown-code-block')) return /SKETCH/i.test(txt('.code-block-header')) ? ['draw', []] : ['code', raw('.code-block-content')];
@@ -1195,7 +1197,7 @@
         if (c.contains('writedown-journal-entry')) return ['entry', [txt('.journal-entry-content')]];
         return null;
     }
-    const BLOCK_SEL = '.aero-glass-block, .aqua-bubble-text, .tactile-alert-plate, .media-track-wrap, .aqua-aero-box, .aero-glass-panel, .aero-foldout-panel, .aero-liquid-divider, .kd-div, .writedown-code-block, .writedown-console-block, .writedown-diff-block, .writedown-horizon-block, .writedown-waypoint-block, .writedown-journal-entry';
+    const BLOCK_SEL = '.aero-glass-block, .aqua-bubble-text, .tactile-alert-plate, .media-track-wrap, .aqua-aero-box, .aero-glass-panel, .aero-foldout-panel, .aero-liquid-divider, .kd-div, .kd-pagebreak, .writedown-code-block, .writedown-console-block, .writedown-diff-block, .writedown-horizon-block, .writedown-waypoint-block, .writedown-journal-entry';
     const blockLine = (b) => '::' + b[0] + (b[1].length && b[0] !== 'draw' ? '{' + b[1].map((t) => String(t).replace(/[{}|]/g, ' ')).join('|') + '}' : '');
     const blockFromLine = (line) => { const m = /^\s*::([a-z]+)(?:\{([^}]*)\})?\s*$/.exec(line); return m ? kdBlockMarkup(m[1], m[2], (t) => inline(t, { notes: {} })) : null; };
 

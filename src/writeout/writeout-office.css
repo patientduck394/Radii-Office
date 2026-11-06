@@ -252,3 +252,6 @@ body.os-office.os-phone:not(.wo-nav-off):not(.wo-focus) #sidebar {
 .bb-chip-col:hover { background: var(--os-hover, rgba(127, 127, 127, 0.14)); transform: scale(1.05); z-index: 1; }
 .bb-chip-col > span { font: 800 12px 'JetBrains Mono', monospace; pointer-events: none; }
 .bb-chip-col small { font-size: 10px; color: var(--os-dim); }
+
+/* the Tabs list only shows when there is something to switch between (a document with one tab has just its pages) */
+body.os-office.wo-one-tab .tabs-section { display: none; }
