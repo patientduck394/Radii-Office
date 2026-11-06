@@ -448,7 +448,7 @@ A Rim Chip cousin with the same size, rim and shine, with slanted candy stripes 
 
 ## Rim gem chips
 
-A Rim Chip cousin shaped the same, but solid like a jewel: a light rim around a saturated body that gets deeper toward the bottom, with white words (light colors keep dark words). Written `!!=color#text#`, in the same 16 colors:
+A Rim Chip cousin cut like a gemstone: hard-edged facets fan out from the middle in light and deep shades of the color, inside a pale setting, with a small sparkle at the upper right and white words (light colors keep dark words). Written `!!=color#text#`, in the same 16 colors:
 
 * `!!=R#text#` !!=R#red#
 * `!!=O#text#` !!=O#orange#
@@ -553,7 +553,7 @@ A Rim Chip cousin with halftone dots of the color in the glass. Written `!!;colo
 
 ## Rim pearl chips
 
-A Rim Chip cousin with an iridescent pearl inside a soft rim: pastel colors drift through white, tinted a little by the color. Written `!!-color#text#`, in the same 16 colors as the Rim Chip:
+A Rim Chip cousin shaped like a real pearl: a soft white body, a bright round highlight at the upper left, and a faint glow of the color along the bottom edge. Written `!!-color#text#`, in the same 16 colors as the Rim Chip:
 
 * `!!-R#text#` !!-R#red#
 * `!!-O#text#` !!-O#orange#
@@ -574,7 +574,7 @@ A Rim Chip cousin with an iridescent pearl inside a soft rim: pastel colors drif
 
 ## Rim steel chips
 
-A Rim Chip cousin of brushed chrome inside a colored rim, with words in a dark shade of the color. Written `!!?color#text#`, in the same 16 colors as the Rim Chip:
+A Rim Chip cousin made like an anodized metal plate: fine brushed lines across a metal tinted by the color, a little rivet at each end and dark engraved words. Written `!!?color#text#`, in the same 16 colors as the Rim Chip:
 
 * `!!?R#text#` !!?R#red#
 * `!!?O#text#` !!?O#orange#
@@ -595,7 +595,7 @@ A Rim Chip cousin of brushed chrome inside a colored rim, with words in a dark s
 
 ## Rim aurora chips
 
-A Rim Chip cousin where the color melts sideways into the next color of the color wheel (red into orange, blue into purple...), under the same glassy top. Written `!!/color#text#`, in the same 16 colors as the Rim Chip:
+A Rim Chip cousin with soft northern lights: blooms of light rise from the bottom corners, the color on the left and the next color of the color wheel on the right (red and orange, blue and purple...), with faint rays through them. Written `!!/color#text#`, in the same 16 colors as the Rim Chip:
 
 * `!!/R#text#` !!/R#red#
 * `!!/O#text#` !!/O#orange#

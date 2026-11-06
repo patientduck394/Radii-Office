@@ -10301,22 +10301,38 @@
 }
 .gel-rimstripe-chip::after { box-shadow: inset 0 0 0.09em 0.01em rgba(253, 255, 255, 0.85); }
 
-/* gem: a light rim around a saturated body that gets deeper toward the bottom */
+/* gem: a cut gemstone. Hard-edged facets fan out from the middle in light and deep shades of the color, a pale setting around it, white words
+   (light colors keep dark ones) and a small sparkle at the upper right */
 .gel-rimgem-chip {
   --gem-ink: #ffffff;
-  border-color: color-mix(in srgb, var(--rc-fill, #02fff1) 50%, #fff);
+  border-color: color-mix(in srgb, var(--rc-fill, #02fff1) 42%, #fff);
   color: var(--gem-ink); text-shadow: 0 0.05em 0.09em color-mix(in srgb, var(--rc-ink, #219a9e) 85%, #000);
   background: linear-gradient(180deg, var(--rc-fill, #02fff1), var(--rc-rim, #04c3ca));
-  background: linear-gradient(180deg,
-    color-mix(in srgb, var(--rc-fill, #02fff1) 86%, #fff) 0%,
-    var(--rc-fill, #02fff1) 42%,
-    var(--rc-rim, #04c3ca) 100%);
+  background:
+    repeating-conic-gradient(from 24deg at 50% 50%, rgba(255, 255, 255, 0.3) 0 0.8deg, transparent 0.8deg 45deg),
+    conic-gradient(from 24deg at 50% 50%,
+      color-mix(in srgb, var(--rc-fill, #02fff1) 55%, #fff) 0deg 45deg,
+      var(--rc-fill, #02fff1) 45deg 90deg,
+      color-mix(in srgb, var(--rc-rim, #04c3ca) var(--gem-d1, 82%), #000) 90deg 135deg,
+      color-mix(in srgb, var(--rc-fill, #02fff1) 80%, #fff) 135deg 180deg,
+      color-mix(in srgb, var(--rc-fill, #02fff1) 38%, #fff) 180deg 225deg,
+      var(--rc-rim, #04c3ca) 225deg 270deg,
+      color-mix(in srgb, var(--rc-rim, #04c3ca) var(--gem-d2, 68%), #000) 270deg 315deg,
+      var(--rc-fill, #02fff1) 315deg 360deg);
 }
-.gel-rimgem-chip::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%); }
-.gel-rimgem-chip::after { box-shadow: inset 0 0 0.08em 0.01em rgba(255, 255, 255, 0.8), inset 0 -0.1em 0.1em -0.04em rgba(0, 0, 0, 0.28); }
+.gel-rimgem-chip::before {
+  left: auto; right: 0.2em; top: 0.06em; width: 0.34em; height: 0.34em; border-radius: 50%;
+  background:
+    radial-gradient(circle, #ffffff 0 0.045em, transparent 0.06em),
+    linear-gradient(90deg, transparent 42%, #ffffff 50%, transparent 58%),
+    linear-gradient(0deg, transparent 42%, #ffffff 50%, transparent 58%);
+}
+.gel-rimgem-chip::after { box-shadow: inset 0 0 0.08em 0.01em rgba(255, 255, 255, 0.8), inset 0 -0.1em 0.1em -0.04em rgba(0, 0, 0, 0.25); }
 /* light colors keep dark words */
 .gel-rimgem-chip.gel-rim-yellow, .gel-rimgem-chip.gel-rim-gold, .gel-rimgem-chip.gel-rim-lime, .gel-rimgem-chip.gel-rim-turquoise,
 .gel-rimgem-chip.gel-rim-white, .gel-rimgem-chip.gel-rim-fog { --gem-ink: var(--rc-ink); text-shadow: 0 0.05em 0 rgba(255, 255, 255, 0.55); }
+.gel-rimgem-chip.gel-rim-yellow, .gel-rimgem-chip.gel-rim-gold, .gel-rimgem-chip.gel-rim-lime, .gel-rimgem-chip.gel-rim-turquoise,
+.gel-rimgem-chip.gel-rim-white, .gel-rimgem-chip.gel-rim-fog { --gem-d1: 95%; --gem-d2: 90%; }
 
 /* neon: dark glass, a bright glowing rim, words in a light tint of the color */
 .gel-rimneon-chip {
@@ -10334,9 +10350,9 @@
    RIM FROST   !!%R#text#  milky frosted glass with a fine grain
    RIM DOUBLE  !!:R#text#  an outline with a second thin ring inside it
    RIM DOTS    !!;R#text#  halftone dots in the glass
-   RIM PEARL   !!-R#text#  an iridescent pearl inside a soft rim
-   RIM STEEL   !!?R#text#  brushed chrome inside a colored rim
-   RIM AURORA  !!/R#text#  the color melting sideways into the next color of the wheel (--rc-fill2)
+   RIM PEARL   !!-R#text#  a real pearl: a bright round highlight, a soft white body and a faint glow of the color at the bottom edge
+   RIM STEEL   !!?R#text#  an anodized metal plate: brushed grain, a rivet at each end, metal tinted by the color
+   RIM AURORA  !!/R#text#  northern-light blooms rising from the bottom corners in the color and the next color of the wheel (--rc-fill2)
    ======================================================== */
 .gel-rimfrost-chip, .gel-rimdouble-chip, .gel-rimdots-chip, .gel-rimpearl-chip, .gel-rimsteel-chip, .gel-rimaurora-chip {
   display: inline-flex !important; align-items: center; justify-content: center;
@@ -10386,32 +10402,43 @@
       color-mix(in srgb, color-mix(in srgb, var(--rc-fill, #02fff1) 14%, #fff) 40%, transparent) 100%);
 }
 
-/* pearl: soft pastel colors drifting through white, tinted a little by the color, in a pale rim */
+/* pearl: a real pearl. A soft white body that deepens a little toward the edge, a bright round highlight at the upper left, a faint glow of the color
+   along the bottom edge and a pale rim */
 .gel-rimpearl-chip {
-  border-color: color-mix(in srgb, var(--rc-fill, #02fff1) 52%, #fff);
-  background: linear-gradient(115deg, #ffe7f3 0%, #e4f1ff 30%, #e5ffec 55%, #fff6df 78%, #f0e6ff 100%);
+  border-color: color-mix(in srgb, var(--rc-fill, #02fff1) 38%, #fff);
+  color: color-mix(in srgb, var(--rc-ink, #219a9e) 78%, #3a3a3a);
+  background: radial-gradient(ellipse 90% 140% at 32% 18%, #ffffff 0%, #f1f1f1 100%);
   background:
-    linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 24%, transparent), transparent 70%),
-    linear-gradient(115deg, #ffe7f3 0%, #e4f1ff 30%, #e5ffec 55%, #fff6df 78%, #f0e6ff 100%);
+    radial-gradient(ellipse 55% 45% at 50% 115%, color-mix(in srgb, var(--rc-fill, #02fff1) 45%, transparent), transparent 72%),
+    radial-gradient(ellipse 90% 140% at 32% 18%, #ffffff 0%, color-mix(in srgb, var(--rc-fill, #02fff1) 7%, #fff) 40%, color-mix(in srgb, var(--rc-fill, #02fff1) 26%, #f3f3f3) 100%);
+  box-shadow: inset 0 -0.1em 0.18em color-mix(in srgb, var(--rc-fill, #02fff1) 30%, transparent), 0 0.04em 0.12em rgba(0, 0, 0, 0.14);
 }
-.gel-rimpearl-chip::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%); }
+.gel-rimpearl-chip::before { left: 0.28em; right: auto; width: 0.75em; top: 0.1em; height: 0.24em; border-radius: 50%; background: radial-gradient(ellipse at 50% 50%, #ffffff 0%, rgba(255, 255, 255, 0) 74%); }
 
-/* steel: banded chrome inside a colored rim, words in a dark shade of the color */
+/* steel: an anodized metal plate. Fine brushed lines across a metal that is tinted by the color, a rivet at each end, dark engraved words */
 .gel-rimsteel-chip {
-  color: color-mix(in srgb, var(--rc-ink, #219a9e) 75%, #000);
-  text-shadow: 0 0.04em 0 rgba(255, 255, 255, 0.7);
-  background: linear-gradient(180deg, #fbfbfb 0%, #d9dde1 46%, #9aa1a8 50%, #cfd4d9 78%, #f2f4f6 100%);
-  box-shadow: inset 0 0 0 0.04em rgba(0, 0, 0, 0.22);
-}
-.gel-rimsteel-chip::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%); }
-
-/* aurora: the color melts sideways into the next color of the wheel, under the same glassy top */
-.gel-rimaurora-chip {
-  color: color-mix(in srgb, var(--rc-ink, #219a9e) 70%, #000);
-  background: linear-gradient(90deg, var(--rc-fill, #02fff1), var(--rc-fill2, #2a8cff));
+  border-color: color-mix(in srgb, var(--rc-rim, #04c3ca) 50%, #5a6168);
+  color: color-mix(in srgb, var(--rc-ink, #219a9e) 55%, #1d2227);
+  text-shadow: 0 0.05em 0 rgba(255, 255, 255, 0.6);
+  background: linear-gradient(180deg, #e8ecef, #aeb6bd);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 62%),
-    linear-gradient(90deg, color-mix(in srgb, var(--rc-fill, #02fff1) 62%, #fff), color-mix(in srgb, var(--rc-fill2, #2a8cff) 62%, #fff));
+    radial-gradient(circle at 0.3em 50%, rgba(58, 64, 70, 0.8) 0 0.032em, rgba(255, 255, 255, 0.95) 0.04em 0.07em, transparent 0.078em),
+    radial-gradient(circle at calc(100% - 0.3em) 50%, rgba(58, 64, 70, 0.8) 0 0.032em, rgba(255, 255, 255, 0.95) 0.04em 0.07em, transparent 0.078em),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0 0.018em, rgba(0, 0, 0, 0.06) 0.018em 0.036em),
+    linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 28%, #f5f7f9) 0%, color-mix(in srgb, var(--rc-fill, #02fff1) 44%, #c7ced4) 52%, color-mix(in srgb, var(--rc-fill, #02fff1) 58%, #9aa3ab) 100%);
+  box-shadow: inset 0 0 0 0.03em rgba(0, 0, 0, 0.2);
+}
+.gel-rimsteel-chip::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 100%); }
+
+/* aurora: soft northern-light blooms rising from the bottom corners, the color on the left and the next color of the wheel on the right, with faint rays of light */
+.gel-rimaurora-chip {
+  color: color-mix(in srgb, var(--rc-ink, #219a9e) 70%, #0f1a2e);
+  background: linear-gradient(180deg, #f9fcff, #e6eefa);
+  background:
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.34) 0 0.07em, transparent 0.07em 0.26em),
+    radial-gradient(ellipse 62% 135% at 12% 118%, color-mix(in srgb, var(--rc-fill, #02fff1) 88%, transparent), transparent 72%),
+    radial-gradient(ellipse 62% 135% at 88% 118%, color-mix(in srgb, var(--rc-fill2, #2a8cff) 88%, transparent), transparent 72%),
+    linear-gradient(180deg, #fbfdff 0%, #e8f0fb 100%);
 }
 .gel-rim-red { --rc-fill2: #ff8a1f; }
 .gel-rim-orange { --rc-fill2: #ffd01f; }
