@@ -3,7 +3,7 @@
 //! and the caller then draws the whole text with the JavaScript engine.
 
 use crate::inline::{inline, Notes};
-use crate::util::{esc, is_space, slug, trim};
+use crate::util::{count_dd, esc, is_space, math_html, slug, trim};
 
 fn skip_space(s: &[char], mut i: usize) -> usize {
     while i < s.len() && is_space(s[i]) {
@@ -273,8 +273,8 @@ pub fn text_to_html(src: &str, notes: &mut Notes) -> Option<String> {
             i += 1;
             continue;
         }
-        // not ported yet: {{template}} lines, pictures, $$ math and ::blocks
-        if tstr.starts_with("{{") || tstr.starts_with("![") || tstr.starts_with("$$") || (tstr.starts_with("::") && tstr.chars().nth(2).map_or(false, |c| c.is_ascii_lowercase())) {
+        // not ported yet: {{template}} lines, pictures and ::blocks
+        if tstr.starts_with("{{") || tstr.starts_with("![") || (tstr.starts_with("::") && tstr.chars().nth(2).map_or(false, |c| c.is_ascii_lowercase())) {
             return None;
         }
         if let Some((n, rest)) = heading(&t) {
@@ -290,6 +290,30 @@ pub fn text_to_html(src: &str, notes: &mut Notes) -> Option<String> {
         }
         if let Some((label, rest)) = footnote_def(&t) {
             out.push(format!("<div class=\"kd-footnote-def\" id=\"fn-{}\"><span class=\"kd-footnote-tag\">{}</span> <span class=\"kd-footnote-text\">{}</span></div>", slug(&label), esc(&label), inline(&rest, notes)?));
+            i += 1;
+            continue;
+        }
+        // $$ ... (more lines) ... $$: one centered equation
+        if tstr.starts_with("$$") && count_dd(&tstr) == 1 {
+            let mut j = i + 1;
+            while j < lines.len() && j - i <= 400 && count_dd(lines[j]) == 0 {
+                j += 1;
+            }
+            if j < lines.len() && count_dd(lines[j]) == 1 && lines[j].trim_end_matches(is_space).ends_with("$$") {
+                let joined = std::iter::once(tstr.as_str()).chain(lines[i + 1..=j].iter().copied()).collect::<Vec<_>>().join("\n");
+                let no_open = joined.strip_prefix("$$").unwrap_or(&joined);
+                let no_close = no_open.trim_end_matches(is_space);
+                let tex = trim(no_close.strip_suffix("$$").unwrap_or(no_close));
+                if !tex.is_empty() {
+                    out.push(math_html(tex, true));
+                    i = j + 1;
+                    continue;
+                }
+            }
+        }
+        if tstr.starts_with("$$") && tstr.ends_with("$$") && tstr.chars().count() >= 4 {
+            let inner: String = tstr.chars().skip(2).take(tstr.chars().count() - 4).collect();
+            out.push(math_html(trim(&inner), true));
             i += 1;
             continue;
         }

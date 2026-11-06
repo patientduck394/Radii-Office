@@ -4,7 +4,7 @@
 //! What this port does not do yet makes it return None, and the caller then uses the JavaScript engine.
 
 use crate::tables::{AN_STYLES, HL_COLORS, HL_STYLES, TRIGGERS, US_FAMS};
-use crate::util::{collect, esc, index_of, is_space, slug, starts_with_at, trim_chars};
+use crate::util::{collect, esc, index_of, is_space, math_html, slug, starts_with_at, trim_chars};
 use std::collections::HashMap;
 use std::sync::OnceLock;
 
@@ -67,10 +67,8 @@ impl<'a> Inline<'a> {
             return None;
         }
         s = self.escaped_dollar(&s);
-        // not ported yet: math ($x^2$ and $$...$$ are drawn by KaTeX in the JavaScript)
-        if s.contains(&'$') {
-            return None;
-        }
+        s = self.math_display(&s);
+        s = self.math_inline(&s);
         s = self.backslash(&s);
         // not ported yet: [[links]] (they look up titles), pictures and files inside the text, [words]{color=...}
         if index_of(&s, &['[', '['], 0).is_some() || index_of(&s, &['(', 'd', 'a', 't', 'a', ':'], 0).is_some() || index_of(&s, &[']', '{'], 0).is_some() {
@@ -135,6 +133,79 @@ impl<'a> Inline<'a> {
                 out.push(s[i]);
                 i += 1;
             }
+        }
+        out
+    }
+
+    // $$ ... $$: a centered equation (the shortest run, at least one character inside)
+    fn math_display(&mut self, s: &[char]) -> Vec<char> {
+        let mut out = Vec::with_capacity(s.len());
+        let mut i = 0;
+        while i < s.len() {
+            if s[i] == '$' && i + 1 < s.len() && s[i + 1] == '$' {
+                if let Some(j) = index_of(s, &['$', '$'], i + 3) {
+                    let h = math_html(collect(trim_chars(&s[i + 2..j])).as_str(), true);
+                    out.extend(self.stash(h).chars());
+                    i = j + 2;
+                    continue;
+                }
+            }
+            out.push(s[i]);
+            i += 1;
+        }
+        out
+    }
+
+    // $x^2$: inline math. Not after a letter, digit or $, no space just inside the dollars, and not followed by a letter, digit or $
+    // (so a price like "$5 and $6" stays text)
+    fn math_inline(&mut self, s: &[char]) -> Vec<char> {
+        let word = |c: char| c.is_ascii_alphanumeric() || c == '_';
+        let mut out = Vec::with_capacity(s.len());
+        let mut i = 0;
+        while i < s.len() {
+            // where the opening $ would be: right here at the very start, or right after one ordinary character
+            let mut hit: Option<(usize, usize, usize)> = None; // (position of $, closing $, start of preceding char or $ itself)
+            let try_at = |dollar: usize| -> Option<usize> {
+                if dollar >= s.len() || s[dollar] != '$' || dollar + 1 >= s.len() || is_space(s[dollar + 1]) {
+                    return None;
+                }
+                // inside: any characters except $ and newline, then one last non-space character (which may be a $ itself),
+                // then the closing $ (the shortest way that fits, like the JavaScript's lazy pattern)
+                let mut p = dollar + 1;
+                loop {
+                    if p >= s.len() {
+                        return None;
+                    }
+                    if !is_space(s[p]) && p + 1 < s.len() && s[p + 1] == '$' && (p + 2 >= s.len() || !(word(s[p + 2]) || s[p + 2] == '$')) {
+                        return Some(p + 1);
+                    }
+                    if s[p] == '$' || s[p] == '\n' {
+                        return None;
+                    }
+                    p += 1;
+                }
+            };
+            if i == 0 {
+                if let Some(q) = try_at(0) {
+                    hit = Some((0, q, 0));
+                }
+            }
+            if hit.is_none() && !word(s[i]) && s[i] != '$' {
+                if let Some(q) = try_at(i + 1) {
+                    hit = Some((i + 1, q, i));
+                }
+            }
+            if let Some((dollar, q, start)) = hit {
+                if start < dollar {
+                    out.push(s[start]);
+                }
+                let h = math_html(&collect(&s[dollar + 1..q]), false);
+                out.extend(self.stash(h).chars());
+                i = q + 1;
+                continue;
+            }
+            out.push(s[i]);
+            i += 1;
         }
         out
     }

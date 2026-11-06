@@ -25,6 +25,10 @@
     };
     function call(name, text) {
         if (!wasm) return null;
+        try { return callWasm(name, text); }
+        catch (e) { console.warn('Keydown Rust engine switched off after an error:', e); wasm = null; api.ready = false; return null; }
+    }
+    function callWasm(name, text) {
         const bytes = enc.encode(String(text == null ? '' : text));
         const ptr = wasm.kd_alloc(bytes.length);
         new Uint8Array(wasm.memory.buffer, ptr, bytes.length).set(bytes);

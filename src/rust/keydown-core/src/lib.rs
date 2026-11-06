@@ -83,10 +83,22 @@ mod tests {
 
     #[test]
     fn not_ported_yet_goes_back_to_javascript() {
-        assert!(inline_html("math $x^2$").is_none());
         assert!(inline_html("a {{template}}").is_none());
         assert!(text_to_html("::glass{Hi}").is_none());
         assert!(text_to_html("@@dice=\"x\"").is_none());
+    }
+
+    #[test]
+    fn math() {
+        let h = inline_html("a $x^2$ b").unwrap();
+        assert!(h.contains("data-tex=\"x^2\"") && h.contains("data-display=\"0\"") && h.starts_with("a <span class=\"kd-math\""));
+        assert!(inline_html("$$a=b$$").unwrap().starts_with("<div class=\"kd-math kd-math-display\""));
+        // a price is not math, and a $ inside the equation's last place still is
+        assert_eq!(inline_html("price $5 and $6").unwrap(), "price $5 and $6");
+        assert!(inline_html("$$$").unwrap().contains("data-tex=\"$\""));
+        // several lines between $$ lines are one centered equation
+        let d = text_to_html("$$\na = b\n$$").unwrap();
+        assert!(d.starts_with("<div class=\"kd-math kd-math-display\"") && d.contains("data-tex=\"a = b\""));
     }
 
     #[test]

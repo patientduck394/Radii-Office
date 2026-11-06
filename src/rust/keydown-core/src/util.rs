@@ -93,3 +93,35 @@ pub fn starts_with_at(hay: &[char], at: usize, needle: &str) -> bool {
 pub fn collect(s: &[char]) -> String {
     s.iter().collect()
 }
+
+/// `mathHtml` in keydown-doc.js without KaTeX: the equation element holding its source (the page's JavaScript typesets it).
+pub fn math_html(tex: &str, display: bool) -> String {
+    let tex = tex.replace('\u{a0}', " ");
+    let shown = format!("{}{}{}", if display { "$$" } else { "$" }, tex, if display { "$$" } else { "$" });
+    let tag = if display { "div" } else { "span" };
+    format!(
+        "<{} class=\"kd-math{}\" contenteditable=\"false\" data-tex=\"{}\" data-display=\"{}\" title=\"Double-click to edit this equation!\"><code class=\"kd-math-src\">{}</code></{}>",
+        tag,
+        if display { " kd-math-display" } else { "" },
+        esc(&tex),
+        if display { "1" } else { "0" },
+        esc(&shown),
+        tag
+    )
+}
+
+/// How many `$$` a text holds (JavaScript's `match(/\$\$/g).length`: pairs, never overlapping).
+pub fn count_dd(s: &str) -> usize {
+    let c: Vec<char> = s.chars().collect();
+    let mut i = 0;
+    let mut n = 0;
+    while i < c.len() {
+        if c[i] == '$' && i + 1 < c.len() && c[i + 1] == '$' {
+            n += 1;
+            i += 2;
+        } else {
+            i += 1;
+        }
+    }
+    n
+}

@@ -237,3 +237,18 @@ body.os-office.os-phone:not(.wo-nav-off):not(.wo-focus) #sidebar {
     overflow-y: auto; box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.35), 6px 0 24px rgba(0, 0, 0, 0.3); animation: osPhoneDrawer 0.28s var(--os-ease);
 }
 @keyframes osPhoneDrawer { from { transform: translateX(-100%); } }
+
+/* ---------- Gel Chips menu (the Bubble Chip's cousins): an icon grid, then the color variants with live previews ---------- */
+.bb-chipmenu { width: 300px; padding: 2px 8px 8px; }
+.bb-chipmenu-head { display: flex; align-items: center; gap: 8px; padding: 6px 2px 6px; font-size: 11px; font-weight: 700; color: var(--os-dim); text-transform: uppercase; letter-spacing: 0.4px; }
+.bb-chipmenu-back { border: 0; background: transparent; color: inherit; font: inherit; text-transform: none; letter-spacing: 0; cursor: pointer; padding: 2px 6px; border-radius: 5px; }
+.bb-chipmenu-back:hover { background: var(--os-hover, rgba(127, 127, 127, 0.18)); }
+.bb-chip-fams { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.bb-chip-fam { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 9px 4px 7px; border: 1px solid var(--os-menu-line); border-radius: 9px; background: transparent; color: inherit; cursor: pointer; font: 600 11px system-ui, sans-serif; transition: transform 0.15s, background 0.15s, border-color 0.15s; }
+.bb-chip-fam:hover { background: var(--os-hover, rgba(127, 127, 127, 0.14)); transform: translateY(-1px); border-color: rgba(127, 127, 127, 0.5); }
+.bb-chip-fam svg { display: block; }
+.bb-chip-cols { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.bb-chip-col { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 10px 2px 6px; min-height: 62px; border: 1px solid var(--os-menu-line); border-radius: 9px; background: transparent; color: inherit; cursor: pointer; overflow: visible; transition: transform 0.15s, background 0.15s; }
+.bb-chip-col:hover { background: var(--os-hover, rgba(127, 127, 127, 0.14)); transform: scale(1.05); z-index: 1; }
+.bb-chip-col > span { font: 800 12px 'JetBrains Mono', monospace; pointer-events: none; }
+.bb-chip-col small { font-size: 10px; color: var(--os-dim); }

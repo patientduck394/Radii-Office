@@ -332,7 +332,7 @@
         };
         s = triggers(s);
         // escape what is left as plain text, then put the stashed pieces back (a trigger's inside is drawn the same way, so they can nest)
-        const render = (raw) => esc(raw).replace(/\u0001(\d+)\u0001/g, (_, i) => store[+i].replace(/\u0002([\s\S]*?)\u0003/g, (__, inner) => render(inner)));
+        const render = (raw) => esc(raw).replace(/\u0001(\d+)\u0001/g, (_, i) => (store[+i] || '').replace(/\u0002([\s\S]*?)\u0003/g, (__, inner) => render(inner)));
         return render(s);
     }
 
@@ -350,13 +350,21 @@
             '<tbody>' + (body.length ? body.map((l) => row(l, 'td')).join('') : '') + '</tbody></table>';
     }
 
+    // The Rust engine draws every equation as its element holding the source; the typesetting (KaTeX) stays JavaScript, so
+    // once KaTeX is on the page each one gets its typeset inside (before that, kdMathRefresh paints them when it loads)
+    function fillMath(html) {
+        if (typeof root.kdMathHTML !== 'function' || !root.katex || html.indexOf('kd-math-src') < 0) return html;
+        const un = (t) => t.replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&amp;/g, '&');
+        return html.replace(/(<(span|div) class="kd-math(?: kd-math-display)?" contenteditable="false" data-tex="([^"]*)" data-display="([01])" title="Double-click to edit this equation!">)<code class="kd-math-src">[\s\S]*?<\/code>(<\/\2>)/g,
+            (m, open, tag, tex, disp, close) => open + root.kdMathHTML(un(tex), disp === '1') + close);
+    }
     function textToHtml(src, opts) {
         // The Rust text engine (rust/keydown-core, loaded by keydown-rust.js) draws the text when it is switched on and it
         // handles all of it; anything it does not do yet comes back as null and the JavaScript below draws it as always
         const rust = root.KeydownRust;
         if (rust && rust.enabled && rust.ready && !(opts && opts.notes)) {
             const h = rust.textToHtml(src);
-            if (h !== null) return h;
+            if (h !== null) return fillMath(h);
         }
         opts = Object.assign({ notes: {} }, opts || {});
         const lines = String(src || '').replace(/\r/g, '').split('\n');

@@ -611,7 +611,6 @@
                         { glyph: 'ab', glyphCls: 's', title: 'Strikethrough', run: function () { fmt('strikethrough'); }, checked: function () { return inTag('s, strike, del'); } },
                         { icon: 'code', title: 'Inline Code', run: inlineCode, checked: function () { return inTag('code'); } },
                         { sep: true },
-                        { icon: 'highlighter', title: 'Highlight', bar: function () { return '#fde047'; }, run: function () { if (lastHl && typeof fmtApplyHighlight === 'function') { fmtApplyHighlight(lastHl); save(); } } },
                         { icon: 'fontColor', title: 'Font Color', bar: function () { return lastColor; }, run: function () { applyColor(lastColor); }, menu: colorMenu },
                         { icon: 'orb', title: 'Gel Orbs', menu: function () { return swatchMenu('Gel Orbs', chips, fmtApplyChip, 'cp-swatch'); } },
                         { icon: 'bubble', title: 'Gel Bubbles', menu: function () { return swatchMenu('Gel Bubbles', aqua, fmtApplyAqua, 'aq-swatch'); } },
