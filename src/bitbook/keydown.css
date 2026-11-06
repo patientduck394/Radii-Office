@@ -5875,7 +5875,7 @@
 }
 .gel-aero-chip::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 0.45em; right: 0.45em; top: 0.08em; height: 0.62em; border-radius: 0.24em;
+  left: 0.45em; right: 0.45em; top: 0.08em; height: 0.62em; border-radius: 0.7em / 0.31em;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.81) 0%, rgba(255, 255, 255, 0.81) 28%, rgba(255, 255, 255, 0.5) 100%);
 }
 .gel-aero-red { --ae-c: #ff2222; --ae-l: #ff6e6e; --ae-e1: #7c0000; --ae-e2: #c60000; }
