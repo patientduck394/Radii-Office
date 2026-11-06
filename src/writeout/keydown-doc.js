@@ -61,7 +61,7 @@
     ];
     // longest openers first (so ** beats * and !#R# beats #R#); highlights go before all of them, each with its NEAREST ending
     // (a lone & is matched by its own rule below, so "AT&T and R&D" stays as typed)
-    const ORDER = TRIGGERS.filter((d) => d[0] !== '&').sort((a, b) => b[0].length - a[0].length);
+    const ORDER = TRIGGERS.slice().filter((d) => d[0] !== '&').sort((a, b) => b[0].length - a[0].length);
     const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#([#_~=\\]-])', 'g');
     const INK_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')\\(([^()]+?)\\)', 'g');
     // Every Annotate style by name: #R.halo(text), #B.neon(text), #Y.marker(text)... ([name, class, label])
