@@ -396,6 +396,8 @@ function kdRender(raw) {
     let mtext = text.replace(/\\\$/g, () => stash("$"));
     mtext = mtext.replace(/\$\$([\s\S]+?)\$\$/g, (m, t) => stash(kdMathHtml(t.trim(), true)));
     mtext = mtext.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (m, pre, t) => pre + stash(kdMathHtml(t, false)));
+    // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
+    mtext = mtext.replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, (m, pre, inner) => pre + stash('<span class="sparklet-text">' + kdEscapeHtml(inner) + "</span>"));
     // a backslash keeps the next symbol as itself (\#R#x# shows "#R#x#"), and \\ shows one backslash; letters and digits are never touched
     let s = kdEscapeHtml(mtext.replace(/\\([^A-Za-z0-9\s])/g, (m, c) => stash(kdEscapeHtml(c))));
     const escRe = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");

@@ -986,6 +986,7 @@ if (canvas) {
             { open: '=SL=', close: '=SL=', className: 'gel-orb gel-sl' },
             
             { open: '&&',    close: '&&',    className: 'spark-text' },
+            { open: '&',     close: '&',     className: 'sparklet-text', hug: true },
             
             { open: '~G~', close: '~G~', className: 'gel-green-flash' },
             { open: '~U~', close: '~U~', className: 'liquid-underline' },
@@ -2046,9 +2047,16 @@ if (canvas) {
         if (/^\s*::[a-z]+\{[^}]*$/.test(currentLineText)) return;
         for (let def of definitions) {
             let openIdx = currentLineText.indexOf(def.open);
+            // a lone & (&sparklet&) must hug its words, not sit inside a word (AT&T) or be part of &&: find the first pair that does
+            let hugEnd = -1;
+            if (def.hug) {
+              const hm = /(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/.exec(currentLineText);
+              if (!hm) continue;
+              openIdx = hm.index + hm[1].length; hugEnd = openIdx + 1 + hm[2].length;
+            }
             if (openIdx === -1) continue;
 
-            let closeIdx = currentLineText.indexOf(def.close, openIdx + def.open.length);
+            let closeIdx = hugEnd !== -1 ? hugEnd : currentLineText.indexOf(def.close, openIdx + def.open.length);
             if (closeIdx === -1) continue;
             // a gel highlight ends at ITS nearest ## / #_ / #~ / #= / #] / #- (no # inside), never at a later highlight's ending!
             if (def.tagName === 'mark' && currentLineText.slice(openIdx + def.open.length, closeIdx).indexOf('#') !== -1) continue;
@@ -8844,6 +8852,7 @@ var FMT_DEFAULT_STYLES = [
     { label: 'Orb Aqua', cls: 'gel-orb gel-aq' },
     { label: 'Orb Slate', cls: 'gel-orb gel-sl' },
     { label: 'Spark Text', cls: 'spark-text' },
+    { label: 'Sparklet', cls: 'sparklet-text' },
     { label: 'Green Flash', cls: 'gel-green-flash' },
     { label: 'Liquid Underline', cls: 'liquid-underline' },
     { label: 'Glossy Border', cls: 'glossy-border-badge' },
@@ -10567,7 +10576,7 @@ function kdHydrateInteractions(root) {
 var fmtWired = false;
 var FMT_HIGHLIGHT_SEL = '.gel-orb, .gel-bubble-chip, .aero-tag-chip, .aero-glass-badge-chip, ' +
     'span[class*="gel-chip-"], span[class*="megachip-"], span[class*="droplet-"]';
-var FMT_EFFECT_SEL = '.spark-text, .liquid-underline, .glossy-border-badge, .cyber-glow-spark, ' +
+var FMT_EFFECT_SEL = '.spark-text, .sparklet-text, .liquid-underline, .glossy-border-badge, .cyber-glow-spark, ' +
     '.liquid-text-glow, .aqua-bubble-text, .reflected-text-block, .embossed-glass-text, ' +
     '.kinetic-wave-text, span[class*="effect-"], span[class*="mkt-"], span[class*="orange-hl-"], ' +
     'span[class*="dev-chip-"], span[class*="av-chip-"], span[class*="jr-chip-"]';

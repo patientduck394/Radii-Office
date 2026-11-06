@@ -455,6 +455,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { open: '__SL_', close: '__', className: 'gel-keycap-chip gel-keycap-slate' },
       { open: '__BK_', close: '__', className: 'gel-keycap-chip gel-keycap-black' },
       { open: '&&',    close: '&&',    className: 'spark-text' },
+      { open: '&',    close: '&',    className: 'sparklet-text', hug: true },
       { open: '~G~', close: '~G~', className: 'gel-green-flash' },
       { open: '~U~', close: '~U~', className: 'liquid-underline' },
       { open: '~B~', close: '~B~', className: 'glossy-border-badge' },
@@ -612,9 +613,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     for (let def of inlineDefinitions) {
       let openIdx = textContent.indexOf(def.open);
+      // a lone & (&sparklet&) must hug its words, not sit inside a word (AT&T) or be part of &&: find the first pair that does
+      let hugEnd = -1;
+      if (def.hug) {
+        const hm = /(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/.exec(textContent);
+        if (!hm) continue;
+        openIdx = hm.index + hm[1].length; hugEnd = openIdx + 1 + hm[2].length;
+      }
       if (openIdx === -1) continue;
 
-      let closeIdx = textContent.indexOf(def.close, openIdx + def.open.length);
+      let closeIdx = hugEnd !== -1 ? hugEnd : textContent.indexOf(def.close, openIdx + def.open.length);
       if (closeIdx === -1) continue;
 
       e.preventDefault();

@@ -28,7 +28,7 @@
     const TRIGGERS = [
         ['=Y=','=Y=','span','gel-orb gel-y'], ['=R=','=R=','span','gel-orb gel-r'], ['=G=','=G=','span','gel-orb gel-g'], ['=C=','=C=','span','gel-orb gel-c'], ['=B=','=B=','span','gel-orb gel-b'], ['=V=','=V=','span','gel-orb gel-v'],
         ['=P=','=P=','span','gel-orb gel-p'], ['=O=','=O=','span','gel-orb gel-o'], ['=MG=','=MG=','span','gel-orb gel-mg'], ['=LM=','=LM=','span','gel-orb gel-lm'], ['=AQ=','=AQ=','span','gel-orb gel-aq'], ['=SL=','=SL=','span','gel-orb gel-sl'],
-        ['&&','&&','span','spark-text'], ['~G~','~G~','span','gel-green-flash'], ['~U~','~U~','span','liquid-underline'], ['~B~','~B~','span','glossy-border-badge'], ['~S~','~S~','span','cyber-glow-spark'], ['~L~','~L~','span','liquid-text-glow'],
+        ['&&','&&','span','spark-text'], ['&','&','span','sparklet-text'], ['~G~','~G~','span','gel-green-flash'], ['~U~','~U~','span','liquid-underline'], ['~B~','~B~','span','glossy-border-badge'], ['~S~','~S~','span','cyber-glow-spark'], ['~L~','~L~','span','liquid-text-glow'],
         ['~M~','~M~','span','reflected-text-block'], ['~E~','~E~','span','embossed-glass-text'], ['~W~','~W~','span','kinetic-wave-text'], ['`','`','code',''], ['**','**','strong',''], ['*','*','em',''],
         
         ['!#R#','#','span','aero-tag-chip tag-chip-r'], ['!#O#','#','span','aero-tag-chip tag-chip-o'], ['!#GL#','#','span','aero-tag-chip tag-chip-gl'], ['!#Y#','#','span','aero-tag-chip tag-chip-y'], ['!#L#','#','span','aero-tag-chip tag-chip-l'], ['!#G#','#','span','aero-tag-chip tag-chip-g'], ['!#TU#','#','span','aero-tag-chip tag-chip-tu'], ['!#T#','#','span','aero-tag-chip tag-chip-t'], ['!#C#','#','span','aero-tag-chip tag-chip-c'], ['!#B#','#','span','aero-tag-chip tag-chip-b'], ['!#PR#','#','span','aero-tag-chip tag-chip-pr'], ['!#PK#','#','span','aero-tag-chip tag-chip-pk'], ['!#W#','#','span','aero-tag-chip tag-chip-w'], ['!#FG#','#','span','aero-tag-chip tag-chip-fg'], ['!#SL#','#','span','aero-tag-chip tag-chip-sl'], ['!#BK#','#','span','aero-tag-chip tag-chip-bk'], ['!#A#','#','span','aero-tag-chip tag-chip-a'], ['#C#','#','span','gel-bubble-chip gel-chip-cyan'], ['#O#','#','span','gel-bubble-chip gel-chip-orange'], ['#G#','#','span','gel-bubble-chip gel-chip-green'], ['#R#','#','span','gel-bubble-chip gel-chip-red'],
@@ -60,7 +60,8 @@
         [';;R;',';;','span','gel-logo-chip gel-logo-red'], [';;O;',';;','span','gel-logo-chip gel-logo-orange'], [';;GL;',';;','span','gel-logo-chip gel-logo-gold'], [';;Y;',';;','span','gel-logo-chip gel-logo-yellow'], [';;L;',';;','span','gel-logo-chip gel-logo-lime'], [';;G;',';;','span','gel-logo-chip gel-logo-green'], [';;TU;',';;','span','gel-logo-chip gel-logo-turquoise'], [';;T;',';;','span','gel-logo-chip gel-logo-teal'], [';;C;',';;','span','gel-logo-chip gel-logo-cyan'], [';;B;',';;','span','gel-logo-chip gel-logo-blue'], [';;PR;',';;','span','gel-logo-chip gel-logo-purple'], [';;PK;',';;','span','gel-logo-chip gel-logo-pink'], [';;SL;',';;','span','gel-logo-chip gel-logo-slate'], [';;W;',';;','span','gel-logo-chip gel-logo-white'], [';;FG;',';;','span','gel-logo-chip gel-logo-fog'], [';;BK;',';;','span','gel-logo-chip gel-logo-black'],
     ];
     // longest openers first (so ** beats * and !#R# beats #R#); highlights go before all of them, each with its NEAREST ending
-    const ORDER = TRIGGERS.slice().sort((a, b) => b[0].length - a[0].length);
+    // (a lone & is matched by its own rule below, so "AT&T and R&D" stays as typed)
+    const ORDER = TRIGGERS.filter((d) => d[0] !== '&').sort((a, b) => b[0].length - a[0].length);
     const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#([#_~=\\]-])', 'g');
     const INK_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')\\(([^()]+?)\\)', 'g');
     // Every Annotate style by name: #R.halo(text), #B.neon(text), #Y.marker(text)... ([name, class, label])
@@ -328,6 +329,8 @@
                     at = str.indexOf(open);
                 }
             });
+            // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
+            str = str.replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, (m, pre, body) => pre + stash('<span class="sparklet-text" spellcheck="false">\u0002' + triggers(body) + '\u0003</span>'));
             return str;
         };
         s = triggers(s);

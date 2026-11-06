@@ -306,6 +306,11 @@
             }
             // a backslash keeps the next symbol as itself (letters and digits are never touched)
             if (s.charAt(i) === '\\' && i + 1 < s.length && /[^A-Za-z0-9\s]/.test(s.charAt(i + 1))) { out += '<span class="kd-esc">' + esc(s.charAt(i + 1)) + '</span>'; i += 2; used = true; continue; }
+            // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
+            if (s.charAt(i) === '&' && s.charAt(i + 1) !== '&' && (i === 0 || !/[\w&]/.test(s.charAt(i - 1)))) {
+                const sp = /^&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/.exec(s.slice(i));
+                if (sp) { out += '<span class="sparklet-text">' + esc(sp[1]) + '</span>'; i += sp[0].length; used = true; continue; }
+            }
             if (s.charAt(i) === '$' && (i === 0 || !/[\w$]/.test(s.charAt(i - 1)))) {
                 let mm = /^\$\$([\s\S]+?)\$\$/.exec(s.slice(i)), disp = true;
                 if (!mm) { mm = /^\$(?=\S)([^$\n]*?\S)\$(?![\w$])/.exec(s.slice(i)); disp = false; }
