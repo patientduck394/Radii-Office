@@ -280,7 +280,7 @@ See-through Vista glass: a pane tinted with the color, a colored rim, a white sh
 
 ## Aero orb chips
 
-A gel orb stretched into a pill: deep at the edges like a sphere, light glowing through from the bottom, an oval shine at the top and a sharp specular dot. Written `++color*text++`, in the same 16 colors as the Aero chips:
+The Vista start orb stretched into a pill: a deep, dark-edged glass body, a crisp glass cap across the top half, the color glowing up from the bottom and a soft halo around it. Written `++color*text++`, in the same 16 colors as the Aero chips:
 
 * `++R*text++` ++R*red++
 * `++O*text++` ++O*orange++
@@ -322,7 +322,7 @@ A dark glossy pill, like a Vista taskbar button, with the color glowing up from 
 
 ## Aero chrome chips
 
-A polished chrome bezel around a glossy colored center, like the metal-framed buttons of the time. Written `++color:text++`, in the same 16 colors as the Aero chips:
+Liquid chrome tinted with the color: a bright sky above a sharp dark horizon line, the color reflected in the ground below it and a slanted streak of light across it. Written `++color:text++`, in the same 16 colors as the Aero chips:
 
 * `++R:text++` ++R:red++
 * `++O:text++` ++O:orange++

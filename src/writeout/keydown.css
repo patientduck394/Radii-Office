@@ -9889,38 +9889,43 @@
   text-shadow: 0 0 6px color-mix(in srgb, var(--ae-l) 80%, transparent), 0 1px 1px rgba(0, 0, 0, 0.6);
 }
 .gel-aeroglow-chip.gel-aero-black { background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.06) 46%, transparent 50%), radial-gradient(120% 90% at 50% 115%, #9a9a9a 0%, #555555 32%, transparent 72%), linear-gradient(180deg, #2c2f36 0%, #101216 100%); }
-/* Aero Orb (++R*text++): a gel orb stretched into a pill: deep at the edges like a sphere, light glowing through
-   from the bottom, an oval shine floating at the top and a sharp specular dot */
+/* Aero Orb (++R*text++): the Vista start orb stretched into a pill. A deep, dark-edged glass body, a crisp glass cap across the top half,
+   the color glowing up from the bottom, a bright ring just inside the edge and a soft halo of the color around it */
 .gel-aeroorb-chip {
-  padding: 2px 14px;
+  padding: 2px 14px; overflow: hidden;
   border: 0;
-  background: radial-gradient(60% 75% at 50% 100%, var(--ae-l) 0%, transparent 100%),
-              radial-gradient(75% 95% at 50% 55%, var(--ae-c) 0%, var(--ae-c) 45%, var(--ae-e2) 78%, var(--ae-e1) 100%);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ae-e1) 75%, transparent), inset 0 -2px 4px color-mix(in srgb, var(--ae-l) 80%, transparent), 0 3px 8px color-mix(in srgb, var(--ae-e1) 45%, transparent);
-  color: var(--ae-ink, #ffffff);
-  text-shadow: 0 1px 2px color-mix(in srgb, var(--ae-e1) 80%, transparent);
+  background: radial-gradient(75% 85% at 50% 108%, var(--ae-l) 0%, color-mix(in srgb, var(--ae-c) 75%, transparent) 42%, transparent 82%),
+              linear-gradient(180deg, color-mix(in srgb, var(--ae-e2) 70%, #000000) 0%, var(--ae-e1) 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ae-e1) 60%, #000000), inset 0 0 0 2px color-mix(in srgb, var(--ae-l) 70%, #ffffff), inset 0 -3px 5px color-mix(in srgb, var(--ae-l) 55%, transparent), 0 0 7px color-mix(in srgb, var(--ae-c) 60%, transparent), 0 2px 5px rgba(0, 0, 0, 0.28);
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 .gel-aeroorb-chip::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 14%; right: 14%; top: 2px; height: 44%; border-radius: 50%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.08) 100%);
+  left: 4%; right: 4%; top: 3px; height: 47%; border-radius: 999px 999px 45% 45% / 100% 100% 55% 55%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.16) 100%);
 }
 .gel-aeroorb-chip::after {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 17%; top: 3px; width: 0.3em; height: 0.3em; border-radius: 50%;
-  background: radial-gradient(closest-side, #ffffff 0%, #ffffff 45%, rgba(255, 255, 255, 0) 100%);
+  left: 24%; right: 24%; bottom: 3px; height: 22%; border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 100%);
 }
 
-/* Aero Chrome (++R:text++): a polished chrome bezel around a glossy colored center */
+/* Aero Chrome (++R:text++): liquid chrome tinted with the color. A bright sky above a sharp dark horizon line, the color reflected
+   in the ground below it, a slanted white streak of light and a thin dark outline */
 .gel-aerochrome-chip {
-  padding: 1px 12px;
-  border: 3px solid transparent;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0.12) 50%, transparent 52%) padding-box,
-              linear-gradient(180deg, var(--ae-l) 0%, var(--ae-c) 55%, var(--ae-e2) 100%) padding-box,
-              linear-gradient(180deg, #ffffff 0%, #d9dee4 22%, #8b949e 48%, #f4f6f8 56%, #b6bec7 78%, #6b737c 100%) border-box;
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(60, 66, 74, 0.55), 0 2px 5px rgba(0, 0, 0, 0.25);
-  color: var(--ae-ink, #ffffff);
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+  padding: 1px 12px; overflow: hidden;
+  border: 1px solid color-mix(in srgb, var(--ae-e1) 85%, #000000);
+  background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, var(--ae-l) 55%, #ffffff) 20%, var(--ae-c) 42%, var(--ae-e1) 49%,
+              color-mix(in srgb, var(--ae-l) 65%, #ffffff) 50%, var(--ae-l) 62%, var(--ae-c) 84%, var(--ae-e2) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 2px color-mix(in srgb, var(--ae-e1) 60%, transparent), 0 2px 4px rgba(0, 0, 0, 0.3);
+  color: #ffffff;
+  text-shadow: 0 0 2px var(--ae-e1), 0 1px 1px var(--ae-e1), 0 0 4px var(--ae-e1);
+}
+.gel-aerochrome-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 16%; width: 14%; top: -10%; bottom: -10%; transform: skewX(-24deg);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
 }
 
 /* Aero Bubble (++R!text++): a soap bubble: clear in the middle, tinted toward its colored rim, a rainbow-free sheen
