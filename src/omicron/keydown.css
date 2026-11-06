@@ -3009,6 +3009,24 @@
 }
 
 /* ========================================================
+   AERO MARK CHIPS (++R?text++): a toast chip cousin for HIGHLIGHTING. Instead of a bordered card it is a fat marker stroke: a solid bright
+   swipe of the color with slightly uneven ends, a deeper edge where the ink pools, a darker underline of ink and deep-colored bold text.
+   ======================================================== */
+.gel-aeromark-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 2px; border-radius: 3px 10px 4px 9px / 10px 3px 9px 4px;
+  border: 0;
+  background: #bfeef2;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 70%, #ffffff) 0%, var(--ae-l) 58%, color-mix(in srgb, var(--ae-c) 55%, var(--ae-l)) 100%);
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--ae-c) 60%, transparent), inset -2px 0 0 color-mix(in srgb, var(--ae-c) 60%, transparent), 0 2px 0 color-mix(in srgb, var(--ae-c) 55%, transparent);
+  color: #063c42; color: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+}
+.gel-aeromark-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-aeromark-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-aeromark-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; color: #111111; }
+
+/* ========================================================
    PAGE BREAK (::pagebreak): in Writeout's Pages view the text after it starts on a fresh page; printing breaks the page here too
    ======================================================== */
 .kd-pagebreak { position: relative; display: flex; align-items: center; justify-content: center; height: 22px; margin: 8px 0; color: #8aa0b4; font: 700 10px/1 system-ui, sans-serif; letter-spacing: 0.1em; text-transform: uppercase; user-select: none; cursor: default; break-after: page; page-break-after: always; }

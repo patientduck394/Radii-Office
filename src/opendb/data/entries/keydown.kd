@@ -404,6 +404,27 @@ A cousin of the toast chip: the same light tinted body and colored border, with 
 * `++FG%text++` ++FG%fog++
 * `++BK%text++` ++BK%black++
 
+## Aero mark chips
+
+A toast chip cousin for highlighting: not a bordered card but a fat marker stroke, a solid bright swipe of the color with slightly uneven ends, a deeper edge where the ink pools and a darker underline of ink. Written `++color?text++`, in the same 16 colors as the Aero chips:
+
+* `++R?text++` ++R?red++
+* `++O?text++` ++O?orange++
+* `++GL?text++` ++GL?gold++
+* `++Y?text++` ++Y?yellow++
+* `++L?text++` ++L?lime++
+* `++G?text++` ++G?green++
+* `++TU?text++` ++TU?turquoise++
+* `++T?text++` ++T?teal++
+* `++C?text++` ++C?cyan++
+* `++B?text++` ++B?blue++
+* `++PR?text++` ++PR?purple++
+* `++PK?text++` ++PK?pink++
+* `++SL?text++` ++SL?slate++
+* `++W?text++` ++W?white++
+* `++FG?text++` ++FG?fog++
+* `++BK?text++` ++BK?black++
+
 ## Rim chips
 
 A glass pill with a thick colored rim: the inside melts from the color at the top to almost clear at the bottom, with a small white shine near the top and words in a deep shade of the color. It is sized by its text (a rim of 0.133em, 0.4em of room at each side). Written `!!#color#text#`, in the same 16 colors as the Aero chips:
