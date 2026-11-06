@@ -3642,3 +3642,104 @@
   box-shadow: 0 0 0.4em color-mix(in srgb, var(--rc-fill, #02fff1) 70%, transparent), inset 0 0 0.35em color-mix(in srgb, var(--rc-fill, #02fff1) 45%, transparent);
 }
 .gel-rimneon-chip::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%); }
+
+/* ========================================================
+   SIX MORE RIM CHIP COUSINS (same size, rim and shine geometry as the Rim Chip, the same 16 colors through .gel-rim-red ...):
+   RIM FROST   !!%R#text#  milky frosted glass with a fine grain
+   RIM DOUBLE  !!:R#text#  an outline with a second thin ring inside it
+   RIM DOTS    !!;R#text#  halftone dots in the glass
+   RIM PEARL   !!-R#text#  an iridescent pearl inside a soft rim
+   RIM STEEL   !!?R#text#  brushed chrome inside a colored rim
+   RIM AURORA  !!/R#text#  the color melting sideways into the next color of the wheel (--rc-fill2)
+   ======================================================== */
+.gel-rimfrost-chip, .gel-rimdouble-chip, .gel-rimdots-chip, .gel-rimpearl-chip, .gel-rimsteel-chip, .gel-rimaurora-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  position: relative; isolation: isolate;
+  padding: 0.034em 0.4em 0; margin: 0 2px; border-radius: 0.667em;
+  border: 0.133em solid var(--rc-rim, #04c3ca);
+  line-height: 1.216; min-height: 1.216em; letter-spacing: 0.019em; font-weight: 700; white-space: nowrap; vertical-align: middle;
+  color: var(--rc-ink, #219a9e);
+}
+.gel-rimfrost-chip::before, .gel-rimdouble-chip::before, .gel-rimdots-chip::before, .gel-rimpearl-chip::before, .gel-rimsteel-chip::before, .gel-rimaurora-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 0.38em; right: 0.38em; top: 0.1em; height: 0.2186em; border-radius: 0.26em / 0.1em;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%);
+}
+.gel-rimfrost-chip::after, .gel-rimdouble-chip::after, .gel-rimdots-chip::after, .gel-rimpearl-chip::after, .gel-rimsteel-chip::after, .gel-rimaurora-chip::after {
+  content: ''; position: absolute; pointer-events: none; inset: -0.133em; border-radius: inherit;
+  box-shadow: inset 0 0 0.09em 0.01em rgba(253, 255, 255, 0.85);
+}
+
+/* frost: milky glass, a fine grain, a soft colored glow around it */
+.gel-rimfrost-chip {
+  border-color: color-mix(in srgb, var(--rc-fill, #02fff1) 62%, #fff);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.58));
+  background:
+    radial-gradient(circle, color-mix(in srgb, var(--rc-fill, #02fff1) 24%, transparent) 0.035em, transparent 0.045em) 0 0 / 0.15em 0.15em,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.58));
+  -webkit-backdrop-filter: blur(0.12em) saturate(1.15); backdrop-filter: blur(0.12em) saturate(1.15);
+  box-shadow: 0 0.04em 0.28em color-mix(in srgb, var(--rc-fill, #02fff1) 38%, transparent);
+}
+.gel-rimfrost-chip::after { box-shadow: inset 0 0 0.09em 0.01em rgba(255, 255, 255, 0.95), inset 0 0 0.32em color-mix(in srgb, var(--rc-fill, #02fff1) 34%, transparent); }
+
+/* double: a clear chip with two rings: the rim, then a white line and a thin colored line just inside it */
+.gel-rimdouble-chip {
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 0.05em rgba(255, 255, 255, 0.92), inset 0 0 0 0.1em color-mix(in srgb, var(--rc-fill, #02fff1) 55%, transparent);
+}
+.gel-rimdouble-chip::before { display: none; }
+.gel-rimdouble-chip::after { box-shadow: inset 0 0 0.07em rgba(253, 255, 255, 0.7); }
+
+/* dots: halftone dots of the color in the glass, bigger toward the bottom of the chip */
+.gel-rimdots-chip {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.2));
+  background:
+    radial-gradient(circle at 50% 50%, color-mix(in srgb, var(--rc-fill, #02fff1) 46%, transparent) 0.065em, transparent 0.08em) 0 0 / 0.24em 0.24em,
+    linear-gradient(180deg,
+      color-mix(in srgb, color-mix(in srgb, var(--rc-fill, #02fff1) 50%, #fff) 70%, transparent) 0%,
+      color-mix(in srgb, color-mix(in srgb, var(--rc-fill, #02fff1) 14%, #fff) 40%, transparent) 100%);
+}
+
+/* pearl: soft pastel colors drifting through white, tinted a little by the color, in a pale rim */
+.gel-rimpearl-chip {
+  border-color: color-mix(in srgb, var(--rc-fill, #02fff1) 52%, #fff);
+  background: linear-gradient(115deg, #ffe7f3 0%, #e4f1ff 30%, #e5ffec 55%, #fff6df 78%, #f0e6ff 100%);
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 24%, transparent), transparent 70%),
+    linear-gradient(115deg, #ffe7f3 0%, #e4f1ff 30%, #e5ffec 55%, #fff6df 78%, #f0e6ff 100%);
+}
+.gel-rimpearl-chip::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%); }
+
+/* steel: banded chrome inside a colored rim, words in a dark shade of the color */
+.gel-rimsteel-chip {
+  color: color-mix(in srgb, var(--rc-ink, #219a9e) 75%, #000);
+  text-shadow: 0 0.04em 0 rgba(255, 255, 255, 0.7);
+  background: linear-gradient(180deg, #fbfbfb 0%, #d9dde1 46%, #9aa1a8 50%, #cfd4d9 78%, #f2f4f6 100%);
+  box-shadow: inset 0 0 0 0.04em rgba(0, 0, 0, 0.22);
+}
+.gel-rimsteel-chip::before { background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 100%); }
+
+/* aurora: the color melts sideways into the next color of the wheel, under the same glassy top */
+.gel-rimaurora-chip {
+  color: color-mix(in srgb, var(--rc-ink, #219a9e) 70%, #000);
+  background: linear-gradient(90deg, var(--rc-fill, #02fff1), var(--rc-fill2, #2a8cff));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 62%),
+    linear-gradient(90deg, color-mix(in srgb, var(--rc-fill, #02fff1) 62%, #fff), color-mix(in srgb, var(--rc-fill2, #2a8cff) 62%, #fff));
+}
+.gel-rim-red { --rc-fill2: #ff8a1f; }
+.gel-rim-orange { --rc-fill2: #ffd01f; }
+.gel-rim-gold { --rc-fill2: #d6ff1f; }
+.gel-rim-yellow { --rc-fill2: #8cff2a; }
+.gel-rim-lime { --rc-fill2: #1fffa8; }
+.gel-rim-green { --rc-fill2: #10f0d8; }
+.gel-rim-turquoise { --rc-fill2: #18a8ff; }
+.gel-rim-teal { --rc-fill2: #5a7bff; }
+.gel-rim-cyan { --rc-fill2: #2a8cff; }
+.gel-rim-blue { --rc-fill2: #9a4dff; }
+.gel-rim-purple { --rc-fill2: #ff3fb0; }
+.gel-rim-pink { --rc-fill2: #ff7a3a; }
+.gel-rim-slate { --rc-fill2: #6fb6d9; }
+.gel-rim-white { --rc-fill2: #bfe6ff; }
+.gel-rim-fog { --rc-fill2: #a9c4e0; }
+.gel-rim-black { --rc-fill2: #5b6a8a; }
