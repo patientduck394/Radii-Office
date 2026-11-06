@@ -424,7 +424,7 @@
         // footnotes become a numbered list where they were cited from
         const used = notes.order.filter((n) => notes.defs[n] !== undefined);
         if (used.length) out.push('<ol class="refs">' + used.map((n) => '<li id="fn-' + esc(n) + '">' + inline(notes.defs[n], { order: [] }) + ' <a href="#ref-' + esc(n) + '" data-scroll title="Back to the text">↩</a></li>').join('') + '</ol>');
-        return out.join('\n');
+        return out.join('');
     }
     // The editor's Keydown guide starts with OpenDB's own extras: quotes, callout boxes and indents, each with a live preview
     function EXTRAS_GUIDE() {

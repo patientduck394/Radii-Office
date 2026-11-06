@@ -80,7 +80,16 @@
     function splitNewlines(rootEl) {
         const w = doc.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT);
         const hits = [];
-        for (let t = w.nextNode(); t; t = w.nextNode()) if (t.nodeValue.includes('\n') && !(t.parentElement && t.parentElement.closest('pre, code, textarea, script, style, .kdx-block'))) hits.push(t);
+        for (let t = w.nextNode(); t; t = w.nextNode()) {
+            if (!t.nodeValue.includes('\n') || (t.parentElement && t.parentElement.closest('pre, code, textarea, script, style, .kdx-block'))) continue;
+            // only spaces and newlines between two blocks (or at the start or end of one) is just how the HTML was written, not a line break somebody typed
+            if (!t.nodeValue.trim()) {
+                const a = t.previousSibling, b = t.nextSibling;
+                const block = (n) => n && n.nodeType === 1 && (BLOCK.test(n.tagName) || n.classList.contains('kdx-block'));
+                if (block(a) || block(b) || (!a && !b)) continue;
+            }
+            hits.push(t);
+        }
         hits.forEach((t) => {
             const parts = t.nodeValue.split('\n');
             const frag = doc.createDocumentFragment();
