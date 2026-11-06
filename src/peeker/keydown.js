@@ -414,12 +414,14 @@ function kdRender(raw) {
     s = s.replace(KD_INK_RE, (m, k, inner) => stash('<mark class="an-hl an-hl-' + KD_HL_COLORS.find((x) => x[0] === k)[1] + ' an-s-ink">') + inner + stash("</mark>"));
     KD_ALL.forEach((def) => {
         const kind = kdKindFor(def);
-        let idx = s.indexOf(def.o);
+        // the text is already HTML-escaped, so tags made of & < > " (like &&spark&&) are looked up in their escaped form
+        const dOpen = kdEscapeHtml(def.o), dClose = kdEscapeHtml(def.c);
+        let idx = s.indexOf(dOpen);
         while (idx !== -1) {
-            const j = s.indexOf(def.c, idx + def.o.length);
+            const j = s.indexOf(dClose, idx + dOpen.length);
             if (j === -1) break;
-            let inner = s.slice(idx + def.o.length, j).trim();
-            if (!inner) { idx = s.indexOf(def.o, idx + def.o.length); continue; }
+            let inner = s.slice(idx + dOpen.length, j).trim();
+            if (!inner) { idx = s.indexOf(dOpen, idx + dOpen.length); continue; }
             let html = "";
             if (def.tag === "code") html = "<code class=\"kd-code\">" + inner + "</code>";
             else if (def.tag === "strong") html = "<strong>" + inner + "</strong>";
@@ -435,8 +437,8 @@ function kdRender(raw) {
                 html = '<span class="' + def.cls + '">' + parts.map((t, i) => '<span class="' + (i < parts.length - 1 ? "input-left" : "input-right") + '">' + (t || "&#8203;") + "</span>").join("") + "</span>";
             }
             else html = '<span class="' + def.cls + '">' + inner + "</span>";
-            s = s.slice(0, idx) + stash(html) + s.slice(j + def.c.length);
-            idx = s.indexOf(def.o);
+            s = s.slice(0, idx) + stash(html) + s.slice(j + dClose.length);
+            idx = s.indexOf(dOpen);
         }
     });
     s = s.replace(/\u0000(\d+)\u0000/g, (m, n) => store[parseInt(n, 10)]);
