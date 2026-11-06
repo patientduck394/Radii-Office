@@ -262,13 +262,40 @@ document.addEventListener('DOMContentLoaded', () => {
       textContent = container.textContent || '';
     }
 
+    // 0. Math: type $x^2$ and press Space (double-click an equation later to edit it)!
+    if (e.key === ' ' && container.nodeType === Node.TEXT_NODE && window.RadiiCollab && window.RadiiCollab.kdRender) {
+      const mm = /(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$$/.exec(textContent);
+      if (mm) {
+        e.preventDefault();
+        const tmp = document.createElement('div');
+        tmp.innerHTML = window.RadiiCollab.kdRender('$' + mm[2] + '$');
+        const mathEl = tmp.firstElementChild;
+        if (mathEl) {
+          const cut = document.createRange();
+          cut.setStart(container, mm.index + mm[1].length);
+          cut.setEnd(container, range.startOffset);
+          cut.deleteContents();
+          cut.insertNode(mathEl);
+          const after = document.createTextNode('\u00A0');
+          mathEl.after(after);
+          const caret = document.createRange();
+          caret.setStart(after, 1); caret.collapse(true);
+          selection.removeAllRanges(); selection.addRange(caret);
+          const mhost = mathEl.parentElement && mathEl.parentElement.closest('[contenteditable="true"]');
+          if (mhost) mhost.dispatchEvent(new Event('input', { bubbles: true }));
+          return;
+        }
+      }
+    }
+
     // 1. Block-Level Double-Colon (::) Macros
     if (e.key === ' ') {
       const trimmed = textContent.trim();
       
-      const blockMacros = ['::glass', '::aqua', '::console', '::divider', '::bubble', '::alert', '::media', '::code', '::emerald', '::amber', '::crimson', '::amethyst', '::gsky', '::foldout', '::horizon', '::entry'];
+      const blockMacros = ['::pagebreak', '::glass', '::aqua', '::console', '::divider', '::bubble', '::alert', '::media', '::code', '::emerald', '::amber', '::crimson', '::amethyst', '::gsky', '::foldout', '::horizon', '::entry'];
       
-      if (blockMacros.includes(trimmed)) {
+      const divMacro = /^::divider\{([^}]*)\}$/.exec(trimmed);
+      if (blockMacros.includes(trimmed) || divMacro) {
         e.preventDefault();
         playAeroClickSound(750, 0.15);
 
@@ -286,6 +313,25 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (trimmed === '::console') {
           newEl.className = 'writedown-console-block';
           newEl.innerHTML = '<div class="console-block-header"><span>⚠️ SYSTEM DEBUG CONSOLE</span></div><pre class="console-block-content" contenteditable="true">error: System bounds fault.</pre>';
+        } else if (trimmed === '::pagebreak') {
+          newEl.className = 'kd-pagebreak';
+          newEl.setAttribute('contenteditable', 'false');
+          newEl.title = 'Page break: what comes after it starts on a new page!';
+          newEl.innerHTML = '<span>Page break</span>';
+        } else if (divMacro) {
+          // ::divider{wavy|Title}: poolside, dual, notched, wavy, dotted, dashed, zigzag, glow, ruler, stitched, bubbles, scallop or aqua
+          const dp = divMacro[1].split('|');
+          let dst = (dp[0] || '').trim().toLowerCase();
+          const dlabel = (dp[1] || '').trim();
+          if (['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'].indexOf(dst) === -1) dst = 'aqua';
+          if (dst === 'aqua' && !dlabel) newEl.className = 'aero-liquid-divider';
+          else {
+            newEl.className = 'kd-div kd-div-' + dst + (dlabel ? ' kd-div-labeled' : '');
+            newEl.setAttribute('contenteditable', 'false');
+            const ln = '<i class="kd-div-line"></i>';
+            newEl.innerHTML = dlabel ? ln + '<span class="kd-div-label"></span>' + ln : ln;
+            if (dlabel) newEl.querySelector('.kd-div-label').textContent = dlabel;
+          }
         } else if (trimmed === '::divider') {
           newEl.className = 'aero-liquid-divider';
         } else if (trimmed === '::bubble') {
@@ -562,7 +608,7 @@ document.addEventListener('DOMContentLoaded', () => {
       { open: '~DR-PK~', close: '~', className: 'gel-chip-droplet-ribbon droplet-ribbon-fuchsia' },
       { open: '~DR-R~', close: '~', className: 'gel-chip-droplet-ribbon droplet-ribbon-crimson' },
       { open: '~DR-SL~', close: '~', className: 'gel-chip-droplet-ribbon droplet-ribbon-slate' }
-    ].concat(window.OMICRON_EXTRA_DEFS || []);
+    ].concat(window.OMICRON_EXTRA_DEFS || [], window.OMICRON_NEW_DEFS || []);
 
     for (let def of inlineDefinitions) {
       let openIdx = textContent.indexOf(def.open);

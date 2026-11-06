@@ -52,18 +52,23 @@
     /* ---------- what you write (Keydown) becomes a plain-text part and a simple HTML part, so every mail app shows it ---------- */
     function stripKeydown(s) {
         return String(s)
+            // Rim chips (!!#R#text#, !!=R#text#, !!^R#text# and the rest of the family) come first, before the highlight rule can see their #R#
+            .replace(/!![#^~=+%:;\-?\/][A-Z]{1,2}#([^#\n]*?)#/g, '$1')
             .replace(/#[A-Z]{1,3}(?:\.[a-z]+)?\(([^)\n]*)\)/g, '$1')
             .replace(/=\+?[A-Z]{1,3}\+?=([\s\S]*?)=\+?[A-Z]{1,3}\+?=/g, '$1')
-            .replace(/\+\+[A-Z]{1,3}[+=*^:!]([\s\S]*?)\+\+/g, '$1')
+            .replace(/\+\+[A-Z]{1,3}[+=*^:!~]([\s\S]*?)\+\+/g, '$1')
             .replace(/#[A-Z]{1,3}#([\s\S]*?)(?:##|#_|#~|#=|#\]|#-|#)/g, '$1');
     }
     function inlineHtml(t) {
         let h = esc(t);
+        // math ($x^2$) has no email-safe form, so it shows as its LaTeX in a code span, kept away from the bold and italic rules below
+        const keep = [];
+        h = h.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (m, pre, tex) => { keep.push('<code>' + tex + '</code>'); return pre + '\u0001' + (keep.length - 1) + '\u0001'; });
         h = h.replace(/`([^`\n]+)`/g, '<code>$1</code>');
         h = h.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
         h = h.replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<em>$2</em>');
         h = h.replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)])/g, '<a href="$1">$1</a>');
-        return h;
+        return h.replace(/\u0001(\d+)\u0001/g, (m, n) => keep[+n]);
     }
     function fromKeydown(kd) {
         const lines = stripKeydown(String(kd || '').replace(/\r/g, '')).split('\n');
@@ -78,6 +83,21 @@
             if ((m = /^(#{1,3})\s+(.*)$/.exec(l))) { endList(); html.push('<h' + (m[1].length + 1) + ' style="margin:.6em 0 .3em">' + inlineHtml(m[2]) + '</h' + (m[1].length + 1) + '>'); text.push(m[2]); return; }
             if ((m = /^\*\s+(.*)$/.exec(l)) || (m = /^-\s+(.*)$/.exec(l))) { if (!list) { html.push('<ul>'); list = true; } html.push('<li>' + inlineHtml(m[1]) + '</li>'); text.push('- ' + m[1].replace(/\*\*/g, '')); return; }
             endList();
+            // ::divider{style|Title} and ::pagebreak become a rule (with the title in the middle), a leading | is an indent step
+            if ((m = /^::(divider|pagebreak)(?:\{([^}]*)\})?\s*$/.exec(l.trim()))) {
+                const title = m[1] === 'divider' ? String(m[2] || '').split('|')[1] || '' : '';
+                html.push(title.trim()
+                    ? '<div style="text-align:center;color:#44557a;margin:8px 0;border-top:1px solid #c8dcff;line-height:0"><span style="background:#fff;padding:0 10px;line-height:1">' + esc(title.trim()) + '</span></div>'
+                    : '<hr style="border:0;border-top:1px solid #c8dcff;margin:10px 0">');
+                text.push(title.trim() ? '--- ' + title.trim() + ' ---' : '----------');
+                return;
+            }
+            if ((m = /^(\|+)\s*(.*)$/.exec(l))) {
+                const n = Math.min(8, m[1].length);
+                html.push('<div>' + '&nbsp;'.repeat(n * 4) + inlineHtml(m[2]) + '</div>');
+                text.push('    '.repeat(n) + m[2]);
+                return;
+            }
             html.push(l.trim() ? '<div>' + inlineHtml(l) + '</div>' : '<div><br></div>');
             text.push(l.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/(^|[^*])\*([^*\n]+)\*/g, '$1$2').replace(/`([^`]+)`/g, '$1'));
         });

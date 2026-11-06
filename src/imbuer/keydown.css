@@ -3155,7 +3155,7 @@
 }
 .gel-aero-chip::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 10%; right: 10%; top: 4%; height: 33%; border-radius: 12% / 50%;
+  left: 0.45em; right: 0.45em; top: 0.08em; height: 0.62em; border-radius: 0.24em;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.81) 0%, rgba(255, 255, 255, 0.81) 28%, rgba(255, 255, 255, 0.5) 100%);
 }
 .gel-aero-red { --ae-c: #ff2222; --ae-l: #ff6e6e; --ae-e1: #7c0000; --ae-e2: #c60000; }
@@ -3182,7 +3182,7 @@
    Orb, Chrome and Bubble: see their own notes below.
    Glow: a dark glossy pill, like a Vista taskbar button, with the color glowing up from the bottom.
    ======================================================== */
-.gel-aeroglass-chip, .gel-aeroorb-chip, .gel-aeroglow-chip, .gel-aerochrome-chip, .gel-aerobubble-chip {
+.gel-aeroglass-chip, .gel-aeroorb-chip, .gel-aeroglow-chip, .gel-aeroring-chip, .gel-aerobubble-chip {
   display: inline-flex !important; align-items: center; justify-content: center;
   position: relative; isolation: isolate;
   padding: 1px 12px; margin: 0 2px; border-radius: 999px;
@@ -3209,8 +3209,8 @@
   text-shadow: 0 0 6px color-mix(in srgb, var(--ae-l) 80%, transparent), 0 1px 1px rgba(0, 0, 0, 0.6);
 }
 .gel-aeroglow-chip.gel-aero-black { background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.06) 46%, transparent 50%), radial-gradient(120% 90% at 50% 115%, #9a9a9a 0%, #555555 32%, transparent 72%), linear-gradient(180deg, #2c2f36 0%, #101216 100%); }
-/* Aero Orb (++R*text++): the Vista start orb stretched into a pill. A deep, dark-edged glass body, a crisp glass cap across the top half,
-   the color glowing up from the bottom, a bright ring just inside the edge and a soft halo of the color around it */
+/* Aero Orb (++R*text++): the Vista start orb stretched into a pill. A deep, dark-edged glass body, a small round highlight near the top,
+   the color glowing up from the bottom, a bright ring just inside the edge and a soft halo of the color around it. The highlight is a small round sliver like the Aero chip's */
 .gel-aeroorb-chip {
   padding: 2px 14px; overflow: hidden;
   border: 0;
@@ -3222,8 +3222,8 @@
 }
 .gel-aeroorb-chip::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 4%; right: 4%; top: 3px; height: 47%; border-radius: 999px 999px 45% 45% / 100% 100% 55% 55%;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.16) 100%);
+  left: 0.8em; right: 0.8em; top: 0.1em; height: 0.44em; border-radius: 0.22em;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.35) 100%);
 }
 .gel-aeroorb-chip::after {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
@@ -3231,22 +3231,24 @@
   background: radial-gradient(closest-side, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0) 100%);
 }
 
-/* Aero Chrome (++R:text++): liquid chrome tinted with the color. A bright sky above a sharp dark horizon line, the color reflected
-   in the ground below it, a slanted white streak of light and a thin dark outline */
-.gel-aerochrome-chip {
-  padding: 1px 12px; overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--ae-e1) 85%, #000000);
-  background: linear-gradient(180deg, #ffffff 0%, color-mix(in srgb, var(--ae-l) 55%, #ffffff) 20%, var(--ae-c) 42%, var(--ae-e1) 49%,
-              color-mix(in srgb, var(--ae-l) 65%, #ffffff) 50%, var(--ae-l) 62%, var(--ae-c) 84%, var(--ae-e2) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 2px color-mix(in srgb, var(--ae-e1) 60%, transparent), 0 2px 4px rgba(0, 0, 0, 0.3);
-  color: #ffffff;
-  text-shadow: 0 0 2px var(--ae-e1), 0 1px 1px var(--ae-e1), 0 0 4px var(--ae-e1);
+/* Aero Ring (++R:text++): a capsule ring. A thick glossy tube of the color (light on top, deep below) around a clear, lightly frosted
+   center, with a thin line of shine along the top of the tube, a soft halo of the color and deep-colored words */
+.gel-aeroring-chip {
+  padding: 1px 12px;
+  border: 0.2em solid transparent;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, color-mix(in srgb, var(--ae-c) 14%, #ffffff) 100%) padding-box,
+              linear-gradient(180deg, var(--ae-l) 0%, var(--ae-c) 45%, var(--ae-e2) 100%) border-box;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ae-e1) 55%, transparent), inset 0 2px 3px color-mix(in srgb, var(--ae-e1) 35%, transparent), 0 0 0 1px color-mix(in srgb, var(--ae-e1) 70%, transparent), 0 0 6px color-mix(in srgb, var(--ae-c) 45%, transparent), 0 2px 4px rgba(0, 0, 0, 0.18);
+  color: color-mix(in srgb, var(--ae-e1) 88%, #000000);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
 }
-.gel-aerochrome-chip::before {
-  content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 16%; width: 14%; top: -10%; bottom: -10%; transform: skewX(-24deg);
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+.gel-aeroring-chip::before {
+  content: ''; position: absolute; z-index: 1; pointer-events: none;
+  left: 0.5em; right: 0.5em; top: -0.17em; height: 0.09em; border-radius: 0.05em;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.95) 20%, rgba(255, 255, 255, 0.95) 80%, rgba(255, 255, 255, 0));
 }
+.gel-aeroring-chip.gel-aero-white { color: #4a4a4a; }
+.gel-aeroring-chip.gel-aero-black { color: #111111; }
 
 /* Aero Bubble (++R!text++): a soap bubble: clear in the middle, tinted toward its colored rim, a rainbow-free sheen
    across it, a big round highlight and a small reflection at the bottom right */
