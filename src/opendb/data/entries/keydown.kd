@@ -425,6 +425,69 @@ A cousin of the Rim Chip with the same size, rim and shine, but filled like a gl
 * `!!^FG#text#` !!^FG#fog#
 * `!!^BK#text#` !!^BK#black#
 
+## Rim stripe chips
+
+A Rim Chip cousin with the same size, rim and shine, with slanted candy stripes of the color running through the glass. Written `!!~color#text#`, in the same 16 colors:
+
+* `!!~R#text#` !!~R#red#
+* `!!~O#text#` !!~O#orange#
+* `!!~GL#text#` !!~GL#gold#
+* `!!~Y#text#` !!~Y#yellow#
+* `!!~L#text#` !!~L#lime#
+* `!!~G#text#` !!~G#green#
+* `!!~TU#text#` !!~TU#turquoise#
+* `!!~T#text#` !!~T#teal#
+* `!!~C#text#` !!~C#cyan#
+* `!!~B#text#` !!~B#blue#
+* `!!~PR#text#` !!~PR#purple#
+* `!!~PK#text#` !!~PK#pink#
+* `!!~SL#text#` !!~SL#slate#
+* `!!~W#text#` !!~W#white#
+* `!!~FG#text#` !!~FG#fog#
+* `!!~BK#text#` !!~BK#black#
+
+## Rim gem chips
+
+A Rim Chip cousin shaped the same, but solid like a jewel: a light rim around a saturated body that gets deeper toward the bottom, with white words (light colors keep dark words). Written `!!=color#text#`, in the same 16 colors:
+
+* `!!=R#text#` !!=R#red#
+* `!!=O#text#` !!=O#orange#
+* `!!=GL#text#` !!=GL#gold#
+* `!!=Y#text#` !!=Y#yellow#
+* `!!=L#text#` !!=L#lime#
+* `!!=G#text#` !!=G#green#
+* `!!=TU#text#` !!=TU#turquoise#
+* `!!=T#text#` !!=T#teal#
+* `!!=C#text#` !!=C#cyan#
+* `!!=B#text#` !!=B#blue#
+* `!!=PR#text#` !!=PR#purple#
+* `!!=PK#text#` !!=PK#pink#
+* `!!=SL#text#` !!=SL#slate#
+* `!!=W#text#` !!=W#white#
+* `!!=FG#text#` !!=FG#fog#
+* `!!=BK#text#` !!=BK#black#
+
+## Rim neon chips
+
+A Rim Chip cousin made of dark glass, with a glowing rim in the color and light words, like a neon sign. Written `!!+color#text#`, in the same 16 colors:
+
+* `!!+R#text#` !!+R#red#
+* `!!+O#text#` !!+O#orange#
+* `!!+GL#text#` !!+GL#gold#
+* `!!+Y#text#` !!+Y#yellow#
+* `!!+L#text#` !!+L#lime#
+* `!!+G#text#` !!+G#green#
+* `!!+TU#text#` !!+TU#turquoise#
+* `!!+T#text#` !!+T#teal#
+* `!!+C#text#` !!+C#cyan#
+* `!!+B#text#` !!+B#blue#
+* `!!+PR#text#` !!+PR#purple#
+* `!!+PK#text#` !!+PK#pink#
+* `!!+SL#text#` !!+SL#slate#
+* `!!+W#text#` !!+W#white#
+* `!!+FG#text#` !!+FG#fog#
+* `!!+BK#text#` !!+BK#black#
+
 ## Logo chips
 
 Chips made like the Radii Office app icons: a softly rounded tile, solid color through its top third fading to a bright tint, under a wide white gloss with a curved lower edge. Written `;;color;text;;`, in 16 colors (the 13 Annotate colors plus white, fog and black):
