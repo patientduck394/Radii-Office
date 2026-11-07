@@ -2199,7 +2199,7 @@ A line that is only `::pagebreak` is a page break. In Writeout's Pages view the 
 
 ::divider{aqua}
 
-`::divider{poolside}` a dashed row of orange pool floats
+`::divider{poolside}` plain orange dashed lines, no special effects at all
 
 ::divider{poolside}
 
