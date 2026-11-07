@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About the Studio - Radii Office</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', 'JetBrains Mono', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 50% 30%, #021f2b 0%, #000a12 100%);
+            color: #ffffff;
+            box-sizing: border-box;
+        }
+
+        /* Top Navigation Bar */
+        .top-navbar {
+            width: 100%;
+            height: 64px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(5, 147, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(5, 143, 255, 0.9);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #0582ff;
+            text-shadow: 0 0 8px rgba(5, 168, 255, 0.6);
+        }
+
+        /* Main Products Section */
+        .products-container {
+            max-width: 1120px;
+            margin: 110px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 2.4rem;
+            font-weight: 900;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #ffffff 0%, #9eddff 50%, #0582ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(5, 138, 255, 0.3);
+        }
+
+        .page-subtitle {
+            color: #b5d9fd;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Products Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* The Archives dropdown */
+        .archives {
+            margin-top: 34px;
+            border: 2px solid rgba(5, 118, 255, 0.35);
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%);
+            backdrop-filter: blur(16px);
+        }
+        .archives-summary {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        .archives-summary::-webkit-details-marker { display: none; }
+        .archives-summary:focus-visible { outline: 3px solid rgba(14, 165, 233, 0.6); outline-offset: 2px; border-radius: 14px; }
+        .archives-icon { font-size: 1.4rem; }
+        .archives-title { font-size: 1.3rem; font-weight: 900; color: #e0f2fe; }
+        .archives-note { color: #94c5f0; font-size: 0.9rem; flex: 1 1 200px; }
+        .archives-chev { color: #7dd3fc; font-size: 1.2rem; transition: transform 0.25s ease; }
+        .archives[open] .archives-chev { transform: rotate(180deg); }
+        .archives-grid { padding: 0 20px 20px; }
+
+        /* Small Colored Product Card */
+        .product-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 2px solid rgba(5, 118, 255, 0.35);
+            border-radius: 14px;
+            padding: 20px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: #0582ff;
+            box-shadow: 0 12px 30px rgba(5, 118, 255, 0.45);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin: 0;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-desc-box {
+            background: rgba(0, 10, 18, 0.5);
+            border: 1px solid rgba(5, 147, 255, 0.25);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .badge-tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* Cool Gel Badge Button Styling */
+        .badge-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .badge-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Custom Badge Palette Framework */
+        .badge-frame-sky {
+            border: 3px solid #38bdf8;
+            background: #f0f9ff;
+            color: #0369a1;
+            box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 2px 4px rgba(56,189,248,0.2);
+        }
+
+        .badge-frame-lime {
+            border: 3px solid #a3e635;
+            background: #f7fee7;
+            color: #3f6212;
+            box-shadow: 0 3px 6px rgba(132,204,22,0.18), inset 0 2px 4px rgba(197,255,17,0.25);
+        }
+        .badge-frame-blue {
+            border: 3px solid #0065ff;
+            background: #eaf2ff;
+            color: #0048bf;
+            box-shadow: 0 3px 6px rgba(0,101,255,0.18), inset 0 2px 4px rgba(77,148,255,0.25);
+        }
+        .badge-frame-emerald {
+            border: 3px solid #34d399;
+            background: #f0fdf4;
+            color: #047857;
+            box-shadow: 0 3px 6px rgba(16,185,129,0.15), inset 0 2px 4px rgba(52,211,153,0.2);
+        }
+
+        .badge-frame-orange {
+            border: 3px solid #fb923c;
+            background: #fff7ed;
+            color: #c2410c;
+            box-shadow: 0 3px 6px rgba(234,88,12,0.15), inset 0 2px 4px rgba(251,146,60,0.2);
+        }
+
+        .badge-frame-crimson {
+            border: 3px solid #f87171;
+            background: #fef2f2;
+            color: #b91c1c;
+            box-shadow: 0 3px 6px rgba(239,68,68,0.15), inset 0 2px 4px rgba(248,113,113,0.2);
+        }
+
+        .badge-frame-amethyst {
+            border: 3px solid #c084fc;
+            background: #faf5ff;
+            color: #7e22ce;
+            box-shadow: 0 3px 6px rgba(168,85,247,0.15), inset 0 2px 4px rgba(192,132,252,0.2);
+        }
+
+        .badge-frame-gold {
+            border: 3px solid #fbbf24;
+            background: #fffbeb;
+            color: #b45309;
+            box-shadow: 0 3px 6px rgba(245,158,11,0.15), inset 0 2px 4px rgba(251,191,36,0.2);
+        }
+
+        .badge-frame-rose {
+            border: 3px solid #FF7FCB;
+            background: #faf5ff;
+            color: #9E3366;
+            box-shadow: 0 3px 6px rgba(255,99,223,0.15), inset 0 2px 4px rgba(255,147,216,0.2);
+        }
+
+        .launch-btn {
+            align-self: flex-start;
+            margin-top: 4px;
+            background: linear-gradient(180deg, #5e9cff 0%, #0582ff 100%);
+            border: 1px solid #9eddff;
+            border-radius: 8px;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(5, 130, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .launch-btn:hover {
+            box-shadow: 0 6px 18px rgba(5, 130, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* Download buttons + the operating system picker! */
+        .card-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 4px; }
+        .card-actions .launch-btn { margin-top: 0; display: inline-flex; align-items: center; }
+        .card-actions .mobile-btn { line-height: 1.15; }
+        .mobile-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; text-decoration: none;
+            font-weight: 800; font-size: 0.85rem; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.3); border: 1px solid #9333ea;
+            background: linear-gradient(180deg, #d8b4fe 0%, #a855f7 50%, #9333ea 51%, #c084fc 100%);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.7), 0 3px 10px rgba(147,51,234,0.35); transition: transform .15s, box-shadow .15s;
+        }
+        .mobile-btn:hover { transform: translateY(-2px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.7), 0 6px 18px rgba(147,51,234,0.5); }
+        .mobile-btn:focus-visible { outline: 2px solid #e9d5ff; outline-offset: 2px; }
+        .download-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #dbeafe 100%);
+            border: 1px solid #9eddff;
+            border-radius: 8px;
+            color: #0369a1;
+            padding: 8px 16px;
+            font: inherit;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(5, 130, 255, 0.25);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover { box-shadow: 0 6px 18px rgba(5, 130, 255, 0.5); transform: translateY(-2px); }
+        .download-btn:focus-visible { outline: 2px solid #9eddff; outline-offset: 2px; }
+
+        .doc-wrap { max-width: 960px; margin: 0 auto; padding: 24px 22px 60px; }
+        .doc-wrap h2 { font-size: 1.35em; margin: 30px 0 8px; color: #0b4f8a; }
+        .doc-wrap p, .doc-wrap li { line-height: 1.65; color: #23405c; }
+        .doc-wrap a.inline { color: #0b6bd3; font-weight: 700; }
+        .doc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 14px; }
+        .doc-card { background: linear-gradient(180deg, #ffffff, #eaf5ff); border: 1px solid #b6dcff; border-radius: 14px; padding: 14px 16px; box-shadow: 0 4px 12px rgba(30, 130, 255, 0.14); }
+        .doc-card h3 { margin: 0 0 6px; font-size: 1.05em; color: #0b4f8a; }
+        .doc-card p { margin: 0 0 8px; font-size: 0.93em; }
+        .doc-card a { color: #0b6bd3; font-weight: 700; text-decoration: none; }
+        .doc-table { width: 100%; border-collapse: collapse; margin-top: 10px; background: rgba(255,255,255,0.7); border-radius: 12px; overflow: hidden; }
+        .doc-table td, .doc-table th { padding: 8px 12px; border-bottom: 1px solid #cfe6fb; text-align: left; font-size: 0.93em; vertical-align: top; }
+        .doc-table th { background: #d9ecff; color: #0b4f8a; }
+        .doc-table code { background: #eef6ff; border: 1px solid #c8e0f8; border-radius: 5px; padding: 1px 6px; font-family: inherit; font-weight: 700; }
+    </style>
+    <script src="/offline.js?v=20261132g" defer></script>
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="top-navbar">
+        <a href="/" class="brand-logo">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="/logo.png" width="120" height="45">
+            <span style="white-space: pre-wrap; font-size: 1.5em;"> Office</span>
+          </div>
+        </a>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/products">Products</a>
+            <a href="/about" class="active">About Studio</a>
+            <a href="/source">Source Code</a>
+            <a href="/docs">Documentation</a>
+            <a href="mailto:patientduck0394@gmail.com">Contact</a>
+        </nav>
+    </header>
+
+    <main class="products-container doc-wrap">
+        <h1 class="page-title">About the Studio</h1>
+        <p class="page-subtitle">Radii Office is a free suite of web apps that run right in your browser, with a glossy Frutiger Aero look and a few languages of their own.</p>
+
+        <h2>What it is</h2>
+        <p>Radii Office is a set of small, fast apps (writing, notes, slides, spreadsheets, drawing, 3D, email, chat and more) that all share one look and one idea: you can type short tags around your text and it turns into formatting. Your work is saved in your own browser, and every app can keep several documents side by side.</p>
+
+        <h2>The ideas behind it</h2>
+        <div class="doc-grid">
+            <div class="doc-card"><h3>Keydown</h3><p>The formatting language every app understands: chips, quotes, dividers, math, spoilers and hundreds of styles.</p><a href="/docs">Read the guide →</a></div>
+            <div class="doc-card"><h3>BitLang</h3><p>A small programming language for Bitbook pages, with buttons, effects and hover changes.</p><a href="/docs#bitlang">See BitLang →</a></div>
+            <div class="doc-card"><h3>Plume</h3><p>A component language and compiler: write HTML, CSS and a little code, and get a working piece of interface.</p><a href="/docs#plume">See Plume →</a></div>
+            <div class="doc-card"><h3>OpenDB</h3><p>A free database of articles, media, papers and small programs. No rights reserved: copy and change anything.</p><a href="/opendb/">Open OpenDB →</a></div>
+        </div>
+
+        <h2>Open and free</h2>
+        <p>The whole site is plain static files, and you can download its source code from the <a class="inline" href="/source">Source Code</a> page. Things are meant to be read, changed and reused, and the <a class="inline" href="/code-of-conduct">Code of Conduct</a> explains how we would like people to treat each other around it.</p>
+
+        <h2>Get in touch</h2>
+        <p>Found a bug, have an idea, or made something with it? Write to <a class="inline" href="mailto:patientduck0394@gmail.com">patientduck0394@gmail.com</a>. You can also browse everything on the <a class="inline" href="/products">Products</a> page.</p>
+    </main>
+</body>
+</html>

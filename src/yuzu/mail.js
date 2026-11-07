@@ -54,6 +54,7 @@
         return String(s)
             // Rim chips (!!#R#text#, !!=R#text#, !!^R#text# and the rest of the family) come first, before the highlight rule can see their #R#
             .replace(/!![#^~=+%:;\-?\/][A-Z]{1,2}#([^#\n]*?)#/g, '$1')
+            .replace(/\*sp\(([^()\n]*)\)/g, '$1')
             .replace(/&&([^&\n]+)&&/g, '$1')
             .replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, '$1$2')
             .replace(/#[A-Z]{1,3}(?:\.[a-z]+)?\(([^)\n]*)\)/g, '$1')

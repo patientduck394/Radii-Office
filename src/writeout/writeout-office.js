@@ -943,6 +943,7 @@
                     { big: true, icon: 'pages', label: 'Header &\nFooter', title: 'Text and page numbers at the top and bottom of every page!', run: function () { if (PLUS().headerFooter) PLUS().headerFooter(); } },
                     { big: true, icon: 'font', label: 'Drop\nCap', title: 'A big first letter!', menu: function () { return PLUS().dropCapMenu ? PLUS().dropCapMenu() : []; } }
                 ] },
+                { label: 'Emoji', items: [{ big: true, icon: 'sparkle', label: 'Custom\nEmoji', title: 'Draw your own emoji or symbol on a square canvas and put it in your text!', run: function () { if (window.KdEmoji) window.KdEmoji.insert(); } }] },
                 { label: 'Math', items: [{ big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } }] },
                 { label: 'Text', items: [{ stack: [
                     { sm: true, icon: 'calendar', label: 'Date', run: function () { insertKind('date'); } },

@@ -39,6 +39,8 @@ places =
     , Place "antimony" "Antimony" "Live posts"
     , Place "waterflow" "Waterflow" "Note workspace"
     , Place "products" "Products" "Every app"
+    , Place "about" "About Studio" "What Radii Office is"
+    , Place "docs" "Documentation" "Where to learn it all"
     , Place "source" "Source Code" "Download the site"
     , Place "code-of-conduct" "Code of Conduct" "Community rules"
     ]

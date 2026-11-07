@@ -1,6 +1,7 @@
 // The newest Keydown chips for Omicron's live typing (Aero chips and their cousins, toast, notice, mark and every Rim chip family)!
 // Same triggers as Writeout, Bitbook and the other Keydown editors; Omicron's own list is in app.js.
 window.OMICRON_NEW_DEFS = [
+  { open: '*sp(', close: ')', className: 'kd-spoiler' },
   { open: '++R+', close: '++', className: 'gel-aero-chip gel-aero-red' },
   { open: '++O+', close: '++', className: 'gel-aero-chip gel-aero-orange' },
   { open: '++GL+', close: '++', className: 'gel-aero-chip gel-aero-gold' },

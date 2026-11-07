@@ -10,6 +10,8 @@ import Html.Attributes exposing (alt, class, height, href, rel, src, target, tit
 type Nav
     = Home
     | Products
+    | About
+    | Docs
     | Source
     | Elsewhere
 
@@ -47,7 +49,9 @@ topBar active =
         , nav [ class "nav-links" ]
             [ link Home "/" "Home"
             , link Products "/products" "Products"
+            , link About "/about" "About Studio"
             , link Source "/source" "Source Code"
+            , link Docs "/docs" "Documentation"
             , a [ href "mailto:patientduck0394@gmail.com" ] [ text "Contact" ]
             ]
         ]

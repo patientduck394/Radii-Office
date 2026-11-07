@@ -974,6 +974,7 @@ if (canvas) {
             
             { open: '&&',    close: '&&',    className: 'spark-text' },
             { open: '&',     close: '&',     className: 'sparklet-text', hug: true },
+            { open: '*sp(',  close: ')',     className: 'kd-spoiler' },
             
             { open: '~G~', close: '~G~', className: 'gel-green-flash' },
             { open: '~U~', close: '~U~', className: 'liquid-underline' },

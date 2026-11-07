@@ -28,7 +28,7 @@
     const TRIGGERS = [
         ['=Y=','=Y=','span','gel-orb gel-y'], ['=R=','=R=','span','gel-orb gel-r'], ['=G=','=G=','span','gel-orb gel-g'], ['=C=','=C=','span','gel-orb gel-c'], ['=B=','=B=','span','gel-orb gel-b'], ['=V=','=V=','span','gel-orb gel-v'],
         ['=P=','=P=','span','gel-orb gel-p'], ['=O=','=O=','span','gel-orb gel-o'], ['=MG=','=MG=','span','gel-orb gel-mg'], ['=LM=','=LM=','span','gel-orb gel-lm'], ['=AQ=','=AQ=','span','gel-orb gel-aq'], ['=SL=','=SL=','span','gel-orb gel-sl'],
-        ['&&','&&','span','spark-text'], ['&','&','span','sparklet-text'], ['~G~','~G~','span','gel-green-flash'], ['~U~','~U~','span','liquid-underline'], ['~B~','~B~','span','glossy-border-badge'], ['~S~','~S~','span','cyber-glow-spark'], ['~L~','~L~','span','liquid-text-glow'],
+        ['&&','&&','span','spark-text'], ['&','&','span','sparklet-text'], ['*sp(',')','span','kd-spoiler'], ['~G~','~G~','span','gel-green-flash'], ['~U~','~U~','span','liquid-underline'], ['~B~','~B~','span','glossy-border-badge'], ['~S~','~S~','span','cyber-glow-spark'], ['~L~','~L~','span','liquid-text-glow'],
         ['~M~','~M~','span','reflected-text-block'], ['~E~','~E~','span','embossed-glass-text'], ['~W~','~W~','span','kinetic-wave-text'], ['`','`','code',''], ['**','**','strong',''], ['*','*','em',''],
         
         ['!#R#','#','span','aero-tag-chip tag-chip-r'], ['!#O#','#','span','aero-tag-chip tag-chip-o'], ['!#GL#','#','span','aero-tag-chip tag-chip-gl'], ['!#Y#','#','span','aero-tag-chip tag-chip-y'], ['!#L#','#','span','aero-tag-chip tag-chip-l'], ['!#G#','#','span','aero-tag-chip tag-chip-g'], ['!#TU#','#','span','aero-tag-chip tag-chip-tu'], ['!#T#','#','span','aero-tag-chip tag-chip-t'], ['!#C#','#','span','aero-tag-chip tag-chip-c'], ['!#B#','#','span','aero-tag-chip tag-chip-b'], ['!#PR#','#','span','aero-tag-chip tag-chip-pr'], ['!#PK#','#','span','aero-tag-chip tag-chip-pk'], ['!#W#','#','span','aero-tag-chip tag-chip-w'], ['!#FG#','#','span','aero-tag-chip tag-chip-fg'], ['!#SL#','#','span','aero-tag-chip tag-chip-sl'], ['!#BK#','#','span','aero-tag-chip tag-chip-bk'], ['!#A#','#','span','aero-tag-chip tag-chip-a'], ['#C#','#','span','gel-bubble-chip gel-chip-cyan'], ['#O#','#','span','gel-bubble-chip gel-chip-orange'], ['#G#','#','span','gel-bubble-chip gel-chip-green'], ['#R#','#','span','gel-bubble-chip gel-chip-red'],
@@ -1150,6 +1150,11 @@
     BQ_STYLES.forEach((q) => { BQ_BY_SYM[q[0]] = q[1]; BQ_BY_NAME[q[1]] = q[0]; });
     const bqSym = (el) => { const c = Array.from(el.classList || []).find((k) => /^kd-bq-/.test(k)); return (c && BQ_BY_NAME[c.slice(6)]) || '>'; };
     const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'chain', 'arrows', 'diamonds', 'stars', 'film', 'rope', 'fade', 'segments', 'barcode'];
+    // *sp(text) spoilers: a click shows or hides the words (the state is a data attribute, so saved text stays *sp(text))
+    if (typeof document !== 'undefined' && !window.__kdSpoilerClick) {
+        window.__kdSpoilerClick = true;
+        document.addEventListener('click', (e) => { const sp = e.target && e.target.closest && e.target.closest('.kd-spoiler'); if (sp) { if (sp.hasAttribute('data-open')) sp.removeAttribute('data-open'); else sp.setAttribute('data-open', '1'); } });
+    }
     const KD_DIVIDER_COLORS = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate', 'white', 'fog', 'black'];
     function kdDividerHtml(style, label, fmt, color) {
         style = String(style || '').trim().toLowerCase();
@@ -1601,9 +1606,49 @@
     /* ---------- Skills as Keydown (Bitbook): @@name="key='value',..." and @@program=``` code ``` ---------- */
     // BeepBox chips, programs, dice, timers, flashcards, time capsules, sprites, Uni-Chips, Custom Chips, Custom CSS
     // chips and jumpers all have a Keydown form, so they travel as text and come back as the real, working skill!
-    const SKILL_SEL = '.an-ink-layer, .bb-chip, .bl-prog, .dc-chip, .tc-chip, .pm-chip, .fl-chip, .px-chip, .uni-chip, .cc-chip, .bbcss-chip, .jumper-anchor';
+    const SKILL_SEL = '.an-ink-layer, .bb-chip, .bl-prog, .dc-chip, .tc-chip, .pm-chip, .fl-chip, .px-chip, .kd-emoji, .uni-chip, .cc-chip, .bbcss-chip, .jumper-anchor';
     const SKILL_RE = /@@([a-z]+)="((?:[^"\\]|\\.)*)"/g;
     const qv = (v) => String(v == null ? '' : v).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    // Custom Emoji / Symbol: a little drawing (strokes in a 100 x 100 square) shown as an inline picture, written @@emoji="d='...',size='md'"
+    // a stroke is ink:color:width:x,y;x,y;... (inks: p pen, g gel, m marker, n neon, d dashed), strokes are joined with |
+    function emojiSvg(d) {
+        const strokes = String(d || '').split('|').filter(Boolean).map((s) => {
+            const a = s.split(':');
+            return { ink: a[0] || 'p', col: '#' + String(a[1] || '000000').replace(/[^0-9a-fA-F]/g, '').slice(0, 6), w: Math.max(1, Math.min(24, +a[2] || 4)),
+                pts: String(a[3] || '').split(';').map((p) => p.split(',').map(Number)).filter((p) => p.length === 2 && isFinite(p[0]) && isFinite(p[1])) };
+        });
+        const path = (pts) => {
+            if (!pts.length) return '';
+            if (pts.length === 1) return 'M' + pts[0][0] + ' ' + pts[0][1] + 'l0.01 0';
+            let out = 'M' + pts[0][0] + ' ' + pts[0][1];
+            for (let i = 1; i < pts.length - 1; i++) out += 'Q' + pts[i][0] + ' ' + pts[i][1] + ' ' + ((pts[i][0] + pts[i + 1][0]) / 2) + ' ' + ((pts[i][1] + pts[i + 1][1]) / 2);
+            const l = pts[pts.length - 1];
+            return out + 'L' + l[0] + ' ' + l[1];
+        };
+        const P = (dd, col, w, extra) => '<path d="' + dd + '" fill="none" stroke="' + col + '" stroke-width="' + w + '" stroke-linecap="round" stroke-linejoin="round"' + (extra || '') + '/>';
+        let out = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100%" height="100%" aria-hidden="true">';
+        strokes.forEach((s) => {
+            const dd = path(s.pts);
+            if (!dd) return;
+            if (s.ink === 'g') out += P(dd, s.col, s.w) + P(dd, '#ffffff', s.w * 0.3, ' opacity="0.55"');
+            else if (s.ink === 'm') out += P(dd, s.col, s.w * 1.7, ' opacity="0.55"');
+            else if (s.ink === 'n') out += P(dd, s.col, s.w * 2.6, ' opacity="0.3"') + P(dd, s.col, s.w) + P(dd, '#ffffff', s.w * 0.35, ' opacity="0.9"');
+            else if (s.ink === 'd') out += P(dd, s.col, s.w, ' stroke-dasharray="' + (s.w * 1.6) + ' ' + (s.w * 1.2) + '"');
+            else out += P(dd, s.col, s.w);
+        });
+        return out + '</svg>';
+    }
+    function emojiChip(d, size) {
+        size = /^(sm|md|lg)$/.test(size) ? size : 'md';
+        const el = document.createElement('span');
+        el.className = 'kd-emoji kd-emoji-' + size;
+        el.setAttribute('contenteditable', 'false');
+        el.setAttribute('data-emoji', d || '');
+        el.setAttribute('data-emoji-size', size);
+        el.setAttribute('title', 'Custom emoji: double-click to edit it!');
+        el.innerHTML = emojiSvg(d);
+        return el;
+    }
     const params = (obj) => Object.keys(obj).filter((k) => obj[k] !== undefined && obj[k] !== null && obj[k] !== '').map((k) => k + "='" + qv(obj[k]) + "'").join(',');
     function parseParams(str) {
         const out = {};
@@ -1641,6 +1686,7 @@
         if (c.contains('tc-chip')) return '@@capsule="' + params({ label: txt('.tc-chip-name'), open: el.getAttribute('data-tc-open'), message: el.getAttribute('data-tc-msg') }) + '"';
         if (c.contains('pm-chip')) return '@@timer="' + params({ label: txt('.pm-chip-name'), minutes: el.getAttribute('data-pm-min') }) + '"';
         if (c.contains('fl-chip')) return '@@flashcard="' + params({ front: txt('.fl-front'), back: txt('.fl-back') }) + '"';
+        if (c.contains('kd-emoji')) return '@@emoji="' + params({ d: el.getAttribute('data-emoji'), size: el.getAttribute('data-emoji-size') }) + '"';
         if (c.contains('px-chip')) return '@@sprite="' + params({ pixels: el.getAttribute('data-px'), size: el.getAttribute('data-px-size') }) + '"';
         if (c.contains('uni-chip')) return '@@unichip="' + params({ color: el.getAttribute('data-uni-color'), accent: cssVar(el, '--uni-accent'), text: kidsText(el) }) + '"';
         if (c.contains('cc-chip')) return '@@customchip="' + params({ style: (Array.from(c).find((k) => /^cc-s\d+$/.test(k)) || 'cc-s1').slice(4), color: cssVar(el, '--cc'), ink: cssVar(el, '--cc-ink'), text: kidsText(el) }) + '"';
@@ -1674,6 +1720,8 @@
                 el = W.pmBuildChip(p.label || 'Focus', parseFloat(p.minutes) || 25);
             } else if (name === 'flashcard' && typeof W.flBuildChip === 'function') {
                 el = W.flBuildChip(p.front || '', p.back || '');
+            } else if (name === 'emoji') {
+                el = emojiChip(p.d || '', p.size);
             } else if (name === 'sprite' && typeof W.pxDecode === 'function' && typeof W.pxToDataUrl === 'function') {
                 el = span('px-chip px-' + (p.size || 'md'), { contenteditable: 'false', 'data-px': p.pixels, 'data-px-size': p.size || 'md', title: 'Pixel sprite: click to edit!' });
                 const img = document.createElement('img');
@@ -1695,7 +1743,7 @@
         } catch (e) { el = null; }
         return el ? el.outerHTML : null;
     }
-    const SKILL_NAMES = /^(ink|beepbox|dice|capsule|timer|flashcard|sprite|unichip|customchip|customcss|jumper)$/;
+    const SKILL_NAMES = /^(ink|beepbox|dice|capsule|timer|flashcard|sprite|emoji|unichip|customchip|customcss|jumper)$/;
 
     /* ---------- Exit Formatting: only the selected text (or the caret's spot) leaves its formatting ---------- */
     // The chip is split there, so the parts before and after keep their style, and you keep typing in plain text!
@@ -1843,5 +1891,7 @@
         document.head.appendChild(st);
     }
 
+    root.kdEmojiSvg = emojiSvg;
+    root.kdEmojiChip = emojiChip;
     root.kdDoc = { inlineHtml: (t) => inline(t, { notes: {} }), sourceOf, parse, isKeydownText, formatLine: (c) => { try { return formatLine(c); } catch (e) { try { console.error('[Keydown] Enter formatting failed', e); root.kdLastError = e; } catch (x) {} return false; } }, inFence, skillToText, skillHtml, exitFormatting, styleCategories, styleMenu, applyStyle, unformat, reformat, checkKeydown, blockFromLine, blockOf, textToHtml, htmlToText, toEditorHtml, toEntry, toFileText, fromFileText, styleCss, atTableHtml: (spec, opts) => { const t = readAtTable(String(spec), 0); return t ? atTableHtml(t, Object.assign({ notes: {} }, opts)) : null; }, HL_COLORS };
 })(typeof window !== 'undefined' ? window : globalThis);
