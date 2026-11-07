@@ -81,7 +81,7 @@
             } finally { setTimeout(function () { applying = false; }, 0); }
         });
     }
-    function textNow() { return kdDoc.sourceOf(ed).replace(/\n{3,}/g, '\n\n'); }
+    function textNow() { return kdDoc.sourceOf(ed); }
 
 
     /* ---------- Monokai colors for the Keydown text ---------- */

@@ -674,6 +674,8 @@
         }
         Array.from(box.childNodes).forEach(walk);
         flush();
+        // Source mode shows every blank line the page has (two empty lines stay two); saved text keeps at most one
+        if (RAW_TEXT) return lines.join('\n').replace(/[ \t]+$/, '');
         return lines.join('\n').replace(/\n{3,}/g, '\n\n').replace(/^\n+|\s+$/g, '');
     }
 
