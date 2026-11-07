@@ -53,6 +53,13 @@ This project incorporates, modifies, or bundles font files derived from the foll
 
 ---
 
+### 6. OCRA
+* **License:** SIL Open Font License, Version 1.1
+* **Copyright:** Copyright © 2014-2026 qwazix
+* **Source:** https://github.com/qwazix/free-libre-fonts
+
+---
+
 ### 8. Other Bundled Font Assets & Fallbacks
 * **Licenses:** Maintained under their respective open-source terms as distributed by their original upstream authors. 
 * **Note:** All intellectual property rights, original filenames, and vector structures for these specialized font sets remain the property of their respective creators.

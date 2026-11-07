@@ -1169,7 +1169,7 @@
     const BQ_BY_SYM = {}, BQ_BY_NAME = {};
     BQ_STYLES.forEach((q) => { BQ_BY_SYM[q[0]] = q[1]; BQ_BY_NAME[q[1]] = q[0]; });
     const bqSym = (el) => { const c = Array.from(el.classList || []).find((k) => /^kd-bq-/.test(k)); return (c && BQ_BY_NAME[c.slice(6)]) || '>'; };
-    const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'chain', 'arrows', 'diamonds', 'stars', 'film', 'rope', 'fade', 'segments', 'barcode'];
+    const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'arrows', 'fade', 'swallow', 'triple', 'stepped', 'crest', 'gel', 'rim'];
     // *sp(text) spoilers: a click shows or hides the words (the state is a data attribute, so saved text stays *sp(text))
     if (typeof document !== 'undefined' && !window.__kdSpoilerClick) {
         window.__kdSpoilerClick = true;
@@ -1201,6 +1201,13 @@
             case 'media': return '<div class="media-track-wrap"><span class="media-track-text">' + f(0, 'NOW PLAYING: Track_Audio_Stream.wav') + '</span><div class="media-control-orb"></div></div>';
             case 'foldout': return '<div class="aero-foldout-panel"><div class="foldout-panel-header"><div class="foldout-arrow-orb">▲</div><div class="foldout-panel-title-input">' + f(0, 'TITLE') + '</div></div><div class="foldout-panel-content"><p>' + f(1, 'TEXT') + '</p></div></div>';
             case 'divider': return kdDividerHtml(parts[0], parts[1], fmt, parts[2]);
+            case 'blank': {
+                let st = (parts[0] || '').trim().toLowerCase(), rows = parts[1];
+                if (/^\d+$/.test(st)) { rows = st; st = 'box'; }
+                if (['box', 'dashed', 'lines', 'grid', 'dots'].indexOf(st) === -1) st = 'box';
+                const n = Math.max(1, Math.min(40, parseInt(rows, 10) || 4)), lab = (parts[2] || '').trim();
+                return '<div class="kd-blank kd-blank-' + st + '" style="--kd-rows:' + n + '" data-rows="' + n + '" contenteditable="false">' + (lab ? '<span class="kd-blank-label">' + fmt(lab) + '</span>' : '') + '</div>';
+            }
             case 'pagebreak': return '<div class="kd-pagebreak" contenteditable="false" title="Page break: what comes after it starts on a new page!"><span>Page break</span></div>';
             case 'code': return '<div class="writedown-code-block"><div class="code-block-header"><span>CODE SPEC</span></div><pre class="code-block-content">' + lines(['// Write text lines here...']) + '</pre></div>';
             case 'console': return '<div class="writedown-console-block"><div class="console-block-header"><span>⚠️ SYSTEM DEBUG CONSOLE</span></div><pre class="console-block-content">' + lines(['error: Undefined reference tracking index bounds fault.']) + '</pre></div>';
@@ -1226,6 +1233,7 @@
         if (c.contains('aero-glass-panel')) return [Object.keys(KD_BLOCK_PANELS).find((k) => c.contains(KD_BLOCK_PANELS[k][0])) || 'gsky', [txt('.glass-panel-header'), txt('.glass-panel-content')]];
         if (c.contains('aero-foldout-panel')) return ['foldout', [txt('.foldout-panel-title-input'), txt('.foldout-panel-content')]];
         if (c.contains('kd-pagebreak')) return ['pagebreak', []];
+        if (c.contains('kd-blank')) { const st = (Array.from(c).find((k) => /^kd-blank-/.test(k)) || 'kd-blank-box').slice(9); const lab = txt('.kd-blank-label'); const n = el.getAttribute('data-rows') || '4'; return ['blank', lab ? [st, n, lab] : [st, n]]; }
         if (c.contains('kd-div')) { const st = (Array.from(c).find((k) => /^kd-div-(?!labeled|c-)/.test(k)) || 'kd-div-aqua').slice(7); const lab = txt('.kd-div-label'); const cm = Array.from(c).find((k) => /^kd-div-c-/.test(k)); const col = cm ? cm.slice(9) : ''; return ['divider', col ? [st, lab || '', col] : (lab ? [st, lab] : [st])]; }
         if (c.contains('aero-liquid-divider')) return ['divider', []];
         if (c.contains('writedown-code-block')) return /SKETCH/i.test(txt('.code-block-header')) ? ['draw', []] : ['code', raw('.code-block-content')];
@@ -1236,7 +1244,7 @@
         if (c.contains('writedown-journal-entry')) return ['entry', [txt('.journal-entry-content')]];
         return null;
     }
-    const BLOCK_SEL = '.aero-glass-block, .aqua-bubble-text, .tactile-alert-plate, .media-track-wrap, .aqua-aero-box, .aero-glass-panel, .aero-foldout-panel, .aero-liquid-divider, .kd-div, .kd-pagebreak, .writedown-code-block, .writedown-console-block, .writedown-diff-block, .writedown-horizon-block, .writedown-waypoint-block, .writedown-journal-entry';
+    const BLOCK_SEL = '.aero-glass-block, .aqua-bubble-text, .tactile-alert-plate, .media-track-wrap, .aqua-aero-box, .aero-glass-panel, .aero-foldout-panel, .aero-liquid-divider, .kd-div, .kd-blank, .kd-pagebreak, .writedown-code-block, .writedown-console-block, .writedown-diff-block, .writedown-horizon-block, .writedown-waypoint-block, .writedown-journal-entry';
     const blockLine = (b) => '::' + b[0] + (b[1].length && b[0] !== 'draw' ? '{' + b[1].map((t) => String(t).replace(/[{}|]/g, ' ')).join('|') + '}' : '');
     const blockFromLine = (line) => { const m = /^\s*::([a-z]+)(?:\{([^}]*)\})?\s*$/.exec(line); return m ? kdBlockMarkup(m[1], m[2], (t) => inline(t, { notes: {} })) : null; };
 

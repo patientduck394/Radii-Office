@@ -927,7 +927,8 @@
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Pages', items: [
                     { big: true, icon: 'newDoc', label: 'New\nPage', title: 'Add a page to this document (Ctrl/Cmd+Enter): the text after it starts on a fresh sheet!', run: newPage },
-                    { big: true, icon: 'divider', label: 'Divider', title: 'Insert a divider line: pick a style!', menu: function () { return KD_DIVIDER_STYLES.map(function (d) { return { label: d[1], icon: 'divider', run: function () { insertKind('divider:' + d[0]); paginateSoon(); } }; }); } }
+                    { big: true, icon: 'divider', label: 'Divider', title: 'Insert a divider line: pick a style!', menu: function () { return KD_DIVIDER_STYLES.map(function (d) { return { label: d[1], icon: 'divider', run: function () { insertKind('divider:' + d[0]); paginateSoon(); } }; }); } },
+                    { big: true, icon: 'table', label: 'Blank\nSpace', title: 'Leave empty room to write in, for practice sheets: pick a style!', menu: function () { return [['box', 'Box'], ['dashed', 'Dashed box'], ['lines', 'Ruled lines'], ['grid', 'Grid'], ['dots', 'Dot grid']].map(function (d) { return { label: d[1], icon: 'table', run: function () { insertKind('blank:' + d[0]); paginateSoon(); } }; }); } }
                 ] },
                 { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } }] },
                 { label: 'Media', items: [

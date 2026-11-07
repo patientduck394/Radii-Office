@@ -1998,41 +1998,37 @@ A line that is only `::pagebreak` is a page break. In Writeout's Pages view the 
 
 ::divider{neon}
 
-`::divider{chain}` a chain of interlocking links
-
-::divider{chain}
-
 `::divider{arrows}` a row of little chevrons pointing right
 
 ::divider{arrows}
-
-`::divider{diamonds}` a row of diamonds
-
-::divider{diamonds}
-
-`::divider{stars}` a row of small stars
-
-::divider{stars}
-
-`::divider{film}` a film strip with holes along both edges
-
-::divider{film}
-
-`::divider{rope}` a twisted rope
-
-::divider{rope}
 
 `::divider{fade}` a soft line that fades out at both ends
 
 ::divider{fade}
 
-`::divider{segments}` a bar cut into short blocks
+`::divider{swallow}` a bar with a V cut at each end, a cousin of Notched
 
-::divider{segments}
+::divider{swallow}
 
-`::divider{barcode}` thin and thick bars, like a barcode
+`::divider{triple}` three V notches along the bar
 
-::divider{barcode}
+::divider{triple}
+
+`::divider{stepped}` a square notch in the middle
+
+::divider{stepped}
+
+`::divider{crest}` a bar with a point rising in the middle
+
+::divider{crest}
+
+`::divider{gel}` a glossy pill, like the Gel chips
+
+::divider{gel}
+
+`::divider{rim}` a thick rim around a fill that melts to white, like the Rim chips
+
+::divider{rim}
 
 ### Divider colors
 
@@ -2651,3 +2647,16 @@ npm run build
 The styles are terminal, mac, dark, paper, blueprint, neon, ember, gel and diff. Add the word lines for line numbers, as in ```js{dark lines|app.js}. The diff style tints lines that start with + or -!
 
 Inline code takes a style too, like `ls -la`{terminal}, `Cmd`{key} or `x`{neon}. The inline styles are terminal, dark, paper, blueprint, neon, ember, gel and key!
+
+## Blank space for practice
+`::blank{style|rows|Label}` leaves an empty box to write in, for textbooks and worksheets. The styles are box, dashed, lines, grid and dots. The rows are how tall it is (4 by default), and the label is optional. `::blank{6}` is a six-row box.
+
+::blank{box|3|Try it yourself}
+
+::blank{lines|4|Write your answer}
+
+::blank{grid|4}
+
+::blank{dots|3}
+
+::blank{dashed|3|Sketch it here}

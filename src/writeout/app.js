@@ -3657,7 +3657,7 @@ function closeInsertMenu() {
 // Drop one node at the caret (ranged selections collapse to the end first)!
 // One divider design everywhere (menu + typed share it)!
 // The divider styles (::divider{poolside} and friends): Insert > Divider lists them!
-const KD_DIVIDER_STYLES = [['aqua', 'Aqua (original)'], ['poolside', 'Poolside'], ['dual', 'Dual'], ['notched', 'Notched'], ['wavy', 'Wavy'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['zigzag', 'Zigzag'], ['glow', 'Glow'], ['ruler', 'Ruler'], ['stitched', 'Stitched'], ['bubbles', 'Bubbles'], ['scallop', 'Scallop'], ['neon', 'Neon'], ['chain', 'Chain'], ['arrows', 'Arrows'], ['diamonds', 'Diamonds'], ['stars', 'Stars'], ['film', 'Film strip'], ['rope', 'Rope'], ['fade', 'Fade'], ['segments', 'Segments'], ['barcode', 'Barcode']];
+const KD_DIVIDER_STYLES = [['aqua', 'Aqua (original)'], ['poolside', 'Poolside'], ['dual', 'Dual'], ['notched', 'Notched'], ['wavy', 'Wavy'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['zigzag', 'Zigzag'], ['glow', 'Glow'], ['ruler', 'Ruler'], ['stitched', 'Stitched'], ['bubbles', 'Bubbles'], ['scallop', 'Scallop'], ['neon', 'Neon'], ['arrows', 'Arrows'], ['fade', 'Fade'], ['swallow', 'Swallowtail'], ['triple', 'Triple notch'], ['stepped', 'Stepped'], ['crest', 'Crest'], ['gel', 'Gel'], ['rim', 'Rim']];
 function kdBuildDivider(style) {
     if (style && style !== 'aqua' && window.kdDoc && typeof window.kdDoc.blockFromLine === 'function') {
         const t = document.createElement('template');
@@ -3831,6 +3831,13 @@ function runInsertKind(kind) {
             } catch (e) {}
             if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
         }
+    } else if (kind.indexOf('blank:') === 0) {
+        // blank:lines gives an empty practice box with ruled lines (box, dashed, lines, grid, dots)
+        const t = document.createElement('template');
+        t.innerHTML = (window.kdDoc && kdDoc.blockFromLine) ? (kdDoc.blockFromLine('::blank{' + kind.slice(6) + '|4}') || '') : '';
+        const node = t.content.firstElementChild;
+        if (node && !fmtInsertNodeAtCaret(node)) canvas.appendChild(node);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
     } else if (kind === 'image') {
         const picker = document.getElementById('insert-image-input');
         if (picker) picker.click();

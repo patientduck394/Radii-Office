@@ -214,7 +214,8 @@ body.os-dark .wo-gp-p { color: #e5e5e5; }
     body.os-office { display: block !important; height: auto; background: #fff; }
     body.os-office #wo-zoomer { display: block; margin: 0; width: auto; zoom: 1 !important; }
     body.os-office #wo-sheets { display: none !important; }
-    body.os-office.wo-pages #wysiwyg-canvas, body.os-office.wo-web #wysiwyg-canvas { padding: 0 !important; width: 100% !important; box-shadow: none !important; }
+    body.os-office.wo-pages #wysiwyg-canvas, body.os-office.wo-web #wysiwyg-canvas { padding: 0 !important; width: 100% !important; box-shadow: none !important; min-height: 0 !important; height: auto !important; }
+    body.os-office #wo-zoomer { height: auto !important; min-height: 0 !important; }
     #wo-page-rules { display: none; }
 }
 
