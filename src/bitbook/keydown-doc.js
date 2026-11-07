@@ -271,7 +271,7 @@
         // @@table=[a1h:'Name',b1:'Score'...] tables, before anything else can touch the text in their cells
         s = atTables(s, opts, stash);
         // `code` is taken literally, so nothing inside it turns into links, math or chips
-        s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code>' + esc(t) + '</code>'));
+        s = s.replace(/`([^`\n]+)`(?:\{(terminal|dark|paper|blueprint|neon|ember|gel|key)\})?/g, (_, t, st) => stash(st ? '<code class="kd-ic kd-ic-' + st + '">' + esc(t) + '</code>' : '<code>' + esc(t) + '</code>'));
         // {{templates}} and Keydown Next's {{live values}} before math, so a "$" inside them stays a "$"
         s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplHtml(raw, false)));
         s = s.replace(/\\\$/g, () => stash('<span class="kd-esc">$</span>'));
@@ -358,6 +358,21 @@
     // Bullet styles! "* " is the round bullet; "- " a dash, "+ " a plus, ". " a ring, "~ " a diamond and "= " an arrow.
     const BL_CLS = { '*': '', '-': 'kd-bl-dash', '+': 'kd-bl-plus', '.': 'kd-bl-ring', '~': 'kd-bl-diamond', '=': 'kd-bl-arrow' };
     const BL_MARK = (el) => { for (const k in BL_CLS) if (BL_CLS[k] && el.classList && el.classList.contains(BL_CLS[k])) return k; return '*'; };
+        /* ``` code blocks: ```lang{style lines|Title} ... ``` (style = terminal mac dark paper blueprint neon ember gel diff) */
+    const CODE_STYLES = ['terminal', 'mac', 'dark', 'paper', 'blueprint', 'neon', 'ember', 'gel', 'diff'];
+    function codeFence(info, body) {
+        const m = /^\s*([A-Za-z0-9_+#.-]*)\s*(?:\{([^{}]*)\})?\s*$/.exec(info || '');
+        const raw = body.join('\n');
+        if (!m || (!m[1] && !m[2])) return '<pre><code>' + esc(raw) + '</code></pre>';
+        const parts = (m[2] || '').split('|');
+        const words = parts[0].split(/\s+/).filter(Boolean);
+        const style = words.filter((w) => CODE_STYLES.indexOf(w) !== -1)[0] || '';
+        const lines = words.indexOf('lines') !== -1, title = parts.slice(1).join('|').trim();
+        const diff = style === 'diff';
+        const rows = body.map((l) => '<span class="kd-ln' + (diff ? (/^\+/.test(l) ? ' kd-ln-add' : /^-/.test(l) ? ' kd-ln-del' : '') : '') + '">' + esc(l) + '</span>').join('\n');
+        return '<pre class="kd-cb' + (style ? ' kd-cb-' + style : '') + (lines ? ' kd-cb-lines' : '') + '" data-kd-info="' + esc(info.trim()) + '"' + (title ? ' data-title="' + esc(title) + '"' : '') + (m[1] ? ' data-lang="' + esc(m[1]) + '"' : '') + '><code>' + rows + '</code></pre>';
+    }
+
     function textToHtml(src, opts) {
         opts = Object.assign({ notes: {} }, opts || {});
         const lines = String(src || '').replace(/\r/g, '').split('\n');
@@ -399,7 +414,7 @@
                 endList();
                 const body = [];
                 for (i++; i < lines.length && !/^```/.test(lines[i].trim()); i++) body.push(lines[i]);
-                out.push('<pre><code>' + esc(body.join('\n')) + '</code></pre>');
+                out.push(codeFence(t.slice(3), body));
                 continue;
             }
             if (t.startsWith(AT_TABLE)) {
@@ -511,7 +526,7 @@
         }
         if (tag === 'STRONG' || tag === 'B') return wrap('**', kids());
         if (tag === 'EM' || tag === 'I') return wrap('*', kids());
-        if (tag === 'CODE') return wrap('`', el.textContent);
+        if (tag === 'CODE') { const ic = /kd-ic-(\w+)/.exec(el.className || ''); return wrap('`', el.textContent) + (ic ? '{' + ic[1] + '}' : ''); }
         if (tag === 'MARK' && (el.classList.contains('an-hl') || el.classList.contains('wa-hl'))) {
             const color = (Array.from(el.classList).find((c) => /^an-hl-/.test(c)) || 'an-hl-yellow').slice(6);
             const code = (HL_COLORS.find((x) => x[1] === color) || [])[0];
@@ -634,7 +649,7 @@
                 rows.filter((r) => r !== head).forEach((r) => lines.push(line(r)));
                 return;
             }
-            if (tag === 'PRE') { flush(); lines.push('```'); el.textContent.replace(/\n$/, '').split('\n').forEach((l) => lines.push(l)); lines.push('```'); return; }
+            if (tag === 'PRE') { flush(); lines.push('```' + (el.getAttribute('data-kd-info') || '')); el.textContent.replace(/\n$/, '').split('\n').forEach((l) => lines.push(l)); lines.push('```'); return; }
             if (tag === 'HR') { push(''); return; }
             if (BLOCK.test(tag)) {
                 flush();
@@ -1356,7 +1371,7 @@
             if (n.classList.contains('kd-esc')) { out += '\\' + n.textContent; return; }
             if (t === 'EM' || t === 'I') { out += '*' + lineSource(n) + '*'; return; }
             if (t === 'STRONG' || t === 'B') { out += '**' + lineSource(n) + '**'; return; }
-            if (t === 'CODE') { out += '`' + n.textContent + '`'; return; }
+            if (t === 'CODE') { const ic = /kd-ic-(\w+)/.exec(n.className || ''); out += '`' + n.textContent + '`' + (ic ? '{' + ic[1] + '}' : ''); return; }
             out += lineSource(n);
         });
         return out;

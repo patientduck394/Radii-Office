@@ -141,6 +141,7 @@
             let m;
             if (/^\s*⟪…[^⟫\n]*⟫\s*$/.test(line)) return sp('m-f', line);
             if (!fence && (m = /^(@@[a-z]+)(=?)("[^"]*")?(```)\s*$/.exec(line.trim()))) { fence = true; return sp('m-k', m[1]) + escH(m[2]) + (m[3] ? sp('m-s', m[3]) : '') + sp('m-p', m[4]); }
+            if ((m = /^(\s*```)([A-Za-z0-9_+#.-]*)(\{[^}]*\})?\s*$/.exec(line)) && !fence && (m[2] || m[3])) { fence = true; return sp('m-p', m[1]) + (m[2] ? sp('m-k', m[2]) : '') + (m[3] ? sp('m-s', m[3]) : ''); }
             if (/^\s*```/.test(line)) { fence = !fence; return sp('m-p', line); }
             if (fence) return hlCode(line);
             if ((m = /^(\|+)(.*)$/.exec(line)) && !/^\|.*\|(\{[a-z]+\})?\s*$/.test(line)) return sp('m-d', m[1]) + highlight(m[2]);

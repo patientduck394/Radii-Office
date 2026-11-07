@@ -14,6 +14,21 @@
     const $ = (id) => document.getElementById(id);
     const view = $('view');
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    /* ``` code blocks: ```lang{style lines|Title} ... ``` (style = terminal mac dark paper blueprint neon ember gel diff) */
+    const CODE_STYLES = ['terminal', 'mac', 'dark', 'paper', 'blueprint', 'neon', 'ember', 'gel', 'diff'];
+    function codeFence(info, body) {
+        const m = /^\s*([A-Za-z0-9_+#.-]*)\s*(?:\{([^{}]*)\})?\s*$/.exec(info || '');
+        const raw = body.join('\n');
+        if (!m || (!m[1] && !m[2])) return '<pre><code>' + esc(raw) + '</code></pre>';
+        const parts = (m[2] || '').split('|');
+        const words = parts[0].split(/\s+/).filter(Boolean);
+        const style = words.filter((w) => CODE_STYLES.indexOf(w) !== -1)[0] || '';
+        const lines = words.indexOf('lines') !== -1, title = parts.slice(1).join('|').trim();
+        const diff = style === 'diff';
+        const rows = body.map((l) => '<span class="kd-ln' + (diff ? (/^\+/.test(l) ? ' kd-ln-add' : /^-/.test(l) ? ' kd-ln-del' : '') : '') + '">' + esc(l) + '</span>').join('\n');
+        return '<pre class="kd-cb' + (style ? ' kd-cb-' + style : '') + (lines ? ' kd-cb-lines' : '') + '" data-kd-info="' + esc(info.trim()) + '"' + (title ? ' data-title="' + esc(title) + '"' : '') + (m[1] ? ' data-lang="' + esc(m[1]) + '"' : '') + '><code>' + rows + '</code></pre>';
+    }
+
     const today = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 
     /* ---------- Data: the shared index + entries kept on this device ---------- */
@@ -304,7 +319,7 @@
         const store = [];
         const stash = (html) => { store.push(html); return '\u0001' + (store.length - 1) + '\u0001'; };
         let s = String(text);
-        s = s.replace(/`([^`\n]+)`/g, (_, t) => stash('<code class="kd-code">' + esc(t) + '</code>'));
+        s = s.replace(/`([^`\n]+)`(?:\{(terminal|dark|paper|blueprint|neon|ember|gel|key)\})?/g, (_, t, st) => stash('<code class="kd-cb' + (st ? ' kd-ic kd-ic-' + st : '') + '">' + esc(t) + '</code>'));
         // {{templates}} and {{live values}} first, so a "$" inside them is never read as math
         s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplInline(raw)));
         s = s.replace(/\\\$/g, () => stash('$'));
@@ -361,7 +376,7 @@
                 flush();
                 const body = [];
                 for (i++; i < lines.length && !/^```/.test(lines[i].trim()); i++) body.push(lines[i]);
-                out.push('<pre><code>' + esc(body.join('\n')) + '</code></pre>');
+                out.push(codeFence(t.slice(3), body));
                 continue;
             }
             if (!t) { flush(); continue; }

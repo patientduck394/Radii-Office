@@ -2640,3 +2640,14 @@ Writeout and Bitbook save their files (.kd and .kn) as Keydown text: a short hea
 * **Pictures and files**: a picture you inserted is saved right in the file as `![name](data:image/png;base64,...)`, with `{width=240px}` after it when you resized it. An attached file is `[report.pdf](data:application/pdf;base64,...){file}`.
 * **Tabs**: each tab of a document starts with a line like `::tab{name="Ideas"}`.
 * **Plain symbols**: words that only look like Keydown keep their symbols as themselves, with a backslash, like `\#R\#not a highlight\#\#`.
+
+## Code block styles
+Open a fence with a language and a style in curly braces, and add a title after a bar!
+
+```js{terminal|app.js}
+npm run build
+```
+
+The styles are terminal, mac, dark, paper, blueprint, neon, ember, gel and diff. Add the word lines for line numbers, as in ```js{dark lines|app.js}. The diff style tints lines that start with + or -!
+
+Inline code takes a style too, like `ls -la`{terminal}, `Cmd`{key} or `x`{neon}. The inline styles are terminal, dark, paper, blueprint, neon, ember, gel and key!
