@@ -288,7 +288,7 @@ const KD_BLOCKS = ["glass","bubble","alert","media","aqua","code","emerald","amb
 const KD_BLOCK_BOXES = { aqua: ['', '🌊 Aqua notes...'], emerald: ['aqua-emerald-box', '🌿 Eco logs...'], amber: ['aqua-amber-box', '☀️ Highlights...'], crimson: ['aqua-crimson-box', '🚨 Urgent tasks...'], amethyst: ['aqua-amethyst-box', '🔮 Creative drafts...'] };
 const KD_BLOCK_PANELS = { gsky: ['panel-sky', '🔹 SKY COMPONENT', 'Sky log notes...'], gemerald: ['panel-emerald', '🌿 ECO COMPONENT', 'Organic project logs...'], gamber: ['panel-amber', '☀️ AMBER MATRIX', 'Highlights...'], gcrimson: ['panel-crimson', '🚨 ALERT MANIFEST', 'Urgent warnings...'] };
 function kdDividerHtml(style, label, fmt, color) {
-const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'];
+const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'chain', 'arrows', 'diamonds', 'stars', 'film', 'rope', 'fade', 'segments', 'barcode'];
 const KD_DIV_COLORS = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate', 'white', 'fog', 'black'];
 style = String(style || '').trim().toLowerCase();
 const named = KD_DIVIDERS.includes(style);
@@ -388,7 +388,7 @@ function kdRender(raw) {
     if (ip) return '<span class="kd-indent" style="display:inline-block;width:' + Math.min(8, ip[1].length) * 2.5 + 'rem"></span>' + kdRender(ip[2].replace(/^\s+/, ""));
     // !> ?> >> %> *> +> -> => ~> $> #> ^> @> &> at the start of a line make a styled quote
     const qm = /^(\s*)(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S[\s\S]*)$/.exec(text);
-    if (qm) return qm[1] + '<span class="blockquote-list kd-bq kd-bq-' + { '!>': 'warn', '?>': 'ask', '>>': 'pull', '%>': 'stat', '*>': 'star', '+>': 'good', '->': 'bad', '=>': 'result', '~>': 'aside', '$>': 'note', '#>': 'mono', '^>': 'tip', '@>': 'say', '&>': 'more' }[qm[2]] + '">' + kdRender(qm[3]) + "</span>";
+    if (qm) return qm[1] + '<span class="blockquote-list kd-bq kd-bq-' + { '!>': 'neon', '?>': 'glass', '>>': 'pull', '%>': 'gradient', '*>': 'marker', '+>': 'green', '->': 'red', '=>': 'dashed', '~>': 'whisper', '$>': 'paper', '#>': 'terminal', '^>': 'ribbon', '@>': 'bubble', '&>': 'card' }[qm[2]] + '">' + kdRender(qm[3]) + "</span>";
     const bm = /^::([a-z]+)(?:\{([^}]*)\})?$/.exec(trimmed);
     if (bm && KD_BLOCKS.includes(bm[1])) return kdRenderBlock(bm[1], bm[2]);
     // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!

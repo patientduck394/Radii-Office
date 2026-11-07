@@ -323,8 +323,8 @@ document.addEventListener('DOMContentLoaded', () => {
           const dp = divMacro[1].split('|');
           let dst = (dp[0] || '').trim().toLowerCase();
           const dlabel = (dp[1] || '').trim();
-          if (['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'].indexOf(dst) === -1) dst = 'aqua';
-          const dnamed = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'].indexOf((dp[0] || '').trim().toLowerCase()) !== -1;
+          if (['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'chain', 'arrows', 'diamonds', 'stars', 'film', 'rope', 'fade', 'segments', 'barcode'].indexOf(dst) === -1) dst = 'aqua';
+          const dnamed = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'chain', 'arrows', 'diamonds', 'stars', 'film', 'rope', 'fade', 'segments', 'barcode'].indexOf((dp[0] || '').trim().toLowerCase()) !== -1;
           const dcol = (dp[2] || '').trim().toLowerCase();
           const dcc = dnamed && ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate', 'white', 'fog', 'black'].indexOf(dcol) !== -1 ? ' kd-div-c-' + dcol : '';
           if (dst === 'aqua' && !dlabel && !dcc) newEl.className = 'aero-liquid-divider';

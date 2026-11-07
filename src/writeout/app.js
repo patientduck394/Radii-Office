@@ -3640,7 +3640,7 @@ function closeInsertMenu() {
 // Drop one node at the caret (ranged selections collapse to the end first)!
 // One divider design everywhere (menu + typed share it)!
 // The divider styles (::divider{poolside} and friends): Insert > Divider lists them!
-const KD_DIVIDER_STYLES = [['aqua', 'Aqua (original)'], ['poolside', 'Poolside'], ['dual', 'Dual'], ['notched', 'Notched'], ['wavy', 'Wavy'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['zigzag', 'Zigzag'], ['glow', 'Glow'], ['ruler', 'Ruler'], ['stitched', 'Stitched'], ['bubbles', 'Bubbles'], ['scallop', 'Scallop']];
+const KD_DIVIDER_STYLES = [['aqua', 'Aqua (original)'], ['poolside', 'Poolside'], ['dual', 'Dual'], ['notched', 'Notched'], ['wavy', 'Wavy'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['zigzag', 'Zigzag'], ['glow', 'Glow'], ['ruler', 'Ruler'], ['stitched', 'Stitched'], ['bubbles', 'Bubbles'], ['scallop', 'Scallop'], ['neon', 'Neon'], ['chain', 'Chain'], ['arrows', 'Arrows'], ['diamonds', 'Diamonds'], ['stars', 'Stars'], ['film', 'Film strip'], ['rope', 'Rope'], ['fade', 'Fade'], ['segments', 'Segments'], ['barcode', 'Barcode']];
 function kdBuildDivider(style) {
     if (style && style !== 'aqua' && window.kdDoc && typeof window.kdDoc.blockFromLine === 'function') {
         const t = document.createElement('template');

@@ -1145,11 +1145,11 @@
     const KD_BLOCK_BOXES = { aqua: ['', '🌊 Aqua notes...'], emerald: ['aqua-emerald-box', '🌿 Eco logs...'], amber: ['aqua-amber-box', '☀️ Highlights...'], crimson: ['aqua-crimson-box', '🚨 Urgent tasks...'], amethyst: ['aqua-amethyst-box', '🔮 Creative drafts...'] };
     const KD_BLOCK_PANELS = { gsky: ['panel-sky', '🔹 SKY COMPONENT', 'Sky log notes...'], gemerald: ['panel-emerald', '🌿 ECO COMPONENT', 'Organic project logs...'], gamber: ['panel-amber', '☀️ AMBER MATRIX', 'Highlights...'], gcrimson: ['panel-crimson', '🚨 ALERT MANIFEST', 'Urgent warnings...'] };
     // ::divider{style} or ::divider{style|Title}: the original aqua strip and twelve more styles, each can carry a title
-    const BQ_STYLES = [['!>','warn'],['?>','ask'],['>>','pull'],['%>','stat'],['*>','star'],['+>','good'],['->','bad'],['=>','result'],['~>','aside'],['$>','note'],['#>','mono'],['^>','tip'],['@>','say'],['&>','more']];
+    const BQ_STYLES = [['!>','neon'],['?>','glass'],['>>','pull'],['%>','gradient'],['*>','marker'],['+>','green'],['->','red'],['=>','dashed'],['~>','whisper'],['$>','paper'],['#>','terminal'],['^>','ribbon'],['@>','bubble'],['&>','card']];
     const BQ_BY_SYM = {}, BQ_BY_NAME = {};
     BQ_STYLES.forEach((q) => { BQ_BY_SYM[q[0]] = q[1]; BQ_BY_NAME[q[1]] = q[0]; });
     const bqSym = (el) => { const c = Array.from(el.classList || []).find((k) => /^kd-bq-/.test(k)); return (c && BQ_BY_NAME[c.slice(6)]) || '>'; };
-    const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'];
+    const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'chain', 'arrows', 'diamonds', 'stars', 'film', 'rope', 'fade', 'segments', 'barcode'];
     const KD_DIVIDER_COLORS = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate', 'white', 'fog', 'black'];
     function kdDividerHtml(style, label, fmt, color) {
         style = String(style || '').trim().toLowerCase();

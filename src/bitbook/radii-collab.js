@@ -242,7 +242,7 @@
         document.head.appendChild(l);
     }
     // $x^2$ and $$...$$ math (KaTeX when the page has it), ::divider{style|Title} and ::pagebreak lines, and a leading | as an indent step
-    const KD_DIVS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'];
+    const KD_DIVS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'chain', 'arrows', 'diamonds', 'stars', 'film', 'rope', 'fade', 'segments', 'barcode'];
     function kdMathHtml(tex, display) {
         tex = String(tex).replace(/\u00A0/g, ' ');
         let inner = '';
@@ -281,7 +281,7 @@
                 const blk = kdBlockLine(ln);
                 if (blk) { flush(); out.push({ html: blk }); needCss = true; return; }
                 const qm = /^[ \t]*(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(ln);
-                if (qm) { flush(); out.push({ html: '<div class="blockquote-list kd-bq kd-bq-' + { '!>': 'warn', '?>': 'ask', '>>': 'pull', '%>': 'stat', '*>': 'star', '+>': 'good', '->': 'bad', '=>': 'result', '~>': 'aside', '$>': 'note', '#>': 'mono', '^>': 'tip', '@>': 'say', '&>': 'more' }[qm[1]] + '">' + kdInline(qm[2]) + '</div>' }); needCss = true; return; }
+                if (qm) { flush(); out.push({ html: '<div class="blockquote-list kd-bq kd-bq-' + { '!>': 'neon', '?>': 'glass', '>>': 'pull', '%>': 'gradient', '*>': 'marker', '+>': 'green', '->': 'red', '=>': 'dashed', '~>': 'whisper', '$>': 'paper', '#>': 'terminal', '^>': 'ribbon', '@>': 'bubble', '&>': 'card' }[qm[1]] + '">' + kdInline(qm[2]) + '</div>' }); needCss = true; return; }
                 const ip = /^(\|+)\s*([\s\S]*)$/.exec(ln);
                 if (ip) { flush(); out.push('<span class="kd-indent" style="display:inline-block;width:' + Math.min(8, ip[1].length) * 2.5 + 'rem"></span>' + kdInline(ip[2])); return; }
             }

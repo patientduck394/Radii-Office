@@ -426,65 +426,65 @@ A toast chip cousin for highlighting: not a bordered card but a fat marker strok
 * `++FG?text++` ++FG?fog++
 * `++BK?text++` ++BK?black++
 
-## Blockquote styles
+## Blockquote looks
 
-A line that starts with a symbol, `>` and a space becomes a styled quote, like the plain `> quote` but with its own look. Type the line and press Enter (or use Re-format); saving as text gives the same line back. There are 14 styles:
+A line that starts with a symbol, `>` and a space is a quote with a different look, like the plain `> quote` but dressed up. They are all the same kind of quote, only the look changes. Type the line and press Enter (or use Re-format); saving as text gives the same line back. There are 14 looks:
 
-`!> your text` Warning: an orange badge with an exclamation mark.
+`!> your text` Neon: a dark panel with a glowing cyan border and glowing words.
 
-!> Careful: this changes every document that uses it.
+!> This is how a quote looks in the neon look.
 
-`?> your text` Question: a cyan badge with a question mark.
+`?> your text` Frosted glass: a milky see-through pane with a white rim and a soft shadow.
 
-?> Which of these two layouts reads better?
+?> This is how a quote looks in the frosted glass look.
 
-`>> your text` Pull quote: big centered italic words between two rules and large quote marks.
+`>> your text` Pull quote: big centered italic words between two rules, with large quote marks.
 
->> The best way to learn a tool is to build something small with it.
+>> This is how a quote looks in the pull quote look.
 
-`%> your text` Big number: one large bold blue statement for a figure or a headline fact.
+`%> your text` Gradient: a blue to cyan gradient panel with white bold words.
 
-%> 280 styles, 14 colorways, 20 designs.
+%> This is how a quote looks in the gradient look.
 
-`*> your text` Highlight: a yellow marker band with a star.
+`*> your text` Highlighter: a yellow marker band behind the words.
 
-*> Remember this part for the test.
+*> This is how a quote looks in the highlighter look.
 
-`+> your text` Good news: a green panel with a check mark.
+`+> your text` Green: a green tinted panel with a green bar on the left.
 
-+> Saved! Everything is backed up.
++> This is how a quote looks in the green look.
 
-`-> your text` Danger: a red panel with a cross.
+`-> your text` Red: a red tinted panel with a red bar on the left.
 
--> This cannot be undone.
+-> This is how a quote looks in the red look.
 
-`=> your text` Result: a grey panel between dashed rules with an arrow.
+`=> your text` Dashed frame: a soft grey box with a dashed border.
 
-=> Total: 12 items, 3 left to do.
+=> This is how a quote looks in the dashed frame look.
 
-`~> your text` Aside: small faded italic words behind a dashed bar, for a side remark.
+`~> your text` Whisper: small faded italic words behind a dotted bar.
 
-~> By the way, the older version did this differently.
+~> This is how a quote looks in the whisper look.
 
-`$> your text` Paper note: a sticky paper note with a piece of tape on it.
+`$> your text` Paper note: a sticky paper note with a piece of tape on top.
 
-$> Bring towels and sunscreen.
+$> This is how a quote looks in the paper note look.
 
-`#> your text` Terminal: a dark terminal line with a prompt.
+`#> your text` Terminal: a dark terminal panel with monospace words.
 
-#> npm run build
+#> This is how a quote looks in the terminal look.
 
-`^> your text` Tip: a green panel with a TIP label.
+`^> your text` Ribbon: a white card with an orange bar and a little ribbon hanging from the top.
 
-^> Press Enter after the line to turn it into a quote.
+^> This is how a quote looks in the ribbon look.
 
 `@> your text` Speech bubble: a blue speech bubble with a tail.
 
-@> Hello there, welcome to the pool party!
+@> This is how a quote looks in the speech bubble look.
 
-`&> your text` Read more: a slate card with an arrow on the right.
+`&> your text` Shadow card: a white card that floats above the page on a soft shadow.
 
-&> Continue with the next section.
+&> This is how a quote looks in the shadow card look.
 
 ## Rim chips
 
@@ -1953,6 +1953,46 @@ A line that is only `::pagebreak` is a page break. In Writeout's Pages view the 
 ::divider{bubbles}
 
 `::divider{scallop}` a row of little arcs
+
+`::divider{neon}` a thin glowing tube of light
+
+::divider{neon}
+
+`::divider{chain}` a chain of interlocking links
+
+::divider{chain}
+
+`::divider{arrows}` a row of little chevrons pointing right
+
+::divider{arrows}
+
+`::divider{diamonds}` a row of diamonds
+
+::divider{diamonds}
+
+`::divider{stars}` a row of small stars
+
+::divider{stars}
+
+`::divider{film}` a film strip with holes along both edges
+
+::divider{film}
+
+`::divider{rope}` a twisted rope
+
+::divider{rope}
+
+`::divider{fade}` a soft line that fades out at both ends
+
+::divider{fade}
+
+`::divider{segments}` a bar cut into short blocks
+
+::divider{segments}
+
+`::divider{barcode}` thin and thick bars, like a barcode
+
+::divider{barcode}
 
 ### Divider colors
 
