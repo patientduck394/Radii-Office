@@ -37,7 +37,7 @@ Start a line with one of these and a space:
 * `**bold**` gives **bold**, and `*italic*` gives *italic*.
 * Backticks around a word show it in a `code` font.
 * `&&spark&&` gives &&spark&&.
-* `&sparklet&` gives &sparklet&, a smaller cousin of Spark Text with two tiny twinkling stars. It needs a lone `&` hugging each side of the words, so things like AT&T and R&D stay as typed.
+* `&sparklet&` gives &sparklet&, a lighter cousin of Spark Text with soft cyan words and a gentle glow. It needs a lone `&` hugging each side of the words, so things like AT&T and R&D stay as typed.
 
 ## Gel highlights
 

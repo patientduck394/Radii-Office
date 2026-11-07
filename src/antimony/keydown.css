@@ -138,19 +138,10 @@
   position: relative;
 }
 
-/* Sparklet (&sparklet&): a smaller, twinklier cousin of Spark Text (&&spark&&): soft cyan words with two tiny gold stars that twinkle by turns */
+/* Sparklet (&sparklet&): a lighter cousin of Spark Text (&&spark&&): soft cyan words with a gentle glow */
 .sparklet-text {
-  position: relative; display: inline-block; padding: 0 0.5em 0 0.3em; margin: 0 0.1em;
   color: #0891b2; font-weight: 700; text-shadow: 0 0 6px rgba(34, 211, 238, 0.45), 0 1px 0 rgba(255, 255, 255, 0.7);
 }
-.sparklet-text::before, .sparklet-text::after {
-  content: '\2726'; position: absolute; pointer-events: none; line-height: 1; color: #f5b301;
-  text-shadow: 0 0 4px rgba(255, 214, 10, 0.9); animation: kd-sparklet-twinkle 1.8s ease-in-out infinite;
-}
-.sparklet-text::before { font-size: 0.8em; right: -0.05em; top: -0.25em; }
-.sparklet-text::after { font-size: 0.55em; left: -0.05em; bottom: -0.1em; animation-delay: 0.9s; }
-@keyframes kd-sparklet-twinkle { 0%, 100% { opacity: 0.25; transform: scale(0.6) rotate(0deg); } 50% { opacity: 1; transform: scale(1.15) rotate(25deg); } }
-@media (prefers-reduced-motion: reduce) { .sparklet-text::before, .sparklet-text::after { animation: none; opacity: 0.9; } }
 
 /* --- 1. Aero Glass Showcase Module Frame --- */
 .aero-glass-block {
