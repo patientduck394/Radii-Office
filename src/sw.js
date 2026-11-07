@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'b5d6d321429b';
+const VERSION = '71ca37ee4910';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","258448b09a"],
@@ -286,6 +286,7 @@ const CORE = [["/","258448b09a"],
   ["/opendb/data/entries/photosynthesis-diagram.kd","0ff51a7a2c"],
   ["/opendb/data/entries/photosynthesis.kd","f7bb6f299b"],
   ["/opendb/data/entries/poolside-water-gdshader.kd","07f60e7a97"],
+  ["/opendb/data/entries/poolsideui.kd","5ad9eb41c3"],
   ["/opendb/data/entries/prime-number.kd","02b8f548b5"],
   ["/opendb/data/entries/public-domain.kd","9e2eb5becd"],
   ["/opendb/data/entries/pythagoras-diagram.kd","45cca565c4"],
@@ -305,7 +306,7 @@ const CORE = [["/","258448b09a"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","84da016db7"],
+  ["/opendb/data/index.json","8cac30a953"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],

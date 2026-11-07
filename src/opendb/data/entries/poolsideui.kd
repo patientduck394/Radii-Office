@@ -1,0 +1,1638 @@
+---
+format: keydown-text
+id: poolsideui
+type: lite
+title: PoolsideUI, 26 Svelte 5 components
+summary: The whole PoolsideUI set in one lite: twenty-six Svelte 5 components in clear cyan-to-blue water with orange as the accent, the design tokens, and a demo page.
+tags: [svelte, javascript, css, poolside, ui, components, library]
+created: 2026-11-07
+updated: 2026-11-07
+authors: [OpenDB contributors]
+license: CC0-1.0
+preview: svelte
+---
+**PoolsideUI** is a set of twenty-six **Svelte 5** components in the Poolside style: clear water from cyan to blue, with orange as a crisp accent (stripes, edges, life rings, lane ropes), never blended into the water. This one lite holds all of it: every `Pool*.svelte` component, `index.js` (one import for everything), `poolside.css` (the design tokens, optional because every component has them built in) and `App.svelte`, a demo page that shows every component. Press **Start** in the preview and it is compiled right in your browser!
+
+Use it in your own project by downloading the ZIP, then `import { PoolButton, PoolCard, toast } from './PoolsideUI/index.js'`. Everything works with the keyboard and screen readers, and the animations stop when the system asks for reduced motion. The README below lists what each component does.
+
+~~~ file: App.svelte
+<script>
+    import { PoolButton, PoolCard, PoolToggle, PoolSlider, PoolProgress, PoolTabs, PoolInput, PoolChip, PoolDialog, PoolToaster, toast, PoolAccordion, PoolTiles,
+        PoolCheckbox, PoolRadioGroup, PoolSelect, PoolSegmented, PoolAlert, PoolSpinner, PoolSkeleton, PoolTooltip, PoolAvatar, PoolMenu, PoolStepper, PoolPagination, PoolTable, PoolStat } from './index.js';
+
+    let heated = $state(true), slide = $state(false);
+    let temp = $state(27.5), level = $state(64);
+    let lane = $state(0);
+    let name = $state(''), email = $state(''), notes = $state('');
+    const emailBad = $derived(email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email));
+    let tags = $state(['Heated', 'Kids pool', 'Diving board', 'Sun loungers']);
+    let open = $state(false);
+    let faqOpen = $state([0]);
+    const RING = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3.5"/><path d="M12 4v4.5M12 15.5V20M4 12h4.5M15.5 12H20"/></svg>';
+    const SUN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v2M12 19v2M3 12h2M19 12h2M5.6 5.6l1.4 1.4M17 17l1.4 1.4M5.6 18.4L7 17M17 7l1.4-1.4"/></svg>';
+    let rules = $state(false), towels = $state(true), goggles = $state(false);
+    const allExtras = $derived(towels && goggles), someExtras = $derived(towels !== goggles);
+    let speed = $state('Medium'), pool = $state(undefined), range = $state('Week');
+    let alertOpen = $state(true), loading = $state(true);
+    let step = $state(1), page = $state(4);
+    let sortBy = $state('time'), sortDir = $state('asc');
+    let picked = $state('');
+    const RESULTS = [{ name: 'Marina Costa', lane: 4, time: 58.21, club: 'Dolphins' }, { name: 'Kai Lindqvist', lane: 5, time: 57.94, club: 'Sharks' }, { name: 'Ana Ruiz', lane: 3, time: 59.02, club: 'Otters' }, { name: 'Tomás Reyes', lane: 6, time: 58.67, club: 'Dolphins' }, { name: 'Zoe Park', lane: 2, time: 60.15, club: 'Seals' }];
+    const CODE = {
+        button: '<PoolButton onclick={save}>Save</PoolButton>\n<PoolButton tone="orange">Dive in!</PoolButton>\n<PoolButton tone="ghost" size="small">Pool rules</PoolButton>',
+        card: '<PoolCard title="Pool party" subtitle="Saturday" icon={ringSvg}>\n    Bring a towel!\n    {#snippet footer()}<PoolButton size="small">I\'m coming!</PoolButton>{/snippet}\n</PoolCard>',
+        toggle: '<PoolToggle bind:checked={heated} label="Heated pool" />\n<PoolSlider bind:value={temp} min={20} max={34} step={0.5} label="Water temperature" unit="°C" />',
+        progress: '<PoolProgress value={level} label="Filling the pool" />\n<PoolProgress value={level} shape="round" label="Water level" />\n<PoolProgress label="Waiting…" />',
+        tabs: '<PoolTabs tabs={["Lap swim", "Lessons", "Free swim"]} bind:active>\n    {#snippet panel(i)}…{/snippet}\n</PoolTabs>',
+        input: '<PoolInput label="Email" type="email" bind:value={email} error={bad ? "That email looks unfinished!" : ""} />',
+        chip: '<PoolChip>Heated</PoolChip>\n<PoolChip tone="orange">Lifeguard on duty</PoolChip>\n<PoolChip tone="soft" onremove={() => drop(tag)}>{tag}</PoolChip>',
+        dialog: '<PoolDialog bind:open title="Book a lane">…{#snippet footer()}…{/snippet}</PoolDialog>\n\n<PoolToaster />   then anywhere:   toast("Saved!")',
+        acc: '<PoolAccordion items={[{ title: "Do I need a swim cap?", text: "Only in the lap lanes!" }]} bind:open />',
+        tiles: '<PoolTiles depth="deep">\n    <h2>Summer hours</h2> …\n</PoolTiles>',
+        check: '<PoolCheckbox bind:checked={rules}>I read the pool rules</PoolCheckbox>\n<PoolRadioGroup label="Lane speed" options={["Slow", "Medium", "Fast"]} bind:value={speed} row />\n<PoolSelect label="Pool" options={pools} bind:value={pool} placeholder="Pick a pool" />\n<PoolSegmented options={["Day", "Week", "Month"]} bind:value={range} />',
+        alert: '<PoolAlert title="Pool closes early">Today at 6!</PoolAlert>\n<PoolAlert tone="warning" title="No running!" dismissible bind:open>…</PoolAlert>',
+        loading: '<PoolSpinner label="Loading the lanes" showLabel />\n<PoolSkeleton shape="circle" width="48px" />  <PoolSkeleton lines={3} />',
+        people: '<PoolAvatar name="Marina Costa" status="online" />\n<PoolTooltip tip="Lane 1 is the fast lane"><PoolButton>Lane 1</PoolButton></PoolTooltip>\n<PoolMenu label="Lane options" items={[{ label: "Book", onselect: book }, { separator: true }, { label: "Cancel", danger: true, onselect: cancel }]} />',
+        steps: '<PoolStepper steps={["Pick a lane", "Choose a time", "Pay", "Swim!"]} bind:current={step} />\n<PoolPagination bind:page total={12} />',
+        table: '<PoolTable caption="100 m freestyle" columns={[{ key: "name", label: "Swimmer" }, { key: "time", label: "Time (s)", align: "right", format: (v) => v.toFixed(2) }]} rows={results} bind:sortBy bind:sortDir />\n<PoolStat label="Swimmers today" value={312} change={8.4} trend={[240, 260, 255, 290, 312]} />'
+    };
+</script>
+
+<PoolToaster />
+
+<div class="demo">
+    <PoolTiles padding="36px 28px">
+        <h1>PoolsideUI</h1>
+        <p class="lead">Twenty-six Svelte 5 components in the Poolside style: clear water from cyan to blue, with orange as a crisp accent! Everything works with the keyboard and screen readers, and holds still when motion is turned off.</p>
+        <div class="row"><PoolButton size="large" onclick={() => toast('Welcome to the pool!')}>Make a splash</PoolButton><PoolButton size="large" tone="orange" onclick={() => toast('Lifeguard is on the way!', { tone: 'orange' })}>Call the lifeguard</PoolButton></div>
+    </PoolTiles>
+
+    <section><h2>PoolButton</h2><p>Glossy water, an orange life-ring tone and a see-through one! Each press sends out a ripple!</p>
+        <div class="row"><PoolButton>Water</PoolButton><PoolButton tone="orange">Orange</PoolButton><PoolButton tone="ghost">Ghost</PoolButton><PoolButton size="small">Small</PoolButton><PoolButton disabled>Disabled</PoolButton><PoolButton tone="ghost" href="#card">A link</PoolButton></div>
+        <pre>{CODE.button}</pre></section>
+
+    <section id="card"><h2>PoolCard</h2><p>White tiles under a rippling water header, with an orange stripe and an icon in a life ring!</p>
+        <div class="grid">
+            <PoolCard title="Pool party" subtitle="Saturday at noon" icon={RING}>Bring a towel and your best <b>cannonball</b>!{#snippet footer()}<PoolButton size="small" tone="ghost">Maybe</PoolButton><PoolButton size="small">I'm coming!</PoolButton>{/snippet}</PoolCard>
+            <PoolCard title="Sun index" subtitle="Today" icon={SUN}>Strong sun from 11 to 3, so sunscreen up!</PoolCard>
+            <PoolCard flat>A flat card has no header, just the tiles and the orange stripe!</PoolCard>
+        </div>
+        <pre>{CODE.card}</pre></section>
+
+    <section><h2>PoolToggle and PoolSlider</h2><p>The switch knob is a life ring that floats across, and the slider fills with water up to an orange float!</p>
+        <div class="row"><PoolToggle bind:checked={heated} label="Heated pool" /><PoolToggle bind:checked={slide} label="Water slide open" /><PoolToggle checked disabled label="Disabled" /></div>
+        <div class="grid"><PoolSlider bind:value={temp} min={20} max={34} step={0.5} label="Water temperature" unit="°C" /><PoolSlider bind:value={level} label="Water level" unit="%" /></div>
+        <p class="note">The pool is {heated ? 'heated' : 'not heated'} to <b>{temp}°C</b>, and the slide is {slide ? 'open' : 'closed'}!</p>
+        <pre>{CODE.toggle}</pre></section>
+
+    <section><h2>PoolProgress</h2><p>Progress as a water level, as a bar or a round porthole with waves on top! Move the Water level slider above!</p>
+        <div class="grid"><div class="stack"><PoolProgress value={level} label="Filling the pool" /><PoolProgress label="Waiting for the lifeguard…" /></div>
+            <div class="row"><PoolProgress value={level} shape="round" label="Water level" /><PoolProgress shape="round" size="72px" label="Busy" /></div></div>
+        <pre>{CODE.progress}</pre></section>
+
+    <section><h2>PoolTabs</h2><p>Swimming lanes split by orange-and-white lane ropes! Arrow keys move between them!</p>
+        <PoolTabs tabs={['Lap swim', 'Lessons', 'Free swim']} bind:active={lane}>
+            {#snippet panel(i)}
+                {#if i === 0}Lap lanes are open <b>6 to 9</b> every morning, fast lane on the left!{:else if i === 1}Lessons for all ages on <b>Saturdays</b>, from Tadpoles to Sharks!{:else}Free swim every afternoon, with the slide open from <b>2</b>!{/if}
+            {/snippet}
+        </PoolTabs>
+        <pre>{CODE.tabs}</pre></section>
+
+    <section><h2>PoolInput</h2><p>Fields like clean tiles, a water-blue focus ring, and orange when something needs fixing!</p>
+        <div class="grid"><PoolInput label="Your name" bind:value={name} placeholder="Marina" required hint="The name on your pool pass" />
+            <PoolInput label="Email" type="email" bind:value={email} placeholder="marina@example.com" error={emailBad ? 'That email looks unfinished!' : ''} />
+            <PoolInput label="Notes for the lifeguard" multiline rows={3} bind:value={notes} /></div>
+        <pre>{CODE.input}</pre></section>
+
+    <section><h2>PoolChip</h2><p>Glossy little pills, and soft ones you can remove!</p>
+        <div class="row"><PoolChip>Heated</PoolChip><PoolChip tone="orange">Lifeguard on duty</PoolChip>
+            {#each tags as t (t)}<PoolChip tone="soft" removeLabel={'Remove ' + t} onremove={() => (tags = tags.filter((x) => x !== t))}>{t}</PoolChip>{/each}
+            {#if tags.length < 4}<PoolButton size="small" tone="ghost" onclick={() => (tags = ['Heated', 'Kids pool', 'Diving board', 'Sun loungers'])}>Bring them back</PoolButton>{/if}</div>
+        <pre>{CODE.chip}</pre></section>
+
+    <section><h2>PoolDialog and PoolToaster</h2><p>A pop-up with the water header (Escape or the haze closes it), and messages that float up like bubbles!</p>
+        <div class="row"><PoolButton onclick={() => (open = true)}>Book a lane</PoolButton><PoolButton tone="ghost" onclick={() => toast('Saved your booking!')}>Water toast</PoolButton><PoolButton tone="ghost" onclick={() => toast('The pool closes in 10 minutes!', { tone: 'orange', time: 6000 })}>Orange toast</PoolButton></div>
+        <PoolDialog bind:open title="Book a lane">
+            <p style="margin-top:0">Which lane would you like for tomorrow morning?</p>
+            <PoolTabs tabs={['Lane 1', 'Lane 2', 'Lane 3']}>{#snippet panel(i)}Lane {i + 1} is {i === 1 ? 'the medium lane' : i === 0 ? 'the fast lane' : 'the slow lane'}!{/snippet}</PoolTabs>
+            {#snippet footer()}<PoolButton tone="ghost" onclick={() => (open = false)}>Cancel</PoolButton><PoolButton onclick={() => { open = false; toast('Lane booked! See you in the water!'); }}>Book it!</PoolButton>{/snippet}
+        </PoolDialog>
+        <pre>{CODE.dialog}</pre></section>
+
+    <section><h2>PoolAccordion</h2><p>Questions that open one at a time, each bar with an orange edge and arrow!</p>
+        <PoolAccordion bind:open={faqOpen} items={[{ title: 'Do I need a swim cap?', text: 'Only in the lap lanes!' }, { title: 'Is there a deep end?', text: 'Yes, 3.8 metres deep, with a diving board.' }, { title: 'Can I bring a float?', text: 'In free swim, yes! Lap lanes stay clear.' }]} />
+        <pre>{CODE.acc}</pre></section>
+
+    <section><h2>PoolTiles</h2><p>A backdrop like looking into a sunny pool, with tiles, drifting light and a lane line!</p>
+        <div class="grid"><PoolTiles><h3>Shallow end</h3><p>Light water for friendly sections!</p></PoolTiles><PoolTiles depth="deep"><h3>Deep end</h3><p>Deeper blue, with white text!</p></PoolTiles></div>
+        <pre>{CODE.tiles}</pre></section>
+    <h2 class="batch">More components</h2>
+
+    <section><h2>PoolCheckbox, PoolRadioGroup, PoolSelect and PoolSegmented</h2><p>The rest of the form pieces! The checkbox fills with water, the radio floats get an orange center, and a bubble slides along the segments!</p>
+        <div class="grid">
+            <div class="stack"><PoolCheckbox bind:checked={rules}>I read the pool rules</PoolCheckbox>
+                <PoolCheckbox checked={allExtras} indeterminate={someExtras} onchange={(v) => { towels = v; goggles = v; }}>All extras</PoolCheckbox>
+                <div class="indent stack"><PoolCheckbox bind:checked={towels}>Towel service</PoolCheckbox><PoolCheckbox bind:checked={goggles}>Goggles</PoolCheckbox></div>
+                <PoolCheckbox checked disabled>Disabled</PoolCheckbox></div>
+            <div class="stack"><PoolRadioGroup label="Lane speed" options={['Slow', 'Medium', 'Fast']} bind:value={speed} row />
+                <PoolRadioGroup label="Pool" options={[{ value: 'main', label: 'Main pool', hint: '25 m, 8 lanes' }, { value: 'kids', label: 'Kids pool', hint: 'Warm and shallow' }, { value: 'dive', label: 'Diving pool', hint: 'Closed today', disabled: true }]} bind:value={pool} /></div>
+            <div class="stack"><PoolSelect label="Pool" options={[{ value: 'main', label: 'Main pool' }, { value: 'kids', label: 'Kids pool' }, { value: 'dive', label: 'Diving pool' }]} bind:value={pool} placeholder="Pick a pool" hint="Same choice as the floats!" />
+                <PoolSegmented options={['Day', 'Week', 'Month']} bind:value={range} label="Range" /><PoolSegmented size="small" options={[{ value: 'c', label: '°C' }, { value: 'f', label: '°F' }]} label="Units" /></div>
+        </div>
+        <p class="note">{rules ? 'Rules read' : 'Rules not read yet'}, {speed} lane, {pool ? pool + ' pool' : 'no pool picked'}, showing a {range.toLowerCase()}!</p>
+        <pre>{CODE.check}</pre></section>
+
+    <section><h2>PoolAlert</h2><p>Banners in calm water, with an orange edge for warnings (they never turn the whole box orange)!</p>
+        <div class="stack"><PoolAlert title="Pool closes early">Today at 6, for cleaning!</PoolAlert>
+            <PoolAlert tone="success" title="Lane booked!">Lane 4, tomorrow at 7:00.{#snippet actions()}<PoolButton size="small" tone="ghost">Add to calendar</PoolButton>{/snippet}</PoolAlert>
+            <PoolAlert tone="warning" title="No running!" dismissible bind:open={alertOpen}>The deck is slippery after the rain.</PoolAlert>
+            {#if !alertOpen}<div><PoolButton size="small" tone="ghost" onclick={() => (alertOpen = true)}>Bring the warning back</PoolButton></div>{/if}
+            <PoolAlert tone="danger" title="Diving pool closed">The board is being repaired.</PoolAlert></div>
+        <pre>{CODE.alert}</pre></section>
+
+    <section><h2>PoolSpinner and PoolSkeleton</h2><p>A spinning life ring, and stand-in shapes with sunlight rippling across!</p>
+        <div class="row"><PoolSpinner /><PoolSpinner size="44px" label="Loading the lanes" showLabel /><PoolButton size="small" tone="ghost" onclick={() => (loading = !loading)}>{loading ? 'Finish loading' : 'Load again'}</PoolButton></div>
+        <div class="loadcard">{#if loading}<div class="row top"><PoolSkeleton shape="circle" width="48px" /><div class="grow"><PoolSkeleton lines={3} /></div></div><PoolSkeleton shape="block" height="90px" />
+            {:else}<div class="row top"><PoolAvatar name="Marina Costa" size="48px" status="online" /><div class="grow"><b>Marina Costa</b><br />Lane 4, 100 m freestyle, 58.21 seconds!</div></div>{/if}</div>
+        <pre>{CODE.loading}</pre></section>
+
+    <section><h2>PoolAvatar, PoolTooltip and PoolMenu</h2><p>Portholes with initials or a picture, water tip bubbles, and a menu of actions!</p>
+        <div class="row"><PoolAvatar name="Marina Costa" status="online" /><PoolAvatar name="Kai Lindqvist" status="away" size="48px" /><PoolAvatar name="Ana" status="offline" size="56px" /><PoolAvatar name="Zoe Park" ring={false} />
+            <PoolTooltip tip="Lane 1 is the fast lane!"><PoolButton size="small">Lane 1</PoolButton></PoolTooltip>
+            <span>The <PoolTooltip tip="3.8 metres, with a diving board!" place="bottom">deep end</PoolTooltip> is over there!</span>
+            <PoolMenu label="Lane options" items={[{ label: 'Book this lane', onselect: () => (picked = 'Booked!') }, { label: 'Share', onselect: () => (picked = 'Shared!') }, { label: 'Swap lanes', disabled: true }, { separator: true }, { label: 'Cancel booking', danger: true, onselect: () => (picked = 'Cancelled!') }]} />
+            {#if picked}<b>{picked}</b>{/if}</div>
+        <pre>{CODE.people}</pre></section>
+
+    <section><h2>PoolStepper and PoolPagination</h2><p>Steps along a lane rope (click a done step to go back), and page floats!</p>
+        <PoolStepper steps={[{ label: 'Pick a lane', hint: 'Lane 4' }, { label: 'Choose a time', hint: '7:00' }, 'Pay', 'Swim!']} bind:current={step} />
+        <div class="row" style="margin-top:14px"><PoolButton size="small" tone="ghost" disabled={step === 0} onclick={() => step--}>Back</PoolButton><PoolButton size="small" disabled={step === 3} onclick={() => step++}>Next step</PoolButton>
+            <span class="grow"></span><PoolPagination bind:page total={12} label="Results pages" /></div>
+        <p class="note">Step {step + 1} of 4, page {page} of 12!</p>
+        <pre>{CODE.steps}</pre></section>
+
+    <section><h2>PoolTable and PoolStat</h2><p>A results table (click a heading to sort it) and dashboard number tiles!</p>
+        <div class="grid stats"><PoolStat label="Swimmers today" value={312} change={8.4} trend={[240, 262, 255, 290, 312]} /><PoolStat label="Water temperature" value="27.5" unit="°C" change={-0.5} changeUnit="°" trend={[28.1, 28.0, 27.9, 27.6, 27.5]} /><PoolStat label="Lanes booked" value="18/24" hint="6 lanes free this hour!" /></div>
+        <div style="margin-top:16px"><PoolTable caption="100 m freestyle, heat 2" columns={[{ key: 'name', label: 'Swimmer' }, { key: 'club', label: 'Club' }, { key: 'lane', label: 'Lane', align: 'right' }, { key: 'time', label: 'Time (s)', align: 'right', format: (v) => v.toFixed(2) }]} rows={RESULTS} bind:sortBy bind:sortDir /></div>
+        <pre>{CODE.table}</pre></section>
+</div>
+
+<style>
+    :global(:root) {
+    --pool-water-1: #67e8f9;   /* sunny shallow water */
+    --pool-water-2: #22d3ee;
+    --pool-water-3: #00b2e3;   /* the deep end: a vivid cyan (darker cyans turn teal, bluer ones turn Aero) */
+    --pool-deep: #075985;      /* text on light water */
+    --pool-ink: #0c4a6e;       /* body text */
+    --pool-orange: #f97316;    /* life rings, lane ropes, stripes */
+    --pool-orange-deep: #c2410c;
+    --pool-tile: #f0fdff;      /* white pool tiles */
+    --pool-tile-line: #cff4fc;
+    --pool-line: rgba(14, 165, 233, 0.4);
+    --pool-shadow: rgba(8, 145, 178, 0.22);
+    --pool-radius: 16px;
+    --pool-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+    }
+    .batch { margin-top: 56px; padding-top: 18px; border-top: 4px solid; border-image: repeating-linear-gradient(90deg, #f97316 0 14px, #fff 14px 28px) 1; font-size: 26px; color: #075985; }
+    .indent { margin-left: 30px; }
+    .loadcard { margin-top: 14px; padding: 14px; border-radius: 16px; border: 1px solid rgba(14, 165, 233, 0.4); background: #fff; display: flex; flex-direction: column; gap: 12px; max-width: 520px; }
+    .row.top { align-items: flex-start; flex-wrap: nowrap; }
+    .grow { flex: 1; min-width: 0; }
+    .stats { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    :global(body) { margin: 0; background: linear-gradient(180deg, #e0faff, #ffffff 420px); font-family: var(--pool-font); color: var(--pool-ink); }
+    .demo { max-width: 1040px; margin: 0 auto; padding: 24px 16px 60px; }
+    h1 { font-size: 40px; margin: 0 0 6px; color: #075985; }
+    .lead { max-width: 640px; font-size: 17px; }
+    section { margin-top: 38px; }
+    h2 { margin: 0 0 4px; color: #0369a1; }
+    section > p { margin-top: 0; }
+    .row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; align-items: start; }
+    .stack { display: flex; flex-direction: column; gap: 14px; }
+    .note { margin: 12px 0 0; }
+    pre { margin: 14px 0 0; padding: 12px 14px; border-radius: 12px; background: #082f49; color: #a5f3fc; font: 12.5px/1.55 ui-monospace, Menlo, monospace; white-space: pre-wrap; box-shadow: inset 4px 0 0 #f97316; }
+</style>
+~~~
+
+~~~ file: index.js
+// PoolsideUI: every component in one import!
+//   (copy this folder into your project, then import { PoolButton, PoolCard, toast } from its index.js)
+export { default as PoolButton } from './PoolButton.svelte';
+export { default as PoolCard } from './PoolCard.svelte';
+export { default as PoolToggle } from './PoolToggle.svelte';
+export { default as PoolSlider } from './PoolSlider.svelte';
+export { default as PoolProgress } from './PoolProgress.svelte';
+export { default as PoolTabs } from './PoolTabs.svelte';
+export { default as PoolInput } from './PoolInput.svelte';
+export { default as PoolChip } from './PoolChip.svelte';
+export { default as PoolDialog } from './PoolDialog.svelte';
+export { default as PoolToaster, toast, dismiss } from './PoolToaster.svelte';
+export { default as PoolAccordion } from './PoolAccordion.svelte';
+export { default as PoolTiles } from './PoolTiles.svelte';
+export { default as PoolCheckbox } from './PoolCheckbox.svelte';
+export { default as PoolRadioGroup } from './PoolRadioGroup.svelte';
+export { default as PoolSelect } from './PoolSelect.svelte';
+export { default as PoolSegmented } from './PoolSegmented.svelte';
+export { default as PoolAlert } from './PoolAlert.svelte';
+export { default as PoolSpinner } from './PoolSpinner.svelte';
+export { default as PoolSkeleton } from './PoolSkeleton.svelte';
+export { default as PoolTooltip } from './PoolTooltip.svelte';
+export { default as PoolAvatar } from './PoolAvatar.svelte';
+export { default as PoolMenu } from './PoolMenu.svelte';
+export { default as PoolStepper } from './PoolStepper.svelte';
+export { default as PoolPagination } from './PoolPagination.svelte';
+export { default as PoolTable } from './PoolTable.svelte';
+export { default as PoolStat } from './PoolStat.svelte';
+~~~
+
+~~~ file: PoolAccordion.svelte
+<!--
+  PoolAccordion.svelte: questions that open one at a time (or several), each bar with an orange edge and arrow!
+
+  <PoolAccordion items={[
+    { title: 'Do I need a swim cap?', text: 'Only in the lap lanes!' },
+    { title: 'Is there a deep end?', text: 'Yes, 3.8 metres, with a diving board.' }
+  ]} />
+  <PoolAccordion items={faq} multiple bind:open />
+
+  Props: items ([{ title, text }]), open (bindable list of open indexes), multiple (several may be open at once), item (a snippet
+         that gets (entry, index) to draw the inside yourself instead of text), class.
+-->
+<script>
+    let { items = [], open = $bindable([]), multiple = false, item = undefined, class: className = '' } = $props();
+    const uid = 'pla' + Math.random().toString(36).slice(2, 8);
+    function flip(i) {
+        const isOpen = open.includes(i);
+        open = isOpen ? open.filter((x) => x !== i) : multiple ? [...open, i] : [i];
+    }
+</script>
+
+<div class="pool-acc {className}">
+    {#each items as it, i (i)}
+        {@const isOpen = open.includes(i)}
+        <section class="pool-acc-item" class:on={isOpen}>
+            <h3><button type="button" id={uid + '-b' + i} aria-expanded={isOpen} aria-controls={uid + '-p' + i} onclick={() => flip(i)}>
+                <svg class="pool-acc-chev" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg>
+                <span>{it.title}</span>
+            </button></h3>
+            <div class="pool-acc-body" id={uid + '-p' + i} role="region" aria-labelledby={uid + '-b' + i} hidden={!isOpen}>
+                {#if item}{@render item(it, i)}{:else}{it.text}{/if}
+            </div>
+        </section>
+    {/each}
+</div>
+
+<style>
+    .pool-acc { display: flex; flex-direction: column; gap: 8px; font-family: var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); }
+    .pool-acc-item { border-radius: 14px; overflow: hidden; border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: var(--pool-tile, #f0fdff); box-shadow: 0 3px 10px rgba(8, 145, 178, 0.12); }
+    h3 { margin: 0; }
+    h3 button { display: flex; align-items: center; gap: 10px; width: 100%; padding: 11px 14px; border: 0; cursor: pointer; text-align: left; font: 700 15px var(--pool-font, system-ui, sans-serif); color: var(--pool-deep, #075985);
+        background: linear-gradient(180deg, #ffffff 0%, #ecfeff 50%, #a5f3fc 100%); box-shadow: inset 4px 0 0 var(--pool-orange, #f97316), inset 0 1px 0 #fff; }
+    .on h3 button { color: #fff; text-shadow: 0 1px 2px rgba(7, 89, 133, 0.5); background: linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    h3 button:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: -3px; }
+    .pool-acc-chev { flex: none; color: var(--pool-orange-deep, #c2410c); transition: transform 0.2s; }
+    .on .pool-acc-chev { transform: rotate(90deg); color: #fff; }
+    .pool-acc-body { padding: 12px 16px 14px; line-height: 1.5; border-top: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); }
+    @media (prefers-reduced-motion: reduce) { .pool-acc-chev { transition: none; } }
+</style>
+~~~
+
+~~~ file: PoolAlert.svelte
+<!--
+  PoolAlert.svelte: a message banner, calm water for news and an orange edge for warnings!
+
+  <PoolAlert title="Pool closes early">Today at 6, for cleaning!</PoolAlert>
+  <PoolAlert tone="warning" title="No running!" dismissible bind:open>The deck is slippery.</PoolAlert>
+
+  Props: tone ('info' default, 'success', 'warning', 'danger'), title, dismissible (shows a × that sets open to false),
+         open (bindable, default true), children, actions (a snippet for buttons), class.
+  Warnings and dangers are announced right away (role="alert"); the others politely (role="status").
+-->
+<script>
+    let { tone = 'info', title = '', dismissible = false, open = $bindable(true), children = undefined, actions = undefined, class: className = '' } = $props();
+    const ICONS = {
+        info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>',
+        success: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.8 2.8L16.5 9"/>',
+        warning: '<path d="M12 3.5l9.5 16.5h-19z"/><path d="M12 10v4.5M12 17.2v.3"/>',
+        danger: '<circle cx="12" cy="12" r="9"/><path d="M9 9l6 6M15 9l-6 6"/>'
+    };
+    const loud = $derived(tone === 'warning' || tone === 'danger');
+</script>
+
+{#if open}
+    <div class="pool-alert pool-{tone} {className}" role={loud ? 'alert' : 'status'}>
+        <svg class="pool-alert-icon" viewBox="0 0 24 24" aria-hidden="true">{@html ICONS[tone] || ICONS.info}</svg>
+        <div class="pool-alert-text">
+            {#if title}<b>{title}</b>{/if}
+            {#if children}<div>{@render children()}</div>{/if}
+            {#if actions}<div class="pool-alert-actions">{@render actions()}</div>{/if}
+        </div>
+        {#if dismissible}<button type="button" aria-label="Dismiss" onclick={() => (open = false)}><svg viewBox="0 0 12 12" width="11" height="11" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>{/if}
+    </div>
+{/if}
+
+<style>
+    .pool-alert { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px; font: 14px/1.45 var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e);
+        border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: linear-gradient(180deg, #ffffff, #ecfeff); box-shadow: 0 4px 12px rgba(8, 145, 178, 0.12); }
+    .pool-success { background: linear-gradient(180deg, #ffffff, #e6fff7); border-color: rgba(16, 185, 129, 0.45); }
+    /* warnings keep the water background: the orange is the edge and the icon, not a wash of color */
+    .pool-warning { box-shadow: inset 5px 0 0 var(--pool-orange, #f97316), 0 4px 12px rgba(8, 145, 178, 0.12); padding-left: 18px; }
+    .pool-danger { box-shadow: inset 5px 0 0 #dc2626, 0 4px 12px rgba(8, 145, 178, 0.12); padding-left: 18px; background: linear-gradient(180deg, #ffffff, #fff1f2); border-color: rgba(220, 38, 38, 0.35); }
+    .pool-alert-icon { flex: none; width: 22px; height: 22px; fill: none; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke: var(--pool-water-3, #00b2e3); }
+    .pool-success .pool-alert-icon { stroke: #059669; }
+    .pool-warning .pool-alert-icon { stroke: var(--pool-orange, #f97316); }
+    .pool-danger .pool-alert-icon { stroke: #dc2626; }
+    .pool-alert-text { flex: 1; min-width: 0; }
+    b { display: block; color: var(--pool-deep, #075985); }
+    .pool-alert-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    button { flex: none; display: inline-flex; padding: 6px; border: 0; border-radius: 50%; background: none; color: var(--pool-deep, #075985); cursor: pointer; }
+    button:hover { background: rgba(2, 132, 199, 0.12); }
+    button:focus-visible { outline: 2px solid var(--pool-orange, #f97316); }
+</style>
+~~~
+
+~~~ file: PoolAvatar.svelte
+<!--
+  PoolAvatar.svelte: a round porthole with a picture or initials, and a little status float!
+
+  <PoolAvatar name="Marina Costa" />                     (shows MC on water)
+  <PoolAvatar name="Kai" src="/kai.jpg" status="online" size="56px" />
+
+  Props: name (used for the initials and the description), src (a picture), size (default '40px'),
+         status ('online' (orange float, in the water), 'away', 'offline', or none), ring (the white and orange ring, default true), class.
+-->
+<script>
+    let { name = '', src = undefined, size = '40px', status = undefined, ring = true, class: className = '' } = $props();
+    let broken = $state(false);
+    const initials = $derived(String(name).trim().split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0].toUpperCase()).join('') || '?');
+    const desc = $derived((name || 'Someone') + (status ? ', ' + status : ''));
+</script>
+
+<span class="pool-avatar {className}" class:ring style:--pa={size} role="img" aria-label={desc}>
+    {#if src && !broken}<img {src} alt="" onerror={() => (broken = true)} />{:else}<span class="pool-initials" aria-hidden="true">{initials}</span>{/if}
+    {#if status}<span class="pool-status pool-{status}" aria-hidden="true"></span>{/if}
+</span>
+
+<style>
+    .pool-avatar { position: relative; display: inline-flex; flex: none; width: var(--pa); height: var(--pa); border-radius: 50%; vertical-align: middle; font-family: var(--pool-font, system-ui, sans-serif); }
+    .ring { box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--pool-orange, #f97316), 0 3px 8px rgba(7, 89, 133, 0.3); }
+    img, .pool-initials { width: 100%; height: 100%; border-radius: 50%; overflow: hidden; }
+    img { object-fit: cover; }
+    .pool-initials { display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 800; font-size: calc(var(--pa) * 0.38); text-shadow: 0 1px 2px rgba(7, 89, 133, 0.5);
+        background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.55), transparent 45%), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    .pool-status { position: absolute; right: -1px; bottom: -1px; width: calc(var(--pa) * 0.3); height: calc(var(--pa) * 0.3); min-width: 10px; min-height: 10px; border-radius: 50%; border: 2px solid #fff; }
+    .pool-online { background: radial-gradient(circle at 35% 30%, #fff 0 15%, transparent 20%), var(--pool-orange, #f97316); }
+    .pool-away { background: #fde68a; }
+    .pool-offline { background: #94a3b8; }
+</style>
+~~~
+
+~~~ file: PoolButton.svelte
+<!--
+  PoolButton.svelte: a glossy water button that sends out a ripple where you press it!
+
+  <PoolButton onclick={save}>Save</PoolButton>
+  <PoolButton tone="orange">Dive in!</PoolButton>
+  <PoolButton tone="ghost" size="small" href="/rules">Pool rules</PoolButton>
+
+  Props: tone ('water' default, 'orange' like a life ring, 'ghost' see-through), size ('small' | 'medium' | 'large'),
+         href (makes it a link), disabled, type ('button' default), onclick, class, style, and anything else goes on the element.
+-->
+<script>
+    let { tone = 'water', size = 'medium', href = undefined, disabled = false, type = 'button', onclick = undefined, children = undefined, class: className = '', ...rest } = $props();
+    let ripples = $state([]);
+    let n = 0;
+    function press(e) {
+        if (disabled) return;
+        const r = e.currentTarget.getBoundingClientRect();
+        const id = ++n;
+        ripples = [...ripples, { id, x: e.clientX - r.left, y: e.clientY - r.top }];
+        setTimeout(() => { ripples = ripples.filter((p) => p.id !== id); }, 650);
+    }
+</script>
+
+<svelte:element this={href && !disabled ? 'a' : 'button'} href={href && !disabled ? href : undefined} type={href ? undefined : type} disabled={href ? undefined : disabled}
+    aria-disabled={href && disabled ? 'true' : undefined}
+    class="pool-btn pool-{tone} pool-{size} {className}" onpointerdown={press} {onclick} {...rest}>
+    <span class="pool-btn-label">{#if children}{@render children()}{/if}</span>
+    {#each ripples as p (p.id)}<span class="pool-ripple" style:left={p.x + 'px'} style:top={p.y + 'px'}></span>{/each}
+</svelte:element>
+
+<style>
+    .pool-btn { position: relative; display: inline-flex; align-items: center; justify-content: center; gap: 6px; overflow: hidden; isolation: isolate;
+        font: 700 15px var(--pool-font, system-ui, sans-serif); text-decoration: none; cursor: pointer; border-radius: 999px; border: 1px solid; transition: transform 0.12s, filter 0.12s, box-shadow 0.12s; }
+    .pool-small { padding: 5px 14px; font-size: 13px; }
+    .pool-medium { padding: 9px 22px; }
+    .pool-large { padding: 13px 30px; font-size: 18px; }
+    .pool-water { color: #fff; border-color: var(--pool-water-3, #00b2e3); text-shadow: 0 1px 2px rgba(7, 89, 133, 0.55);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.08) 48%, transparent 52%), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), inset 0 -3px 0 var(--pool-orange, #f97316), 0 4px 12px var(--pool-shadow, rgba(8, 145, 178, 0.22)); }
+    .pool-orange { color: #fff; border-color: var(--pool-orange-deep, #c2410c); text-shadow: 0 1px 2px rgba(124, 45, 18, 0.5);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 48%, transparent 52%), linear-gradient(180deg, #fdba74, var(--pool-orange, #f97316));
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.85), 0 4px 12px rgba(234, 88, 12, 0.3); }
+    .pool-ghost { color: var(--pool-deep, #075985); border-color: var(--pool-line, rgba(14, 165, 233, 0.4)); background: rgba(255, 255, 255, 0.55); box-shadow: inset 0 1px 0 #fff; }
+    .pool-btn:hover:not([disabled]):not([aria-disabled='true']) { filter: brightness(1.07); transform: translateY(-1px); }
+    .pool-btn:active:not([disabled]) { transform: translateY(1px); }
+    .pool-btn:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 2px; }
+    .pool-ghost:focus-visible { outline-color: var(--pool-water-3, #00b2e3); }
+    .pool-btn[disabled], .pool-btn[aria-disabled='true'] { opacity: 0.5; cursor: not-allowed; filter: saturate(0.4); }
+    .pool-btn-label { position: relative; z-index: 1; }
+    .pool-ripple { position: absolute; z-index: 0; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, 0.85); pointer-events: none; animation: pool-ripple 0.65s ease-out forwards; }
+    .pool-ghost .pool-ripple { border-color: var(--pool-water-2, #22d3ee); }
+    @keyframes pool-ripple { to { transform: scale(14); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .pool-ripple { display: none; } .pool-btn { transition: none; } }
+</style>
+~~~
+
+~~~ file: PoolCard.svelte
+<!--
+  PoolCard.svelte: a white tile card with a rippling water header and an orange stripe under it!
+
+  <PoolCard title="Pool party">
+    Saturday at noon, bring a towel!
+    {#snippet footer()}<PoolButton size="small">I'm coming!</PoolButton>{/snippet}
+  </PoolCard>
+
+  Props: title, subtitle, icon (an SVG string, shown in a life ring), href (the whole card becomes a link),
+         flat (no header: just the tile body with the orange stripe on top), children, footer (snippet), class, style.
+-->
+<script>
+    let { title = '', subtitle = '', icon = '', href = undefined, flat = false, children = undefined, footer = undefined, class: className = '', style = undefined } = $props();
+</script>
+
+<svelte:element this={href ? 'a' : 'article'} {href} class="pool-card {className}" class:pool-flat={flat} {style}>
+    {#if !flat && (title || icon)}
+        <header class="pool-card-head">
+            {#if icon}<span class="pool-card-ring" aria-hidden="true">{@html icon}</span>{/if}
+            <span><b class="pool-card-title">{title}</b>{#if subtitle}<small>{subtitle}</small>{/if}</span>
+        </header>
+    {/if}
+    <div class="pool-card-body">{#if children}{@render children()}{/if}</div>
+    {#if footer}<footer class="pool-card-foot">{@render footer()}</footer>{/if}
+</svelte:element>
+
+<style>
+    .pool-card { display: flex; flex-direction: column; border-radius: var(--pool-radius, 16px); overflow: hidden; color: var(--pool-ink, #0c4a6e); text-decoration: none; font-family: var(--pool-font, system-ui, sans-serif);
+        background: var(--pool-tile, #f0fdff); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); box-shadow: 0 8px 22px var(--pool-shadow, rgba(8, 145, 178, 0.22)), inset 0 1px 0 #fff; transition: transform 0.15s, box-shadow 0.15s; }
+    a.pool-card:hover { transform: translateY(-2px); box-shadow: 0 12px 28px var(--pool-shadow, rgba(8, 145, 178, 0.22)); }
+    a.pool-card:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 2px; }
+    .pool-card-head { display: flex; align-items: center; gap: 10px; padding: 12px 16px; color: #fff; text-shadow: 0 1px 2px rgba(7, 89, 133, 0.5);
+        background: radial-gradient(120% 60% at 20% 0%, rgba(255, 255, 255, 0.5), transparent 60%), repeating-radial-gradient(circle at 85% 150%, rgba(255, 255, 255, 0.14) 0 6px, transparent 6px 14px), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3));
+        box-shadow: inset 0 -4px 0 var(--pool-orange, #f97316); }
+    .pool-card-head > span:last-child { display: flex; flex-direction: column; min-width: 0; }
+    .pool-card-title { font-size: 17px; font-weight: 800; }
+    .pool-card-head small { font-size: 12.5px; opacity: 0.92; }
+    /* the icon sits in a little life ring: white with orange bands */
+    .pool-card-ring { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; color: var(--pool-deep, #075985);
+        background: radial-gradient(circle, #fff 0 55%, transparent 56%), conic-gradient(var(--pool-orange, #f97316) 0 45deg, #fff 45deg 90deg, var(--pool-orange, #f97316) 90deg 135deg, #fff 135deg 180deg, var(--pool-orange, #f97316) 180deg 225deg, #fff 225deg 270deg, var(--pool-orange, #f97316) 270deg 315deg, #fff 315deg);
+        box-shadow: 0 2px 6px rgba(7, 89, 133, 0.35); text-shadow: none; }
+    .pool-card-ring :global(svg) { width: 16px; height: 16px; }
+    .pool-card-body { padding: 14px 16px; flex: 1; line-height: 1.5; background-image: linear-gradient(var(--pool-tile-line, #cff4fc) 1px, transparent 1px), linear-gradient(90deg, var(--pool-tile-line, #cff4fc) 1px, transparent 1px); background-size: 22px 22px; background-position: -1px -1px; }
+    .pool-flat { border-top: 4px solid var(--pool-orange, #f97316); }
+    .pool-card-foot { display: flex; gap: 8px; justify-content: flex-end; padding: 10px 16px; border-top: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: rgba(255, 255, 255, 0.8); }
+    @media (prefers-reduced-motion: reduce) { .pool-card { transition: none; } }
+</style>
+~~~
+
+~~~ file: PoolCheckbox.svelte
+<!--
+  PoolCheckbox.svelte: a checkbox like a little water tile that fills up, with an orange tick!
+
+  <PoolCheckbox bind:checked={agree}>I read the pool rules</PoolCheckbox>
+  <PoolCheckbox bind:checked label="Towel service" indeterminate={some} />
+
+  Props: checked (bindable), label (or words between the tags), indeterminate (a dash, for "some of them"), disabled,
+         name, value, onchange(checked), class. It is a real checkbox underneath, so forms and keyboards just work.
+-->
+<script>
+    let { checked = $bindable(false), label = '', indeterminate = false, disabled = false, name = undefined, value = undefined, onchange = undefined, children = undefined, class: className = '' } = $props();
+    let box = $state();
+    $effect(() => { if (box) box.indeterminate = !!indeterminate && !checked; });
+</script>
+
+<label class="pool-check {className}" class:off-limits={disabled}>
+    <input type="checkbox" bind:this={box} bind:checked {disabled} {name} {value} onchange={() => { if (typeof onchange === 'function') onchange(checked); }} />
+    <span class="pool-box" aria-hidden="true">
+        <svg viewBox="0 0 16 16"><path class="pool-tick" d="M3.5 8.5l3 3 6-7" /><path class="pool-dash" d="M4 8h8" /></svg>
+    </span>
+    {#if label || children}<span class="pool-check-label">{#if children}{@render children()}{:else}{label}{/if}</span>{/if}
+</label>
+
+<style>
+    .pool-check { display: inline-flex; align-items: center; gap: 9px; font: 600 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); cursor: pointer; position: relative; }
+    .off-limits { opacity: 0.5; cursor: not-allowed; }
+    input { position: absolute; opacity: 0; width: 22px; height: 22px; margin: 0; cursor: inherit; }
+    .pool-box { flex: none; display: inline-flex; width: 22px; height: 22px; border-radius: 7px; border: 1.5px solid var(--pool-water-3, #00b2e3);
+        background: linear-gradient(180deg, #fff, var(--pool-tile, #f0fdff)); box-shadow: inset 0 2px 3px rgba(7, 89, 133, 0.12); transition: background 0.15s; }
+    input:checked + .pool-box, input:indeterminate + .pool-box { background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    svg { width: 100%; height: 100%; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+    .pool-tick, .pool-dash { stroke: #fff; stroke-width: 2.4; opacity: 0; }
+    /* the tick has an orange shadow line under it: the accent, never mixed into the water */
+    input:checked + .pool-box .pool-tick { opacity: 1; filter: drop-shadow(0 1.2px 0 var(--pool-orange, #f97316)); }
+    input:indeterminate + .pool-box .pool-dash { opacity: 1; filter: drop-shadow(0 1.2px 0 var(--pool-orange, #f97316)); }
+    input:focus-visible + .pool-box { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { .pool-box { transition: none; } }
+</style>
+~~~
+
+~~~ file: PoolChip.svelte
+<!--
+  PoolChip.svelte: a glossy little pill (a tag, a count, a status), in water or orange, that can be removed!
+
+  <PoolChip>Heated</PoolChip>
+  <PoolChip tone="orange">Lifeguard on duty</PoolChip>
+  <PoolChip tone="soft" onremove={() => drop(tag)}>{tag}</PoolChip>
+
+  Props: tone ('water' default, 'orange', 'soft' pale water), onremove (shows a × button that calls it), removeLabel
+         (its name for screen readers, default 'Remove'), class.
+-->
+<script>
+    let { tone = 'water', onremove = undefined, removeLabel = 'Remove', children = undefined, class: className = '' } = $props();
+</script>
+
+<span class="pool-chip pool-{tone} {className}">
+    <span>{#if children}{@render children()}{/if}</span>
+    {#if typeof onremove === 'function'}
+        <button type="button" class="pool-chip-x" aria-label={removeLabel} onclick={onremove}><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
+    {/if}
+</span>
+
+<style>
+    .pool-chip { display: inline-flex; align-items: center; gap: 4px; padding: 3px 11px; border-radius: 999px; font: 700 12.5px var(--pool-font, system-ui, sans-serif); line-height: 1.4; vertical-align: middle; border: 1px solid; white-space: nowrap; }
+    .pool-water { color: #fff; border-color: var(--pool-water-3, #00b2e3); text-shadow: 0 1px 1px rgba(7, 89, 133, 0.5);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 52%), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    .pool-orange { color: #fff; border-color: var(--pool-orange-deep, #c2410c); text-shadow: 0 1px 1px rgba(124, 45, 18, 0.45);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 52%), linear-gradient(180deg, #fdba74, var(--pool-orange, #f97316)); }
+    .pool-soft { color: var(--pool-deep, #075985); border-color: var(--pool-line, rgba(14, 165, 233, 0.4)); background: linear-gradient(180deg, #fff, #cffafe); box-shadow: inset 3px 0 0 var(--pool-orange, #f97316); padding-left: 13px; }
+    .pool-chip-x { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; margin-right: -5px; padding: 0; border: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.3); color: inherit; cursor: pointer; }
+    .pool-soft .pool-chip-x { background: rgba(2, 132, 199, 0.12); }
+    .pool-chip-x:hover { background: rgba(255, 255, 255, 0.55); }
+    .pool-chip-x:focus-visible { outline: 2px solid var(--pool-orange, #f97316); outline-offset: 1px; }
+    .pool-orange .pool-chip-x:focus-visible { outline-color: #fff; }
+</style>
+~~~
+
+~~~ file: PoolDialog.svelte
+<!--
+  PoolDialog.svelte: a pop-up window with a water header and an orange stripe, on a soft blue haze!
+
+  <PoolButton onclick={() => (open = true)}>Book a lane</PoolButton>
+  <PoolDialog bind:open title="Book a lane">
+    Which lane would you like?
+    {#snippet footer()}
+      <PoolButton tone="ghost" onclick={() => (open = false)}>Cancel</PoolButton>
+      <PoolButton onclick={book}>Book it!</PoolButton>
+    {/snippet}
+  </PoolDialog>
+
+  Props: open (bindable), title, width (default '440px'), closeOnBackdrop (true), onclose(), children, footer (snippet), class.
+  It uses the browser's own <dialog> (showModal), so focus stays inside it and Escape closes it.
+-->
+<script>
+    let { open = $bindable(false), title = '', width = '440px', closeOnBackdrop = true, onclose = undefined, children = undefined, footer = undefined, class: className = '' } = $props();
+    let dlg = $state();
+    const uid = 'pld' + Math.random().toString(36).slice(2, 8);
+    $effect(() => {
+        if (!dlg) return;
+        if (open && !dlg.open) dlg.showModal();
+        else if (!open && dlg.open) dlg.close();
+    });
+    function closed() { open = false; if (typeof onclose === 'function') onclose(); }
+    function backdrop(e) { if (closeOnBackdrop && e.target === dlg) dlg.close(); }
+</script>
+
+<dialog bind:this={dlg} class="pool-dialog {className}" style:--pd-w={width} aria-labelledby={title ? uid : undefined} onclose={closed} onclick={backdrop}>
+    <div class="pool-dialog-box">
+        <header class="pool-dialog-head">
+            <h2 id={uid}>{title}</h2>
+            <button type="button" class="pool-dialog-x" aria-label="Close" onclick={() => dlg.close()}><svg viewBox="0 0 12 12" width="12" height="12" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
+        </header>
+        <div class="pool-dialog-body">{#if children}{@render children()}{/if}</div>
+        {#if footer}<footer class="pool-dialog-foot">{@render footer()}</footer>{/if}
+    </div>
+</dialog>
+
+<style>
+    .pool-dialog { width: min(var(--pd-w), calc(100vw - 24px)); padding: 0; border: 0; border-radius: var(--pool-radius, 16px); background: none; color: var(--pool-ink, #0c4a6e); font-family: var(--pool-font, system-ui, sans-serif); overflow: visible; }
+    .pool-dialog::backdrop { background: radial-gradient(circle at 50% 30%, rgba(103, 232, 249, 0.35), rgba(7, 89, 133, 0.45)); backdrop-filter: blur(3px); }
+    .pool-dialog[open] { animation: pool-pop 0.18s ease-out; }
+    @keyframes pool-pop { from { transform: translateY(8px) scale(0.98); opacity: 0; } }
+    .pool-dialog-box { border-radius: var(--pool-radius, 16px); overflow: hidden; background: var(--pool-tile, #f0fdff); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); box-shadow: 0 24px 60px rgba(7, 89, 133, 0.35); }
+    .pool-dialog-head { display: flex; align-items: center; gap: 10px; padding: 12px 14px 12px 18px; color: #fff; text-shadow: 0 1px 2px rgba(7, 89, 133, 0.5);
+        background: radial-gradient(120% 60% at 20% 0%, rgba(255, 255, 255, 0.5), transparent 60%), repeating-radial-gradient(circle at 85% 150%, rgba(255, 255, 255, 0.14) 0 6px, transparent 6px 14px), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3));
+        box-shadow: inset 0 -4px 0 var(--pool-orange, #f97316); }
+    h2 { flex: 1; margin: 0; font-size: 17px; font-weight: 800; }
+    .pool-dialog-x { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.2); color: #fff; cursor: pointer; }
+    .pool-dialog-x:hover { background: rgba(255, 255, 255, 0.4); }
+    .pool-dialog-x:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 1px; }
+    .pool-dialog-body { padding: 16px 18px; line-height: 1.5; }
+    .pool-dialog-foot { display: flex; gap: 8px; justify-content: flex-end; padding: 10px 14px; border-top: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: rgba(255, 255, 255, 0.85); }
+    @media (prefers-reduced-motion: reduce) { .pool-dialog[open] { animation: none; } }
+</style>
+~~~
+
+~~~ file: PoolInput.svelte
+<!--
+  PoolInput.svelte: a text field like a clean pool tile, with a water-blue focus ring and orange for problems!
+
+  <PoolInput label="Your name" bind:value={name} placeholder="Marina" />
+  <PoolInput label="Email" type="email" bind:value={email} error={emailOk ? '' : 'That email looks unfinished!'} />
+  <PoolInput label="Notes" multiline rows={4} bind:value={notes} hint="Anything the lifeguard should know" />
+
+  Props: value (bindable), label, type ('text' default), placeholder, hint, error (an orange message; also marks it invalid),
+         multiline (a text area), rows (3), required, disabled, oninput(value), class, and anything else goes on the field.
+-->
+<script>
+    let { value = $bindable(''), label = '', type = 'text', placeholder = '', hint = '', error = '', multiline = false, rows = 3, required = false, disabled = false, oninput = undefined, class: className = '', ...rest } = $props();
+    const uid = 'pli' + Math.random().toString(36).slice(2, 8);
+    const said = $derived([hint ? uid + '-h' : '', error ? uid + '-e' : ''].filter(Boolean).join(' ') || undefined);
+    const tell = () => { if (typeof oninput === 'function') oninput(value); };
+</script>
+
+<div class="pool-field {className}" class:bad={!!error} class:off-limits={disabled}>
+    {#if label}<label for={uid}>{label}{#if required}<span class="pool-req" aria-hidden="true"> *</span>{/if}</label>{/if}
+    {#if multiline}
+        <textarea id={uid} {rows} {placeholder} {required} {disabled} bind:value oninput={tell} aria-invalid={error ? 'true' : undefined} aria-describedby={said} {...rest}></textarea>
+    {:else}
+        <input id={uid} {type} {placeholder} {required} {disabled} bind:value oninput={tell} aria-invalid={error ? 'true' : undefined} aria-describedby={said} {...rest} />
+    {/if}
+    {#if hint && !error}<small id={uid + '-h'} class="pool-hint">{hint}</small>{/if}
+    {#if error}<small id={uid + '-e'} class="pool-error" role="alert">{error}</small>{/if}
+</div>
+
+<style>
+    .pool-field { display: flex; flex-direction: column; gap: 5px; font-family: var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); }
+    label { font: 700 13px var(--pool-font, system-ui, sans-serif); color: var(--pool-deep, #075985); }
+    .pool-req { color: var(--pool-orange-deep, #c2410c); }
+    input, textarea { box-sizing: border-box; width: 100%; font: 15px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); padding: 10px 14px; border-radius: 12px;
+        border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: linear-gradient(180deg, #ffffff, var(--pool-tile, #f0fdff)); box-shadow: inset 0 2px 3px rgba(7, 89, 133, 0.08); transition: box-shadow 0.15s, border-color 0.15s; }
+    textarea { resize: vertical; line-height: 1.45; }
+    input::placeholder, textarea::placeholder { color: #7aa7bf; }
+    input:focus, textarea:focus { outline: none; border-color: var(--pool-water-3, #00b2e3); box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.35), inset 0 2px 3px rgba(7, 89, 133, 0.08); }
+    .bad input, .bad textarea { border-color: var(--pool-orange, #f97316); box-shadow: inset 4px 0 0 var(--pool-orange, #f97316); }
+    .bad input:focus, .bad textarea:focus { box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.3), inset 4px 0 0 var(--pool-orange, #f97316); }
+    .pool-hint { color: #4b7a94; font-size: 12.5px; }
+    .pool-error { color: var(--pool-orange-deep, #c2410c); font-size: 12.5px; font-weight: 700; }
+    .off-limits { opacity: 0.55; }
+</style>
+~~~
+
+~~~ file: PoolMenu.svelte
+<!--
+  PoolMenu.svelte: a button that opens a little menu of actions!
+
+  <PoolMenu label="Lane options" items={[
+    { label: 'Book this lane', onselect: book },
+    { label: 'Share', onselect: share },
+    { separator: true },
+    { label: 'Cancel booking', onselect: cancel, danger: true }
+  ]} />
+
+  Props: label (the button's text), items ([{ label, onselect, disabled, danger } or { separator: true }]), tone (the button:
+         'ghost' default, 'water', 'orange'), align ('left' default or 'right'), class.
+  Keyboard: Enter or Down opens it, arrows move, Home/End jump, Enter picks, Escape closes and goes back to the button.
+-->
+<script>
+    import PoolButton from './PoolButton.svelte';
+    let { label = 'Menu', items = [], tone = 'ghost', align = 'left', class: className = '' } = $props();
+    let open = $state(false);
+    let wrap = $state(), list = $state();
+    const uid = 'plm' + Math.random().toString(36).slice(2, 8);
+    const entries = () => (list ? Array.from(list.querySelectorAll('[role="menuitem"]:not([aria-disabled="true"])')) : []);
+    function show(focusLast) {
+        open = true;
+        requestAnimationFrame(() => { const e = entries(); (focusLast ? e[e.length - 1] : e[0])?.focus(); });
+    }
+    function hide(back) { open = false; if (back) wrap?.querySelector('.pool-menu-btn')?.focus(); }
+    function pick(it) { if (it.disabled) return; hide(true); if (typeof it.onselect === 'function') it.onselect(); }
+    function btnKeys(e) {
+        if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') { e.preventDefault(); show(false); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); show(true); }
+    }
+    function listKeys(e) {
+        const all = entries(), i = all.indexOf(document.activeElement);
+        if (e.key === 'ArrowDown') { e.preventDefault(); all[(i + 1) % all.length]?.focus(); }
+        else if (e.key === 'ArrowUp') { e.preventDefault(); all[(i - 1 + all.length) % all.length]?.focus(); }
+        else if (e.key === 'Home') { e.preventDefault(); all[0]?.focus(); }
+        else if (e.key === 'End') { e.preventDefault(); all[all.length - 1]?.focus(); }
+        else if (e.key === 'Escape') { e.preventDefault(); hide(true); }
+        else if (e.key === 'Tab') hide(false);
+    }
+    $effect(() => {
+        if (!open) return;
+        const away = (e) => { if (wrap && !wrap.contains(e.target)) hide(false); };
+        document.addEventListener('pointerdown', away);
+        return () => document.removeEventListener('pointerdown', away);
+    });
+</script>
+
+<span class="pool-menu {className}" bind:this={wrap}>
+    <span class="pool-menu-btn-wrap" role="presentation" onkeydown={btnKeys}>
+        <PoolButton {tone} class="pool-menu-btn" aria-haspopup="menu" aria-expanded={open} aria-controls={uid} onclick={() => (open ? hide(false) : show(false))}>
+            {label}<svg class="pool-menu-chev" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+        </PoolButton>
+    </span>
+    {#if open}
+        <div class="pool-menu-list pool-{align}" role="menu" id={uid} aria-label={label} tabindex="-1" bind:this={list} onkeydown={listKeys}>
+            {#each items as it, i (i)}
+                {#if it.separator}<div class="pool-menu-sep" role="separator"></div>
+                {:else}<div class="pool-menu-item" class:danger={it.danger} role="menuitem" tabindex="-1" aria-disabled={it.disabled ? 'true' : undefined} onclick={() => pick(it)} onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(it); } }}>{it.label}</div>{/if}
+            {/each}
+        </div>
+    {/if}
+</span>
+
+<style>
+    .pool-menu { position: relative; display: inline-block; font-family: var(--pool-font, system-ui, sans-serif); }
+    .pool-menu-chev { fill: none; stroke: var(--pool-orange, #f97316); stroke-width: 2.8; stroke-linecap: round; stroke-linejoin: round; margin-left: 2px; }
+    .pool-menu-list { position: absolute; top: calc(100% + 6px); z-index: 60; min-width: 200px; padding: 6px; border-radius: 14px; outline: none;
+        background: linear-gradient(180deg, #ffffff, #ecfeff); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); box-shadow: inset 0 3px 0 var(--pool-orange, #f97316), 0 12px 28px rgba(7, 89, 133, 0.25); }
+    .pool-left { left: 0; }
+    .pool-right { right: 0; }
+    .pool-menu-item { padding: 8px 12px; border-radius: 9px; cursor: pointer; font: 600 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); outline: none; }
+    .pool-menu-item:hover, .pool-menu-item:focus { color: #fff; background: linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); text-shadow: 0 1px 1px rgba(7, 89, 133, 0.45); }
+    .pool-menu-item:focus-visible { box-shadow: inset 4px 0 0 var(--pool-orange, #f97316); }
+    .danger { color: var(--pool-orange-deep, #c2410c); }
+    .danger:hover, .danger:focus { background: linear-gradient(180deg, #fdba74, var(--pool-orange, #f97316)); }
+    [aria-disabled='true'] { opacity: 0.45; cursor: not-allowed; }
+    [aria-disabled='true']:hover { background: none; color: var(--pool-ink, #0c4a6e); text-shadow: none; }
+    .pool-menu-sep { height: 1px; margin: 5px 6px; background: var(--pool-line, rgba(14, 165, 233, 0.4)); }
+</style>
+~~~
+
+~~~ file: PoolPagination.svelte
+<!--
+  PoolPagination.svelte: page numbers as little floats, the current one full of water!
+
+  <PoolPagination bind:page total={12} />
+  <PoolPagination bind:page total={pages} around={1} label="Swim results pages" />
+
+  Props: page (bindable, starting at 1), total (number of pages), around (how many numbers next to the current one, default 2),
+         label (for screen readers, default 'Pages'), onchange(page), class. Long lists skip with "…".
+-->
+<script>
+    let { page = $bindable(1), total = 1, around = 2, label = 'Pages', onchange = undefined, class: className = '' } = $props();
+    const nums = $derived.by(() => {
+        const out = [], t = Math.max(1, total);
+        for (let n = 1; n <= t; n++) {
+            if (n === 1 || n === t || Math.abs(n - page) <= around) out.push(n);
+            else if (out[out.length - 1] !== '…') out.push('…');
+        }
+        return out;
+    });
+    function go(n) { n = Math.min(Math.max(1, total), Math.max(1, n)); if (n === page) return; page = n; if (typeof onchange === 'function') onchange(n); }
+</script>
+
+<nav class="pool-pages {className}" aria-label={label}>
+    <button type="button" class="pool-page pool-arrow" aria-label="Previous page" disabled={page <= 1} onclick={() => go(page - 1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></button>
+    {#each nums as n, i (i)}
+        {#if n === '…'}<span class="pool-gap" aria-hidden="true">…</span>
+        {:else}<button type="button" class="pool-page" aria-current={n === page ? 'page' : undefined} aria-label={'Page ' + n} onclick={() => go(n)}>{n}</button>{/if}
+    {/each}
+    <button type="button" class="pool-page pool-arrow" aria-label="Next page" disabled={page >= total} onclick={() => go(page + 1)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" /></svg></button>
+</nav>
+
+<style>
+    .pool-pages { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 5px; font-family: var(--pool-font, system-ui, sans-serif); }
+    .pool-page { min-width: 34px; height: 34px; padding: 0 8px; border-radius: 999px; border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); cursor: pointer;
+        background: linear-gradient(180deg, #fff, #ecfeff); color: var(--pool-deep, #075985); font: 700 14px var(--pool-font, system-ui, sans-serif); font-variant-numeric: tabular-nums; }
+    .pool-page:hover:not(:disabled):not([aria-current]) { background: #cffafe; }
+    .pool-page[aria-current='page'] { color: #fff; border-color: var(--pool-water-3, #00b2e3); text-shadow: 0 1px 1px rgba(7, 89, 133, 0.5);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, transparent 50%), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); box-shadow: inset 0 -3px 0 var(--pool-orange, #f97316); }
+    .pool-page:disabled { opacity: 0.4; cursor: not-allowed; }
+    .pool-page:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 2px; }
+    .pool-arrow svg { width: 16px; height: 16px; fill: none; stroke: var(--pool-orange-deep, #c2410c); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; display: block; margin: auto; }
+    .pool-gap { color: #5d8aa3; padding: 0 2px; }
+</style>
+~~~
+
+~~~ file: PoolProgress.svelte
+<!--
+  PoolProgress.svelte: progress as the water level in a pool, with gentle waves on top!
+
+  <PoolProgress value={uploaded} max={total} label="Filling the pool" />
+  <PoolProgress value={0.4} max={1} shape="round" size="80px" />
+  <PoolProgress label="Waiting…" />                      (no value: the water keeps rising and falling)
+
+  Props: value (leave it out for "busy"), max (100), label, shape ('bar' default or 'round', a round porthole), size (the
+         round one's width, default '96px'), showPercent (true), class. It is a role="progressbar" with the right aria values.
+-->
+<script>
+    let { value = undefined, max = 100, label = '', shape = 'bar', size = '96px', showPercent = true, class: className = '' } = $props();
+    const busy = $derived(value === undefined || value === null);
+    const pct = $derived(busy ? 50 : Math.round(Math.min(100, Math.max(0, (value / (max || 1)) * 100))));
+</script>
+
+<div class="pool-progress pool-{shape} {className}" class:busy role="progressbar" aria-label={label || 'Progress'} aria-valuemin="0" aria-valuemax="100" aria-valuenow={busy ? undefined : pct} style:--pp-size={size}>
+    {#if label && shape === 'bar'}<div class="pool-progress-top"><span>{label}</span>{#if showPercent && !busy}<b>{pct}%</b>{/if}</div>{/if}
+    <div class="pool-tank">
+        <div class="pool-water" style:height={pct + '%'} style:--w={pct + '%'}>
+            <svg class="pool-wave" viewBox="0 0 120 10" preserveAspectRatio="none" aria-hidden="true"><path d="M0 5 Q15 0 30 5 T60 5 T90 5 T120 5 V10 H0 Z" /></svg>
+        </div>
+        {#if shape === 'round' && showPercent}<b class="pool-round-pct">{busy ? '…' : pct + '%'}</b>{/if}
+    </div>
+    {#if label && shape === 'round'}<div class="pool-round-label">{label}</div>{/if}
+</div>
+
+<style>
+    .pool-progress { font: 600 13px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); }
+    .pool-progress-top { display: flex; justify-content: space-between; margin-bottom: 4px; }
+    .pool-progress-top b { color: var(--pool-deep, #075985); font-variant-numeric: tabular-nums; }
+    .pool-tank { position: relative; overflow: hidden; background: var(--pool-tile, #f0fdff); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4));
+        background-image: linear-gradient(var(--pool-tile-line, #cff4fc) 1px, transparent 1px), linear-gradient(90deg, var(--pool-tile-line, #cff4fc) 1px, transparent 1px); background-size: 10px 10px; }
+    .pool-bar .pool-tank { height: 18px; border-radius: 999px; box-shadow: inset 0 -3px 0 var(--pool-orange, #f97316); }
+    /* in a bar the water fills sideways */
+    .pool-bar .pool-water { position: absolute; left: 0; top: 0; bottom: 0; height: auto !important; width: var(--w); }
+    .pool-water { position: absolute; left: 0; right: 0; bottom: 0; transition: height 0.4s, width 0.4s; background: linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    .pool-bar .pool-wave { display: none; }
+    .pool-round .pool-tank { width: var(--pp-size); aspect-ratio: 1; border-radius: 50%; border: 4px solid #fff; box-shadow: 0 0 0 3px var(--pool-orange, #f97316), 0 6px 16px var(--pool-shadow, rgba(8, 145, 178, 0.22)), inset 0 4px 10px rgba(7, 89, 133, 0.2); }
+    /* the wave path repeats every 60 of its 120 units (a crest and a trough), so one loop moves it exactly half its width:
+       the end of a loop looks the same as the start, and it never jumps (it starts a whole tank to the left, so no gap shows) */
+    .pool-wave { position: absolute; left: -100%; bottom: 100%; width: 200%; height: 10px; margin-bottom: -1px; fill: var(--pool-water-1, #67e8f9); animation: pool-wave 2.4s linear infinite; }
+    @keyframes pool-wave { to { transform: translateX(50%); } }
+    .pool-round-pct { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: calc(var(--pp-size) / 4.5); color: var(--pool-deep, #075985); text-shadow: 0 0 6px #fff, 0 0 2px #fff; }
+    .pool-round-label { text-align: center; margin-top: 8px; width: var(--pp-size); }
+    .busy .pool-water { animation: pool-busy 2.2s ease-in-out infinite alternate; }
+    .busy.pool-bar .pool-water { width: 40% !important; animation: pool-busy-bar 1.4s ease-in-out infinite alternate; }
+    @keyframes pool-busy { from { height: 25%; } to { height: 75%; } }
+    @keyframes pool-busy-bar { from { left: 0; } to { left: 60%; } }
+    @media (prefers-reduced-motion: reduce) { .pool-wave, .busy .pool-water, .busy.pool-bar .pool-water { animation: none; } .pool-water { transition: none; } }
+</style>
+~~~
+
+~~~ file: PoolRadioGroup.svelte
+<!--
+  PoolRadioGroup.svelte: pick one, where each choice is a little float and the picked one gets an orange center!
+
+  <PoolRadioGroup label="Lane speed" options={['Slow', 'Medium', 'Fast']} bind:value={speed} />
+  <PoolRadioGroup options={[{ value: 'k', label: 'Kids pool' }, { value: 'm', label: 'Main pool', hint: '25 m' }]} bind:value row />
+
+  Props: options (strings, or { value, label, hint, disabled }), value (bindable), label (the group's name), row (side by side),
+         name (made for you), disabled, onchange(value), class. Real radio buttons underneath: arrow keys move the choice.
+-->
+<script>
+    let { options = [], value = $bindable(undefined), label = '', row = false, name = undefined, disabled = false, onchange = undefined, class: className = '' } = $props();
+    const uid = 'plr' + Math.random().toString(36).slice(2, 8);
+    const opts = $derived(options.map((o) => (typeof o === 'object' && o ? o : { value: o, label: String(o) })));
+</script>
+
+<div class="pool-radios {className}" class:row role="radiogroup" aria-labelledby={label ? uid : undefined} aria-disabled={disabled ? 'true' : undefined}>
+    {#if label}<div class="pool-radios-label" id={uid}>{label}</div>{/if}
+    {#each opts as o (o.value)}
+        <label class="pool-radio" class:off-limits={disabled || o.disabled}>
+            <input type="radio" name={name || uid} value={o.value} checked={value === o.value} disabled={disabled || o.disabled}
+                onchange={() => { value = o.value; if (typeof onchange === 'function') onchange(o.value); }} />
+            <span class="pool-float" aria-hidden="true"></span>
+            <span class="pool-radio-text">{o.label}{#if o.hint}<small>{o.hint}</small>{/if}</span>
+        </label>
+    {/each}
+</div>
+
+<style>
+    .pool-radios { display: flex; flex-direction: column; gap: 8px; font: 600 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); }
+    .row { flex-direction: row; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+    .row .pool-radios-label { width: 100%; }
+    .pool-radios-label { font-weight: 800; color: var(--pool-deep, #075985); }
+    .pool-radio { position: relative; display: inline-flex; align-items: center; gap: 9px; cursor: pointer; }
+    .off-limits { opacity: 0.5; cursor: not-allowed; }
+    input { position: absolute; opacity: 0; width: 22px; height: 22px; margin: 0; cursor: inherit; }
+    .pool-float { flex: none; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--pool-water-3, #00b2e3); background: radial-gradient(circle at 35% 30%, #fff, var(--pool-tile, #f0fdff)); box-shadow: inset 0 2px 3px rgba(7, 89, 133, 0.12); }
+    input:checked + .pool-float { background: radial-gradient(circle, var(--pool-orange, #f97316) 0 26%, #fff 28% 34%, transparent 36%), radial-gradient(circle at 35% 30%, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    input:focus-visible + .pool-float { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 2px; }
+    .pool-radio-text { display: flex; flex-direction: column; }
+    small { font-weight: 400; font-size: 12px; color: #4b7a94; }
+</style>
+~~~
+
+~~~ file: PoolSegmented.svelte
+<!--
+  PoolSegmented.svelte: a row of joined buttons where a water bubble slides to the one you pick!
+
+  <PoolSegmented options={['Day', 'Week', 'Month']} bind:value={range} />
+  <PoolSegmented options={[{ value: 'c', label: '°C' }, { value: 'f', label: '°F' }]} bind:value size="small" label="Units" />
+
+  Props: options (strings, or { value, label }), value (bindable), label (a name for screen readers), size ('small' | 'medium'),
+         onchange(value), class. Arrow keys move the choice, like radio buttons.
+-->
+<script>
+    let { options = [], value = $bindable(undefined), label = 'Choose one', size = 'medium', onchange = undefined, class: className = '' } = $props();
+    const opts = $derived(options.map((o) => (typeof o === 'object' && o ? o : { value: o, label: String(o) })));
+    const idx = $derived(Math.max(0, opts.findIndex((o) => o.value === value)));
+    let row = $state();
+    $effect(() => { if (value === undefined && opts.length) value = opts[0].value; });
+    function pick(i, focus) {
+        const o = opts[(i + opts.length) % opts.length];
+        value = o.value;
+        if (typeof onchange === 'function') onchange(o.value);
+        if (focus && row) row.querySelectorAll('button')[(i + opts.length) % opts.length]?.focus();
+    }
+    function keys(e) {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); pick(idx + 1, true); }
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); pick(idx - 1, true); }
+    }
+</script>
+
+<div class="pool-seg pool-{size} {className}" role="radiogroup" aria-label={label} bind:this={row} tabindex="-1" onkeydown={keys} style:--n={opts.length} style:--i={idx}>
+    <span class="pool-bubble" aria-hidden="true"></span>
+    {#each opts as o, i (o.value)}
+        <button type="button" role="radio" aria-checked={i === idx} tabindex={i === idx ? 0 : -1} onclick={() => pick(i)}>{o.label}</button>
+    {/each}
+</div>
+
+<style>
+    .pool-seg { position: relative; display: inline-grid; grid-template-columns: repeat(var(--n), 1fr); padding: 3px; border-radius: 999px; border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4));
+        background: linear-gradient(180deg, #ecfeff, #cffafe); box-shadow: inset 0 2px 3px rgba(7, 89, 133, 0.12); font-family: var(--pool-font, system-ui, sans-serif); }
+    .pool-bubble { position: absolute; top: 3px; bottom: 3px; left: 3px; width: calc((100% - 6px) / var(--n)); transform: translateX(calc(100% * var(--i))); border-radius: 999px; transition: transform 0.25s cubic-bezier(.3, 1.3, .5, 1);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.05) 50%, transparent 52%), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3));
+        box-shadow: inset 0 -3px 0 var(--pool-orange, #f97316), 0 2px 6px rgba(7, 89, 133, 0.3); }
+    button { position: relative; z-index: 1; border: 0; background: none; cursor: pointer; border-radius: 999px; padding: 7px 18px; font: 700 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-deep, #075985); white-space: nowrap; transition: color 0.2s; }
+    .pool-small button { padding: 4px 12px; font-size: 12.5px; }
+    button[aria-checked='true'] { color: #fff; text-shadow: 0 1px 2px rgba(7, 89, 133, 0.5); }
+    button:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 1px; }
+    @media (prefers-reduced-motion: reduce) { .pool-bubble, button { transition: none; } }
+</style>
+~~~
+
+~~~ file: PoolSelect.svelte
+<!--
+  PoolSelect.svelte: a drop-down that matches PoolInput, with an orange arrow!
+
+  <PoolSelect label="Pool" options={['Main pool', 'Kids pool', 'Diving pool']} bind:value={pool} />
+  <PoolSelect label="Time" options={[{ value: 9, label: '9:00' }, { value: 10, label: '10:00' }]} bind:value placeholder="Pick a time" />
+
+  Props: options (strings, or { value, label, disabled }), value (bindable), label, placeholder (an empty first choice), hint, error,
+         disabled, required, onchange(value), class. It is the browser's own <select>, so it works everywhere, phones included.
+-->
+<script>
+    let { options = [], value = $bindable(undefined), label = '', placeholder = '', hint = '', error = '', disabled = false, required = false, onchange = undefined, class: className = '' } = $props();
+    const uid = 'plsel' + Math.random().toString(36).slice(2, 8);
+    const opts = $derived(options.map((o) => (typeof o === 'object' && o ? o : { value: o, label: String(o) })));
+    const said = $derived([hint && !error ? uid + '-h' : '', error ? uid + '-e' : ''].filter(Boolean).join(' ') || undefined);
+</script>
+
+<div class="pool-field {className}" class:bad={!!error} class:off-limits={disabled}>
+    {#if label}<label for={uid}>{label}</label>{/if}
+    <div class="pool-select">
+        <select id={uid} bind:value {disabled} {required} aria-invalid={error ? 'true' : undefined} aria-describedby={said} onchange={() => { if (typeof onchange === 'function') onchange(value); }}>
+            {#if placeholder}<option value={undefined} disabled selected={value === undefined}>{placeholder}</option>{/if}
+            {#each opts as o (o.value)}<option value={o.value} disabled={o.disabled}>{o.label}</option>{/each}
+        </select>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" /></svg>
+    </div>
+    {#if hint && !error}<small id={uid + '-h'} class="pool-hint">{hint}</small>{/if}
+    {#if error}<small id={uid + '-e'} class="pool-error" role="alert">{error}</small>{/if}
+</div>
+
+<style>
+    .pool-field { display: flex; flex-direction: column; gap: 5px; font-family: var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); }
+    label { font: 700 13px var(--pool-font, system-ui, sans-serif); color: var(--pool-deep, #075985); }
+    .pool-select { position: relative; }
+    select { -webkit-appearance: none; appearance: none; box-sizing: border-box; width: 100%; font: 15px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); padding: 10px 40px 10px 14px; border-radius: 12px; cursor: pointer;
+        border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: linear-gradient(180deg, #ffffff, var(--pool-tile, #f0fdff)); box-shadow: inset 0 2px 3px rgba(7, 89, 133, 0.08); }
+    select:focus { outline: none; border-color: var(--pool-water-3, #00b2e3); box-shadow: 0 0 0 4px rgba(34, 211, 238, 0.35); }
+    svg { position: absolute; right: 12px; top: 50%; width: 18px; height: 18px; margin-top: -9px; pointer-events: none; fill: none; stroke: var(--pool-orange, #f97316); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+    .bad select { border-color: var(--pool-orange, #f97316); box-shadow: inset 4px 0 0 var(--pool-orange, #f97316); }
+    .pool-hint { color: #4b7a94; font-size: 12.5px; }
+    .pool-error { color: var(--pool-orange-deep, #c2410c); font-size: 12.5px; font-weight: 700; }
+    .off-limits { opacity: 0.55; }
+</style>
+~~~
+
+~~~ file: PoolSkeleton.svelte
+<!--
+  PoolSkeleton.svelte: a stand-in shape while something loads, with light rippling across it like sun on water!
+
+  <PoolSkeleton lines={3} />                         (three text lines, the last one shorter)
+  <PoolSkeleton shape="circle" width="48px" />
+  <PoolSkeleton shape="block" height="140px" />
+
+  Props: shape ('text' default, 'circle', 'block'), lines (for text, default 1), width, height, label (for screen readers,
+         default 'Loading'), class. It holds still when reduced motion is on.
+-->
+<script>
+    let { shape = 'text', lines = 1, width = undefined, height = undefined, label = 'Loading', class: className = '' } = $props();
+</script>
+
+<span class="pool-skel-wrap {className}" role="status" aria-label={label}>
+    {#if shape === 'text'}
+        {#each Array.from({ length: Math.max(1, lines) }) as _, i (i)}
+            <span class="pool-skel pool-line" style:width={i === lines - 1 && lines > 1 ? '62%' : width || '100%'} aria-hidden="true"></span>
+        {/each}
+    {:else}
+        <span class="pool-skel pool-{shape}" style:width={width || (shape === 'circle' ? '40px' : '100%')} style:height={height || (shape === 'circle' ? width || '40px' : '120px')} aria-hidden="true"></span>
+    {/if}
+</span>
+
+<style>
+    .pool-skel-wrap { display: flex; flex-direction: column; gap: 8px; }
+    .pool-skel { display: block; position: relative; overflow: hidden; background: #cffafe; }
+    .pool-skel::after { content: ''; position: absolute; inset: 0; transform: translateX(-100%); animation: pool-shine 1.6s ease-in-out infinite;
+        background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.85) 50%, transparent 80%); }
+    .pool-line { height: 12px; border-radius: 999px; }
+    .pool-circle { border-radius: 50%; flex: none; }
+    .pool-block { border-radius: 14px; }
+    @keyframes pool-shine { to { transform: translateX(100%); } }
+    @media (prefers-reduced-motion: reduce) { .pool-skel::after { animation: none; display: none; } }
+</style>
+~~~
+
+~~~ file: PoolSlider.svelte
+<!--
+  PoolSlider.svelte: a slider whose track fills with water up to an orange float!
+
+  <PoolSlider bind:value={temp} min={20} max={34} step={0.5} label="Water temperature" unit="°C" />
+
+  Props: value (bindable), min (0), max (100), step (1), label, unit (shown after the number), showValue (true),
+         disabled, oninput(value), class. It is a real range input, so arrow keys, Page Up/Down, Home and End work.
+-->
+<script>
+    let { value = $bindable(50), min = 0, max = 100, step = 1, label = '', unit = '', showValue = true, disabled = false, oninput = undefined, class: className = '' } = $props();
+    const uid = 'pls' + Math.random().toString(36).slice(2, 8);
+    const pct = $derived(max > min ? Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)) : 0);
+</script>
+
+<div class="pool-slider {className}" class:off-limits={disabled}>
+    {#if label || showValue}
+        <div class="pool-slider-top">
+            {#if label}<label for={uid}>{label}</label>{/if}
+            {#if showValue}<output for={uid}>{value}{unit}</output>{/if}
+        </div>
+    {/if}
+    <input id={uid} type="range" {min} {max} {step} {disabled} bind:value style:--pct={pct + '%'} oninput={() => { if (typeof oninput === 'function') oninput(value); }} aria-valuetext={value + (unit || '')} />
+</div>
+
+<style>
+    .pool-slider { font: 600 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); min-width: 160px; }
+    .off-limits { opacity: 0.5; }
+    .pool-slider-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+    output { font-variant-numeric: tabular-nums; color: var(--pool-deep, #075985); font-weight: 800; }
+    input { -webkit-appearance: none; appearance: none; width: 100%; height: 26px; margin: 0; background: none; cursor: pointer; }
+    input:disabled { cursor: not-allowed; }
+    input::-webkit-slider-runnable-track { height: 12px; border-radius: 999px; border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4));
+        background: linear-gradient(90deg, var(--pool-water-2, #22d3ee) 0, var(--pool-water-3, #00b2e3) var(--pct), var(--pool-tile, #f0fdff) var(--pct)); box-shadow: inset 0 1px 2px rgba(7, 89, 133, 0.25); }
+    input::-moz-range-track { height: 12px; border-radius: 999px; border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: var(--pool-tile, #f0fdff); }
+    input::-moz-range-progress { height: 12px; border-radius: 999px; background: linear-gradient(90deg, var(--pool-water-2, #22d3ee), var(--pool-water-3, #00b2e3)); }
+    /* the thumb is an orange float with a white band and a shine */
+    input::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; margin-top: -7px; border-radius: 50%; border: 2px solid #fff;
+        background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), transparent 40%), linear-gradient(180deg, var(--pool-orange, #f97316) 0 40%, #fff 40% 60%, var(--pool-orange, #f97316) 60%);
+        box-shadow: 0 2px 6px rgba(124, 45, 18, 0.4); }
+    input::-moz-range-thumb { width: 22px; height: 22px; border-radius: 50%; border: 2px solid #fff;
+        background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), transparent 40%), linear-gradient(180deg, var(--pool-orange, #f97316) 0 40%, #fff 40% 60%, var(--pool-orange, #f97316) 60%); box-shadow: 0 2px 6px rgba(124, 45, 18, 0.4); }
+    input:focus-visible { outline: none; }
+    input:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.45), 0 2px 6px rgba(124, 45, 18, 0.4); }
+    input:focus-visible::-moz-range-thumb { box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.45); }
+</style>
+~~~
+
+~~~ file: PoolSpinner.svelte
+<!--
+  PoolSpinner.svelte: a spinning life ring for "loading"!
+
+  <PoolSpinner />
+  <PoolSpinner size="48px" label="Loading the lanes" showLabel />
+
+  Props: size (default '28px'), label (what is loading, for screen readers; default 'Loading'), showLabel (also show it), class.
+  With reduced motion it pulses gently instead of spinning.
+-->
+<script>
+    let { size = '28px', label = 'Loading', showLabel = false, class: className = '' } = $props();
+</script>
+
+<span class="pool-spin {className}" role="status" style:--ps={size}>
+    <span class="pool-spin-ring" aria-hidden="true"></span>
+    {#if showLabel}<span class="pool-spin-label">{label}…</span>{:else}<span class="pool-sr">{label}</span>{/if}
+</span>
+
+<style>
+    .pool-spin { display: inline-flex; align-items: center; gap: 8px; font: 600 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-deep, #075985); vertical-align: middle; }
+    .pool-spin-ring { width: var(--ps); height: var(--ps); border-radius: 50%; flex: none; animation: pool-spin 1s linear infinite;
+        background: radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.85), transparent 35%),
+            conic-gradient(var(--pool-orange, #f97316) 0 45deg, #fff 45deg 90deg, var(--pool-orange, #f97316) 90deg 135deg, #fff 135deg 180deg, var(--pool-orange, #f97316) 180deg 225deg, #fff 225deg 270deg, var(--pool-orange, #f97316) 270deg 315deg, #fff 315deg);
+        -webkit-mask: radial-gradient(circle, transparent 0 38%, #000 40%); mask: radial-gradient(circle, transparent 0 38%, #000 40%);
+        filter: drop-shadow(0 1px 2px rgba(7, 89, 133, 0.45)); }
+    @keyframes pool-spin { to { transform: rotate(360deg); } }
+    .pool-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @media (prefers-reduced-motion: reduce) { .pool-spin-ring { animation: pool-pulse 1.6s ease-in-out infinite alternate; } @keyframes pool-pulse { to { opacity: 0.45; } } }
+</style>
+~~~
+
+~~~ file: PoolStat.svelte
+<!--
+  PoolStat.svelte: a number tile for dashboards, with how it changed and a small wave-line chart!
+
+  <PoolStat label="Swimmers today" value={312} change={+8.4} />
+  <PoolStat label="Water temperature" value="27.5" unit="°C" change={-0.5} trend={[27.9, 28.1, 27.8, 27.6, 27.5]} />
+
+  Props: label, value, unit, change (a percent or amount: up shows in water blue, down in orange), changeUnit (default '%'),
+         trend (a list of numbers for the line), hint, class.
+-->
+<script>
+    let { label = '', value = '', unit = '', change = undefined, changeUnit = '%', trend = undefined, hint = '', class: className = '' } = $props();
+    const up = $derived(typeof change === 'number' && change >= 0);
+    const path = $derived.by(() => {
+        if (!Array.isArray(trend) || trend.length < 2) return '';
+        const lo = Math.min(...trend), hi = Math.max(...trend), span = hi - lo || 1;
+        return trend.map((v, i) => (i ? 'L' : 'M') + ((i / (trend.length - 1)) * 100).toFixed(1) + ' ' + (26 - ((v - lo) / span) * 22).toFixed(1)).join(' ');
+    });
+    const said = $derived(typeof change === 'number' ? (up ? 'up ' : 'down ') + Math.abs(change) + changeUnit : '');
+</script>
+
+<div class="pool-stat {className}">
+    <div class="pool-stat-label">{label}</div>
+    <div class="pool-stat-value">{value}{#if unit}<span class="pool-unit">{unit}</span>{/if}</div>
+    {#if typeof change === 'number'}
+        <div class="pool-change" class:down={!up} aria-label={said}>
+            <svg viewBox="0 0 12 12" aria-hidden="true"><path d={up ? 'M6 2.5l3.5 4H2.5z' : 'M6 9.5l3.5-4H2.5z'} /></svg>{Math.abs(change)}{changeUnit}
+        </div>
+    {/if}
+    {#if path}
+        <svg class="pool-trend" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true">
+            <path class="pool-trend-fill" d={path + ' L100 30 L0 30 Z'} />
+            <path class="pool-trend-line" d={path} />
+        </svg>
+    {/if}
+    {#if hint}<div class="pool-stat-hint">{hint}</div>{/if}
+</div>
+
+<style>
+    .pool-stat { position: relative; overflow: hidden; padding: 14px 16px 12px; border-radius: var(--pool-radius, 16px); font-family: var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e);
+        background: linear-gradient(180deg, #ffffff, var(--pool-tile, #f0fdff)); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); box-shadow: inset 0 4px 0 var(--pool-orange, #f97316), 0 6px 16px rgba(8, 145, 178, 0.14); }
+    .pool-stat-label { font-size: 13px; font-weight: 700; color: #4b7a94; }
+    .pool-stat-value { font-size: 32px; font-weight: 800; line-height: 1.15; color: var(--pool-deep, #075985); font-variant-numeric: tabular-nums; }
+    .pool-unit { font-size: 18px; margin-left: 2px; color: var(--pool-water-3, #00b2e3); }
+    .pool-change { display: inline-flex; align-items: center; gap: 3px; margin-top: 2px; padding: 1px 8px; border-radius: 999px; font: 700 12.5px var(--pool-font, system-ui, sans-serif); color: #fff; background: var(--pool-water-3, #00b2e3); }
+    .pool-change.down { background: var(--pool-orange, #f97316); }
+    .pool-change svg { width: 11px; height: 11px; fill: currentColor; }
+    .pool-trend { display: block; width: 100%; height: 38px; margin-top: 8px; overflow: visible; }
+    .pool-trend-fill { fill: rgba(34, 211, 238, 0.22); }
+    .pool-trend-line { fill: none; stroke: var(--pool-water-3, #00b2e3); stroke-width: 2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+    .pool-stat-hint { margin-top: 6px; font-size: 12px; color: #4b7a94; }
+</style>
+~~~
+
+~~~ file: PoolStepper.svelte
+<!--
+  PoolStepper.svelte: steps along a lane rope: done steps are full of water, the current one wears an orange ring!
+
+  <PoolStepper steps={['Pick a lane', 'Choose a time', 'Pay', 'Swim!']} bind:current={step} />
+  <PoolStepper steps={stages} current={2} clickable={false} />
+
+  Props: steps (labels, or { label, hint }), current (bindable index), clickable (go back to a done step by clicking it, default true),
+         onchange(index), class. The current step is marked aria-current="step".
+-->
+<script>
+    let { steps = [], current = $bindable(0), clickable = true, onchange = undefined, class: className = '' } = $props();
+    const list = $derived(steps.map((s) => (typeof s === 'object' && s ? s : { label: String(s) })));
+    function go(i) { if (!clickable || i >= current) return; current = i; if (typeof onchange === 'function') onchange(i); }
+</script>
+
+<ol class="pool-steps {className}" style:--n={list.length}>
+    {#each list as s, i (i)}
+        <li class:done={i < current} class:now={i === current} aria-current={i === current ? 'step' : undefined}>
+            {#if clickable && i < current}
+                <button type="button" class="pool-step-dot" onclick={() => go(i)} aria-label={'Back to step ' + (i + 1) + ': ' + s.label}><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 8.5l2.6 2.6L12 5.5" /></svg></button>
+            {:else}
+                <span class="pool-step-dot" aria-hidden="true">{#if i < current}<svg viewBox="0 0 16 16"><path d="M4 8.5l2.6 2.6L12 5.5" /></svg>{:else}{i + 1}{/if}</span>
+            {/if}
+            <span class="pool-step-text"><b>{s.label}</b>{#if s.hint}<small>{s.hint}</small>{/if}</span>
+            <span class="pool-sr">{i < current ? '(done)' : i === current ? '(current step)' : ''}</span>
+        </li>
+    {/each}
+</ol>
+
+<style>
+    .pool-steps { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); list-style: none; margin: 0; padding: 0; font-family: var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); }
+    li { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 0 4px; }
+    /* the lane rope between steps: orange and white floats once you have passed it, plain water line before */
+    li + li::before { content: ''; position: absolute; top: 15px; right: calc(50% + 20px); left: calc(-50% + 20px); height: 4px; border-radius: 2px; background: #bae6fd; }
+    li.done + li::before, li.now::before { background: repeating-linear-gradient(90deg, var(--pool-orange, #f97316) 0 8px, #fff 8px 14px); box-shadow: 0 0 0 1px rgba(194, 65, 12, 0.25); }
+    .pool-step-dot { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; font: 800 14px var(--pool-font, system-ui, sans-serif); padding: 0;
+        color: var(--pool-deep, #075985); background: var(--pool-tile, #f0fdff); border: 2px solid #bae6fd; }
+    .done .pool-step-dot { border-color: var(--pool-water-3, #00b2e3); background: linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); color: #fff; }
+    button.pool-step-dot { cursor: pointer; }
+    button.pool-step-dot:hover { filter: brightness(1.08); }
+    button.pool-step-dot:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 2px; }
+    .now .pool-step-dot { border-color: #fff; color: #fff; background: linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); box-shadow: 0 0 0 3px var(--pool-orange, #f97316), 0 4px 10px rgba(7, 89, 133, 0.3); }
+    .pool-step-dot svg { width: 16px; height: 16px; fill: none; stroke: #fff; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+    .pool-step-text { display: flex; flex-direction: column; font-size: 13px; }
+    .now b { color: var(--pool-deep, #075985); }
+    li:not(.done):not(.now) b { color: #5d8aa3; font-weight: 600; }
+    small { color: #4b7a94; }
+    .pool-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+~~~
+
+~~~ file: PoolTable.svelte
+<!--
+  PoolTable.svelte: a table with a water header row, tile-striped rows, and click-to-sort columns!
+
+  <PoolTable caption="Race results" columns={[
+    { key: 'name', label: 'Swimmer' },
+    { key: 'lane', label: 'Lane', align: 'right' },
+    { key: 'time', label: 'Time (s)', align: 'right', format: (v) => v.toFixed(2) }
+  ]} rows={results} />
+
+  Props: columns ([{ key, label, align, sortable (default true), format(value, row) }]), rows (objects), caption (a title, also for
+         screen readers), sortBy / sortDir (bindable: a key and 'asc' | 'desc'), empty (text when there are no rows), class.
+  Sorted columns say so with aria-sort. Wide tables scroll sideways inside their box.
+-->
+<script>
+    let { columns = [], rows = [], caption = '', sortBy = $bindable(undefined), sortDir = $bindable('asc'), empty = 'Nothing here yet!', class: className = '' } = $props();
+    const sorted = $derived.by(() => {
+        if (!sortBy) return rows;
+        const k = sortBy, d = sortDir === 'desc' ? -1 : 1;
+        return [...rows].sort((a, b) => {
+            const x = a[k], y = b[k];
+            if (typeof x === 'number' && typeof y === 'number') return (x - y) * d;
+            return String(x ?? '').localeCompare(String(y ?? ''), undefined, { numeric: true }) * d;
+        });
+    });
+    function sort(c) {
+        if (c.sortable === false) return;
+        if (sortBy === c.key) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+        else { sortBy = c.key; sortDir = 'asc'; }
+    }
+    const show = (c, r) => (typeof c.format === 'function' ? c.format(r[c.key], r) : r[c.key] ?? '');
+</script>
+
+<div class="pool-table-wrap {className}">
+    <table class="pool-table">
+        {#if caption}<caption>{caption}</caption>{/if}
+        <thead>
+            <tr>
+                {#each columns as c (c.key)}
+                    <th scope="col" style:text-align={c.align || 'left'} aria-sort={sortBy === c.key ? (sortDir === 'asc' ? 'ascending' : 'descending') : undefined}>
+                        {#if c.sortable === false}{c.label}
+                        {:else}<button type="button" onclick={() => sort(c)}>{c.label}<svg viewBox="0 0 12 12" aria-hidden="true" class:on={sortBy === c.key} class:desc={sortBy === c.key && sortDir === 'desc'}><path d="M3 7.5l3-3 3 3" /></svg></button>{/if}
+                    </th>
+                {/each}
+            </tr>
+        </thead>
+        <tbody>
+            {#each sorted as r, i (i)}
+                <tr>{#each columns as c (c.key)}<td style:text-align={c.align || 'left'}>{show(c, r)}</td>{/each}</tr>
+            {:else}
+                <tr><td class="pool-empty" colspan={columns.length || 1}>{empty}</td></tr>
+            {/each}
+        </tbody>
+    </table>
+</div>
+
+<style>
+    .pool-table-wrap { overflow-x: auto; border-radius: var(--pool-radius, 16px); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); box-shadow: 0 6px 18px rgba(8, 145, 178, 0.14); background: #fff; }
+    .pool-table { width: 100%; border-collapse: collapse; font: 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); font-variant-numeric: tabular-nums; }
+    caption { caption-side: top; text-align: left; padding: 10px 14px 8px; font-weight: 800; color: var(--pool-deep, #075985); background: var(--pool-tile, #f0fdff); }
+    thead tr { background: linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); box-shadow: inset 0 -3px 0 var(--pool-orange, #f97316); }
+    th { padding: 10px 14px 12px; color: #fff; font-weight: 800; text-shadow: 0 1px 2px rgba(7, 89, 133, 0.5); white-space: nowrap; }
+    th button { all: unset; display: inline-flex; align-items: center; gap: 5px; cursor: pointer; border-radius: 6px; }
+    th button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    th svg { width: 12px; height: 12px; fill: none; stroke: rgba(255, 255, 255, 0.5); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: transform 0.15s; }
+    th svg.on { stroke: #fff; }
+    th svg.desc { transform: rotate(180deg); }
+    td { padding: 9px 14px; border-top: 1px solid var(--pool-tile-line, #cff4fc); }
+    tbody tr:nth-child(even) td { background: var(--pool-tile, #f0fdff); }
+    tbody tr:hover td { background: #cffafe; }
+    .pool-empty { text-align: center !important; color: #5d8aa3; padding: 18px; }
+</style>
+~~~
+
+~~~ file: PoolTabs.svelte
+<!--
+  PoolTabs.svelte: tabs as swimming lanes, split by orange-and-white lane ropes; the open lane fills with water!
+
+  <PoolTabs tabs={['Lap swim', 'Lessons', 'Free swim']} bind:active>
+    {#snippet panel(i)}
+      {#if i === 0}Mornings 6 to 9!{:else if i === 1}Saturdays!{:else}Every afternoon!{/if}
+    {/snippet}
+  </PoolTabs>
+
+  Props: tabs (a list of labels), active (bindable index), panel (a snippet that gets the open index), onchange(i), class.
+  Arrow keys, Home and End move between lanes, like any tab bar.
+-->
+<script>
+    let { tabs = [], active = $bindable(0), panel = undefined, onchange = undefined, class: className = '' } = $props();
+    let bar = $state();
+    const uid = 'plt' + Math.random().toString(36).slice(2, 8);
+    function pick(i, focus) {
+        if (i < 0 || i >= tabs.length) return;
+        active = i;
+        if (typeof onchange === 'function') onchange(i);
+        if (focus && bar) bar.querySelectorAll('[role="tab"]')[i]?.focus();
+    }
+    function keys(e) {
+        const n = tabs.length, map = { ArrowRight: active + 1, ArrowDown: active + 1, ArrowLeft: active - 1 + n, ArrowUp: active - 1 + n, Home: 0, End: n - 1 };
+        if (!(e.key in map)) return;
+        e.preventDefault();
+        pick(map[e.key] % n, true);
+    }
+</script>
+
+<div class="pool-tabs {className}">
+    <div class="pool-lanes" role="tablist" tabindex="-1" bind:this={bar} onkeydown={keys}>
+        {#each tabs as t, i (i)}
+            <button type="button" role="tab" id={uid + '-t' + i} aria-controls={uid + '-p' + i} aria-selected={active === i} tabindex={active === i ? 0 : -1} onclick={() => pick(i)}>{t}</button>
+        {/each}
+    </div>
+    <div class="pool-panel" role="tabpanel" id={uid + '-p' + active} aria-labelledby={uid + '-t' + active}>
+        {#if panel}{@render panel(active)}{/if}
+    </div>
+</div>
+
+<style>
+    .pool-tabs { font-family: var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); border-radius: var(--pool-radius, 16px); overflow: hidden; border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); background: var(--pool-tile, #f0fdff); box-shadow: 0 6px 18px var(--pool-shadow, rgba(8, 145, 178, 0.22)); }
+    .pool-lanes { display: flex; overflow-x: auto; background: linear-gradient(180deg, #ecfeff, #cffafe); }
+    .pool-lanes button { position: relative; flex: 1; min-width: max-content; padding: 10px 18px; border: 0; background: none; cursor: pointer; font: 700 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-deep, #075985); }
+    /* the lane rope between lanes: orange and white floats */
+    .pool-lanes button + button::before { content: ''; position: absolute; left: -2px; top: 6px; bottom: 6px; width: 4px; border-radius: 2px;
+        background: repeating-linear-gradient(180deg, var(--pool-orange, #f97316) 0 5px, #fff 5px 10px); box-shadow: 0 0 0 1px rgba(194, 65, 12, 0.25); }
+    .pool-lanes button[aria-selected='true'] { color: #fff; text-shadow: 0 1px 2px rgba(7, 89, 133, 0.5);
+        background: repeating-radial-gradient(circle at 50% 160%, rgba(255, 255, 255, 0.15) 0 5px, transparent 5px 12px), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    .pool-lanes button:hover:not([aria-selected='true']) { background: rgba(255, 255, 255, 0.6); }
+    .pool-lanes button:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: -3px; }
+    .pool-panel { padding: 14px 18px; line-height: 1.5; }
+</style>
+~~~
+
+~~~ file: PoolTiles.svelte
+<!--
+  PoolTiles.svelte: a backdrop for a section, like looking into a sunny pool: tiles, drifting light and a lane line!
+
+  <PoolTiles>
+    <h2>Summer hours</h2>
+    <p>Open every day from 10 to 8!</p>
+  </PoolTiles>
+
+  Props: depth ('shallow' default, light water; 'deep' darker blue with white text), lane (the orange lane line, default true),
+         padding (default '24px'), class, style. The light drifts slowly (and holds still for people who turn motion off).
+-->
+<script>
+    let { depth = 'shallow', lane = true, padding = '24px', children = undefined, class: className = '', style = undefined } = $props();
+</script>
+
+<div class="pool-tiles pool-{depth} {className}" class:lane {style} style:--pt-pad={padding}>
+    <div class="pool-light" aria-hidden="true"></div>
+    <div class="pool-tiles-inner">{#if children}{@render children()}{/if}</div>
+</div>
+
+<style>
+    .pool-tiles { position: relative; overflow: hidden; isolation: isolate; border-radius: var(--pool-radius, 16px); font-family: var(--pool-font, system-ui, sans-serif); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); }
+    .pool-shallow { color: var(--pool-ink, #0c4a6e); background-color: #a5f3fc; }
+    .pool-deep { color: #fff; background-color: #0369a1; }
+    /* the tiles: thin grout lines over the water color */
+    .pool-tiles::before { content: ''; position: absolute; inset: 0; z-index: -2; background-image: linear-gradient(rgba(255, 255, 255, 0.45) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.45) 1px, transparent 1px); background-size: 26px 26px;
+        background-color: transparent; }
+    .pool-shallow::before { background-color: #cffafe; }
+    .pool-deep::before { background-image: linear-gradient(rgba(255, 255, 255, 0.18) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.18) 1px, transparent 1px); background-color: #0284c7; }
+    /* the drifting light: soft caustic blobs */
+    .pool-light { position: absolute; inset: -40%; z-index: -1; opacity: 0.55; pointer-events: none;
+        background: radial-gradient(closest-side, rgba(255, 255, 255, 0.7), transparent) 10% 20% / 30% 22% no-repeat, radial-gradient(closest-side, rgba(255, 255, 255, 0.55), transparent) 60% 35% / 26% 18% no-repeat,
+            radial-gradient(closest-side, rgba(255, 255, 255, 0.6), transparent) 35% 70% / 34% 20% no-repeat, radial-gradient(closest-side, rgba(255, 255, 255, 0.5), transparent) 85% 75% / 24% 20% no-repeat;
+        animation: pool-drift 14s ease-in-out infinite alternate; }
+    .pool-deep .pool-light { opacity: 0.25; }
+    @keyframes pool-drift { to { transform: translate(6%, 4%) rotate(4deg); } }
+    /* the lane line: a dark tile stripe with an orange rope float row along the bottom */
+    .lane::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; z-index: -1; background: repeating-linear-gradient(90deg, var(--pool-orange, #f97316) 0 14px, #fff 14px 28px); }
+    .pool-tiles-inner { position: relative; padding: var(--pt-pad); padding-bottom: calc(var(--pt-pad) + 4px); }
+    .pool-tiles-inner :global(h1), .pool-tiles-inner :global(h2), .pool-tiles-inner :global(h3) { margin-top: 0; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); }
+    .pool-deep .pool-tiles-inner :global(h1), .pool-deep .pool-tiles-inner :global(h2), .pool-deep .pool-tiles-inner :global(h3) { text-shadow: 0 1px 2px rgba(7, 89, 133, 0.6); }
+    @media (prefers-reduced-motion: reduce) { .pool-light { animation: none; } }
+</style>
+~~~
+
+~~~ file: PoolToaster.svelte
+<!--
+  PoolToaster.svelte: little messages that float up like bubbles from the corner of the screen!
+
+  Put one PoolToaster on the page, then call toast() from anywhere:
+  <script>
+    import PoolToaster, { toast } from './PoolToaster.svelte';
+  </script>
+  <PoolToaster />
+  <PoolButton onclick={() => toast('Saved!')}>Save</PoolButton>
+  toast('The pool is closing in 10 minutes!', { tone: 'orange', time: 6000 });
+
+  toast(message, { tone: 'water' | 'orange', time: milliseconds (default 3500; 0 stays until closed) }) returns an id;
+  dismiss(id) closes one early. Props: place ('bottom-right' default, 'bottom-left', 'top-right', 'top-left', 'bottom').
+  Messages are announced to screen readers (role="status").
+-->
+<script module>
+    let list = $state([]);
+    let n = 0;
+    export function toast(message, opts = {}) {
+        const id = ++n;
+        list.push({ id, message: String(message), tone: opts.tone === 'orange' ? 'orange' : 'water' });
+        const time = opts.time ?? 3500;
+        if (time > 0) setTimeout(() => dismiss(id), time);
+        return id;
+    }
+    export function dismiss(id) {
+        const i = list.findIndex((t) => t.id === id);
+        if (i >= 0) list.splice(i, 1);
+    }
+</script>
+
+<script>
+    let { place = 'bottom-right' } = $props();
+</script>
+
+<div class="pool-toasts pool-{place}" role="status" aria-live="polite">
+    {#each list as t (t.id)}
+        <div class="pool-toast pool-t-{t.tone}">
+            <span class="pool-bubble" aria-hidden="true"></span>
+            <span class="pool-toast-msg">{t.message}</span>
+            <button type="button" aria-label="Close message" onclick={() => dismiss(t.id)}><svg viewBox="0 0 12 12" width="10" height="10" aria-hidden="true"><path d="M2.5 2.5l7 7M9.5 2.5l-7 7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" /></svg></button>
+        </div>
+    {/each}
+</div>
+
+<style>
+    .pool-toasts { position: fixed; z-index: 2147483000; display: flex; flex-direction: column; gap: 8px; max-width: min(360px, calc(100vw - 24px)); pointer-events: none; font-family: var(--pool-font, system-ui, sans-serif); }
+    .pool-bottom-right { right: 16px; bottom: 16px; }
+    .pool-bottom-left { left: 16px; bottom: 16px; }
+    .pool-top-right { right: 16px; top: 16px; flex-direction: column-reverse; }
+    .pool-top-left { left: 16px; top: 16px; flex-direction: column-reverse; }
+    .pool-bottom { left: 50%; bottom: 16px; transform: translateX(-50%); }
+    .pool-toast { pointer-events: auto; display: flex; align-items: center; gap: 10px; padding: 10px 10px 10px 12px; border-radius: 14px; font: 600 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e);
+        background: linear-gradient(180deg, #ffffff, #ecfeff); border: 1px solid var(--pool-line, rgba(14, 165, 233, 0.4)); box-shadow: 0 10px 24px rgba(7, 89, 133, 0.22); animation: pool-float 0.35s cubic-bezier(.3, 1.4, .5, 1); }
+    .pool-t-orange { box-shadow: inset 4px 0 0 var(--pool-orange, #f97316), 0 10px 24px rgba(7, 89, 133, 0.22); }
+    .pool-bubble { flex: none; width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(2, 132, 199, 0.5);
+        background: radial-gradient(circle at 32% 28%, #fff 0 20%, transparent 24%), radial-gradient(circle, rgba(103, 232, 249, 0.2), rgba(2, 132, 199, 0.55)); }
+    .pool-t-orange .pool-bubble { border-color: var(--pool-orange-deep, #c2410c); background: radial-gradient(circle at 32% 28%, #fff 0 20%, transparent 24%), radial-gradient(circle, #fdba74, var(--pool-orange, #f97316)); }
+    .pool-toast-msg { flex: 1; }
+    .pool-toast button { display: inline-flex; padding: 5px; border: 0; border-radius: 50%; background: none; color: var(--pool-deep, #075985); cursor: pointer; }
+    .pool-toast button:hover { background: rgba(2, 132, 199, 0.12); }
+    .pool-toast button:focus-visible { outline: 2px solid var(--pool-orange, #f97316); }
+    @keyframes pool-float { from { transform: translateY(14px) scale(0.96); opacity: 0; } }
+    @media (prefers-reduced-motion: reduce) { .pool-toast { animation: none; } }
+</style>
+~~~
+
+~~~ file: PoolToggle.svelte
+<!--
+  PoolToggle.svelte: an on/off switch whose knob is a little life ring floating across the water!
+
+  <PoolToggle bind:checked={heated} label="Heated pool" />
+
+  Props: checked (bindable), label (text next to it; or put words between the tags), disabled, onchange(checked), class.
+  It is a real switch (role="switch"): Space and Enter flip it.
+-->
+<script>
+    let { checked = $bindable(false), label = '', disabled = false, onchange = undefined, children = undefined, class: className = '' } = $props();
+    const uid = 'plg' + Math.random().toString(36).slice(2, 8);
+    function flip() {
+        if (disabled) return;
+        checked = !checked;
+        if (typeof onchange === 'function') onchange(checked);
+    }
+</script>
+
+<label class="pool-toggle {className}" class:on={checked} class:off-limits={disabled}>
+    <button type="button" role="switch" aria-checked={checked} {disabled} onclick={flip} class="pool-track" aria-labelledby={label || children ? uid : undefined} aria-label={label || children ? undefined : 'Switch'}><span class="pool-ring" aria-hidden="true"></span></button>
+    {#if label || children}<span class="pool-toggle-label" id={uid}>{#if children}{@render children()}{:else}{label}{/if}</span>{/if}
+</label>
+
+<style>
+    .pool-toggle { display: inline-flex; align-items: center; gap: 10px; font: 600 14px var(--pool-font, system-ui, sans-serif); color: var(--pool-ink, #0c4a6e); cursor: pointer; }
+    .off-limits { opacity: 0.5; cursor: not-allowed; }
+    .pool-track { position: relative; width: 56px; height: 30px; flex: none; padding: 0; border-radius: 999px; cursor: inherit; border: 1px solid #94a3b8;
+        background: linear-gradient(180deg, #e2e8f0, #f8fafc); box-shadow: inset 0 2px 4px rgba(15, 23, 42, 0.15); transition: background 0.2s, border-color 0.2s; }
+    .on .pool-track { border-color: var(--pool-water-3, #00b2e3);
+        background: repeating-linear-gradient(100deg, rgba(255, 255, 255, 0.18) 0 4px, transparent 4px 10px), linear-gradient(180deg, var(--pool-water-1, #67e8f9), var(--pool-water-3, #00b2e3)); }
+    .pool-ring { position: absolute; top: 2px; left: 2px; width: 24px; height: 24px; border-radius: 50%; transition: left 0.22s cubic-bezier(.3, 1.4, .5, 1);
+        background: radial-gradient(circle, transparent 0 34%, rgba(0, 0, 0, 0.12) 35%, transparent 38%), radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.9), transparent 45%),
+            conic-gradient(var(--pool-orange, #f97316) 0 45deg, #fff 45deg 90deg, var(--pool-orange, #f97316) 90deg 135deg, #fff 135deg 180deg, var(--pool-orange, #f97316) 180deg 225deg, #fff 225deg 270deg, var(--pool-orange, #f97316) 270deg 315deg, #fff 315deg);
+        -webkit-mask: radial-gradient(circle, transparent 0 30%, #000 31%); mask: radial-gradient(circle, transparent 0 30%, #000 31%);
+        box-shadow: 0 2px 4px rgba(15, 23, 42, 0.3); }
+    .on .pool-ring { left: 28px; }
+    .pool-track:focus-visible { outline: 3px solid var(--pool-orange, #f97316); outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { .pool-ring, .pool-track { transition: none; } }
+</style>
+~~~
+
+~~~ file: PoolTooltip.svelte
+<!--
+  PoolTooltip.svelte: a little water bubble with a tip, shown when you point at (or tab to) something!
+
+  <PoolTooltip tip="Lane 1 is the fast lane"><PoolButton>Lane 1</PoolButton></PoolTooltip>
+  <PoolTooltip tip="3.8 metres!" place="bottom">deep end</PoolTooltip>
+
+  Props: tip (the text), place ('top' default or 'bottom'), class. Wrap anything: when it is focusable (a button, a link),
+  the tip follows its focus; plain words become focusable on their own. Escape hides the tip.
+-->
+<script>
+    let { tip = '', place = 'top', children = undefined, class: className = '' } = $props();
+    let shown = $state(false);
+    let host = $state();
+    const uid = 'plt' + Math.random().toString(36).slice(2, 8);
+    // plain words get a tab stop; a button or link inside already has one, and gets the description
+    let words = $state(true);
+    $effect(() => {
+        if (!host) return;
+        const inner = host.querySelector('a[href], button, input, select, textarea, [tabindex]:not(.pool-tip)');
+        words = !inner;
+        if (inner) inner.setAttribute('aria-describedby', uid);
+    });
+</script>
+
+<!-- (plain words need a tab stop so keyboard users can reach the tip) -->
+<!-- svelte-ignore a11y_no_static_element_interactions, a11y_no_noninteractive_tabindex -->
+<span class="pool-tip {className}" class:words bind:this={host} tabindex={words ? 0 : undefined} aria-describedby={words ? uid : undefined}
+    onmouseenter={() => (shown = true)} onmouseleave={() => (shown = false)} onfocusin={() => (shown = true)} onfocusout={() => (shown = false)}
+    onkeydown={(e) => { if (e.key === 'Escape') shown = false; }}>
+    {#if children}{@render children()}{/if}
+    <span class="pool-tip-bubble pool-{place}" class:on={shown} role="tooltip" id={uid}>{tip}</span>
+</span>
+
+<style>
+    .pool-tip { position: relative; display: inline-block; outline: none; }
+    .words { border-bottom: 2px dotted var(--pool-water-2, #22d3ee); cursor: help; }
+    .words:focus-visible { background: rgba(34, 211, 238, 0.25); border-radius: 3px; }
+    .pool-tip-bubble { position: absolute; left: 50%; z-index: 50; width: max-content; max-width: 260px; padding: 7px 12px; border-radius: 12px; pointer-events: none;
+        font: 600 13px/1.4 var(--pool-font, system-ui, sans-serif); color: #fff; text-shadow: 0 1px 1px rgba(7, 89, 133, 0.5);
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, transparent 50%), linear-gradient(180deg, var(--pool-water-2, #22d3ee), var(--pool-water-3, #00b2e3));
+        box-shadow: 0 6px 16px rgba(7, 89, 133, 0.3); opacity: 0; transition: opacity 0.15s, transform 0.15s; }
+    .pool-tip-bubble::after { content: ''; position: absolute; left: 50%; width: 10px; height: 10px; margin-left: -5px; transform: rotate(45deg); background: var(--pool-water-3, #00b2e3); }
+    .pool-top { bottom: calc(100% + 10px); transform: translate(-50%, 4px); box-shadow: inset 0 -3px 0 var(--pool-orange, #f97316), 0 6px 16px rgba(7, 89, 133, 0.3); }
+    .pool-top::after { bottom: -5px; background: var(--pool-orange, #f97316); }
+    .pool-bottom { top: calc(100% + 10px); transform: translate(-50%, -4px); box-shadow: inset 0 3px 0 var(--pool-orange, #f97316), 0 6px 16px rgba(7, 89, 133, 0.3); }
+    .pool-bottom::after { top: -5px; background: var(--pool-orange, #f97316); }
+    .pool-tip-bubble.on { opacity: 1; transform: translate(-50%, 0); }
+    @media (prefers-reduced-motion: reduce) { .pool-tip-bubble { transition: none; } }
+</style>
+~~~
+
+~~~ file: poolside.css
+/* PoolsideUI design tokens (optional): every component has these built in as fallbacks.
+   Load this file (or set any of these on a parent) to recolor the whole set at once!
+   The Poolside rule: clear water (cyan to blue) for surfaces, orange only as a crisp accent
+   (stripes, edges, rings, tips), never blended into the water in one gradient. */
+:root {
+    --pool-water-1: #67e8f9;   /* sunny shallow water */
+    --pool-water-2: #22d3ee;
+    --pool-water-3: #00b2e3;   /* the deep end: a vivid cyan (darker cyans turn teal, bluer ones turn Aero) */
+    --pool-deep: #075985;      /* text on light water */
+    --pool-ink: #0c4a6e;       /* body text */
+    --pool-orange: #f97316;    /* life rings, lane ropes, stripes */
+    --pool-orange-deep: #c2410c;
+    --pool-tile: #f0fdff;      /* white pool tiles */
+    --pool-tile-line: #cff4fc;
+    --pool-line: rgba(14, 165, 233, 0.4);
+    --pool-shadow: rgba(8, 145, 178, 0.22);
+    --pool-radius: 16px;
+    --pool-font: "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+~~~
+
+~~~ file: README.md
+# PoolsideUI
+
+Twenty-six Svelte 5 components in the Poolside style: clear water from cyan to blue, with orange as a crisp accent
+(stripes, edges, life rings, lane ropes), never blended into the water.
+
+| Component | What it is |
+| --- | --- |
+| `PoolButton` | Glossy water, orange (life ring) or ghost button with a ripple; sizes, links, disabled |
+| `PoolCard` | Tile card with a rippling water header, orange stripe, life-ring icon, footer snippet, or `flat` |
+| `PoolToggle` | Switch (`role="switch"`) whose knob is a life ring; `bind:checked` |
+| `PoolSlider` | Range slider that fills with water up to an orange float; `bind:value`, label, unit |
+| `PoolProgress` | Water-level progress as a bar or a round porthole with waves; no value means busy |
+| `PoolTabs` | Lane tabs split by orange-and-white lane ropes; `bind:active`, `panel` snippet, arrow keys |
+| `PoolInput` | Text field or text area with a water focus ring, hint, and orange error message |
+| `PoolChip` | Pill in water, orange or soft, removable with `onremove` |
+| `PoolDialog` | Modal on the native `<dialog>`; `bind:open`, title, footer snippet, Escape and backdrop close |
+| `PoolToaster` | Bubble messages: put one `<PoolToaster />` on the page, then `toast('Saved!')` from anywhere |
+| `PoolAccordion` | Questions that open one at a time (or `multiple`), orange edge and arrow |
+| `PoolTiles` | Section backdrop of pool tiles with drifting light and a lane rope; `depth="deep"` |
+| `PoolCheckbox` | Checkbox that fills with water, orange-shadowed tick, `indeterminate` dash; `bind:checked` |
+| `PoolRadioGroup` | Pick one: floats with an orange center; strings or `{ value, label, hint, disabled }`, `row` |
+| `PoolSelect` | The browser's own drop-down styled like PoolInput, orange arrow, placeholder, hint, error |
+| `PoolSegmented` | Joined buttons with a sliding water bubble; arrow keys |
+| `PoolAlert` | Banner: info, success, warning (orange edge), danger; `dismissible`, `actions` snippet |
+| `PoolSpinner` | A spinning life ring (pulses with reduced motion) |
+| `PoolSkeleton` | Loading stand-ins (text lines, circle, block) with a sunlight shimmer |
+| `PoolTooltip` | Water tip bubble on hover or focus; wraps buttons, links or plain words |
+| `PoolAvatar` | Porthole with initials or a picture, orange ring, status float |
+| `PoolMenu` | Button with a drop-down menu of actions; full keyboard support, separators, danger items |
+| `PoolStepper` | Steps along a lane rope; click a done step to go back |
+| `PoolPagination` | Page floats with "…" gaps |
+| `PoolTable` | Water header row, tile stripes, click-to-sort columns with `aria-sort`, formatters |
+| `PoolStat` | Dashboard number tile with change (up in blue, down in orange) and a small trend line |
+
+Every component has its colors built in. `poolside.css` holds the same tokens (`--pool-water-1` … `--pool-orange`),
+so loading it, or setting them on a parent, recolors the whole set. Everything works with the keyboard and screen
+readers, and animations stop when the system asks for reduced motion.
+
+```svelte
+<script>
+    import { PoolButton, PoolCard, PoolToaster, toast } from './PoolsideUI/index.js';
+</script>
+
+<PoolToaster />
+<PoolCard title="Pool party" subtitle="Saturday">
+    Bring a towel!
+    {#snippet footer()}<PoolButton size="small" onclick={() => toast("See you there!")}>I'm coming!</PoolButton>{/snippet}
+</PoolCard>
+```
+
+**Demo:** `cd demo && node build.mjs`, then open `demo/index.html`!
+~~~
