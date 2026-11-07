@@ -423,7 +423,9 @@
     const NAV = /^(Arrow|Page|Home|End|Escape|Tab|F\d+)/;
     function blockKeys(e) {
         if (mode !== 'view' || !ed.contains(e.target)) return;
-        if (NAV.test(e.key) || ((e.metaKey || e.ctrlKey) && /^[acfp]$/i.test(e.key))) return;   // moving, copying, finding, printing
+        if (NAV.test(e.key)) return;   // moving
+        // every browser shortcut still works here (copy, find, print, reload with Ctrl+Shift+R...): only the ones that would change the page are blocked
+        if ((e.metaKey || e.ctrlKey) && !/^([xvzybiuke]|Enter|Backspace|Delete)$/i.test(e.key)) return;
         e.preventDefault(); e.stopImmediatePropagation();
     }
     function blockInput(e) { if (mode === 'view' && ed.contains(e.target)) { e.preventDefault(); e.stopImmediatePropagation(); } }
