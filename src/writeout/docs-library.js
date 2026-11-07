@@ -121,6 +121,8 @@
             input.addEventListener('change', rename);
             input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
             const on = function (sel, fn) { const x = row.querySelector(sel); if (x) x.addEventListener('click', fn); };
+            // clicking anywhere on a row (not its name box or buttons) switches to that document
+            if (!cur) row.addEventListener('click', function (e) { if (!e.target.closest('input, button')) go(id); });
             on('.rd-open', function () { go(id); });
             on('.rd-tab', function () { window.open(RF.link(id), '_blank', 'noopener'); });
             on('.rd-copy', function () { copyDocument(load(), id); render(b); });
@@ -140,6 +142,37 @@
         b.querySelector('.rd-new').addEventListener('click', function () { newDocument(load()); });
     }
 
+    // File > Home shows ALL the documents (click one to switch to it), not just the open one
+    function enhanceHome(b) {
+        const card = b.querySelector('.bb-bs-doc');
+        if (!card) return;
+        const h2 = card.previousElementSibling && /^H2$/i.test(card.previousElementSibling.tagName) ? card.previousElementSibling : null;
+        const r = sync();
+        const img = card.querySelector('img');
+        const curMeta = card.querySelector('span') ? card.querySelector('span').innerHTML : '';
+        const wrap = document.createElement('div');
+        wrap.className = 'rd-home';
+        const ids = Object.keys(r.docs).filter(function (id) { return id === RF.id || RF.size(id); });
+        ids.sort(function (a, c) { return (a === RF.id ? -1 : 0) - (c === RF.id ? -1 : 0) || (r.docs[c].modified || 0) - (r.docs[a].modified || 0); });
+        ids.slice(0, 8).forEach(function (id) {
+            const cur = id === RF.id;
+            const item = document.createElement(cur ? 'div' : 'button');
+            if (!cur) item.type = 'button';
+            item.className = 'bb-bs-doc rd-home-doc' + (cur ? ' rd-home-cur' : '');
+            item.innerHTML = (img ? '<img src="' + esc(img.getAttribute('src')) + '" alt="">' : '') + '<div><b>' + esc(nameOf(r, id)) + '</b><span>'
+                + (cur ? '<em class="rd-badge">Open now</em> · ' + curMeta : 'Edited ' + esc(when(r.docs[id].modified)) + ' · ' + esc(kb(RF.size(id))) + ' · click to switch') + '</span></div>';
+            if (!cur) item.addEventListener('click', function () { go(id); });
+            wrap.appendChild(item);
+        });
+        const bar = document.createElement('div');
+        bar.className = 'rd-home-bar';
+        bar.innerHTML = '<button type="button" class="rd-new">' + OS.ico('newDoc') + '<span>New document</span></button>' + (ids.length > 8 ? '<span class="rd-hint">…and ' + (ids.length - 8) + ' more in Documents</span>' : '');
+        bar.querySelector('.rd-new').addEventListener('click', function () { newDocument(load()); });
+        if (h2) h2.textContent = ids.length > 1 ? 'Your documents' : h2.textContent;
+        card.replaceWith(wrap);
+        wrap.after(bar);
+    }
+
     function css() {
         if (document.getElementById('radii-docs-css')) return;
         const s = document.createElement('style');
@@ -155,6 +188,9 @@
             + '.rd-meta{font-size:12px;color:var(--os-dim,#666)}.rd-badge{color:var(--os-accent,#2563eb)}'
             + '.rd-act{display:flex;gap:6px;flex:none}.rd-act button{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--os-menu-line,#ddd);background:var(--os-field,#fff);color:var(--os-text,#222);font:600 12.5px var(--os-font,system-ui);cursor:pointer}'
             + '.rd-act button:hover{border-color:var(--os-accent,#2563eb);color:var(--os-accent,#2563eb)}.rd-act .os-ico{width:16px;height:16px}.rd-del:hover{border-color:#dc2626!important;color:#dc2626!important}'
+            + '.rd-home{display:flex;flex-direction:column;gap:8px;max-width:720px}.rd-home-doc{width:100%;text-align:left;font:inherit;color:inherit;cursor:default;margin:0;background:var(--os-menu,#fff)}button.rd-home-doc{cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}'
+            + 'button.rd-home-doc:hover{border-color:var(--os-accent,#2563eb);box-shadow:0 2px 10px rgba(0,0,0,.1);transform:translateY(-1px)}.rd-home-cur{border-color:var(--os-accent,#2563eb)!important;background:var(--os-accent-l,var(--os-hover,#eef))}'
+            + '.rd-home-bar{margin-top:12px;display:flex;align-items:center;gap:12px}.rd-badge{font-style:normal;font-weight:700}'
             + '@media (max-width:600px){.rd-row{flex-wrap:wrap}.rd-act{width:100%;justify-content:flex-end}}';
         document.head.appendChild(s);
     }
@@ -197,6 +233,12 @@
         cfgRef = cfg;
         try {
             css();
+            const home = Array.isArray(cfg.backstage) && cfg.backstage.find(function (p) { return p.id === 'home' && typeof p.render === 'function'; });
+            if (home && !home._rd) {
+                const hr = home.render;
+                home._rd = true;
+                home.render = function (b) { const out = hr.apply(this, arguments); try { enhanceHome(b); } catch (e) {} return out; };
+            }
             if (Array.isArray(cfg.backstage) && !cfg.backstage.some(function (p) { return p.id === 'docs'; })) {
                 const at = cfg.backstage.findIndex(function (p) { return p.id === 'new'; });
                 cfg.backstage.splice(at < 0 ? Math.min(1, cfg.backstage.length) : at + 1, 0, { id: 'docs', label: 'Documents', icon: 'folder', render: render });
