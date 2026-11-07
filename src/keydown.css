@@ -4215,3 +4215,7 @@
 .kd-div-gel .kd-div-line::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 50%; border-radius: 999px 999px 0 0; background: rgba(255, 255, 255, 0.6); }
 .kd-div-gel .kd-div-line::after { content: none; }
 .kd-div-glass .kd-div-line { height: 18px; box-sizing: border-box; border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.6); background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.05) 50.1%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, var(--ae-e2), var(--ae-c) 55%, var(--ae-l)); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.15); }
+
+/* PAGE NUMBER MARKER (::pagenumbers{style|start}): the numbers change from the page it sits on; it never prints */
+.kd-pagenums { display: flex; align-items: center; justify-content: center; margin: 6px 0; padding: 2px 10px; color: #6a8aa6; font: 700 10px/1.6 system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; border: 1px dotted rgba(138, 160, 180, 0.8); border-radius: 999px; user-select: none; }
+@media print { .kd-pagenums { display: none !important; } }

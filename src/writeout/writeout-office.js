@@ -602,10 +602,48 @@
             }
             sheets._count = pageCount;
         }
+        applyPageNumbers();
         pageList();
     }
 
     /* ---------- the Pages list in the side pane: every page of the document, click to jump there ---------- */
+    // Page number formats: ::pagenumbers{style|start} sets how the numbers look from the page it sits on (none for front matter, roman, letters, Greek)
+    function pageLabel(fmt, n) {
+        const up = /^upper-/.test(fmt), base = fmt.replace(/^upper-/, '');
+        let s = '';
+        if (base === 'none') return '';
+        if (base === 'roman') {
+            if (n < 1 || n > 3999) s = String(n);
+            else { [['m', 1000], ['cm', 900], ['d', 500], ['cd', 400], ['c', 100], ['xc', 90], ['l', 50], ['xl', 40], ['x', 10], ['ix', 9], ['v', 5], ['iv', 4], ['i', 1]].forEach(function (r) { while (n >= r[1]) { s += r[0]; n -= r[1]; } }); }
+        } else if (base === 'alpha' || base === 'greek') {
+            const L = base === 'alpha' ? 'abcdefghijklmnopqrstuvwxyz' : 'αβγδεζηθικλμνξοπρστυφχψω';
+            if (n < 1) s = String(n);
+            else { while (n > 0) { n--; s = L.charAt(n % L.length) + s; n = Math.floor(n / L.length); } }
+        } else s = String(n);
+        return up ? s.toUpperCase() : s;
+    }
+    const PAGE_NUMBER_FORMATS = [['none', 'No page numbers (front matter)'], ['roman', 'Roman numerals (i, ii, iii)'], ['upper-roman', 'Roman numerals (I, II, III)'], ['alpha', 'Latin letters (a, b, c)'], ['upper-alpha', 'Latin letters (A, B, C)'], ['greek', 'Greek letters (α, β, γ)'], ['upper-greek', 'Greek letters (Α, Β, Γ)'], ['arabic', 'Numbers (1, 2, 3), starting again at 1']];
+    function pageNumberMenu() {
+        return PAGE_NUMBER_FORMATS.map(function (f) { return { label: f[1], run: function () { insertKind('pagenums:' + f[0]); if (f[0] !== 'none' && !prefs.numbers) { prefs.numbers = true; savePrefs(); applyView(); } paginateSoon(); OS.toast('Page numbers from this page: ' + f[1] + '!'); } }; });
+    }
+    function applyPageNumbers() {
+        if (!sheets) return;
+        const box = ed.getBoundingClientRect();
+        const ratio = (box.height / (ed.offsetHeight || 1)) || 1;
+        const P = pageDims().h + GAP;
+        const marks = [];
+        Array.from(ed.querySelectorAll('.kd-pagenums')).forEach(function (el) {
+            const r = el.getBoundingClientRect();
+            marks.push({ page: Math.max(0, Math.floor(((r.top - box.top) / ratio) / P)), fmt: el.getAttribute('data-fmt') || 'arabic', start: parseInt(el.getAttribute('data-start'), 10) || 1 });
+        });
+        marks.sort(function (a, b) { return a.page - b.page; });
+        Array.from(sheets.children).forEach(function (sh, p) {
+            let cur = { page: 0, fmt: 'arabic', start: 1 };
+            marks.forEach(function (m) { if (m.page <= p) cur = m; });
+            const span = sh.querySelector('.wo-pnum');
+            if (span) span.textContent = pageLabel(cur.fmt, cur.start + (p - cur.page));
+        });
+    }
     function pageList() {
         const list = document.getElementById('doc-pages-list');
         if (!list) return;
@@ -973,6 +1011,7 @@
                     { big: true, icon: 'pages', label: 'Pages\nView', title: 'Show the document as separate pages, like Word\'s Print Layout!', run: function () { setPagesView(!prefs.pages); }, checked: function () { return prefs.pages; } },
                     { big: true, icon: 'print', label: 'Print\nPreview', title: 'See the pages at the real size they will print: Letter paper, 100%, with every page margin!', run: function () { setPreview(!previewing); }, checked: function () { return previewing; } },
                     { big: true, icon: 'web', label: 'Color\nPreview', title: 'See the pages in black and white, or as people with color blindness see them!', menu: colorPreviewMenu },
+                    { big: true, icon: 'pages', label: 'Page Number\nFormat', title: 'Front matter with no numbers, Roman numerals, letters or Greek letters: the numbers change from the page where you place it!', menu: pageNumberMenu },
                     { stack: [
                         { check: true, label: 'Page Numbers', get: function () { return prefs.numbers; }, set: function (v) { prefs.numbers = v; savePrefs(); applyView(); } }
                     ] }

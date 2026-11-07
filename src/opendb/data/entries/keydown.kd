@@ -2677,3 +2677,6 @@ Plants make food by [__14|photosynthesis] using [__6] and water.
 `[##6]` is the same blank drawn as a small empty box instead of a line, and it takes an answer too, like `[##6|2024]`.
 
 The war ended in [##6|1945] and began in [##6].
+
+## Page number formats
+`::pagenumbers{style|start}` is a small marker that changes how page numbers look from the page it sits on, until the next marker. The styles are `none` (front matter, no number), `arabic`, `roman` (i, ii, iii), `upper-roman` (I, II, III), `alpha` (a, b, c), `upper-alpha`, `greek` (α, β, γ) and `upper-greek`. The start number is optional and defaults to 1, so `::pagenumbers{roman|1}` starts a Roman section and `::pagenumbers{arabic|1}` starts the main text again at 1. Writeout and Bitbook show the numbers on their page sheets (turn on Page Numbers), and the marker itself never prints. In Writeout and Bitbook, use Layout > Pages > Page Number Format (or View in Bitbook) to place one at the caret!

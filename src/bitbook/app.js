@@ -7360,6 +7360,13 @@ function runInsertKind(kind) {
             } catch (e) {}
             if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
         }
+    } else if (kind.indexOf('pagenums:') === 0) {
+        // pagenums:roman puts a page number marker at the caret: the numbers change from the page it sits on
+        const t = document.createElement('template');
+        t.innerHTML = (window.kdDoc && kdDoc.blockFromLine) ? (kdDoc.blockFromLine('::pagenumbers{' + kind.slice(9) + '|1}') || '') : '';
+        const node = t.content.firstElementChild;
+        if (node && !fmtInsertNodeAtCaret(node)) canvas.appendChild(node);
+        if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
     } else if (kind.indexOf('blank:') === 0) {
         // blank:lines gives an empty practice box with ruled lines (box, dashed, lines, grid, dots)
         const t = document.createElement('template');
