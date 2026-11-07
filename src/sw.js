@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'fe2a24dca371';
+const VERSION = '812e44284ee4';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","258448b09a"],
@@ -305,7 +305,7 @@ const CORE = [["/","258448b09a"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","0b2605440e"],
+  ["/opendb/data/index.json","2e8fb8712b"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],
@@ -458,20 +458,20 @@ const CORE = [["/","258448b09a"],
   ["/writeout/writeout-plus.js?v=20261202a","0c332f03f0"],
   ["/writeout/writeout-pro.js?v=20261121","caccf13976"],
   ["/writeout/zonerider-scene.js?v=20261204a","c58a7dc96c"],
-  ["/yuzu/","4c76e0ffcf"],
-  ["/yuzu/app.js?v=20261210c","bb63c301c2"],
+  ["/yuzu/","6f2183d101"],
+  ["/yuzu/app.js?v=20261210o","302e94e7ae"],
   ["/yuzu/apple-touch-icon.png","f5fc3ad6b3"],
   ["/yuzu/auth.html","988825e1aa"],
   ["/yuzu/config.js?v=20261205d","50e6f244fe"],
   ["/yuzu/docs-library.js?v=20261208f","cfff92b841"],
   ["/yuzu/favicon-96.png","4dc6e73704"],
   ["/yuzu/favicon.svg","d950817834"],
-  ["/yuzu/index.html","4c76e0ffcf"],
+  ["/yuzu/index.html","6f2183d101"],
   ["/yuzu/kdnext-auto.js?v=20261207d","dddce102b2"],
   ["/yuzu/mail.js?v=20261208k","679eed3475"],
   ["/yuzu/manifest.json","6a73d971b5"],
-  ["/yuzu/mobile/","1036264d19"],
-  ["/yuzu/mobile/index.html","1036264d19"],
+  ["/yuzu/mobile/","5442d5cbcb"],
+  ["/yuzu/mobile/index.html","5442d5cbcb"],
   ["/yuzu/office-shell.css?v=20261210m","313a3ab9d7"],
   ["/yuzu/office-shell.js?v=20261204i","4bd30c5f19"],
   ["/yuzu/office.js?v=20261208f","06be98573b"],

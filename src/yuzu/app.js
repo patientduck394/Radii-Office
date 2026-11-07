@@ -113,7 +113,9 @@
         }
         return plainHtml(out.join('\n').replace(/\n*(\u0001[\s\S]*?\u0002)\n*/g, '$1')).replace(/\u0001([\s\S]*?)\u0002/g, '<details class="yz-quote"><summary>Show earlier messages</summary>$1</details>');
     };
-    const bodyText = (m) => (m.remote ? m.body : plain(m.body));
+    // Yuzu-to-Yuzu mail holds Keydown (and the Sent folder is always your own Keydown); mail from anywhere else is plain text
+    const isKd = (m) => !m.remote || (state.account && state.account.provider === 'yuzu' && (m.folder === 'sent' || /@radii-office\.com>?\s*$/i.test(String(m.from || ''))));
+    const bodyText = (m) => (isKd(m) ? plain(m.body) : m.body);
 
     /* ---------- the mail account ---------- */
     function showError(e) {
@@ -272,6 +274,8 @@
         const bad = to.find((a) => !/^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(a.email));
         if (bad) { toast('"' + bad.email + '" does not look like an email address!'); return; }
         const parts = YuzuMail.fromKeydown(c.body);
+        // between name@radii-office.com addresses the message travels as Keydown itself (Yuzu draws it when it arrives); other mail apps get the plain and simple HTML versions
+        if (state.account.provider === 'yuzu' && to.every((a) => /@radii-office\.com$/i.test(a.email))) parts.text = String(c.body || '');
         state.sending = true;
         const btn = $('yz-compose-send'); if (btn) { btn.disabled = true; btn.textContent = 'Sending…'; }
         try {
@@ -474,7 +478,7 @@
                 '<div class="yz-read-meta"><span class="yz-avatar" style="background:' + avatarColor(who) + '">' + esc(initials(who)) + '</span>' +
                 '<div><b>' + esc(x.folder === 'sent' ? 'You' : nameOf(who) || '(no recipient)') + '</b><span class="yz-read-addr">' + (x.folder === 'sent' ? 'to ' + esc(x.to) : esc(who)) + '</span></div>' +
                 '<span class="yz-read-date">' + new Date(x.date).toLocaleString() + '</span></div>' +
-                (x.remote ? '<div class="yz-read-body yz-plain">' + foldQuotes(x.body) + '</div>' : '<div class="yz-read-body keydown-doc">' + kdHtml(x.body) + '</div>') + '</article>';
+                (!isKd(x) ? '<div class="yz-read-body yz-plain">' + foldQuotes(x.body) + '</div>' : '<div class="yz-read-body keydown-doc">' + kdHtml(x.body) + '</div>') + '</article>';
         };
         el.innerHTML =
             '<div class="yz-read-top">' +
