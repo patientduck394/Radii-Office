@@ -7102,11 +7102,7 @@
 .kd-div-crest .kd-div-line { height: 18px; clip-path: polygon(0 62%, 7px 28%, calc(50% - 22px) 28%, 50% 0, calc(50% + 22px) 28%, calc(100% - 7px) 28%, 100% 62%, calc(100% - 7px) 100%, 7px 100%); }
 .kd-div-crest.kd-div-labeled .kd-div-line { height: 14px; clip-path: polygon(0 50%, 7px 0, calc(100% - 7px) 0, 100% 50%, calc(100% - 7px) 100%, 7px 100%); }
 /* gel: a glossy pill like the Gel chips */
-.kd-div-gel .kd-div-line { height: 14px; box-sizing: border-box; border-radius: 999px; border: 1px solid color-mix(in srgb, var(--kdc1, #0ea5e9) 60%, #fff); background: linear-gradient(180deg, color-mix(in srgb, var(--kdc2, #22d3ee) 70%, #fff) 0%, var(--kdc2, #22d3ee) 45%, var(--kdc1, #0ea5e9) 100%); box-shadow: inset 0 -4px 8px color-mix(in srgb, var(--kdc1, #0ea5e9) 45%, transparent), 0 3px 8px color-mix(in srgb, var(--kdc1, #0ea5e9) 40%, transparent); }
-.kd-div-gel .kd-div-line::after { content: ''; position: absolute; left: 7px; right: 7px; top: 2px; height: 4px; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0)); }
 /* rim: a thick colored rim around a fill that melts to white, like the Rim chips */
-.kd-div-rim .kd-div-line { height: 16px; box-sizing: border-box; border-radius: 999px; border: 3px solid var(--kdc1, #0ea5e9); background: linear-gradient(180deg, color-mix(in srgb, var(--kdc2, #22d3ee) 80%, #fff) 0%, color-mix(in srgb, var(--kdc2, #22d3ee) 18%, #fff) 100%); box-shadow: inset 0 0 4px rgba(255, 255, 255, 0.9); }
-.kd-div-rim .kd-div-line::after { content: ''; position: absolute; left: 6px; right: 6px; top: 1px; height: 3px; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0)); }
 /* ::blank{style|rows|Label}: empty room to write in, for practice sheets */
 .kd-blank { position: relative; box-sizing: border-box; margin: 16px 0; min-height: calc(var(--kd-rows, 4) * 1.7em); border-radius: 12px; break-inside: avoid; }
 .kd-blank-label { position: absolute; top: -9px; left: 14px; padding: 0 6px; font: 700 11px/1.4 system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase; color: #0b6b86; background: var(--wo-sheet-bg, #fff); }
@@ -7121,3 +7117,27 @@
 :is(#wysiwyg-canvas, .kd-doc, body) .kd-fill[data-answer] { cursor: pointer; }
 :is(#wysiwyg-canvas, .kd-doc, body) .kd-fill[data-answer][data-open]::before { content: attr(data-answer); color: #0b6b86; white-space: nowrap; }
 @media print { .kd-fill[data-answer][data-open]::before { content: ''; } }
+
+/* Gel and Rim dividers, second look: Gel uses the Aero gel chip colors, Rim keeps one hue for its fill and its rim (the Rim chip colors) */
+.kd-div-gel, .kd-div-rim { --ae-c: #2277ff; --ae-l: #6eb4ff; --ae-e1: #00317c; --ae-e2: #0058c6; --rd-fill: #02fff1; --rd-rim: #04c3ca; }
+.kd-div-c-red.kd-div-gel, .kd-div-c-red.kd-div-rim { --ae-c: #ff2222; --ae-l: #ff6e6e; --ae-e1: #7c0000; --ae-e2: #c60000; --rd-fill: #ff0202; --rd-rim: #e20404; }
+.kd-div-c-orange.kd-div-gel, .kd-div-c-orange.kd-div-rim { --ae-c: #ff7f22; --ae-l: #ffb26e; --ae-e1: #944200; --ae-e2: #c66700; --rd-fill: #ff7700; --rd-rim: #cd6204; }
+.kd-div-c-gold.kd-div-gel, .kd-div-c-gold.kd-div-rim { --ae-c: #ffb300; --ae-l: #ffd66e; --ae-e1: #8a5a00; --ae-e2: #c98a00; --rd-fill: #ffb700; --rd-rim: #d29804; }
+.kd-div-c-yellow.kd-div-gel, .kd-div-c-yellow.kd-div-rim { --ae-c: #ffd122; --ae-l: #fdff6e; --ae-e1: #9c7c00; --ae-e2: #e6c700; --ae-ink: #000000; text-shadow: none; --rd-fill: #ffea00; --rd-rim: #d2c104; }
+.kd-div-c-lime.kd-div-gel, .kd-div-c-lime.kd-div-rim { --ae-c: #9be000; --ae-l: #d4ff6e; --ae-e1: #4f7a00; --ae-e2: #86c400; --ae-ink: #1f3300; text-shadow: none; --rd-fill: #95ff00; --rd-rim: #7cd204; }
+.kd-div-c-green.kd-div-gel, .kd-div-c-green.kd-div-rim { --ae-c: #04db00; --ae-l: #98ff6e; --ae-e1: #058100; --ae-e2: #87e600; --rd-fill: #02ff2d; --rd-rim: #04ca06; }
+.kd-div-c-turquoise.kd-div-gel, .kd-div-c-turquoise.kd-div-rim { --ae-c: #00d6a8; --ae-l: #6effd8; --ae-e1: #007a5e; --ae-e2: #00c095; --rd-fill: #00ffaa; --rd-rim: #04cd8a; }
+.kd-div-c-teal.kd-div-gel, .kd-div-c-teal.kd-div-rim { --ae-c: #00a8a8; --ae-l: #5fe0e0; --ae-e1: #005c66; --ae-e2: #009aa6; --rd-fill: #00b7db; --rd-rim: #04abcd; }
+.kd-div-c-cyan.kd-div-gel, .kd-div-c-cyan.kd-div-rim { --ae-c: #00cedb; --ae-l: #6ef9ff; --ae-e1: #007081; --ae-e2: #00c3e6; --rd-fill: #02fff1; --rd-rim: #04c3ca; }
+.kd-div-c-blue.kd-div-gel, .kd-div-c-blue.kd-div-rim { --ae-c: #2277ff; --ae-l: #6eb4ff; --ae-e1: #00317c; --ae-e2: #0058c6; --rd-fill: #0062ff; --rd-rim: #0451cd; }
+.kd-div-c-purple.kd-div-gel, .kd-div-c-purple.kd-div-rim { --ae-c: #9b30ff; --ae-l: #c98bff; --ae-e1: #4a0080; --ae-e2: #7a1ad1; --rd-fill: #9500ff; --rd-rim: #7904cd; }
+.kd-div-c-pink.kd-div-gel, .kd-div-c-pink.kd-div-rim { --ae-c: #ff2fa8; --ae-l: #ff8ad0; --ae-e1: #7c0047; --ae-e2: #c6006f; --rd-fill: #ff00a1; --rd-rim: #cd0483; }
+.kd-div-c-slate.kd-div-gel, .kd-div-c-slate.kd-div-rim { --ae-c: #7f8ea3; --ae-l: #b5c1d1; --ae-e1: #334155; --ae-e2: #5b6b82; --rd-fill: #7f8ea3; --rd-rim: #5b6b82; }
+.kd-div-c-white.kd-div-gel, .kd-div-c-white.kd-div-rim { --ae-c: #f2f2f2; --ae-l: #ffffff; --ae-e1: #8e8e8e; --ae-e2: #c6c6c6; --ae-ink: #5c5c5c; text-shadow: none; --rd-fill: #ffffff; --rd-rim: #b9c2cc; }
+.kd-div-c-fog.kd-div-gel, .kd-div-c-fog.kd-div-rim { --ae-c: #c5c5c5; --ae-l: #e8e8e8; --ae-e1: #6d6d6d; --ae-e2: #9c9c9c; --ae-ink: #2e2e2e; text-shadow: none; --rd-fill: #d4d8dc; --rd-rim: #98a0a8; }
+.kd-div-c-black.kd-div-gel, .kd-div-c-black.kd-div-rim { --ae-c: #333333; --ae-l: #7d7d7d; --ae-e1: #000000; --ae-e2: #2c2c2c; --rd-fill: #555555; --rd-rim: #222222; }
+.kd-div-gel .kd-div-line { height: 16px; box-sizing: border-box; border-radius: 999px; overflow: hidden; border: 1px solid var(--ae-e2); background: linear-gradient(180deg, var(--ae-l) 0%, var(--ae-c) 55%, var(--ae-e2) 100%); box-shadow: inset 0 -3px 5px color-mix(in srgb, var(--ae-e1) 30%, transparent), inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 2px 6px color-mix(in srgb, var(--ae-e1) 35%, transparent); }
+.kd-div-gel .kd-div-line::before { content: ''; position: absolute; left: 4px; right: 4px; top: 1px; height: 46%; border-radius: 999px 999px 40% 40%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.25)); }
+.kd-div-gel .kd-div-line::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: 1px; height: 22%; border-radius: 999px; background: linear-gradient(0deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)); }
+.kd-div-rim .kd-div-line { height: 18px; box-sizing: border-box; border-radius: 999px; border: 3px solid var(--rd-rim); background: linear-gradient(180deg, color-mix(in srgb, var(--rd-fill) 78%, #fff) 0%, color-mix(in srgb, var(--rd-fill) 22%, #fff) 100%); box-shadow: inset 0 0 5px color-mix(in srgb, #fff 90%, var(--rd-fill)); }
+.kd-div-rim .kd-div-line::before { content: ''; position: absolute; left: 5px; right: 5px; top: 1px; height: 3px; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0)); }
