@@ -737,6 +737,7 @@
     // Opening a content link: it always becomes a NEW file in this browser, so nothing of yours is replaced
     async function openDocLink(digits) {
         const RF = window.RadiiFile;
+        if (!RF) { try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} ui.toast('This old shared-copy link cannot be opened any more!'); return; }
         const target = (function () { try { return sessionStorage.getItem('rc_doc_target') || ''; } catch (e) { return ''; } })();
         if (RF && (!RF.id || RF.id !== target)) {
             const id = RF.newId();

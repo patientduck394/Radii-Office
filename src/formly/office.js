@@ -36,8 +36,8 @@
     const lockedOut = () => app.locked();
     const fieldMenu = () => FIELD_KINDS.map(([t, label, icon]) => ({ label: label, icon: icon, disabled: lockedOut, run: () => addField(t) }));
     const setMode = (m) => { app.setMode(m); sync(); };
-    const askReset = () => OS.confirm('New Form', 'Start a blank form? The one you have now is kept in File > Documents!', 'New Form')
-        .then((ok) => { if (ok) { if (window.RadiiDocs) RadiiDocs.archive(); app.resetForm(); OS.toast('A fresh form!'); } });
+    const askReset = () => OS.confirm('New Form', 'Start a blank form?', 'New Form')
+        .then((ok) => { if (ok) { app.resetForm(); OS.toast('A fresh form!'); } });
     const cards = (items) => OS.bsCards(items);
     const openFile = () => app.$('btn-upload-file').click();
 
