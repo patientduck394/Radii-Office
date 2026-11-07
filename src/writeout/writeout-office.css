@@ -258,3 +258,6 @@ body.os-office.wo-one-tab .tabs-section { display: none; }
 
 /* Changing between tabs lives in File > Tabs (File > Notes in Bitbook): the side pane keeps only the Pages list */
 body.os-office .tabs-section { display: none; }
+
+/* Home carries the documents list: its own heading and hint step aside */
+.rd-embed > h1, .rd-embed > .rd-hint { display: none; }

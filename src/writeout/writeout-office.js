@@ -303,12 +303,6 @@
         paginateSoon();
         setTimeout(function () { paginate(); OS.sync(); try { if (line && line.scrollIntoView) line.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} OS.toast('Page ' + currentPage() + '!'); }, 60);
     }
-    // the older page TABS (a document made of several tabs) are still here: New Tab adds one
-    function newTab() {
-        const b = document.getElementById('tabs-add-btn');
-        if (b) b.click();
-    }
-
     /* ---------- Find & Replace ---------- */
     function textNodes() {
         const out = [];
@@ -785,10 +779,17 @@
                     { label: 'New page', hint: 'Add a page to this document: the text after it starts on a fresh sheet!', icon: 'newDoc', run: newPage },
                     { label: 'Open a .kd file', hint: 'Import a Writeout document!', icon: 'folder', run: openFile }
                 ]));
-                b.insertAdjacentHTML('beforeend', '<h2>This document</h2><div class="wo-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((kdActiveTab() || {}).name || 'Main') + '</b><span>' + OS.esc(statsLine()) + '</span></div></div>');
+                // every saved document lives right here on Home (rename, copy, delete, switch), like Bitbook!
+                if (window.RadiiDocs && RadiiDocs.mount) {
+                    b.insertAdjacentHTML('beforeend', '<h2>Your documents</h2>');
+                    const box = document.createElement('div');
+                    box.className = 'rd-embed';
+                    b.appendChild(box);
+                    RadiiDocs.mount(box);
+                } else b.insertAdjacentHTML('beforeend', '<h2>This document</h2><div class="wo-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((kdActiveTab() || {}).name || 'Main') + '</b><span>' + OS.esc(statsLine()) + '</span></div></div>');
             }
         },
-        { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'Blank document', hint: 'Clears every page and tab!', preview: '<div class="os-card-prev wo-prev-blank"></div>', run: newDocument }, { label: 'New page', hint: 'A fresh page after this one, keeping the rest!', icon: 'newDoc', run: newPage }])); } },
+        { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'Blank document', hint: 'Clears every page!', preview: '<div class="os-card-prev wo-prev-blank"></div>', run: newDocument }, { label: 'New page', hint: 'A fresh page after this one, keeping the rest!', icon: 'newDoc', run: newPage }])); } },
         { id: 'open', label: 'Open', icon: 'folder', render: function (b) { b.innerHTML = '<h1>Open</h1>'; b.appendChild(OS.bsCards([{ label: 'Browse…', hint: 'Open a .kd Writeout document!', icon: 'folder', run: openFile }])); b.insertAdjacentHTML('beforeend', '<p class="os-note">Your work also saves automatically in this browser!</p>'); } },
         { id: 'save', label: 'Save a Copy', icon: 'save', render: function (b) { b.innerHTML = '<h1>Save a Copy</h1>'; b.appendChild(OS.bsCards(DL.slice(0, 2).map(function (d) { return { label: d[1], hint: d[2], icon: d[3], run: function () { download(d[0]); } }; }))); } },
         { id: 'export', label: 'Export', icon: 'export', render: function (b) { b.innerHTML = '<h1>Export</h1>'; b.appendChild(OS.bsCards(DL.map(function (d) { return { label: d[1], hint: d[2], icon: d[3], run: function () { download(d[0]); } }; }))); } },
@@ -796,7 +797,7 @@
         {
             id: 'info', label: 'Info', icon: 'info', render: function (b) {
                 const s = stats();
-                b.innerHTML = '<h1>Info</h1><table class="wo-wc big"><tr><td>Pages</td><td><b>' + pageCount + '</b></td></tr><tr><td>Words</td><td><b>' + s.words.toLocaleString() + '</b></td></tr><tr><td>Characters</td><td><b>' + s.chars.toLocaleString() + '</b></td></tr><tr><td>Paragraphs</td><td><b>' + s.paras + '</b></td></tr><tr><td>Page tabs</td><td><b>' + kdTabs.length + '</b></td></tr><tr><td>Protected</td><td><b>' + (kdDocPasswordHash ? 'Yes!' : 'No') + '</b></td></tr></table>';
+                b.innerHTML = '<h1>Info</h1><table class="wo-wc big"><tr><td>Pages</td><td><b>' + pageCount + '</b></td></tr><tr><td>Words</td><td><b>' + s.words.toLocaleString() + '</b></td></tr><tr><td>Characters</td><td><b>' + s.chars.toLocaleString() + '</b></td></tr><tr><td>Paragraphs</td><td><b>' + s.paras + '</b></td></tr><tr><td>Protected</td><td><b>' + (kdDocPasswordHash ? 'Yes!' : 'No') + '</b></td></tr></table>';
                 b.appendChild(OS.bsCards([{ label: 'Protect Document', hint: 'Set a password for this document!', icon: 'lock', run: function () { togglePane('doc'); } }]));
             }
         }
@@ -966,8 +967,7 @@
                 { label: 'Pages', items: [
                     { big: true, icon: 'pages', label: 'Pages\nView', title: 'Show the document as separate pages, like Word\'s Print Layout!', run: function () { setPagesView(!prefs.pages); }, checked: function () { return prefs.pages; } },
                     { stack: [
-                        { check: true, label: 'Page Numbers', get: function () { return prefs.numbers; }, set: function (v) { prefs.numbers = v; savePrefs(); applyView(); } },
-                        { sm: true, icon: 'newDoc', label: 'New Tab', title: 'Add a tab: another set of pages in this document', run: newTab }
+                        { check: true, label: 'Page Numbers', get: function () { return prefs.numbers; }, set: function (v) { prefs.numbers = v; savePrefs(); applyView(); } }
                     ] }
                 ] },
                 { label: 'Page Background', items: [

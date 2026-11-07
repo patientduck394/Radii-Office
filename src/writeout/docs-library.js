@@ -324,12 +324,12 @@
                     return out;
                 };
             }
-            if (Array.isArray(cfg.backstage) && !cfg.backstage.some(function (p) { return p.id === 'docs'; })) {
+            if (cfg.key !== 'writeout' && Array.isArray(cfg.backstage) && !cfg.backstage.some(function (p) { return p.id === 'docs'; })) {
                 const at = cfg.backstage.findIndex(function (p) { return p.id === 'new'; });
                 cfg.backstage.splice(at < 0 ? Math.min(1, cfg.backstage.length) : at + 1, 0, { id: 'docs', label: 'Documents', icon: 'folder', render: render });
             }
             // Writeout and Bitbook: changing between tabs lives in the File menu (the side pane's Tabs list steps aside)
-            if (Array.isArray(cfg.backstage) && tabsReady() && !cfg.backstage.some(function (p) { return p.id === 'tabs'; })) {
+            if (cfg.key !== 'writeout' && Array.isArray(cfg.backstage) && tabsReady() && !cfg.backstage.some(function (p) { return p.id === 'tabs'; })) {
                 const at = cfg.backstage.findIndex(function (p) { return p.id === 'docs'; });
                 cfg.backstage.splice(at < 0 ? 1 : at + 1, 0, { id: 'tabs', label: cfg.key === 'bitbook' ? 'Notes' : 'Tabs', icon: 'folder', render: renderTabs });
             }

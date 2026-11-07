@@ -7882,6 +7882,19 @@ function kdFreshTabs() {
     kdSaveTabs();
 }
 
+// There are no tabs any more: every tab a document has (an older save, a file, another editor) becomes PAGES of one document!
+// Each one is separated by a page break, and a tab with a real name keeps it as a heading on its first page.
+function kdTabsToPages(tabs) {
+    if (!tabs || tabs.length <= 1) return tabs;
+    const brk = '<div class="kd-pagebreak" contenteditable="false"><span>Page break</span></div>';
+    const html = tabs.map(function (t, i) {
+        const named = i > 0 && t.name && !/^(Main|Untitled|Tab \d+|Page \d+)$/.test(t.name);
+        const esc = String(t.name || '').replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; });
+        return (named ? '<h2 class="header-2">' + esc + '</h2>' : '') + (t.html || '');
+    }).join(brk);
+    return [{ id: tabs[0].id, name: 'Main', html: html }];
+}
+
 function kdLoadTabs() {
     if (!kdRestoreEnabled()) { kdFreshTabs(); return; }
     // Restore the saved document: pages, outlines, and active tab survive reloads!
@@ -7900,6 +7913,7 @@ function kdLoadTabs() {
             }
         }
     } catch (e) { kdTabs = []; }
+    kdTabs = kdTabsToPages(kdTabs);
     if (!kdTabs.length) {
         let legacy = '';
         try { legacy = localStorage.getItem('writedown_save_slot_1') || ''; } catch (e) {}
@@ -8102,6 +8116,7 @@ function kdRestoreTabs(tabs) {
     kdTabs = tabs.map(function (t) {
         return { id: kdTabId(), name: String(t.name || 'Untitled').substring(0, 60), html: typeof t.html === 'string' ? t.html : '' };
     });
+    kdTabs = kdTabsToPages(kdTabs);
     if (!kdTabs.length) kdTabs = [{ id: kdTabId(), name: 'Main', html: '' }];
     kdActiveTabId = kdTabs[0].id;
     kdExpandedTabs = {};
