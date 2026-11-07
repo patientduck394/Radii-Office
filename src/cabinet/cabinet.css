@@ -61,7 +61,7 @@ body {
 }
 .pad-toggle-btn svg { color: #ffffff; transition: color 0.2s ease, transform 0.2s ease; }
 .pad-toggle-btn:hover {
-    background: linear-gradient(180deg, #FF6B5E 0%, #FF0000 100%);
+    background: linear-gradient(180deg, #dc2626 0%, #FF0000 100%);
     border-color: #FFBDB8;
     box-shadow: 0 4px 12px rgba(255,0,0,0.35), inset 0 1px 2px #fff;
     transform: translateY(-1px);
@@ -119,7 +119,7 @@ body {
 }
 .drawer-pick:hover { background: rgba(255,255,255,0.14); }
 .drawer-item.active .drawer-pick {
-    background: linear-gradient(180deg, #FF6B5E 0%, #FF0000 100%);
+    background: linear-gradient(180deg, #dc2626 0%, #FF0000 100%);
     border-color: #FFBDB8;
     color: #fff;
     box-shadow: 0 4px 12px rgba(255,0,0,0.35), inset 0 1px 2px #fff;
@@ -170,7 +170,7 @@ body {
     font-family: 'JetBrains Mono', monospace;
     outline: none;
 }
-.drawer-name-box input:focus { border-color: #FF6B5E; }
+.drawer-name-box input:focus { border-color: #dc2626; }
 .sidebar-footer-controls {
     margin-top: auto;
     font-size: 12px;
@@ -199,7 +199,7 @@ body {
     outline: none;
     cursor: pointer;
 }
-.tag-filter-select:focus { border-color: #FF6B5E; }
+.tag-filter-select:focus { border-color: #dc2626; }
 .tag-filter-select option {
     background: #1e293b;
     color: #fff;
@@ -265,7 +265,7 @@ body {
 .view-seg-btn svg { width: 15px; height: 15px; }
 .view-seg-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
 .view-seg-btn.active {
-    background: linear-gradient(180deg, #FF6B5E 0%, #FF0000 100%);
+    background: linear-gradient(180deg, #dc2626 0%, #FF0000 100%);
     color: #fff;
     text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     box-shadow: 0 2px 6px rgba(255,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.4);
@@ -444,7 +444,7 @@ body {
     font-weight: 800;
     font-family: 'JetBrains Mono', monospace;
     cursor: pointer;
-    background: linear-gradient(180deg, #FF6B5E 0%, #FF0000 100%);
+    background: linear-gradient(180deg, #dc2626 0%, #FF0000 100%);
     color: #fff;
     text-shadow: 0 1px 1px rgba(0,0,0,0.3);
     box-shadow: 0 2px 6px rgba(255,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.4);
@@ -458,7 +458,7 @@ body {
 .tag-chip {
     display: inline-flex;
     align-items: center;
-    background: linear-gradient(180deg, #FF6B5E 0%, #FF0000 100%);
+    background: linear-gradient(180deg, #dc2626 0%, #FF0000 100%);
     border: 1px solid #FFBDB8;
     border-radius: 10px;
     padding: 2px 6px;
@@ -524,7 +524,7 @@ body {
     box-shadow: 0 12px 30px rgba(255,0,0,0.2), inset 0 1px 0 #fff;
 }
 .folder-card .file-preview {
-    background: linear-gradient(180deg, #FF6B5E 0%, #FF0000 100%);
+    background: linear-gradient(180deg, #dc2626 0%, #FF0000 100%);
     height: 120px;
     display: flex;
     align-items: center;
@@ -536,7 +536,7 @@ body {
 .folder-card .file-sub { color: #64748b; }
 .folder-card .file-actions { padding: 8px 12px 12px; }
 .folder-card.drag-over-folder {
-    outline: 3px solid #FF6B5E;
+    outline: 3px solid #dc2626;
     outline-offset: 4px;
     transform: scale(1.03);
     box-shadow: 0 12px 30px rgba(255,0,0,0.4), inset 0 1px 0 #fff;
@@ -559,7 +559,7 @@ body {
 .folder-card[draggable="true"] { cursor: grab; }
 .folder-card[draggable="true"]:active { cursor: grabbing; }
 .file-card.drop-merge {
-    outline: 3px solid #FF6B5E;
+    outline: 3px solid #dc2626;
     outline-offset: 4px;
     transform: scale(1.03);
     box-shadow: 0 12px 30px rgba(255,0,0,0.4), inset 0 1px 0 #fff;
@@ -1159,7 +1159,7 @@ body {
     font-family: 'JetBrains Mono', monospace;
 }
 .folder-type-option:last-child { border-bottom: none; }
-.folder-type-option:hover { background: rgba(255,107,94,0.12); }
+.folder-type-option:hover { background: rgba(220, 38, 38,0.12); }
 .folder-type-option.node-option:hover { background: rgba(174,255,9,0.22); }
 .folder-type-option.connector-option:hover { background: rgba(9,237,255,0.18); }
 .folder-type-option.linker-option:hover { background: rgba(11,163,255,0.18); }
@@ -1296,12 +1296,12 @@ body {
     color: #fff; 
     background: rgba(255,255,255,0.1); 
 }
-.breadcrumb-item:first-child { color: #FF6B5E; font-weight: 700; }
+.breadcrumb-item:first-child { color: #dc2626; font-weight: 700; }
 .breadcrumb-sep { color: #64748b; }
 .breadcrumb-item.drag-over-path {
-    outline: 2px solid #FF6B5E;
+    outline: 2px solid #dc2626;
     outline-offset: 2px;
-    background: rgba(255,107,94,0.25);
+    background: rgba(220, 38, 38,0.25);
     color: #fff;
     transform: scale(1.05);
 }
@@ -1325,7 +1325,7 @@ body {
 }
 .modal-blur-gate.active .embossed-dialogue-chassis { transform: scale(1); }
 .dialog-header {
-    background: linear-gradient(180deg, #FF6B5E 0%, #FF0000 50%, #7A0000 100%);
+    background: linear-gradient(180deg, #dc2626 0%, #FF0000 50%, #7A0000 100%);
     border-bottom: 2px solid rgba(255,255,255,0.4);
     padding: 12px 20px; display: flex; align-items: center; justify-content: space-between;
     font-family: 'JetBrains Mono', monospace;

@@ -218,14 +218,15 @@ body.os-dark .os-rb:hover, body.os-dark .os-split-arrow:hover, body.os-dark .os-
 .os-cbar { position: absolute; left: 5px; right: 5px; bottom: 2px; height: 4px; border-radius: 1px; }
 .os-rb.sm .os-cbar { left: 4px; right: auto; width: 16px; bottom: 1px; height: 3px; }
 .os-split { display: flex; align-items: stretch; border-radius: 5px; }
-.os-split.big { flex-direction: column; }
+.os-split.big { flex-direction: column; position: relative; }
 .os-split .os-rb.ic { border-top-right-radius: 0; border-bottom-right-radius: 0; }
-.os-split.big .os-rb.big { height: 50px; border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
+.os-split.big .os-rb.big { height: 68px; }
 .os-split-arrow {
     border: 1px solid transparent; background: transparent; border-radius: 0 5px 5px 0; width: 14px; padding: 0;
     font-size: 9px; cursor: pointer; color: var(--os-dim); transition: background 0.14s;
 }
-.os-split.big .os-split-arrow { width: auto; height: 18px; border-radius: 0 0 5px 5px; }
+.os-split.big .os-split-arrow { position: absolute; right: 2px; top: 4px; z-index: 2; width: 16px; height: 18px; border-radius: 6px; font-size: 11px; line-height: 1; }
+.os-split.big .os-rb.big .os-caret { visibility: hidden; }
 .os-combo { display: inline-flex; align-items: center; gap: 4px; height: 24px; }
 .os-select, .os-input {
     height: 24px; border: 1px solid var(--os-field-line); border-radius: 4px; background: var(--os-field); color: var(--os-text);

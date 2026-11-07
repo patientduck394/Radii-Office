@@ -1,5 +1,5 @@
 /* =====================================================================
-   Cabinet's Explorer layout! A coral ribbon (Home, Share, View, Help), a
+   Cabinet's Explorer layout! A red ribbon (Home, Share, View, Help), a
    drawer list on the left, a File screen with the drawer's export options
    and a status bar, on top of Cabinet's own file grid. Cabinet Classic
    (the glass sidebar) stays one click away in Settings!
@@ -151,10 +151,10 @@
         kind: 'onenote',
         key: 'cabinet',
         icon: 'favicon-96.png',
-        officeHint: 'A coral ribbon, a drawer list, a File screen and a status bar, like a file explorer!',
+        officeHint: 'A red ribbon, a drawer list, a File screen and a status bar, like a file explorer!',
         classicHint: 'The original Cabinet: coral glass sidebar and gel buttons!',
         classicToast: 'Cabinet Classic: coral glass and gel!',
-        theme: { accent: '#FF6B5E', 'accent-d': '#e5483a', 'accent-l': '#ffe4e1', title: '#e5483a', gel1: '#ff9a8f', gel2: '#FF6B5E', 'gel-border': '#ffc2bb', 'gel-glow': 'rgba(255, 107, 94, 0.45)', glow: 'rgba(255, 228, 225, 0.9)', 'thumb-bg': '#3b1210' },
+        theme: { accent: '#dc2626', 'accent-d': '#b91c1c', 'accent-l': '#fee2e2', title: '#b91c1c', gel1: '#ef4444', gel2: '#dc2626', 'gel-border': '#fecaca', 'gel-glow': 'rgba(220, 38, 38, 0.45)', glow: 'rgba(255, 228, 225, 0.9)', 'thumb-bg': '#3a0d0d' },
         editor: function () { return null; },
         title: function () { return C.name(); },
         rename: function (n) { C.rename(n); },
