@@ -309,3 +309,6 @@ body.os-office.bb-pages #wysiwyg-canvas {
 body.os-office.os-phone.bb-pages #bb-zoomer { width: 100% !important; margin: 10px 0 28px; }
 body.os-office.os-phone #bb-sheets { display: none !important; }
 body.os-office.os-phone.bb-pages #wysiwyg-canvas { width: 100% !important; min-height: 70vh !important; padding: 20px 16px 40px !important; background: var(--bb-sheet-bg, #fff) !important; border-radius: 10px !important; }
+
+/* Changing between tabs lives in File > Tabs (File > Notes in Bitbook): the side pane keeps only the Pages list */
+body.os-office .tabs-section { display: none; }

@@ -73,6 +73,11 @@
         const time = d.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' });
         return days < 1 && d.getDate() === new Date().getDate() ? 'today ' + time : days < 2 ? 'yesterday ' + time : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
     };
+    // a name is read-only (so a click on the row switches to it) until it is double-clicked
+    const renameOnDblClick = function (input) {
+        input.addEventListener('dblclick', function () { input.readOnly = false; input.focus(); input.select(); });
+        input.addEventListener('blur', function () { input.readOnly = true; });
+    };
     const go = function (id) { setTimeout(function () { location.href = RF.link(id); }, 220); };
 
     function newDocument(r) {
@@ -103,7 +108,7 @@
             const row = document.createElement('div');
             row.className = 'rd-row' + (cur ? ' rd-cur' : '');
             row.innerHTML = '<span class="rd-ico">' + OS.ico('file') + '</span>'
-                + '<div class="rd-main"><input class="rd-name" spellcheck="false" aria-label="Document name" value="' + esc(nameOf(r, id)) + '"><span class="rd-meta">' + (cur ? '<b class="rd-badge">Open now</b> ' : '') + 'Edited ' + esc(when(d.modified)) + ' · ' + esc(kb(RF.size(id))) + '</span></div>'
+                + '<div class="rd-main"><input class="rd-name" readonly title="Double-click to rename" spellcheck="false" aria-label="Document name" value="' + esc(nameOf(r, id)) + '"><span class="rd-meta">' + (cur ? '<b class="rd-badge">Open now</b> ' : '') + 'Edited ' + esc(when(d.modified)) + ' · ' + esc(kb(RF.size(id))) + '</span></div>'
                 + '<div class="rd-act">'
                 + (cur ? '' : '<button type="button" class="rd-open">Open</button>')
                 + '<button type="button" class="rd-tab" title="Open in a new tab">' + OS.ico('export') + '</button>'
@@ -119,10 +124,11 @@
                 input.value = v;
             };
             input.addEventListener('change', rename);
+            renameOnDblClick(input);
             input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
             const on = function (sel, fn) { const x = row.querySelector(sel); if (x) x.addEventListener('click', fn); };
             // clicking anywhere on a row (not its name box or buttons) switches to that document
-            if (!cur) row.addEventListener('click', function (e) { if (!e.target.closest('input, button')) go(id); });
+            if (!cur) row.addEventListener('click', function (e) { if (!e.target.closest('button, input:not([readonly])')) go(id); });
             on('.rd-open', function () { go(id); });
             on('.rd-tab', function () { window.open(RF.link(id), '_blank', 'noopener'); });
             on('.rd-copy', function () { copyDocument(load(), id); render(b); });
@@ -140,6 +146,56 @@
             list.appendChild(row);
         });
         b.querySelector('.rd-new').addEventListener('click', function () { newDocument(load()); });
+    }
+
+    // File > Tabs (Writeout) / File > Notes (Bitbook): change between the tabs of the open document, rename them, add and close them
+    function tabsReady() { try { return typeof kdTabs !== 'undefined' && Array.isArray(kdTabs) && typeof kdActivateTab === 'function'; } catch (e) { return false; } }
+    function renderTabs(b) {
+        const word = cfgRef && cfgRef.key === 'bitbook' ? 'note' : 'tab';
+        const Word = word[0].toUpperCase() + word.slice(1);
+        b.innerHTML = '<h1>' + Word + 's</h1><p class="rd-hint">Change between the ' + word + 's of this document: click one to open it. Double-click a name to rename it.</p>'
+            + '<div class="rd-bar"><button type="button" class="rd-new">' + OS.ico('newDoc') + '<span>New ' + word + '</span></button></div><div class="rd-list"></div>';
+        const list = b.querySelector('.rd-list');
+        const words = function (t) { return (String(t.html || '').replace(/<[^>]*>/g, ' ').match(/\S+/g) || []).length; };
+        kdTabs.forEach(function (tab) {
+            const cur = tab.id === kdActiveTabId;
+            const row = document.createElement('div');
+            row.className = 'rd-row' + (cur ? ' rd-cur' : '');
+            row.innerHTML = '<span class="rd-ico">' + OS.ico('file') + '</span><div class="rd-main"><input class="rd-name" readonly title="Double-click to rename" spellcheck="false" aria-label="' + Word + ' name" value="' + esc(tab.name) + '"><span class="rd-meta">'
+                + (cur ? '<b class="rd-badge">Open now</b> · ' : '') + words(tab).toLocaleString() + ' word' + (words(tab) === 1 ? '' : 's') + '</span></div>'
+                + '<div class="rd-act">' + (cur ? '' : '<button type="button" class="rd-open">Open</button>') + (kdTabs.length > 1 ? '<button type="button" class="rd-del" title="Close this ' + word + '">' + OS.ico('trash') + '</button>' : '') + '</div>';
+            const input = row.querySelector('.rd-name');
+            const rename = function () { const v = input.value.trim().substring(0, 60); if (v && v !== tab.name) { tab.name = v; kdSaveTabs(); kdRenderTabs(); } else input.value = tab.name; };
+            input.addEventListener('change', rename);
+            renameOnDblClick(input);
+            input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
+            const open = function () { if (tab.id !== kdActiveTabId) kdActivateTab(tab.id); OS.closeBackstage(); setTimeout(function () { OS.sync(); }, 30); };
+            const ob = row.querySelector('.rd-open');
+            if (ob) ob.addEventListener('click', open);
+            if (!cur) row.addEventListener('click', function (e) { if (!e.target.closest('button, input:not([readonly])')) open(); });
+            const del = row.querySelector('.rd-del');
+            if (del) del.addEventListener('click', function () {
+                OS.confirm('Close ' + word, 'Delete ' + word + ' "' + tab.name + '" for good? This cannot be undone!', 'Delete', true).then(function (ok) {
+                    if (!ok) return;
+                    kdTabs = kdTabs.filter(function (t) { return t.id !== tab.id; });
+                    try { delete kdExpandedTabs[tab.id]; } catch (e) {}
+                    if (kdActiveTabId === tab.id) {
+                        kdActiveTabId = kdTabs[0].id;
+                        canvas.innerHTML = kdTabs[0].html || '';
+                        try { kdHydrateInteractions(); kdRenderOutline(); } catch (e) {}
+                    }
+                    kdSaveTabs();
+                    kdRenderTabs();
+                    renderTabs(b);
+                });
+            });
+            list.appendChild(row);
+        });
+        b.querySelector('.rd-new').addEventListener('click', function () {
+            const add = document.getElementById('tabs-add-btn');
+            if (add) add.click();
+            setTimeout(function () { OS.closeBackstage(); OS.sync(); }, 60);
+        });
     }
 
     // File > Home shows ALL the documents (click one to switch to it), not just the open one
@@ -184,7 +240,7 @@
             + '.rd-row:hover{border-color:var(--os-accent,#2563eb);box-shadow:0 2px 10px rgba(0,0,0,.08)}.rd-cur{border-color:var(--os-accent,#2563eb);background:var(--os-accent-l,var(--os-hover,#eef))}'
             + '.rd-ico{display:grid;place-items:center;width:36px;height:36px;border-radius:9px;color:var(--os-accent,#2563eb);background:var(--os-hover,#eef);flex:none}.rd-ico .os-ico{width:20px;height:20px}'
             + '.rd-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.rd-name{border:0;background:transparent;font:700 15px var(--os-font,system-ui);color:var(--os-text,#222);padding:2px 4px;margin:0 -4px;border-radius:6px;outline:none;width:100%}'
-            + '.rd-name:hover{background:var(--os-hover,#eee)}.rd-name:focus{background:var(--os-field,#fff);box-shadow:0 0 0 2px var(--os-accent,#2563eb)}'
+            + '.rd-name[readonly]{cursor:pointer}.rd-name:not([readonly]):hover{background:var(--os-hover,#eee)}.rd-name:focus{background:var(--os-field,#fff);box-shadow:0 0 0 2px var(--os-accent,#2563eb)}'
             + '.rd-meta{font-size:12px;color:var(--os-dim,#666)}.rd-badge{color:var(--os-accent,#2563eb)}'
             + '.rd-act{display:flex;gap:6px;flex:none}.rd-act button{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--os-menu-line,#ddd);background:var(--os-field,#fff);color:var(--os-text,#222);font:600 12.5px var(--os-font,system-ui);cursor:pointer}'
             + '.rd-act button:hover{border-color:var(--os-accent,#2563eb);color:var(--os-accent,#2563eb)}.rd-act .os-ico{width:16px;height:16px}.rd-del:hover{border-color:#dc2626!important;color:#dc2626!important}'
@@ -242,6 +298,11 @@
             if (Array.isArray(cfg.backstage) && !cfg.backstage.some(function (p) { return p.id === 'docs'; })) {
                 const at = cfg.backstage.findIndex(function (p) { return p.id === 'new'; });
                 cfg.backstage.splice(at < 0 ? Math.min(1, cfg.backstage.length) : at + 1, 0, { id: 'docs', label: 'Documents', icon: 'folder', render: render });
+            }
+            // Writeout and Bitbook: changing between tabs lives in the File menu (the side pane's Tabs list steps aside)
+            if (Array.isArray(cfg.backstage) && tabsReady() && !cfg.backstage.some(function (p) { return p.id === 'tabs'; })) {
+                const at = cfg.backstage.findIndex(function (p) { return p.id === 'docs'; });
+                cfg.backstage.splice(at < 0 ? 1 : at + 1, 0, { id: 'tabs', label: cfg.key === 'bitbook' ? 'Notes' : 'Tabs', icon: 'folder', render: renderTabs });
             }
             sync();
             setInterval(sync, 10000);

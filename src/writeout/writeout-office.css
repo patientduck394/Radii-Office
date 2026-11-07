@@ -255,3 +255,6 @@ body.os-office.os-phone:not(.wo-nav-off):not(.wo-focus) #sidebar {
 
 /* the Tabs list only shows when there is something to switch between (a document with one tab has just its pages) */
 body.os-office.wo-one-tab .tabs-section { display: none; }
+
+/* Changing between tabs lives in File > Tabs (File > Notes in Bitbook): the side pane keeps only the Pages list */
+body.os-office .tabs-section { display: none; }
