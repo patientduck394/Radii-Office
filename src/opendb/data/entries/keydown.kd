@@ -527,7 +527,7 @@ Capital letters between two rules, one in each accent color. Styles 57 to 70:
 
 ### Poolside design 6: Gradient text
 
-Words filled with a color sweep, bold and borderless. Styles 71 to 84:
+Words filled with a color sweep, bold, on a soft panel where the colorway has one. Styles 71 to 84:
 
 * `.poolside_style 71(text)` .poolside_style 71(Cyan)
 * `.poolside_style 72(text)` .poolside_style 72(Blue)
@@ -565,7 +565,7 @@ A dark tube with glowing words and a soft halo. Styles 85 to 98:
 
 ### Poolside design 8: Letterpress
 
-Pressed-in letters with a light edge and a soft inset, like a stamp. Styles 99 to 112:
+Pressed-in letters on a soft inset panel, like a stamp. Styles 99 to 112:
 
 * `.poolside_style 99(text)` .poolside_style 99(Cyan)
 * `.poolside_style 100(text)` .poolside_style 100(Blue)
@@ -622,7 +622,7 @@ An arrow-shaped ticket that points to the left. Styles 127 to 140:
 
 ### Poolside design 11: Candy stripe
 
-Candy stripes running diagonally behind the words. Styles 141 to 154:
+Soft candy stripes running diagonally behind the words. Styles 141 to 154:
 
 * `.poolside_style 141(text)` .poolside_style 141(Cyan)
 * `.poolside_style 142(text)` .poolside_style 142(Blue)
@@ -698,7 +698,7 @@ A white sticker with a drop shadow, turned slightly. Styles 183 to 196:
 
 ### Poolside design 15: Extrude
 
-Chunky extruded letters with a stepped shadow. Styles 197 to 210:
+Chunky extruded letters with a crisp stepped shadow. Styles 197 to 210:
 
 * `.poolside_style 197(text)` .poolside_style 197(Cyan)
 * `.poolside_style 198(text)` .poolside_style 198(Blue)
@@ -734,9 +734,9 @@ Words wrapped in square brackets of the two accent colors. Styles 211 to 224:
 * `.poolside_style 223(text)` .poolside_style 223(Frost)
 * `.poolside_style 224(text)` .poolside_style 224(Splash)
 
-### Poolside design 17: Strike line
+### Poolside design 17: Bar underline
 
-Words struck through with a thick colored line. Styles 225 to 238:
+Bold words on a thick two-color bar that runs along their foot. Styles 225 to 238:
 
 * `.poolside_style 225(text)` .poolside_style 225(Cyan)
 * `.poolside_style 226(text)` .poolside_style 226(Blue)
