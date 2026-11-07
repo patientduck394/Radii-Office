@@ -271,7 +271,7 @@
     }
     function kdRender(text) {
         const s = String(text == null ? '' : text);
-        if (!/(^|\n)[ \t]*(::(divider|pagebreak)|\|)/.test(s)) return kdInline(s);
+        if (!/(^|\n)[ \t]*(::(divider|pagebreak)|\||(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s)/.test(s)) return kdInline(s);
         const out = [];
         let buf = [], fence = false, needCss = false;
         const flush = () => { if (buf.length) { out.push(kdInline(buf.join('\n'))); buf = []; } };
@@ -280,6 +280,8 @@
             if (!fence && !/```/.test(ln)) {
                 const blk = kdBlockLine(ln);
                 if (blk) { flush(); out.push({ html: blk }); needCss = true; return; }
+                const qm = /^[ \t]*(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(ln);
+                if (qm) { flush(); out.push({ html: '<div class="blockquote-list kd-bq kd-bq-' + { '!>': 'warn', '?>': 'ask', '>>': 'pull', '%>': 'stat', '*>': 'star', '+>': 'good', '->': 'bad', '=>': 'result', '~>': 'aside', '$>': 'note', '#>': 'mono', '^>': 'tip', '@>': 'say', '&>': 'more' }[qm[1]] + '">' + kdInline(qm[2]) + '</div>' }); needCss = true; return; }
                 const ip = /^(\|+)\s*([\s\S]*)$/.exec(ln);
                 if (ip) { flush(); out.push('<span class="kd-indent" style="display:inline-block;width:' + Math.min(8, ip[1].length) * 2.5 + 'rem"></span>' + kdInline(ip[2])); return; }
             }

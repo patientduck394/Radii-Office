@@ -4128,6 +4128,41 @@
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 2px 6px rgba(234, 179, 8, 0.35);
 }
 
+/* ========================================================
+   BLOCKQUOTE STYLES: a line that starts with a symbol and ">" becomes a styled quote.
+   !> warning   ?> question   >> pull quote   %> big number   *> highlight   +> good news   -> danger
+   => result   ~> aside   $> paper note   #> terminal   ^> tip   @> speech bubble   &> read more
+   ======================================================== */
+.kd-bq { display: block; position: relative; margin: 14px 0; padding: 10px 18px; font-style: normal; line-height: 1.5; border-radius: 0 10px 10px 0; }
+.kd-bq::before, .kd-bq::after { font-style: normal; }
+.kd-bq-warn { background: linear-gradient(90deg, rgba(249, 115, 22, 0.17), rgba(249, 115, 22, 0.03)); border-left: 5px solid #f97316; color: #9a3412; padding-left: 46px; }
+.kd-bq-warn::before { content: '!'; position: absolute; left: 12px; top: 50%; margin-top: -12px; width: 24px; height: 24px; border-radius: 50%; background: #f97316; color: #fff; font: 900 15px/24px system-ui, sans-serif; text-align: center; box-shadow: 0 2px 5px rgba(249, 115, 22, 0.45); }
+.kd-bq-ask { background: linear-gradient(90deg, rgba(6, 182, 212, 0.16), rgba(6, 182, 212, 0.03)); border-left: 5px solid #06b6d4; color: #0e7490; padding-left: 46px; }
+.kd-bq-ask::before { content: '?'; position: absolute; left: 12px; top: 50%; margin-top: -12px; width: 24px; height: 24px; border-radius: 50%; background: #06b6d4; color: #fff; font: 900 15px/24px system-ui, sans-serif; text-align: center; box-shadow: 0 2px 5px rgba(6, 182, 212, 0.45); }
+.kd-bq-pull { background: none; border: 0; border-top: 2px solid #38bdf8; border-bottom: 2px solid #38bdf8; border-radius: 0; text-align: center; font-size: 1.28em; font-style: italic; font-family: Georgia, 'Times New Roman', serif; color: #0c4a6e; padding: 18px 44px; }
+.kd-bq-pull::before { content: '\201C'; position: absolute; left: 6px; top: -2px; font: 700 54px/1 Georgia, serif; color: #38bdf8; }
+.kd-bq-pull::after { content: '\201D'; position: absolute; right: 6px; bottom: -22px; font: 700 54px/1 Georgia, serif; color: #38bdf8; }
+.kd-bq-stat { background: linear-gradient(90deg, rgba(10, 108, 255, 0.14), rgba(10, 108, 255, 0)); border-left: 7px solid #0a6cff; color: #0a58d6; font-size: 1.4em; font-weight: 900; letter-spacing: -0.01em; padding: 8px 18px; }
+.kd-bq-star { background: linear-gradient(transparent 12%, rgba(250, 204, 21, 0.45) 12% 88%, transparent 88%); border-left: 0; border-radius: 6px; color: #713f12; font-weight: 700; padding: 8px 18px 8px 40px; }
+.kd-bq-star::before { content: '\2726'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 18px; color: #ca8a04; }
+.kd-bq-good { background: linear-gradient(90deg, rgba(34, 197, 94, 0.17), rgba(34, 197, 94, 0.03)); border-left: 5px solid #22c55e; color: #166534; padding-left: 46px; }
+.kd-bq-good::before { content: '\2713'; position: absolute; left: 12px; top: 50%; margin-top: -12px; width: 24px; height: 24px; border-radius: 50%; background: #22c55e; color: #fff; font: 900 14px/24px system-ui, sans-serif; text-align: center; box-shadow: 0 2px 5px rgba(34, 197, 94, 0.45); }
+.kd-bq-bad { background: linear-gradient(90deg, rgba(239, 68, 68, 0.17), rgba(239, 68, 68, 0.03)); border-left: 5px solid #ef4444; color: #991b1b; padding-left: 46px; }
+.kd-bq-bad::before { content: '\2715'; position: absolute; left: 12px; top: 50%; margin-top: -12px; width: 24px; height: 24px; border-radius: 50%; background: #ef4444; color: #fff; font: 900 13px/24px system-ui, sans-serif; text-align: center; box-shadow: 0 2px 5px rgba(239, 68, 68, 0.45); }
+.kd-bq-result { background: rgba(100, 116, 139, 0.1); border: 0; border-top: 2px dashed #64748b; border-bottom: 2px dashed #64748b; border-radius: 0; color: #334155; font-weight: 700; padding: 10px 18px 10px 44px; }
+.kd-bq-result::before { content: '\2192'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font: 900 20px/1 system-ui, sans-serif; color: #475569; }
+.kd-bq-aside { background: none; border-left: 3px dashed #94a3b8; color: #64748b; font-size: 0.92em; font-style: italic; border-radius: 0; padding: 4px 16px; }
+.kd-bq-note { background: linear-gradient(180deg, #fffdf2, #fff7d6); border: 1px solid #f3e3a1; border-left: 1px solid #f3e3a1; color: #5b4a12; border-radius: 3px; box-shadow: 2px 4px 9px rgba(120, 90, 0, 0.18); transform: rotate(-0.4deg); padding: 14px 20px 10px; font-family: 'Segoe Print', 'Comic Sans MS', cursive, system-ui; }
+.kd-bq-note::before { content: ''; position: absolute; left: 50%; top: -9px; width: 64px; height: 18px; margin-left: -32px; background: rgba(125, 211, 252, 0.6); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12); transform: rotate(-2deg); }
+.kd-bq-mono { background: #0b1220; border-left: 4px solid #22d3ee; color: #7dd3fc; border-radius: 6px; font-family: ui-monospace, 'JetBrains Mono', Menlo, monospace; font-size: 0.92em; padding: 10px 16px 10px 34px; box-shadow: inset 0 0 14px rgba(34, 211, 238, 0.12); }
+.kd-bq-mono::before { content: '$'; position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #22d3ee; font-weight: 900; }
+.kd-bq-tip { background: linear-gradient(90deg, rgba(132, 204, 22, 0.17), rgba(132, 204, 22, 0.03)); border-left: 5px solid #84cc16; color: #3f6212; padding: 10px 18px 10px 62px; }
+.kd-bq-tip::before { content: 'TIP'; position: absolute; left: 12px; top: 50%; margin-top: -10px; padding: 0 7px; height: 20px; border-radius: 999px; background: #84cc16; color: #fff; font: 900 10.5px/20px system-ui, sans-serif; letter-spacing: 0.08em; box-shadow: 0 2px 4px rgba(101, 163, 13, 0.4); }
+.kd-bq-say { background: linear-gradient(180deg, #e0f2fe, #bae6fd); color: #075985; border: 1px solid #7dd3fc; border-radius: 16px 16px 16px 2px; margin-bottom: 20px; padding: 10px 18px; box-shadow: 0 2px 6px rgba(14, 165, 233, 0.22); }
+.kd-bq-say::after { content: ''; position: absolute; left: 14px; bottom: -9px; width: 14px; height: 10px; background: #bae6fd; border: 1px solid #7dd3fc; border-top: 0; clip-path: polygon(0 0, 100% 0, 0 100%); }
+.kd-bq-more { background: linear-gradient(90deg, rgba(71, 85, 105, 0.12), rgba(71, 85, 105, 0.02)); border: 1px solid #cbd5e1; border-left: 5px solid #475569; color: #334155; padding-right: 44px; }
+.kd-bq-more::after { content: '\2192'; position: absolute; right: 16px; top: 50%; transform: translateY(-50%); font: 900 20px/1 system-ui, sans-serif; color: #475569; }
+
 .hl-2 {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 48%), rgba(244, 114, 182, 0.5);
   border: 1px solid #ec4899;

@@ -81,6 +81,8 @@
         const endQuote = () => { if (quote.length) { html.push('<blockquote style="margin:0 0 0 4px;padding-left:10px;border-left:3px solid #c8dcff;color:#44557a">' + quote.join('<br>') + '</blockquote>'); quote = []; } };
         lines.forEach((l) => {
             let m;
+            // styled quotes (!> ?> >> %> ...) go out as plain quotes
+            l = l.replace(/^(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+/, '> ');
             if ((m = /^>\s?(.*)$/.exec(l))) { endList(); quote.push(inlineHtml(m[1])); text.push('> ' + m[1]); return; }
             endQuote();
             if ((m = /^(#{1,3})\s+(.*)$/.exec(l))) { endList(); html.push('<h' + (m[1].length + 1) + ' style="margin:.6em 0 .3em">' + inlineHtml(m[2]) + '</h' + (m[1].length + 1) + '>'); text.push(m[2]); return; }

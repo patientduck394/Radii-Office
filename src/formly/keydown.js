@@ -386,6 +386,9 @@ function kdRender(raw) {
     // each | at the start of a line is one indent step (just that line's first line)!
     const ip = /^(\|+)([\s\S]*)$/.exec(text);
     if (ip) return '<span class="kd-indent" style="display:inline-block;width:' + Math.min(8, ip[1].length) * 2.5 + 'rem"></span>' + kdRender(ip[2].replace(/^\s+/, ""));
+    // !> ?> >> %> *> +> -> => ~> $> #> ^> @> &> at the start of a line make a styled quote
+    const qm = /^(\s*)(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S[\s\S]*)$/.exec(text);
+    if (qm) return qm[1] + '<span class="blockquote-list kd-bq kd-bq-' + { '!>': 'warn', '?>': 'ask', '>>': 'pull', '%>': 'stat', '*>': 'star', '+>': 'good', '->': 'bad', '=>': 'result', '~>': 'aside', '$>': 'note', '#>': 'mono', '^>': 'tip', '@>': 'say', '&>': 'more' }[qm[2]] + '">' + kdRender(qm[3]) + "</span>";
     const bm = /^::([a-z]+)(?:\{([^}]*)\})?$/.exec(trimmed);
     if (bm && KD_BLOCKS.includes(bm[1])) return kdRenderBlock(bm[1], bm[2]);
     // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!

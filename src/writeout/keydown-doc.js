@@ -410,6 +410,8 @@
                 out.push(ind(n === 4 ? '<h1 class="mega-header">' + inline(m[2], opts) + '</h1>' : '<h' + n + ' class="header-' + n + '">' + inline(m[2], opts) + '</h' + n + '>'));
                 continue;
             }
+            // !> ?> >> %> *> +> -> => ~> $> #> ^> @> &> start a styled quote (a warning, a question, a pull quote...)
+            if ((m = /^(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(t))) { out.push(ind('<blockquote class="blockquote-list kd-bq kd-bq-' + BQ_BY_SYM[m[1]] + '">' + inline(m[2], opts) + '</blockquote>')); continue; }
             if ((m = /^>\s+(\S.*)$/.exec(t))) { out.push(ind('<blockquote class="blockquote-list">' + inline(m[1], opts) + '</blockquote>')); continue; }
             if ((m = /^\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(t))) {
                 out.push('<div class="kd-footnote-def" id="fn-' + slug(m[1]) + '"><span class="kd-footnote-tag">' + esc(m[1]) + '</span> <span class="kd-footnote-text">' + inline(m[2], opts) + '</span></div>');
@@ -608,7 +610,7 @@
                 });
                 return;
             }
-            if (tag === 'BLOCKQUOTE') { push('|'.repeat(indentOf(el)) + alignOf(el) + '> ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
+            if (tag === 'BLOCKQUOTE') { push('|'.repeat(indentOf(el)) + alignOf(el) + bqSym(el) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
             if (tag === 'TABLE') {
                 flush();
                 const rows = Array.from(el.rows);
@@ -1074,7 +1076,7 @@
         // the line itself first: "# Title", "* item", "> quote", ::block{...}, $math$... becomes what it says
         let lineEl2 = null;
         const runText = nodes.map((n) => n.textContent).join('').replace(/\u200B/g, '');
-        if (/^\s*(#{1,4}\s+\S|\*\s+\S|>\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
+        if (/^\s*(#{1,4}\s+\S|\*\s+\S|>\s+\S|(?:!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
             if (block === canvas) {
                 // text sitting right in the canvas gets a line of its own first
                 const d = document.createElement('div');
@@ -1143,6 +1145,10 @@
     const KD_BLOCK_BOXES = { aqua: ['', '🌊 Aqua notes...'], emerald: ['aqua-emerald-box', '🌿 Eco logs...'], amber: ['aqua-amber-box', '☀️ Highlights...'], crimson: ['aqua-crimson-box', '🚨 Urgent tasks...'], amethyst: ['aqua-amethyst-box', '🔮 Creative drafts...'] };
     const KD_BLOCK_PANELS = { gsky: ['panel-sky', '🔹 SKY COMPONENT', 'Sky log notes...'], gemerald: ['panel-emerald', '🌿 ECO COMPONENT', 'Organic project logs...'], gamber: ['panel-amber', '☀️ AMBER MATRIX', 'Highlights...'], gcrimson: ['panel-crimson', '🚨 ALERT MANIFEST', 'Urgent warnings...'] };
     // ::divider{style} or ::divider{style|Title}: the original aqua strip and twelve more styles, each can carry a title
+    const BQ_STYLES = [['!>','warn'],['?>','ask'],['>>','pull'],['%>','stat'],['*>','star'],['+>','good'],['->','bad'],['=>','result'],['~>','aside'],['$>','note'],['#>','mono'],['^>','tip'],['@>','say'],['&>','more']];
+    const BQ_BY_SYM = {}, BQ_BY_NAME = {};
+    BQ_STYLES.forEach((q) => { BQ_BY_SYM[q[0]] = q[1]; BQ_BY_NAME[q[1]] = q[0]; });
+    const bqSym = (el) => { const c = Array.from(el.classList || []).find((k) => /^kd-bq-/.test(k)); return (c && BQ_BY_NAME[c.slice(6)]) || '>'; };
     const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'];
     const KD_DIVIDER_COLORS = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate', 'white', 'fog', 'black'];
     function kdDividerHtml(style, label, fmt, color) {
@@ -1298,7 +1304,7 @@
             const lines = listLines(ul);
             ul.replaceWith(...lines); n += lines.length;
         });
-        root.querySelectorAll('blockquote.blockquote-list').forEach((q) => { if (root.contains(q) && !isProtected(q, root)) { q.replaceWith(lineEl('> ' + kidsText(q).replace(/[\n​]+/g, ' ').trim(), q)); n++; } });
+        root.querySelectorAll('blockquote.blockquote-list').forEach((q) => { if (root.contains(q) && !isProtected(q, root)) { q.replaceWith(lineEl(bqSym(q) + ' ' + kidsText(q).replace(/[\n​]+/g, ' ').trim(), q)); n++; } });
         root.querySelectorAll('.kd-footnote-def').forEach((d) => {
             if (!root.contains(d)) return;
             const tag = d.querySelector('.kd-footnote-tag'), text = d.querySelector('.kd-footnote-text');
@@ -1428,6 +1434,7 @@
             else { const ul = document.createElement('ul'); ul.className = 'bulleted-list'; ul.appendChild(li); b.replaceWith(ul); }
             return li;
         }
+        if ((m = /^\s*(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S/.exec(text))) { const q = takeRest(make('blockquote', 'blockquote-list kd-bq kd-bq-' + BQ_BY_SYM[m[1]]), lead + 3); b.replaceWith(q); return q; }
         if (/^\s*>\s+\S/.test(text)) { const q = takeRest(make('blockquote', 'blockquote-list'), lead + 2); b.replaceWith(q); return q; }
         if ((m = /^\s*\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(text)) && !b.children.length) {
             const d = document.createElement('div');
