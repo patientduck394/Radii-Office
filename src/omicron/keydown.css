@@ -3897,3 +3897,6 @@
 .kd-div-crest.kd-div-labeled .kd-div-line { height: 12px; clip-path: none; }
 .kd-div-ticket .kd-div-line { height: 18px; background: linear-gradient(180deg, var(--kdc2, #22d3ee), var(--kdc1, #0ea5e9)); -webkit-mask: radial-gradient(circle 9px at 0 50%, transparent 8.5px, #000 9px) left / 51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, transparent 8.5px, #000 9px) right / 51% 100% no-repeat; mask: radial-gradient(circle 9px at 0 50%, transparent 8.5px, #000 9px) left / 51% 100% no-repeat, radial-gradient(circle 9px at 100% 50%, transparent 8.5px, #000 9px) right / 51% 100% no-repeat; }
 .kd-div-ticket .kd-div-line::after { content: ''; position: absolute; left: 16px; right: 16px; top: 50%; border-top: 2px dashed rgba(255, 255, 255, 0.8); }
+
+/* [##8]: the blank as a little empty box instead of a line */
+:is(#wysiwyg-canvas, .kd-doc, body) .kd-fill-box { height: 1.45em; vertical-align: -0.3em; border: 2px solid #0ea5e9; border-radius: 6px; background: rgba(14, 165, 233, 0.05); }

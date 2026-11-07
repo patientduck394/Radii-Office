@@ -2669,3 +2669,7 @@ Inline code takes a style too, like `ls -la`{terminal}, `Cmd`{key} or `x`{neon}.
 `[__8]` puts a blank to write in right inside a sentence, 8 characters wide. Leave the number out for a standard width. Add an answer after a bar, like `[__8|photosynthesis]`, and it stays hidden until you click the blank (it never prints).
 
 Plants make food by [__14|photosynthesis] using [__6] and water.
+
+`[##6]` is the same blank drawn as a small empty box instead of a line, and it takes an answer too, like `[##6|2024]`.
+
+The war ended in [##6|1945] and began in [##6].
