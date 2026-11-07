@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '4a9746349ae5';
+const VERSION = '6d79e467e774';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","258448b09a"],
@@ -306,7 +306,7 @@ const CORE = [["/","258448b09a"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","98ab9948ef"],
+  ["/opendb/data/index.json","ac51978af7"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],
@@ -339,19 +339,19 @@ const CORE = [["/","258448b09a"],
   ["/opendb/mobile/","83ef964b84"],
   ["/opendb/mobile/index.html","83ef964b84"],
   ["/opendb/style.css?v=20261210p","35b23accdc"],
-  ["/peeker/","c4953dfa78"],
+  ["/peeker/","bc105066ce"],
   ["/peeker/apple-touch-icon.png","5fa59ee1f8"],
   ["/peeker/docs-library.js?v=20261210r","3861948818"],
   ["/peeker/favicon-96.png","d9f7b4b5cd"],
   ["/peeker/icon-192.png","996e16c3cb"],
-  ["/peeker/index.html","c4953dfa78"],
+  ["/peeker/index.html","bc105066ce"],
   ["/peeker/keydown-marketplace.css?v=20261131y","c343a717cf"],
   ["/peeker/keydown.css?v=20261210x","f8d6bfe138"],
   ["/peeker/keydown.js?v=20261210x","74d1d02ee1"],
-  ["/peeker/mobile/","ababa3a33a"],
-  ["/peeker/mobile/index.html","ababa3a33a"],
-  ["/peeker/peeker.css?v=20261131y","ef8fa2c8b6"],
-  ["/peeker/peeker.js?v=20261201x","d61795b246"],
+  ["/peeker/mobile/","68485afdb0"],
+  ["/peeker/mobile/index.html","68485afdb0"],
+  ["/peeker/peeker.css?v=20261210ze","ede2e24be2"],
+  ["/peeker/peeker.js?v=20261210zd","2babfa3ef5"],
   ["/peeker/radii-file.js?v=20261208e","35211af971"],
   ["/phone-drawer.js?v=20261201k","59866f43f3"],
   ["/phosphor/","85f8ae5d0a"],

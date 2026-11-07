@@ -326,3 +326,15 @@ body.no-doc .pk-pagebar, body.no-doc #thumbs { visibility: hidden; }
 .gel-btn.fmt.on { background: var(--gel); border-color: var(--gel-edge); color: #fff; box-shadow: inset 0 2px 4px rgba(0,0,0,0.18); }
 /* Keydown chips in text marks keep the text on one line, like the rest of the mark */
 .pk-a.text .gel-bubble-chip, .pk-a.text [class*="-chip"] { white-space: nowrap; }
+
+/* Edit tool: every line of text and picture that is already in the PDF gets an outline you can click */
+.pk-ex { position: absolute; inset: 0; pointer-events: none; }
+.pk-ex-hit { position: absolute; border-radius: 2px; outline: 1px dashed rgba(255, 122, 0, 0.6); cursor: text; pointer-events: none; }
+body[data-tool="edit"] .pk-ex-hit { pointer-events: auto; }
+.pk-ex-hit:hover { background: rgba(255, 122, 0, 0.16); outline: 2px solid #ff7a00; }
+.pk-ex-hit.img { cursor: move; outline-color: rgba(29, 111, 224, 0.65); }
+.pk-ex-hit.img:hover { background: rgba(29, 111, 224, 0.14); outline-color: #1d6fe0; }
+body[data-tool="edit"] .pk-sheet { cursor: default; }
+/* the marks layer lets clicks fall through to the outlines under it, and the marks themselves still take clicks */
+.pk-annots { pointer-events: none; }
+.pk-annots .pk-a { pointer-events: auto; }

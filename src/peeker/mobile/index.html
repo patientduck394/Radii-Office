@@ -27,7 +27,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="peeker.css?v=20261131y">
+    <link rel="stylesheet" href="peeker.css?v=20261210ze">
     <!-- Keydown, the same one Antimony, Phosphor and Formly use: chips, highlights and every other style in text marks -->
     <link rel="stylesheet" href="keydown.css?v=20261210x">
     <link rel="stylesheet" href="keydown-marketplace.css?v=20261131y">
@@ -91,6 +91,8 @@
             <div class="view-seg" id="tools" role="toolbar" aria-label="Tools">
                 <button class="view-seg-btn active" data-tool="select" title="Select and move marks (V)">
                     <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3l14 8l-6 2l-2 6z" /></svg>Select</button>
+                <button class="view-seg-btn" data-tool="edit" title="Edit what is already in the PDF: click a line of text or a picture (E)">
+                    <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 20h4L19 9l-4-4L4 16zM13.5 6.5l4 4" /></svg>Edit</button>
                 <button class="view-seg-btn" data-tool="text" title="Add text (T)">
                     <svg viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 6V4h14v2M12 4v16M9 20h6" /></svg>Text</button>
                 <button class="view-seg-btn" data-tool="hl" title="Highlight an area (H)">
@@ -186,6 +188,6 @@
     <input type="file" id="file-img" accept="image/*" hidden>
     <script src="keydown.js?v=20261210x"></script>
     <script src="../bitbook/annotate-ink.js?v=20261210c"></script>
-    <script src="peeker.js?v=20261201x" defer></script>
+    <script src="peeker.js?v=20261210zd" defer></script>
 </body>
 </html>

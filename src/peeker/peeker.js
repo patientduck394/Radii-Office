@@ -380,7 +380,7 @@ function rebuild() {
         const el = document.createElement('div');
         el.className = 'pk-page' + (i === curPage ? ' current' : '');
         el.dataset.i = i;
-        el.innerHTML = '<div class="pk-sheet"><canvas></canvas><svg class="pk-ink"></svg><div class="pk-annots"></div></div><div class="pk-pnum">' + (i + 1) + '</div>';
+        el.innerHTML = '<div class="pk-sheet"><canvas></canvas><svg class="pk-ink"></svg><div class="pk-ex"></div><div class="pk-annots"></div></div><div class="pk-pnum">' + (i + 1) + '</div>';
         pagesEl.appendChild(el);
         sizePage(i);
         renderLayer(i);
@@ -388,6 +388,7 @@ function rebuild() {
     });
     buildThumbs();
     updateInfo();
+    showExisting();
 }
 function sizePage(i) {
     const pg = cur.pages[i];
@@ -457,7 +458,7 @@ function renderLayer(i) {
             html += `<div class="pk-a text${sel}" data-id="${a.id}" style="left:${a.x * z}px;top:${a.y * z}px;${textCss(a, z)}${a.rot ? `transform:rotate(${-a.rot}deg)` : ''}">${kdHtml(a.text)}</div>`;
         } else {
             const inner = a.t === 'img' ? `<img src="${a.data}" alt="">` : '';
-            const look = a.t === 'hl' ? `background:${esc(a.color)}` : a.t === 'box' ? `border:${a.size * z}px solid ${esc(a.color)}` : '';
+            const look = a.t === 'white' && a.color ? `background:${esc(a.color)}` : a.t === 'hl' ? `background:${esc(a.color)}` : a.t === 'box' ? `border:${a.size * z}px solid ${esc(a.color)}` : '';
             const rot = a.t === 'img' && a.rot ? `transform:rotate(${-a.rot}deg);transform-origin:0 0;` : '';
             html += `<div class="pk-a ${a.t}${sel}" data-id="${a.id}" style="left:${a.x * z}px;top:${a.y * z}px;width:${a.w * z}px;height:${a.h * z}px;${rot}${look}">${inner}${sel ? '<i class="pk-handle"></i>' : ''}</div>`;
         }
@@ -618,6 +619,7 @@ function setTool(t) {
     document.querySelectorAll('#tools [data-tool]').forEach((b) => b.classList.toggle('active', b.dataset.tool === t));
     if (t !== 'select') select(null);
     renderStyle();
+    showExisting();
 }
 function styleKey() {
     const a = selected();
@@ -762,10 +764,14 @@ pagesEl.addEventListener('pointerdown', (e) => {
     if (i !== curPage) { picked = new Set([i]); setCurrent(i, false); }
     const p = localPoint(pageEl, e);
     const markEl = e.target.closest('.pk-a');
-    if (tool === 'select' || (tool === 'text' && markEl && markEl.classList.contains('text'))) {
+    if (tool === 'edit' && !markEl) {
+        const hit = e.target.closest('.pk-ex-hit');
+        if (hit) { e.preventDefault(); takeExisting(i, hit.dataset.k); return; }
+    }
+    if (tool === 'select' || tool === 'edit' || (tool === 'text' && markEl && markEl.classList.contains('text'))) {
         if (!markEl) { select(null); return; }
         const id = markEl.dataset.id;
-        if (tool === 'text') { editText(i, id); e.preventDefault(); return; }
+        if (tool === 'text' || (tool === 'edit' && markEl.classList.contains('text'))) { editText(i, id); e.preventDefault(); return; }
         select(id);
         const a = selected();
         drag = { kind: e.target.classList.contains('pk-handle') ? 'resize' : 'move', i, pageEl, start: p, orig: JSON.parse(JSON.stringify(a)), a, moved: false };
@@ -878,15 +884,174 @@ function editText(i, id) {
             else undoStack.pop();
             page.annots = page.annots.filter((x) => x.id !== id);
             selId = null;
+        } else if (a.orig !== undefined && text === a.orig && a.x === a.ox && a.y === a.oy) {
+            // nothing changed: the line stays exactly as it was in the PDF
+            undoStack.pop();
+            page.annots = page.annots.filter((x) => x.id !== id && x.id !== a.cover);
+            page.ex = (page.ex || []).filter((k) => k !== a.exKey);
+            selId = null;
         } else if (text !== before) {
             if (!a.fresh) pushUndo();
             a.text = text;
         }
         delete a.fresh;
-        renderLayer(i); save(); renderStyle(); updateInfo();
+        renderLayer(i); save(); renderStyle(); updateInfo(); showExisting();
     };
     el.addEventListener('blur', finish);
     el.addEventListener('keydown', (ev) => { if (ev.key === 'Escape') { ev.preventDefault(); el.blur(); } ev.stopPropagation(); });
+}
+
+/* ---------- Edit what is already in the PDF ---------- */
+// The Edit tool outlines every line of text and every picture that is already on the page. Click one and it becomes a mark you can
+// change: a cover in the paper's color goes over the original, and a text mark (same size, font and color) or a picture takes its place.
+// A page's text, read piece by piece (older browsers cannot loop over pdf.js's streams, so this reads the stream by hand)
+async function textContentOf(page) {
+    const reader = page.streamTextContent().getReader();
+    const items = [], styles = {};
+    for (;;) {
+        const r = await reader.read();
+        if (r.done) break;
+        for (const it of r.value.items) items.push(it);
+        Object.assign(styles, r.value.styles);
+    }
+    return { items, styles };
+}
+const exCache = new Map();
+function existingOf(pg) {
+    if (pg.sid === 'blank' || !bytes[pg.sid]) return Promise.resolve([]);
+    const key = pg.sid + '|' + pg.index;
+    if (!exCache.has(key)) exCache.set(key, (async () => {
+        const lib = await loadPdfjs();
+        const doc = await getPdf(pg.sid);
+        const page = await doc.getPage(pg.index + 1);
+        const vp = page.getViewport({ scale: 1, rotation: 0 });
+        const out = [];
+        // lines of text: pieces on the same baseline that sit side by side belong together
+        let tc;
+        try { tc = await textContentOf(page); } catch (e) { console.warn('Peeker: reading the text failed', e); tc = { items: [], styles: {} }; }
+        const runs = [];
+        tc.items.forEach((it) => {
+            if (!it.str) return;
+            const tr = lib.Util.transform(vp.transform, it.transform);
+            const size = Math.hypot(tr[0], tr[1]);
+            if (size < 3 || Math.abs(tr[1]) > size * 0.15 || Math.abs(tr[2]) > size * 0.6) return;   // straight text only
+            runs.push({ str: it.str, x: tr[4], base: tr[5], size, w: Math.max(0, it.width), font: it.fontName });
+        });
+        runs.sort((a, b) => Math.round(a.base) - Math.round(b.base) || a.x - b.x);
+        const lines = [];
+        let ln = null;
+        runs.forEach((r) => {
+            if (ln && Math.abs(r.base - ln.base) < ln.size * 0.3 && r.x - ln.end < ln.size * 1.5 && r.x - ln.end > -ln.size) {
+                const gap = r.x - ln.end;
+                ln.text += (gap > ln.size * 0.18 && !/\s$/.test(ln.text) && !/^\s/.test(r.str) ? ' ' : '') + r.str;
+                ln.end = Math.max(ln.end, r.x + r.w);
+            } else { ln = { text: r.str, x: r.x, base: r.base, size: r.size, end: r.x + r.w, font: r.font }; lines.push(ln); }
+        });
+        lines.forEach((l, n) => {
+            const text = l.text.replace(/\s+$/, '');
+            if (!text.trim()) return;
+            let name = '';
+            try { const fo = page.commonObjs.has(l.font) ? page.commonObjs.get(l.font) : null; name = (fo && fo.name) || ''; } catch (e) { /* the font is not loaded yet */ }
+            const fam = (tc.styles[l.font] && tc.styles[l.font].fontFamily) || '';
+            const font = /mono|courier|consol|menlo/i.test(name) || fam === 'monospace' ? 'mono' : /times|serif|georgia|garamond|minion|roman|palatino|book/i.test(name) && !/sans/i.test(name) || fam === 'serif' ? 'serif' : 'sans';
+            out.push({ key: 't' + n, kind: 'text', text, x: l.x, base: l.base, size: l.size, y: l.base - l.size * 0.92, w: Math.max(4, l.end - l.x), h: l.size * 1.2, font, bold: /bold|black|heavy|semibold|demi/i.test(name), italic: /italic|oblique/i.test(name) });
+        });
+        // pictures: where the page paints an image, found by following the page's drawing steps
+        let ol;
+        try { ol = await page.getOperatorList(); } catch (e) { console.warn('Peeker: getOperatorList failed', e && e.stack || e); return out; }
+        const O = lib.OPS;
+        const isImg = new Set([O.paintImageXObject, O.paintInlineImageXObject, O.paintImageMaskXObject, O.paintJpegXObject].filter((v) => v !== undefined));
+        let ctm = [1, 0, 0, 1, 0, 0];
+        const stack = [];
+        let n = 0;
+        for (let k = 0; k < ol.fnArray.length; k++) {
+            const fn = ol.fnArray[k], args = ol.argsArray[k];
+            if (fn === O.save) stack.push(ctm.slice());
+            else if (fn === O.restore) { if (stack.length) ctm = stack.pop(); }
+            else if (fn === O.transform) ctm = lib.Util.transform(ctm, args);
+            else if (fn === O.paintFormXObjectBegin) { stack.push(ctm.slice()); if (args && args[0]) ctm = lib.Util.transform(ctm, args[0]); }
+            else if (fn === O.paintFormXObjectEnd) { if (stack.length) ctm = stack.pop(); }
+            else if (isImg.has(fn)) {
+                const m = lib.Util.transform(vp.transform, ctm);
+                const pts = [[0, 0], [1, 0], [0, 1], [1, 1]].map((p) => [m[0] * p[0] + m[2] * p[1] + m[4], m[1] * p[0] + m[3] * p[1] + m[5]]);
+                const x0 = Math.min(...pts.map((p) => p[0])), x1 = Math.max(...pts.map((p) => p[0]));
+                const y0 = Math.min(...pts.map((p) => p[1])), y1 = Math.max(...pts.map((p) => p[1]));
+                const w = x1 - x0, h = y1 - y0;
+                if (w < 6 || h < 6 || (w * h) > vp.width * vp.height * 0.9) continue;
+                out.push({ key: 'i' + (n++), kind: 'img', x: x0, y: y0, w, h });
+            }
+        }
+        return out;
+    })().catch((e) => { exCache.delete(key); console.warn('Peeker could not read the page for editing:', e); return []; }));
+    return exCache.get(key);
+}
+let exToken = 0;
+async function showExisting() {
+    const tok = ++exToken;
+    if (!cur) return;
+    for (let i = 0; i < cur.pages.length; i++) {
+        const box = pagesEl.children[i] && pagesEl.children[i].querySelector('.pk-ex');
+        if (!box) continue;
+        if (tool !== 'edit') { box.innerHTML = ''; continue; }
+        const pg = cur.pages[i];
+        const items = await existingOf(pg);
+        if (tok !== exToken || tool !== 'edit') return;
+        const used = pg.ex || [];
+        box.innerHTML = items.filter((it) => !used.includes(it.key)).map((it) =>
+            `<div class="pk-ex-hit ${it.kind}" data-k="${it.key}" title="${it.kind === 'text' ? 'Click to edit this text' : 'Click to move, resize or delete this picture'}" style="left:${it.x * zoom - 1}px;top:${it.y * zoom - 1}px;width:${it.w * zoom + 2}px;height:${it.h * zoom + 2}px"></div>`).join('');
+    }
+}
+// The paper color around a spot (the edge of its box) and the ink color inside it (the pixel that differs most)
+function sampleColors(canvas, px, it) {
+    const c = canvas.getContext('2d');
+    const x0 = Math.max(0, Math.floor((it.x - 3) * px)), y0 = Math.max(0, Math.floor((it.y - 3) * px));
+    const x1 = Math.min(canvas.width, Math.ceil((it.x + it.w + 3) * px)), y1 = Math.min(canvas.height, Math.ceil((it.y + it.h + 3) * px));
+    const w = x1 - x0, h = y1 - y0;
+    if (w < 2 || h < 2) return { bg: '#ffffff', fg: '#111111' };
+    const d = c.getImageData(x0, y0, w, h).data;
+    const at = (x, y) => { const o = (y * w + x) * 4; return [d[o], d[o + 1], d[o + 2]]; };
+    const edge = [];
+    for (let x = 0; x < w; x++) { edge.push(at(x, 0), at(x, h - 1)); }
+    for (let y = 0; y < h; y++) { edge.push(at(0, y), at(w - 1, y)); }
+    const med = (k) => edge.map((p) => p[k]).sort((a, b) => a - b)[edge.length >> 1];
+    const bg = [med(0), med(1), med(2)];
+    let best = null, bd = -1;
+    for (let y = 1; y < h - 1; y++) for (let x = 1; x < w - 1; x++) {
+        const p = at(x, y), dist = Math.abs(p[0] - bg[0]) + Math.abs(p[1] - bg[1]) + Math.abs(p[2] - bg[2]);
+        if (dist > bd) { bd = dist; best = p; }
+    }
+    const hx = (p) => '#' + p.map((v) => v.toString(16).padStart(2, '0')).join('');
+    return { bg: hx(bg), fg: bd > 60 && best ? hx(best) : '#111111' };
+}
+async function takeExisting(i, key) {
+    const pg = cur.pages[i];
+    const it = (await existingOf(pg)).find((x) => x.key === key);
+    if (!it || (pg.ex || []).includes(key)) return;
+    await renderPage(i);
+    const canvas = pagesEl.children[i].querySelector('canvas');
+    const px = canvas.width / pg.w;
+    const col = sampleColors(canvas, px, it);
+    pushUndo();
+    (pg.ex = pg.ex || []).push(key);
+    const cover = { id: uid(), t: 'white', x: it.x - 1, y: it.y - 1, w: it.w + 2, h: it.h + 2, color: col.bg };
+    pg.annots.push(cover);
+    if (it.kind === 'text') {
+        const a = { id: uid(), t: 'text', x: it.x, y: it.base - it.size * 0.94, size: +it.size.toFixed(1), color: col.fg, font: it.font, bold: it.bold, italic: it.italic, underline: false, strike: false, text: it.text, rot: 0, orig: it.text, cover: cover.id, exKey: key };
+        a.ox = a.x; a.oy = a.y;
+        pg.annots.push(a);
+        renderLayer(i);
+        editText(i, a.id);
+    } else {
+        const c = document.createElement('canvas');
+        c.width = Math.max(1, Math.round(it.w * px)); c.height = Math.max(1, Math.round(it.h * px));
+        c.getContext('2d').drawImage(canvas, it.x * px, it.y * px, it.w * px, it.h * px, 0, 0, c.width, c.height);
+        const a = { id: uid(), t: 'img', data: c.toDataURL('image/png'), rot: 0, x: it.x, y: it.y, w: it.w, h: it.h, cover: cover.id };
+        pg.annots.push(a);
+        selId = a.id;
+        renderLayer(i); save(); updateInfo(); renderStyle();
+        toast('Picture ready! Drag it, pull the dot to resize, or press Delete to remove it!');
+    }
+    showExisting();
 }
 
 /* ---------- Pictures + signatures ---------- */
@@ -987,7 +1152,7 @@ async function pageText(pg) {
     const key = pg.sid + ':' + pg.index;
     if (!textCache.has(key)) {
         const doc = await getPdf(pg.sid);
-        const tc = await (await doc.getPage(pg.index + 1)).getTextContent();
+        const tc = await textContentOf(await doc.getPage(pg.index + 1));
         textCache.set(key, tc.items.map((it) => it.str + (it.hasEOL ? '\n' : '')).join('').replace(/\s+/g, ' '));
     }
     return textCache.get(key);
@@ -1371,7 +1536,7 @@ async function buildPdf(indices) {
         const X = (x) => cb.x + x, Y = (y) => cb.y + cb.height - y;
         for (const a of pg.annots) {
             if (a.t === 'hl') page.drawRectangle({ x: X(a.x), y: Y(a.y + a.h), width: a.w, height: a.h, color: hex(lib, a.color), opacity: 0.42, blendMode: BlendMode.Multiply });
-            else if (a.t === 'white') page.drawRectangle({ x: X(a.x), y: Y(a.y + a.h), width: a.w, height: a.h, color: lib.rgb(1, 1, 1) });
+            else if (a.t === 'white') page.drawRectangle({ x: X(a.x), y: Y(a.y + a.h), width: a.w, height: a.h, color: a.color ? hex(lib, a.color) : lib.rgb(1, 1, 1) });
             else if (a.t === 'box') page.drawRectangle({ x: X(a.x + a.size / 2), y: Y(a.y + a.h - a.size / 2), width: Math.max(0, a.w - a.size), height: Math.max(0, a.h - a.size), borderColor: hex(lib, a.color), borderWidth: a.size });
             else if (a.t === 'ink' && a.pts.length && a.kind && AI) {
                 const pic = await rasterInk(a);
@@ -1507,7 +1672,7 @@ document.addEventListener('keydown', (e) => {
     if (mod) return;
     if ((e.key === 'Delete' || e.key === 'Backspace') && selId) { e.preventDefault(); deleteSelected(); return; }
     if (e.key === 'Escape') { if (!$('sign-modal').hidden) $('sign-modal').hidden = true; else if (selId) select(null); else closePanel(); return; }
-    const keys = { v: 'select', t: 'text', h: 'hl', d: 'ink', b: 'box', w: 'white' };
+    const keys = { v: 'select', e: 'edit', t: 'text', h: 'hl', d: 'ink', b: 'box', w: 'white' };
     if (keys[e.key.toLowerCase()] && cur) { setTool(keys[e.key.toLowerCase()]); return; }
     if (cur && (e.key === 'PageDown' || e.key === 'PageUp') && !e.altKey) { e.preventDefault(); setCurrent(curPage + (e.key === 'PageDown' ? 1 : -1), true); }
 });
