@@ -1471,6 +1471,18 @@ function firefoxSafe(root) {
         n.style.backgroundSize = outSizes.join(', ');
     }
 }
+// Chips like the Rim family fade through colors the browser writes as color(srgb r g b / alpha). Snapshots in some browsers cannot read that
+// form, so the fill (a whole gradient!) went missing: every such color on the throwaway copy is written as plain rgba() first
+function srgbSafe(root) {
+    for (const n of [root, ...root.querySelectorAll('*')]) {
+        const cs = getComputedStyle(n);
+        if (/color\(srgb/.test(cs.backgroundImage)) n.style.backgroundImage = toRgba(cs.backgroundImage);
+        if (/color\(srgb/.test(cs.boxShadow)) n.style.boxShadow = toRgba(cs.boxShadow);
+        if (/color\(srgb/.test(cs.textShadow)) n.style.textShadow = toRgba(cs.textShadow);
+        if (/color\(srgb/.test(cs.color)) n.style.color = toRgba(cs.color);
+        ['Top', 'Right', 'Bottom', 'Left'].forEach((side) => { const v = cs['border' + side + 'Color']; if (/color\(srgb/.test(v)) n.style['border' + side + 'Color'] = toRgba(v); });
+    }
+}
 async function rasterText(a) {
     const h2i = await loadH2i();
     const host = document.createElement('div');
@@ -1488,6 +1500,7 @@ async function rasterText(a) {
         if (document.fonts && document.fonts.ready) await document.fonts.ready;
         const opts = { pixelRatio: 4, skipFonts: true, width: host.offsetWidth, height: host.offsetHeight };
         // WebKit loads the pictures inside a snapshot only after the first one is drawn, so it draws twice
+        srgbSafe(host);
         if (WEBKIT) { await webkitSafe(host); await h2i.toPng(host, opts); }
         if (FIREFOX) firefoxSafe(host);
         const png = await h2i.toPng(host, opts);

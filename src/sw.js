@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'da8ddb36eb1e';
+const VERSION = '83b761030fba';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","258448b09a"],
@@ -286,7 +286,7 @@ const CORE = [["/","258448b09a"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
   ["/opendb/data/entries/water-cycle.kd","d0587215c0"],
   ["/opendb/data/entries/zonerider-pool-toys.kd","d124eb2875"],
-  ["/opendb/data/index.json","6534b29412"],
+  ["/opendb/data/index.json","48d0e6c944"],
   ["/opendb/data/media/aero-bubbles.svg","b0f3dc08f3"],
   ["/opendb/data/media/gel-arrow-circle.png","1a2515aff1"],
   ["/opendb/data/media/gel-arrow-cyan.png","be58d208aa"],
@@ -319,18 +319,18 @@ const CORE = [["/","258448b09a"],
   ["/opendb/mobile/","88473189d8"],
   ["/opendb/mobile/index.html","88473189d8"],
   ["/opendb/style.css?v=20261210p","35b23accdc"],
-  ["/peeker/","d3d81807a2"],
+  ["/peeker/","be21420d6c"],
   ["/peeker/apple-touch-icon.png","5fa59ee1f8"],
   ["/peeker/favicon-96.png","d9f7b4b5cd"],
   ["/peeker/icon-192.png","996e16c3cb"],
-  ["/peeker/index.html","d3d81807a2"],
+  ["/peeker/index.html","be21420d6c"],
   ["/peeker/keydown-marketplace.css?v=20261131y","c343a717cf"],
   ["/peeker/keydown.css?v=20261210zi","482f180df9"],
   ["/peeker/keydown.js?v=20261210x","74d1d02ee1"],
-  ["/peeker/mobile/","76a1655992"],
-  ["/peeker/mobile/index.html","76a1655992"],
+  ["/peeker/mobile/","bd71feb8a0"],
+  ["/peeker/mobile/index.html","bd71feb8a0"],
   ["/peeker/peeker.css?v=20261210ze","ede2e24be2"],
-  ["/peeker/peeker.js?v=20261210zd","2babfa3ef5"],
+  ["/peeker/peeker.js?v=20261210zk","63a9a82c01"],
   ["/phone-drawer.js?v=20261201k","59866f43f3"],
   ["/phosphor/","0991d5ec23"],
   ["/phosphor/apple-touch-icon.png","fee49162de"],
