@@ -122,7 +122,7 @@
             const d = r.docs[id], cur = id === RF.id;
             const row = document.createElement('div');
             row.className = 'rd-row' + (cur ? ' rd-cur' : '');
-            row.innerHTML = '<span class="rd-ico">' + OS.ico('file') + '</span>'
+            row.innerHTML = (b.classList.contains('rd-embed') ? '<img class="rd-fav" src="favicon-96.png" alt="">' : '<span class="rd-ico">' + OS.ico('file') + '</span>')
                 + '<div class="rd-main"><input class="rd-name" readonly title="Double-click to rename" spellcheck="false" aria-label="Document name" value="' + esc(nameOf(r, id)) + '"><span class="rd-meta">' + (cur ? '<b class="rd-badge">Open now</b> ' : '') + 'Edited ' + esc(when(d.modified)) + ' · ' + esc(kb(RF.size(id))) + '</span></div>'
                 + '<div class="rd-act">'
                 + (cur ? '' : '<button type="button" class="rd-open">Open</button>')
