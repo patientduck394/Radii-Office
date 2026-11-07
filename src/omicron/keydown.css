@@ -3939,3 +3939,7 @@
   .kd-div-notched, .kd-div-dotted .kd-div-line, .kd-div-stitched .kd-div-line { filter: none !important; }
   .kd-div-ticket .kd-div-line { -webkit-mask: none; mask: none; clip-path: polygon(0 0, 100% 0, calc(100% - 0.0px) 0.0px, calc(100% - 3.4px) 0.7px, calc(100% - 6.4px) 2.6px, calc(100% - 8.3px) 5.6px, calc(100% - 9.0px) 9.0px, calc(100% - 8.3px) 12.4px, calc(100% - 6.4px) 15.4px, calc(100% - 3.4px) 17.3px, calc(100% - 0.0px) 18.0px, 100% 18px, 0 18px, 0.0px 18.0px, 3.4px 17.3px, 6.4px 15.4px, 8.3px 12.4px, 9.0px 9.0px, 8.3px 5.6px, 6.4px 2.6px, 3.4px 0.7px, 0.0px 0.0px); }
 } }
+
+/* AERO CHIP ALIGNMENT: the Aero chips (bubble, glass, orb, glow, ring and the plain Aero pill) sit on the text baseline. With "middle" their middle
+   sat about 0.07em lower than the middle of the letters and brackets beside them, which showed most on chips holding math like (Z) and (H) */
+.gel-aero-chip, .gel-aeroglass-chip, .gel-aeroorb-chip, .gel-aeroglow-chip, .gel-aeroring-chip, .gel-aerobubble-chip { vertical-align: baseline; }
