@@ -26,7 +26,8 @@
         wide: { label: 'Wide', hint: '1" top/bottom, 2" sides', t: 96, b: 96, s: 192 },
         writeout: { label: 'Writeout', hint: 'The original snug 30px padding', t: 30, b: 30, s: 30 }
     };
-    const GAP = 28;
+    let GAP = 28, printing = false, previewing = false;   // printing and Print Preview lay the pages edge to edge, at their real size
+    function printLayout() { return printing || previewing; }
 
     function save() { try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {} }
 
@@ -476,7 +477,7 @@
     }
 
     function office() { return document.body.classList.contains('os-office'); }
-    function pagesOn() { return office() && prefs.pages; }
+    function pagesOn() { return office() && (prefs.pages || printLayout()); }
 
     function ensureWrap() {
         if (zoomer) return;
@@ -509,7 +510,8 @@
         ensureWrap();
         const on = office();
         document.body.classList.toggle('wo-pages', pagesOn());
-        document.body.classList.toggle('wo-web', on && !prefs.pages);
+        document.body.classList.toggle('wo-web', on && !pagesOn());
+        document.body.classList.toggle('wo-preview', previewing);
         document.body.classList.toggle('wo-nav-off', !prefs.nav);
         document.body.classList.toggle('wo-pane-on', !!prefs.pane);
         document.body.classList.toggle('wo-focus', on && !!prefs.focus);
@@ -523,7 +525,8 @@
         st.setProperty('--wo-mt', m.t + 'px');
         st.setProperty('--wo-mb', m.b + 'px');
         st.setProperty('--wo-ms', m.s + 'px');
-        st.zoom = on ? String(prefs.zoom) : '';
+        st.zoom = on ? String(printLayout() ? 1 : prefs.zoom) : '';
+        st.setProperty('--wo-print-fs', getComputedStyle(ed).fontSize);
         captureSheetBg();
         paginate();
         OS.sync();
@@ -586,9 +589,10 @@
         // Bare text right inside the canvas still counts toward the height!
         const contentH = Math.max(lastBottom, (ed.scrollHeight || 0) - m.b - 2);
         pageCount = Math.max(1, Math.floor((contentH - 1) / P) + 1);
-        const total = pageCount * P - GAP;
+        const total = pageCount * P - GAP - (printLayout() ? 1 : 0);
         zoomer.style.setProperty('--wo-total-h', total + 'px');
-        if (sheets.children.length !== pageCount) {
+        if (sheets.children.length !== pageCount || sheets._pitch !== P) {
+            sheets._pitch = P;
             let html = '';
             for (let i = 0; i < pageCount; i++) html += '<div class="wo-sheet" style="top:' + (i * P) + 'px"><span class="wo-pnum">' + (i + 1) + '</span></div>';
             sheets.innerHTML = html;
@@ -967,6 +971,7 @@
                 ] },
                 { label: 'Pages', items: [
                     { big: true, icon: 'pages', label: 'Pages\nView', title: 'Show the document as separate pages, like Word\'s Print Layout!', run: function () { setPagesView(!prefs.pages); }, checked: function () { return prefs.pages; } },
+                    { big: true, icon: 'print', label: 'Print\nPreview', title: 'See the pages at the real size they will print: Letter paper, 100%, with every page margin!', run: function () { setPreview(!previewing); }, checked: function () { return previewing; } },
                     { stack: [
                         { check: true, label: 'Page Numbers', get: function () { return prefs.numbers; }, set: function (v) { prefs.numbers = v; savePrefs(); applyView(); } }
                     ] }
@@ -1184,9 +1189,18 @@
     // Page tabs re-render the canvas: re-paginate after every switch!
     const tabsList = document.getElementById('doc-tabs-list');
     if (tabsList) tabsList.addEventListener('click', function () { setTimeout(paginateSoon, 30); });
-    // Printing never carries the on-screen page-break spacing!
-    window.addEventListener('beforeprint', function () { if (ruleStyle) ruleStyle.disabled = true; });
-    window.addEventListener('afterprint', function () { if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
+    // Printing lays the pages out edge to edge at their real size (the same math as the screen, with no gap between sheets),
+    // so every printed page gets the page margins, not only the first one!
+    function printPageSize(on) {
+        let st = document.getElementById('wo-print-page');
+        if (!st) { st = document.createElement('style'); st.id = 'wo-print-page'; document.head.appendChild(st); }
+        const d = pageDims();
+        st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: 0; } }' : '';
+    }
+    window.addEventListener('beforeprint', function () { if (printing) return; printing = true; GAP = 0; printPageSize(true); applyView(); });
+    window.addEventListener('afterprint', function () { if (!printing) return; printing = false; GAP = previewing ? 0 : 28; printPageSize(false); applyView(); });
+    // Print Preview: the pages exactly as they will print (real paper size, 100%, no gaps)
+    function setPreview(on) { previewing = !!on; GAP = (previewing || printing) ? 0 : 28; applyView(); OS.toast(previewing ? 'Print Preview: the pages at their real printed size!' : 'Print Preview off!'); }
     applyView();
-    window.WriteoutWord = { paginate: paginate, applyView: applyView, prefs: prefs, pageCount: function () { return pageCount; } };
+    window.WriteoutWord = { setPreview: setPreview, paginate: paginate, applyView: applyView, prefs: prefs, pageCount: function () { return pageCount; } };
 })();

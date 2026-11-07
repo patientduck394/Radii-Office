@@ -212,11 +212,19 @@ body.os-dark .wo-gp-p { color: #e5e5e5; }
 
 @media print {
     body.os-office { display: block !important; height: auto; background: #fff; }
-    body.os-office #wo-zoomer { display: block; margin: 0; width: auto; zoom: 1 !important; }
+    body.os-office #wo-zoomer { display: block; margin: 0 !important; width: var(--wo-pw) !important; zoom: 1 !important; height: auto !important; }
     body.os-office #wo-sheets { display: none !important; }
-    body.os-office.wo-pages #wysiwyg-canvas, body.os-office.wo-web #wysiwyg-canvas { padding: 0 !important; width: 100% !important; box-shadow: none !important; min-height: 0 !important; height: auto !important; }
-    body.os-office #wo-zoomer { height: auto !important; min-height: 0 !important; }
-    #wo-page-rules { display: none; }
+    body.os-office .workspace-viewport-wrapper, body.os-office .canvas-scrollbox { padding: 0 !important; margin: 0 !important; }
+    body.os-office.wo-pages #wysiwyg-canvas {
+        width: var(--wo-pw) !important; max-width: none !important; margin: 0 !important;
+        padding: var(--wo-mt) var(--wo-ms) var(--wo-mb) !important;
+        font-size: var(--wo-print-fs, 16px) !important; min-height: var(--wo-total-h, var(--wo-ph)) !important; height: auto !important;
+        box-shadow: none !important; background: #fff !important;
+    }
+}
+/* Print Preview: the sheets sit edge to edge at their real size, with a thin line where each page ends */
+body.wo-preview .wo-sheet { border-radius: 0; border-bottom: 1px solid #94a3b8; }
+body.wo-preview #wo-zoomer { margin-top: 16px; }
 }
 
 /* Phone mode: Mobile View, like Word's: the text fills the screen instead of a full paper page,

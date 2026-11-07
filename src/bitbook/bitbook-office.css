@@ -300,10 +300,19 @@ body.os-office.bb-pages #wysiwyg-canvas {
     flex: none !important;
 }
 @media print {
-    body.os-office #bb-zoomer { display: block; margin: 0; width: auto; zoom: 1 !important; }
+    body.os-office #bb-zoomer { display: block; margin: 0 !important; width: var(--bb-pw) !important; zoom: 1 !important; height: auto !important; }
     body.os-office #bb-sheets { display: none !important; }
-    body.os-office.bb-pages #wysiwyg-canvas { padding: 0 !important; width: 100% !important; box-shadow: none !important; }
-    #bb-page-rules { display: none; }
+    body.os-office .workspace-viewport-wrapper, body.os-office .canvas-scrollbox { padding: 0 !important; margin: 0 !important; zoom: 1 !important; }
+    body.os-office.bb-pages #wysiwyg-canvas {
+        width: var(--bb-pw) !important; max-width: none !important; margin: 0 !important;
+        padding: var(--bb-mt) var(--bb-ms) var(--bb-mb) !important;
+        font-size: var(--bb-print-fs, 16px) !important; min-height: var(--bb-total-h, var(--bb-ph)) !important; height: auto !important;
+        box-shadow: none !important; background: #fff !important;
+    }
+}
+/* Print Preview: the sheets sit edge to edge at their real size, with a thin line where each page ends */
+body.bb-preview .bb-sheet { border-radius: 0; border-bottom: 1px solid #94a3b8; }
+body.bb-preview #bb-zoomer { margin-top: 16px; }
 }
 /* Phone mode: the text fills the screen instead of paper pages (Print Layout comes back on a bigger screen) */
 body.os-office.os-phone.bb-pages #bb-zoomer { width: 100% !important; margin: 10px 0 28px; }

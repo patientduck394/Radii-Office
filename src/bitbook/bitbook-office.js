@@ -461,7 +461,8 @@
         document.body.classList.toggle('bb-pane-on', !!prefs.pane);
         document.body.classList.toggle('bb-full', on && !!prefs.full);
         const scb = document.querySelector('.canvas-scrollbox');
-        if (scb) scb.style.zoom = on && prefs.zoom !== 1 ? String(prefs.zoom) : '';
+        if (scb) scb.style.zoom = on && prefs.zoom !== 1 && !printLayout() ? String(prefs.zoom) : '';
+        document.body.classList.toggle('bb-preview', previewing);
         renderHead();
         applyPage();
         applyPagesView();
@@ -486,7 +487,8 @@
         wide: { label: 'Wide', hint: '1" top/bottom, 2" sides', t: 96, b: 96, s: 192 },
         bitbook: { label: 'Bitbook', hint: 'The snug OneNote padding', t: 30, b: 30, s: 48 }
     };
-    const GAP = 28;
+    let GAP = 28, printing = false, previewing = false;   // printing and Print Preview lay the pages edge to edge, at their real size
+    function printLayout() { return printing || previewing; }
     let zoomer = null, pagebox = null, sheets = null, ruleStyle = null, pageCount = 1, sheetBg = '#ffffff';
 
     function pageDims() {
@@ -499,7 +501,7 @@
         }
         return { w: w, h: h };
     }
-    function pagesOn() { return office() && prefs.pages && !prefs.full; }
+    function pagesOn() { return office() && (prefs.pages || printLayout()) && !prefs.full; }
 
     function ensureWrap() {
         if (zoomer) return;
@@ -544,6 +546,7 @@
         st.setProperty('--bb-mt', m.t + 'px');
         st.setProperty('--bb-mb', m.b + 'px');
         st.setProperty('--bb-ms', m.s + 'px');
+        st.setProperty('--bb-print-fs', getComputedStyle(ed).fontSize);
         captureSheetBg();
         paginate();
     }
@@ -603,8 +606,9 @@
         }
         const contentH = Math.max(lastBottom, (ed.scrollHeight || 0) - m.b - 2);
         pageCount = Math.max(1, Math.floor((contentH - 1) / P) + 1);
-        zoomer.style.setProperty('--bb-total-h', (pageCount * P - GAP) + 'px');
-        if (sheets.children.length !== pageCount) {
+        zoomer.style.setProperty('--bb-total-h', (pageCount * P - GAP - (printLayout() ? 1 : 0)) + 'px');
+        if (sheets.children.length !== pageCount || sheets._pitch !== P) {
+            sheets._pitch = P;
             let html = '';
             for (let i = 0; i < pageCount; i++) html += '<div class="bb-sheet" style="top:' + (i * P) + 'px"><span class="bb-pnum">' + (i + 1) + '</span></div>';
             sheets.innerHTML = html;
@@ -917,6 +921,7 @@
                 ] },
                 { label: 'Views', items: [
                     { big: true, icon: 'pages', label: 'Pages\nView', title: 'Show the note as separate pages, like Word\'s Print Layout!', run: function () { setPagesView(!prefs.pages); }, checked: function () { return prefs.pages; } },
+                    { big: true, icon: 'print', label: 'Print\nPreview', title: 'See the pages at the real size they will print: Letter paper, 100%, with every page margin!', run: function () { setPreview(!previewing); }, checked: function () { return previewing; } },
                     { big: true, icon: 'fullscreen', label: 'Full Page\nView', title: 'Just the page (Esc to exit)!', run: function () { setFull(true); } }
                 ] },
                 { label: 'Page Layout', items: [
@@ -1038,7 +1043,19 @@
     new MutationObserver(function () { setTimeout(function () { captureSheetBg(); paginateSoon(); }, 30); }).observe(ed, { attributes: true, attributeFilter: ['class', 'style'] });
     ed.addEventListener('load', paginateSoon, true);
     window.addEventListener('resize', paginateSoon);
-    window.addEventListener('afterprint', paginateSoon);
+    // Printing lays the pages out edge to edge at their real size (the same math as the screen, with no gap between sheets),
+    // so every printed page gets the page margins, not only the first one!
+    function printPageSize(on) {
+        let st = document.getElementById('bb-print-page');
+        if (!st) { st = document.createElement('style'); st.id = 'bb-print-page'; document.head.appendChild(st); }
+        const d = pageDims();
+        st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: 0; } }' : '';
+    }
+    window.addEventListener('beforeprint', function () { if (printing) return; printing = true; GAP = 0; printPageSize(true); applyView(); });
+    window.addEventListener('afterprint', function () { if (!printing) return; printing = false; GAP = previewing ? 0 : 28; printPageSize(false); applyView(); });
+    // Print Preview: the pages exactly as they will print (real paper size, 100%, no gaps)
+    function setPreview(on) { previewing = !!on; GAP = (previewing || printing) ? 0 : 28; applyView(); OS.toast(previewing ? 'Print Preview: the pages at their real printed size!' : 'Print Preview off!'); }
+    window.BitbookPreview = { set: setPreview };
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(paginateSoon);
     const pagesAdd = document.getElementById('pages-add-btn');
     if (pagesAdd) pagesAdd.addEventListener('click', function () { newPage(); });
