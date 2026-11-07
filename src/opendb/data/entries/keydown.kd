@@ -2660,3 +2660,8 @@ Inline code takes a style too, like `ls -la`{terminal}, `Cmd`{key} or `x`{neon}.
 ::blank{dots|3}
 
 ::blank{dashed|3|Sketch it here}
+
+### Blanks inside a sentence
+`[__8]` puts a blank to write in right inside a sentence, 8 characters wide. Leave the number out for a standard width. Add an answer after a bar, like `[__8|photosynthesis]`, and it stays hidden until you click the blank (it never prints).
+
+Plants make food by [__14|photosynthesis] using [__6] and water.

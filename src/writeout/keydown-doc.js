@@ -272,6 +272,8 @@
         s = atTables(s, opts, stash);
         // `code` is taken literally, so nothing inside it turns into links, math or chips
         s = s.replace(/`([^`\n]+)`(?:\{(terminal|dark|paper|blueprint|neon|ember|gel|key)\})?/g, (_, t, st) => stash(st ? '<code class="kd-ic kd-ic-' + st + '">' + esc(t) + '</code>' : '<code>' + esc(t) + '</code>'));
+        // [__8] is a blank to write in (8 characters wide); [__8|answer] hides the answer until it is clicked (width and answer are optional)
+        s = s.replace(/\[__(\d{1,2})?(?:\|([^\]\n]*))?\]/g, (_, w, ans) => stash('<span class="kd-fill" data-w="' + (w || 6) + '"' + (ans ? ' data-answer="' + esc(ans) + '"' : '') + ' style="--w:' + (w || 6) + '" contenteditable="false"></span>'));
         // {{templates}} and Keydown Next's {{live values}} before math, so a "$" inside them stays a "$"
         s = s.replace(/\{\{([^{}]+)\}\}/g, (_, raw) => stash(tplHtml(raw, false)));
         s = s.replace(/\\\$/g, () => stash('<span class="kd-esc">$</span>'));
@@ -486,6 +488,7 @@
         // Keydown Next (keydown-next.js): blocks, live values and @style lines save as the text they were made from
         if (el.classList.contains('kdx') && el.hasAttribute('data-kd-src')) return el.getAttribute('data-kd-src');
         // an escaped symbol saves with its backslash, so it stays plain next time too
+        if (el.classList.contains('kd-fill')) return '[__' + (el.getAttribute('data-w') && el.getAttribute('data-w') !== '6' ? el.getAttribute('data-w') : '') + (el.getAttribute('data-answer') ? '|' + el.getAttribute('data-answer') : '') + ']';
         if (el.classList.contains('kd-esc')) return '\\' + el.textContent;
         if (el.matches(SKILL_SEL) && !el.classList.contains('bl-prog')) return skillToText(el);
         if (el.classList.contains('kd-math')) {
@@ -1173,7 +1176,7 @@
     // *sp(text) spoilers: a click shows or hides the words (the state is a data attribute, so saved text stays *sp(text))
     if (typeof document !== 'undefined' && !window.__kdSpoilerClick) {
         window.__kdSpoilerClick = true;
-        document.addEventListener('click', (e) => { const sp = e.target && e.target.closest && e.target.closest('.kd-spoiler'); if (sp) { if (sp.hasAttribute('data-open')) sp.removeAttribute('data-open'); else sp.setAttribute('data-open', '1'); } });
+        document.addEventListener('click', (e) => { const fl = e.target && e.target.closest && e.target.closest('.kd-fill[data-answer]'); if (fl) { if (fl.hasAttribute('data-open')) fl.removeAttribute('data-open'); else fl.setAttribute('data-open', '1'); } const sp = e.target && e.target.closest && e.target.closest('.kd-spoiler'); if (sp) { if (sp.hasAttribute('data-open')) sp.removeAttribute('data-open'); else sp.setAttribute('data-open', '1'); } });
     }
     const KD_DIVIDER_COLORS = ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate', 'white', 'fog', 'black'];
     function kdDividerHtml(style, label, fmt, color) {
@@ -1376,6 +1379,7 @@
             if (n.nodeType !== 1) return;
             const t = n.tagName;
             if (t === 'BR') { out += '\n'; return; }
+            if (n.classList.contains('kd-fill')) { out += '[__' + (n.getAttribute('data-w') && n.getAttribute('data-w') !== '6' ? n.getAttribute('data-w') : '') + (n.getAttribute('data-answer') ? '|' + n.getAttribute('data-answer') : '') + ']'; return; }
             if (n.classList.contains('kd-esc')) { out += '\\' + n.textContent; return; }
             if (t === 'EM' || t === 'I') { out += '*' + lineSource(n) + '*'; return; }
             if (t === 'STRONG' || t === 'B') { out += '**' + lineSource(n) + '**'; return; }
@@ -1393,6 +1397,7 @@
             if (n.nodeType !== 1) continue;
             const t = n.tagName;
             if (t === 'BR') { out += '\n'; continue; }
+            if (n.classList.contains('kd-fill')) { out += '[__' + (n.getAttribute('data-w') && n.getAttribute('data-w') !== '6' ? n.getAttribute('data-w') : '') + (n.getAttribute('data-answer') ? '|' + n.getAttribute('data-answer') : '') + ']'; continue; }
             if (n.classList.contains('kd-esc')) { out += '\\' + n.textContent; continue; }
             // (a span with no class and no Keydown-able style, like the leftovers of a paste, is just its text)
             const plain = (t === 'SPAN' || t === 'FONT') && !n.className && !styleAttrs(n) && Array.from(n.attributes).every((x) => /^(style|dir|lang|class)$/.test(x.name));
