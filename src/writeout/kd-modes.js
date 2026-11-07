@@ -83,17 +83,27 @@
     const escH = function (t) { return String(t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
     const sp = function (cls, t) { return '<span class="' + cls + '">' + escH(t) + '</span>'; };
     // chip and tag marks: ++R+ ++ ;;R; !!#R# #R# ##  ~X~ =R= ^^R^ %R% &&  *sp(  @family-1@  and friends
-    const MARKS = '\\+\\+[A-Z]{1,2}[+~!%?*:^]|;;[A-Z]{1,2};|!!?[#^~=+%:;\\-?/][A-Z]{1,2}[#!]?|[!?]{2}[A-Z]{1,2}[!?]|#[A-Z]{1,2}#(?:[_~=.][a-z]*)?|~[A-Z][A-Z0-9-]*~|=[A-Z]{1,2}=|\\^\\^[A-Z]{1,2}\\^|%[A-Z]{1,2}%|%\\d{1,2}%[A-Z]{1,2}%|&&|\\*sp\\(|@[a-z0-9]+(?:-[1-5])?@|##|#_|#~|#=|\\+\\+|;;|\\^\\^|!!|\\?\\?|\\*>|\\+>';
-    const INLINE = new RegExp('(`[^`\\n]+`)|(\\$\\$[^$\\n]+\\$\\$|\\$[^$\\n]+\\$)|(\\[\\[[^\\]\\n]+\\]\\]|\\[[^\\]\\n]+\\]\\([^)\\n]+\\))|(\\*\\*[^*\\n]+\\*\\*)|(\\{\\{[^{}\\n]*\\}\\}|\\[\\^[^\\]\\n]+\\]|\\{align=[a-z]+\\})|(' + MARKS + ')|(\\*[^*\\s][^*\\n]*\\*)', 'g');
+    const MARKS = '\\+\\+[A-Z]{1,2}[+~!%?*:^]|;;[A-Z]{1,2};|!!?[#^~=+%:;\\-?/][A-Z]{1,2}[#!]?|[!?]{2}[A-Z]{1,2}[!?]|#[A-Z]{1,2}#(?:[_~=.][a-z]*)?|~[A-Z][A-Z0-9-]*~|=[A-Z]{1,2}=|\\^\\^[A-Z]{1,2}\\^|%[A-Z]{1,2}%|%\\d{1,2}%[A-Z]{1,2}%|&&|@[a-z0-9]+(?:-[1-5])?@|##|#_|#~|#=|\\+\\+|;;|\\^\\^|!!|\\?\\?|\\*>|\\+>';
+    const INLINE = new RegExp('(`[^`\\n]+`)|(\\$\\$[^$\\n]+\\$\\$|\\$[^$\\n]+\\$)|(\\[\\[[^\\]\\n]+\\]\\]|\\[[^\\]\\n]+\\]\\([^)\\n]+\\))|(\\*\\*[^*\\n]+\\*\\*)|(\\{\\{[^{}\\n]*\\}\\}|\\[\\^[^\\]\\n]+\\]|\\{align=[a-z]+\\})|(#[A-Z]{1,2}(?:\\.[a-z]+)?\\(|\\*sp\\()|(' + MARKS + ')|(\\*[^*\\s][^*\\n]*\\*)', 'g');
+    // (bold, italic and the (...) forms hold more Keydown inside them, so their insides are colored too)
     function hlInline(t) {
         let out = '', last = 0, m;
-        INLINE.lastIndex = 0;
-        while ((m = INLINE.exec(t))) {
+        const re = new RegExp(INLINE.source, 'g');   // (its own copy: the insides are colored by calling this again)
+        while ((m = re.exec(t))) {
             if (m.index > last) out += escH(t.slice(last, m.index));
-            const cls = m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[4] ? 'm-b' : m[5] ? 'm-p' : m[6] ? 'm-n' : 'm-i';
-            out += sp(cls, m[0]);
-            last = m.index + m[0].length;
-            if (m[0].length === 0) INLINE.lastIndex++;
+            let end = m.index + m[0].length;
+            if (m[4]) out += '<span class="m-b">**' + hlInline(m[0].slice(2, -2)) + '**</span>';
+            else if (m[8]) out += '<span class="m-i">*' + hlInline(m[0].slice(1, -1)) + '*</span>';
+            else if (m[6]) {
+                // a name( ... ): the closing ) is the one that matches, counting any ( ) inside
+                let depth = 1, i = end;
+                while (i < t.length && depth > 0) { if (t.charAt(i) === '(') depth++; else if (t.charAt(i) === ')') depth--; i++; }
+                if (depth === 0) { out += sp('m-n', m[0]) + hlInline(t.slice(end, i - 1)) + sp('m-n', ')'); end = i; re.lastIndex = i; }
+                else out += sp('m-n', m[0]);
+            } else out += sp(m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[5] ? 'm-p' : 'm-n', m[0]);
+            last = end;
+            if (m[0].length === 0) re.lastIndex++;
+            else if (end !== m.index + m[0].length) re.lastIndex = end;
         }
         return out + escH(t.slice(last));
     }
@@ -117,7 +127,7 @@
             if (fence) return hlCode(line);
             if ((m = /^(\|+)(.*)$/.exec(line)) && !/^\|.*\|(\{[a-z]+\})?\s*$/.test(line)) return sp('m-d', m[1]) + highlight(m[2]);
             if (/^\s*([-*_=])\1{2,}\s*$/.test(line)) return sp('m-d', line);
-            if ((m = /^(\s*)(#{1,4})(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-h', m[2] + m[3] + m[4]);
+            if ((m = /^(\s*)(#{1,4})(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-h', m[2] + m[3]) + '<span class="m-h">' + hlInline(m[4]) + '</span>';
             if ((m = /^(\s*)(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>|>)(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
             if ((m = /^(\s*)([*+\-.~=])(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
             if ((m = /^(::[a-z]+)(\{[^}]*\})?(.*)$/.exec(line))) return sp('m-k', m[1]) + (m[2] ? sp('m-p', m[2]) : '') + hlInline(m[3]);
