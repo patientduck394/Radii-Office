@@ -2026,9 +2026,13 @@ A line that is only `::pagebreak` is a page break. In Writeout's Pages view the 
 
 ::divider{ticket}
 
-`::divider{gel}` a glossy pill, like the Gel chips
+`::divider{gel}` the Reflection Shine look: the color with a flat white shine over its top half and a soft glow along the bottom
 
 ::divider{gel}
+
+`::divider{glass}` a glossy glass bar with a hard-edged gloss over a diagonal color gradient
+
+::divider{glass}
 
 `::divider{rim}` a thick rim around a fill that melts to white, like the Rim chips
 

@@ -243,7 +243,7 @@
         document.head.appendChild(l);
     }
     // $x^2$ and $$...$$ math (KaTeX when the page has it), ::divider{style|Title} and ::pagebreak lines, and a leading | as an indent step
-    const KD_DIVS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'arrows', 'fade', 'swallow', 'triple', 'stepped', 'crest', 'ticket', 'gel', 'rim'];
+    const KD_DIVS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'arrows', 'fade', 'swallow', 'triple', 'stepped', 'crest', 'ticket', 'gel', 'glass', 'rim'];
     function kdMathHtml(tex, display) {
         tex = String(tex).replace(/\u00A0/g, ' ');
         let inner = '';

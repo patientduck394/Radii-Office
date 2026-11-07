@@ -3657,7 +3657,7 @@ function closeInsertMenu() {
 // Drop one node at the caret (ranged selections collapse to the end first)!
 // One divider design everywhere (menu + typed share it)!
 // The divider styles (::divider{poolside} and friends): Insert > Divider lists them!
-const KD_DIVIDER_STYLES = [['aqua', 'Aqua (original)'], ['poolside', 'Poolside'], ['dual', 'Dual'], ['notched', 'Notched'], ['wavy', 'Wavy'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['zigzag', 'Zigzag'], ['glow', 'Glow'], ['ruler', 'Ruler'], ['stitched', 'Stitched'], ['bubbles', 'Bubbles'], ['scallop', 'Scallop'], ['neon', 'Neon'], ['arrows', 'Arrows'], ['fade', 'Fade'], ['swallow', 'Swallowtail'], ['triple', 'Triple notch'], ['stepped', 'Stepped'], ['crest', 'Crest'], ['ticket', 'Ticket'], ['gel', 'Gel'], ['rim', 'Rim']];
+const KD_DIVIDER_STYLES = [['aqua', 'Aqua (original)'], ['poolside', 'Poolside'], ['dual', 'Dual'], ['notched', 'Notched'], ['wavy', 'Wavy'], ['dotted', 'Dotted'], ['dashed', 'Dashed'], ['zigzag', 'Zigzag'], ['glow', 'Glow'], ['ruler', 'Ruler'], ['stitched', 'Stitched'], ['bubbles', 'Bubbles'], ['scallop', 'Scallop'], ['neon', 'Neon'], ['arrows', 'Arrows'], ['fade', 'Fade'], ['swallow', 'Swallowtail'], ['triple', 'Triple notch'], ['stepped', 'Stepped'], ['crest', 'Crest'], ['ticket', 'Ticket'], ['gel', 'Gel'], ['glass', 'Glass'], ['rim', 'Rim']];
 function kdBuildDivider(style) {
     if (style && style !== 'aqua' && window.kdDoc && typeof window.kdDoc.blockFromLine === 'function') {
         const t = document.createElement('template');

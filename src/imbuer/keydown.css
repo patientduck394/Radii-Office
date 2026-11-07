@@ -4398,9 +4398,6 @@
 .kd-div-c-white.kd-div-gel, .kd-div-c-white.kd-div-rim { --ae-c: #f2f2f2; --ae-l: #ffffff; --ae-e1: #8e8e8e; --ae-e2: #c6c6c6; --ae-ink: #5c5c5c; text-shadow: none; --rd-fill: #ffffff; --rd-rim: #b9c2cc; }
 .kd-div-c-fog.kd-div-gel, .kd-div-c-fog.kd-div-rim { --ae-c: #c5c5c5; --ae-l: #e8e8e8; --ae-e1: #6d6d6d; --ae-e2: #9c9c9c; --ae-ink: #2e2e2e; text-shadow: none; --rd-fill: #d4d8dc; --rd-rim: #98a0a8; }
 .kd-div-c-black.kd-div-gel, .kd-div-c-black.kd-div-rim { --ae-c: #333333; --ae-l: #7d7d7d; --ae-e1: #000000; --ae-e2: #2c2c2c; --rd-fill: #555555; --rd-rim: #222222; }
-.kd-div-gel .kd-div-line { height: 16px; box-sizing: border-box; border-radius: 999px; overflow: hidden; border: 1px solid var(--ae-e2); background: linear-gradient(180deg, var(--ae-l) 0%, var(--ae-c) 55%, var(--ae-e2) 100%); box-shadow: inset 0 -3px 5px color-mix(in srgb, var(--ae-e1) 30%, transparent), inset 0 0 0 1px rgba(255, 255, 255, 0.35), 0 2px 6px color-mix(in srgb, var(--ae-e1) 35%, transparent); }
-.kd-div-gel .kd-div-line::before { content: ''; position: absolute; left: 4px; right: 4px; top: 1px; height: 46%; border-radius: 999px 999px 40% 40%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.25)); }
-.kd-div-gel .kd-div-line::after { content: ''; position: absolute; left: 10%; right: 10%; bottom: 1px; height: 22%; border-radius: 999px; background: linear-gradient(0deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0)); }
 .kd-div-rim .kd-div-line { height: 18px; box-sizing: border-box; border-radius: 999px; border: 3px solid var(--rd-rim); background: linear-gradient(180deg, color-mix(in srgb, var(--rd-fill) 78%, #fff) 0%, color-mix(in srgb, var(--rd-fill) 22%, #fff) 100%); box-shadow: inset 0 0 5px color-mix(in srgb, #fff 90%, var(--rd-fill)); }
 .kd-div-rim .kd-div-line::before { content: ''; position: absolute; left: 5px; right: 5px; top: 1px; height: 3px; border-radius: 999px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0)); }
 
@@ -4420,3 +4417,27 @@
 
 /* [##8]: the blank as a little empty box instead of a line */
 :is(#wysiwyg-canvas, .kd-doc, body) .kd-fill-box { height: 1.45em; vertical-align: -0.3em; border: 2px solid #0ea5e9; border-radius: 6px; background: rgba(14, 165, 233, 0.05); }
+
+/* Gel divider = the Reflection Shine ink: the color, a flat white shine over the top half and a soft glow along the bottom.
+   Glass divider = a glossy glass bar (hard-edged gloss over a diagonal color gradient, white rim, deep shadow) */
+.kd-div-glass { --ae-c: #2277ff; --ae-l: #6eb4ff; --ae-e1: #00317c; --ae-e2: #0058c6; }
+.kd-div-c-red.kd-div-glass { --ae-c: #ff2222; --ae-l: #ff6e6e; --ae-e1: #7c0000; --ae-e2: #c60000; }
+.kd-div-c-orange.kd-div-glass { --ae-c: #ff7f22; --ae-l: #ffb26e; --ae-e1: #944200; --ae-e2: #c66700; }
+.kd-div-c-gold.kd-div-glass { --ae-c: #ffb300; --ae-l: #ffd66e; --ae-e1: #8a5a00; --ae-e2: #c98a00; }
+.kd-div-c-yellow.kd-div-glass { --ae-c: #ffd122; --ae-l: #fdff6e; --ae-e1: #9c7c00; --ae-e2: #e6c700; --ae-ink: #000000; text-shadow: none; }
+.kd-div-c-lime.kd-div-glass { --ae-c: #9be000; --ae-l: #d4ff6e; --ae-e1: #4f7a00; --ae-e2: #86c400; --ae-ink: #1f3300; text-shadow: none; }
+.kd-div-c-green.kd-div-glass { --ae-c: #04db00; --ae-l: #98ff6e; --ae-e1: #058100; --ae-e2: #87e600; }
+.kd-div-c-turquoise.kd-div-glass { --ae-c: #00d6a8; --ae-l: #6effd8; --ae-e1: #007a5e; --ae-e2: #00c095; }
+.kd-div-c-teal.kd-div-glass { --ae-c: #00a8a8; --ae-l: #5fe0e0; --ae-e1: #005c66; --ae-e2: #009aa6; }
+.kd-div-c-cyan.kd-div-glass { --ae-c: #00cedb; --ae-l: #6ef9ff; --ae-e1: #007081; --ae-e2: #00c3e6; }
+.kd-div-c-blue.kd-div-glass { --ae-c: #2277ff; --ae-l: #6eb4ff; --ae-e1: #00317c; --ae-e2: #0058c6; }
+.kd-div-c-purple.kd-div-glass { --ae-c: #9b30ff; --ae-l: #c98bff; --ae-e1: #4a0080; --ae-e2: #7a1ad1; }
+.kd-div-c-pink.kd-div-glass { --ae-c: #ff2fa8; --ae-l: #ff8ad0; --ae-e1: #7c0047; --ae-e2: #c6006f; }
+.kd-div-c-slate.kd-div-glass { --ae-c: #7f8ea3; --ae-l: #b5c1d1; --ae-e1: #334155; --ae-e2: #5b6b82; }
+.kd-div-c-white.kd-div-glass { --ae-c: #f2f2f2; --ae-l: #ffffff; --ae-e1: #8e8e8e; --ae-e2: #c6c6c6; --ae-ink: #5c5c5c; text-shadow: none; }
+.kd-div-c-fog.kd-div-glass { --ae-c: #c5c5c5; --ae-l: #e8e8e8; --ae-e1: #6d6d6d; --ae-e2: #9c9c9c; --ae-ink: #2e2e2e; text-shadow: none; }
+.kd-div-c-black.kd-div-glass { --ae-c: #333333; --ae-l: #7d7d7d; --ae-e1: #000000; --ae-e2: #2c2c2c; }
+.kd-div-gel .kd-div-line { height: 16px; box-sizing: border-box; border-radius: 999px; overflow: hidden; border: 0; background: linear-gradient(0deg, color-mix(in srgb, var(--ae-c) 15%, #fff) 0%, transparent 42%) , var(--ae-c); box-shadow: none; }
+.kd-div-gel .kd-div-line::before { content: ''; position: absolute; left: 0; right: 0; top: 0; height: 50%; border-radius: 999px 999px 0 0; background: rgba(255, 255, 255, 0.6); }
+.kd-div-gel .kd-div-line::after { content: none; }
+.kd-div-glass .kd-div-line { height: 18px; box-sizing: border-box; border-radius: 9px; border: 1px solid rgba(255, 255, 255, 0.6); background: linear-gradient(to bottom, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.05) 50.1%, rgba(255, 255, 255, 0.15) 100%), linear-gradient(135deg, var(--ae-e2), var(--ae-c) 55%, var(--ae-l)); box-shadow: 0 4px 10px rgba(0, 0, 0, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 -1px 2px rgba(0, 0, 0, 0.15); }

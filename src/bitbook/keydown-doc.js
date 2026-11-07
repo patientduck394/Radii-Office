@@ -1172,7 +1172,7 @@
     const BQ_BY_SYM = {}, BQ_BY_NAME = {};
     BQ_STYLES.forEach((q) => { BQ_BY_SYM[q[0]] = q[1]; BQ_BY_NAME[q[1]] = q[0]; });
     const bqSym = (el) => { const c = Array.from(el.classList || []).find((k) => /^kd-bq-/.test(k)); return (c && BQ_BY_NAME[c.slice(6)]) || '>'; };
-    const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'arrows', 'fade', 'swallow', 'triple', 'stepped', 'crest', 'ticket', 'gel', 'rim'];
+    const KD_DIVIDERS = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop', 'neon', 'arrows', 'fade', 'swallow', 'triple', 'stepped', 'crest', 'ticket', 'gel', 'glass', 'rim'];
     // *sp(text) spoilers: a click shows or hides the words (the state is a data attribute, so saved text stays *sp(text))
     if (typeof document !== 'undefined' && !window.__kdSpoilerClick) {
         window.__kdSpoilerClick = true;
