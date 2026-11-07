@@ -349,12 +349,12 @@ if (canvas) {
                 return;
             }
             // --- LINE SHORTCUTS: "# " "## " "### " are headings, "#### " the mega header, "* " a list! ---
-            if (/^(#{1,4}|\*)$/.test(currentLineText) && !(textNode.parentNode && textNode.parentNode.closest && textNode.parentNode.closest('h1,h2,h3,li,pre,code,blockquote'))) {
+            if (/^(#{1,4}|[*+\-.~=])$/.test(currentLineText) && !(textNode.parentNode && textNode.parentNode.closest && textNode.parentNode.closest('h1,h2,h3,li,pre,code,blockquote'))) {
                 e.preventDefault(); playAeroClickSound(750, 0.12);
                 const lvl = currentLineText.length;
                 let blockEl, holder;
-                if (currentLineText === '*') {
-                    blockEl = document.createElement('ul'); blockEl.className = 'bulleted-list';
+                if (/^[*+\-.~=]$/.test(currentLineText)) {
+                    blockEl = document.createElement('ul'); blockEl.className = 'bulleted-list' + ({ '-': ' kd-bl-dash', '+': ' kd-bl-plus', '.': ' kd-bl-ring', '~': ' kd-bl-diamond', '=': ' kd-bl-arrow' }[currentLineText] || '');
                     holder = document.createElement('li'); blockEl.appendChild(holder);
                 } else {
                     blockEl = document.createElement(lvl === 4 ? 'h1' : 'h' + lvl);

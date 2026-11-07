@@ -16572,3 +16572,13 @@ mark.an-hl.an-s-ls {
 .kd-emoji-sm { width: 1.15em; height: 1.15em; vertical-align: -0.2em; }
 .kd-emoji-lg { width: 3.2em; height: 3.2em; vertical-align: -0.8em; }
 .kd-emoji svg { display: block; width: 100%; height: 100%; pointer-events: none; }
+
+/* Bullet styles (- dash, + plus, . ring, ~ diamond, = arrow; * stays the round bullet)! */
+:is(#wysiwyg-canvas, .kd-doc, body) ul.bulleted-list[class*="kd-bl-"] { list-style: none; padding-left: 0; }
+:is(#wysiwyg-canvas, .kd-doc, body) ul.bulleted-list[class*="kd-bl-"] > li::before,
+:is(#wysiwyg-canvas, .kd-doc, body) span.bulleted-list[class*="kd-bl-"]::before { display: inline-block; min-width: 1em; margin-right: 0.45em; font-weight: 800; text-align: center; }
+:is(#wysiwyg-canvas, .kd-doc, body) ul.kd-bl-dash > li::before, :is(#wysiwyg-canvas, .kd-doc, body) span.kd-bl-dash::before { content: "\2013"; color: #64748b; }
+:is(#wysiwyg-canvas, .kd-doc, body) ul.kd-bl-plus > li::before, :is(#wysiwyg-canvas, .kd-doc, body) span.kd-bl-plus::before { content: "+"; color: #16a34a; }
+:is(#wysiwyg-canvas, .kd-doc, body) ul.kd-bl-ring > li::before, :is(#wysiwyg-canvas, .kd-doc, body) span.kd-bl-ring::before { content: "\25E6"; color: #0284c7; }
+:is(#wysiwyg-canvas, .kd-doc, body) ul.kd-bl-diamond > li::before, :is(#wysiwyg-canvas, .kd-doc, body) span.kd-bl-diamond::before { content: "\25C6"; color: #f97316; font-size: 0.7em; vertical-align: 0.1em; }
+:is(#wysiwyg-canvas, .kd-doc, body) ul.kd-bl-arrow > li::before, :is(#wysiwyg-canvas, .kd-doc, body) span.kd-bl-arrow::before { content: "\25B8"; color: #7c3aed; }

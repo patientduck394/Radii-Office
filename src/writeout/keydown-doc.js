@@ -353,12 +353,15 @@
             '<tbody>' + (body.length ? body.map((l) => row(l, 'td')).join('') : '') + '</tbody></table>';
     }
 
+    // Bullet styles! "* " is the round bullet; "- " a dash, "+ " a plus, ". " a ring, "~ " a diamond and "= " an arrow.
+    const BL_CLS = { '*': '', '-': 'kd-bl-dash', '+': 'kd-bl-plus', '.': 'kd-bl-ring', '~': 'kd-bl-diamond', '=': 'kd-bl-arrow' };
+    const BL_MARK = (el) => { for (const k in BL_CLS) if (BL_CLS[k] && el.classList && el.classList.contains(BL_CLS[k])) return k; return '*'; };
     function textToHtml(src, opts) {
         opts = Object.assign({ notes: {} }, opts || {});
         const lines = String(src || '').replace(/\r/g, '').split('\n');
         const out = [];
-        let list = null;
-        const endList = () => { if (list) { out.push('<ul class="bulleted-list">' + list.join('') + '</ul>'); list = null; } };
+        let list = null, listCls = '';
+        const endList = () => { if (list) { out.push('<ul class="bulleted-list' + (listCls ? ' ' + listCls : '') + '">' + list.join('') + '</ul>'); list = null; } };
         for (let i = 0; i < lines.length; i++) {
             let t = lines[i].trim();
             let m;
@@ -401,7 +404,7 @@
                 const at = readAtTable(t, 0);
                 if (at && at.end === t.length) { endList(); out.push(ind(atTableHtml(at, opts))); continue; }
             }
-            if ((m = /^\*\s+(\S.*)$/.exec(t))) { (list = list || []).push('<li>' + inline(m[1], opts) + '</li>'); continue; }
+            if ((m = /^([*+\-.~=])\s+(\S.*)$/.exec(t))) { if (list && listCls !== BL_CLS[m[1]]) endList(); listCls = BL_CLS[m[1]]; (list = list || []).push('<li>' + inline(m[2], opts) + '</li>'); continue; }
             endList();
             if (!t) { out.push('<div><br></div>'); continue; }
             if ((m = /^\{\{([^{}]+)\}\}$/.exec(t)) && !INLINE_TAGS[tplName(m[1])]) { out.push(tplHtml(m[1], true)); continue; }
@@ -558,14 +561,14 @@
     // {align=center} for a line the toolbar centered (or aligned right, or justified)
     const alignOf = (el) => { const a = (el.style && el.style.textAlign) || el.getAttribute('align') || ''; return /^(center|right|justify)$/.test(a) ? '{align=' + a + '} ' : ''; };
     // a line the editor styled as a whole (~H1~ makes <div><span class="header-1">...</span></div>)
-    const LINE_SPANS = { 'header-1': '# ', 'header-2': '## ', 'header-3': '### ', 'mega-header': '#### ', 'blockquote-list': '> ', 'bulleted-list': '* ' };
+    const LINE_SPANS = { 'header-1': '# ', 'header-2': '## ', 'header-3': '### ', 'mega-header': '#### ', 'blockquote-list': '> ', 'bulleted-list': '* ', 'bulleted-list kd-bl-dash': '- ', 'bulleted-list kd-bl-plus': '+ ', 'bulleted-list kd-bl-ring': '. ', 'bulleted-list kd-bl-diamond': '~ ', 'bulleted-list kd-bl-arrow': '= ' };
     function lineSpanOf(el) {
         const parts = Array.from(el.childNodes).filter((n) => !(n.nodeType === 3 && !n.nodeValue.replace(/\u200B/g, '').trim()) && !(n.nodeType === 1 && n.tagName === 'BR'));
         const only = parts.length === 1 && parts[0].nodeType === 1 ? parts[0] : null;
         return only && LINE_SPANS[String(only.className).trim()] ? only : null;
     }
     // a plain line that starts like a heading, bullet, quote, block, table, fence or footnote keeps that start as itself
-    const LINE_MARK = /^(\||#{1,4}\s|\*\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
+    const LINE_MARK = /^(\||#{1,4}\s|[*+\-.~=]\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
     const plainLine = (l) => (LINE_MARK.test(l) ? '\\' + l : l);
     const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && (el.style.textIndent || el.style.marginLeft)) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
     function htmlToText(html) {
@@ -606,7 +609,7 @@
             if (tag === 'UL' || tag === 'OL') {
                 Array.from(el.querySelectorAll('li')).forEach((li) => {
                     const t = Array.from(li.childNodes).filter((c) => !(c.nodeType === 1 && /^(UL|OL)$/.test(c.tagName))).map(inlineText).join('').replace(/\n+/g, ' ').trim();
-                    if (t) push('* ' + t);
+                    if (t) push((el.tagName === 'UL' ? BL_MARK(el) : '*') + ' ' + t);
                 });
                 return;
             }
@@ -636,7 +639,7 @@
                 const hasBlocks = Array.from(el.children).some((c) => BLOCK.test(c.tagName) || c.classList.contains('kd-math-display') || c.hasAttribute('data-kd-media') || c.classList.contains('bl-prog'));
                 if (hasBlocks) { Array.from(el.childNodes).forEach(walk); flush(); return; }
                 const ls = lineSpanOf(el);
-                if (ls) { lines.push((LINE_SPANS[String(ls.className).trim()] === '* ' ? '' : '|'.repeat(indentOf(el)) + alignOf(el)) + LINE_SPANS[String(ls.className).trim()] + kidsText(ls).replace(/\n+/g, ' ').trim()); return; }
+                if (ls) { lines.push((/^[*+\-.~=] $/.test(LINE_SPANS[String(ls.className).trim()]) ? '' : '|'.repeat(indentOf(el)) + alignOf(el)) + LINE_SPANS[String(ls.className).trim()] + kidsText(ls).replace(/\n+/g, ' ').trim()); return; }
                 const t = kidsText(el).replace(/\s+$/, '');
                 if (t.trim() === '') lines.push('');
                 else {
@@ -1076,7 +1079,7 @@
         // the line itself first: "# Title", "* item", "> quote", ::block{...}, $math$... becomes what it says
         let lineEl2 = null;
         const runText = nodes.map((n) => n.textContent).join('').replace(/\u200B/g, '');
-        if (/^\s*(#{1,4}\s+\S|\*\s+\S|>\s+\S|(?:!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
+        if (/^\s*(#{1,4}\s+\S|[*+\-.~=]\s+\S|>\s+\S|(?:!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
             if (block === canvas) {
                 // text sitting right in the canvas gets a line of its own first
                 const d = document.createElement('div');
@@ -1299,7 +1302,7 @@
             const out = [];
             Array.from(ul.children).filter((li) => li.tagName === 'LI').forEach((li) => {
                 const own = Array.from(li.childNodes).filter((c) => !(c.nodeType === 1 && /^(UL|OL)$/.test(c.tagName))).map(inlineText).join('').replace(/[\n\u200B]+/g, ' ').trim();
-                if (own) out.push(lineEl('* ' + own, li));
+                if (own) out.push(lineEl(BL_MARK(ul) + ' ' + own, li));
                 Array.from(li.children).filter((c) => /^(UL|OL)$/.test(c.tagName)).forEach((sub) => out.push(...listLines(sub)));
             });
             return out;
@@ -1432,11 +1435,12 @@
             b.replaceWith(h);
             return h;
         }
-        if (/^\s*\*\s+\S/.test(text)) {
+        if ((m = /^\s*([*+\-.~=])\s+\S/.exec(text))) {
             const li = takeRest(make('li'), lead + 2);
             const prev = b.previousElementSibling;
-            if (prev && prev.tagName === 'UL' && prev.classList.contains('bulleted-list')) { prev.appendChild(li); b.remove(); }
-            else { const ul = document.createElement('ul'); ul.className = 'bulleted-list'; ul.appendChild(li); b.replaceWith(ul); }
+            const bcls = 'bulleted-list' + (BL_CLS[m[1]] ? ' ' + BL_CLS[m[1]] : '');
+            if (prev && prev.tagName === 'UL' && prev.classList.contains('bulleted-list') && BL_MARK(prev) === m[1]) { prev.appendChild(li); b.remove(); }
+            else { const ul = document.createElement('ul'); ul.className = bcls; ul.appendChild(li); b.replaceWith(ul); }
             return li;
         }
         if ((m = /^\s*(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S/.exec(text))) { const q = takeRest(make('blockquote', 'blockquote-list kd-bq kd-bq-' + BQ_BY_SYM[m[1]]), lead + 3); b.replaceWith(q); return q; }

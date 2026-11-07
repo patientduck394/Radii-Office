@@ -86,7 +86,7 @@
             if ((m = /^>\s?(.*)$/.exec(l))) { endList(); quote.push(inlineHtml(m[1])); text.push('> ' + m[1]); return; }
             endQuote();
             if ((m = /^(#{1,3})\s+(.*)$/.exec(l))) { endList(); html.push('<h' + (m[1].length + 1) + ' style="margin:.6em 0 .3em">' + inlineHtml(m[2]) + '</h' + (m[1].length + 1) + '>'); text.push(m[2]); return; }
-            if ((m = /^\*\s+(.*)$/.exec(l)) || (m = /^-\s+(.*)$/.exec(l))) { if (!list) { html.push('<ul>'); list = true; } html.push('<li>' + inlineHtml(m[1]) + '</li>'); text.push('- ' + m[1].replace(/\*\*/g, '')); return; }
+            if ((m = /^[*+\-.~=]\s+(.*)$/.exec(l))) { if (!list) { html.push('<ul>'); list = true; } html.push('<li>' + inlineHtml(m[1]) + '</li>'); text.push('- ' + m[1].replace(/\*\*/g, '')); return; }
             endList();
             // ::divider{style|Title} and ::pagebreak become a rule (with the title in the middle), a leading | is an indent step
             if ((m = /^::(divider|pagebreak)(?:\{([^}]*)\})?\s*$/.exec(l.trim()))) {

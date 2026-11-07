@@ -396,9 +396,9 @@ function kdRender(raw) {
     const bm = /^::([a-z]+)(?:\{([^}]*)\})?$/.exec(trimmed);
     if (bm && KD_BLOCKS.includes(bm[1])) return kdRenderBlock(bm[1], bm[2]);
     // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
-    const lp = /^(\s*)(#{1,4}|\*)\s+(\S[\s\S]*)$/.exec(text);
+    const lp = /^(\s*)(#{1,4}|[*+\-.~=])\s+(\S[\s\S]*)$/.exec(text);
     if (lp) {
-        const cls = lp[2] === "*" ? "bulleted-list" : ["header-1", "header-2", "header-3", "mega-header"][lp[2].length - 1];
+        const cls = lp[2].length === 1 && lp[2] !== "#" ? "bulleted-list" + ({ "-": " kd-bl-dash", "+": " kd-bl-plus", ".": " kd-bl-ring", "~": " kd-bl-diamond", "=": " kd-bl-arrow" }[lp[2]] || "") : ["header-1", "header-2", "header-3", "mega-header"][lp[2].length - 1];
         return lp[1] + '<span class="' + cls + '">' + kdRender(lp[3]) + "</span>";
     }
     const store = [];

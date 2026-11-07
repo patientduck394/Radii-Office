@@ -385,16 +385,16 @@
             }
             // a line indented with tabs (Writeout and Bitbook's Indent saves it that way) stays indented
             const tabs = (/^\t+/.exec(lines[i]) || [''])[0].length;
-            if (tabs && !/^(#{1,4}|\*)\s/.test(t)) { flush(); out.push('<p class="odb-indent" style="margin-left: ' + Math.min(8, tabs) * 2.5 + 'rem">' + inline(t, notes) + '</p>'); continue; }
+            if (tabs && !/^(#{1,4}|[*+\-.~=])\s/.test(t)) { flush(); out.push('<p class="odb-indent" style="margin-left: ' + Math.min(8, tabs) * 2.5 + 'rem">' + inline(t, notes) + '</p>'); continue; }
             // a template alone on its line: a notice box, a hatnote or the stub note
             if ((m = /^\{\{([^{}]+)\}\}$/.exec(t)) && findTpl(m[1]) && findTpl(m[1]).kind !== 'inline') { flush(); out.push(tplBlock(m[1])); continue; }
             // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
             // (the text inside is drawn like any other line, so **bold**, links and math work in it too)
-            const ls = /^(#{1,4}|\*)\s+(\S.*)$/.exec(t);
+            const ls = /^(#{1,4}|[*+\-.~=])\s+(\S.*)$/.exec(t);
             if (ls) {
                 flush();
-                const cls = ls[1] === '*' ? 'bulleted-list' : ['header-1', 'header-2', 'header-3', 'mega-header'][ls[1].length - 1];
-                const anchor = ls[1] === '*' ? '' : ' id="s-' + ls[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '"';
+                const cls = ls[1].charAt(0) !== '#' ? 'bulleted-list' + ({ '-': ' kd-bl-dash', '+': ' kd-bl-plus', '.': ' kd-bl-ring', '~': ' kd-bl-diamond', '=': ' kd-bl-arrow' }[ls[1]] || '') : ['header-1', 'header-2', 'header-3', 'mega-header'][ls[1].length - 1];
+                const anchor = ls[1].charAt(0) !== '#' ? '' : ' id="s-' + ls[2].toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '"';
                 out.push('<div class="kd-line"' + anchor + '><span class="' + cls + '">' + inline(ls[2], notes) + '</span></div>');
                 continue;
             }
