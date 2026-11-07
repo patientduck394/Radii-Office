@@ -1189,13 +1189,14 @@
     // Page tabs re-render the canvas: re-paginate after every switch!
     const tabsList = document.getElementById('doc-tabs-list');
     if (tabsList) tabsList.addEventListener('click', function () { setTimeout(paginateSoon, 30); });
-    // Printing uses the browser's own page margins (the Page Layout margins) on EVERY printed page, and the text flows from page to
-    // page by itself: the on-screen page-break spacing is switched off while printing!
+    // Printing: the page itself has no margin (so the browser prints no date, title or address in the corners), and the Page Layout
+    // margins are padding that repeats on EVERY printed page (box-decoration-break: clone); the text flows from page to page by itself
+    // and the on-screen page-break spacing is switched off while printing!
     function printPageSize(on) {
         let st = document.getElementById('wo-print-page');
         if (!st) { st = document.createElement('style'); st.id = 'wo-print-page'; document.head.appendChild(st); }
         const d = pageDims(), m = MARGINS[prefs.margins] || MARGINS.normal;
-        st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: ' + m.t + 'px ' + m.s + 'px ' + m.b + 'px; } }' : '';
+        st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: 0; } }' : '';
     }
     window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; });
     window.addEventListener('afterprint', function () { printPageSize(false); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });

@@ -301,10 +301,11 @@ body.os-office.bb-pages #wysiwyg-canvas {
 }
 @media print {
     body.os-office #bb-zoomer { display: block; margin: 0 !important; width: auto !important; zoom: 1 !important; height: auto !important; min-height: 0 !important; }
-    body.os-office #bb-sheets { display: none !important; }
+    body.os-office #bb-sheets, body.os-office #doc-jumper-rail { display: none !important; }
     body.os-office .workspace-viewport-wrapper, body.os-office .canvas-scrollbox { padding: 0 !important; margin: 0 !important; zoom: 1 !important; }
     body.os-office.bb-pages #wysiwyg-canvas, body.os-office.bb-web #wysiwyg-canvas {
-        width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important;
+        width: 100% !important; max-width: none !important; margin: 0 !important; padding: var(--bb-mt) var(--bb-ms) var(--bb-mb) !important; box-sizing: border-box !important;
+        box-decoration-break: clone; -webkit-box-decoration-break: clone;
         font-size: var(--bb-print-fs, 16px) !important; min-height: 0 !important; height: auto !important;
         box-shadow: none !important; background: #fff !important;
     }

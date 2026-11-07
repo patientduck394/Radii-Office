@@ -216,7 +216,8 @@ body.os-dark .wo-gp-p { color: #e5e5e5; }
     body.os-office #wo-sheets { display: none !important; }
     body.os-office .workspace-viewport-wrapper, body.os-office .canvas-scrollbox { padding: 0 !important; margin: 0 !important; zoom: 1 !important; }
     body.os-office.wo-pages #wysiwyg-canvas, body.os-office.wo-web #wysiwyg-canvas {
-        width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important;
+        width: 100% !important; max-width: none !important; margin: 0 !important; padding: var(--wo-mt) var(--wo-ms) var(--wo-mb) !important; box-sizing: border-box !important;
+        box-decoration-break: clone; -webkit-box-decoration-break: clone;
         font-size: var(--wo-print-fs, 16px) !important; min-height: 0 !important; height: auto !important;
         box-shadow: none !important; background: #fff !important;
     }
