@@ -2006,21 +2006,25 @@ A line that is only `::pagebreak` is a page break. In Writeout's Pages view the 
 
 ::divider{fade}
 
-`::divider{swallow}` a bar with a V cut at each end, a cousin of Notched
+`::divider{swallow}` a two-tone ribbon with a V cut at each end, a cousin of Notched
 
 ::divider{swallow}
 
-`::divider{triple}` three V notches along the bar
+`::divider{triple}` three V notches in a candy-striped bar
 
 ::divider{triple}
 
-`::divider{stepped}` a square notch in the middle
+`::divider{stepped}` a square notch in a bar of little blocks
 
 ::divider{stepped}
 
-`::divider{crest}` a bar with a point rising in the middle
+`::divider{crest}` a bar that fades out at both ends with a point rising in the middle
 
 ::divider{crest}
+
+`::divider{ticket}` a ticket stub with round bites at both ends and a dashed line
+
+::divider{ticket}
 
 `::divider{gel}` a glossy pill, like the Gel chips
 
