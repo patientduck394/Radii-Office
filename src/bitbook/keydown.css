@@ -7174,5 +7174,14 @@
 
 /* PRINTING DIVIDERS SHARP: Chrome prints transparent gradients, dots and masks as small low-resolution pictures. A filter that changes
    nothing you can see makes it draw the whole divider through its 300 dpi path instead, so every style keeps its exact look (the notched
-   style already has its own shadow filter, which does the same job) */
-@media print { .kd-div:not(.kd-div-notched), .aero-liquid-divider { filter: brightness(1.001); } }
+   style already has its own shadow filter, which does the same job). Firefox is left out: it prints every filtered box as one 72 dpi picture, but keeps
+   gradients, clip-paths and SVG tiles as sharp vector drawings */
+@media print { @supports not (-moz-appearance: none) { .kd-div:not(.kd-div-notched), .aero-liquid-divider { filter: brightness(1.001); } } }
+
+/* FIREFOX PRINTING: Firefox keeps gradients, clip-paths and SVG drawings as sharp vector shapes, but prints any box with a CSS filter as one
+   72 dpi picture. These dividers lose only a faint 2 to 3 pixel shadow there, and the ticket's round bites become a clip-path instead of a mask */
+@media print { @supports (-moz-appearance: none) {
+  .kd-div-dual .kd-div-line { filter: none; box-shadow: 0 2px 3px rgba(14, 165, 233, 0.3); }
+  .kd-div-notched, .kd-div-dotted .kd-div-line, .kd-div-stitched .kd-div-line { filter: none !important; }
+  .kd-div-ticket .kd-div-line { -webkit-mask: none; mask: none; clip-path: polygon(0 0, 100% 0, calc(100% - 0.0px) 0.0px, calc(100% - 3.4px) 0.7px, calc(100% - 6.4px) 2.6px, calc(100% - 8.3px) 5.6px, calc(100% - 9.0px) 9.0px, calc(100% - 8.3px) 12.4px, calc(100% - 6.4px) 15.4px, calc(100% - 3.4px) 17.3px, calc(100% - 0.0px) 18.0px, 100% 18px, 0 18px, 0.0px 18.0px, 3.4px 17.3px, 6.4px 15.4px, 8.3px 12.4px, 9.0px 9.0px, 8.3px 5.6px, 6.4px 2.6px, 3.4px 0.7px, 0.0px 0.0px); }
+} }

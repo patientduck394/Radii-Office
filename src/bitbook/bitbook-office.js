@@ -1086,14 +1086,65 @@
     // Printing: the page itself has no margin (so the browser prints no date, title or address in the corners), and the Page Layout
     // margins are padding that repeats on EVERY printed page (box-decoration-break: clone); the text flows from page to page by itself
     // and the on-screen page-break spacing is switched off while printing!
+    // Firefox prints a tiled SVG background (the wavy, dashed, zigzag, scallop and arrows dividers) as tiny 72 dpi pictures. While printing in Firefox
+    // each tile is drawn as repeated copies of its own vector shapes in an inline SVG instead (sharp at any printer resolution), then put back
+    let printTiles = [];
+    function printTilesOn() {
+        printTilesOff();
+        if (!/Firefox\//.test(navigator.userAgent)) return;
+        Array.from(ed.querySelectorAll('.kd-div-line, .aero-liquid-divider')).forEach(function (el, n) {
+            const cs = getComputedStyle(el);
+            const m = /^url\("data:image\/svg\+xml[;,]([^"]*)"\)$/.exec((cs.backgroundImage || '').trim());
+            if (!m) return;
+            let svg;
+            try { svg = decodeURIComponent(m[1].replace(/^charset=utf-8,/i, '')); } catch (e) { return; }
+            const root = /<svg\b([^>]*)>([\s\S]*)<\/svg>\s*$/i.exec(svg);
+            if (!root) return;
+            const attr = function (name) { const a = new RegExp('\\b' + name + "=['\"]([^'\"]*)['\"]").exec(root[1]); return a ? a[1] : ''; };
+            let tw = parseFloat(attr('width')), th = parseFloat(attr('height'));
+            const vb = attr('viewBox').split(/[\s,]+/).map(parseFloat);
+            if (!(tw > 0)) tw = vb[2];
+            if (!(th > 0)) th = vb[3];
+            const sz = (cs.backgroundSize || '').split(' ').map(parseFloat);
+            if (sz[0] > 0 && !/%/.test(cs.backgroundSize)) { th = sz[1] > 0 ? sz[1] : th * sz[0] / tw; tw = sz[0]; }
+            if (!(tw > 0 && th > 0)) return;
+            const W = el.clientWidth, H = el.clientHeight;
+            if (!W || !H) return;
+            const px = function (v, room) { v = String(v || '0'); return /%$/.test(v) ? (parseFloat(v) / 100) * room : parseFloat(v) || 0; };
+            const rep = cs.backgroundRepeat || 'repeat';
+            const x0 = px(cs.backgroundPositionX, W - tw), y0 = px(cs.backgroundPositionY, H - th);
+            const repX = !/^no-repeat|^repeat-y/.test(rep), repY = !/^no-repeat|^repeat-x/.test(rep);
+            const nx = repX ? Math.ceil(W / tw) + 1 : 1, ny = repY ? Math.ceil(H / th) + 1 : 1;
+            const id = 'kdtile' + n;
+            const inner = vb.length === 4 && vb[2] > 0 ? '<svg x="0" y="0" width="' + tw + '" height="' + th + '" viewBox="' + vb.join(' ') + '">' + root[2] + '</svg>' : root[2];
+            let uses = '';
+            for (let i = 0; i < nx; i++) for (let j = 0; j < ny; j++) {
+                const ux = (repX ? (x0 % tw - (x0 % tw > 0 ? tw : 0)) : x0) + i * tw, uy = (repY ? (y0 % th - (y0 % th > 0 ? th : 0)) : y0) + j * th;
+                uses += '<use href="#' + id + '" x="' + ux + '" y="' + uy + '"/>';
+            }
+            const holder = document.createElement('span');
+            holder.className = 'kd-print-svg';
+            holder.setAttribute('aria-hidden', 'true');
+            holder.style.cssText = 'position:absolute;left:0;top:0;width:' + W + 'px;height:' + H + 'px;pointer-events:none;display:block;overflow:hidden';
+            holder.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="' + W + '" height="' + H + '" viewBox="0 0 ' + W + ' ' + H + '"><defs><g id="' + id + '">' + inner + '</g></defs>' + uses + '</svg>';
+            printTiles.push({ el: el, holder: holder, bg: el.style.backgroundImage, pos: el.style.position });
+            if (cs.position === 'static') el.style.position = 'relative';
+            el.insertBefore(holder, el.firstChild);
+            el.style.backgroundImage = 'none';
+        });
+    }
+    function printTilesOff() {
+        printTiles.forEach(function (r) { r.holder.remove(); r.el.style.backgroundImage = r.bg; r.el.style.position = r.pos; });
+        printTiles = [];
+    }
     function printPageSize(on) {
         let st = document.getElementById('bb-print-page');
         if (!st) { st = document.createElement('style'); st.id = 'bb-print-page'; document.head.appendChild(st); }
         const d = pageDims(), m = MARGINS[prefs.margins] || MARGINS.normal;
         st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: 0; } }' : '';
     }
-    window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; });
-    window.addEventListener('afterprint', function () { printPageSize(false); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
+    window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; try { printTilesOn(); } catch (e) { console.warn('print tiles', e); } });
+    window.addEventListener('afterprint', function () { printPageSize(false); printTilesOff(); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
     // Color previews: see the pages as a printout in black and white, or as people with color blindness see them (screen only, never printed)
     const COLOR_PREVIEWS = [['', 'Normal vision'], ['gray', 'Grayscale (a black and white printout)'], ['protan', 'Protanopia (no red)'], ['deutan', 'Deuteranopia (no green)'], ['tritan', 'Tritanopia (no blue)']];
     let colorPreview = '';
