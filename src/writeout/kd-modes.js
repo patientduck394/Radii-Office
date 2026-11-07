@@ -23,11 +23,16 @@
         '.kd-modes button[aria-pressed="true"]{background:linear-gradient(180deg,#38bdf8,#0284c7);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}',
         '.kd-srcwrap{display:none;position:relative;box-sizing:border-box;width:100%;min-height:60vh;border:1px solid #3e3d32;border-radius:10px;background:#272822;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:8;overflow:hidden}',
         'body.kd-mode-source .kd-srcwrap{display:block}',
-        '.kd-hl,.kd-src{box-sizing:border-box;width:100%;margin:0;padding:22px 26px;border:0;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,"JetBrains Mono",monospace;letter-spacing:0;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;font-variant-ligatures:none}',
+        '.kd-hl,.kd-src{box-sizing:border-box;width:100%;margin:0;padding:22px 26px 22px 40px;border:0;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,"JetBrains Mono",monospace;letter-spacing:0;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;font-variant-ligatures:none}',
         '.kd-hl{position:absolute;left:0;top:0;right:0;min-height:100%;color:#f8f8f2;pointer-events:none;overflow:hidden}',
         '.kd-src{display:block;position:relative;min-height:60vh;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:#f8f8f0;resize:none;overflow:hidden;outline:none}',
         '.kd-src::selection{background:#49483e;-webkit-text-fill-color:transparent}',
         '.kd-hl .m-h{color:#a6e22e;font-weight:700}.kd-hl .m-k{color:#f92672}.kd-hl .m-s{color:#e6db74}.kd-hl .m-n{color:#ae81ff}.kd-hl .m-c{color:#75715e}',
+        '.kd-l{min-height:1.6em}',
+        '.kd-gutter{position:absolute;left:0;top:0;bottom:0;width:32px;z-index:2;pointer-events:none;background:linear-gradient(90deg,rgba(255,255,255,.04),rgba(255,255,255,0));border-right:1px solid #3e3d32}',
+        '.kd-fold{position:absolute;left:6px;width:20px;height:22px;padding:0;border:0;background:none;color:#90908a;font:14px/22px system-ui,sans-serif;cursor:pointer;pointer-events:auto;border-radius:4px;opacity:.7;transition:opacity .15s,background .15s}',
+        '.kd-fold:hover,.kd-srcwrap:hover .kd-fold{opacity:1}.kd-fold:hover{background:#3e3d32;color:#f8f8f2}.kd-fold.on{opacity:1;color:#fd971f}',
+        '.kd-hl .m-f{color:#fd971f;background:rgba(253,151,31,.14);border-radius:4px;padding:0 4px;font-style:italic}',
         '.kd-hl .m-t{color:#66d9ef}.kd-hl .m-p{color:#fd971f}.kd-hl .m-b{color:#fd971f;font-weight:700}.kd-hl .m-i{color:#fd971f;font-style:italic}.kd-hl .m-l{color:#66d9ef;text-decoration:underline}.kd-hl .m-d{color:#75715e}',
         'body.kd-mode-source #wysiwyg-canvas,body.kd-mode-source #wo-sheets,body.kd-mode-source #bb-sheets{display:none!important}',
         'body.kd-mode-view #wysiwyg-canvas,body.kd-mode-view #wysiwyg-canvas *{caret-color:transparent}',
@@ -84,7 +89,7 @@
     const sp = function (cls, t) { return '<span class="' + cls + '">' + escH(t) + '</span>'; };
     // chip and tag marks: ++R+ ++ ;;R; !!#R# #R# ##  ~X~ =R= ^^R^ %R% &&  *sp(  @family-1@  and friends
     const MARKS = '\\+\\+[A-Z]{1,2}[+~!%?*:^]|;;[A-Z]{1,2};|!!?[#^~=+%:;\\-?/][A-Z]{1,2}[#!]?|[!?]{2}[A-Z]{1,2}[!?]|#[A-Z]{1,2}#(?:[_~=.][a-z]*)?|~[A-Z][A-Z0-9-]*~|=[A-Z]{1,2}=|\\^\\^[A-Z]{1,2}\\^|%[A-Z]{1,2}%|%\\d{1,2}%[A-Z]{1,2}%|&&|@[a-z0-9]+(?:-[1-5])?@|##|#_|#~|#=|\\+\\+|;;|\\^\\^|!!|\\?\\?|\\*>|\\+>';
-    const INLINE = new RegExp('(`[^`\\n]+`)|(\\$\\$[^$\\n]+\\$\\$|\\$[^$\\n]+\\$)|(\\[\\[[^\\]\\n]+\\]\\]|\\[[^\\]\\n]+\\]\\([^)\\n]+\\))|(\\*\\*[^*\\n]+\\*\\*)|(\\{\\{[^{}\\n]*\\}\\}|\\[\\^[^\\]\\n]+\\]|\\{align=[a-z]+\\})|(#[A-Z]{1,2}(?:\\.[a-z]+)?\\(|\\*sp\\()|(' + MARKS + ')|(\\*[^*\\s][^*\\n]*\\*)', 'g');
+    const INLINE = new RegExp('(`[^`\\n]+`)|(\\$\\$[^$\\n]+\\$\\$|\\$[^$\\n]+\\$)|(\\[\\[[^\\]\\n]+\\]\\]|\\[[^\\]\\n]+\\]\\([^)\\n]+\\))|(\\*\\*[^*\\n]+\\*\\*)|(\\{\\{[^{}\\n]*\\}\\}|\\[\\^[^\\]\\n]+\\]|\\{align=[a-z]+\\})|(#[A-Z]{1,2}(?:\\.[a-z]+)?\\(|\\*sp\\()|(' + MARKS + ')|(\\*[^*\\s][^*\\n]*\\*)|(⟪…[^⟫\\n]*⟫)', 'g');
     // (bold, italic and the (...) forms hold more Keydown inside them, so their insides are colored too)
     function hlInline(t) {
         let out = '', last = 0, m;
@@ -100,7 +105,7 @@
                 while (i < t.length && depth > 0) { if (t.charAt(i) === '(') depth++; else if (t.charAt(i) === ')') depth--; i++; }
                 if (depth === 0) { out += sp('m-n', m[0]) + hlInline(t.slice(end, i - 1)) + sp('m-n', ')'); end = i; re.lastIndex = i; }
                 else out += sp('m-n', m[0]);
-            } else out += sp(m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[5] ? 'm-p' : 'm-n', m[0]);
+            } else out += sp(m[9] ? 'm-f' : m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[5] ? 'm-p' : 'm-n', m[0]);
             last = end;
             if (m[0].length === 0) re.lastIndex++;
             else if (end !== m.index + m[0].length) re.lastIndex = end;
@@ -118,10 +123,12 @@
         }
         return out + escH(t.slice(last));
     }
-    function highlight(text) {
+    const PH = /⟪…[^⟫\n]*⟫/;
+    function hlLines(text) {
         let fence = false;
         return String(text).split('\n').map(function (line) {
             let m;
+            if (/^\s*⟪…[^⟫\n]*⟫\s*$/.test(line)) return sp('m-f', line);
             if (!fence && (m = /^(@@[a-z]+)(=?)("[^"]*")?(```)\s*$/.exec(line.trim()))) { fence = true; return sp('m-k', m[1]) + escH(m[2]) + (m[3] ? sp('m-s', m[3]) : '') + sp('m-p', m[4]); }
             if (/^\s*```/.test(line)) { fence = !fence; return sp('m-p', line); }
             if (fence) return hlCode(line);
@@ -134,17 +141,85 @@
             if ((m = /^(@@[a-z]+)(=")(.*)(")\s*$/.exec(line))) return sp('m-k', m[1]) + escH(m[2]) + sp('m-s', m[3]) + escH(m[4]);
             if (/^\|.*\|(\{[a-z]+\})?\s*$/.test(line)) return line.split('|').map(function (c, i, a) { return hlInline(c); }).join(sp('m-k', '|'));
             return hlInline(line);
-        }).join('\n');
+        });
+    }
+    function highlight(text) { return hlLines(text).join('\n'); }
+    // the colored copy sits under the box (whose own letters are see-through); the box grows with its text so both always line up
+    let hlPre = null, gutter = null, folds = {}, nextFold = 1;
+    /* ---------- folding: images and skills with long data, and code or math blocks, fold up from a little arrow on their first line ---------- */
+    // (a folded part is swapped for a short ⟪…note #n⟫ mark in the box; the real text is kept and put back whenever the page is read)
+    const PH_G = /⟪…[^⟫\n]*#(\d+)⟫/g;
+    function expand(v) {
+        let t = String(v);
+        for (let k = 0; k < 6; k++) { const n = t.replace(PH_G, function (all, id) { return folds[id] !== undefined ? folds[id] : all; }); if (n === t) break; t = n; }
+        return t;
+    }
+    const fullText = function () { return src ? expand(src.value) : ''; };
+    const OPEN_FENCE = /^(\s*```\S*|@@[a-z]+(?:="(?:[^"\\]|\\.)*")?=```)\s*$/;
+    const IMG = /^(\s*!\[[^\]\n]*\]\()([^)\n]{40,})(\).*)$/;
+    const SKILL = /^(@@[a-z]+=")((?:[^"\\]|\\.){40,})(")\s*$/;
+    const IMG_F = /^\s*!\[[^\]\n]*\]\(⟪…[^⟫\n]*⟫\)/, SKILL_F = /^@@[a-z]+="⟪…[^⟫\n]*⟫"\s*$/, WHOLE_F = /^\s*⟪…[^⟫\n]*⟫\s*$/;
+    function foldInfo(lines) {
+        const out = [];
+        for (let i = 0; i < lines.length; i++) {
+            const l = lines[i];
+            if (OPEN_FENCE.test(l) || /^\s*\$\$\s*$/.test(l)) {
+                const dollar = /^\s*\$\$\s*$/.test(l);
+                let j = i + 1;
+                while (j < lines.length && !(dollar ? /^\s*\$\$\s*$/.test(lines[j]) : /^\s*```\s*$/.test(lines[j]))) j++;
+                if (j < lines.length && j - i >= 2) { out.push({ i: i, j: j, kind: 'block', folded: j === i + 2 && WHOLE_F.test(lines[i + 1]) }); i = j; }
+            } else if (IMG_F.test(l) || SKILL_F.test(l)) out.push({ i: i, kind: 'line', folded: true });
+            else if (IMG.test(l) || SKILL.test(l)) out.push({ i: i, kind: 'line', folded: false });
+        }
+        return out;
+    }
+    function toggleFold(i) {
+        const lines = src.value.split('\n'), info = foldInfo(lines).find(function (f) { return f.i === i; });
+        if (!info) return;
+        let caret;
+        if (info.kind === 'block') {
+            if (info.folded) { const id = (PH_G.exec(lines[i + 1]) || [])[1]; PH_G.lastIndex = 0; if (folds[id] !== undefined) { lines[i + 1] = folds[id]; delete folds[id]; } }
+            else { const id = nextFold++; const inner = lines.slice(i + 1, info.j); folds[id] = inner.join('\n'); lines.splice(i + 1, inner.length, '⟪…' + inner.length + (inner.length === 1 ? ' line #' : ' lines #') + id + '⟫'); }
+        } else if (info.folded) {
+            lines[i] = lines[i].replace(PH_G, function (all, id) { const o = folds[id] !== undefined ? folds[id] : all; delete folds[id]; return o; });
+        } else {
+            const id = nextFold++, m = IMG.exec(lines[i]) || SKILL.exec(lines[i]);
+            folds[id] = m[2];
+            lines[i] = m[1] + '⟪…' + (m[2].length > 1024 ? Math.round(m[2].length / 1024) + ' KB' : m[2].length + ' characters') + ' #' + id + '⟫' + m[3];
+        }
+        caret = lines.slice(0, i).join('\n').length + (i ? 1 : 0);
+        src.value = lines.join('\n');
+        src.setSelectionRange(caret, caret);
+        lastSel = [caret, caret]; touched = true;
+        refresh();
+    }
+    function buildGutter() {
+        if (!gutter || !hlPre) return;
+        const kids = hlPre.children, info = foldInfo(src.value.split('\n'));
+        gutter.innerHTML = '';
+        info.forEach(function (f) {
+            const row = kids[f.i];
+            if (!row) return;
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'kd-fold' + (f.folded ? ' on' : '');
+            b.textContent = f.folded ? '▸' : '▾';
+            b.title = f.folded ? 'Unfold' : 'Fold (hide) this ' + (f.kind === 'block' ? 'block' : 'long part');
+            b.style.top = row.offsetTop + 'px';
+            b.addEventListener('mousedown', function (e) { e.preventDefault(); });
+            b.addEventListener('click', function (e) { e.preventDefault(); toggleFold(f.i); });
+            gutter.appendChild(b);
+        });
     }
     // the colored copy sits under the box (whose own letters are see-through); the box grows with its text so both always line up
-    let hlPre = null;
     function refresh() {
         if (!src || !hlPre) return;
-        hlPre.innerHTML = highlight(src.value) + '\n ';
+        hlPre.innerHTML = hlLines(src.value).map(function (l) { return '<div class="kd-l">' + (l || '​') + '</div>'; }).join('');
         src.style.height = 'auto';
         src.style.height = Math.max(src.scrollHeight, 1) + 'px';
+        buildGutter();
     }
-    function setSrc(v) { ensureSrc().value = v; refresh(); }
+    function setSrc(v) { folds = {}; nextFold = 1; ensureSrc().value = v; refresh(); }
 
     /* ---------- Source ---------- */
     function ensureSrc() {
@@ -158,7 +233,10 @@
         hlPre = document.createElement('pre');
         hlPre.className = 'kd-hl';
         hlPre.setAttribute('aria-hidden', 'true');
+        gutter = document.createElement('div');
+        gutter.className = 'kd-gutter';
         wrap.appendChild(hlPre);
+        wrap.appendChild(gutter);
         wrap.appendChild(src);
         ed.parentNode.insertBefore(wrap, ed.nextSibling);
         src.addEventListener('input', refresh);
@@ -167,9 +245,9 @@
         // where the caret is, as the box last said (the page may move it when a ribbon button takes the focus)
         ['select', 'keyup', 'mouseup', 'input', 'blur', 'click'].forEach(function (t) { src.addEventListener(t, function () { lastSel = [src.selectionStart, src.selectionEnd]; }); });
         // typing keeps the page (and its save) up to date, a moment after you stop
-        src.addEventListener('input', function () { clearTimeout(srcTimer); srcTimer = setTimeout(function () { build(src.value); }, 700); });
+        src.addEventListener('input', function () { clearTimeout(srcTimer); srcTimer = setTimeout(function () { build(fullText()); }, 700); });
         // leaving the box (for another page tab, the ribbon...) saves what you typed right away
-        src.addEventListener('blur', function () { if (srcTimer) { clearTimeout(srcTimer); srcTimer = 0; build(src.value); } });
+        src.addEventListener('blur', function () { if (srcTimer) { clearTimeout(srcTimer); srcTimer = 0; build(fullText()); } });
         src.addEventListener('keydown', function (e) {
             if (e.key === 'Tab' && !e.metaKey && !e.ctrlKey && !e.altKey) {
                 // Tab puts one | at the start of each picked line (one | is one indent step), and Shift+Tab takes one away!
@@ -237,7 +315,7 @@
         if (mode !== 'source' || !src || applying) return;
         const now = textNow();
         if (now === lastText) return;
-        if (src.value === now) { lastText = now; return; }
+        if (fullText() === now) { lastText = now; return; }
         const old = lastText;
         let pre = 0;
         while (pre < old.length && pre < now.length && old.charAt(pre) === now.charAt(pre)) pre++;
@@ -317,14 +395,14 @@
         busy = busy.then(function () {
             clearTimeout(srcTimer);
             // leaving Source: the text becomes the page (all of it formatted)
-            const fromSource = from === 'source' && src ? build(src.value) : Promise.resolve();
+            const fromSource = from === 'source' && src ? build(fullText()) : Promise.resolve();
             return fromSource.then(function () {
                 mode = m;
                 try { localStorage.setItem(KEY, m); } catch (e) {}
                 if (m === 'source') {
                     installShims();
                     setSrc(textNow());
-                    lastText = src.value; touched = false; lastSel = null;
+                    lastText = fullText(); touched = false; lastSel = null;
                     paintBar();
                     // (the box could only be measured once it showed: size it to its text now, and again when fonts arrive)
                     refresh(); requestAnimationFrame(refresh);
