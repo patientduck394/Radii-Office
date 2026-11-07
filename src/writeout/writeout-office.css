@@ -212,13 +212,12 @@ body.os-dark .wo-gp-p { color: #e5e5e5; }
 
 @media print {
     body.os-office { display: block !important; height: auto; background: #fff; }
-    body.os-office #wo-zoomer { display: block; margin: 0 !important; width: var(--wo-pw) !important; zoom: 1 !important; height: auto !important; }
+    body.os-office #wo-zoomer { display: block; margin: 0 !important; width: auto !important; zoom: 1 !important; height: auto !important; min-height: 0 !important; }
     body.os-office #wo-sheets { display: none !important; }
-    body.os-office .workspace-viewport-wrapper, body.os-office .canvas-scrollbox { padding: 0 !important; margin: 0 !important; }
-    body.os-office.wo-pages #wysiwyg-canvas {
-        width: var(--wo-pw) !important; max-width: none !important; margin: 0 !important;
-        padding: var(--wo-mt) var(--wo-ms) var(--wo-mb) !important;
-        font-size: var(--wo-print-fs, 16px) !important; min-height: var(--wo-total-h, var(--wo-ph)) !important; height: auto !important;
+    body.os-office .workspace-viewport-wrapper, body.os-office .canvas-scrollbox { padding: 0 !important; margin: 0 !important; zoom: 1 !important; }
+    body.os-office.wo-pages #wysiwyg-canvas, body.os-office.wo-web #wysiwyg-canvas {
+        width: 100% !important; max-width: none !important; margin: 0 !important; padding: 0 !important;
+        font-size: var(--wo-print-fs, 16px) !important; min-height: 0 !important; height: auto !important;
         box-shadow: none !important; background: #fff !important;
     }
 }

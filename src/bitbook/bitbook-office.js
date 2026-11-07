@@ -1043,16 +1043,16 @@
     new MutationObserver(function () { setTimeout(function () { captureSheetBg(); paginateSoon(); }, 30); }).observe(ed, { attributes: true, attributeFilter: ['class', 'style'] });
     ed.addEventListener('load', paginateSoon, true);
     window.addEventListener('resize', paginateSoon);
-    // Printing lays the pages out edge to edge at their real size (the same math as the screen, with no gap between sheets),
-    // so every printed page gets the page margins, not only the first one!
+    // Printing uses the browser's own page margins (the Page Layout margins) on EVERY printed page, and the text flows from page to
+    // page by itself: the on-screen page-break spacing is switched off while printing!
     function printPageSize(on) {
         let st = document.getElementById('bb-print-page');
         if (!st) { st = document.createElement('style'); st.id = 'bb-print-page'; document.head.appendChild(st); }
-        const d = pageDims();
-        st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: 0; } }' : '';
+        const d = pageDims(), m = MARGINS[prefs.margins] || MARGINS.normal;
+        st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: ' + m.t + 'px ' + m.s + 'px ' + m.b + 'px; } }' : '';
     }
-    window.addEventListener('beforeprint', function () { if (printing) return; printing = true; GAP = 0; printPageSize(true); applyView(); });
-    window.addEventListener('afterprint', function () { if (!printing) return; printing = false; GAP = previewing ? 0 : 28; printPageSize(false); applyView(); });
+    window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; });
+    window.addEventListener('afterprint', function () { printPageSize(false); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
     // Print Preview: the pages exactly as they will print (real paper size, 100%, no gaps)
     function setPreview(on) { previewing = !!on; GAP = (previewing || printing) ? 0 : 28; applyView(); OS.toast(previewing ? 'Print Preview: the pages at their real printed size!' : 'Print Preview off!'); }
     window.BitbookPreview = { set: setPreview };
