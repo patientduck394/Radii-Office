@@ -1031,6 +1031,7 @@
                 ] },
                 { label: 'Annotator', items: [
                     { big: true, icon: 'annotate', label: 'Annotator', title: 'A pen tray: pick a pen and a color, then select text to mark it! Notes and a list of every mark too!', run: function () { if (window.WriteoutAnnotator) window.WriteoutAnnotator.toggle(); }, checked: function () { return !!(window.WriteoutAnnotator && window.WriteoutAnnotator.isOn()); } },
+                    { big: true, icon: 'brush', label: 'Ink\nDrawing', title: 'Draw right on the page with the Annotate inks (Gel, Felt Pen, Highlighter, Neon, Crayon and the Theme Packs) in 13 colors!', run: function () { if (window.AnnotateInk) window.AnnotateInk.start(); else OS.toast('The Annotate inks did not load!'); } },
                     { stack: [{ sm: true, icon: 'bullets', label: 'All Marks', run: function () { if (window.WriteoutAnnotator) window.WriteoutAnnotator.list(); } }] }
                 ] },
                 { label: 'Writing', items: [
