@@ -23,7 +23,8 @@
         '.kd-modes button[aria-pressed="true"]{background:linear-gradient(180deg,#38bdf8,#0284c7);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}',
         '.kd-src{display:none;box-sizing:border-box;width:100%;min-height:70vh;margin:0;padding:22px 26px;border:1px solid rgba(2,132,199,.35);border-radius:10px;background:#fff;color:#0f172a;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;resize:vertical;tab-size:4}',
         'body.kd-mode-source .kd-src{display:block}',
-        'body.kd-mode-source #wysiwyg-canvas,body.kd-mode-source #wo-sheets{display:none!important}',
+        'body.kd-mode-source #wysiwyg-canvas,body.kd-mode-source #wo-sheets,body.kd-mode-source #bb-sheets{display:none!important}',
+        'body.kd-mode-source .kd-src{position:relative;z-index:8;min-height:60vh}',
         'body.kd-mode-view #wysiwyg-canvas,body.kd-mode-view #wysiwyg-canvas *{caret-color:transparent}',
         'body.kd-mode-view #wysiwyg-canvas [contenteditable="true"]{cursor:default}',
         '@media print{.kd-modes{display:none}}'
