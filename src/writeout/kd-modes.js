@@ -21,10 +21,15 @@
         '.kd-modes{position:fixed;right:16px;bottom:46px;z-index:70;display:flex;gap:2px;padding:3px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(224,242,254,.94));border:1px solid rgba(2,132,199,.45);box-shadow:0 6px 18px rgba(3,105,161,.22);font:700 12px system-ui,sans-serif}',
         '.kd-modes button{font:inherit;border:0;background:none;color:#0369a1;padding:5px 12px;border-radius:999px;cursor:pointer}',
         '.kd-modes button[aria-pressed="true"]{background:linear-gradient(180deg,#38bdf8,#0284c7);color:#fff;box-shadow:inset 0 1px 0 rgba(255,255,255,.5)}',
-        '.kd-src{display:none;box-sizing:border-box;width:100%;min-height:70vh;margin:0;padding:22px 26px;border:1px solid rgba(2,132,199,.35);border-radius:10px;background:#fff;color:#0f172a;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,monospace;white-space:pre-wrap;resize:vertical;tab-size:4}',
-        'body.kd-mode-source .kd-src{display:block}',
+        '.kd-srcwrap{display:none;position:relative;box-sizing:border-box;width:100%;min-height:60vh;border:1px solid #3e3d32;border-radius:10px;background:#272822;box-shadow:0 6px 18px rgba(0,0,0,.25);z-index:8;overflow:hidden}',
+        'body.kd-mode-source .kd-srcwrap{display:block}',
+        '.kd-hl,.kd-src{box-sizing:border-box;width:100%;margin:0;padding:22px 26px;border:0;font:14px/1.6 ui-monospace,SFMono-Regular,Menlo,"JetBrains Mono",monospace;letter-spacing:0;white-space:pre-wrap;overflow-wrap:break-word;word-break:normal;tab-size:4;font-variant-ligatures:none}',
+        '.kd-hl{position:absolute;left:0;top:0;right:0;min-height:100%;color:#f8f8f2;pointer-events:none;overflow:hidden}',
+        '.kd-src{display:block;position:relative;min-height:60vh;background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:#f8f8f0;resize:none;overflow:hidden;outline:none}',
+        '.kd-src::selection{background:#49483e;-webkit-text-fill-color:transparent}',
+        '.kd-hl .m-h{color:#a6e22e;font-weight:700}.kd-hl .m-k{color:#f92672}.kd-hl .m-s{color:#e6db74}.kd-hl .m-n{color:#ae81ff}.kd-hl .m-c{color:#75715e}',
+        '.kd-hl .m-t{color:#66d9ef}.kd-hl .m-p{color:#fd971f}.kd-hl .m-b{color:#fd971f;font-weight:700}.kd-hl .m-i{color:#fd971f;font-style:italic}.kd-hl .m-l{color:#66d9ef;text-decoration:underline}.kd-hl .m-d{color:#75715e}',
         'body.kd-mode-source #wysiwyg-canvas,body.kd-mode-source #wo-sheets,body.kd-mode-source #bb-sheets{display:none!important}',
-        'body.kd-mode-source .kd-src{position:relative;z-index:8;min-height:60vh}',
         'body.kd-mode-view #wysiwyg-canvas,body.kd-mode-view #wysiwyg-canvas *{caret-color:transparent}',
         'body.kd-mode-view #wysiwyg-canvas [contenteditable="true"]{cursor:default}',
         '@media print{.kd-modes{display:none}}'
@@ -73,6 +78,64 @@
     }
     function textNow() { return kdDoc.sourceOf(ed).replace(/\n{3,}/g, '\n\n'); }
 
+
+    /* ---------- Monokai colors for the Keydown text ---------- */
+    const escH = function (t) { return String(t).replace(/[&<>]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]; }); };
+    const sp = function (cls, t) { return '<span class="' + cls + '">' + escH(t) + '</span>'; };
+    // chip and tag marks: ++R+ ++ ;;R; !!#R# #R# ##  ~X~ =R= ^^R^ %R% &&  *sp(  @family-1@  and friends
+    const MARKS = '\\+\\+[A-Z]{1,2}[+~!%?*:^]|;;[A-Z]{1,2};|!!?[#^~=+%:;\\-?/][A-Z]{1,2}[#!]?|[!?]{2}[A-Z]{1,2}[!?]|#[A-Z]{1,2}#(?:[_~=.][a-z]*)?|~[A-Z][A-Z0-9-]*~|=[A-Z]{1,2}=|\\^\\^[A-Z]{1,2}\\^|%[A-Z]{1,2}%|%\\d{1,2}%[A-Z]{1,2}%|&&|\\*sp\\(|@[a-z0-9]+(?:-[1-5])?@|##|#_|#~|#=|\\+\\+|;;|\\^\\^|!!|\\?\\?|\\*>|\\+>';
+    const INLINE = new RegExp('(`[^`\\n]+`)|(\\$\\$[^$\\n]+\\$\\$|\\$[^$\\n]+\\$)|(\\[\\[[^\\]\\n]+\\]\\]|\\[[^\\]\\n]+\\]\\([^)\\n]+\\))|(\\*\\*[^*\\n]+\\*\\*)|(\\{\\{[^{}\\n]*\\}\\}|\\[\\^[^\\]\\n]+\\]|\\{align=[a-z]+\\})|(' + MARKS + ')|(\\*[^*\\s][^*\\n]*\\*)', 'g');
+    function hlInline(t) {
+        let out = '', last = 0, m;
+        INLINE.lastIndex = 0;
+        while ((m = INLINE.exec(t))) {
+            if (m.index > last) out += escH(t.slice(last, m.index));
+            const cls = m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[4] ? 'm-b' : m[5] ? 'm-p' : m[6] ? 'm-n' : 'm-i';
+            out += sp(cls, m[0]);
+            last = m.index + m[0].length;
+            if (m[0].length === 0) INLINE.lastIndex++;
+        }
+        return out + escH(t.slice(last));
+    }
+    const CODE_RE = /(#.*$)|("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')|\b(\d+(?:\.\d+)?)\b|\b(fn|var|temp|if|elif|else|while|for|in|return|break|continue|and|or|not|true|false|null)\b|\b([A-Za-z_]\w*)(?=\()/g;
+    function hlCode(t) {
+        let out = '', last = 0, m;
+        CODE_RE.lastIndex = 0;
+        while ((m = CODE_RE.exec(t))) {
+            if (m.index > last) out += escH(t.slice(last, m.index));
+            out += sp(m[1] ? 'm-c' : m[2] ? 'm-s' : m[3] ? 'm-n' : m[4] ? 'm-k' : 'm-h', m[0]);
+            last = m.index + m[0].length;
+        }
+        return out + escH(t.slice(last));
+    }
+    function highlight(text) {
+        let fence = false;
+        return String(text).split('\n').map(function (line) {
+            let m;
+            if (!fence && (m = /^(@@[a-z]+)(=?)("[^"]*")?(```)\s*$/.exec(line.trim()))) { fence = true; return sp('m-k', m[1]) + escH(m[2]) + (m[3] ? sp('m-s', m[3]) : '') + sp('m-p', m[4]); }
+            if (/^\s*```/.test(line)) { fence = !fence; return sp('m-p', line); }
+            if (fence) return hlCode(line);
+            if ((m = /^(\|+)(.*)$/.exec(line)) && !/^\|.*\|(\{[a-z]+\})?\s*$/.test(line)) return sp('m-d', m[1]) + highlight(m[2]);
+            if (/^\s*([-*_=])\1{2,}\s*$/.test(line)) return sp('m-d', line);
+            if ((m = /^(\s*)(#{1,4})(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-h', m[2] + m[3] + m[4]);
+            if ((m = /^(\s*)(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>|>)(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
+            if ((m = /^(\s*)([*+\-.~=])(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
+            if ((m = /^(::[a-z]+)(\{[^}]*\})?(.*)$/.exec(line))) return sp('m-k', m[1]) + (m[2] ? sp('m-p', m[2]) : '') + hlInline(m[3]);
+            if ((m = /^(@@[a-z]+)(=")(.*)(")\s*$/.exec(line))) return sp('m-k', m[1]) + escH(m[2]) + sp('m-s', m[3]) + escH(m[4]);
+            if (/^\|.*\|(\{[a-z]+\})?\s*$/.test(line)) return line.split('|').map(function (c, i, a) { return hlInline(c); }).join(sp('m-k', '|'));
+            return hlInline(line);
+        }).join('\n');
+    }
+    // the colored copy sits under the box (whose own letters are see-through); the box grows with its text so both always line up
+    let hlPre = null;
+    function refresh() {
+        if (!src || !hlPre) return;
+        hlPre.innerHTML = highlight(src.value) + '\n ';
+        src.style.height = 'auto';
+        src.style.height = Math.max(src.scrollHeight, 1) + 'px';
+    }
+    function setSrc(v) { ensureSrc().value = v; refresh(); }
+
     /* ---------- Source ---------- */
     function ensureSrc() {
         if (src) return src;
@@ -80,7 +143,16 @@
         src.className = 'kd-src';
         src.spellcheck = false;
         src.setAttribute('aria-label', 'Page source (Keydown text)');
-        ed.parentNode.insertBefore(src, ed.nextSibling);
+        const wrap = document.createElement('div');
+        wrap.className = 'kd-srcwrap';
+        hlPre = document.createElement('pre');
+        hlPre.className = 'kd-hl';
+        hlPre.setAttribute('aria-hidden', 'true');
+        wrap.appendChild(hlPre);
+        wrap.appendChild(src);
+        ed.parentNode.insertBefore(wrap, ed.nextSibling);
+        src.addEventListener('input', refresh);
+        window.addEventListener('resize', refresh);
         ['pointerdown', 'keydown', 'focus'].forEach(function (t) { src.addEventListener(t, function () { touched = true; }); });
         // where the caret is, as the box last said (the page may move it when a ribbon button takes the focus)
         ['select', 'keyup', 'mouseup', 'input', 'blur', 'click'].forEach(function (t) { src.addEventListener(t, function () { lastSel = [src.selectionStart, src.selectionEnd]; }); });
@@ -164,7 +236,7 @@
         const added = now.slice(pre, now.length - suf), removed = old.length - pre - suf;
         lastText = now;
         // (a different page opened, or text was replaced: show that page; plain additions go in at the caret)
-        if (!added || removed) { src.value = now; return; }
+        if (!added || removed) { setSrc(now); return; }
         srcInsert(added, /\n/.test(added) || /^\s*$/.test(old.charAt(pre - 1) || '\n'));
     }
 
@@ -241,7 +313,7 @@
                 try { localStorage.setItem(KEY, m); } catch (e) {}
                 if (m === 'source') {
                     installShims();
-                    ensureSrc().value = textNow();
+                    setSrc(textNow());
                     lastText = src.value; touched = false; lastSel = null;
                     paintBar();
                     setTimeout(function () { try { src.focus(); src.setSelectionRange(0, 0); src.scrollTop = 0; } catch (e) {} touched = false; }, 0);
