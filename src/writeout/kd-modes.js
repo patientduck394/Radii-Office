@@ -316,6 +316,9 @@
                     setSrc(textNow());
                     lastText = src.value; touched = false; lastSel = null;
                     paintBar();
+                    // (the box could only be measured once it showed: size it to its text now, and again when fonts arrive)
+                    refresh(); requestAnimationFrame(refresh);
+                    try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh); } catch (e) {}
                     setTimeout(function () { try { src.focus(); src.setSelectionRange(0, 0); src.scrollTop = 0; } catch (e) {} touched = false; }, 0);
                     return;
                 }
