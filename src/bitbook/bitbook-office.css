@@ -252,3 +252,60 @@ body.os-office.os-phone:not(.bb-nav-off):not(.bb-full) #sidebar {
 .bb-chip-col:hover { background: var(--os-hover, rgba(127, 127, 127, 0.14)); transform: scale(1.05); z-index: 1; }
 .bb-chip-col > span { font: 800 12px 'JetBrains Mono', monospace; pointer-events: none; }
 .bb-chip-col small { font-size: 10px; color: var(--os-dim); }
+
+/* ========================================================
+   PAGES (Print Layout), the same real pages as Writeout: View > Pages shows the note as separate sheets on a desk.
+   A page is a page break (::pagebreak, Ctrl/Cmd+Enter); the sheets sit behind a see-through canvas.
+   ======================================================== */
+#bb-zoomer, #bb-pagebox { display: contents; }
+#bb-sheets { display: none; }
+body.os-office.bb-pages .canvas-scrollbox { background: #d8d3df !important; padding: 0 16px; overflow-x: auto; scroll-behavior: auto; }
+body.os-office.os-dark.bb-pages .canvas-scrollbox { background: #16141a !important; }
+body.os-office.bb-pages #bb-zoomer { display: block; position: relative; margin: 26px auto 46px; width: var(--bb-pw); flex: none; }
+body.os-office.bb-pages #bb-pagebox { display: block; position: relative; }
+/* the title and date sit on the desk, above the first sheet */
+body.os-office.bb-pages #on-page-head { padding: 0 2px 12px; }
+body.os-office.bb-pages #on-title { width: 100%; max-width: none; }
+body.os-office.bb-pages #on-date { color: #5f5970; }
+body.os-office.bb-pages.os-dark #on-date { color: #aaa2b8; }
+body.os-office.bb-pages #bb-sheets { display: block; position: absolute; left: 0; top: 0; width: var(--bb-pw); height: 0; z-index: 0; pointer-events: none; }
+.bb-sheet {
+    position: absolute;
+    left: 0;
+    width: var(--bb-pw);
+    height: var(--bb-ph);
+    background: var(--bb-sheet-bg, #fff);
+    border-radius: 2px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.14), 0 8px 26px rgba(0, 0, 0, 0.11);
+}
+.bb-pnum {
+    position: absolute; left: 0; right: 0; bottom: calc(var(--bb-mb) / 2 - 8px);
+    text-align: center; font: 600 11px var(--os-brand-font, system-ui); color: rgba(100, 116, 139, 0.75); display: none;
+}
+body.bb-numbers .bb-pnum { display: block; }
+body.os-office.bb-pages #wysiwyg-canvas {
+    position: relative;
+    z-index: 1;
+    width: var(--bb-pw) !important;
+    max-width: none !important;
+    min-height: var(--bb-total-h, var(--bb-ph)) !important;
+    padding: var(--bb-mt) var(--bb-ms) var(--bb-mb) !important;
+    margin: 0 !important;
+    background: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    flex: none !important;
+}
+@media print {
+    body.os-office #bb-zoomer { display: block; margin: 0; width: auto; zoom: 1 !important; }
+    body.os-office #bb-sheets { display: none !important; }
+    body.os-office.bb-pages #wysiwyg-canvas { padding: 0 !important; width: 100% !important; box-shadow: none !important; }
+    #bb-page-rules { display: none; }
+}
+/* Phone mode: the text fills the screen instead of paper pages (Print Layout comes back on a bigger screen) */
+body.os-office.os-phone.bb-pages #bb-zoomer { width: 100% !important; margin: 10px 0 28px; }
+body.os-office.os-phone #bb-sheets { display: none !important; }
+body.os-office.os-phone.bb-pages #wysiwyg-canvas { width: 100% !important; min-height: 70vh !important; padding: 20px 16px 40px !important; background: var(--bb-sheet-bg, #fff) !important; border-radius: 10px !important; }

@@ -13,7 +13,7 @@
 
     const PREF_KEY = 'bitbook_onenote_prefs';
     const PAGE_KEY = 'bitbook_onenote_pages';
-    const prefs = Object.assign({ nav: true, pane: false, zoom: 1, full: false, lines: 'none', color: '' }, (function () {
+    const prefs = Object.assign({ nav: true, pane: false, zoom: 1, full: false, lines: 'none', color: '', pages: false, margins: 'normal', numbers: true }, (function () {
         try { return JSON.parse(localStorage.getItem(PREF_KEY) || '{}') || {}; } catch (e) { return {}; }
     })());
     prefs.pane = false; // the Format sidebar is gone from this layout (Protect and Note Info still open their own panel)
@@ -462,6 +462,7 @@
         if (scb) scb.style.zoom = on && prefs.zoom !== 1 ? String(prefs.zoom) : '';
         renderHead();
         applyPage();
+        applyPagesView();
         OS.sync();
     }
     function themeMenu() {
@@ -473,6 +474,226 @@
             return { label: t.name + (t.id === '' || t.installed ? '' : ' (Get)'), checked: active === t.id, icon: 'pageColor', run: function () { if (M && M.applyTheme) M.applyTheme(t.id); setTimeout(applyPage, 60); } };
         }));
     }
+
+    /* ---------- Pages (the same real pages and Print Layout as Writeout!) ----------
+       A page is a page break (::pagebreak, Ctrl/Cmd+Enter); View > Pages shows the note as separate sheets, like Word's Print Layout. */
+    const MARGINS = {
+        normal: { label: 'Normal', hint: '1" all around', t: 96, b: 96, s: 96 },
+        narrow: { label: 'Narrow', hint: '0.5" all around', t: 48, b: 48, s: 48 },
+        moderate: { label: 'Moderate', hint: '1" top/bottom, 0.75" sides', t: 96, b: 96, s: 72 },
+        wide: { label: 'Wide', hint: '1" top/bottom, 2" sides', t: 96, b: 96, s: 192 },
+        bitbook: { label: 'Bitbook', hint: 'The snug OneNote padding', t: 30, b: 30, s: 48 }
+    };
+    const GAP = 28;
+    let zoomer = null, pagebox = null, sheets = null, ruleStyle = null, pageCount = 1, sheetBg = '#ffffff';
+
+    function pageDims() {
+        let w = (typeof kdPageWidth === 'function' && kdPageWidth()) || 0;
+        let h = (typeof kdPageHeight === 'function' && kdPageHeight()) || 1056;
+        if (!w) {
+            const land = typeof kdPageOrient !== 'undefined' && kdPageOrient === 'landscape';
+            w = land ? 1056 : 816;
+            h = land ? 816 : 1056;
+        }
+        return { w: w, h: h };
+    }
+    function pagesOn() { return office() && prefs.pages && !prefs.full; }
+
+    function ensureWrap() {
+        if (zoomer) return;
+        const scb = ed.parentElement;
+        zoomer = document.createElement('div');
+        zoomer.id = 'bb-zoomer';
+        pagebox = document.createElement('div');
+        pagebox.id = 'bb-pagebox';
+        sheets = document.createElement('div');
+        sheets.id = 'bb-sheets';
+        sheets.setAttribute('aria-hidden', 'true');
+        scb.insertBefore(zoomer, head || ed);
+        if (head) zoomer.appendChild(head);
+        zoomer.appendChild(pagebox);
+        pagebox.appendChild(sheets);
+        pagebox.appendChild(ed);
+        ruleStyle = document.createElement('style');
+        ruleStyle.id = 'bb-page-rules';
+        document.head.appendChild(ruleStyle);
+    }
+    // the sheets take the page color of the note (or the canvas theme)
+    function captureSheetBg() {
+        const had = document.body.classList.contains('bb-pages');
+        if (had) document.body.classList.remove('bb-pages');
+        const cs = getComputedStyle(ed);
+        sheetBg = cs.backgroundImage && cs.backgroundImage !== 'none' ? cs.backgroundImage + ', ' + cs.backgroundColor : cs.backgroundColor;
+        if (!sheetBg || sheetBg === 'rgba(0, 0, 0, 0)') { const scb = document.querySelector('.canvas-scrollbox'); sheetBg = scb ? getComputedStyle(scb).backgroundColor : '#ffffff'; if (!sheetBg || sheetBg === 'rgba(0, 0, 0, 0)') sheetBg = '#ffffff'; }
+        if (had) document.body.classList.add('bb-pages');
+        if (zoomer) zoomer.style.setProperty('--bb-sheet-bg', sheetBg);
+    }
+    function applyPagesView() {
+        ensureWrap();
+        document.body.classList.toggle('bb-pages', pagesOn());
+        document.body.classList.toggle('bb-numbers', !!prefs.numbers);
+        const d = pageDims();
+        const m = MARGINS[prefs.margins] || MARGINS.normal;
+        const st = zoomer.style;
+        st.setProperty('--bb-pw', d.w + 'px');
+        st.setProperty('--bb-ph', d.h + 'px');
+        st.setProperty('--bb-gap', GAP + 'px');
+        st.setProperty('--bb-mt', m.t + 'px');
+        st.setProperty('--bb-mb', m.b + 'px');
+        st.setProperty('--bb-ms', m.s + 'px');
+        captureSheetBg();
+        paginate();
+    }
+    function paginate() {
+        if (!ruleStyle) return;
+        const sheet = ruleStyle.sheet;
+        while (sheet.cssRules.length) sheet.deleteRule(0);
+        if (!pagesOn()) {
+            sheets.innerHTML = '';
+            sheets._count = 0;
+            zoomer.style.removeProperty('--bb-total-h');
+            pageCount = Math.max(1, ed.querySelectorAll('.kd-pagebreak').length + 1);
+            pageList();
+            return;
+        }
+        // measure the text on its own: the last page count's height must not hold the note open (or pages could never go away)
+        zoomer.style.removeProperty('--bb-total-h');
+        const d = pageDims();
+        const m = MARGINS[prefs.margins] || MARGINS.normal;
+        const H = d.h, P = d.h + GAP;
+        const box = ed.getBoundingClientRect();
+        const ratio = (box.height / (ed.offsetHeight || 1)) || 1;
+        const top0 = box.top;
+        let idx = 0, lastBottom = m.t, forceTop = null;   // forceTop: where the line after a page break must start
+        const kids = ed.children;
+        for (let i = 0; i < kids.length; i++) {
+            const kid = kids[i];
+            idx++;
+            const cs = getComputedStyle(kid);
+            if (cs.position === 'absolute' || cs.position === 'fixed' || cs.display === 'none') continue;
+            const r = kid.getBoundingClientRect();
+            const t = (r.top - top0) / ratio;
+            const b = (r.bottom - top0) / ratio;
+            const h = b - t;
+            const p = Math.max(0, Math.floor(t / P));
+            const cTop = p * P + m.t;
+            const cBottom = p * P + H - m.b;
+            let target = null;
+            if (forceTop !== null) {
+                if (t < forceTop - 0.5) target = forceTop;
+                forceTop = null;
+            }
+            if (target !== null) { /* decided by the page break above */ }
+            else if (t > cBottom - 0.5) target = (p + 1) * P + m.t;
+            else if (b > cBottom + 0.5 && h <= H - m.t - m.b) target = (p + 1) * P + m.t;
+            else if (p > 0 && t < cTop - 0.5) target = cTop;
+            if (target !== null) {
+                const push = target - t;
+                const prev = kid.previousElementSibling;
+                const mt = parseFloat(cs.marginTop) || 0;
+                const pmb = prev ? (parseFloat(getComputedStyle(prev).marginBottom) || 0) : 0;
+                const base = prev ? Math.max(mt, pmb) : mt;
+                sheet.insertRule('#wysiwyg-canvas > :nth-child(' + idx + ') { margin-top: ' + (base + push).toFixed(1) + 'px !important; }', sheet.cssRules.length);
+                lastBottom = target + h;
+            } else lastBottom = Math.max(lastBottom, b);
+            if (kid.classList && kid.classList.contains('kd-pagebreak')) forceTop = (Math.floor(((target !== null ? target : t) + 1) / P) + 1) * P + m.t;
+        }
+        const contentH = Math.max(lastBottom, (ed.scrollHeight || 0) - m.b - 2);
+        pageCount = Math.max(1, Math.floor((contentH - 1) / P) + 1);
+        zoomer.style.setProperty('--bb-total-h', (pageCount * P - GAP) + 'px');
+        if (sheets.children.length !== pageCount) {
+            let html = '';
+            for (let i = 0; i < pageCount; i++) html += '<div class="bb-sheet" style="top:' + (i * P) + 'px"><span class="bb-pnum">' + (i + 1) + '</span></div>';
+            sheets.innerHTML = html;
+            if (sheets._count && pageCount > sheets._count) { const last = sheets.lastElementChild; if (last) last.classList.add('bb-sheet-new'); }
+            sheets._count = pageCount;
+        }
+        pageList();
+    }
+    function currentPage() {
+        const s = window.getSelection();
+        if (!s || !s.rangeCount || !ed.contains(s.anchorNode)) return 1;
+        if (pagesOn()) {
+            let r = s.getRangeAt(0).getBoundingClientRect();
+            if (!r || (!r.height && !r.top)) { const n = selNode(); if (n) r = n.getBoundingClientRect(); }
+            const box = ed.getBoundingClientRect();
+            const ratio = (box.height / (ed.offsetHeight || 1)) || 1;
+            return Math.min(pageCount, Math.max(1, Math.floor(((r.top - box.top) / ratio) / (pageDims().h + GAP)) + 1));
+        }
+        let top = s.anchorNode, here = 1;
+        while (top && top.parentNode !== ed) top = top.parentNode;
+        for (let k = top && top.previousElementSibling; k; k = k.previousElementSibling) if (k.classList.contains('kd-pagebreak')) here++;
+        return here;
+    }
+    // the Pages list in the side pane: every page of the note, click to jump there
+    function pageList() {
+        const list = document.getElementById('doc-pages-list');
+        if (!list) return;
+        const breaks = ed.querySelectorAll('.kd-pagebreak').length;
+        const n = pagesOn() ? Math.max(pageCount, breaks + 1) : breaks + 1;
+        const here = Math.min(currentPage(), n);
+        const key = n + ':' + here;
+        if (list._key === key) return;
+        list._key = key;
+        list.innerHTML = '';
+        for (let i = 1; i <= n; i++) {
+            const row = document.createElement('div');
+            row.className = 'tab-row';
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'outline-item' + (i === here ? ' active' : '');
+            b.textContent = 'Page ' + i;
+            b.title = 'Go to page ' + i;
+            b.addEventListener('click', function () { goToPage(i); });
+            row.appendChild(b);
+            list.appendChild(row);
+        }
+    }
+    function goToPage(i) {
+        if (pagesOn() && sheets && sheets.children[i - 1]) { sheets.children[i - 1].scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+        const brs = ed.querySelectorAll('.kd-pagebreak');
+        const target = i <= 1 ? ed.firstElementChild : (brs[i - 2] && brs[i - 2].nextElementSibling);
+        if (target && target.scrollIntoView) target.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+    let paginateQueued = false;
+    function paginateSoon() {
+        if (paginateQueued) return;
+        paginateQueued = true;
+        requestAnimationFrame(function () { paginateQueued = false; if (office()) { paginate(); OS.sync(); } });
+    }
+    // New Page adds a real page: a page break at the caret, and what comes after it starts on a fresh sheet
+    function newPage() {
+        const line = typeof kdInsertPageBreak === 'function' ? kdInsertPageBreak() : null;
+        save();
+        paginateSoon();
+        setTimeout(function () { paginate(); OS.sync(); try { if (line && line.scrollIntoView) line.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} OS.toast('Page ' + currentPage() + '!'); }, 60);
+    }
+    function setPagesView(on) { prefs.pages = !!on; savePrefs(); applyView(); OS.toast(on ? 'Pages: the note as separate sheets!' : 'Pages view off: one long page!'); }
+    function setMargins(k) { prefs.margins = k; savePrefs(); applyView(); OS.toast(MARGINS[k].label + ' margins!'); }
+    function sizeMenu() {
+        return (typeof KD_PAGE_SIZES !== 'undefined' ? KD_PAGE_SIZES : []).map(function (s) {
+            return { label: s.name, hint: s.w ? Math.round(s.w / 96 * 100) / 100 + '" × ' + Math.round(s.h / 96 * 100) / 100 + '"' : 'Letter-shaped pages', icon: 'size', checked: kdPageSizeId === s.id, run: function () { kdSetPageSize(s.id); applyView(); } };
+        });
+    }
+    function orientMenu() {
+        return ['portrait', 'landscape'].map(function (o) {
+            return { label: o[0].toUpperCase() + o.slice(1), icon: 'orientation', checked: kdPageOrient === o, run: function () { kdSetOrient(o); applyView(); } };
+        });
+    }
+    function marginsMenu() {
+        return Object.keys(MARGINS).map(function (k) {
+            return { label: MARGINS[k].label, hint: MARGINS[k].hint, icon: 'margins', checked: prefs.margins === k, run: function () { setMargins(k); } };
+        });
+    }
+    window.BitbookPages = {
+        pageCount: function () { return pageCount; },
+        pageOf: function (el) {
+            if (!pagesOn() || !el || !el.getBoundingClientRect) return 1;
+            const r = el.getBoundingClientRect(), box = ed.getBoundingClientRect();
+            const ratio = (box.height / (ed.offsetHeight || 1)) || 1;
+            return Math.min(pageCount, Math.max(1, Math.floor(((r.top - box.top) / ratio) / (pageDims().h + GAP)) + 1));
+        }
+    };
 
     /* ---------- Stats ---------- */
     function stats() {
@@ -511,7 +732,8 @@
             id: 'home', label: 'Home', icon: 'home', render: function (b) {
                 b.innerHTML = '<h1>' + greet() + '!</h1>';
                 b.appendChild(OS.bsCards([
-                    { label: 'New page', hint: 'A fresh page in this notebook!', icon: 'newDoc', run: newNote },
+                    { label: 'New page', hint: 'Add a page to this note: the text after it starts on a fresh sheet!', icon: 'newDoc', run: newPage },
+                    { label: 'New note', hint: 'A fresh note in this notebook!', icon: 'notebook', run: newNote },
                     { label: 'New notebook', hint: 'Start over with an empty notebook!', icon: 'notebook', run: newNotebook },
                     { label: 'Open a .kn file', hint: 'Import a Bitbook note!', icon: 'folder', run: openFile }
                 ]));
@@ -519,7 +741,7 @@
                 b.insertAdjacentHTML('beforeend', '<h2>This notebook</h2><div class="bb-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((tab() || {}).name || 'Quick Note') + '</b><span>' + kdTabs.length + ' page' + (kdTabs.length === 1 ? '' : 's') + ' · ' + s.words.toLocaleString() + ' words on this page · saves automatically in this browser!</span></div></div>');
             }
         },
-        { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'New page', hint: 'Keeps every other page!', icon: 'newDoc', run: newNote }, { label: 'New notebook', hint: 'Clears every page!', icon: 'notebook', run: newNotebook }])); } },
+        { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'New note', hint: 'Keeps every other note!', icon: 'notebook', run: newNote }, { label: 'New notebook', hint: 'Clears every page!', icon: 'notebook', run: newNotebook }])); } },
         { id: 'open', label: 'Open', icon: 'folder', render: function (b) { b.innerHTML = '<h1>Open</h1>'; b.appendChild(OS.bsCards([{ label: 'Browse…', hint: 'Open a .kn or .kd file!', icon: 'folder', run: openFile }])); } },
         { id: 'export', label: 'Export', icon: 'export', render: function (b) { b.innerHTML = '<h1>Export</h1>'; b.appendChild(OS.bsCards(DL.map(function (d) { return { label: d[1], hint: d[2], icon: d[3], run: function () { download(d[0]); } }; }))); } },
         { id: 'print', label: 'Print', icon: 'print', action: function () { if (typeof printWriteoutPage === 'function') printWriteoutPage(); } },
@@ -644,7 +866,10 @@
         },
         {
             id: 'insert', label: 'Insert', groups: [
-                { label: 'Pages', items: [{ big: true, icon: 'newDoc', label: 'New\nPage', run: newNote }] },
+                { label: 'Pages', items: [
+                    { big: true, icon: 'newDoc', label: 'New\nPage', title: 'Add a page to this note (Ctrl/Cmd+Enter): the text after it starts on a fresh sheet!', run: newPage },
+                    { big: true, icon: 'notebook', label: 'New\nNote', title: 'Add another note to this notebook', run: newNote }
+                ] },
                 { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } }] },
                 { label: 'Files', items: [
                     { big: true, icon: 'attach', label: 'File\nAttachment', run: function () { insertKind('file'); } },
@@ -687,7 +912,13 @@
                     { big: true, icon: 'code', label: 'Source', title: 'Edit the page as Keydown text! Going back formats all of it!', run: function () { if (window.KdModes) KdModes.set('source'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'source'; } }
                 ] },
                 { label: 'Views', items: [
+                    { big: true, icon: 'pages', label: 'Pages\nView', title: 'Show the note as separate pages, like Word\'s Print Layout!', run: function () { setPagesView(!prefs.pages); }, checked: function () { return prefs.pages; } },
                     { big: true, icon: 'fullscreen', label: 'Full Page\nView', title: 'Just the page (Esc to exit)!', run: function () { setFull(true); } }
+                ] },
+                { label: 'Page Layout', items: [
+                    { big: true, icon: 'margins', label: 'Margins', menu: marginsMenu },
+                    { big: true, icon: 'orientation', label: 'Orientation', menu: orientMenu },
+                    { big: true, icon: 'size', label: 'Size', menu: sizeMenu }
                 ] },
                 { label: 'Page Setup', items: [
                     { big: true, icon: 'pageColor', label: 'Page\nColor', menu: pageColorMenu },
@@ -696,6 +927,7 @@
                 ] },
                 { label: 'Show', items: [{ stack: [
                     { check: true, label: 'Page List', get: function () { return prefs.nav; }, set: function (v) { prefs.nav = v; savePrefs(); applyView(); } },
+                    { check: true, label: 'Page Numbers', get: function () { return prefs.numbers; }, set: function (v) { prefs.numbers = v; savePrefs(); applyView(); } },
                     { check: true, label: 'Floating Spheres', get: function () { return window.WriteoutSettings ? !window.WriteoutSettings.ambientHidden() : true; }, set: function (v) { if (window.WriteoutSettings) window.WriteoutSettings.setAmbientHidden(!v); } }
                 ] }] },
                 { label: 'Zoom', items: [
@@ -751,7 +983,8 @@
             { icon: 'save', title: 'Download a copy (.kn)', run: function () { download('kn'); OS.flashSaved('Saved!'); } },
             { icon: 'undo', title: 'Undo (⌘Z)', run: function () { try { if (window.kdBlockUndo) window.kdBlockUndo(); else document.execCommand('undo'); } catch (e) {} } },
             { icon: 'redo', title: 'Redo (⌘⇧Z)', run: function () { try { if (window.kdBlockRedo) window.kdBlockRedo(); else document.execCommand('redo'); } catch (e) {} } },
-            { icon: 'newDoc', title: 'New Page', run: newNote }
+            { icon: 'newDoc', title: 'New Page (Ctrl/Cmd+Enter)', run: newPage },
+            { icon: 'notebook', title: 'New Note', run: newNote }
         ],
         tabs: tabs,
         backstage: backstage,
@@ -759,10 +992,11 @@
         status: function () {
             const s = stats();
             const i = kdTabs.indexOf(tab());
-            return ['Page <b>' + (i + 1) + '</b> of <b>' + kdTabs.length + '</b>', '<b>' + s.words.toLocaleString() + '</b> word' + (s.words === 1 ? '' : 's'), '<b>' + s.chars.toLocaleString() + '</b> characters'];
+            return ['Page <b>' + currentPage() + '</b> of <b>' + pageCount + '</b>', 'Note <b>' + (i + 1) + '</b> of <b>' + kdTabs.length + '</b>', '<b>' + s.words.toLocaleString() + '</b> word' + (s.words === 1 ? '' : 's'), '<b>' + s.chars.toLocaleString() + '</b> characters'];
         },
         views: [
             { icon: 'navPane', title: 'Page List', run: function () { prefs.nav = !prefs.nav; savePrefs(); applyView(); }, active: function () { return prefs.nav; } },
+            { icon: 'pages', title: 'Pages (Print Layout)', run: function () { setPagesView(!prefs.pages); }, active: function () { return prefs.pages; } },
             { icon: 'fullscreen', title: 'Full Page View', run: function () { setFull(!prefs.full); }, active: function () { return prefs.full; } }
         ],
         zoom: { get: function () { return prefs.zoom; }, set: setZoom, min: 50, max: 200 },
@@ -794,6 +1028,18 @@
     const addBtn = document.getElementById('tabs-add-btn');
     if (addBtn) addBtn.addEventListener('click', function () { setTimeout(function () { info(); renderHead(); if (office()) focusTitle(); }, 20); });
     new MutationObserver(function () { setTimeout(applyPage, 30); }).observe(ed, { attributes: true, attributeFilter: ['class'] });
+    // Pages: re-measure whenever the note changes
+    ed.addEventListener('input', paginateSoon);
+    new MutationObserver(paginateSoon).observe(ed, { childList: true, subtree: true, characterData: true });
+    new MutationObserver(function () { setTimeout(function () { captureSheetBg(); paginateSoon(); }, 30); }).observe(ed, { attributes: true, attributeFilter: ['class', 'style'] });
+    ed.addEventListener('load', paginateSoon, true);
+    window.addEventListener('resize', paginateSoon);
+    window.addEventListener('afterprint', paginateSoon);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(paginateSoon);
+    const pagesAdd = document.getElementById('pages-add-btn');
+    if (pagesAdd) pagesAdd.addEventListener('click', function () { newPage(); });
+    document.addEventListener('selectionchange', function () { if (ed.contains((window.getSelection() || {}).anchorNode || null)) pageList(); });
+    if (tabsList) tabsList.addEventListener('click', function () { setTimeout(paginateSoon, 30); });
     document.addEventListener('keydown', function (e) {
         if (!office()) return;
         if (e.key === 'Escape' && prefs.full) { setFull(false); return; }
@@ -802,5 +1048,5 @@
     });
     setInterval(function () { if (office()) renderHead(); }, 30000);
     applyView();
-    window.BitbookOneNote = { applyView: applyView, prefs: prefs, renderHead: renderHead };
+    window.BitbookOneNote = { applyView: applyView, prefs: prefs, renderHead: renderHead, paginate: paginate };
 })();
