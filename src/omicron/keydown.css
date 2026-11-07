@@ -3943,3 +3943,7 @@
 /* AERO CHIP ALIGNMENT: the Aero chips (bubble, glass, orb, glow, ring and the plain Aero pill) sit on the text baseline. With "middle" their middle
    sat about 0.07em lower than the middle of the letters and brackets beside them, which showed most on chips holding math like (Z) and (H) */
 .gel-aero-chip, .gel-aeroglass-chip, .gel-aeroorb-chip, .gel-aeroglow-chip, .gel-aeroring-chip, .gel-aerobubble-chip { vertical-align: baseline; }
+
+/* AERO BUBBLE REFLECTION: the small white reflection used percentages that put it past the rounded edge on tall, narrow chips (math like (H)),
+   so it poked out of the bubble. It now sits well inside the curve in every shape */
+.gel-aerobubble-chip::after { right: 15%; bottom: 13%; }
