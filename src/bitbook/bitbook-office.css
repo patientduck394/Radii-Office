@@ -321,3 +321,6 @@ body.os-office.os-phone.bb-pages #wysiwyg-canvas { width: 100% !important; min-h
 
 /* Changing between tabs lives in File > Tabs (File > Notes in Bitbook): the side pane keeps only the Pages list */
 body.os-office .tabs-section { display: none; }
+
+/* Color previews are for the screen only: paper always prints in the real colors */
+@media print { #bb-zoomer { filter: none !important; } }

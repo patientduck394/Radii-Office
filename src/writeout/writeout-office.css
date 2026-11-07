@@ -271,3 +271,6 @@ body.os-office .tabs-section { display: none; }
 /* Home carries the documents list: its own heading and hint step aside */
 .rd-embed > h1, .rd-embed > .rd-hint { display: none; }
 .rd-embed .rd-fav { width: 36px; height: 36px; flex: none; }
+
+/* Color previews are for the screen only: paper always prints in the real colors */
+@media print { #wo-zoomer { filter: none !important; } }

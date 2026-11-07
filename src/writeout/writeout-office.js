@@ -972,6 +972,7 @@
                 { label: 'Pages', items: [
                     { big: true, icon: 'pages', label: 'Pages\nView', title: 'Show the document as separate pages, like Word\'s Print Layout!', run: function () { setPagesView(!prefs.pages); }, checked: function () { return prefs.pages; } },
                     { big: true, icon: 'print', label: 'Print\nPreview', title: 'See the pages at the real size they will print: Letter paper, 100%, with every page margin!', run: function () { setPreview(!previewing); }, checked: function () { return previewing; } },
+                    { big: true, icon: 'web', label: 'Color\nPreview', title: 'See the pages in black and white, or as people with color blindness see them!', menu: colorPreviewMenu },
                     { stack: [
                         { check: true, label: 'Page Numbers', get: function () { return prefs.numbers; }, set: function (v) { prefs.numbers = v; savePrefs(); applyView(); } }
                     ] }
@@ -1200,6 +1201,31 @@
     }
     window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; });
     window.addEventListener('afterprint', function () { printPageSize(false); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
+    // Color previews: see the pages as a printout in black and white, or as people with color blindness see them (screen only, never printed)
+    const COLOR_PREVIEWS = [['', 'Normal vision'], ['gray', 'Grayscale (a black and white printout)'], ['protan', 'Protanopia (no red)'], ['deutan', 'Deuteranopia (no green)'], ['tritan', 'Tritanopia (no blue)']];
+    let colorPreview = '';
+    function ensureColorDefs() {
+        if (document.getElementById('kd-cb-defs')) return;
+        const m = function (id, v) { return '<filter id="kd-cb-' + id + '" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="' + v + '"/></filter>'; };
+        const wrap = document.createElement('div');
+        wrap.id = 'kd-cb-defs';
+        wrap.setAttribute('aria-hidden', 'true');
+        wrap.style.cssText = 'position:absolute;width:0;height:0;overflow:hidden';
+        wrap.innerHTML = '<svg width="0" height="0" xmlns="http://www.w3.org/2000/svg"><defs>' +
+            m('protan', '0.152286 1.052583 -0.204868 0 0  0.114503 0.786281 0.099216 0 0  -0.003882 -0.048116 1.051998 0 0  0 0 0 1 0') +
+            m('deutan', '0.367322 0.860646 -0.227968 0 0  0.280085 0.672501 0.047413 0 0  -0.011820 0.042940 0.968881 0 0  0 0 0 1 0') +
+            m('tritan', '1.255528 -0.076749 -0.178779 0 0  -0.078411 0.930809 0.147602 0 0  0.004733 0.691367 0.303900 0 0  0 0 0 1 0') +
+            '</defs></svg>';
+        document.body.appendChild(wrap);
+    }
+    function setColorPreview(v) {
+        colorPreview = v || '';
+        ensureColorDefs();
+        if (zoomer) zoomer.style.filter = colorPreview === 'gray' ? 'grayscale(1)' : colorPreview ? 'url(#kd-cb-' + colorPreview + ')' : '';
+        const l = COLOR_PREVIEWS.filter(function (c) { return c[0] === colorPreview; })[0];
+        OS.toast(colorPreview ? 'Color preview: ' + l[1] + '!' : 'Normal colors again!');
+    }
+    function colorPreviewMenu() { return COLOR_PREVIEWS.map(function (c) { return { label: c[1], checked: colorPreview === c[0], run: function () { setColorPreview(c[0]); } }; }); }
     // Print Preview: the pages exactly as they will print (real paper size, 100%, no gaps)
     function setPreview(on) { previewing = !!on; GAP = (previewing || printing) ? 0 : 28; applyView(); OS.toast(previewing ? 'Print Preview: the pages at their real printed size!' : 'Print Preview off!'); }
     applyView();
