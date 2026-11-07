@@ -89,7 +89,7 @@
     const sp = function (cls, t) { return '<span class="' + cls + '">' + escH(t) + '</span>'; };
     // chip and tag marks: ++R+ ++ ;;R; !!#R# #R# ##  ~X~ =R= ^^R^ %R% &&  *sp(  @family-1@  and friends
     const MARKS = '\\+\\+[A-Z]{1,2}[+~!%?*:^]|;;[A-Z]{1,2};|!!?[#^~=+%:;\\-?/][A-Z]{1,2}[#!]?|[!?]{2}[A-Z]{1,2}[!?]|#[A-Z]{1,2}#(?:[_~=.][a-z]*)?|~[A-Z][A-Z0-9-]*~|=[A-Z]{1,2}=|\\^\\^[A-Z]{1,2}\\^|%[A-Z]{1,2}%|%\\d{1,2}%[A-Z]{1,2}%|&&|@[a-z0-9]+(?:-[1-5])?@|##|#_|#~|#=|\\+\\+|;;|\\^\\^|!!|\\?\\?|\\*>|\\+>';
-    const INLINE = new RegExp('(`[^`\\n]+`)|(\\$\\$[^$\\n]+\\$\\$|\\$[^$\\n]+\\$)|(\\[\\[[^\\]\\n]+\\]\\]|\\[[^\\]\\n]+\\]\\([^)\\n]+\\))|(\\*\\*[^*\\n]+\\*\\*)|(\\{\\{[^{}\\n]*\\}\\}|\\[\\^[^\\]\\n]+\\]|\\{align=[a-z]+\\})|(#[A-Z]{1,2}(?:\\.[a-z]+)?\\(|\\*sp\\()|(' + MARKS + ')|(\\*[^*\\s][^*\\n]*\\*)|(⟪…[^⟫\\n]*⟫)', 'g');
+    const INLINE = new RegExp('(`[^`\\n]+`)|(\\$\\$[^$\\n]+\\$\\$|\\$[^$\\n]+\\$)|(\\[\\[[^\\]\\n]+\\]\\]|\\[[^\\]\\n]+\\]\\([^)\\n]+\\))|(\\*\\*[^*\\n]+\\*\\*)|(\\{\\{[^{}\\n]*\\}\\}|\\[\\^[^\\]\\n]+\\]|\\{align=[a-z]+\\})|(#[A-Z]{1,2}(?:\\.[a-z]+)?\\(|\\*sp\\(|#[%^+:;][A-Z]{1,2}[%^+:;])|(' + MARKS + ')|(\\*[^*\\s][^*\\n]*\\*)|(⟪…[^⟫\\n]*⟫)', 'g');
     // (bold, italic and the (...) forms hold more Keydown inside them, so their insides are colored too)
     function hlInline(t) {
         let out = '', last = 0, m;
@@ -102,8 +102,19 @@
             else if (m[6]) {
                 // a name( ... ): the closing ) is the one that matches, counting any ( ) inside
                 let depth = 1, i = end;
-                while (i < t.length && depth > 0) { if (t.charAt(i) === '(') depth++; else if (t.charAt(i) === ')') depth--; i++; }
-                if (depth === 0) { out += sp('m-n', m[0]) + hlInline(t.slice(end, i - 1)) + sp('m-n', ')'); end = i; re.lastIndex = i; }
+                const paren = m[0].charAt(m[0].length - 1) === '(';
+                const closer = paren ? ')' : m[0].charAt(m[0].length - 1);   // (#:G:text: and its cousins end with the same mark that opened them)
+                if (paren) { while (i < t.length && depth > 0) { if (t.charAt(i) === '(') depth++; else if (t.charAt(i) === ')') depth--; i++; } }
+                else {
+                    depth = 1;
+                    while (i < t.length) {
+                        const ch = t.charAt(i);
+                        if (ch === '$') { const z = t.indexOf('$', i + 1); if (z > 0) { i = z + 1; continue; } }   // (math inside can hold the mark)
+                        if (ch === closer) { depth = 0; i++; break; }
+                        i++;
+                    }
+                }
+                if (depth === 0) { out += sp('m-n', m[0]) + hlInline(t.slice(end, i - 1)) + sp('m-n', closer); end = i; re.lastIndex = i; }
                 else out += sp('m-n', m[0]);
             } else out += sp(m[9] ? 'm-f' : m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[5] ? 'm-p' : 'm-n', m[0]);
             last = end;
