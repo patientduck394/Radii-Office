@@ -5,7 +5,7 @@
 
   <script>
     import KeydownStylePicker from './KeydownStylePicker.svelte';
-    let style = $state('');                   // the tag to type, like '=Y=' or '@pfwavelet-3@'
+    let style = $state('');                   // the tag to type, like '=Y=' or '@pfcaustics-3@'
   </script>
   <KeydownStylePicker bind:value={style} onpick={(s) => console.log(s.wrap('Hello'))} />
   <KeydownText text={style + 'Hello' + (style.startsWith('@') ? '@' : '')} />

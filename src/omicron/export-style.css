@@ -12145,549 +12145,550 @@ ul, .bulleted-list { list-style-position: inside; margin: 15px 0px; padding-left
 .us-ptsunring-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
 .us-ptsunring-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
 /* --- Poolside 4: 90 designs x 5 colorways, in the orange-and-pool-blue summer palette of Poolside 2 and 3 --- */
-.us-pfwavelet { background: radial-gradient(circle at 7px -1px, transparent 0 4.5px, var(--w) 5px 6.4px, transparent 7px) 0 0 / 14px 7px repeat-x, radial-gradient(circle at 7px 100%, transparent 0 4px, color-mix(in srgb, var(--w) 55%, transparent) 4.4px 5.4px, transparent 6px) 0 100% / 14px 7px repeat-x, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 7px; padding: 6px 12px 3px; }
-.us-pfwavelet-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfwavelet-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfwavelet-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfwavelet-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfwavelet-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfglints { background: radial-gradient(circle at 12% 30%, #ffffff 0 1px, transparent 1.6px), radial-gradient(circle at 70% 75%, #ffffff 0 0.9px, transparent 1.5px), radial-gradient(circle at 88% 28%, var(--ol) 0 1px, transparent 1.6px), radial-gradient(circle at 40% 82%, rgba(255,255,255,0.7) 0 0.8px, transparent 1.4px), linear-gradient(120deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; box-shadow: 0 0 0 1px var(--o); }
-.us-pfglints::after { content: '\2726'; position: absolute; pointer-events: none; right: 4px; top: -6px; font-size: 0.8em; color: var(--ol); text-shadow: 0 0 4px var(--o); }
-.us-pfglints-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfglints-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfglints-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfglints-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfglints-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfringfill { background: repeating-radial-gradient(circle at 12% 50%, transparent 0 4px, rgba(255,255,255,0.4) 4px 5px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; padding: 1px 14px 1px 22px; }
-.us-pfringfill-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfringfill-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfringfill-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfringfill-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfringfill-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfcurrent { background: repeating-linear-gradient(100deg, transparent 0 9px, rgba(255,255,255,0.32) 9px 10px, transparent 10px 17px), linear-gradient(90deg, var(--b), var(--c)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 6px 16px 6px 16px; }
-.us-pfcurrent-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfcurrent-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfcurrent-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfcurrent-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfcurrent-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfdrizzle { background: radial-gradient(circle, rgba(255,255,255,0.8) 0 1px, transparent 1.6px) 0 0 / 8px 10px, radial-gradient(circle, rgba(255,255,255,0.5) 0 1px, transparent 1.6px) 4px 5px / 8px 10px, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 9px; }
-.us-pfdrizzle-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfdrizzle-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfdrizzle-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfdrizzle-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfdrizzle-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pftideline { background: radial-gradient(circle at 5px 52%, var(--w) 0 2.2px, transparent 2.8px) 0 0 / 10px 100% repeat-x, linear-gradient(180deg, var(--w) 0 52%, var(--c) 52%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--b); border-bottom: 3px solid var(--b); border-radius: 6px; }
-.us-pftideline-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pftideline-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pftideline-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pftideline-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pftideline-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfmoonpool { background: radial-gradient(circle at 90% 30%, var(--w) 0 2.6px, color-mix(in srgb, var(--w) 45%, transparent) 3.4px, transparent 9px), repeating-linear-gradient(0deg, transparent 0 4px, rgba(255,255,255,0.09) 4px 5px), linear-gradient(180deg, var(--b), var(--dk)); color: var(--w); text-shadow: 0 1px 2px var(--dk); border-radius: 9px; border: 1px solid var(--c); padding: 1px 22px 1px 11px; }
-.us-pfmoonpool-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfmoonpool-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfmoonpool-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfmoonpool-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfmoonpool-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pflagoonglow { background: radial-gradient(ellipse 80% 90% at 50% 125%, var(--ol), transparent 70%), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; box-shadow: 0 0 10px color-mix(in srgb, var(--c) 70%, transparent), inset 0 0 6px rgba(255,255,255,0.45); }
-.us-pflagoonglow-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pflagoonglow-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pflagoonglow-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pflagoonglow-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pflagoonglow-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfsplashdots { background: radial-gradient(circle at 6% 22%, var(--w) 0 2px, transparent 2.6px), radial-gradient(circle at 94% 70%, var(--w) 0 2.4px, transparent 3px), radial-gradient(circle at 16% 82%, rgba(255,255,255,0.7) 0 1.2px, transparent 1.8px), radial-gradient(circle at 84% 20%, rgba(255,255,255,0.7) 0 1.4px, transparent 2px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 9px; }
-.us-pfsplashdots-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfsplashdots-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfsplashdots-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfsplashdots-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfsplashdots-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfwetgloss { background: linear-gradient(180deg, rgba(255,255,255,0.7) 0 46%, transparent 47%), radial-gradient(circle at 16% 26%, #ffffff 0 2px, transparent 3px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 1px solid var(--b); border-radius: 999px; box-shadow: 0 2px 0 var(--b), 0 3px 6px color-mix(in srgb, var(--b) 40%, transparent); }
-.us-pfwetgloss::after { content: ''; position: absolute; pointer-events: none; left: 14px; bottom: -5px; width: 5px; height: 8px; background: var(--b); border-radius: 0 0 50% 50% / 0 0 60% 60%; }
-.us-pfwetgloss-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfwetgloss-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfwetgloss-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfwetgloss-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfwetgloss-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfsunpath { background: linear-gradient(90deg, transparent 34%, rgba(255,255,255,0.5) 50%, transparent 66%), repeating-linear-gradient(0deg, transparent 0 3px, rgba(255,255,255,0.14) 3px 4px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; }
-.us-pfsunpath-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfsunpath-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfsunpath-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfsunpath-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfsunpath-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfbubblerim { background: radial-gradient(circle at 6px 2px, rgba(255,255,255,0.9) 0 2px, transparent 2.6px) 0 0 / 14px 100% repeat-x, radial-gradient(circle at 12px calc(100% - 2px), rgba(255,255,255,0.7) 0 1.6px, transparent 2.2px) 0 0 / 14px 100% repeat-x, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 10px; }
-.us-pfbubblerim-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfbubblerim-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfbubblerim-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfbubblerim-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfbubblerim-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pffoamtop { background: radial-gradient(circle at 6px 5px, var(--w) 0 4px, transparent 4.5px), radial-gradient(circle at 16px 3px, var(--w) 0 3px, transparent 3.5px), radial-gradient(circle at 24px 5px, var(--w) 0 4px, transparent 4.5px) 0 0 / 30px 9px repeat-x, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; padding: 7px 12px 1px; }
-.us-pffoamtop-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pffoamtop-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pffoamtop-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pffoamtop-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pffoamtop-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfwhirl { background: repeating-conic-gradient(from 0deg at 14% 50%, var(--c) 0 18deg, color-mix(in srgb, var(--c) 50%, var(--b)) 18deg 36deg), linear-gradient(90deg, transparent 24%, color-mix(in srgb, var(--b) 60%, transparent)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; padding: 1px 14px 1px 24px; }
-.us-pfwhirl-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfwhirl-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfwhirl-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfwhirl-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfwhirl-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfshimmerslide { background: linear-gradient(105deg, transparent 28%, rgba(255,255,255,0.6) 46%, transparent 62%), linear-gradient(90deg, var(--b), var(--c)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; }
-.us-pfshimmerslide-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfshimmerslide-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfshimmerslide-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfshimmerslide-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfshimmerslide-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfdiamondtile { background: linear-gradient(45deg, rgba(255,255,255,0.28) 25%, transparent 25% 75%, rgba(255,255,255,0.28) 75%) 0 0 / 12px 12px, linear-gradient(45deg, rgba(255,255,255,0.28) 25%, transparent 25% 75%, rgba(255,255,255,0.28) 75%) 6px 6px / 12px 12px, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 1px solid var(--b); border-radius: 4px; }
-.us-pfdiamondtile-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfdiamondtile-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfdiamondtile-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfdiamondtile-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfdiamondtile-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfsteps { background: linear-gradient(180deg, var(--w) 0 25%, var(--ol) 25% 50%, var(--c) 50% 75%, var(--b) 75%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px; border: 1px solid var(--b); }
-.us-pfsteps-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfsteps-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfsteps-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfsteps-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfsteps-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfglassblock { background: radial-gradient(circle at 24% 30%, rgba(255,255,255,0.85) 0 3px, transparent 4px), linear-gradient(135deg, rgba(255,255,255,0.45), transparent 45%), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 2px solid color-mix(in srgb, var(--w) 70%, var(--c)); border-radius: 4px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.6), inset 0 0 8px rgba(255,255,255,0.4); }
-.us-pfglassblock-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfglassblock-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfglassblock-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfglassblock-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfglassblock-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfterracotta { background: repeating-linear-gradient(0deg, transparent 0 7px, rgba(0,0,0,0.2) 7px 8px), repeating-linear-gradient(90deg, transparent 0 13px, rgba(0,0,0,0.13) 13px 14px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; }
-.us-pfterracotta-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfterracotta-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfterracotta-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfterracotta-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfterracotta-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfslatdeck { background: repeating-linear-gradient(180deg, var(--ol) 0 6px, var(--o) 6px 7px), linear-gradient(90deg, rgba(255,255,255,0.2), transparent); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px; }
-.us-pfslatdeck-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfslatdeck-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfslatdeck-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfslatdeck-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfslatdeck-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pffenceposts { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.8) 4% 96%, transparent), repeating-linear-gradient(90deg, var(--w) 0 8px, var(--c) 8px 10px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-top: 3px solid var(--b); border-radius: 2px 2px 0 0; }
-.us-pffenceposts-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pffenceposts-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pffenceposts-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pffenceposts-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pffenceposts-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfpavergrid { background: repeating-linear-gradient(0deg, transparent 0 9px, rgba(0,0,0,0.22) 9px 10px), repeating-linear-gradient(90deg, transparent 0 15px, rgba(0,0,0,0.22) 15px 16px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; }
-.us-pfpavergrid-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfpavergrid-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfpavergrid-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfpavergrid-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfpavergrid-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfcopingedge { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-top: 4px solid var(--w); border-bottom: 4px solid var(--b); border-radius: 3px; box-shadow: 0 2px 0 var(--dk); }
-.us-pfcopingedge-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfcopingedge-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfcopingedge-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfcopingedge-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfcopingedge-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfrailbar { background: linear-gradient(180deg, var(--w), color-mix(in srgb, var(--c) 35%, var(--w)) 45%, var(--c) 55%, var(--w)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--b); border-radius: 999px; box-shadow: 0 1px 0 #ffffff inset; }
-.us-pfrailbar-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfrailbar-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfrailbar-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfrailbar-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfrailbar-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfcornertile { background: linear-gradient(135deg, var(--o) 0 9px, transparent 9px), linear-gradient(-45deg, var(--o) 0 9px, transparent 9px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; }
-.us-pfcornertile-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfcornertile-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfcornertile-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfcornertile-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfcornertile-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pftilegrid { background: linear-gradient(rgba(255,255,255,0.32) 1px, transparent 1px) 0 0 / 8px 8px, linear-gradient(90deg, rgba(255,255,255,0.32) 1px, transparent 1px) 0 0 / 8px 8px, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; }
-.us-pftilegrid-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pftilegrid-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pftilegrid-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pftilegrid-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pftilegrid-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pflanestripes { background: linear-gradient(180deg, rgba(255,255,255,0.55), transparent 50%, rgba(0,0,0,0.16)), repeating-linear-gradient(90deg, var(--o) 0 12px, var(--w) 12px 24px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; }
-.us-pflanestripes-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pflanestripes-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pflanestripes-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pflanestripes-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pflanestripes-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfdivider { background: radial-gradient(circle at 6px 100%, var(--o) 0 3px, transparent 3.6px) 0 100% / 12px 7px repeat-x, radial-gradient(circle at 12px 100%, var(--w) 0 3px, transparent 3.6px) 0 100% / 12px 7px repeat-x, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; padding: 1px 12px 8px; }
-.us-pfdivider-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfdivider-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfdivider-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfdivider-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfdivider-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfpoolfloor { background: radial-gradient(ellipse 14px 7px at 18% 38%, rgba(255,255,255,0.4), transparent), radial-gradient(ellipse 12px 8px at 58% 70%, rgba(255,255,255,0.36), transparent), radial-gradient(ellipse 14px 7px at 88% 30%, rgba(255,255,255,0.4), transparent), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 6px; }
-.us-pfpoolfloor-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfpoolfloor-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfpoolfloor-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfpoolfloor-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfpoolfloor-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfcobble { background: radial-gradient(ellipse 8px 6px at 8px 6px, color-mix(in srgb, var(--ol) 65%, #ffffff) 0 78%, transparent 82%) 0 0 / 16px 12px, radial-gradient(ellipse 8px 6px at 16px 12px, color-mix(in srgb, var(--ol) 65%, #ffffff) 0 78%, transparent 82%) 8px 6px / 16px 12px, var(--o); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 4px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--o) 70%, #000000); }
-.us-pfcobble-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfcobble-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfcobble-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfcobble-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfcobble-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pffloatring { background: var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 4px solid var(--o); border-radius: 999px; box-shadow: inset 0 0 0 2px var(--w), inset 0 0 0 4px var(--c), 0 0 0 1px var(--b); padding: 0 12px; }
-.us-pffloatring-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pffloatring-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pffloatring-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pffloatring-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pffloatring-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfbeachball { background: linear-gradient(90deg, transparent 8%, rgba(255,255,255,0.78) 8% 92%, transparent), conic-gradient(from 0deg at 50% 50%, var(--o) 0 60deg, var(--w) 60deg 120deg, var(--c) 120deg 180deg, var(--ol) 180deg 240deg, var(--b) 240deg 300deg, var(--w) 300deg); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; padding: 1px 14px; box-shadow: 0 0 0 1px var(--b); }
-.us-pfbeachball-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfbeachball-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfbeachball-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfbeachball-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfbeachball-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfkayak { background: linear-gradient(180deg, var(--ol), var(--o) 55%, color-mix(in srgb, var(--o) 70%, #000000)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); clip-path: polygon(0 50%, 0.75em 0, calc(100% - 0.75em) 0, 100% 50%, calc(100% - 0.75em) 100%, 0.75em 100%); padding: 1px 1.3em; border-radius: 0; }
-.us-pfkayak-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfkayak-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfkayak-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfkayak-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfkayak-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfpaddleboard { background: linear-gradient(180deg, var(--w) 0 36%, var(--c) 36% 64%, var(--w) 64%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--b); border-radius: 999px; padding: 1px 16px; }
-.us-pfpaddleboard-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfpaddleboard-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfpaddleboard-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfpaddleboard-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfpaddleboard-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfdivemask { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 30%, #ffffff), color-mix(in srgb, var(--c) 12%, #ffffff)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 3px solid var(--dk); border-radius: 14px; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7), inset 0 4px 6px rgba(255,255,255,0.7); }
-.us-pfdivemask-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfdivemask-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfdivemask-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfdivemask-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfdivemask-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pflifevest { background: linear-gradient(90deg, transparent 0 16%, var(--w) 16% 19%, transparent 19% 81%, var(--w) 81% 84%, transparent 84%), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 10px 10px 4px 4px; padding: 1px 22px; box-shadow: inset 0 -3px 0 color-mix(in srgb, var(--o) 70%, #000000); }
-.us-pflifevest-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pflifevest-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pflifevest-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pflifevest-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pflifevest-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfsnorkel { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-right: 6px solid var(--o); border-radius: 999px 4px 4px 999px; padding: 1px 14px 1px 18px; }
-.us-pfsnorkel-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfsnorkel-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfsnorkel-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfsnorkel-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfsnorkel-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfpail { background: linear-gradient(180deg, var(--ol) 0 14%, var(--o) 14%); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); clip-path: polygon(0 0, 100% 0, 93% 100%, 7% 100%); border-radius: 0; padding: 1px 1.2em; }
-.us-pfpail-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfpail-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfpail-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfpail-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfpail-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfsandcastle { background: linear-gradient(90deg, var(--ol) 0 14px, transparent 14px 24px) 0 0 / 24px 6px repeat-x, linear-gradient(180deg, var(--ol), var(--o)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px; padding: 8px 12px 1px; }
-.us-pfsandcastle-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfsandcastle-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfsandcastle-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfsandcastle-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfsandcastle-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfswimfin { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); clip-path: polygon(0 0, 100% 22%, 100% 78%, 0 100%); border-radius: 0; padding: 1px 1.3em 1px 10px; }
-.us-pfswimfin-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfswimfin-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfswimfin-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfswimfin-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfswimfin-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfnoodlecoil { background: radial-gradient(circle at 8px 50%, var(--dk) 0 2px, transparent 2.6px), radial-gradient(circle at calc(100% - 8px) 50%, var(--dk) 0 2px, transparent 2.6px), linear-gradient(180deg, var(--ol), var(--o) 55%, color-mix(in srgb, var(--o) 70%, #000000)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; padding: 1px 20px; }
-.us-pfnoodlecoil-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfnoodlecoil-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfnoodlecoil-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfnoodlecoil-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfnoodlecoil-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfpinwheel { background: conic-gradient(from 45deg at 12px 50%, var(--o) 0 25%, var(--c) 0 50%, var(--ol) 0 75%, var(--b) 0) 0 0 / 24px 100% no-repeat, linear-gradient(var(--w), var(--w)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; padding: 1px 12px 1px 28px; border: 1px solid var(--c); }
+.us-pfcaustics { background: repeating-linear-gradient(60deg, transparent 0 8px, rgba(255,255,255,0.17) 8px 9px), repeating-linear-gradient(-60deg, transparent 0 8px, rgba(255,255,255,0.17) 8px 9px), radial-gradient(ellipse 14px 8px at 25% 40%, rgba(255,255,255,0.35), transparent), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 7px; }
+.us-pfcaustics-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfcaustics-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfcaustics-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfcaustics-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfcaustics-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfwhitecap { background: radial-gradient(ellipse 7px 3px at 9px 5px, var(--w) 0 80%, transparent 86%) 0 0 / 44px 10px repeat-x, radial-gradient(ellipse 5px 2px at 26px 3px, var(--w) 0 80%, transparent 86%) 0 0 / 44px 10px repeat-x, radial-gradient(ellipse 6px 2.5px at 38px 6px, var(--w) 0 80%, transparent 86%) 0 0 / 44px 10px repeat-x, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; padding: 8px 12px 1px; }
+.us-pfwhitecap-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfwhitecap-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfwhitecap-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfwhitecap-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfwhitecap-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfeddy { background: conic-gradient(from 90deg at 88% 50%, rgba(255,255,255,0.4), transparent 25%, rgba(255,255,255,0.28) 50%, transparent 75%, rgba(255,255,255,0.4)), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; padding: 1px 24px 1px 14px; }
+.us-pfeddy-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfeddy-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfeddy-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfeddy-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfeddy-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfrippleedge { background: repeating-radial-gradient(circle at 100% 50%, transparent 0 5px, rgba(255,255,255,0.4) 5px 6px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; padding: 1px 18px 1px 12px; }
+.us-pfrippleedge-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfrippleedge-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfrippleedge-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfrippleedge-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfrippleedge-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pftidepool { background: radial-gradient(ellipse at 50% 30%, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 3px solid var(--ol); border-radius: 40% / 80%; box-shadow: inset 0 2px 6px rgba(0,0,0,0.3); padding: 0 16px; }
+.us-pftidepool-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pftidepool-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pftidepool-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pftidepool-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pftidepool-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfseafoam { background: radial-gradient(circle at 8% 30%, rgba(255,255,255,0.8) 0 3px, transparent 3.6px), radial-gradient(circle at 22% 78%, rgba(255,255,255,0.6) 0 2px, transparent 2.6px), radial-gradient(circle at 48% 20%, rgba(255,255,255,0.7) 0 2.4px, transparent 3px), radial-gradient(circle at 70% 80%, rgba(255,255,255,0.8) 0 3px, transparent 3.6px), radial-gradient(circle at 92% 35%, rgba(255,255,255,0.6) 0 2px, transparent 2.6px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 9px; }
+.us-pfseafoam-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfseafoam-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfseafoam-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfseafoam-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfseafoam-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfmisting { background: radial-gradient(circle, rgba(255,255,255,0.6) 0 0.8px, transparent 1.2px) 0 0 / 6px 6px, radial-gradient(circle, rgba(255,255,255,0.38) 0 0.8px, transparent 1.2px) 3px 3px / 6px 6px, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 9px; box-shadow: 0 0 10px color-mix(in srgb, var(--c) 50%, transparent); }
+.us-pfmisting-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfmisting-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfmisting-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfmisting-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfmisting-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfwakewash { background: linear-gradient(160deg, transparent 38%, rgba(255,255,255,0.45) 39% 42%, transparent 43%), linear-gradient(20deg, transparent 38%, rgba(255,255,255,0.45) 39% 42%, transparent 43%), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 4px 14px 14px 4px; }
+.us-pfwakewash-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfwakewash-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfwakewash-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfwakewash-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfwakewash-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfsurfline { background: radial-gradient(circle at 6px 100%, var(--w) 0 4px, transparent 4.6px) 0 100% / 12px 6px repeat-x, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; padding: 1px 12px 8px; }
+.us-pfsurfline-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfsurfline-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfsurfline-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfsurfline-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfsurfline-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfdewdrop { background: radial-gradient(circle at 16% 30%, #ffffff 0 1.4px, rgba(255,255,255,0.45) 2px 3.6px, transparent 4.2px), radial-gradient(circle at 58% 72%, #ffffff 0 1.2px, rgba(255,255,255,0.4) 1.8px 3.2px, transparent 3.8px), radial-gradient(circle at 88% 28%, #ffffff 0 1.2px, rgba(255,255,255,0.4) 1.8px 3.2px, transparent 3.8px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 10px; }
+.us-pfdewdrop-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfdewdrop-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfdewdrop-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfdewdrop-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfdewdrop-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfglassy { background: linear-gradient(180deg, rgba(255,255,255,0.85), rgba(255,255,255,0) 52%), linear-gradient(180deg, var(--ol), var(--c)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--c); border-radius: 10px; box-shadow: inset 0 0 6px rgba(255,255,255,0.7); }
+.us-pfglassy-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfglassy-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfglassy-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfglassy-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfglassy-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfmoonbeam { background: linear-gradient(90deg, transparent 36%, rgba(255,255,255,0.28) 50%, transparent 64%), linear-gradient(180deg, var(--b), var(--dk)); color: var(--w); text-shadow: 0 1px 2px var(--dk); border: 1px solid var(--c); border-radius: 8px; }
+.us-pfmoonbeam-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfmoonbeam-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfmoonbeam-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfmoonbeam-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfmoonbeam-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfcurrentarrow { background: linear-gradient(135deg, transparent 44%, rgba(255,255,255,0.32) 45% 55%, transparent 56%) 0 0 / 12px 12px, linear-gradient(45deg, transparent 44%, rgba(255,255,255,0.32) 45% 55%, transparent 56%) 0 0 / 12px 12px, linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); clip-path: polygon(0 0, calc(100% - 0.6em) 0, 100% 50%, calc(100% - 0.6em) 100%, 0 100%); border-radius: 0; padding: 1px 1.3em 1px 12px; }
+.us-pfcurrentarrow-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfcurrentarrow-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfcurrentarrow-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfcurrentarrow-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfcurrentarrow-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfbubbletrail { background: radial-gradient(circle at 8% 78%, transparent 0 2px, rgba(255,255,255,0.75) 2.4px 3.2px, transparent 3.6px), radial-gradient(circle at 14% 50%, transparent 0 2.6px, rgba(255,255,255,0.75) 3px 4px, transparent 4.4px), radial-gradient(circle at 22% 24%, transparent 0 3.2px, rgba(255,255,255,0.75) 3.6px 4.6px, transparent 5px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 9px; padding: 1px 12px 1px 26px; }
+.us-pfbubbletrail-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfbubbletrail-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfbubbletrail-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfbubbletrail-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfbubbletrail-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfdepthfade { background: linear-gradient(180deg, var(--ol), var(--c) 40%, var(--b) 75%, var(--dk)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; }
+.us-pfdepthfade-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfdepthfade-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfdepthfade-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfdepthfade-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfdepthfade-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfsparkleswim { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 9px; box-shadow: 0 0 0 1px var(--o); }
+.us-pfsparkleswim::before { content: '\2726'; position: absolute; pointer-events: none; left: 5px; top: -6px; font-size: 0.75em; color: var(--ol); text-shadow: 0 0 4px var(--o); }
+.us-pfsparkleswim::after { content: '\2727'; position: absolute; pointer-events: none; right: 6px; bottom: -5px; font-size: 0.7em; color: #ffffff; text-shadow: 0 0 4px var(--c); }
+.us-pfsparkleswim-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfsparkleswim-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfsparkleswim-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfsparkleswim-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfsparkleswim-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfmosaicfade { background: linear-gradient(rgba(255,255,255,0.35) 1px, transparent 1px) 0 0 / 7px 7px, linear-gradient(90deg, rgba(255,255,255,0.35) 1px, transparent 1px) 0 0 / 7px 7px, linear-gradient(90deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; }
+.us-pfmosaicfade-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfmosaicfade-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfmosaicfade-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfmosaicfade-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfmosaicfade-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfzigtile { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.86) 4% 96%, transparent), linear-gradient(135deg, var(--o) 25%, transparent 25%) -6px 0 / 12px 12px, linear-gradient(225deg, var(--o) 25%, transparent 25%) -6px 0 / 12px 12px, linear-gradient(315deg, var(--o) 25%, transparent 25%) 0 0 / 12px 12px, linear-gradient(45deg, var(--o) 25%, transparent 25%) 0 0 / 12px 12px, var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px; padding: 1px 14px; }
+.us-pfzigtile-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfzigtile-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfzigtile-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfzigtile-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfzigtile-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfhexpave { background: repeating-linear-gradient(60deg, rgba(0,0,0,0.14) 0 1px, transparent 1px 10px), repeating-linear-gradient(-60deg, rgba(0,0,0,0.14) 0 1px, transparent 1px 10px), repeating-linear-gradient(0deg, rgba(0,0,0,0.14) 0 1px, transparent 1px 10px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 4px; }
+.us-pfhexpave-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfhexpave-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfhexpave-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfhexpave-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfhexpave-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfbrickborder { background: linear-gradient(rgba(0,0,0,0.25) 1px, transparent 1px) 0 0 / 100% 8px, linear-gradient(90deg, rgba(0,0,0,0.25) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(0,0,0,0.25) 1px, transparent 1px) 8px 8px / 16px 16px, linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; }
+.us-pfbrickborder-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfbrickborder-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfbrickborder-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfbrickborder-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfbrickborder-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfcolumns { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.86) 4% 96%, transparent), repeating-linear-gradient(90deg, var(--w) 0 5px, var(--ol) 5px 9px, rgba(0,0,0,0.12) 9px 10px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-top: 3px solid var(--o); border-bottom: 3px solid var(--o); border-radius: 0; }
+.us-pfcolumns-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfcolumns-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfcolumns-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfcolumns-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfcolumns-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfarchway { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px 999px 4px 4px / 70% 70% 4px 4px; padding: 5px 18px 1px; }
+.us-pfarchway-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfarchway-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfarchway-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfarchway-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfarchway-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfbalcony { background: repeating-linear-gradient(90deg, var(--w) 0 3px, transparent 3px 8px) 0 100% / 100% 40% no-repeat, linear-gradient(180deg, var(--o) 0 4px, transparent 4px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; padding: 6px 12px 7px; }
+.us-pfbalcony-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfbalcony-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfbalcony-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfbalcony-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfbalcony-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfcabanastripe { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.86) 4% 96%, transparent), repeating-linear-gradient(90deg, var(--o) 0 10px, var(--w) 10px 20px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px 3px 0 0; border-bottom: 4px dotted var(--o); padding: 1px 14px; }
+.us-pfcabanastripe-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfcabanastripe-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfcabanastripe-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfcabanastripe-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfcabanastripe-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfpergola { background: repeating-linear-gradient(90deg, var(--o) 0 8px, transparent 8px 14px) 0 0 / 100% 6px no-repeat, linear-gradient(180deg, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px; padding: 8px 12px 1px; }
+.us-pfpergola-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfpergola-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfpergola-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfpergola-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfpergola-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfstairrail { background: linear-gradient(180deg, #ffffff, color-mix(in srgb, var(--c) 30%, #ffffff) 45%, var(--c) 55%, #ffffff); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--b); border-left: 5px solid var(--c); border-right: 5px solid var(--c); border-radius: 999px / 60%; padding: 0 14px; }
+.us-pfstairrail-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfstairrail-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfstairrail-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfstairrail-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfstairrail-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfdrain { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.86) 4% 96%, transparent), repeating-linear-gradient(90deg, var(--b) 0 3px, var(--c) 3px 7px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 2px solid var(--dk); border-radius: 4px; padding: 1px 14px; }
+.us-pfdrain-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfdrain-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfdrain-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfdrain-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfdrain-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfskimmer { background: radial-gradient(circle at 50% 130%, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 2px solid var(--b); border-radius: 999px 999px 6px 6px; padding: 3px 16px 1px; }
+.us-pfskimmer-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfskimmer-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfskimmer-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfskimmer-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfskimmer-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pflightbulb { background: radial-gradient(circle at 50% 50%, #ffffff 0 18%, var(--ol) 42%, var(--c) 72%, var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; box-shadow: 0 0 12px var(--c), 0 0 0 1px var(--b); padding: 1px 16px; }
+.us-pflightbulb-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pflightbulb-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pflightbulb-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pflightbulb-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pflightbulb-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfwallart { background: radial-gradient(ellipse 42% 62% at 20% 100%, var(--c) 0 90%, transparent 92%), radial-gradient(ellipse 42% 62% at 72% 100%, var(--o) 0 90%, transparent 92%), linear-gradient(180deg, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 6px; }
+.us-pfwallart-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfwallart-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfwallart-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfwallart-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfwallart-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfterrazzo { background: radial-gradient(circle at 10% 30%, var(--o) 0 1.6px, transparent 2.2px), radial-gradient(circle at 30% 75%, var(--c) 0 1.8px, transparent 2.4px), radial-gradient(circle at 52% 25%, var(--b) 0 1.4px, transparent 2px), radial-gradient(circle at 70% 70%, var(--o) 0 2px, transparent 2.6px), radial-gradient(circle at 90% 30%, var(--c) 0 1.6px, transparent 2.2px), var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--ol); border-radius: 6px; }
+.us-pfterrazzo-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfterrazzo-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfterrazzo-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfterrazzo-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfterrazzo-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfgateway { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.86) 4% 96%, transparent), repeating-linear-gradient(90deg, var(--dk) 0 2px, transparent 2px 7px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-top: 3px solid var(--dk); border-bottom: 3px solid var(--dk); border-radius: 0; }
+.us-pfgateway-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfgateway-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfgateway-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfgateway-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfgateway-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pffountain { background: repeating-radial-gradient(ellipse at 50% 150%, transparent 0 7px, rgba(255,255,255,0.5) 7px 8px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px 999px 8px 8px; padding: 3px 16px 1px; }
+.us-pffountain-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pffountain-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pffountain-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pffountain-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pffountain-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfflippers { background: linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); clip-path: polygon(0 24%, 10% 0, 90% 0, 100% 24%, 100% 100%, 0 100%); border-radius: 0; padding: 4px 14px 1px; }
+.us-pfflippers-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfflippers-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfflippers-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfflippers-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfflippers-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfsnorkelset { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-left: 6px solid var(--o); border-radius: 4px 999px 999px 4px; padding: 1px 16px 1px 12px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15); }
+.us-pfsnorkelset-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfsnorkelset-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfsnorkelset-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfsnorkelset-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfsnorkelset-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfswimcap { background: radial-gradient(ellipse at 30% 25%, rgba(255,255,255,0.55), transparent 55%), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px 999px 6px 6px / 100% 100% 6px 6px; border-bottom: 3px solid var(--dk); padding: 3px 16px 1px; }
+.us-pfswimcap-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfswimcap-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfswimcap-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfswimcap-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfswimcap-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfgoggles { background: linear-gradient(180deg, rgba(255,255,255,0.55), transparent 50%), color-mix(in srgb, var(--c) 55%, transparent); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 4px solid var(--dk); border-radius: 999px; padding: 0 14px; box-shadow: inset 0 0 6px rgba(255,255,255,0.8); }
+.us-pfgoggles-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfgoggles-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfgoggles-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfgoggles-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfgoggles-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfkickboard { background: radial-gradient(ellipse 8px 4px at calc(100% - 14px) 50%, rgba(0,0,0,0.35) 0 90%, transparent), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 12px 12px 3px 3px; padding: 1px 28px 1px 12px; }
+.us-pfkickboard-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfkickboard-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfkickboard-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfkickboard-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfkickboard-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfpullbuoy { background: linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 2px solid var(--w); border-radius: 999px; box-shadow: 0 0 0 1px var(--o), inset 0 -3px 0 rgba(0,0,0,0.12); padding: 0 16px; }
+.us-pfpullbuoy-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfpullbuoy-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfpullbuoy-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfpullbuoy-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfpullbuoy-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfwhistle { background: radial-gradient(circle at 12px 50%, var(--dk) 0 2px, transparent 2.6px), linear-gradient(180deg, #ffffff, var(--ol), var(--c)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--b); border-radius: 999px 6px 6px 999px; padding: 1px 12px 1px 24px; }
+.us-pfwhistle-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfwhistle-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfwhistle-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfwhistle-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfwhistle-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfrescuetube { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.86) 4% 96%, transparent), repeating-linear-gradient(90deg, var(--o) 0 14px, var(--w) 14px 18px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; padding: 1px 16px; box-shadow: inset 0 -3px 0 rgba(0,0,0,0.15); }
+.us-pfrescuetube-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfrescuetube-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfrescuetube-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfrescuetube-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfrescuetube-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfpoolnet { background: repeating-linear-gradient(45deg, rgba(255,255,255,0.5) 0 1px, transparent 1px 6px), repeating-linear-gradient(-45deg, rgba(255,255,255,0.5) 0 1px, transparent 1px 6px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 2px solid var(--w); border-radius: 4px 4px 14px 14px; box-shadow: 0 0 0 1px var(--b); }
+.us-pfpoolnet-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfpoolnet-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfpoolnet-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfpoolnet-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfpoolnet-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfhose { background: repeating-linear-gradient(80deg, rgba(0,0,0,0.18) 0 2px, transparent 2px 9px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; box-shadow: inset 0 2px 0 rgba(255,255,255,0.35); }
+.us-pfhose-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfhose-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfhose-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfhose-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfhose-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfchlorine { background: radial-gradient(circle, var(--w) 0 55%, var(--ol) 56% 60%, var(--w) 61%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 2px solid var(--c); border-radius: 999px; padding: 0 14px; }
+.us-pfchlorine-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfchlorine-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfchlorine-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfchlorine-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfchlorine-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pftestkit { background: linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.86) 4% 96%, transparent), linear-gradient(90deg, var(--o) 0 22%, var(--ol) 22% 44%, var(--c) 44% 66%, var(--b) 66%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--dk); border-radius: 3px; }
+.us-pftestkit-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pftestkit-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pftestkit-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pftestkit-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pftestkit-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfthermo { background: linear-gradient(90deg, var(--o) 0 72%, var(--w) 72%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 2px solid var(--dk); border-radius: 999px; padding: 0 14px; }
+.us-pfthermo-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfthermo-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfthermo-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfthermo-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfthermo-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pftimer { background: var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 3px solid var(--dk); border-radius: 999px; box-shadow: inset 0 0 0 2px var(--c); font-family: ui-monospace, Menlo, monospace; padding: 0 14px; }
+.us-pftimer-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pftimer-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pftimer-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pftimer-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pftimer-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pflemonade { background: radial-gradient(circle at 13px 50%, transparent 0 4px, var(--w) 4.6px 6px, var(--ol) 6.6px 8px, transparent 8.6px) 0 0 / 28px 100% no-repeat, linear-gradient(180deg, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; padding: 1px 12px 1px 28px; border: 1px solid var(--ol); }
+.us-pflemonade-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pflemonade-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pflemonade-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pflemonade-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pflemonade-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfpunch { background: radial-gradient(circle at 18% 70%, var(--ol) 0 2px, transparent 2.6px), radial-gradient(circle at 60% 30%, var(--ol) 0 2.2px, transparent 2.8px), radial-gradient(circle at 86% 74%, var(--ol) 0 2px, transparent 2.6px), linear-gradient(180deg, var(--ol), var(--o) 60%, var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 10px; }
+.us-pfpunch-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfpunch-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfpunch-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfpunch-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfpunch-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpopsicle { background: linear-gradient(180deg, rgba(255,255,255,0.45), transparent 50%), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-right: 12px solid var(--ol); border-radius: 12px 999px 999px 12px; padding: 1px 12px 1px 14px; }
+.us-pfpopsicle-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfpopsicle-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfpopsicle-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfpopsicle-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpopsicle-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pficecream { background: linear-gradient(180deg, var(--w) 0 50%, transparent 50%), repeating-linear-gradient(45deg, rgba(0,0,0,0.2) 0 1px, transparent 1px 5px), repeating-linear-gradient(-45deg, rgba(0,0,0,0.2) 0 1px, transparent 1px 5px), var(--ol); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px 999px 4px 4px; padding: 1px 14px; }
+.us-pficecream-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pficecream-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pficecream-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pficecream-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pficecream-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfwatermelon { background: radial-gradient(circle at 20% 40%, var(--dk) 0 1.2px, transparent 1.8px), radial-gradient(circle at 55% 30%, var(--dk) 0 1.2px, transparent 1.8px), radial-gradient(circle at 82% 45%, var(--dk) 0 1.2px, transparent 1.8px), linear-gradient(180deg, var(--o) 0 68%, var(--w) 68% 80%, var(--c) 80%); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 4px 4px 999px 999px / 4px 4px 70% 70%; padding: 1px 14px 3px; }
+.us-pfwatermelon-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfwatermelon-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfwatermelon-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfwatermelon-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfwatermelon-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfcoconut { background: radial-gradient(circle at 50% 0, var(--w) 0 4px, transparent 4.6px), linear-gradient(180deg, var(--o), color-mix(in srgb, var(--o) 55%, #000000)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 6px 6px 40% 40% / 6px 6px 100% 100%; padding: 3px 14px 3px; }
+.us-pfcoconut-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfcoconut-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfcoconut-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfcoconut-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfcoconut-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfsmoothie { background: linear-gradient(180deg, var(--w) 0 25%, var(--ol) 25% 50%, var(--o) 50% 75%, var(--c) 75%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 6px; border: 1px solid var(--ol); }
+.us-pfsmoothie-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfsmoothie-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfsmoothie-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfsmoothie-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfsmoothie-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfchips { background: repeating-linear-gradient(90deg, rgba(0,0,0,0.15) 0 2px, transparent 2px 4px) 0 0 / 100% 5px no-repeat, repeating-linear-gradient(90deg, rgba(0,0,0,0.15) 0 2px, transparent 2px 4px) 0 100% / 100% 5px no-repeat, linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px; padding: 6px 12px; }
+.us-pfchips-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfchips-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfchips-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfchips-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfchips-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfseasonpass { background: linear-gradient(180deg, transparent 0 56%, var(--o) 56% 70%, transparent 70%), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 1px solid var(--dk); border-radius: 6px; }
+.us-pfseasonpass-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfseasonpass-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfseasonpass-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfseasonpass-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfseasonpass-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfwristtag { background: repeating-linear-gradient(90deg, transparent 0 14px, rgba(0,0,0,0.12) 14px 15px), var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-top: 2px solid var(--c); border-bottom: 2px solid var(--c); border-radius: 3px; }
+.us-pfwristtag-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfwristtag-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfwristtag-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfwristtag-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfwristtag-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pflessoncard { background: repeating-linear-gradient(180deg, transparent 0 1.25em, rgba(30,120,200,0.3) 1.25em calc(1.25em + 1px)), var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-top: 3px solid var(--o); border-radius: 2px; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.us-pflessoncard-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pflessoncard-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pflessoncard-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pflessoncard-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pflessoncard-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pflockerkey { background: radial-gradient(circle at 12px 50%, var(--w) 0 4px, var(--dk) 4.4px 5.4px, transparent 6px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px 999px 999px 8px; padding: 1px 14px 1px 28px; }
+.us-pflockerkey-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pflockerkey-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pflockerkey-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pflockerkey-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pflockerkey-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfcheckin { background: linear-gradient(180deg, var(--ol), var(--o)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-left: 3px dotted var(--dk); border-radius: 4px; padding: 1px 12px 1px 14px; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5); }
+.us-pfcheckin-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfcheckin-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfcheckin-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfcheckin-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfcheckin-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfnametag { background: var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--o); border-top: 8px solid var(--o); border-radius: 4px; padding: 0 12px; }
+.us-pfnametag-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfnametag-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfnametag-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfnametag-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfnametag-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfmembercard { background: linear-gradient(135deg, rgba(255,255,255,0.35) 0 30%, transparent 31%), linear-gradient(120deg, var(--b), var(--c)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; box-shadow: 0 2px 6px rgba(0,40,90,0.3); }
+.us-pfmembercard-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfmembercard-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfmembercard-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfmembercard-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfmembercard-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfstamp { background: radial-gradient(circle, rgba(0,0,0,0) 40%, color-mix(in srgb, var(--b) 12%, transparent)); color: var(--b); text-shadow: none; border: 2px solid var(--b); border-radius: 40% / 70%; transform: rotate(2deg); display: inline-block; text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.9em; font-weight: 900; padding: 1px 12px; }
+.us-pfstamp-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfstamp-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfstamp-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfstamp-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfstamp-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfretrosun { background: radial-gradient(circle at 14% 100%, var(--o) 0 17px, transparent 18px), linear-gradient(180deg, var(--c), var(--ol)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 6px; padding: 1px 12px 1px 36px; }
+.us-pfretrosun-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfretrosun-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfretrosun-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfretrosun-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfretrosun-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfpostcard { background: var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 5px solid transparent; border-image: repeating-linear-gradient(45deg, var(--o) 0 8px, var(--w) 8px 16px, var(--c) 16px 24px, var(--w) 24px 32px) 5; border-radius: 0; padding: 0 10px; }
+.us-pfpostcard-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfpostcard-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfpostcard-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfpostcard-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpostcard-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfdinerstripe { background: repeating-linear-gradient(90deg, var(--o) 0 8px, var(--w) 8px 16px) 0 0 / 100% 5px no-repeat, repeating-linear-gradient(90deg, var(--o) 0 8px, var(--w) 8px 16px) 0 100% / 100% 5px no-repeat, var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 2px; padding: 7px 12px; }
+.us-pfdinerstripe-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfdinerstripe-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfdinerstripe-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfdinerstripe-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfdinerstripe-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfatomic { background: radial-gradient(circle at 92% 30%, var(--o) 0 1.6px, transparent 2.2px), radial-gradient(circle at 80% 76%, var(--c) 0 1.4px, transparent 2px), var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--c); border-radius: 8px; padding: 1px 12px 1px 24px; }
+.us-pfatomic::before { content: '\2736'; position: absolute; pointer-events: none; left: 7px; top: 50%; transform: translateY(-50%); font-size: 0.95em; color: var(--o); }
+.us-pfatomic-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfatomic-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfatomic-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfatomic-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfatomic-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpalmprint { background: repeating-linear-gradient(115deg, transparent 0 9px, color-mix(in srgb, var(--c) 45%, transparent) 9px 11px), var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 6px; border: 1px solid var(--ol); }
+.us-pfpalmprint-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfpalmprint-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfpalmprint-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfpalmprint-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpalmprint-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfsunsetband { background: linear-gradient(180deg, var(--o) 0 25%, var(--ol) 25% 50%, var(--c) 50% 75%, var(--b) 75%); color: #ffffff; text-shadow: 0 1px 3px var(--dk), 0 0 3px var(--dk); border-radius: 6px; }
+.us-pfsunsetband-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfsunsetband-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfsunsetband-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfsunsetband-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfsunsetband-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfmotelsign { background: var(--dk); color: var(--ol); text-shadow: 0 0 5px var(--c), 0 0 12px var(--c); border: 3px double var(--o); border-radius: 8px; letter-spacing: 0.06em; padding: 1px 14px; }
+.us-pfmotelsign-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfmotelsign-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfmotelsign-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfmotelsign-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfmotelsign-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfpennant { background: linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); clip-path: polygon(0 0, calc(100% - 1.8em) 0, 100% 50%, calc(100% - 1.8em) 100%, 0 100%); border-radius: 0; padding: 1px 2.4em 1px 12px; }
+.us-pfpennant-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfpennant-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfpennant-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfpennant-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpennant-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfbadge { background: linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 3px dotted var(--w); outline: 2px solid var(--o); border-radius: 999px; padding: 0 16px; }
+.us-pfbadge-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfbadge-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfbadge-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfbadge-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfbadge-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfpatch { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 2px dashed var(--w); outline: 3px solid var(--b); outline-offset: -1px; border-radius: 6px; margin: 0 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.25); }
+.us-pfpatch-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfpatch-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfpatch-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfpatch-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfpatch-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pflongshadow { background: linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); text-shadow: 1px 1px 0 var(--b), 2px 2px 0 var(--b), 3px 3px 0 var(--b), 4px 4px 0 var(--b), 5px 5px 0 color-mix(in srgb, var(--b) 80%, transparent), 6px 6px 0 color-mix(in srgb, var(--b) 55%, transparent); border-radius: 8px; }
+.us-pflongshadow-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pflongshadow-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pflongshadow-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pflongshadow-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pflongshadow-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfstacktext { background: none; color: var(--b); font-weight: 900; letter-spacing: 0.04em; text-shadow: 0 -2px 0 var(--c), 0 -4px 0 var(--ol), 0 2px 0 var(--o); }
+.us-pfstacktext-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfstacktext-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfstacktext-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfstacktext-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfstacktext-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfgloweredge { background: var(--dk); color: #ffffff; -webkit-text-stroke: 0.6px var(--c); text-shadow: 0 0 4px var(--c), 0 0 10px var(--c); border-radius: 8px; font-weight: 900; padding: 1px 12px; }
+.us-pfgloweredge-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfgloweredge-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfgloweredge-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfgloweredge-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfgloweredge-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfsplashtext { background: radial-gradient(circle at 20% 100%, var(--c) 0 2px, transparent 2.6px), radial-gradient(circle at 55% 104%, var(--c) 0 1.6px, transparent 2.2px), radial-gradient(circle at 86% 100%, var(--c) 0 2.2px, transparent 2.8px); color: var(--b); font-weight: 900; padding: 1px 6px 5px; border-radius: 0; }
+.us-pfsplashtext-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfsplashtext-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfsplashtext-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfsplashtext-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfsplashtext-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfwettext { background: linear-gradient(180deg, rgba(255,255,255,0), color-mix(in srgb, var(--c) 25%, transparent)); color: var(--b); font-weight: 900; text-shadow: 0 1px 0 #ffffff, 0 3px 4px rgba(0,60,140,0.35); border-radius: 6px; }
+.us-pfwettext-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfwettext-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfwettext-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfwettext-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfwettext-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfdashoutline { background: none; color: var(--b); font-weight: 900; border: 2px dashed var(--b); border-radius: 6px; padding: 0 10px; }
+.us-pfdashoutline-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfdashoutline-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfdashoutline-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfdashoutline-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfdashoutline-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfinline { background: none; color: var(--w); -webkit-text-stroke: 3px var(--b); paint-order: stroke fill; text-shadow: 0 0 1px var(--b); font-weight: 900; letter-spacing: 0.03em; }
+.us-pfinline-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfinline-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfinline-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfinline-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfinline-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfglasstext { background: linear-gradient(180deg, var(--c), var(--b)); color: rgba(255,255,255,0.88); text-shadow: 0 1px 0 rgba(255,255,255,0.55), 0 -1px 0 var(--dk); border-radius: 8px; font-weight: 900; letter-spacing: 0.03em; }
+.us-pfglasstext-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfglasstext-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfglasstext-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfglasstext-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfglasstext-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfcutpaper { background: var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; box-shadow: 3px 3px 0 var(--c), 6px 6px 0 var(--b); border-radius: 3px; margin-right: 8px; }
+.us-pfcutpaper-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfcutpaper-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfcutpaper-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfcutpaper-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfcutpaper-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfdoublewave { background: radial-gradient(circle at 4px calc(100% - 1px), var(--o) 0 1.4px, transparent 2px) 0 0 / 8px 100% repeat-x; color: var(--b); font-weight: 800; text-decoration: underline wavy var(--c); text-decoration-thickness: 2px; text-underline-offset: 0.2em; padding-bottom: 3px; border-radius: 0; }
+.us-pfdoublewave-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfdoublewave-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfdoublewave-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfdoublewave-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfdoublewave-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfpillswitch { background: radial-gradient(circle at calc(100% - 11px) 50%, #ffffff 0 7px, transparent 7.6px), linear-gradient(90deg, var(--b), var(--c)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.3); padding: 1px 28px 1px 14px; }
+.us-pfpillswitch-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfpillswitch-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfpillswitch-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfpillswitch-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfpillswitch-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfcornerdot { background: radial-gradient(circle at 5px 5px, var(--o) 0 1.8px, transparent 2.4px), radial-gradient(circle at calc(100% - 5px) 5px, var(--o) 0 1.8px, transparent 2.4px), radial-gradient(circle at 5px calc(100% - 5px), var(--o) 0 1.8px, transparent 2.4px), radial-gradient(circle at calc(100% - 5px) calc(100% - 5px), var(--o) 0 1.8px, transparent 2.4px), var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--c); border-radius: 8px; padding: 1px 14px; }
+.us-pfcornerdot-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfcornerdot-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfcornerdot-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfcornerdot-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfcornerdot-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpoolcard { background: var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-top: 6px solid var(--c); border-radius: 4px; box-shadow: 0 2px 6px rgba(0,60,140,0.25); }
+.us-pfpoolcard-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfpoolcard-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfpoolcard-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfpoolcard-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfpoolcard-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfticker { background: var(--dk); color: var(--ol); font-family: ui-monospace, Menlo, monospace; letter-spacing: 0.1em; border-top: 2px dashed var(--c); border-bottom: 2px dashed var(--c); border-radius: 0; text-shadow: none; padding: 1px 12px; }
+.us-pfticker-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfticker-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfticker-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfticker-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfticker-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfdivewave { background: radial-gradient(circle at 5px 0, transparent 0 3px, var(--c) 3.4px 4.4px, transparent 5px) 0 0 / 10px 5px repeat-x, radial-gradient(circle at 5px 100%, transparent 0 3px, var(--c) 3.4px 4.4px, transparent 5px) 0 100% / 10px 5px repeat-x; color: var(--b); font-weight: 800; border-radius: 0; padding: 6px 12px; }
+.us-pfdivewave-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfdivewave-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-pfdivewave-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfdivewave-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-pfdivewave-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfsplitgrad { background: linear-gradient(90deg, var(--o) 50%, var(--c) 50%); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; padding: 1px 16px; }
+.us-pfsplitgrad-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-pfsplitgrad-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-pfsplitgrad-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-pfsplitgrad-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-pfsplitgrad-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfhalo { background: var(--w); color: var(--b); font-weight: 900; border: 2px solid var(--c); border-radius: 999px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--c) 30%, transparent), 0 0 12px var(--c); text-shadow: none; padding: 0 14px; }
+.us-pfhalo-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-pfhalo-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-pfhalo-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-pfhalo-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-pfhalo-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
 @keyframes us-p4-spin { to { transform: rotate(360deg); } }
-.us-pfpinwheel-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfpinwheel-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfpinwheel-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfpinwheel-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfpinwheel-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfwebbing { background: repeating-linear-gradient(90deg, var(--c) 0 6px, var(--w) 6px 8px), repeating-linear-gradient(0deg, transparent 0 5px, rgba(0,0,0,0.12) 5px 6px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px; }
-.us-pfwebbing-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfwebbing-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfwebbing-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfwebbing-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfwebbing-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfmirrorlens { background: linear-gradient(135deg, rgba(255,255,255,0.6) 0 16%, transparent 17% 38%, rgba(255,255,255,0.22) 39% 48%, transparent 49%), linear-gradient(180deg, var(--b), var(--dk)); color: var(--w); text-shadow: 0 1px 2px var(--dk); border: 1px solid var(--c); border-radius: 30% / 50%; padding: 1px 14px; }
-.us-pfmirrorlens-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfmirrorlens-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfmirrorlens-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfmirrorlens-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfmirrorlens-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfsprinkler { background: repeating-radial-gradient(circle at 50% 170%, transparent 0 10px, rgba(255,255,255,0.55) 10px 11px, transparent 11px 20px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 9px; }
-.us-pfsprinkler-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfsprinkler-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfsprinkler-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfsprinkler-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfsprinkler-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfpopstick { background: repeating-linear-gradient(0deg, transparent 0 3px, rgba(120,60,0,0.1) 3px 4px), linear-gradient(180deg, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--o); border-radius: 999px; padding: 1px 16px; }
-.us-pfpopstick-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfpopstick-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfpopstick-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfpopstick-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfpopstick-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pftikicup { background: linear-gradient(90deg, var(--dk) 0 6px, transparent 6px calc(100% - 6px), var(--dk) calc(100% - 6px)), repeating-linear-gradient(90deg, rgba(0,0,0,0.14) 0 3px, transparent 3px 6px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 6px 6px 14px 14px; }
-.us-pftikicup-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pftikicup-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pftikicup-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pftikicup-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pftikicup-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfsoftserve { background: repeating-linear-gradient(172deg, var(--w) 0 5px, color-mix(in srgb, var(--ol) 50%, var(--w)) 5px 8px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; box-shadow: 0 2px 0 var(--o); border: 1px solid var(--ol); }
-.us-pfsoftserve-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfsoftserve-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfsoftserve-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfsoftserve-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfsoftserve-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfsorbet { background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.7), transparent 40%), linear-gradient(120deg, var(--ol), var(--c) 55%, var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; border: 1px solid var(--c); }
-.us-pfsorbet-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfsorbet-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfsorbet-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfsorbet-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfsorbet-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfcherrytop { background: radial-gradient(circle at 12px 50%, #ffffff 0 1.4px, var(--o) 2px 6px, color-mix(in srgb, var(--o) 60%, #000000) 6.6px, transparent 7.2px) 0 0 / 26px 100% no-repeat, linear-gradient(180deg, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px; padding: 1px 12px 1px 26px; border: 1px solid var(--ol); }
-.us-pfcherrytop-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfcherrytop-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfcherrytop-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfcherrytop-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfcherrytop-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfbasket { background: repeating-linear-gradient(45deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 6px), repeating-linear-gradient(-45deg, rgba(0,0,0,0.16) 0 2px, transparent 2px 6px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 3px 3px 10px 10px; }
-.us-pfbasket-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfbasket-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfbasket-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfbasket-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfbasket-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfcitruswedge { background: repeating-linear-gradient(90deg, transparent 0 9px, rgba(255,255,255,0.5) 9px 10px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 3px solid var(--o); border-radius: 999px 999px 4px 4px / 100% 100% 4px 4px; padding: 0 14px; }
-.us-pfcitruswedge-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfcitruswedge-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfcitruswedge-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfcitruswedge-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfcitruswedge-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfpineapple { background: repeating-linear-gradient(45deg, rgba(0,0,0,0.22) 0 1px, transparent 1px 7px), repeating-linear-gradient(-45deg, rgba(0,0,0,0.22) 0 1px, transparent 1px 7px), linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; }
-.us-pfpineapple-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfpineapple-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfpineapple-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfpineapple-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfpineapple-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfcoolerlid { background: linear-gradient(180deg, var(--w) 0 30%, var(--c) 30%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-top: 5px solid var(--o); border-radius: 4px; box-shadow: inset 0 -3px 0 var(--b); }
-.us-pfcoolerlid-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfcoolerlid-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfcoolerlid-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfcoolerlid-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfcoolerlid-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pftanlines { background: linear-gradient(180deg, var(--ol) 0 30%, var(--w) 30% 70%, var(--ol) 70%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 4px; }
-.us-pftanlines-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pftanlines-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pftanlines-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pftanlines-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pftanlines-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfsunburn { background: radial-gradient(circle at 50% 125%, var(--ol), var(--o) 45%, color-mix(in srgb, var(--o) 55%, #b91c1c)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 8px; box-shadow: inset 0 0 8px rgba(255,255,255,0.35); }
-.us-pfsunburn-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfsunburn-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfsunburn-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfsunburn-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfsunburn-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfparasol { background: linear-gradient(90deg, transparent 6%, rgba(255,255,255,0.82) 6% 94%, transparent), repeating-linear-gradient(90deg, var(--o) 0 12px, var(--w) 12px 24px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 999px 999px 4px 4px / 100% 100% 4px 4px; border-bottom: 3px dotted var(--b); padding: 2px 16px 1px; }
-.us-pfparasol-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfparasol-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfparasol-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfparasol-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfparasol-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfhammock { background: linear-gradient(90deg, transparent 6%, rgba(255,255,255,0.8) 6% 94%, transparent), repeating-linear-gradient(90deg, var(--c) 0 5px, var(--ol) 5px 10px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 4px 4px 999px 999px / 4px 4px 80% 80%; padding: 1px 16px 3px; }
-.us-pfhammock-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfhammock-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfhammock-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfhammock-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfhammock-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pftowelfringe { background: repeating-linear-gradient(90deg, var(--w) 0 2px, transparent 2px 4px) 0 100% / 100% 6px no-repeat, linear-gradient(180deg, var(--c) 0 18%, var(--w) 18% 30%, var(--c) 30% 38%, var(--w) 38%); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 2px; padding: 3px 12px 8px; }
-.us-pftowelfringe-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pftowelfringe-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pftowelfringe-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pftowelfringe-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pftowelfringe-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pffruitdots { background: radial-gradient(circle at 6px 6px, var(--o) 0 2.6px, transparent 3.2px) 0 0 / 16px 14px, radial-gradient(circle at 14px 13px, var(--c) 0 2.6px, transparent 3.2px) 0 0 / 16px 14px, var(--w); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border: 1px solid var(--c); border-radius: 8px; }
-.us-pffruitdots-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pffruitdots-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pffruitdots-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pffruitdots-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pffruitdots-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfguardsign { background: var(--o); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 2px solid var(--w); border-radius: 4px; box-shadow: 0 0 0 2px var(--o); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 900; font-size: 0.92em; }
-.us-pfguardsign-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfguardsign-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfguardsign-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfguardsign-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfguardsign-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pftowelchit { background: radial-gradient(circle at 0 50%, transparent 0 5px, var(--ol) 5.5px) left / 51% 100% no-repeat, radial-gradient(circle at 100% 50%, transparent 0 5px, var(--ol) 5.5px) right / 51% 100% no-repeat; color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 0; padding: 1px 14px; }
-.us-pftowelchit-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pftowelchit-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pftowelchit-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pftowelchit-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pftowelchit-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pflockertag { background: radial-gradient(circle at 11px 50%, #ffffff 0 3px, var(--dk) 3.2px 4px, transparent 4.6px), linear-gradient(180deg, var(--c), var(--b)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 6px 12px 12px 6px; padding: 1px 12px 1px 26px; }
-.us-pflockertag-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pflockertag-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pflockertag-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pflockertag-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pflockertag-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfkeyfob { background: linear-gradient(180deg, var(--ol), var(--o)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 2px solid var(--w); border-radius: 999px; box-shadow: 0 0 0 2px var(--o), 0 2px 5px rgba(0,0,0,0.25); padding: 0 12px; }
-.us-pfkeyfob-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfkeyfob-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfkeyfob-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfkeyfob-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfkeyfob-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfspf { background: radial-gradient(circle, var(--ol) 0 55%, var(--o) 56%); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 2px solid var(--w); border-radius: 999px; box-shadow: 0 0 0 2px var(--o); padding: 0 12px; }
-.us-pfspf-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfspf-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfspf-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfspf-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfspf-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfuvindex { background: linear-gradient(90deg, var(--c), var(--ol) 45%, var(--o) 75%, color-mix(in srgb, var(--o) 55%, #b91c1c)); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border-radius: 999px; border: 1px solid color-mix(in srgb, var(--o) 70%, #000000); }
-.us-pfuvindex-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfuvindex-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfuvindex-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfuvindex-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfuvindex-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfopenswim { background: var(--dk); color: var(--ol); text-shadow: 0 0 6px var(--o), 0 0 12px var(--o); border: 2px solid var(--o); border-radius: 6px; box-shadow: 0 0 8px color-mix(in srgb, var(--o) 60%, transparent), inset 0 0 6px color-mix(in srgb, var(--o) 40%, transparent); text-transform: uppercase; letter-spacing: 0.08em; }
-.us-pfopenswim-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfopenswim-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfopenswim-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfopenswim-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfopenswim-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfcautiontape { background: linear-gradient(90deg, transparent 5%, rgba(255,255,255,0.85) 5% 95%, transparent), repeating-linear-gradient(45deg, var(--o) 0 9px, var(--dk) 9px 18px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 3px; padding: 1px 14px; }
-.us-pfcautiontape-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfcautiontape-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfcautiontape-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfcautiontape-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfcautiontape-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfhangtag { background: radial-gradient(circle at 9px 50%, var(--dk) 0 2px, transparent 2.6px), linear-gradient(180deg, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; clip-path: polygon(16px 0, 100% 0, 100% 100%, 16px 100%, 0 50%); border-radius: 0; padding: 1px 12px 1px 24px; }
-.us-pfhangtag-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfhangtag-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfhangtag-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfhangtag-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfhangtag-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfcabinplate { background: linear-gradient(180deg, var(--w), var(--ol)); color: var(--dk); font-weight: 900; text-shadow: 0 1px 0 #ffffff; border: 2px solid var(--o); border-radius: 3px; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.7), 0 1px 0 var(--b); letter-spacing: 0.06em; }
-.us-pfcabinplate-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfcabinplate-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfcabinplate-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfcabinplate-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfcabinplate-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfreceipt { background: linear-gradient(var(--w), var(--w)) 0 0 / 100% calc(100% - 5px) no-repeat, linear-gradient(135deg, var(--w) 50%, transparent 50%) 0 100% / 8px 5px repeat-x, linear-gradient(225deg, var(--w) 50%, transparent 50%) 0 100% / 8px 5px repeat-x; color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 0; padding: 1px 12px 7px; font-family: ui-monospace, Menlo, monospace; font-weight: 700; }
-.us-pfreceipt-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfreceipt-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfreceipt-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfreceipt-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfreceipt-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfparkpass { background: linear-gradient(180deg, var(--b) 0 6px, var(--c) 6px); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 1px solid var(--b); border-radius: 6px; padding: 5px 12px 1px; }
-.us-pfparkpass-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfparkpass-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfparkpass-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfparkpass-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfparkpass-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfstickynote { background: linear-gradient(180deg, var(--ol) 0 5px, var(--w) 5px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; display: inline-block; transform: rotate(-1.2deg); box-shadow: 2px 3px 5px rgba(0,0,0,0.25); border-radius: 1px 1px 10px 1px; padding: 6px 12px 1px; }
-.us-pfstickynote-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfstickynote-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfstickynote-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfstickynote-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfstickynote-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfschedule { background: linear-gradient(90deg, var(--o) 0 5px, var(--w) 5px); color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-bottom: 1px solid var(--c); border-radius: 0 4px 4px 0; padding: 1px 12px 1px 14px; }
-.us-pfschedule-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfschedule-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfschedule-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfschedule-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfschedule-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfwristloop { background: repeating-linear-gradient(90deg, var(--c) 0 3px, color-mix(in srgb, var(--c) 78%, var(--b)) 3px 5px); color: #ffffff; text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent); border: 1px solid var(--b); border-radius: 999px; box-shadow: inset 0 2px 0 rgba(255,255,255,0.35), inset 0 -2px 0 rgba(0,0,0,0.15); }
-.us-pfwristloop-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfwristloop-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfwristloop-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfwristloop-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfwristloop-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfwaveshadow { background: none; color: var(--b); font-weight: 900; text-shadow: 1px 1px 0 var(--ol), 2px 2px 0 var(--c); }
-.us-pfwaveshadow-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfwaveshadow-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfwaveshadow-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfwaveshadow-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfwaveshadow-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfdusktext { background: linear-gradient(180deg, var(--o), var(--b)); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-weight: 900; padding: 0 2px; }
-.us-pfdusktext-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfdusktext-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfdusktext-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfdusktext-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfdusktext-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfstripefill { background: repeating-linear-gradient(0deg, var(--c) 0 3px, var(--b) 3px 5px); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-weight: 900; padding: 0 2px; }
-.us-pfstripefill-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfstripefill-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfstripefill-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfstripefill-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfstripefill-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfblocktext { background: none; color: var(--w); font-weight: 900; letter-spacing: 0.04em; text-shadow: 1px 1px 0 var(--b), 2px 2px 0 var(--b), 3px 3px 0 var(--b), 4px 4px 0 var(--dk); }
-.us-pfblocktext-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfblocktext-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfblocktext-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfblocktext-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfblocktext-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfhollowtext { background: none; -webkit-text-stroke: 1.3px var(--b); color: transparent; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.04em; }
-.us-pfhollowtext-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfhollowtext-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfhollowtext-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfhollowtext-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfhollowtext-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfstencilcut { background: repeating-linear-gradient(0deg, var(--b) 0 3px, transparent 3px 4px); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-weight: 900; letter-spacing: 0.08em; padding: 0 2px; }
-.us-pfstencilcut-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfstencilcut-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfstencilcut-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfstencilcut-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfstencilcut-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfsplittone { background: linear-gradient(180deg, var(--o) 50%, var(--b) 50%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-weight: 900; padding: 0 2px; }
-.us-pfsplittone-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfsplittone-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfsplittone-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfsplittone-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfsplittone-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfneonorange { background: var(--dk); color: var(--ol); text-shadow: 0 0 5px var(--o), 0 0 12px var(--o), 0 0 22px var(--o); border: 1px solid var(--o); border-radius: 6px; box-shadow: 0 0 10px color-mix(in srgb, var(--o) 55%, transparent), inset 0 0 6px color-mix(in srgb, var(--o) 30%, transparent); }
-.us-pfneonorange-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfneonorange-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfneonorange-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfneonorange-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfneonorange-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfvintageoffset { background: none; color: var(--b); font-weight: 900; letter-spacing: 0.03em; text-shadow: 2px 1px 0 var(--o), -1px -1px 0 color-mix(in srgb, var(--c) 70%, transparent); }
-.us-pfvintageoffset-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfvintageoffset-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfvintageoffset-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfvintageoffset-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfvintageoffset-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfmarqueetext { background: var(--dk); color: var(--ol); text-shadow: 0 0 6px var(--o); border: 3px dotted var(--ol); border-radius: 6px; padding: 1px 12px; letter-spacing: 0.05em; font-weight: 900; }
-.us-pfmarqueetext-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfmarqueetext-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfmarqueetext-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfmarqueetext-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfmarqueetext-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfglosstext { background: linear-gradient(180deg, color-mix(in srgb, var(--c) 40%, #ffffff) 0 46%, var(--b) 46% 100%); -webkit-background-clip: text; background-clip: text; color: transparent; -webkit-text-fill-color: transparent; font-weight: 900; filter: drop-shadow(0 1px 0 var(--dk)); padding: 0 2px; }
-.us-pfglosstext-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfglosstext-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfglosstext-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfglosstext-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfglosstext-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfwavyrule { background: none; color: var(--b); font-weight: 800; text-decoration: underline wavy var(--c); text-decoration-thickness: 2px; text-underline-offset: 0.22em; }
-.us-pfwavyrule-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfwavyrule-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfwavyrule-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfwavyrule-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfwavyrule-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfdoublerule { background: none; color: var(--b); font-weight: 800; border-top: 3px double var(--c); border-bottom: 3px double var(--c); border-radius: 0; letter-spacing: 0.08em; text-transform: uppercase; font-size: 0.92em; }
-.us-pfdoublerule-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfdoublerule-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
-.us-pfdoublerule-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfdoublerule-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
-.us-pfdoublerule-5 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfswipemark { background: linear-gradient(100deg, transparent 0 3%, color-mix(in srgb, var(--o) 55%, transparent) 3% 97%, transparent 97%) 0 62% / 100% 68% no-repeat; color: var(--dk); font-weight: 900; text-shadow: 0 0 3px #ffffff; border-radius: 2px; text-shadow: none; }
-.us-pfswipemark-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
-.us-pfswipemark-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
-.us-pfswipemark-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
-.us-pfswipemark-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
-.us-pfswipemark-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfinkstamp { background: rgba(255,255,255,0.35); color: var(--b); text-shadow: none; border: 2px solid var(--b); outline: 1px solid var(--b); outline-offset: 2px; border-radius: 4px; transform: rotate(-3deg); display: inline-block; letter-spacing: 0.1em; text-transform: uppercase; font-size: 0.9em; font-weight: 900; }
-.us-pfinkstamp-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
-.us-pfinkstamp-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
-.us-pfinkstamp-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
-.us-pfinkstamp-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
-.us-pfinkstamp-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
 /* --- Frutiger Aero 4: 90 designs x 5 colorways, in the glossy sky-and-grass glass of Frutiger Aero 1, 2 and 3 --- */
 .us-fdpeek { background: linear-gradient(135deg, rgba(255,255,255,0.6) 0 30%, rgba(255,255,255,0.08) 30.5%), linear-gradient(180deg, color-mix(in srgb, var(--a) 45%, transparent), color-mix(in srgb, var(--a) 25%, transparent)); color: var(--ink); text-shadow: 0 0 6px rgba(255,255,255,0.9); border: 1px solid rgba(255,255,255,0.95); border-radius: 8px; box-shadow: 0 0 0 1px color-mix(in srgb, var(--a) 70%, #000000), inset 0 0 10px rgba(255,255,255,0.55), 0 3px 8px color-mix(in srgb, var(--a) 35%, transparent); }
 .us-fdpeek-1 { --a: #2a8de0; --b: #8fe3ff; --ink: #0b3a5c; }
@@ -14986,49 +14987,3 @@ mark.an-hl.an-s-ls {
 .gel-rim-white { --rc-fill2: #bfe6ff; }
 .gel-rim-fog { --rc-fill2: #a9c4e0; }
 .gel-rim-black { --rc-fill2: #5b6a8a; }
-
-/* ========================================================
-   POOLSIDE STYLES (.poolside_style N(text), N from 1 to 280): 20 designs in 14 Poolside colorways (cyan, blue and orange), 280 looks in all.
-   N = (design - 1) * 14 + colorway. The span carries ps-style, ps-f<design> and ps-c<colorway>.
-   ======================================================== */
-.ps-style { display: inline; font-weight: 700; line-height: 1.3; padding: 0 0.4em; margin: 0 0.08em; border-radius: 0.35em; background: var(--pss, transparent); color: var(--psx); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-.ps-f1 { background: linear-gradient(180deg, var(--psf1), var(--psf2) 62%, var(--psf3)); color: var(--psk); border: 1px solid var(--pse); border-radius: 999px; padding: 0.02em 0.7em; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), 0 1px 3px rgba(0, 40, 90, 0.25); text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12); }
-.ps-f2 { border: 0.13em solid var(--psa); border-radius: 999px; padding: 0 0.6em; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35); }
-.ps-f3 { background: linear-gradient(transparent 50%, color-mix(in srgb, var(--psa) 38%, transparent) 50% 94%, transparent 94%), var(--pss, transparent); border-radius: 0.2em; padding: 0 0.25em; }
-.ps-f4 { text-decoration: underline wavy var(--psa); text-decoration-thickness: 0.12em; text-underline-offset: 0.22em; padding: 0 0.15em; }
-.ps-f5 { border-top: 0.1em solid var(--psa); border-bottom: 0.1em solid var(--psd); border-radius: 0; padding: 0.05em 0.5em; letter-spacing: 0.06em; text-transform: uppercase; font-size: 0.92em; }
-.ps-f6 { background: linear-gradient(90deg, var(--psa), var(--psd) 55%, var(--psx)), linear-gradient(var(--pss, transparent), var(--pss, transparent)); -webkit-background-clip: text, border-box; background-clip: text, border-box; color: transparent; -webkit-text-fill-color: transparent; font-weight: 900; padding: 0 0.3em; border-radius: 0.35em; }
-.ps-f7 { background: #07203d; color: color-mix(in srgb, var(--psa) 55%, #ffffff); border: 1px solid var(--psa); border-radius: 0.4em; padding: 0.04em 0.55em; text-shadow: 0 0 4px var(--psa), 0 0 10px var(--psa), 0 0 20px var(--psd); box-shadow: 0 0 0.5em color-mix(in srgb, var(--psa) 55%, transparent), inset 0 0 0.4em color-mix(in srgb, var(--psa) 35%, transparent); }
-.ps-f8 { text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9), 0 -1px 0 rgba(0, 50, 100, 0.35); background: linear-gradient(180deg, color-mix(in srgb, var(--psf1) 80%, transparent), color-mix(in srgb, var(--psf2) 30%, transparent)); border-radius: 0.3em; padding: 0 0.5em; box-shadow: inset 0 1px 3px rgba(0, 60, 120, 0.3); font-weight: 800; }
-.ps-c7.ps-f8, .ps-c8.ps-f8 { text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7), 0 1px 0 rgba(255, 255, 255, 0.12); background: linear-gradient(180deg, #0a2a5e, #0f3578); box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.25); }
-.ps-f9 { border-radius: 0.55em; padding: 0.02em 0.6em; color: var(--psk); background: linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0 48%, transparent 49%), linear-gradient(180deg, var(--psf1), var(--psf2) 55%, var(--psf3)); border: 1px solid var(--pse); box-shadow: 0 2px 0 var(--pse), 0 3px 6px rgba(0, 40, 90, 0.25); }
-.ps-f10 { display: inline-block; padding: 0 0.8em 0 1.1em; color: var(--psk); background: linear-gradient(90deg, var(--psf2), var(--psf3)); clip-path: polygon(0.6em 0, 100% 0, 100% 100%, 0.6em 100%, 0 50%); border-radius: 0 0.2em 0.2em 0; }
-.ps-f11 { background: repeating-linear-gradient(135deg, rgba(255, 255, 255, var(--psst, 0.28)) 0 0.4em, transparent 0.4em 0.8em), linear-gradient(180deg, var(--psf2), var(--psf3)); color: var(--psk); border: 1px solid var(--pse); border-radius: 0.3em; padding: 0 0.5em; text-shadow: 0 1px 1px rgba(0, 30, 70, 0.35); }
-.ps-f12 { background: linear-gradient(color-mix(in srgb, var(--pse) 30%, transparent) 1px, transparent 1px) 0 0 / 0.6em 0.6em, linear-gradient(90deg, color-mix(in srgb, var(--pse) 30%, transparent) 1px, transparent 1px) 0 0 / 0.6em 0.6em, linear-gradient(180deg, var(--psf1), var(--psf2)); color: var(--psk); border: 1px solid var(--pse); border-radius: 0.25em; padding: 0 0.45em; text-shadow: 0 1px 1px rgba(0, 30, 70, 0.25); }
-.ps-f13 { display: inline-flex; align-items: center; gap: 0.35em; padding: 0 0.65em 0 0.4em; border-radius: 999px; border: 1px solid var(--pse); background: var(--pss, rgba(255, 255, 255, 0.7)); }
-.ps-f13::before { content: ''; width: 0.6em; height: 0.6em; flex: none; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff 0 12%, var(--psa) 40%, var(--psd)); box-shadow: 0 0 0.3em var(--psa); }
-.ps-f14 { display: inline-block; background: var(--pss, #ffffff); border: 0.16em solid var(--pss, #ffffff); outline: 1px solid var(--pse); border-radius: 0.45em; padding: 0 0.4em; box-shadow: 0 0.12em 0.35em rgba(0, 40, 90, 0.35); transform: rotate(-1.6deg); font-weight: 800; }
-.ps-f15 { color: var(--psx); text-shadow: 1px 1px 0 var(--psf1), 2px 2px 0 var(--psa), 3px 3px 0 var(--pse); font-weight: 900; letter-spacing: 0.04em; padding: 0 0.3em 0.1em 0.1em; }
-.ps-c7.ps-f15, .ps-c8.ps-f15 { text-shadow: 1px 1px 0 #1b4a9a, 2px 2px 0 #1b4a9a, 3px 3px 0 #000000; }
-.ps-f16 { font-weight: 800; padding: 0 0.2em; }
-.ps-f16::before { content: '['; color: var(--psa); margin-right: 0.15em; font-weight: 900; }
-.ps-f16::after { content: ']'; color: var(--psd); margin-left: 0.15em; font-weight: 900; }
-.ps-f17 { background: linear-gradient(90deg, var(--psa), var(--psd)) 0 100% / 100% 0.28em no-repeat, var(--pss, transparent); border-radius: 0; padding: 0 0.3em 0.1em; font-weight: 800; }
-.ps-f18 { display: inline-block; padding: 0 1em; color: var(--psk); background: linear-gradient(180deg, var(--psf1), var(--psf2) 60%, var(--psf3)); clip-path: polygon(0 0, 100% 0, calc(100% - 0.55em) 50%, 100% 100%, 0 100%, 0.55em 50%); border-radius: 0; }
-.ps-f19 { background: linear-gradient(180deg, var(--psgt, rgba(255, 255, 255, 0.7)), var(--psgb, rgba(255, 255, 255, 0.25))), color-mix(in srgb, var(--psa) 38%, transparent), var(--pss, transparent); border: 1px solid color-mix(in srgb, var(--pse) 70%, #ffffff); border-radius: 0.55em; padding: 0 0.6em; box-shadow: 0 0.12em 0.45em color-mix(in srgb, var(--psa) 40%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.8); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); }
-.ps-c7.ps-f19, .ps-c8.ps-f19 { background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04)), var(--pss); border-color: var(--pse); box-shadow: 0 0.12em 0.45em color-mix(in srgb, var(--psa) 35%, transparent); }
-.ps-f20 { display: inline-block; padding: 0 0.9em; color: var(--psk); background: linear-gradient(90deg, var(--psf2), var(--psf3)); clip-path: polygon(0.45em 0, 100% 0, calc(100% - 0.45em) 100%, 0 100%); border-radius: 0; }
-.ps-c1 { --psa: #00b4d8; --psd: #00b4d8; --psx: #008fb0; --pss: transparent; --psf1: #8cf0ff; --psf2: #00b4d8; --psf3: #007d99; --pse: #006b85; --psk: #ffffff; }
-.ps-c2 { --psa: #0a6cff; --psd: #0a6cff; --psx: #0a58d6; --pss: transparent; --psf1: #7db3ff; --psf2: #0a6cff; --psf3: #0646b0; --pse: #05379a; --psk: #ffffff; }
-.ps-c3 { --psa: #0097b8; --psd: #0097b8; --psx: #00758f; --pss: transparent; --psf1: #5fd6ec; --psf2: #0097b8; --psf3: #005f78; --pse: #004d63; --psk: #ffffff; }
-.ps-c4 { --psa: #ff8a1f; --psd: #ff8a1f; --psx: #d86a0c; --pss: transparent; --psf1: #ffcf94; --psf2: #ff8a1f; --psf3: #c2570a; --pse: #a54a08; --psk: #ffffff; }
-.ps-c5 { --psa: #0a6cff; --psd: #0a6cff; --psx: #0646b0; --pss: #e6f9ff; --psf1: #ffffff; --psf2: #dff7ff; --psf3: #a8e6f7; --pse: #6fd0ea; --psk: #0646b0; }
-.ps-c6 { --psa: #ff8a1f; --psd: #ff8a1f; --psx: #a34a06; --pss: #fff4e6; --psf1: #ffffff; --psf2: #ffeedb; --psf3: #ffcf94; --pse: #ffb066; --psk: #9a4505; }
-.ps-c7 { --psa: #38e0ff; --psd: #38e0ff; --psx: #5ce6ff; --pss: #0b2a5e; --psf1: #1b4a9a; --psf2: #0f3578; --psf3: #0a2a5e; --pse: #38e0ff; --psk: #7af0ff; --psgt: rgba(255, 255, 255, 0.22); --psgb: rgba(255, 255, 255, 0.06); --psst: 0.1; }
-.ps-c8 { --psa: #ff9a3c; --psd: #ff9a3c; --psx: #ff9a3c; --pss: #0b2a5e; --psf1: #1b4a9a; --psf2: #0f3578; --psf3: #0a2a5e; --pse: #ff9a3c; --psk: #ffb066; --psgt: rgba(255, 255, 255, 0.22); --psgb: rgba(255, 255, 255, 0.06); --psst: 0.1; }
-.ps-c9 { --psa: #00c2e0; --psd: #0a6cff; --psx: #0a6cff; --pss: transparent; --psf1: #6fe9ff; --psf2: #00c2e0; --psf3: #0a6cff; --pse: #0646b0; --psk: #ffffff; }
-.ps-c10 { --psa: #00c2e0; --psd: #ff8a1f; --psx: #0089a3; --pss: transparent; --psf1: #6fe9ff; --psf2: #00c2e0; --psf3: #ff8a1f; --pse: #c2570a; --psk: #ffffff; }
-.ps-c11 { --psa: #0a6cff; --psd: #ff8a1f; --psx: #0a58d6; --pss: transparent; --psf1: #6fa8ff; --psf2: #0a6cff; --psf3: #ff8a1f; --pse: #c2570a; --psk: #ffffff; }
-.ps-c12 { --psa: #ff8a1f; --psd: #0a6cff; --psx: #d86a0c; --pss: transparent; --psf1: #ffcf94; --psf2: #ff8a1f; --psf3: #0a6cff; --pse: #0646b0; --psk: #ffffff; }
-.ps-c13 { --psa: #00b4d8; --psd: #00b4d8; --psx: #007d99; --pss: #f4fdff; --psf1: #ffffff; --psf2: #f2fcff; --psf3: #cdeefa; --pse: #9bdcef; --psk: #007d99; }
-.ps-c14 { --psa: #00a3c4; --psd: #00a3c4; --psx: #062c5a; --pss: #00d5f0; --psf1: #7af0ff; --psf2: #00d5f0; --psf3: #0099b3; --pse: #007d99; --psk: #062c5a; }
