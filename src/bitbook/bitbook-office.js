@@ -13,9 +13,11 @@
 
     const PREF_KEY = 'bitbook_onenote_prefs';
     const PAGE_KEY = 'bitbook_onenote_pages';
-    const prefs = Object.assign({ nav: true, pane: false, zoom: 1, full: false, lines: 'none', color: '', pages: false, margins: 'normal', numbers: true }, (function () {
+    const prefs = Object.assign({ nav: true, pane: false, zoom: 1, full: false, lines: 'none', color: '', pages: true, margins: 'normal', numbers: true }, (function () {
         try { return JSON.parse(localStorage.getItem(PREF_KEY) || '{}') || {}; } catch (e) { return {}; }
     })());
+    // the paper pages are on from the start, like Writeout (until someone turns them off on purpose)
+    if (!prefs.pagesChosen) prefs.pages = true;
     prefs.pane = false; // the Format sidebar is gone from this layout (Protect and Note Info still open their own panel)
     // Per-note page looks + created dates (layout-only, never inside the note text)!
     let pageInfo = (function () { try { return JSON.parse(localStorage.getItem(PAGE_KEY) || '{}') || {}; } catch (e) { return {}; } })();
@@ -668,7 +670,7 @@
         paginateSoon();
         setTimeout(function () { paginate(); OS.sync(); try { if (line && line.scrollIntoView) line.scrollIntoView({ block: 'center', behavior: 'smooth' }); } catch (e) {} OS.toast('Page ' + currentPage() + '!'); }, 60);
     }
-    function setPagesView(on) { prefs.pages = !!on; savePrefs(); applyView(); OS.toast(on ? 'Pages: the note as separate sheets!' : 'Pages view off: one long page!'); }
+    function setPagesView(on) { prefs.pages = !!on; prefs.pagesChosen = true; savePrefs(); applyView(); OS.toast(on ? 'Pages: the note as separate sheets!' : 'Pages view off: one long page!'); }
     function setMargins(k) { prefs.margins = k; savePrefs(); applyView(); OS.toast(MARGINS[k].label + ' margins!'); }
     function sizeMenu() {
         return (typeof KD_PAGE_SIZES !== 'undefined' ? KD_PAGE_SIZES : []).map(function (s) {
