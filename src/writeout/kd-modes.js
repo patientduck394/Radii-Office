@@ -174,6 +174,7 @@
         return out;
     }
     function toggleFold(i) {
+        const sc0 = scroller(), top0 = sc0.scrollTop;
         const lines = src.value.split('\n'), info = foldInfo(lines).find(function (f) { return f.i === i; });
         if (!info) return;
         let caret;
@@ -192,6 +193,9 @@
         src.setSelectionRange(caret, caret);
         lastSel = [caret, caret]; touched = true;
         refresh();
+        // (setting the caret and the new height can both move the page: put it back where it was)
+        sc0.scrollTop = top0;
+        requestAnimationFrame(function () { sc0.scrollTop = top0; });
     }
     function buildGutter() {
         if (!gutter || !hlPre) return;
@@ -211,13 +215,40 @@
             gutter.appendChild(b);
         });
     }
-    // the colored copy sits under the box (whose own letters are see-through); the box grows with its text so both always line up
-    function refresh() {
+    // the page area that scrolls (the box itself grows, so the area around it does the scrolling)
+    function scroller() {
+        for (let e = src && src.parentElement; e; e = e.parentElement) {
+            if (/(auto|scroll)/.test(getComputedStyle(e).overflowY) && e.scrollHeight > e.clientHeight) return e;
+        }
+        return document.scrollingElement || document.documentElement;
+    }
+    // runs something that resizes the box without the page jumping (the box is briefly measured at its own height, which would clamp the scroll)
+    function keepScroll(fn) {
+        const sc = scroller(), top = sc.scrollTop;
+        fn();
+        sc.scrollTop = top;
+        requestAnimationFrame(function () { sc.scrollTop = top; });
+    }
+    // after typing, scroll only as much as needed to keep the line you are on in view
+    function caretInView() {
         if (!src || !hlPre) return;
-        hlPre.innerHTML = hlLines(src.value).map(function (l) { return '<div class="kd-l">' + (l || '​') + '</div>'; }).join('');
-        src.style.height = 'auto';
-        src.style.height = Math.max(src.scrollHeight, 1) + 'px';
-        buildGutter();
+        const line = src.value.slice(0, src.selectionStart).split('\n').length - 1, row = hlPre.children[line];
+        if (!row) return;
+        const sc = scroller(), box = (sc === document.scrollingElement || sc === document.documentElement) ? { top: 0, bottom: window.innerHeight } : sc.getBoundingClientRect();
+        const top = hlPre.getBoundingClientRect().top + row.offsetTop, bottom = top + row.offsetHeight;
+        if (top < box.top + 12) sc.scrollTop -= box.top + 12 - top;
+        else if (bottom > box.bottom - 12) sc.scrollTop += bottom - (box.bottom - 12);
+    }
+    // the colored copy sits under the box (whose own letters are see-through); the box grows with its text so both always line up
+    function refresh(typing) {
+        if (!src || !hlPre) return;
+        keepScroll(function () {
+            hlPre.innerHTML = hlLines(src.value).map(function (l) { return '<div class="kd-l">' + (l || '​') + '</div>'; }).join('');
+            src.style.height = 'auto';
+            src.style.height = Math.max(src.scrollHeight, 1) + 'px';
+            buildGutter();
+        });
+        if (typing === true) caretInView();
     }
     function setSrc(v) { folds = {}; nextFold = 1; ensureSrc().value = v; refresh(); }
 
@@ -239,7 +270,7 @@
         wrap.appendChild(gutter);
         wrap.appendChild(src);
         ed.parentNode.insertBefore(wrap, ed.nextSibling);
-        src.addEventListener('input', refresh);
+        src.addEventListener('input', function () { refresh(true); });
         window.addEventListener('resize', refresh);
         ['pointerdown', 'keydown', 'focus'].forEach(function (t) { src.addEventListener(t, function () { touched = true; }); });
         // where the caret is, as the box last said (the page may move it when a ribbon button takes the focus)

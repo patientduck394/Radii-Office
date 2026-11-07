@@ -144,6 +144,57 @@
     });
     // Bitbook's Skills menu entry
     document.querySelectorAll('#skills-menu-popup [data-skill="emoji"]').forEach((item) => item.addEventListener('click', () => { insert(); try { closeSkillsMenu(); } catch (e) {} }));
+
+    /* ---------- an emoji is one character of the text: arrow keys step over it, Shift+arrows select it, Backspace and Delete remove it ---------- */
+    const isEmoji = (n) => !!(n && n.nodeType === 1 && n.classList && n.classList.contains('kd-emoji'));
+    const blank = (n) => n.nodeType === 3 && !n.nodeValue.replace(/[​﻿]/g, '');
+    // the emoji touching the caret on one side (dir -1 is the left, 1 the right), or null when a letter or something else is there
+    function neighbor(node, off, dir) {
+        if (node.nodeType === 3) {
+            const v = node.nodeValue;
+            if ((dir < 0 ? v.slice(0, off) : v.slice(off)).replace(/[​﻿]/g, '')) return null;
+            let sib = dir < 0 ? node.previousSibling : node.nextSibling;
+            while (sib && blank(sib)) sib = dir < 0 ? sib.previousSibling : sib.nextSibling;
+            return isEmoji(sib) ? sib : null;
+        }
+        const kids = node.childNodes;
+        let i = dir < 0 ? off - 1 : off;
+        while (i >= 0 && i < kids.length && blank(kids[i])) i += dir;
+        return isEmoji(kids[i]) ? kids[i] : null;
+    }
+    document.addEventListener('keydown', (e) => {
+        if (!/^(ArrowLeft|ArrowRight|Backspace|Delete)$/.test(e.key) || e.metaKey || e.ctrlKey || e.altKey || e.isComposing) return;
+        const canvas = document.getElementById('wysiwyg-canvas');
+        if (!canvas || /kd-mode-(view|source)/.test(document.body.className)) return;
+        const sel = window.getSelection();
+        if (!sel.rangeCount || !sel.focusNode || !canvas.contains(sel.focusNode)) return;
+        if (e.key === 'Backspace' || e.key === 'Delete') {
+            if (!sel.isCollapsed) return;
+            const em = neighbor(sel.focusNode, sel.focusOffset, e.key === 'Backspace' ? -1 : 1);
+            if (!em) return;
+            e.preventDefault();
+            const parent = em.parentNode, idx = Array.prototype.indexOf.call(parent.childNodes, em);
+            em.remove();
+            sel.collapse(parent, idx);
+            save();
+            return;
+        }
+        if (!sel.isCollapsed && !e.shiftKey) return;   // (with something selected, the arrows just collapse it, as they always do)
+        const dir = e.key === 'ArrowLeft' ? -1 : 1;
+        const em = neighbor(sel.focusNode, sel.focusOffset, dir);
+        if (!em) return;
+        e.preventDefault();
+        const parent = em.parentNode, idx = Array.prototype.indexOf.call(parent.childNodes, em), pos = dir < 0 ? idx : idx + 1;
+        if (e.shiftKey) sel.extend(parent, pos); else sel.collapse(parent, pos);
+    }, true);
+    // an emoji that was copied and pasted must stay one piece (the paste drops its "do not edit inside" mark)
+    (function () {
+        const canvas = document.getElementById('wysiwyg-canvas');
+        if (!canvas) return;
+        const fix = () => canvas.querySelectorAll('.kd-emoji:not([contenteditable="false"])').forEach((el) => el.setAttribute('contenteditable', 'false'));
+        new MutationObserver(fix).observe(canvas, { childList: true, subtree: true });
+        fix();
+    })();
     css();
     window.KdEmoji = { open: open, insert: insert };
 })();
