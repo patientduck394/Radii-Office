@@ -430,6 +430,27 @@ A toast chip cousin for highlighting: not a bordered card but a fat marker strok
 
 In Writeout (Insert > Custom Emoji) and Bitbook (Skills > Custom Emoji / Symbol) you can draw your own emoji or symbol on a square canvas with a pen, a gel pen, a marker, a neon tube or a dashed line, and it goes into your text like a picture the size of a letter. Double-click it later to keep drawing. Saved as text it is `@@emoji="d='g:ff7a1a:6:10,20;30,40',size='md'"`: each stroke is `ink:color:width:x,y;x,y;...` on a 100 by 100 square, strokes are joined with `|`, and the size is `sm`, `md` or `lg`.
 
+## Dark Gel chips
+
+Sixteen midnight neon pills sharing one dark design, built into Keydown (they used to be a Marketplace pack, so nothing needs installing)! Write `~CPR~text~CPR~` with a color letter after CP (R O A Y L G E T C S B I V F P, and Q for slate)!
+
+* `~CPR~text~CPR~` Chip Red: ~CPR~Chip Red~CPR~
+* `~CPO~text~CPO~` Chip Orange: ~CPO~Chip Orange~CPO~
+* `~CPA~text~CPA~` Chip Amber: ~CPA~Chip Amber~CPA~
+* `~CPY~text~CPY~` Chip Yellow: ~CPY~Chip Yellow~CPY~
+* `~CPL~text~CPL~` Chip Lime: ~CPL~Chip Lime~CPL~
+* `~CPG~text~CPG~` Chip Green: ~CPG~Chip Green~CPG~
+* `~CPE~text~CPE~` Chip Emerald: ~CPE~Chip Emerald~CPE~
+* `~CPT~text~CPT~` Chip Teal: ~CPT~Chip Teal~CPT~
+* `~CPC~text~CPC~` Chip Cyan: ~CPC~Chip Cyan~CPC~
+* `~CPS~text~CPS~` Chip Sky: ~CPS~Chip Sky~CPS~
+* `~CPB~text~CPB~` Chip Blue: ~CPB~Chip Blue~CPB~
+* `~CPI~text~CPI~` Chip Indigo: ~CPI~Chip Indigo~CPI~
+* `~CPV~text~CPV~` Chip Violet: ~CPV~Chip Violet~CPV~
+* `~CPF~text~CPF~` Chip Fuchsia: ~CPF~Chip Fuchsia~CPF~
+* `~CPP~text~CPP~` Chip Pink: ~CPP~Chip Pink~CPP~
+* `~CPQ~text~CPQ~` Chip Slate: ~CPQ~Chip Slate~CPQ~
+
 ## Bullet styles
 
 Start a line with a mark and a space to make a bullet, and the mark picks the look. Lines with the same mark stay one list, and a new mark starts a new list!
@@ -2326,27 +2347,6 @@ Fifty one-of-a-kind pool chips! Rings, scales, sails, stripes, seals and splashe
 * `~PU48~text~PU48~` Mermaid Scales: ~PU48~Mermaid Scales~PU48~
 * `~PU49~text~PU49~` Grayfin: ~PU49~Grayfin~PU49~
 * `~PU50~text~PU50~` Tower Stripes: ~PU50~Tower Stripes~PU50~
-
-### Dark Gel Chip Pack
-
-Sixteen midnight neon chips sharing one dark pill design — nothing else looks like these!
-
-* `~CPR~text~CPR~` Chip Red: ~CPR~Chip Red~CPR~
-* `~CPO~text~CPO~` Chip Orange: ~CPO~Chip Orange~CPO~
-* `~CPA~text~CPA~` Chip Amber: ~CPA~Chip Amber~CPA~
-* `~CPY~text~CPY~` Chip Yellow: ~CPY~Chip Yellow~CPY~
-* `~CPL~text~CPL~` Chip Lime: ~CPL~Chip Lime~CPL~
-* `~CPG~text~CPG~` Chip Green: ~CPG~Chip Green~CPG~
-* `~CPE~text~CPE~` Chip Emerald: ~CPE~Chip Emerald~CPE~
-* `~CPT~text~CPT~` Chip Teal: ~CPT~Chip Teal~CPT~
-* `~CPC~text~CPC~` Chip Cyan: ~CPC~Chip Cyan~CPC~
-* `~CPS~text~CPS~` Chip Sky: ~CPS~Chip Sky~CPS~
-* `~CPB~text~CPB~` Chip Blue: ~CPB~Chip Blue~CPB~
-* `~CPI~text~CPI~` Chip Indigo: ~CPI~Chip Indigo~CPI~
-* `~CPV~text~CPV~` Chip Violet: ~CPV~Chip Violet~CPV~
-* `~CPF~text~CPF~` Chip Fuchsia: ~CPF~Chip Fuchsia~CPF~
-* `~CPP~text~CPP~` Chip Pink: ~CPP~Chip Pink~CPP~
-* `~CPQ~text~CPQ~` Chip Slate: ~CPQ~Chip Slate~CPQ~
 
 ### Blue Chip Pack
 

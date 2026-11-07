@@ -410,35 +410,6 @@
             ]
         },
         {
-            id: 'chip-pack',
-            name: 'Dark Gel Chip Pack',
-            category: 'styles',
-            kind: 'style-pack',
-            version: '1.0.0',
-            image: 'DarkGelChipPack.png',
-            description: 'Sixteen midnight neon chips sharing one dark pill design — nothing else looks like these!',
-            previewHTML: '<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;font-size:10px;background:#0f172a;border-radius:10px;padding:8px;"><span class="mkt-cp-red">R</span><span class="mkt-cp-orange">O</span><span class="mkt-cp-amber">A</span><span class="mkt-cp-yellow">Y</span><span class="mkt-cp-lime">L</span><span class="mkt-cp-green">G</span><span class="mkt-cp-emerald">E</span><span class="mkt-cp-teal">T</span><span class="mkt-cp-cyan">C</span><span class="mkt-cp-sky">S</span><span class="mkt-cp-blue">B</span><span class="mkt-cp-indigo">I</span><span class="mkt-cp-violet">V</span><span class="mkt-cp-fuchsia">F</span><span class="mkt-cp-pink">P</span><span class="mkt-cp-slate">Sl</span></div>',
-            css: `.mkt-cp-red,.mkt-cp-orange,.mkt-cp-amber,.mkt-cp-yellow,.mkt-cp-lime,.mkt-cp-green,.mkt-cp-emerald,.mkt-cp-teal,.mkt-cp-cyan,.mkt-cp-sky,.mkt-cp-blue,.mkt-cp-indigo,.mkt-cp-violet,.mkt-cp-fuchsia,.mkt-cp-pink,.mkt-cp-slate{display:inline-flex!important;align-items:center;padding:2px 12px;border-radius:20px;font-weight:800;white-space:nowrap;margin:0 2px;vertical-align:middle;}.mkt-cp-red{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #f87171;color:#fecaca;box-shadow:0 0 10px rgba(248,113,113,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-orange{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #fb923c;color:#fed7aa;box-shadow:0 0 10px rgba(251,146,60,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-amber{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #fbbf24;color:#fde68a;box-shadow:0 0 10px rgba(251,191,36,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-yellow{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #fde047;color:#fef08a;box-shadow:0 0 10px rgba(253,224,71,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-lime{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #a3e635;color:#d9f99d;box-shadow:0 0 10px rgba(163,230,53,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-green{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #4ade80;color:#bbf7d0;box-shadow:0 0 10px rgba(74,222,128,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-emerald{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #34d399;color:#a7f3d0;box-shadow:0 0 10px rgba(52,211,153,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-teal{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #2dd4bf;color:#99f6e4;box-shadow:0 0 10px rgba(45,212,191,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-cyan{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #67e8f9;color:#cffafe;box-shadow:0 0 10px rgba(103,232,249,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-sky{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #7dd3fc;color:#e0f2fe;box-shadow:0 0 10px rgba(125,211,252,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-blue{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #93c5fd;color:#dbeafe;box-shadow:0 0 10px rgba(147,197,253,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-indigo{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #a5b4fc;color:#e0e7ff;box-shadow:0 0 10px rgba(165,180,252,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-violet{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #c4b5fd;color:#ede9fe;box-shadow:0 0 10px rgba(196,181,253,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-fuchsia{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #f0abfc;color:#fae8ff;box-shadow:0 0 10px rgba(240,171,252,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-pink{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #f9a8d4;color:#fce7f3;box-shadow:0 0 10px rgba(249,168,212,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}.mkt-cp-slate{background:linear-gradient(180deg,#334155 0%,#0f172a 100%);border:2px solid #94a3b8;color:#e2e8f0;box-shadow:0 0 10px rgba(148,163,184,0.45),inset 0 1px 1px rgba(255,255,255,0.15);}`,
-            styles: [
-                { name: 'Chip Red', label: 'CR', className: 'mkt-cp-red', trigger: { open: '~CPR~', close: '~CPR~' } },
-                { name: 'Chip Orange', label: 'CO', className: 'mkt-cp-orange', trigger: { open: '~CPO~', close: '~CPO~' } },
-                { name: 'Chip Amber', label: 'AM', className: 'mkt-cp-amber', trigger: { open: '~CPA~', close: '~CPA~' } },
-                { name: 'Chip Yellow', label: 'CY', className: 'mkt-cp-yellow', trigger: { open: '~CPY~', close: '~CPY~' } },
-                { name: 'Chip Lime', label: 'CL', className: 'mkt-cp-lime', trigger: { open: '~CPL~', close: '~CPL~' } },
-                { name: 'Chip Green', label: 'CG', className: 'mkt-cp-green', trigger: { open: '~CPG~', close: '~CPG~' } },
-                { name: 'Chip Emerald', label: 'CE', className: 'mkt-cp-emerald', trigger: { open: '~CPE~', close: '~CPE~' } },
-                { name: 'Chip Teal', label: 'CT', className: 'mkt-cp-teal', trigger: { open: '~CPT~', close: '~CPT~' } },
-                { name: 'Chip Cyan', label: 'CN', className: 'mkt-cp-cyan', trigger: { open: '~CPC~', close: '~CPC~' } },
-                { name: 'Chip Sky', label: 'CS', className: 'mkt-cp-sky', trigger: { open: '~CPS~', close: '~CPS~' } },
-                { name: 'Chip Blue', label: 'CB', className: 'mkt-cp-blue', trigger: { open: '~CPB~', close: '~CPB~' } },
-                { name: 'Chip Indigo', label: 'CI', className: 'mkt-cp-indigo', trigger: { open: '~CPI~', close: '~CPI~' } },
-                { name: 'Chip Violet', label: 'CV', className: 'mkt-cp-violet', trigger: { open: '~CPV~', close: '~CPV~' } },
-                { name: 'Chip Fuchsia', label: 'CF', className: 'mkt-cp-fuchsia', trigger: { open: '~CPF~', close: '~CPF~' } },
-                { name: 'Chip Pink', label: 'CP', className: 'mkt-cp-pink', trigger: { open: '~CPP~', close: '~CPP~' } },
-                { name: 'Chip Slate', label: 'Cq', className: 'mkt-cp-slate', trigger: { open: '~CPQ~', close: '~CPQ~' } }
-            ]
-        },
-        {
             id: 'blue-chip-pack',
             name: 'Blue Chip Pack',
             category: 'styles',

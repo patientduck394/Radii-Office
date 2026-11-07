@@ -526,7 +526,8 @@
         if (had) document.body.classList.remove('bb-pages');
         const cs = getComputedStyle(ed);
         sheetBg = cs.backgroundImage && cs.backgroundImage !== 'none' ? cs.backgroundImage + ', ' + cs.backgroundColor : cs.backgroundColor;
-        if (!sheetBg || sheetBg === 'rgba(0, 0, 0, 0)') { const scb = document.querySelector('.canvas-scrollbox'); sheetBg = scb ? getComputedStyle(scb).backgroundColor : '#ffffff'; if (!sheetBg || sheetBg === 'rgba(0, 0, 0, 0)') sheetBg = '#ffffff'; }
+        // (a page with no color of its own is white paper; the grey around the pages is the desk, never the paper)
+        if (!sheetBg || sheetBg === 'rgba(0, 0, 0, 0)') sheetBg = '#ffffff';
         if (had) document.body.classList.add('bb-pages');
         if (zoomer) zoomer.style.setProperty('--bb-sheet-bg', sheetBg);
     }

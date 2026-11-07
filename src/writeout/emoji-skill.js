@@ -1,7 +1,7 @@
 /* =====================================================================
    Custom Emoji / Symbol (Writeout and Bitbook, identical copy in each)!
-   Draw on a square canvas with pens like the Annotator's (pen, gel, marker, neon, dashed) and put the drawing right inside
-   your text like an emoji. It is saved as Keydown text:  @@emoji="d='g:ff7a1a:6:10,20;30,40',size='md'"
+   Draw on a square canvas with the Annotator's own inks, Theme Pack styles and colors (bitbook/annotate-ink.js) and put the drawing
+   right inside your text like an emoji. It is saved as Keydown text:  @@emoji="d='gel:orange:9:M10 20Q30 40 50 50',size='md'"
    Double-click an emoji in the page to draw on it again!
    Needs the Keydown engine (keydown-doc.js) for the drawing itself.
    ===================================================================== */
@@ -9,8 +9,14 @@
     'use strict';
     if (window.KdEmoji) return;
 
-    const COLORS = ['#ef4444', '#f97316', '#f5b301', '#eab308', '#84cc16', '#22c55e', '#14b8a6', '#06b6d4', '#0a6cff', '#7c3aed', '#ec4899', '#64748b', '#ffffff', '#cbd5e1', '#1e293b', '#000000'];
-    const INKS = [['p', 'Pen'], ['g', 'Gel'], ['m', 'Marker'], ['n', 'Neon'], ['d', 'Dashed']];
+    // The Annotator's inks, Theme Pack styles and colors (bitbook/annotate-ink.js); a small set of our own if it did not load
+    const AIK = () => window.AnnotateInk || null;
+    const FALLBACK_COLORS = [['red', '#ef4444', '#dc2626', '#f9b4b4'], ['orange', '#f97316', '#ea580c', '#fdc7a2'], ['gold', '#ea9f08', '#ca8a04', '#f7d99c'], ['yellow', '#ead708', '#caa604', '#f7ef9c'], ['lime', '#84cc16', '#65a30d', '#ceeba2'], ['green', '#10b981', '#059669', '#9fe3cd'], ['turquoise', '#30e5cd', '#26b1a5', '#acf5eb'], ['teal', '#06b6d4', '#0891b2', '#9be2ee'], ['cyan', '#30d3e5', '#26a3b1', '#acedf5'], ['blue', '#3b82f6', '#2563eb', '#b1cdfb'], ['purple', '#a855f7', '#9333ea', '#dcbbfc'], ['pink', '#ec4899', '#db2777', '#f7b6d6'], ['slate', '#b4b4b4', '#6f6f6f', '#e1e1e1']];
+    const COLORS = () => (AIK() ? AIK().COLORS : FALLBACK_COLORS);
+    const INKS = () => (AIK() ? AIK().INKS : [['pen', 'Felt Pen'], ['marker', 'Highlighter']]);
+    const PACKS = () => (AIK() ? AIK().PACKS : []);
+    const BASE = () => (AIK() ? AIK().BASE : { pen: 2.6, marker: 18 });
+    const SIZES = [['s', 'S', 0.6], ['m', 'M', 1], ['l', 'L', 1.7]];
     const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 
     function css() {
@@ -28,47 +34,61 @@
             + '.kde-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;align-items:center}'
             + '.kde-sw{width:22px;height:22px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #8aa9c4;cursor:pointer;padding:0}.kde-sw.on{box-shadow:0 0 0 2px #0a6cff}'
             + '.kde-btn{border:1px solid #9fcbf0;background:#fff;border-radius:999px;padding:4px 11px;font:700 12px "Segoe UI",system-ui,sans-serif;color:#1d3a57;cursor:pointer}.kde-btn.on{background:linear-gradient(180deg,#8fd0ff,#1e8fe0);color:#fff;border-color:#0b66b5}'
-            + '.kde-go{background:linear-gradient(180deg,#8fe08a,#2a9d22);color:#fff;border-color:#1f7a19}.kde-row input[type=range]{flex:1;min-width:90px}';
+            + '.kde-row select{flex:1;min-width:140px;border:1px solid #9fcbf0;border-radius:8px;padding:4px 6px;font:600 12px "Segoe UI",system-ui,sans-serif;color:#1d3a57;background:#fff}.kde-go{background:linear-gradient(180deg,#8fe08a,#2a9d22);color:#fff;border-color:#1f7a19}.kde-row input[type=range]{flex:1;min-width:90px}';
         document.head.appendChild(s);
     }
 
     // The drawing dialog. start = { d, size } to edit one; cb(d, size) when it is saved
     function open(start, cb) {
         css();
-        let strokes = String((start && start.d) || '').split('|').filter(Boolean).map((s) => { const a = s.split(':'); return { ink: a[0] || 'p', col: a[1] || '000000', w: +a[2] || 6, pts: String(a[3] || '').split(';').map((p) => p.split(',').map(Number)).filter((p) => p.length === 2) }; });
-        let ink = 'p', col = '#0a6cff', w = 6, erase = false, size = (start && start.size) || 'md', cur = null;
+        let strokes = (window.kdEmojiStrokes ? window.kdEmojiStrokes(start && start.d) : []).map((s) => {
+            const n = (String(s.d).match(/-?\d+(?:\.\d+)?/g) || []).map(Number), pts = [];
+            if (/l0\.1 0$/.test(s.d)) n.length -= 2;
+            for (let i = 0; i + 1 < n.length; i += 2) pts.push([n[i], n[i + 1]]);
+            return { t: s.t, c: s.c, w: s.w, d: s.d, pts: pts };
+        });
+        let ink = INKS()[0][0], col = COLORS().some((c) => c[0] === 'blue') ? 'blue' : COLORS()[0][0], sz = 'm', erase = false, size = (start && start.size) || 'md', cur = null;
         const back = document.createElement('div');
         back.className = 'kde-back';
+        const packOpts = PACKS().map((pk) => '<optgroup label="' + esc(pk[1]) + '">' + pk[2].map((st) => '<option value="' + st[0] + '">' + esc(st[1]) + '</option>').join('') + '</optgroup>').join('');
         back.innerHTML = '<div class="kde-card"><div class="kde-head"><b>Custom Emoji / Symbol</b><button type="button" aria-label="Close">×</button></div>'
             + '<div class="kde-surface"></div>'
-            + '<div class="kde-row kde-inks"></div><div class="kde-row kde-cols"></div>'
-            + '<div class="kde-row"><span>Thickness</span><input type="range" min="2" max="18" value="6" class="kde-w"></div>'
+            + '<div class="kde-row kde-inks"></div>'
+            + (packOpts ? '<div class="kde-row"><span>Theme Packs</span><select class="kde-pack"><option value="">Choose a style…</option>' + packOpts + '</select></div>' : '')
+            + '<div class="kde-row kde-cols"></div><div class="kde-row kde-sizes"><span>Size</span></div>'
             + '<div class="kde-row"><button type="button" class="kde-btn kde-erase">Eraser</button><button type="button" class="kde-btn kde-undo">Undo</button><button type="button" class="kde-btn kde-clear">Clear</button>'
             + '<span style="margin-left:auto">In text</span><button type="button" class="kde-btn" data-s="sm">Small</button><button type="button" class="kde-btn" data-s="md">Normal</button><button type="button" class="kde-btn" data-s="lg">Large</button></div>'
             + '<div class="kde-row" style="justify-content:flex-end"><button type="button" class="kde-btn kde-cancel">Cancel</button><button type="button" class="kde-btn kde-go">' + (start && start.d !== undefined ? 'Save' : 'Put it in the text') + '</button></div></div>';
         document.body.appendChild(back);
         const q = (sel) => back.querySelector(sel);
         const surf = q('.kde-surface');
-        const ser = () => strokes.concat(cur ? [cur] : []).map((s) => s.ink + ':' + String(s.col).replace('#', '') + ':' + s.w + ':' + s.pts.map((p) => p[0] + ',' + p[1]).join(';')).join('|');
+        const widthOf = () => Math.round((BASE()[ink] || 6) * SIZES.find((z) => z[0] === sz)[2] * 10) / 10;
+        const ser = () => (window.kdEmojiSer ? window.kdEmojiSer(strokes.concat(cur && !cur.erasing ? [cur] : [])) : '');
         const draw = () => { surf.innerHTML = window.kdEmojiSvg ? window.kdEmojiSvg(ser()) : ''; };
         const inks = q('.kde-inks');
-        INKS.forEach((k) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'kde-btn' + (k[0] === ink ? ' on' : ''); b.textContent = k[1]; b.addEventListener('click', () => { ink = k[0]; erase = false; sync(); }); b.dataset.k = k[0]; inks.appendChild(b); });
+        INKS().forEach((k) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'kde-btn'; b.textContent = k[1]; b.title = k[1]; b.addEventListener('click', () => { ink = k[0]; erase = false; sync(); }); b.dataset.k = k[0]; inks.appendChild(b); });
         const cols = q('.kde-cols');
-        COLORS.forEach((c) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'kde-sw'; b.style.background = c; b.title = c; b.addEventListener('click', () => { col = c; erase = false; sync(); }); b.dataset.c = c; cols.appendChild(b); });
+        COLORS().forEach((c) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'kde-sw'; b.style.background = 'linear-gradient(180deg,' + c[3] + ',' + c[1] + ' 60%,' + c[2] + ')'; b.title = c[0].charAt(0).toUpperCase() + c[0].slice(1); b.addEventListener('click', () => { col = c[0]; erase = false; sync(); }); b.dataset.c = c[0]; cols.appendChild(b); });
+        SIZES.forEach((z) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'kde-btn'; b.textContent = z[1]; b.dataset.z = z[0]; b.addEventListener('click', () => { sz = z[0]; sync(); }); q('.kde-sizes').appendChild(b); });
+        const packSel = q('.kde-pack');
+        if (packSel) packSel.addEventListener('change', () => { if (packSel.value) { ink = packSel.value; erase = false; sync(); } });
         function sync() {
             inks.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.k === ink && !erase));
             cols.querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.c === col && !erase));
+            q('.kde-sizes').querySelectorAll('button').forEach((b) => b.classList.toggle('on', b.dataset.z === sz));
+            if (packSel && !inks.querySelector('[data-k="' + ink + '"]')) packSel.value = ink; else if (packSel) packSel.value = '';
             q('.kde-erase').classList.toggle('on', erase);
             back.querySelectorAll('[data-s]').forEach((b) => b.classList.toggle('on', b.dataset.s === size));
         }
         const pos = (e) => { const r = surf.getBoundingClientRect(); return [Math.max(0, Math.min(100, Math.round((e.clientX - r.left) / r.width * 1000) / 10)), Math.max(0, Math.min(100, Math.round((e.clientY - r.top) / r.height * 1000) / 10))]; };
-        const hit = (p) => { for (let i = strokes.length - 1; i >= 0; i--) if (strokes[i].pts.some((q) => Math.hypot(q[0] - p[0], q[1] - p[1]) < 5 + strokes[i].w / 2)) return i; return -1; };
+        const hit = (p) => { for (let i = strokes.length - 1; i >= 0; i--) if (strokes[i].pts.some((pt) => Math.hypot(pt[0] - p[0], pt[1] - p[1]) < 5 + strokes[i].w / 2)) return i; return -1; };
+        const pathOf = (pts) => (AIK() ? AIK().pathOf(pts) : 'M' + pts.map((p) => p[0] + ' ' + p[1]).join('L'));
         surf.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             try { surf.setPointerCapture(e.pointerId); } catch (x) {}
             const p = pos(e);
             if (erase) { const i = hit(p); if (i >= 0) { strokes.splice(i, 1); draw(); } cur = { erasing: true }; return; }
-            cur = { ink: ink, col: col, w: w, pts: [p] };
+            cur = { t: ink, c: col, w: widthOf(), pts: [p], d: pathOf([p]) };
             draw();
         });
         surf.addEventListener('pointermove', (e) => {
@@ -76,12 +96,11 @@
             const p = pos(e);
             if (cur.erasing) { const i = hit(p); if (i >= 0) { strokes.splice(i, 1); draw(); } return; }
             const l = cur.pts[cur.pts.length - 1];
-            if (Math.hypot(l[0] - p[0], l[1] - p[1]) > 1.2) { cur.pts.push(p); draw(); }
+            if (Math.hypot(l[0] - p[0], l[1] - p[1]) > 1.2) { cur.pts.push(p); cur.d = pathOf(cur.pts); draw(); }
         });
         const end = () => { if (cur && !cur.erasing && cur.pts.length) strokes.push(cur); cur = null; draw(); };
         surf.addEventListener('pointerup', end);
         surf.addEventListener('pointercancel', end);
-        q('.kde-w').addEventListener('input', (e) => { w = +e.target.value; });
         q('.kde-erase').addEventListener('click', () => { erase = !erase; sync(); });
         q('.kde-undo').addEventListener('click', () => { strokes.pop(); draw(); });
         q('.kde-clear').addEventListener('click', () => { strokes = []; draw(); });
