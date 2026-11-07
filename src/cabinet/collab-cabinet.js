@@ -14,10 +14,10 @@
     if (!window.RadiiCollab || !cab) return;
     const RC = window.RadiiCollab;
     const root = document.documentElement.style;
-    root.setProperty('--rc-a', '#ef4444');
-    root.setProperty('--rc-b', '#dc2626');
-    root.setProperty('--rc-rim', '#fecaca');
-    root.setProperty('--rc-glow', 'rgba(220, 38, 38, 0.45)');
+    root.setProperty('--rc-a', '#ff9a8f');
+    root.setProperty('--rc-b', '#FF6B5E');
+    root.setProperty('--rc-rim', '#ffc2bb');
+    root.setProperty('--rc-glow', 'rgba(255, 107, 94, 0.45)');
 
     function clone(o) { return JSON.parse(JSON.stringify(o)); }
     const ROOT = 'root';
