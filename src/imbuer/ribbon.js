@@ -2693,11 +2693,12 @@ function wireBackstage() {
     bs.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeBackstage(); });
     document.getElementById('bs-body').addEventListener('click', async (e) => {
         const t = e.target.closest('[data-tpl]');
-        if (t) { closeBackstage(); loadTemplate(+t.dataset.tpl); return; }
+        if (t) { closeBackstage(); if (window.RadiiDocs) RadiiDocs.archive(); loadTemplate(+t.dataset.tpl); return; }
         if (e.target.closest('[data-new]')) {
             closeBackstage();
             const hasData = book.sheets.some(s => Object.keys(s.data).length);
-            if (hasData && !(await confirmDialog('New Workbook', 'Start a new blank workbook? You can undo this!', 'Start New'))) return;
+            if (hasData && !(await confirmDialog('New Workbook', 'Start a new blank workbook? The one you have now is kept in File > Documents!', 'Start New'))) return;
+            if (hasData && window.RadiiDocs) RadiiDocs.archive();
             pushUndo();
             book = newBook();
             resetTransient();

@@ -324,9 +324,12 @@ document.addEventListener('DOMContentLoaded', () => {
           let dst = (dp[0] || '').trim().toLowerCase();
           const dlabel = (dp[1] || '').trim();
           if (['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'].indexOf(dst) === -1) dst = 'aqua';
-          if (dst === 'aqua' && !dlabel) newEl.className = 'aero-liquid-divider';
+          const dnamed = ['aqua', 'poolside', 'dual', 'notched', 'wavy', 'dotted', 'dashed', 'zigzag', 'glow', 'ruler', 'stitched', 'bubbles', 'scallop'].indexOf((dp[0] || '').trim().toLowerCase()) !== -1;
+          const dcol = (dp[2] || '').trim().toLowerCase();
+          const dcc = dnamed && ['red', 'orange', 'gold', 'yellow', 'lime', 'green', 'turquoise', 'teal', 'cyan', 'blue', 'purple', 'pink', 'slate', 'white', 'fog', 'black'].indexOf(dcol) !== -1 ? ' kd-div-c-' + dcol : '';
+          if (dst === 'aqua' && !dlabel && !dcc) newEl.className = 'aero-liquid-divider';
           else {
-            newEl.className = 'kd-div kd-div-' + dst + (dlabel ? ' kd-div-labeled' : '');
+            newEl.className = 'kd-div kd-div-' + dst + dcc + (dlabel ? ' kd-div-labeled' : '');
             newEl.setAttribute('contenteditable', 'false');
             const ln = '<i class="kd-div-line"></i>';
             newEl.innerHTML = dlabel ? ln + '<span class="kd-div-label"></span>' + ln : ln;

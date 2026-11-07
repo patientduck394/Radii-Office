@@ -426,6 +426,390 @@ A toast chip cousin for highlighting: not a bordered card but a fat marker strok
 * `++FG?text++` ++FG?fog++
 * `++BK?text++` ++BK?black++
 
+## Poolside styles
+
+280 ready-made looks in Poolside's palette (cyan, blue and orange), written `.poolside_style N(text)` with a number from 1 to 280, like `.poolside_style 1(text)` for .poolside_style 1(this). They are 20 designs in 14 colorways each, so the number tells you both: design 1 is styles 1 to 14, design 2 is styles 15 to 28, and so on (style N is design (N - 1) / 14 rounded down, plus 1, in colorway (N - 1) mod 14, plus 1). Keep the words short and without a `)` inside. The 14 colorways, in order, are Cyan, Blue, Lagoon, Orange, Sky, Sand, Navy, Dusk, Cyan and blue, Cyan and orange, Blue and orange, Sunset, Frost and Splash.
+
+### Poolside design 1: Gel pill
+
+A glossy gel capsule with a light top, a deep bottom and a bright rim. Styles 1 to 14:
+
+* `.poolside_style 1(text)` .poolside_style 1(Cyan)
+* `.poolside_style 2(text)` .poolside_style 2(Blue)
+* `.poolside_style 3(text)` .poolside_style 3(Lagoon)
+* `.poolside_style 4(text)` .poolside_style 4(Orange)
+* `.poolside_style 5(text)` .poolside_style 5(Sky)
+* `.poolside_style 6(text)` .poolside_style 6(Sand)
+* `.poolside_style 7(text)` .poolside_style 7(Navy)
+* `.poolside_style 8(text)` .poolside_style 8(Dusk)
+* `.poolside_style 9(text)` .poolside_style 9(Cyan and blue)
+* `.poolside_style 10(text)` .poolside_style 10(Cyan and orange)
+* `.poolside_style 11(text)` .poolside_style 11(Blue and orange)
+* `.poolside_style 12(text)` .poolside_style 12(Sunset)
+* `.poolside_style 13(text)` .poolside_style 13(Frost)
+* `.poolside_style 14(text)` .poolside_style 14(Splash)
+
+### Poolside design 2: Ring
+
+A thick outline ring around plain words, like a pool lane marker. Styles 15 to 28:
+
+* `.poolside_style 15(text)` .poolside_style 15(Cyan)
+* `.poolside_style 16(text)` .poolside_style 16(Blue)
+* `.poolside_style 17(text)` .poolside_style 17(Lagoon)
+* `.poolside_style 18(text)` .poolside_style 18(Orange)
+* `.poolside_style 19(text)` .poolside_style 19(Sky)
+* `.poolside_style 20(text)` .poolside_style 20(Sand)
+* `.poolside_style 21(text)` .poolside_style 21(Navy)
+* `.poolside_style 22(text)` .poolside_style 22(Dusk)
+* `.poolside_style 23(text)` .poolside_style 23(Cyan and blue)
+* `.poolside_style 24(text)` .poolside_style 24(Cyan and orange)
+* `.poolside_style 25(text)` .poolside_style 25(Blue and orange)
+* `.poolside_style 26(text)` .poolside_style 26(Sunset)
+* `.poolside_style 27(text)` .poolside_style 27(Frost)
+* `.poolside_style 28(text)` .poolside_style 28(Splash)
+
+### Poolside design 3: Marker
+
+A highlighter swipe across the lower part of the words. Styles 29 to 42:
+
+* `.poolside_style 29(text)` .poolside_style 29(Cyan)
+* `.poolside_style 30(text)` .poolside_style 30(Blue)
+* `.poolside_style 31(text)` .poolside_style 31(Lagoon)
+* `.poolside_style 32(text)` .poolside_style 32(Orange)
+* `.poolside_style 33(text)` .poolside_style 33(Sky)
+* `.poolside_style 34(text)` .poolside_style 34(Sand)
+* `.poolside_style 35(text)` .poolside_style 35(Navy)
+* `.poolside_style 36(text)` .poolside_style 36(Dusk)
+* `.poolside_style 37(text)` .poolside_style 37(Cyan and blue)
+* `.poolside_style 38(text)` .poolside_style 38(Cyan and orange)
+* `.poolside_style 39(text)` .poolside_style 39(Blue and orange)
+* `.poolside_style 40(text)` .poolside_style 40(Sunset)
+* `.poolside_style 41(text)` .poolside_style 41(Frost)
+* `.poolside_style 42(text)` .poolside_style 42(Splash)
+
+### Poolside design 4: Wavy line
+
+Words with a wavy line under them, like ripples. Styles 43 to 56:
+
+* `.poolside_style 43(text)` .poolside_style 43(Cyan)
+* `.poolside_style 44(text)` .poolside_style 44(Blue)
+* `.poolside_style 45(text)` .poolside_style 45(Lagoon)
+* `.poolside_style 46(text)` .poolside_style 46(Orange)
+* `.poolside_style 47(text)` .poolside_style 47(Sky)
+* `.poolside_style 48(text)` .poolside_style 48(Sand)
+* `.poolside_style 49(text)` .poolside_style 49(Navy)
+* `.poolside_style 50(text)` .poolside_style 50(Dusk)
+* `.poolside_style 51(text)` .poolside_style 51(Cyan and blue)
+* `.poolside_style 52(text)` .poolside_style 52(Cyan and orange)
+* `.poolside_style 53(text)` .poolside_style 53(Blue and orange)
+* `.poolside_style 54(text)` .poolside_style 54(Sunset)
+* `.poolside_style 55(text)` .poolside_style 55(Frost)
+* `.poolside_style 56(text)` .poolside_style 56(Splash)
+
+### Poolside design 5: Double rule
+
+Capital letters between two rules, one in each accent color. Styles 57 to 70:
+
+* `.poolside_style 57(text)` .poolside_style 57(Cyan)
+* `.poolside_style 58(text)` .poolside_style 58(Blue)
+* `.poolside_style 59(text)` .poolside_style 59(Lagoon)
+* `.poolside_style 60(text)` .poolside_style 60(Orange)
+* `.poolside_style 61(text)` .poolside_style 61(Sky)
+* `.poolside_style 62(text)` .poolside_style 62(Sand)
+* `.poolside_style 63(text)` .poolside_style 63(Navy)
+* `.poolside_style 64(text)` .poolside_style 64(Dusk)
+* `.poolside_style 65(text)` .poolside_style 65(Cyan and blue)
+* `.poolside_style 66(text)` .poolside_style 66(Cyan and orange)
+* `.poolside_style 67(text)` .poolside_style 67(Blue and orange)
+* `.poolside_style 68(text)` .poolside_style 68(Sunset)
+* `.poolside_style 69(text)` .poolside_style 69(Frost)
+* `.poolside_style 70(text)` .poolside_style 70(Splash)
+
+### Poolside design 6: Gradient text
+
+Words filled with a color sweep, bold and borderless. Styles 71 to 84:
+
+* `.poolside_style 71(text)` .poolside_style 71(Cyan)
+* `.poolside_style 72(text)` .poolside_style 72(Blue)
+* `.poolside_style 73(text)` .poolside_style 73(Lagoon)
+* `.poolside_style 74(text)` .poolside_style 74(Orange)
+* `.poolside_style 75(text)` .poolside_style 75(Sky)
+* `.poolside_style 76(text)` .poolside_style 76(Sand)
+* `.poolside_style 77(text)` .poolside_style 77(Navy)
+* `.poolside_style 78(text)` .poolside_style 78(Dusk)
+* `.poolside_style 79(text)` .poolside_style 79(Cyan and blue)
+* `.poolside_style 80(text)` .poolside_style 80(Cyan and orange)
+* `.poolside_style 81(text)` .poolside_style 81(Blue and orange)
+* `.poolside_style 82(text)` .poolside_style 82(Sunset)
+* `.poolside_style 83(text)` .poolside_style 83(Frost)
+* `.poolside_style 84(text)` .poolside_style 84(Splash)
+
+### Poolside design 7: Neon tube
+
+A dark tube with glowing words and a soft halo. Styles 85 to 98:
+
+* `.poolside_style 85(text)` .poolside_style 85(Cyan)
+* `.poolside_style 86(text)` .poolside_style 86(Blue)
+* `.poolside_style 87(text)` .poolside_style 87(Lagoon)
+* `.poolside_style 88(text)` .poolside_style 88(Orange)
+* `.poolside_style 89(text)` .poolside_style 89(Sky)
+* `.poolside_style 90(text)` .poolside_style 90(Sand)
+* `.poolside_style 91(text)` .poolside_style 91(Navy)
+* `.poolside_style 92(text)` .poolside_style 92(Dusk)
+* `.poolside_style 93(text)` .poolside_style 93(Cyan and blue)
+* `.poolside_style 94(text)` .poolside_style 94(Cyan and orange)
+* `.poolside_style 95(text)` .poolside_style 95(Blue and orange)
+* `.poolside_style 96(text)` .poolside_style 96(Sunset)
+* `.poolside_style 97(text)` .poolside_style 97(Frost)
+* `.poolside_style 98(text)` .poolside_style 98(Splash)
+
+### Poolside design 8: Letterpress
+
+Pressed-in letters with a light edge and a soft inset, like a stamp. Styles 99 to 112:
+
+* `.poolside_style 99(text)` .poolside_style 99(Cyan)
+* `.poolside_style 100(text)` .poolside_style 100(Blue)
+* `.poolside_style 101(text)` .poolside_style 101(Lagoon)
+* `.poolside_style 102(text)` .poolside_style 102(Orange)
+* `.poolside_style 103(text)` .poolside_style 103(Sky)
+* `.poolside_style 104(text)` .poolside_style 104(Sand)
+* `.poolside_style 105(text)` .poolside_style 105(Navy)
+* `.poolside_style 106(text)` .poolside_style 106(Dusk)
+* `.poolside_style 107(text)` .poolside_style 107(Cyan and blue)
+* `.poolside_style 108(text)` .poolside_style 108(Cyan and orange)
+* `.poolside_style 109(text)` .poolside_style 109(Blue and orange)
+* `.poolside_style 110(text)` .poolside_style 110(Sunset)
+* `.poolside_style 111(text)` .poolside_style 111(Frost)
+* `.poolside_style 112(text)` .poolside_style 112(Splash)
+
+### Poolside design 9: Gloss tag
+
+A glossy tag with a white shine across its top half and a rim shadow. Styles 113 to 126:
+
+* `.poolside_style 113(text)` .poolside_style 113(Cyan)
+* `.poolside_style 114(text)` .poolside_style 114(Blue)
+* `.poolside_style 115(text)` .poolside_style 115(Lagoon)
+* `.poolside_style 116(text)` .poolside_style 116(Orange)
+* `.poolside_style 117(text)` .poolside_style 117(Sky)
+* `.poolside_style 118(text)` .poolside_style 118(Sand)
+* `.poolside_style 119(text)` .poolside_style 119(Navy)
+* `.poolside_style 120(text)` .poolside_style 120(Dusk)
+* `.poolside_style 121(text)` .poolside_style 121(Cyan and blue)
+* `.poolside_style 122(text)` .poolside_style 122(Cyan and orange)
+* `.poolside_style 123(text)` .poolside_style 123(Blue and orange)
+* `.poolside_style 124(text)` .poolside_style 124(Sunset)
+* `.poolside_style 125(text)` .poolside_style 125(Frost)
+* `.poolside_style 126(text)` .poolside_style 126(Splash)
+
+### Poolside design 10: Arrow ticket
+
+An arrow-shaped ticket that points to the left. Styles 127 to 140:
+
+* `.poolside_style 127(text)` .poolside_style 127(Cyan)
+* `.poolside_style 128(text)` .poolside_style 128(Blue)
+* `.poolside_style 129(text)` .poolside_style 129(Lagoon)
+* `.poolside_style 130(text)` .poolside_style 130(Orange)
+* `.poolside_style 131(text)` .poolside_style 131(Sky)
+* `.poolside_style 132(text)` .poolside_style 132(Sand)
+* `.poolside_style 133(text)` .poolside_style 133(Navy)
+* `.poolside_style 134(text)` .poolside_style 134(Dusk)
+* `.poolside_style 135(text)` .poolside_style 135(Cyan and blue)
+* `.poolside_style 136(text)` .poolside_style 136(Cyan and orange)
+* `.poolside_style 137(text)` .poolside_style 137(Blue and orange)
+* `.poolside_style 138(text)` .poolside_style 138(Sunset)
+* `.poolside_style 139(text)` .poolside_style 139(Frost)
+* `.poolside_style 140(text)` .poolside_style 140(Splash)
+
+### Poolside design 11: Candy stripe
+
+Candy stripes running diagonally behind the words. Styles 141 to 154:
+
+* `.poolside_style 141(text)` .poolside_style 141(Cyan)
+* `.poolside_style 142(text)` .poolside_style 142(Blue)
+* `.poolside_style 143(text)` .poolside_style 143(Lagoon)
+* `.poolside_style 144(text)` .poolside_style 144(Orange)
+* `.poolside_style 145(text)` .poolside_style 145(Sky)
+* `.poolside_style 146(text)` .poolside_style 146(Sand)
+* `.poolside_style 147(text)` .poolside_style 147(Navy)
+* `.poolside_style 148(text)` .poolside_style 148(Dusk)
+* `.poolside_style 149(text)` .poolside_style 149(Cyan and blue)
+* `.poolside_style 150(text)` .poolside_style 150(Cyan and orange)
+* `.poolside_style 151(text)` .poolside_style 151(Blue and orange)
+* `.poolside_style 152(text)` .poolside_style 152(Sunset)
+* `.poolside_style 153(text)` .poolside_style 153(Frost)
+* `.poolside_style 154(text)` .poolside_style 154(Splash)
+
+### Poolside design 12: Pool tiles
+
+A swimming pool wall: a tile grid behind the words. Styles 155 to 168:
+
+* `.poolside_style 155(text)` .poolside_style 155(Cyan)
+* `.poolside_style 156(text)` .poolside_style 156(Blue)
+* `.poolside_style 157(text)` .poolside_style 157(Lagoon)
+* `.poolside_style 158(text)` .poolside_style 158(Orange)
+* `.poolside_style 159(text)` .poolside_style 159(Sky)
+* `.poolside_style 160(text)` .poolside_style 160(Sand)
+* `.poolside_style 161(text)` .poolside_style 161(Navy)
+* `.poolside_style 162(text)` .poolside_style 162(Dusk)
+* `.poolside_style 163(text)` .poolside_style 163(Cyan and blue)
+* `.poolside_style 164(text)` .poolside_style 164(Cyan and orange)
+* `.poolside_style 165(text)` .poolside_style 165(Blue and orange)
+* `.poolside_style 166(text)` .poolside_style 166(Sunset)
+* `.poolside_style 167(text)` .poolside_style 167(Frost)
+* `.poolside_style 168(text)` .poolside_style 168(Splash)
+
+### Poolside design 13: Dot badge
+
+A pill with a glowing bead at its start, like a status light. Styles 169 to 182:
+
+* `.poolside_style 169(text)` .poolside_style 169(Cyan)
+* `.poolside_style 170(text)` .poolside_style 170(Blue)
+* `.poolside_style 171(text)` .poolside_style 171(Lagoon)
+* `.poolside_style 172(text)` .poolside_style 172(Orange)
+* `.poolside_style 173(text)` .poolside_style 173(Sky)
+* `.poolside_style 174(text)` .poolside_style 174(Sand)
+* `.poolside_style 175(text)` .poolside_style 175(Navy)
+* `.poolside_style 176(text)` .poolside_style 176(Dusk)
+* `.poolside_style 177(text)` .poolside_style 177(Cyan and blue)
+* `.poolside_style 178(text)` .poolside_style 178(Cyan and orange)
+* `.poolside_style 179(text)` .poolside_style 179(Blue and orange)
+* `.poolside_style 180(text)` .poolside_style 180(Sunset)
+* `.poolside_style 181(text)` .poolside_style 181(Frost)
+* `.poolside_style 182(text)` .poolside_style 182(Splash)
+
+### Poolside design 14: Sticker
+
+A white sticker with a drop shadow, turned slightly. Styles 183 to 196:
+
+* `.poolside_style 183(text)` .poolside_style 183(Cyan)
+* `.poolside_style 184(text)` .poolside_style 184(Blue)
+* `.poolside_style 185(text)` .poolside_style 185(Lagoon)
+* `.poolside_style 186(text)` .poolside_style 186(Orange)
+* `.poolside_style 187(text)` .poolside_style 187(Sky)
+* `.poolside_style 188(text)` .poolside_style 188(Sand)
+* `.poolside_style 189(text)` .poolside_style 189(Navy)
+* `.poolside_style 190(text)` .poolside_style 190(Dusk)
+* `.poolside_style 191(text)` .poolside_style 191(Cyan and blue)
+* `.poolside_style 192(text)` .poolside_style 192(Cyan and orange)
+* `.poolside_style 193(text)` .poolside_style 193(Blue and orange)
+* `.poolside_style 194(text)` .poolside_style 194(Sunset)
+* `.poolside_style 195(text)` .poolside_style 195(Frost)
+* `.poolside_style 196(text)` .poolside_style 196(Splash)
+
+### Poolside design 15: Extrude
+
+Chunky extruded letters with a stepped shadow. Styles 197 to 210:
+
+* `.poolside_style 197(text)` .poolside_style 197(Cyan)
+* `.poolside_style 198(text)` .poolside_style 198(Blue)
+* `.poolside_style 199(text)` .poolside_style 199(Lagoon)
+* `.poolside_style 200(text)` .poolside_style 200(Orange)
+* `.poolside_style 201(text)` .poolside_style 201(Sky)
+* `.poolside_style 202(text)` .poolside_style 202(Sand)
+* `.poolside_style 203(text)` .poolside_style 203(Navy)
+* `.poolside_style 204(text)` .poolside_style 204(Dusk)
+* `.poolside_style 205(text)` .poolside_style 205(Cyan and blue)
+* `.poolside_style 206(text)` .poolside_style 206(Cyan and orange)
+* `.poolside_style 207(text)` .poolside_style 207(Blue and orange)
+* `.poolside_style 208(text)` .poolside_style 208(Sunset)
+* `.poolside_style 209(text)` .poolside_style 209(Frost)
+* `.poolside_style 210(text)` .poolside_style 210(Splash)
+
+### Poolside design 16: Brackets
+
+Words wrapped in square brackets of the two accent colors. Styles 211 to 224:
+
+* `.poolside_style 211(text)` .poolside_style 211(Cyan)
+* `.poolside_style 212(text)` .poolside_style 212(Blue)
+* `.poolside_style 213(text)` .poolside_style 213(Lagoon)
+* `.poolside_style 214(text)` .poolside_style 214(Orange)
+* `.poolside_style 215(text)` .poolside_style 215(Sky)
+* `.poolside_style 216(text)` .poolside_style 216(Sand)
+* `.poolside_style 217(text)` .poolside_style 217(Navy)
+* `.poolside_style 218(text)` .poolside_style 218(Dusk)
+* `.poolside_style 219(text)` .poolside_style 219(Cyan and blue)
+* `.poolside_style 220(text)` .poolside_style 220(Cyan and orange)
+* `.poolside_style 221(text)` .poolside_style 221(Blue and orange)
+* `.poolside_style 222(text)` .poolside_style 222(Sunset)
+* `.poolside_style 223(text)` .poolside_style 223(Frost)
+* `.poolside_style 224(text)` .poolside_style 224(Splash)
+
+### Poolside design 17: Strike line
+
+Words struck through with a thick colored line. Styles 225 to 238:
+
+* `.poolside_style 225(text)` .poolside_style 225(Cyan)
+* `.poolside_style 226(text)` .poolside_style 226(Blue)
+* `.poolside_style 227(text)` .poolside_style 227(Lagoon)
+* `.poolside_style 228(text)` .poolside_style 228(Orange)
+* `.poolside_style 229(text)` .poolside_style 229(Sky)
+* `.poolside_style 230(text)` .poolside_style 230(Sand)
+* `.poolside_style 231(text)` .poolside_style 231(Navy)
+* `.poolside_style 232(text)` .poolside_style 232(Dusk)
+* `.poolside_style 233(text)` .poolside_style 233(Cyan and blue)
+* `.poolside_style 234(text)` .poolside_style 234(Cyan and orange)
+* `.poolside_style 235(text)` .poolside_style 235(Blue and orange)
+* `.poolside_style 236(text)` .poolside_style 236(Sunset)
+* `.poolside_style 237(text)` .poolside_style 237(Frost)
+* `.poolside_style 238(text)` .poolside_style 238(Splash)
+
+### Poolside design 18: Ribbon
+
+A ribbon banner with notched ends. Styles 239 to 252:
+
+* `.poolside_style 239(text)` .poolside_style 239(Cyan)
+* `.poolside_style 240(text)` .poolside_style 240(Blue)
+* `.poolside_style 241(text)` .poolside_style 241(Lagoon)
+* `.poolside_style 242(text)` .poolside_style 242(Orange)
+* `.poolside_style 243(text)` .poolside_style 243(Sky)
+* `.poolside_style 244(text)` .poolside_style 244(Sand)
+* `.poolside_style 245(text)` .poolside_style 245(Navy)
+* `.poolside_style 246(text)` .poolside_style 246(Dusk)
+* `.poolside_style 247(text)` .poolside_style 247(Cyan and blue)
+* `.poolside_style 248(text)` .poolside_style 248(Cyan and orange)
+* `.poolside_style 249(text)` .poolside_style 249(Blue and orange)
+* `.poolside_style 250(text)` .poolside_style 250(Sunset)
+* `.poolside_style 251(text)` .poolside_style 251(Frost)
+* `.poolside_style 252(text)` .poolside_style 252(Splash)
+
+### Poolside design 19: Frost glass
+
+Frosted glass: a milky pane tinted with the color. Styles 253 to 266:
+
+* `.poolside_style 253(text)` .poolside_style 253(Cyan)
+* `.poolside_style 254(text)` .poolside_style 254(Blue)
+* `.poolside_style 255(text)` .poolside_style 255(Lagoon)
+* `.poolside_style 256(text)` .poolside_style 256(Orange)
+* `.poolside_style 257(text)` .poolside_style 257(Sky)
+* `.poolside_style 258(text)` .poolside_style 258(Sand)
+* `.poolside_style 259(text)` .poolside_style 259(Navy)
+* `.poolside_style 260(text)` .poolside_style 260(Dusk)
+* `.poolside_style 261(text)` .poolside_style 261(Cyan and blue)
+* `.poolside_style 262(text)` .poolside_style 262(Cyan and orange)
+* `.poolside_style 263(text)` .poolside_style 263(Blue and orange)
+* `.poolside_style 264(text)` .poolside_style 264(Sunset)
+* `.poolside_style 265(text)` .poolside_style 265(Frost)
+* `.poolside_style 266(text)` .poolside_style 266(Splash)
+
+### Poolside design 20: Slant label
+
+A slanted label, like a parallelogram. Styles 267 to 280:
+
+* `.poolside_style 267(text)` .poolside_style 267(Cyan)
+* `.poolside_style 268(text)` .poolside_style 268(Blue)
+* `.poolside_style 269(text)` .poolside_style 269(Lagoon)
+* `.poolside_style 270(text)` .poolside_style 270(Orange)
+* `.poolside_style 271(text)` .poolside_style 271(Sky)
+* `.poolside_style 272(text)` .poolside_style 272(Sand)
+* `.poolside_style 273(text)` .poolside_style 273(Navy)
+* `.poolside_style 274(text)` .poolside_style 274(Dusk)
+* `.poolside_style 275(text)` .poolside_style 275(Cyan and blue)
+* `.poolside_style 276(text)` .poolside_style 276(Cyan and orange)
+* `.poolside_style 277(text)` .poolside_style 277(Blue and orange)
+* `.poolside_style 278(text)` .poolside_style 278(Sunset)
+* `.poolside_style 279(text)` .poolside_style 279(Frost)
+* `.poolside_style 280(text)` .poolside_style 280(Splash)
+
 ## Rim chips
 
 A glass pill with a thick colored rim: the inside melts from the color at the top to almost clear at the bottom, with a small white shine near the top and words in a deep shade of the color. It is sized by its text (a rim of 0.133em, 0.4em of room at each side). Written `!!#color#text#`, in the same 16 colors as the Aero chips:
@@ -1815,7 +2199,7 @@ A line that is only `::pagebreak` is a page break. In Writeout's Pages view the 
 
 ::divider{aqua}
 
-`::divider{poolside}` a pool lane rope: a water bar with orange floats
+`::divider{poolside}` a dashed row of orange pool floats
 
 ::divider{poolside}
 
@@ -1860,6 +2244,34 @@ A line that is only `::pagebreak` is a page break. In Writeout's Pages view the 
 ::divider{bubbles}
 
 `::divider{scallop}` a row of little arcs
+
+### Divider colors
+
+Any named style can take one of 16 colors as a third part: `::divider{style|Title|color}`. Leave the title empty to color a plain line, like `::divider{wavy||red}`. A color only works together with a style (`::divider{red}` is just the original aqua strip), and the title takes the color too. The colors are `red`, `orange`, `gold`, `yellow`, `lime`, `green`, `turquoise`, `teal`, `cyan`, `blue`, `purple`, `pink`, `slate`, `white`, `fog`, `black`.
+
+`::divider{wavy||red}`
+
+::divider{wavy||red}
+
+`::divider{poolside||blue}`
+
+::divider{poolside||blue}
+
+`::divider{dual||green}`
+
+::divider{dual||green}
+
+`::divider{glow||pink}`
+
+::divider{glow||pink}
+
+`::divider{dashed||purple}`
+
+::divider{dashed||purple}
+
+`::divider{scallop|Title|orange}`
+
+::divider{scallop|Title|orange}
 
 ::divider{scallop}
 

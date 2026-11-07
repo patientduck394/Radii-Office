@@ -901,6 +901,7 @@ function download(name, data, type) {
 function saveFile() { download('scene.zr', JSON.stringify(serialize()), 'application/json'); toast('Saved scene.zr!'); }
 function newScene(ask = true) {
     const go = () => {
+        if (window.RadiiDocs) RadiiDocs.archive();
         commit();
         if (state.mode === 'edit') setMode('object');
         while (world.children.length) world.remove(world.children[0]);
@@ -916,7 +917,7 @@ function newScene(ask = true) {
         changed();
     };
     if (!ask) { go(); return; }
-    confirmDlg('New scene', 'Start a new scene? Anything not saved to a file is lost (you can still Undo)!', 'New Scene').then((ok) => { if (ok) go(); });
+    confirmDlg('New scene', 'Start a new scene? The one you have now is kept in File > Documents (and you can still Undo)!', 'New Scene').then((ok) => { if (ok) go(); });
 }
 
 /* ==================================================================

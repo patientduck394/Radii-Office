@@ -88,6 +88,21 @@
         OS.toast('New document!');
         go(id);
     }
+    // "New" in an app wipes the open document: this first stores the open one in File > Documents (so nothing is lost,
+    // and both can be renamed or deleted there)
+    function archive() {
+        try {
+            if (!RF.size(RF.id)) return false;
+            const r = sync();
+            const cur = r.docs[RF.id] || {};
+            const nid = RF.newId();
+            RF.copy(RF.id, nid);
+            r.docs[nid] = { name: nameOf(r, RF.id) + (cur.auto ? '' : ' (earlier)'), auto: false, created: cur.created || Date.now(), modified: cur.modified || Date.now() };
+            save(r);
+            OS.toast('The earlier document is kept in File > Documents!');
+            return true;
+        } catch (e) { return false; }
+    }
     function copyDocument(r, id) {
         const nid = RF.newId();
         RF.copy(id, nid);
@@ -281,7 +296,7 @@
         window.addEventListener('pagehide', sync);
     }
     if (!shell) {
-        window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, setTitle: function (fn) { cfgRef.title = fn; sync(); } };
+        window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, archive: archive, create: function () { newDocument(load()); }, setTitle: function (fn) { cfgRef.title = fn; sync(); } };
         if (document.readyState !== 'loading') standalone(); else document.addEventListener('DOMContentLoaded', standalone);
         return;
     }
@@ -294,6 +309,20 @@
                 const hr = home.render;
                 home._rd = true;
                 home.render = function (b) { const out = hr.apply(this, arguments); try { enhanceHome(b); } catch (e) {} return out; };
+            }
+            const newPg = Array.isArray(cfg.backstage) && cfg.backstage.find(function (p) { return p.id === 'new' && typeof p.render === 'function'; });
+            if (newPg && !newPg._rd) {
+                const nr = newPg.render;
+                newPg._rd = true;
+                newPg.render = function (b) {
+                    const out = nr.apply(this, arguments);
+                    try {
+                        const cards = OS.bsCards([{ label: 'New document', hint: 'Keeps this one in File > Documents, where you can rename or delete any of them!', icon: 'newDoc', run: function () { newDocument(load()); } }]);
+                        const h1 = b.querySelector('h1');
+                        if (h1 && h1.nextSibling) b.insertBefore(cards, h1.nextSibling); else b.insertBefore(cards, b.firstChild);
+                    } catch (e) {}
+                    return out;
+                };
             }
             if (Array.isArray(cfg.backstage) && !cfg.backstage.some(function (p) { return p.id === 'docs'; })) {
                 const at = cfg.backstage.findIndex(function (p) { return p.id === 'new'; });
@@ -310,5 +339,5 @@
         } catch (e) {}
         return orig.apply(this, arguments);
     };
-    window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog };
+    window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, archive: archive, create: function () { newDocument(load()); } };
 })();

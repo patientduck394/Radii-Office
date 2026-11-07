@@ -700,8 +700,9 @@
     function greet() { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening'; }
     async function newDeck() {
         if (slides.length > 1 || slides[0].elements.length > 2) {
-            if (!(await OS.confirm('New Presentation', 'Start a new presentation? You can undo this (⌘Z)!', 'Start New'))) return;
+            if (!(await OS.confirm('New Presentation', 'Start a new presentation? The one you have now is kept in File > Documents!', 'Start New'))) return;
         }
+        if (window.RadiiDocs) RadiiDocs.archive();
         saveState();
         slides.splice(0, slides.length, { id: uid('slide'), title: 'Presentation Title', background: BG_DEFAULT, elements: LAYOUTS.title.make(), transition: null, notes: '', hidden: false });
         slides[0].elements[0].content = 'PRESENTATION TITLE';
