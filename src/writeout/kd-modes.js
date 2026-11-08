@@ -415,7 +415,15 @@
         // Annotate draws on the page itself, so it needs the page showing
         if (window.AnnotateInk && typeof window.AnnotateInk.start === 'function') {
             const st = window.AnnotateInk.start;
-            window.AnnotateInk.start = function () { if (mode === 'source') { toast('Annotate draws right on the page: switch to Visual mode to use it!'); return; } return st.apply(this, arguments); };
+            window.AnnotateInk.start = function (el, opts) {
+                if (mode !== 'source') return st.apply(this, arguments);
+                // Source: show the page to draw on, then come back to Source, where the drawing is now an @@ink line
+                set('visual');
+                const self = this, back = opts && typeof opts.onStop === 'function' ? opts.onStop : null;
+                setTimeout(function () {
+                    st.call(self, el, Object.assign({}, opts, { onStop: function () { if (back) back(); set('source'); toast('Your drawing is in the Source as @@ink!'); } }));
+                }, 60);
+            };
         }
     }
 
