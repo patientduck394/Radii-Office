@@ -73,7 +73,8 @@
         ['i', '*', '*', /(?<![*\w])\*([^*\s<>][^*<>\n]*?)\*(?![*\w(])/g]
     ];
     const NAMES = INLINE.map((r) => r[0]).concat(['blank', 'box']);
-    const FORWARD = new RegExp('<(' + NAMES.join('|') + ')\\s([^<>\\n]+)>', 'g');
+    const FORWARD = new RegExp('<(' + NAMES.join('|') + ')\\s([^<>\\n]+)>(?=(<)?)', 'g');
+    const ZW = '\u200b';   // (an invisible separator, so two chips written side by side do not run their # marks together)
     const DIVIDERS = { rope: 'poolside', lane: 'dual', tile: 'notched', wave: 'swallow', reef: 'triple', step: 'stepped', crest: 'crest', ticket: 'ticket', buoy: 'gel', glass: 'glass', ring: 'rim', water: 'aqua' };
     const DIV_BACK = {}; Object.keys(DIVIDERS).forEach((k) => { DIV_BACK[DIVIDERS[k]] = k; });
     const QUOTE_MARKS = '!?*+\\-=~$#^@&';   // (a quote written < plus one of these; <: has its own line below)
@@ -99,11 +100,11 @@
         let prev;
         do {
             prev = s;
-            s = s.replace(FORWARD, (all, name, body) => {
+            s = s.replace(FORWARD, (all, name, body, next) => {
                 if (name === 'blank') { const m = /^(\d+)(?:\|(.*))?$/.exec(body); return m ? '[__' + m[1] + (m[2] ? '|' + m[2] : '') + ']' : all; }
                 if (name === 'box') { const m = /^(\d+)(?:\|(.*))?$/.exec(body); return m ? '[##' + m[1] + (m[2] ? '|' + m[2] : '') + ']' : all; }
                 const r = INLINE.find((x) => x[0] === name);
-                return r[1] + body + r[2];
+                return r[1] + body + r[2] + (next ? ZW : '');
             });
         } while (s !== prev);
         return s;
@@ -130,6 +131,7 @@
     /* ---------- Keydown  ->  Poolside Keydown ---------- */
     function inlineToPK(s) {
         INLINE.forEach((r) => { s = s.replace(r[3], (all, body) => '<' + r[0] + ' ' + body + '>'); });
+        s = s.replace(/\u200b(?=<)/g, '');
         return s.replace(/\[__(\d+)(?:\|([^\]<>\n]*))?\]/g, (a, n, ans) => '<blank ' + n + (ans ? '|' + ans : '') + '>')
             .replace(/\[##(\d+)(?:\|([^\]<>\n]*))?\]/g, (a, n, ans) => '<box ' + n + (ans ? '|' + ans : '') + '>');
     }
