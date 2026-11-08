@@ -21,9 +21,11 @@ fn mtime_of(path: &str) -> Result<u64, String> {
 }
 
 #[tauri::command]
-async fn radii_pick(app: tauri::AppHandle, save: bool, name: String) -> Option<String> {
+async fn radii_pick(app: tauri::AppHandle, save: bool, name: String, exts: Option<Vec<String>>) -> Option<String> {
     use tauri_plugin_dialog::DialogExt;
-    let mut d = app.dialog().file().add_filter("Radii file", &["radii", "json"]);
+    let list: Vec<String> = exts.unwrap_or_else(|| vec!["radii".to_string(), "json".to_string()]);
+    let refs: Vec<&str> = list.iter().map(|s| s.as_str()).collect();
+    let mut d = app.dialog().file().add_filter("Document", &refs);
     if save {
         d = d.set_file_name(&name);
     }
