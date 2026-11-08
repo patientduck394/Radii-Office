@@ -56,30 +56,146 @@ body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-fill { border-bottom-colo
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-blank { border-color: var(--pk-water); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-blank-label { color: var(--pk-orange-d); }
 
-/* ---------- every highlight, chip and divider colour is pulled into the pool: cyan, blue and orange ----------
-   (a turn of hue on the drawn chip; the colour you typed is still the one in your text!) */
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is([class*="gel-"], mark[class*="an-hl-"], [class*="kd-div-c-"]):is([class*="-red"], [class*="-green"], [class*="-lime"], [class*="-yellow"], [class*="-gold"], [class*="-turquoise"], [class*="-teal"], [class*="-purple"], [class*="-pink"]) { filter: hue-rotate(var(--pk-spin)); }
-/* red, yellow and gold become orange; lime, green, turquoise and teal become cyan; purple and pink become blue */
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-red"] { --pk-spin: 26deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-yellow"] { --pk-spin: -22deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-gold"] { --pk-spin: -18deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-lime"] { --pk-spin: 118deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-green"] { --pk-spin: 64deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-turquoise"] { --pk-spin: 8deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-teal"] { --pk-spin: 16deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-purple"] { --pk-spin: -58deg; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-pink"] { --pk-spin: -112deg; }
-/* the one-letter gel orbs (=G=, =R=, =P=...) */
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-r) { filter: hue-rotate(26deg); }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-y) { filter: hue-rotate(-22deg); }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-g, .gel-lm) { filter: hue-rotate(64deg); }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-p, .gel-v, .gel-mg) { filter: hue-rotate(-58deg); }
-
-/* ---------- print keeps the plain colours (filters would turn the dividers into low-resolution pictures) ---------- */
-@media print {
-    body[data-kd="poolside"] :is(#wf-visual, #wf-view) * { filter: none !important; }
-    body[data-kd="poolside"] :is(#wf-visual, #wf-view) { background-image: none; }
+/* ---------- ORIGINAL POOLSIDE STYLES ----------
+   Every mark of Poolside Keydown is drawn with its own design, not with Keydown's gel, rim or toast looks:
+   each one below clears the Keydown look completely (all: unset) and is built again from lane ropes, rings, tiles and water.
+   They only apply to the elements Poolside marks produce, inside Poolside notes. */
+body[data-kd="poolside"] {
+    --pk-o: #ff8a1b; --pk-o2: #ffe3c2; --pk-od: #8a3d00;
+    --pk-c: #18bfe8; --pk-c2: #d4f6ff; --pk-cd: #055a78;
+    --pk-b: #1b7fe0; --pk-b2: #d6ebff; --pk-bd: #0b3f9a;
 }
+body[data-kd="poolside"][data-theme="night"] { --pk-o2: #4a2a0c; --pk-od: #ffc98f; --pk-c2: #0d4256; --pk-cd: #9fe8fb; --pk-b2: #12335e; --pk-bd: #a8cfff; }
+
+/* the elements Poolside marks produce are cleared of every Keydown look first (each selector is listed on its own, so the specific rules below always win) */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-orange,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-orange::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-orange::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-cyan,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-cyan::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-cyan::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-blue,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-blue::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-blue::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-orange,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-orange::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-orange::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-cyan,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-cyan::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-cyan::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-blue,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-blue::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-blue::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-orange,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-orange::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-orange::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-cyan,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-cyan::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-cyan::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-blue,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-blue::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-blue::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-chip-waterdrop,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-chip-waterdrop::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-chip-waterdrop::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-ha,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-ha::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-ha::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ha,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ha::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ha::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-mk,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-mk::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-mk::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-mk,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-mk::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-mk::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-blue.an-s-ink,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-blue.an-s-ink::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-blue.an-s-ink::after,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ink,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ink::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ink::after { all: unset; }
+
+/* <ring>: a life ring, striped orange and white all the way round */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-orange { display: inline-block; padding: 0 13px; border: 3px solid transparent; border-radius: 999px; color: var(--pk-od); font-weight: 700; background: linear-gradient(var(--pk-o2), var(--pk-o2)) padding-box, repeating-linear-gradient(90deg, var(--pk-o) 0 9px, #fff 9px 18px) border-box; }
+/* <lap>: a lane rope under the words */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-cyan { display: inline; padding-bottom: 3px; color: var(--pk-cd); font-weight: 700; background: repeating-linear-gradient(90deg, var(--pk-c) 0 8px, #fff 8px 16px) left bottom / 100% 5px no-repeat; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+/* <reef>: a wave under the words */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-rimdouble-chip.gel-rim-blue { display: inline; color: var(--pk-bd); font-weight: 700; text-decoration: underline wavy var(--pk-b) 2px; text-underline-offset: 5px; }
+/* <buoy>: an orange float with a white band */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-orange { position: relative; display: inline-block; padding: 0 13px 0 29px; border-radius: 999px; background: var(--pk-o); color: #fff; font-weight: 700; box-shadow: inset 0 0 0 2px #fff, 0 0 0 2px var(--pk-o); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-orange::before { content: ""; position: absolute; left: 9px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; background: #fff; box-shadow: inset 0 0 0 3px var(--pk-o); }
+/* <foam>: sea foam, a cyan patch full of bubbles */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-cyan { display: inline-block; padding: 0 11px; border-radius: 12px 4px 12px 4px; color: var(--pk-cd); font-weight: 600; background: radial-gradient(circle at 10% 30%, #fff 0 3px, transparent 4px), radial-gradient(circle at 38% 74%, #fff 0 2px, transparent 3px), radial-gradient(circle at 70% 28%, #fff 0 2.5px, transparent 3.5px), radial-gradient(circle at 92% 70%, #fff 0 2px, transparent 3px), var(--pk-c2); box-shadow: inset 0 0 0 1px var(--pk-c); }
+/* <deep>: the deep end, a dark blue block with a cyan waterline */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-blue { display: inline-block; padding: 0 12px; border-radius: 3px 3px 8px 8px; color: #fff; font-weight: 700; background: linear-gradient(180deg, #4fd2f5 0 4px, var(--pk-bd) 4px); }
+body[data-kd="poolside"][data-theme="night"] :is(#wf-visual, #wf-view) .gel-bubble-chip.gel-chip-blue { background: linear-gradient(180deg, #4fd2f5 0 4px, #1d4f94 4px); color: #e6f3ff; }
+/* <sun>: a sun with rays beside orange words */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-orange { position: relative; display: inline-block; padding: 0 13px 0 29px; border-radius: 4px 14px 14px 4px; background: var(--pk-o2); color: var(--pk-od); font-weight: 700; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-orange::before { content: ""; position: absolute; left: 6px; top: 50%; width: 16px; height: 16px; margin-top: -8px; border-radius: 50%; background: radial-gradient(circle, var(--pk-o) 0 36%, transparent 38%), repeating-conic-gradient(var(--pk-o) 0 11deg, transparent 11deg 30deg); }
+/* <lagoon>: a lagoon, water shaded from the edges, in a double frame */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-cyan { display: inline-block; padding: 0 13px; border-radius: 9px; color: var(--pk-cd); font-weight: 700; background: linear-gradient(90deg, #eafcff, #a6ecfc 50%, #eafcff); box-shadow: inset 0 0 0 2px var(--pk-c), inset 0 0 0 4px #fff; }
+body[data-kd="poolside"][data-theme="night"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-cyan { background: linear-gradient(90deg, #0b3547, #115a73 50%, #0b3547); box-shadow: inset 0 0 0 2px var(--pk-c), inset 0 0 0 4px #082a38; }
+/* <tile>: a square of pool tile with its grout lines */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-aerotoast-chip.gel-aero-blue { display: inline-block; padding: 1px 11px; border: 2px solid var(--pk-b); border-radius: 2px; color: var(--pk-bd); font-weight: 700; background-color: var(--pk-b2); background-image: linear-gradient(rgba(27, 127, 224, .35) 1px, transparent 1px), linear-gradient(90deg, rgba(27, 127, 224, .35) 1px, transparent 1px); background-size: 8px 8px; }
+/* <drop>: a water drop, round with one pointed corner */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-chip-waterdrop { position: relative; display: inline-block; padding: 0 14px; border-radius: 15px 15px 15px 2px; color: #fff; font-weight: 700; background: linear-gradient(180deg, #5fd8f7, var(--pk-b)); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-chip-waterdrop::before { content: ""; position: absolute; left: 8px; top: 4px; width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, .85); }
+/* <halo> and <sunhalo>: a soft ring of light round the words */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-ha { padding: 0 4px; border-radius: 7px; color: inherit; background: rgba(24, 191, 232, .13); box-shadow: 0 0 0 3px rgba(24, 191, 232, .28), 0 0 12px rgba(24, 191, 232, .5); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ha { padding: 0 4px; border-radius: 7px; color: inherit; background: rgba(255, 138, 27, .12); box-shadow: 0 0 0 3px rgba(255, 138, 27, .3), 0 0 12px rgba(255, 138, 27, .5); }
+/* <mark> and <flag>: a highlighter stroke across the lower half */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-cyan.an-s-mk { padding: 0 4px; color: inherit; background: linear-gradient(transparent 48%, rgba(24, 191, 232, .5) 48% 90%, transparent 90%); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-mk { padding: 0 4px; color: inherit; background: linear-gradient(transparent 48%, rgba(255, 138, 27, .5) 48% 90%, transparent 90%); }
+/* <ink> and <fire>: written with a pen, in blue or orange ink */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-blue.an-s-ink { color: var(--pk-bd); font: italic 600 1.05em Georgia, "Times New Roman", serif; text-shadow: 0 0 1px rgba(11, 63, 154, .35); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-ink { color: #d96a00; font: italic 700 1.05em Georgia, "Times New Roman", serif; text-shadow: 0 0 1px rgba(217, 106, 0, .35); }
+
+/* ---------- callouts: <! an alert ring, <? a question ring, <> a pulled quote between two lane ropes ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull),
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull)::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull)::after { all: unset; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass) { position: relative; display: block; margin: 14px 0; padding: 12px 18px 12px 58px; border-radius: 12px; line-height: 1.55; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-neon { background: var(--pk-o2); color: var(--pk-od); border: 2px solid var(--pk-o); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-glass { background: var(--pk-c2); color: var(--pk-cd); border: 2px dashed var(--pk-c); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass)::before { content: ""; position: absolute; left: 14px; top: 50%; width: 30px; height: 30px; margin-top: -15px; border-radius: 50%; -webkit-mask: radial-gradient(circle, transparent 0 8px, #000 9px); mask: radial-gradient(circle, transparent 0 8px, #000 9px); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-neon::before { background: repeating-conic-gradient(var(--pk-o) 0 45deg, #fff 45deg 90deg); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-glass::before { background: repeating-conic-gradient(var(--pk-c) 0 45deg, #fff 45deg 90deg); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass)::after { position: absolute; left: 14px; top: 50%; width: 30px; margin-top: -11px; text-align: center; font: 800 18px/22px system-ui, sans-serif; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-neon::after { content: "!"; color: var(--pk-od); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-glass::after { content: "?"; color: var(--pk-cd); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-pull { display: block; margin: 22px 0; padding: 22px 16px; text-align: center; color: var(--pk-bd); font: italic 500 1.3em/1.45 Georgia, "Times New Roman", serif; background: repeating-linear-gradient(90deg, var(--pk-o) 0 14px, #fff 14px 28px) top / 100% 5px no-repeat, repeating-linear-gradient(90deg, var(--pk-c) 0 14px, #fff 14px 28px) bottom / 100% 5px no-repeat; }
+
+/* ---------- bullets: ring, drop, bubble, tile and wave markers ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.bulleted-list[class*="kd-bl-"] > li::before { content: ""; display: inline-block; min-width: 0; width: .62em; height: .62em; margin-right: .6em; vertical-align: .02em; font-size: inherit; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.kd-bl-dash > li::before { border-radius: 50%; background: conic-gradient(var(--pk-o) 0 25%, #fff 0 50%, var(--pk-o) 0 75%, #fff 0); -webkit-mask: radial-gradient(circle, transparent 0 30%, #000 33%); mask: radial-gradient(circle, transparent 0 30%, #000 33%); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.kd-bl-plus > li::before { border-radius: 50% 50% 50% 0; transform: rotate(-45deg) scale(.9); background: var(--pk-b); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.kd-bl-ring > li::before { border-radius: 50%; background: radial-gradient(circle at 35% 30%, #fff 0 14%, var(--pk-c) 16%); box-shadow: 0 0 0 1px var(--pk-c); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.kd-bl-diamond > li::before { border-radius: 1px; background: var(--pk-o); transform: rotate(45deg) scale(.85); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.kd-bl-arrow > li::before { width: .55em; height: .55em; border-top: 3px solid var(--pk-b); border-right: 3px solid var(--pk-b); transform: rotate(45deg) scale(.8); margin-right: .7em; }
+
+/* ---------- dividers: ten lane marks, none of Keydown's ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(.kd-div-poolside, .kd-div-dual, .kd-div-notched, .kd-div-swallow, .kd-div-triple, .kd-div-stepped, .kd-div-rim, .kd-div-glass, .kd-div-gel, .kd-div-aqua),
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(.kd-div-poolside, .kd-div-dual, .kd-div-notched, .kd-div-swallow, .kd-div-triple, .kd-div-stepped, .kd-div-rim, .kd-div-glass, .kd-div-gel, .kd-div-aqua) :is(.kd-div-line, .kd-div-label),
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(.kd-div-poolside, .kd-div-dual, .kd-div-notched, .kd-div-swallow, .kd-div-triple, .kd-div-stepped, .kd-div-rim, .kd-div-glass, .kd-div-gel, .kd-div-aqua) :is(.kd-div-line, .kd-div-label)::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(.kd-div-poolside, .kd-div-dual, .kd-div-notched, .kd-div-swallow, .kd-div-triple, .kd-div-stepped, .kd-div-rim, .kd-div-glass, .kd-div-gel, .kd-div-aqua) :is(.kd-div-line, .kd-div-label)::after { all: unset; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(.kd-div-poolside, .kd-div-dual, .kd-div-notched, .kd-div-swallow, .kd-div-triple, .kd-div-stepped, .kd-div-rim, .kd-div-glass, .kd-div-gel, .kd-div-aqua) { --dv: var(--pk-b); display: flex; align-items: center; gap: 16px; margin: 22px 0; user-select: none; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-c-cyan { --dv: var(--pk-c); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-c-orange { --dv: var(--pk-o); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-c-blue { --dv: var(--pk-b); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(.kd-div-poolside, .kd-div-dual, .kd-div-notched, .kd-div-swallow, .kd-div-triple, .kd-div-stepped, .kd-div-rim, .kd-div-glass, .kd-div-gel, .kd-div-aqua) .kd-div-line { display: block; flex: 1; min-width: 12px; height: 10px; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(.kd-div-poolside, .kd-div-dual, .kd-div-notched, .kd-div-swallow, .kd-div-triple, .kd-div-stepped, .kd-div-rim, .kd-div-glass, .kd-div-gel, .kd-div-aqua) .kd-div-label { display: block; color: var(--pk-bd); font: 800 .78em/1 system-ui, sans-serif; letter-spacing: 1.6px; text-transform: uppercase; white-space: nowrap; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-poolside .kd-div-line { height: 8px; border-radius: 5px; background: repeating-linear-gradient(90deg, var(--dv) 0 14px, #fff 14px 28px); box-shadow: 0 0 0 1px var(--dv); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-dual .kd-div-line { height: 14px; background: linear-gradient(var(--dv), var(--dv)) top / 100% 3px no-repeat, linear-gradient(var(--dv), var(--dv)) bottom / 100% 3px no-repeat; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-notched .kd-div-line { height: 12px; background: repeating-linear-gradient(90deg, var(--dv) 0 12px, transparent 12px 17px); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-swallow .kd-div-line { height: 12px; background: var(--dv); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M0 6Q6 0 12 6T24 6' fill='none' stroke='black' stroke-width='2.6'/%3E%3C/svg%3E") repeat-x center / 24px 12px; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='12'%3E%3Cpath d='M0 6Q6 0 12 6T24 6' fill='none' stroke='black' stroke-width='2.6'/%3E%3C/svg%3E") repeat-x center / 24px 12px; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-triple .kd-div-line { height: 16px; background: linear-gradient(var(--dv), var(--dv)) 0 0 / 100% 2px no-repeat, linear-gradient(var(--dv), var(--dv)) 12% 50% / 76% 2px no-repeat, linear-gradient(var(--dv), var(--dv)) 24% 100% / 52% 2px no-repeat; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-stepped .kd-div-line { height: 16px; background: var(--dv); clip-path: polygon(0 100%, 0 75%, 20% 75%, 20% 50%, 40% 50%, 40% 25%, 60% 25%, 60% 0, 100% 0, 100% 100%); opacity: .85; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-rim .kd-div-line { height: 16px; background: radial-gradient(circle, transparent 0 3px, var(--dv) 4px 6px, transparent 7px) left center / 16px 16px no-repeat, radial-gradient(circle, transparent 0 3px, var(--dv) 4px 6px, transparent 7px) right center / 16px 16px no-repeat, linear-gradient(var(--dv), var(--dv)) center / calc(100% - 28px) 3px no-repeat; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-glass .kd-div-line { height: 12px; border-radius: 7px; background: linear-gradient(90deg, rgba(24, 191, 232, .08), rgba(24, 191, 232, .38), rgba(24, 191, 232, .08)); box-shadow: inset 0 0 0 1px var(--dv); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-gel .kd-div-line { height: 16px; background: radial-gradient(circle, var(--dv) 0 5px, transparent 6px) left center / 22px 16px repeat-x; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-div-aqua .kd-div-line { height: 10px; border-radius: 6px; background: linear-gradient(90deg, #8ee8ff, var(--dv)); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .6); }
 
 /* ---------- the Poolside Keydown reference in the Guide ---------- */
 .pk-guide h4 { margin: 16px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .9px; color: #c85f00; }
