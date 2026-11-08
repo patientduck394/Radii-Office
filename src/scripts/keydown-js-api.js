@@ -366,7 +366,7 @@ Object.assign(Keydown, {
     editor,
     skills: SKILLS.map((s) => ({ name: s.name, label: s.label })),
     skillHtml,
-    guide: () => Portable.kdBuildGuideHTML(),
+    guide: () => Portable.kdBuildGuideHTML() + newSyntaxGuide(),
     styleCategories: () => kdDoc.styleCategories(),
     file: { toText: kdDoc.toFileText, fromText: kdDoc.fromFileText, parse: kdDoc.parse },
     doc: kdDoc,
@@ -376,4 +376,28 @@ window.Keydown = Keydown;
 // Like Keydown.js 1.x: every [data-keydown] element is drawn (or made editable) when the page is ready
 // (a page that only wants the editors, like KeydownBox.svelte, sets window.__KeydownNoAuto first)
 const boot = () => { if (!window.KeydownEngine && !window.__KeydownNoAuto) window.KeydownEngine = new Keydown(); };
+// The newer syntax, drawn by the full engine: code blocks and inline code styles, blanks to write in, page numbers and dividers
+function newSyntaxGuide() {
+    const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const rows = [
+        ['```js{terminal|app.js}\nnpm run build\n```', 'Code block styles: terminal, mac, dark, paper, blueprint, neon, ember, gel, diff (add "lines" for numbers)'],
+        ['`ls -la`{terminal}', 'Inline code styles: terminal, dark, paper, blueprint, neon, ember, gel, key'],
+        ['Water is made of [__8|hydrogen] and oxygen', 'A blank to write in: [__8] a line 8 characters wide, [__8|answer] hides the answer until clicked'],
+        ['Fill the [##6] box', 'The same blank as an empty box: [##6] or [##6|answer]'],
+        ['::blank{lines|3|Write here}', 'Room to write: box, dashed, lines, grid or dots, the rows and a label'],
+        ['::divider{glass|Title|blue}', 'Dividers: aqua, poolside, dual, notched, swallow, triple, stepped, crest, ticket, gel, glass, rim and more, in 16 colors'],
+        ['::pagenumbers{roman|1}', 'Page numbers from this page on: none, arabic, roman, alpha, greek (and upper- versions)'],
+    ];
+    const preview = (src) => {
+        try {
+            if (/^::/.test(src)) return (kdDoc.blockFromLine && kdDoc.blockFromLine(src)) || esc(src);
+            if (/^```/.test(src)) return kdDoc.textToHtml ? kdDoc.textToHtml(src) : esc(src);
+            return kdDoc.inlineHtml(src);
+        } catch (e) { return esc(src); }
+    };
+    return '<div class="kd-guide-group"><div class="kd-guide-title">Code, blanks, dividers and page numbers (' + rows.length + ')</div>'
+        + rows.map((r) => '<div class="kd-guide-row"><code>' + esc(r[0]).replace(/\n/g, '<br>') + '</code><span>' + preview(r[0]) + '<small class="kd-guide-hint"> ' + esc(r[1]) + '</small></span></div>').join('')
+        + '</div>';
+}
+
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else setTimeout(boot, 0);
