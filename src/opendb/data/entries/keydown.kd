@@ -6,7 +6,7 @@ title: Keydown
 summary: Keydown is the formatting language of Radii Office, where short tags typed around text turn it into glossy chips, highlights, headings and more.
 tags: [radii office, formatting, markup language, software]
 created: 2026-10-28
-updated: 2026-11-02
+updated: 2026-11-08
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Used in: Writeout, Bitbook, OpenDB, Phosphor, Imbuer, Formly and more
@@ -470,13 +470,13 @@ Write `*sp(text)` to hide words behind a dark bar until someone clicks them, lik
 
 A line that starts with a symbol, `>` and a space is a quote with a different look, like the plain `> quote` but dressed up. They are all the same kind of quote, only the look changes. Type the line and press Enter (or use Re-format); saving as text gives the same line back. There are 14 looks:
 
-`!> your text` Neon: a dark panel with a glowing cyan border and glowing words.
+`!> your text` Orange: an orange tinted panel with an orange bar on the left, like the green and red looks.
 
-!> This is how a quote looks in the neon look.
+!> This is how a quote looks in the orange look.
 
-`?> your text` Frosted glass: a milky see-through pane with a white rim and a soft shadow.
+`?> your text` Cyan: a cyan tinted panel with a cyan bar on the left, like the green and red looks.
 
-?> This is how a quote looks in the frosted glass look.
+?> This is how a quote looks in the cyan look.
 
 `>> your text` Pull quote: big centered italic words between two rules, with large quote marks.
 

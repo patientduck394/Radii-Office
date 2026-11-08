@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'a100c50c0492';
+const VERSION = 'a43aef541f17';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","c5e15f09bd"],
@@ -282,7 +282,7 @@ const CORE = [["/","c5e15f09bd"],
   ["/opendb/data/entries/imaginary-number.kd","126bc26493"],
   ["/opendb/data/entries/joyfully.kd","295b9ad118"],
   ["/opendb/data/entries/julia-programming-language.kd","ee7348b600"],
-  ["/opendb/data/entries/keydown.kd","2e6b50ace8"],
+  ["/opendb/data/entries/keydown.kd","e07397ed16"],
   ["/opendb/data/entries/opendb-architecture.kd","250e9bbb43"],
   ["/opendb/data/entries/opendb.kd","f3ec28155e"],
   ["/opendb/data/entries/perma-language.kd","07d9d0f40c"],
@@ -299,7 +299,7 @@ const CORE = [["/","c5e15f09bd"],
   ["/opendb/data/entries/python-pool-calculator.kd","ee6e962eab"],
   ["/opendb/data/entries/quantum-mechanics.kd","0ca43819e7"],
   ["/opendb/data/entries/qubit.kd","4d572b4248"],
-  ["/opendb/data/entries/radii-office.kd","3ae42e7b58"],
+  ["/opendb/data/entries/radii-office.kd","5fa51e0f52"],
   ["/opendb/data/entries/set-mathematics.kd","a3890b88bf"],
   ["/opendb/data/entries/sieve-of-eratosthenes.kd","e9c6337460"],
   ["/opendb/data/entries/sigmoid-function.kd","6853dd44c1"],

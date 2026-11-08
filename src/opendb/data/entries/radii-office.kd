@@ -6,7 +6,7 @@ title: Radii Office
 summary: Radii Office is a free, open-source suite of web apps for documents, spreadsheets, slides, notes, files and more, styled after the Frutiger Aero look.
 tags: [radii office, software, productivity, web apps]
 created: 2026-10-28
-updated: 2026-10-29
+updated: 2026-11-08
 authors: [OpenDB contributors]
 license: CC0-1.0
 infobox.Type: Office suite of web apps
@@ -30,7 +30,7 @@ infobox.Source code: "[Radii-Office on GitHub](https://github.com/patientduck394
 
 #B#Documents#
 
-**Writeout** is a rich-text writing tool for focused document writing. Its ribbon layout works like Microsoft Word, with a Navigation pane, real pages and a status bar. It supports Keydown, an Annotator for highlighting, equations, footnotes and several pages in one document. Documents are saved as `.kd` files and can be exported as PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB. Writeout also has a downloadable desktop app.
+**Writeout** is a rich-text writing tool for focused document writing. Its ribbon layout works like Microsoft Word, with a Navigation pane, real pages and a status bar. It supports Keydown, an Annotator for highlighting, equations, footnotes and several pages in one document. Documents are saved as `.kd` files and can be exported as PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB. File > Home lists every saved document, so you can keep many of them, rename them and switch between them, and Share can keep a file on your computer that is updated as you type. Print Preview shows the real page size, Color Preview shows how a page looks in grayscale or to someone who is colorblind, and page numbers can be hidden, Roman, lettered or Greek. A `;;pk{ }` block draws [[poolside-keydown|Poolside Keydown]]. Writeout also has a downloadable desktop app.
 
 ## Imbuer
 
@@ -66,14 +66,14 @@ infobox.Source code: "[Radii-Office on GitHub](https://github.com/patientduck394
 
 #PK#Vector Studio#
 
-**Inkpath** is a vector graphics editor. It has box selection for picking several shapes at once, real-time dragging of Bézier curve points, and panning and zooming around the canvas. Its curve math runs in WebAssembly built from Rust. Drawings are saved as `.kv` files and can be exported as SVG.
+**Inkpath** is a vector graphics editor. It has box selection for picking several shapes at once, real-time dragging of Bézier curve points, and panning and zooming around the canvas. Its curve math runs in WebAssembly built from Rust. Drawings are saved as `.kv` files and can be exported as SVG or PNG. Blur Behind turns a shape into frosted glass by blurring everything behind it, and the result survives export. The Animate panel adds keyframe animation: set a keyframe, move a shape, move the playhead and set another, or use a preset such as Fade in, Spin or Bounce, and export an SVG that plays by itself in any browser.
 
 ## Peeker
 
 #O#PDF#
 
-**Peeker** is a PDF editor that runs entirely in the browser, so files are never uploaded anywhere. You can add text, highlights, drawings, boxes, whiteout, pictures and signatures; rotate, reorder, duplicate and delete pages; merge PDFs; fill in forms; and search the text. It uses the open-source pdf.js and pdf-lib libraries.
+**Peeker** is a PDF editor that runs entirely in the browser, so files are never uploaded anywhere. You can add text, highlights, drawings, boxes, whiteout, pictures and signatures; rotate, reorder, duplicate and delete pages; merge PDFs; fill in forms; and search the text. The Edit tool turns the text and pictures already in a PDF into things you can move, change or replace. It uses the open-source pdf.js and pdf-lib libraries.
 
 ## Other apps
 
-The suite also includes **Bitbook** for notes, **Waterflow** for a clear, glassy notebook (the original is kept as Waterflow Legacy in the Archives), **Formly** for forms, **Hexa** for calendars and boards, **Taskra** for to-do lists, **Zonerider** for 3D modeling and animation, **Yuzu** for email, **Phosphor** for team messaging and [[opendb|OpenDB]], the free database this article is part of.
+The suite also includes **Bitbook** for notes, **Waterflow** for a clear, glassy notebook with notebooks, tags and notes written in [[poolside-keydown|Poolside Keydown]] (the original is kept as Waterflow Legacy in the Archives), **Trigger** for automation rules that make glowing pods react when your files change, **Formly** for forms, **Hexa** for calendars and boards, **Taskra** for to-do lists, **Zonerider** for 3D modeling and animation, **Yuzu** for email, **Phosphor** for team messaging and [[opendb|OpenDB]], the free database this article is part of.
