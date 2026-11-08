@@ -14,7 +14,8 @@
     'use strict';
     const NS = 'http://www.w3.org/2000/svg';
     const A = { dur: 3, loop: true, ease: 'ease-in-out' };
-    let open = false, exporting = false, playing = false, tNow = 0, raf = 0, dock = null;
+    let open = false, exporting = false, playing = false, tNow = 0, raf = 0, dock = null, autoKey = false, selSig = '';
+    const snaps = {};   // idx -> a copy of the shape as it was before you moved it (what a new keyframe is measured against)
     const BEZ = { 'ease': [0.25, 0.1, 0.25, 1], 'ease-in': [0.42, 0, 1, 1], 'ease-out': [0, 0, 0.58, 1], 'ease-in-out': [0.42, 0, 0.58, 1] };
     const PROPS = [
         { id: 'dx', label: 'Move X', unit: 'px', def: 0, min: -1500, max: 1500, step: 1 },
@@ -138,6 +139,7 @@
     const sv = () => document.getElementById('viewport');
     function seek(sec) {
         tNow = clamp(sec, 0, A.dur);
+        snapshotSelection();
         const s = sv(); if (s && s.pauseAnimations && active()) { try { s.pauseAnimations(); s.setCurrentTime(tNow); } catch (e) {} }
         refresh();
     }
@@ -163,6 +165,8 @@
     // after every render: the SMIL elements are new, so the clock is put back where the playhead is
     function sync() {
         if (!active()) return;
+        const sig = (typeof selectedIndices !== 'undefined' ? selectedIndices : []).join(',');
+        if (sig !== selSig) { selSig = sig; snapshotSelection(); }
         const s = sv(); if (!s) return;
         try { s.setCurrentTime(tNow); if (playing) s.unpauseAnimations(); else s.pauseAnimations(); } catch (e) {}
         refresh();
@@ -187,6 +191,65 @@
         if (!list.length) delete obj.anim[pid];
         if (!Object.keys(obj.anim).length) delete obj.anim;
     }
+    /* ---------- Set keyframe: capture what you did to the shape at the playhead ----------
+       The tracks hold how far a shape is from where it is drawn (its base). You drag, turn, resize or recolour a shape on the canvas
+       while the playhead is at a time, then Set keyframe measures the difference against the copy taken before you touched it,
+       adds it to what the animation already does at that time, keys EVERY property there, and puts the base back, so the shape
+       stays exactly where you left it and the animation carries the change. */
+    const clone = (o) => JSON.parse(JSON.stringify(o));
+    const plain = (o) => { const c = clone(o); delete c.anim; return c; };
+    function snapshot(i) { if (objects[i]) snaps[i] = plain(objects[i]); }
+    function snapshotSelection() { Object.keys(snaps).forEach((k) => delete snaps[k]); (selectedIndices || []).forEach(snapshot); }
+    const changedSince = (i) => !!objects[i] && !!snaps[i] && JSON.stringify(plain(objects[i])) !== JSON.stringify(snaps[i]);
+    function capture(i, tf) {
+        const o = objects[i]; if (!o) return false;
+        const s0 = snaps[i] || plain(o);
+        const cur = (pid) => valueAt(o.anim && o.anim[pid], tf, defOf(s0, PROPS.find((x) => x.id === pid)), pid === 'fill');
+        let b0 = { x: 0, y: 0, w: 1, h: 1 }, b1 = b0;
+        try { b0 = shapeBBox(s0); b1 = shapeBBox(o); } catch (e) {}
+        const area0 = Math.max(1e-6, b0.w * b0.h), area1 = Math.max(1e-6, b1.w * b1.h);
+        const vals = {
+            dx: cur('dx') + ((b1.x + b1.w / 2) - (b0.x + b0.w / 2)),
+            dy: cur('dy') + ((b1.y + b1.h / 2) - (b0.y + b0.h / 2)),
+            rot: cur('rot') + ((o.rotation || 0) - (s0.rotation || 0)),
+            scale: clamp(cur('scale') * Math.sqrt(area1 / area0), 0, 8),
+            opacity: clamp(cur('opacity') * ((s0.opacity === 0 || s0.opacity === undefined) ? 1 : (o.opacity === undefined ? 1 : o.opacity) / s0.opacity), 0, 1)
+        };
+        const solid = !o.fillType || o.fillType === 'color';
+        if (solid) vals.fill = (o.fill !== s0.fill) ? o.fill : cur('fill');
+        Object.keys(vals).forEach((pid) => setKey(o, pid, tf, typeof vals[pid] === 'number' ? +f3(vals[pid]) : vals[pid]));
+        // the base goes back to what it was: the animation now carries the change
+        Object.keys(o).forEach((k) => { if (k !== 'anim') delete o[k]; });
+        Object.assign(o, clone(s0));
+        snapshot(i);
+        return true;
+    }
+    function setKeyframe(quiet) {
+        const sel = (selectedIndices || []).filter((i) => objects[i]);
+        if (!sel.length) { if (!quiet) note('Pick a shape first, then move it and press Set keyframe!'); return; }
+        if (playing) pause();
+        pushHistory(true);
+        const tf = A.dur ? tNow / A.dur : 0;
+        sel.forEach((i) => capture(i, tf));
+        render();
+        if (!quiet) { playUISound && playUISound('snap'); note('Keyframe set at ' + tNow.toFixed(2) + 's for ' + sel.length + (sel.length === 1 ? ' shape' : ' shapes') + '. Move the playhead, move the shape, and set another!'); }
+    }
+    // Auto-key: finishing a drag, a turn or a slider while the Animate window is open keys the change at the playhead
+    function maybeAutoKey() {
+        if (!open || !autoKey || playing) return;
+        const sel = (selectedIndices || []).filter((i) => changedSince(i));
+        if (!sel.length) return;
+        pushHistory(true);
+        const tf = A.dur ? tNow / A.dur : 0;
+        sel.forEach((i) => capture(i, tf));
+        render();
+        note('Auto-key: keyframe set at ' + tNow.toFixed(2) + 's');
+    }
+    ['mouseup', 'touchend', 'change', 'keyup'].forEach((ev) => document.addEventListener(ev, (e) => {
+        if (!open || !autoKey || (dock && dock.contains(e.target))) return;
+        setTimeout(maybeAutoKey, 30);
+    }, true));
+
     // presets: each makes tracks over the whole animation
     const PRESETS = {
         'Fade in': () => ({ opacity: [{ t: 0, v: 0 }, { t: 0.35, v: 1 }] }),
@@ -221,6 +284,7 @@
 #anim-dock b{color:#FF60C5;letter-spacing:1px;text-transform:uppercase}
 #anim-dock button,#anim-dock select,#anim-dock input[type=number],#anim-dock input[type=text]{font:inherit;color:#fff;background:rgba(255,255,255,.08);border:1px solid rgba(255,96,197,.5);border-radius:8px;padding:4px 9px}
 #anim-dock button{cursor:pointer}#anim-dock button:hover{background:rgba(255,96,197,.28)}
+#anim-dock #ad-setkey{background:linear-gradient(180deg,#ff8a1b,#c25e00);border-color:#ffd2a0;font-weight:800}
 #anim-dock .ad-on{background:linear-gradient(180deg,#ff60c5,#c026a0)!important;border-color:#ffd2ef!important}
 #anim-dock #ad-scrub{flex:1;min-width:140px}
 #anim-dock input[type=number]{width:62px}
@@ -240,10 +304,12 @@
         const st = document.createElement('style'); st.textContent = CSS; document.head.appendChild(st);
         dock = document.createElement('div'); dock.id = 'anim-dock'; dock.hidden = true;
         dock.innerHTML = `<div class="ad-head"><b>Animation</b>
+            <button id="ad-setkey" title="Capture the selected shapes (position, rotation, size, opacity, fill) as a keyframe at the playhead">◆ Set keyframe</button>
             <button id="ad-play" title="Play or pause">Play</button><button id="ad-stop" title="Back to the start">Stop</button>
             <input type="range" id="ad-scrub" min="0" max="1000" value="0" title="Move the playhead"><span id="ad-time">0.00s</span>
             <label>Length <input type="number" id="ad-dur" min="0.5" max="120" step="0.5"> s</label>
             <label><input type="checkbox" id="ad-loop"> Loop</label>
+            <label title="Moving, turning, resizing or recolouring a shape sets a keyframe at the playhead by itself"><input type="checkbox" id="ad-auto"> Auto-key</label>
             <label>Easing <select id="ad-ease"><option value="ease-in-out">Ease in out</option><option value="ease">Ease</option><option value="ease-in">Ease in</option><option value="ease-out">Ease out</option><option value="linear">Linear</option><option value="discrete">Steps</option></select></label>
             <button id="ad-export" title="Download an SVG that animates by itself">Export animated SVG</button><button id="ad-close" title="Close">✕</button></div>
           <div class="ad-body"><div class="ad-presets"><select id="ad-preset"><option value="">Preset…</option>${Object.keys(PRESETS).map((k) => '<option>' + k + '</option>').join('')}</select>
@@ -251,6 +317,8 @@
             <div id="ad-rows"></div></div>`;
         document.body.appendChild(dock);
         const $ = (id) => dock.querySelector('#' + id);
+        $('ad-setkey').onclick = () => setKeyframe();
+        $('ad-auto').onchange = (e) => { autoKey = e.target.checked; note(autoKey ? 'Auto-key is on: change a shape at the playhead and it is keyed!' : 'Auto-key is off.'); };
         $('ad-play').onclick = () => (playing ? pause() : play());
         $('ad-stop').onclick = stop;
         $('ad-close').onclick = closeDock;
@@ -286,7 +354,7 @@
         if (document.activeElement !== $('ad-scrub')) $('ad-scrub').value = Math.round(tf * 1000);
         $('ad-time').textContent = tNow.toFixed(2) + 's';
         if (document.activeElement !== $('ad-dur')) $('ad-dur').value = A.dur;
-        $('ad-loop').checked = A.loop; $('ad-ease').value = A.ease;
+        $('ad-loop').checked = A.loop; $('ad-ease').value = A.ease; $('ad-auto').checked = autoKey;
         const rows = $('ad-rows'), o = target();
         if (!o) { rows.innerHTML = '<div style="color:#ffd2ef;opacity:.8">Pick a shape to animate it, or apply a preset to the selection. Number boxes and the ◆ buttons make keyframes at the playhead.</div>'; lastRowsKey = ''; return; }
         if (light) {   // while playing only the playhead lines move
@@ -326,7 +394,7 @@
             };
         });
     }
-    function openDock() { build(); open = true; dock.hidden = false; const b = document.getElementById('anim-btn'); if (b) b.classList.add('active'); render(); }
+    function openDock() { build(); snapshotSelection(); open = true; dock.hidden = false; const b = document.getElementById('anim-btn'); if (b) b.classList.add('active'); render(); }
     function closeDock() { pause(); open = false; if (dock) dock.hidden = true; const b = document.getElementById('anim-btn'); if (b) b.classList.remove('active'); render(); }
     function toggle() { if (open) closeDock(); else openDock(); }
 
@@ -362,6 +430,6 @@
         beginExport: beginExport, endExport: endExport, anyAnimation: anyAnimation,
         settings: () => (anyAnimation() ? { duration: A.dur, loop: A.loop, ease: A.ease } : undefined),
         load: (s) => { if (!s) return; A.dur = clamp(+s.duration || 3, 0.5, 120); A.loop = s.loop !== false; A.ease = s.ease || 'ease-in-out'; },
-        valueAt: valueAt, state: () => ({ open: open, playing: playing, t: tNow, A: A })
+        setKeyframe: setKeyframe, valueAt: valueAt, state: () => ({ open: open, playing: playing, t: tNow, A: A })
     };
 })(typeof window !== 'undefined' ? window : this);

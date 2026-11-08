@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '7e0ae13862de';
+const VERSION = '8e84618d8cba';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","c5e15f09bd"],
@@ -180,8 +180,8 @@ const CORE = [["/","c5e15f09bd"],
   ["/imbuer/ribbon.js?v=20261210zj","78356a7b0f"],
   ["/imbuer/style.css?v=20261210p","db50b9dde9"],
   ["/index.html","c5e15f09bd"],
-  ["/inkpath/","8c2fea8c07"],
-  ["/inkpath/animation.js?v=20261212b","871034a3cc"],
+  ["/inkpath/","11aeaef0ab"],
+  ["/inkpath/animation.js?v=20261212c","8140a2c03c"],
   ["/inkpath/app.js?v=20261212b","e3f2fbc098"],
   ["/inkpath/apple-touch-icon.png","be49b899f3"],
   ["/inkpath/bezmath.js","344ed5f815"],
@@ -189,9 +189,9 @@ const CORE = [["/","c5e15f09bd"],
   ["/inkpath/collab-inkpath.js?v=20261042","80b49895b7"],
   ["/inkpath/css2svg.js?v=20261204d","198ba068a1"],
   ["/inkpath/favicon-96.png","4af36efa9d"],
-  ["/inkpath/index.html","8c2fea8c07"],
-  ["/inkpath/mobile/","6e3b5da588"],
-  ["/inkpath/mobile/index.html","6e3b5da588"],
+  ["/inkpath/index.html","11aeaef0ab"],
+  ["/inkpath/mobile/","8f8ea4f54e"],
+  ["/inkpath/mobile/index.html","8f8ea4f54e"],
   ["/inkpath/radii-collab.css?v=20261042","8b8ee6cb67"],
   ["/inkpath/radii-collab.js?v=20261211b","39950cbb0a"],
   ["/inkpath/radii-file.js?v=20261211a","35211af971"],
