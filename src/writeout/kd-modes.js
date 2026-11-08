@@ -443,12 +443,32 @@
     ['beforeinput', 'paste', 'drop', 'cut'].forEach(function (t) { document.addEventListener(t, blockInput, true); });
 
     /* ---------- switching ---------- */
+    // Each mode remembers how far down you had scrolled: Visual and View are linked (one shared spot), Source has its own,
+    // so going back to either lands where you left it, not at some random page!
+    const scrollAt = { page: 0, source: 0 };
+    let scrollToken = 0;
+    const grpOf = function (m) { return m === 'source' ? 'source' : 'page'; };
+    function scrollBoxOf(el) {
+        for (let e = el && el.parentElement; e; e = e.parentElement) {
+            if (/(auto|scroll)/.test(getComputedStyle(e).overflowY) && e.scrollHeight > e.clientHeight) return e;
+        }
+        return document.scrollingElement || document.documentElement;
+    }
+    function rememberScroll(m) { try { scrollAt[grpOf(m)] = scrollBoxOf(m === 'source' ? src : ed).scrollTop; } catch (e) {} }
+    // puts the remembered spot back once the new mode is laid out (a few tries while fonts and formulas settle; scrolling yourself cancels the rest)
+    function restoreScroll(m) {
+        const top = scrollAt[grpOf(m)] || 0, tok = ++scrollToken;
+        const go = function () { if (tok !== scrollToken || mode !== m) return; try { scrollBoxOf(m === 'source' ? src : ed).scrollTop = top; } catch (e) {} };
+        go(); requestAnimationFrame(go); setTimeout(go, 120); setTimeout(go, 450);
+    }
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function (t) { document.addEventListener(t, function () { scrollToken++; }, true); });
     let busy = Promise.resolve();
     function set(m) {
         if (!/^(view|visual|source)$/.test(m) || m === mode) return busy;
         const from = mode;
         busy = busy.then(function () {
             clearTimeout(srcTimer);
+            rememberScroll(from);
             // leaving Source: the text becomes the page (all of it formatted)
             const fromSource = from === 'source' && src ? build(fullText()) : Promise.resolve();
             return fromSource.then(function () {
@@ -462,14 +482,15 @@
                     // (the box could only be measured once it showed: size it to its text now, and again when fonts arrive)
                     refresh(); requestAnimationFrame(refresh);
                     try { if (document.fonts && document.fonts.ready) document.fonts.ready.then(refresh); } catch (e) {}
-                    setTimeout(function () { try { src.focus(); src.setSelectionRange(0, 0); src.scrollTop = 0; } catch (e) {} touched = false; }, 0);
+                    setTimeout(function () { try { src.focus({ preventScroll: true }); src.setSelectionRange(0, 0); src.scrollTop = 0; } catch (e) {} touched = false; restoreScroll('source'); }, 0);
                     return;
                 }
                 if (m === 'view') {
                     // read the page again from its text, so everything on it is formatted
-                    return build(textNow()).then(function () { paintBar(); try { ed.blur(); } catch (e) {} });
+                    return build(textNow()).then(function () { paintBar(); try { ed.blur(); } catch (e) {} restoreScroll('view'); });
                 }
                 paintBar();
+                restoreScroll('visual');
             });
         }).catch(function (e) { try { console.error('[Keydown] mode switch failed', e); } catch (x) {} toast('Could not switch modes: ' + (e && e.message || e)); paintBar(); });
         return busy;
