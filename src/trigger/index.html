@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radii Trigger</title>
+    <meta name="description" content="Type automation rules like #!trigger-[sync]-Writeout->notify!# and watch glowing pods react when your Radii files change!">
+    <meta name="theme-color" content="#22d3ee">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="style.css?v=20261211a">
+</head>
+<body>
+<header class="tg-top">
+    <img src="favicon.svg" width="30" height="30" alt="">
+    <h1>Radii Trigger</h1>
+    <span class="tg-state" id="tg-state">Running</span>
+    <span class="tg-grow"></span>
+    <button type="button" class="tg-btn" id="tg-folder">Watch a folder…</button>
+    <button type="button" class="tg-btn tg-main" id="tg-run">Pause</button>
+</header>
+<main class="tg-wrap">
+    <section class="tg-pane">
+        <h2>Rules <small>one per line</small></h2>
+        <textarea id="tg-rules" spellcheck="false" aria-label="Rules"></textarea>
+        <div class="tg-help">
+            <p>A rule looks like <code>#!trigger-[event]-Source-&gt;action!#</code></p>
+            <p><b>Events</b> <code>change</code> <code>save</code> <code>sync</code> <code>start</code> <code>every:30s</code></p>
+            <p><b>Sources</b> an app name (Writeout, Mainkey, Inkpath…) or <code>Any</code></p>
+            <p><b>Actions</b> <code>notify</code> <code>log</code> <code>pod:orange</code> <code>open:Inkpath</code> (or just <code>Inkpath</code>) <code>copy:backup</code> <code>webhook:https://…</code></p>
+            <p>Chain actions with commas: <code>-&gt;notify,pod:blue,copy:backup</code></p>
+        </div>
+    </section>
+    <section class="tg-pane">
+        <h2>Pods <small id="tg-count"></small></h2>
+        <div class="tg-pods" id="tg-pods"></div>
+        <h2>Log</h2>
+        <ol class="tg-log" id="tg-log" aria-live="polite"></ol>
+    </section>
+</main>
+<script src="app.js?v=20261211a"></script>
+</body>
+</html>

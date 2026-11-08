@@ -27,7 +27,7 @@
     const THEMES = {
         amber: ['#f5a300', '#ffe94a'], antimony: ['#0f8f80', '#5ee0cf'], cabinet: ['#ee0000', '#ffbcbc'], formly: ['#8b7cf6', '#ddd4ff'],
         hexa: ['#22c2a6', '#b8f5ea'], imbuer: ['#02bf00', '#80ff00'], inkpath: ['#ff7cd0', '#ffd7fc'], mainkey: ['#bd1cff', '#f6c2ff'],
-        omicron: ['#17d9bf', '#b8f7f4'], peeker: ['#ff8a1b', '#ffd9a8'], phosphor: ['#34d399', '#a0e8dc'], taskra: ['#6f6cf0', '#cfcdff'], zonerider: ['#8fc400', '#e9ffb0'],
+        omicron: ['#17d9bf', '#b8f7f4'], peeker: ['#ff8a1b', '#ffd9a8'], phosphor: ['#34d399', '#a0e8dc'], taskra: ['#6f6cf0', '#cfcdff'], zonerider: ['#8fc400', '#e9ffb0'], trigger: ['#22d3ee', '#c7f3ff'],
         waterflow: ['#14b8a6', '#facc15'], opendb: ['#1d4ed8', '#7cc0ff'], writeout: ['#0a9cf0', '#7fe3ff'], bitbook: ['#d01bff', '#f8c4ff'], yuzu: ['#0065ff', '#9cc3ff']
     };
     const theme = THEMES[(location.pathname.split('/')[1] || '').toLowerCase()] || ['#1278c8', '#7fd0ff'];

@@ -432,6 +432,7 @@
     let diffTimer = null;
     // Throttled (not debounced), so a long drag streams live instead of waiting!
     function localChanged() {
+        disk.touched();
         if (!room.on || applying || !room.synced || diffTimer) return;
         diffTimer = setTimeout(function () { diffTimer = null; diffAndSend(); }, 120);
     }
@@ -1001,6 +1002,7 @@
             const self = this;
             const self0 = this;
             let html = '<label class="rc-label">Your name<input class="rc-input rc-name" maxlength="24" placeholder="Pick a display name" value="' + esc(me.name) + '"></label>';
+            html += disk.card();
             if (window.RadiiFile) {
                 html += '<div class="rc-card rc-filecard"><b>Share a copy as a link</b>' +
                     '<p class="rc-fine">The whole ' + esc(cfg.docName) + ' is packed into one long number inside the link (after the #, so it never reaches any server). Whoever opens it gets their own private copy, with no file to download!</p>' +
@@ -1046,6 +1048,7 @@
             });
             nm.addEventListener('keydown', function (e) { if (e.key === 'Enter') nm.blur(); });
             const on = function (sel, fn) { const x = b.querySelector(sel); if (x) x.addEventListener('click', fn); };
+            disk.wire(b);
             on('.rc-start', function () { nm.dispatchEvent(new Event('change')); start(); });
             on('.rc-join', function () { nm.dispatchEvent(new Event('change')); joinFromText(b.querySelector('.rc-paste').value); });
             on('.rc-copy', function () { copyLink(); });
@@ -1230,6 +1233,7 @@
     function init(config) {
         cfg = config;
         ui.build();
+        setTimeout(disk.boot, 900);
         // Rejoin after a reload, or join from an invite link!
         const docNum = docFromHash();
         if (docNum) setTimeout(function () { openDocLink(docNum); }, 350);
@@ -1254,10 +1258,240 @@
         window.addEventListener('hashchange', function () { const h = parseHash(); if (h) join(h.id, h.key); });
     }
 
+    /* ---------- A real file on this computer, kept up to date as you type! ----------
+       "Save to a file" picks a place once, then EVERY edit quietly rewrites that same file (like a desktop app), and when
+       something else changes the file (a synced folder, another window) the document updates live.
+       Chrome and Edge use the File System Access API; the Radii desktop apps use their own file commands. */
+    const disk = (function () {
+        const TI = window.__TAURI_INTERNALS__;
+        const hasFS = !!(window.showSaveFilePicker && window.showOpenFilePicker);
+        const kind = TI ? 'tauri' : hasFS ? 'web' : 'none';
+        let h = null, fname = '', lastText = '', lastMod = 0, timer = null, poller = null, busy = false, needPerm = false, status = '', applyingDisk = false;
+        const fid = function () { return (window.RadiiFile && window.RadiiFile.id) ? '@' + window.RadiiFile.id : ''; };
+        const key = function () { return 'radii_disk_' + cfg.app + fid(); };
+        const rawLS = function (m, k, v) { try { const P = Storage.prototype; return m === 'g' ? localStorage.getItem(k) : localStorage.setItem(k, v); } catch (e) { return null; } };
+        function idb() {
+            return new Promise(function (res, rej) {
+                const r = indexedDB.open('radii-disk', 1);
+                r.onupgradeneeded = function () { r.result.createObjectStore('h'); };
+                r.onsuccess = function () { res(r.result); };
+                r.onerror = function () { rej(r.error); };
+            });
+        }
+        function idbGet(k) { return idb().then(function (d) { return new Promise(function (res) { const q = d.transaction('h').objectStore('h').get(k); q.onsuccess = function () { res(q.result || null); }; q.onerror = function () { res(null); }; }); }).catch(function () { return null; }); }
+        function idbSet(k, v) { return idb().then(function (d) { return new Promise(function (res) { const t = d.transaction('h', 'readwrite'); if (v) t.objectStore('h').put(v, k); else t.objectStore('h').delete(k); t.oncomplete = function () { res(); }; t.onerror = function () { res(); }; }); }).catch(function () {}); }
+        const inv = function (cmd, args) { return TI.invoke(cmd, args || {}); };
+        function serialize() {
+            return JSON.stringify({ radii: 1, app: cfg.app, name: cfg.docName, saved: Date.now(), units: readSnapshot() });
+        }
+        function ui_() { try { ui.renderPeople(); } catch (e) {} }
+        function stamp() { const d = new Date(); return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }); }
+        async function readFile() {
+            if (kind === 'tauri') { const r = await inv('radii_read', { path: h }); return { text: r.text, mod: r.mtime }; }
+            const f = await h.getFile();
+            return { text: await f.text(), mod: f.lastModified };
+        }
+        async function modOf() {
+            if (kind === 'tauri') return await inv('radii_stat', { path: h });
+            return (await h.getFile()).lastModified;
+        }
+        async function writeFile(text) {
+            if (kind === 'tauri') { return await inv('radii_write', { path: h, text: text }); }
+            const w = await h.createWritable();
+            await w.write(text);
+            await w.close();
+            return (await h.getFile()).lastModified;
+        }
+        async function save(force) {
+            if (!h || needPerm || applyingDisk || busy) return;
+            const text = serialize();
+            const cmp = function (t) { try { const o = JSON.parse(t); delete o.saved; return JSON.stringify(o); } catch (e) { return t; } };
+            if (!force && cmp(text) === cmp(lastText)) return;
+            busy = true;
+            try {
+                lastMod = await writeFile(text);
+                lastText = text;
+                rawLS('s', key() + '_ts', String(Date.now()));
+                status = 'Saved ' + stamp();
+            } catch (e) {
+                console.error(e);
+                needPerm = kind === 'web';
+                status = needPerm ? 'Click Reconnect to keep saving' : 'Could not save: ' + (e && e.message || e);
+            }
+            busy = false;
+            ui_();
+        }
+        function touched() {
+            if (!h || applyingDisk) return;
+            clearTimeout(timer);
+            timer = setTimeout(function () { timer = null; save(false); }, 300);
+        }
+        function fromText(text) {
+            const o = JSON.parse(text);
+            if (!o || typeof o.units !== 'object') throw new Error('That file is not a Radii document!');
+            if (o.app && o.app !== cfg.app) throw new Error('That file belongs to ' + o.app + ': open it there!');
+            return o;
+        }
+        function applyUnits(units) {
+            // (adapters rebuild from the room's units, so they are loaded in first, like a shared-copy link does)
+            const keep = room.units;
+            const live = room.on;
+            const fresh = live ? new Map(keep) : new Map();
+            const changed = {};
+            Object.keys(units).forEach(function (k) { const v = units[k] == null ? null : JSON.stringify(units[k]); fresh.set(k, { v: v, c: live ? ++room.clock : 1, w: live ? me.id : 'disk' }); changed[k] = units[k]; });
+            if (live) keep.forEach(function (u, k) { if (!(k in units) && u.v !== null) { fresh.set(k, { v: null, c: ++room.clock, w: me.id }); changed[k] = null; } });
+            room.units = fresh;
+            applyingDisk = true; applying = true;
+            try { cfg.adapter.apply(changed, true, {}); } catch (e) { console.error(e); }
+            applying = false; applyingDisk = false;
+            if (!live) room.units = new Map();
+            else { try { send('d', { t: 'ops', from: me.id, units: (function () { const o = {}; fresh.forEach(function (u, k) { if (u.w === me.id) o[k] = u; }); return o; })() }); } catch (e) {} }
+        }
+        async function tick() {
+            if (!h || needPerm || busy || timer) return;
+            try {
+                const m = await modOf();
+                if (m === lastMod) return;
+                lastMod = m;
+                const r = await readFile();
+                if (r.text === lastText) return;
+                const o = fromText(r.text);
+                lastText = r.text;
+                applyUnits(o.units);
+                status = 'Updated from the file at ' + stamp();
+                ui_();
+            } catch (e) { /* the file may be mid-write: try again next beat */ }
+        }
+        function run() {
+            clearInterval(poller);
+            poller = setInterval(tick, 1100);
+        }
+        async function useHandle(handle, name, mode) {
+            h = handle; fname = name; needPerm = false;
+            if (mode === 'open') {
+                const r = await readFile();
+                const o = fromText(r.text);
+                try { cfg.adapter.begin && cfg.adapter.begin('guest'); } catch (e) { console.error(e); }
+                lastText = r.text; lastMod = r.mod;
+                applyUnits(o.units);
+                status = 'Opened and watching';
+            } else {
+                await save(true);
+            }
+            if (kind === 'tauri') rawLS('s', key() + '_path', JSON.stringify({ p: handle, n: name })); else await idbSet(key(), handle);
+            run();
+            ui_();
+        }
+        async function newFile() {
+            const base = String(cfg.docName || cfg.app).replace(/[^\w\- ]+/g, '').trim() || cfg.app;
+            try {
+                if (kind === 'tauri') {
+                    const p = await inv('radii_pick', { save: true, name: base + '.radii' });
+                    if (!p) return;
+                    await useHandle(p, p.split(/[\\/]/).pop(), 'new');
+                } else {
+                    const fh = await window.showSaveFilePicker({ suggestedName: base + '.radii', types: [{ description: 'Radii file', accept: { 'application/json': ['.radii'] } }] });
+                    await useHandle(fh, fh.name, 'new');
+                }
+                ui.toast('Done! Every change now saves to ' + fname + ' by itself!');
+            } catch (e) { if (!(e && e.name === 'AbortError')) ui.toast(String(e && e.message || 'Could not make that file!')); }
+        }
+        async function openFile() {
+            try {
+                if (kind === 'tauri') {
+                    const p = await inv('radii_pick', { save: false, name: '' });
+                    if (!p) return;
+                    await useHandle(p, p.split(/[\\/]/).pop(), 'open');
+                } else {
+                    const r = await window.showOpenFilePicker({ types: [{ description: 'Radii file', accept: { 'application/json': ['.radii', '.json'] } }] });
+                    await useHandle(r[0], r[0].name, 'open');
+                }
+                ui.toast('Opened ' + fname + '! It updates live from now on!');
+            } catch (e) { if (!(e && e.name === 'AbortError')) ui.toast(String(e && e.message || 'Could not open that file!')); }
+        }
+        function off() {
+            clearInterval(poller); clearTimeout(timer);
+            h = null; fname = ''; needPerm = false; status = '';
+            if (kind === 'tauri') rawLS('s', key() + '_path', ''); else idbSet(key(), null);
+            ui_();
+        }
+        async function reconnect() {
+            if (!h || kind !== 'web') return;
+            try {
+                if ((await h.requestPermission({ mode: 'readwrite' })) === 'granted') { needPerm = false; status = 'Reconnected'; await settle(); run(); }
+            } catch (e) { console.error(e); }
+            ui_();
+        }
+        // After a reload: whichever side is newer wins, so nothing typed is lost
+        async function settle() {
+            try {
+                const r = await readFile();
+                const o = fromText(r.text);
+                const mine = Number(rawLS('g', key() + '_ts')) || 0;
+                lastMod = r.mod;
+                if ((o.saved || 0) > mine + 1500) { lastText = r.text; applyUnits(o.units); status = 'Updated from the file at ' + stamp(); }
+                else { lastText = r.text; await save(true); }
+            } catch (e) { await save(true); }
+        }
+        async function boot() {
+            if (kind === 'none') return;
+            try {
+                if (kind === 'tauri') {
+                    const s = JSON.parse(rawLS('g', key() + '_path') || 'null');
+                    if (!s || !s.p) return;
+                    h = s.p; fname = s.n;
+                    try { await modOf(); } catch (e) { h = null; return; }
+                    await settle(); run(); ui_();
+                } else {
+                    const fh = await idbGet(key());
+                    if (!fh) return;
+                    h = fh; fname = fh.name;
+                    if ((await fh.queryPermission({ mode: 'readwrite' })) === 'granted') { await settle(); run(); }
+                    else {
+                        needPerm = true; status = 'Click Reconnect to keep saving';
+                        document.addEventListener('click', function once(ev) { if (ev.target && ev.target.closest && ev.target.closest('.rc-panel,.rc-share')) return; document.removeEventListener('click', once, true); reconnect(); }, true);
+                    }
+                    ui_();
+                }
+            } catch (e) { console.error(e); }
+        }
+        function download() {
+            const t = serialize();
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([t], { type: 'application/json' }));
+            a.download = (String(cfg.docName || cfg.app).replace(/[^\w\- ]+/g, '').trim() || cfg.app) + '.radii';
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+        }
+        function card() {
+            const dl = '<button type="button" class="rc-btn rc-disk-dl">Download a copy</button>';
+            let html = '<div class="rc-card rc-diskcard"><b>Keep a file on this computer</b>';
+            if (kind === 'none') {
+                html += '<p class="rc-fine">This browser cannot keep a file up to date by itself. Chrome, Edge and the Radii desktop apps can! You can still download a copy.</p><div class="rc-row">' + dl + '</div>';
+            } else if (!h) {
+                html += '<p class="rc-fine">Save this ' + esc(cfg.docName) + ' as a real file. After that, every change you make is written to it as you type, and if the file changes somewhere else (a synced folder, another window) this ' + esc(cfg.docName) + ' updates live!</p>' +
+                    '<div class="rc-row"><button type="button" class="rc-btn rc-gel rc-disk-new">Save to a file…</button><button type="button" class="rc-btn rc-disk-open">Open a file…</button></div>';
+            } else {
+                html += '<p class="rc-fine"><b>' + esc(fname) + '</b><br>' + esc(status || 'Keeping it up to date!') + '</p><div class="rc-row">' +
+                    (needPerm ? '<button type="button" class="rc-btn rc-gel rc-disk-perm">Reconnect</button>' : '') +
+                    '<button type="button" class="rc-btn rc-disk-now">Save now</button>' + dl + '<button type="button" class="rc-btn rc-disk-off">Stop</button></div>';
+            }
+            return html + '</div>';
+        }
+        function wire(b) {
+            const on = function (sel, fn) { const x = b.querySelector(sel); if (x) x.addEventListener('click', fn); };
+            on('.rc-disk-new', newFile); on('.rc-disk-open', openFile); on('.rc-disk-off', off);
+            on('.rc-disk-perm', reconnect); on('.rc-disk-now', function () { save(true); }); on('.rc-disk-dl', download);
+        }
+        window.addEventListener('beforeunload', function () { if (h && timer) { try { save(false); } catch (e) {} } });
+        return { kind: kind, touched: touched, boot: boot, card: card, wire: wire, linked: function () { return !!h; }, name: function () { return fname; }, saveNow: function () { return save(true); } };
+    })();
+
     window.RadiiCollab = {
         init: init,
         changed: localChanged,
         cursorMoved: cursorMoved,
+        disk: { linked: disk.linked, name: disk.name, saveNow: disk.saveNow, kind: disk.kind },
         shareButton: shareButton,
         open: function (tab) { ui.open(tab); },
         toggle: function (tab) { ui.toggle(tab); },

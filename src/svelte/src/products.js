@@ -4,7 +4,7 @@ import ProductFinder from './ProductFinder.svelte';
 import DownloadDialog from './DownloadDialog.svelte';
 
 // Each app's name exactly as its desktop files are named in the release (Writeout-Windows.exe...)!
-const APPS = { inkpath: 'Inkpath', mainkey: 'Mainkey', imbuer: 'Imbuer', writeout: 'Writeout', amber: 'Amber', omicron: 'Omicron', formly: 'Formly', opendb: 'OpenDB', peeker: 'Peeker', cabinet: 'Cabinet', phosphor: 'Phosphor', bitbook: 'Bitbook', hexa: 'Hexa', taskra: 'Taskra', waterflow: 'Waterflow', zonerider: 'Zonerider', yuzu: 'Yuzu' };
+const APPS = { inkpath: 'Inkpath', mainkey: 'Mainkey', imbuer: 'Imbuer', writeout: 'Writeout', amber: 'Amber', omicron: 'Omicron', formly: 'Formly', opendb: 'OpenDB', peeker: 'Peeker', cabinet: 'Cabinet', phosphor: 'Phosphor', bitbook: 'Bitbook', hexa: 'Hexa', taskra: 'Taskra', waterflow: 'Waterflow', zonerider: 'Zonerider', trigger: 'Trigger', yuzu: 'Yuzu' };
 
 function start() {
     const grid = document.querySelector('.product-grid');
