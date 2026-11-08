@@ -1143,8 +1143,38 @@
         const d = pageDims(), m = MARGINS[prefs.margins] || MARGINS.normal;
         st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: 0; } }' : '';
     }
-    window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; try { printTilesOn(); } catch (e) { console.warn('print tiles', e); } });
-    window.addEventListener('afterprint', function () { printPageSize(false); printTilesOff(); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
+    // Page numbers on paper! The sheets (and the numbers written on them) are hidden when printing, so each page's number is
+    // written into the printed flow instead: a layer of labels, one per page, each sitting (page number x page height) down from the top
+    // (the pages are laid edge to edge with the margins repeated on each, so page i ends exactly i page heights down). It lives next to
+    // the document, not inside it, so nothing is saved by accident, and it goes away after printing!
+    function printNumbersOn() {
+        printNumbersOff();
+        if (!prefs.numbers || !pagesOn() || !sheets || !zoomer) return;
+        // (the sheets already carry the right label for each page: read them as they are)
+        const labels = Array.from(sheets.children).map(function (sh) { const sp = sh.querySelector('.bb-pnum'); return sp ? sp.textContent : ''; });
+        if (!labels.length) return;
+        const H = pageDims().h;
+        const box = document.createElement('div');
+        box.className = 'bb-print-nums';
+        box.setAttribute('aria-hidden', 'true');
+        labels.forEach(function (t, i) {
+            if (!t) return;
+            const sp = document.createElement('span');
+            sp.textContent = t;
+            sp.style.top = ((i + 1) * H) + 'px';
+            box.appendChild(sp);
+        });
+        zoomer.appendChild(box);
+        zoomer.style.setProperty('--bb-print-h', (labels.length * H - 1) + 'px');
+        document.body.classList.add('bb-printnums');
+    }
+    function printNumbersOff() {
+        Array.from(document.querySelectorAll('.bb-print-nums')).forEach(function (b) { b.remove(); });
+        document.body.classList.remove('bb-printnums');
+        if (zoomer) zoomer.style.removeProperty('--bb-print-h');
+    }
+    window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; try { printTilesOn(); } catch (e) { console.warn('print tiles', e); } try { printNumbersOn(); } catch (e) { console.warn('print numbers', e); } });
+    window.addEventListener('afterprint', function () { printPageSize(false); printTilesOff(); printNumbersOff(); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
     // Color previews: see the pages as a printout in black and white, or as people with color blindness see them (screen only, never printed)
     const COLOR_PREVIEWS = [['', 'Normal vision'], ['gray', 'Grayscale (a black and white printout)'], ['protan', 'Protanopia (no red)'], ['deutan', 'Deuteranopia (no green)'], ['tritan', 'Tritanopia (no blue)']];
     let colorPreview = '';

@@ -324,3 +324,12 @@ body.os-office .tabs-section { display: none; }
 
 /* Color previews are for the screen only: paper always prints in the real colors */
 @media print { #bb-zoomer { filter: none !important; } }
+
+/* Page numbers on paper: a layer of labels, one at the foot of every printed page (written by printNumbersOn when printing starts) */
+.bb-print-nums { display: none; }
+@media print {
+    body.os-office.bb-printnums #bb-zoomer { position: relative !important; }
+    body.os-office.bb-pages.bb-printnums #wysiwyg-canvas { min-height: var(--bb-print-h) !important; }
+    .bb-print-nums { display: block; position: absolute; left: 0; top: 0; width: 100%; height: var(--bb-print-h); pointer-events: none; z-index: 2; }
+    .bb-print-nums span { position: absolute; left: 0; right: 0; text-align: center; transform: translateY(-100%); margin-top: calc(var(--bb-mb) / -2 + 8px); font: 600 11px var(--os-brand-font, system-ui), sans-serif; color: #64748b; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}

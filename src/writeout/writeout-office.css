@@ -277,3 +277,12 @@ body.os-office .tabs-section { display: none; }
 /* Home carries the documents list: its own heading and hint step aside */
 .rd-embed > h1, .rd-embed > .rd-hint { display: none; }
 .rd-embed .rd-fav { width: 36px; height: 36px; flex: none; }
+
+/* Page numbers on paper: a layer of labels, one at the foot of every printed page (written by printNumbersOn when printing starts) */
+.wo-print-nums { display: none; }
+@media print {
+    body.os-office.wo-printnums #wo-zoomer { position: relative !important; }
+    body.os-office.wo-pages.wo-printnums #wysiwyg-canvas { min-height: var(--wo-print-h) !important; }
+    .wo-print-nums { display: block; position: absolute; left: 0; top: 0; width: 100%; height: var(--wo-print-h); pointer-events: none; z-index: 2; }
+    .wo-print-nums span { position: absolute; left: 0; right: 0; text-align: center; transform: translateY(-100%); margin-top: calc(var(--wo-mb) / -2 + 8px); font: 600 11px var(--os-brand-font, system-ui), sans-serif; color: #64748b; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
