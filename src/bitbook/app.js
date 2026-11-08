@@ -2768,7 +2768,7 @@ function kdCanvasBlocks(html) {
 function kdKeydownPayload(html) {
     const currentTimestampString = new Date().toISOString();
     let yamlConfigBlock = "---\n";
-    yamlConfigBlock += "app: \"Writedown WYSIWYG Suite\"\n";
+    yamlConfigBlock += "app: \"Bitbook\"\n";
     yamlConfigBlock += "format: \"keydown-yaml-canvas\"\n";
     yamlConfigBlock += `exported_at: \"${currentTimestampString}\"\n`;
     yamlConfigBlock += `page_size: \"${kdPageSizeId}\"\n`;

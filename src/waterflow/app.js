@@ -1522,7 +1522,7 @@ function exportKeydownFile() {
 
     // Compile un-bloated, human-scannable YAML header parameters
     let yamlConfigBlock = "---\n";
-    yamlConfigBlock += "app: \"Writedown WYSIWYG Suite\"\n";
+    yamlConfigBlock += "app: \"Waterflow\"\n";
     yamlConfigBlock += "format: \"keydown-yaml-canvas\"\n";
     yamlConfigBlock += `exported_at: \"${currentTimestampString}\"\n`;
     yamlConfigBlock += "---\n\n";
