@@ -61,6 +61,8 @@
     /* ---------- page <-> Keydown text ---------- */
     function save() { try { if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent(); } catch (e) {} }
     function hydrate() {
+        // Keydown Next (::chart, ::timer, {{values}}, ;;pk{ Poolside Keydown }) is drawn again for the rebuilt page
+        try { if (window.KeydownNext) window.KeydownNext.apply(ed, { editing: mode !== 'view' }); } catch (e) {}
         try { if (typeof kdHydrateInteractions === 'function') kdHydrateInteractions(); } catch (e) {}
         try { if (window.BitLang && window.BitLang.hydrate) window.BitLang.hydrate(ed); } catch (e) {}
         try { if (typeof kdRenderOutline === 'function') kdRenderOutline(); } catch (e) {}

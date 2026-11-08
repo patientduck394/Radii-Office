@@ -19,7 +19,8 @@
         scratch: '<svg viewBox="0 0 24 24"><path d="M12 3c3 4 6 7 6 11a6 6 0 0 1-12 0c0-4 3-7 6-11z"/></svg>',
         trash: '<svg viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></svg>',
         book: '<svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>',
-        plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'
+        plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>',
+        more: '<svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg>'
     };
     // Poolside colors: foam, cyan, blue, deep blue, sun and orange (nothing else)
     const COLORS = ['', '#5fd8f7', '#18bfe8', '#1b7fe0', '#0b3f9a', '#ffb35c', '#ff8a1b'];
@@ -284,7 +285,7 @@
     }
     function streamRow(kind, label, icon, count, extra) {
         const on = stream.kind === kind && (!extra || (stream.id === extra.id));
-        return '<button type="button" class="wf-st' + (on ? ' on' : '') + '" data-kind="' + kind + '"' + (extra ? ' data-id="' + esc(extra.id) + '"' : '') + '>' + (extra && extra.color ? '<i class="wf-dot" style="background:' + extra.color + '"></i>' : icon) + '<span>' + esc(label) + '</span><em>' + (count == null ? '' : count) + '</em></button>';
+        return '<button type="button" class="wf-st' + (on ? ' on' : '') + '" data-kind="' + kind + '"' + (extra ? ' data-id="' + esc(extra.id) + '"' : '') + '>' + (extra && extra.color ? '<i class="wf-dot" style="background:' + extra.color + '"></i>' : icon) + '<span>' + esc(label) + '</span><em>' + (count == null ? '' : count) + '</em>' + (kind === 'nb' ? '<i class="wf-st-more" role="button" tabindex="0" data-id="' + esc(extra.id) + '" title="Notebook options: rename, color or delete">' + ICON.more + '</i>' : '') + '</button>';
     }
     function renderRail() {
         const l = live();
@@ -296,10 +297,15 @@
     }
     const inStreamToday = (n) => ymd(new Date(n.updated)) === ymd(new Date());
     $('wf-rail').addEventListener('click', (e) => {
+        const mo = e.target.closest('.wf-st-more');
+        if (mo) { e.stopPropagation(); notebookDialog(mo.dataset.id); return; }
         const st = e.target.closest('.wf-st'); const tg = e.target.closest('.wf-tag');
         if (st) { stream = st.dataset.kind === 'nb' ? { kind: 'nb', id: st.dataset.id } : { kind: st.dataset.kind }; body.dataset.rail = ''; if (stream.kind === 'scratch') { openNote(scratch); } renderAll(); }
         if (tg) { stream = { kind: 'tag', name: tg.dataset.tag }; body.dataset.rail = ''; renderAll(); }
     });
+
+    $('wf-rail').addEventListener('contextmenu', (e) => { const st = e.target.closest('.wf-st[data-kind="nb"]'); if (st) { e.preventDefault(); notebookDialog(st.dataset.id); } });
+    $('wf-rail').addEventListener('keydown', (e) => { const mo = e.target.closest && e.target.closest('.wf-st-more'); if (mo && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); notebookDialog(mo.dataset.id); } });
 
     /* ---------- the list ---------- */
     function listTitle() {
@@ -309,6 +315,7 @@
     }
     function renderList() {
         $('wf-listtitle').textContent = listTitle();
+        $('wf-nbopts').hidden = stream.kind !== 'nb';
         const q = $('wf-q').value.trim().toLowerCase();
         let arr = stream.kind === 'scratch' ? [scratch] : notes.filter(inStream);
         if (q) arr = arr.filter((n) => (n.title + ' ' + n.text + ' ' + (n.tags || []).join(' ')).toLowerCase().includes(q));
@@ -318,6 +325,7 @@
         $('wf-cards').innerHTML = arr.map((n) => '<button type="button" class="wf-cardn' + (cur && cur.id === n.id ? ' on' : '') + '" data-id="' + esc(n.id) + '" role="listitem" style="--c:' + (n.color || (n.nb && (nbs.find((b) => b.id === n.nb) || {}).color) || 'transparent') + '"><b><span>' + esc(titleOf(n)) + '</span>' + (n.pinned ? ICON.pin : '') + '</b><p>' + esc(preview(n) || 'Empty note') + '</p><small>' + esc(when(n.updated)) + (n.nb ? '<i>' + esc(nbName(n.nb)) + '</i>' : '') + (n.tags || []).slice(0, 2).map((t) => '<i>#' + esc(t) + '</i>').join('') + '</small></button>').join('') || '<div class="wf-none">' + (q ? 'Nothing matches that search!' : stream.kind === 'trash' ? 'The trash is empty!' : 'No notes here yet. Press New note!') + '</div>';
     }
     $('wf-cards').addEventListener('click', (e) => { const c = e.target.closest('.wf-cardn'); if (c) { const n = c.dataset.id === 'scratch' ? scratch : notes.find((x) => x.id === c.dataset.id); if (n) openNote(n); } });
+    $('wf-nbopts').addEventListener('click', () => { if (stream.kind === 'nb') notebookDialog(stream.id); });
     $('wf-q').addEventListener('input', renderList);
     $('wf-sort').addEventListener('change', renderList);
     const renderAll = () => { renderRail(); renderList(); };
@@ -442,6 +450,27 @@
             notes.push(n); touch(n);
         }
         stream = { kind: 'today' }; renderAll(); openNote(n);
+    }
+    // a notebook's name, color and removal
+    function notebookDialog(id) {
+        const nb = nbs.find((b) => b.id === id); if (!nb) return;
+        const count = notes.filter((n) => n.nb === id && !n.trashed).length;
+        dialog('Notebook', '<div class="wf-row"><span>Name</span><input type="text" id="nb-name" maxlength="40" value="' + esc(nb.name) + '"></div>' +
+            '<div class="wf-row"><span>Color<small>The color on its notes in the list</small></span><span class="wf-colors wf-nbcolors" id="nb-colors">' + COLORS.map((c) => '<button type="button" data-c="' + c + '" class="' + ((nb.color || '') === c ? 'on' : '') + '" style="background:' + (c || 'linear-gradient(135deg,#fff 45%,#ff8a1b 46%,#ff8a1b 54%,#fff 55%)') + '" aria-label="Color ' + (c || 'none') + '"></button>').join('') + '</span></div>' +
+            '<div class="wf-row"><span>Delete this notebook<small>' + (count ? 'Its ' + count + (count === 1 ? ' note stays' : ' notes stay') + ' in All notes, just without a notebook.' : 'It has no notes in it.') + '</small></span><button type="button" class="wf-btn danger" id="nb-del">Delete notebook</button></div>', (b) => {
+            const name = b.querySelector('#nb-name');
+            const save = () => { const v = name.value.trim().slice(0, 40); if (v && v !== nb.name) { nb.name = v; saveNbs(); renderAll(); if (cur) renderMeta(); } };
+            name.addEventListener('change', save); name.addEventListener('keydown', (e) => { if (e.key === 'Enter') { save(); closeDialog(); } });
+            b.querySelector('#nb-colors').addEventListener('click', (e) => { const c = e.target.closest('button'); if (!c) return; nb.color = c.dataset.c; saveNbs(); b.querySelectorAll('#nb-colors button').forEach((x) => x.classList.toggle('on', x === c)); renderAll(); });
+            b.querySelector('#nb-del').addEventListener('click', () => {
+                if (!confirm('Delete the notebook "' + nb.name + '"?' + (count ? ' Its notes will stay in All notes.' : ''))) return;
+                notes.forEach((n) => { if (n.nb === id) { n.nb = ''; touch(n); } });
+                nbs = nbs.filter((x) => x.id !== id); saveNbs();
+                if (stream.kind === 'nb' && stream.id === id) stream = { kind: 'all' };
+                closeDialog(); if (cur) renderMeta(); renderAll(); toast('Notebook deleted!');
+            });
+            setTimeout(() => name.focus(), 30);
+        });
     }
     function addNotebook() {
         const name = (prompt('Name the new notebook') || '').trim();

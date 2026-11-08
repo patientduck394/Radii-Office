@@ -306,3 +306,13 @@ body[data-theme="night"] .wf-modes button[aria-selected="true"], body[data-theme
 /* inline code looks like it does in Writeout: a soft slate chip (styled `code`{neon} ones keep their own look) */
 .wf-paper :not(pre) > code:not(.kd-ic) { background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border: 1px solid #cbd5e1; color: #475569; padding: 3px 6px; border-radius: 5px; font-size: 14px; box-shadow: 0 1px 2px rgba(0, 0, 0, .05); font-family: monospace; }
 body[data-theme="night"] .wf-paper :not(pre) > code:not(.kd-ic) { background: linear-gradient(180deg, #24384d, #1b2c3f); border-color: #3b5774; color: #cfe3f5; }
+
+/* ---------- notebook options ---------- */
+.wf-st-more { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-right: -6px; border-radius: 8px; opacity: 0; transition: opacity .15s, background .15s; }
+.wf-st-more svg { width: 14px; height: 14px; }
+.wf-st:hover .wf-st-more, .wf-st.on .wf-st-more, .wf-st-more:focus-visible { opacity: 1; }
+.wf-st-more:hover { background: rgba(255, 138, 27, .22); color: #c85f00; }
+@media (hover: none) { .wf-st-more { opacity: 1; } }
+.wf-nbcolors { display: inline-flex; gap: 6px; margin: 0; flex: 0 0 auto; }
+.wf-nbcolors button { width: 22px; height: 22px; padding: 0; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .2); }
+.wf-nbcolors button.on { outline: 2px solid var(--ink); outline-offset: 2px; }

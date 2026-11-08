@@ -24,7 +24,7 @@
     const doc = root.document;
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     const hash = (s) => { let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) >>> 0; return h.toString(36); };
-    const SKIP = 'pre, code, textarea, script, style, .kd-math, .katex, .kdx-block, .kdx-def, .kdx-val, .kdx-set, .kdx-input, .kd-tpl-keep, [data-kdx-skip]';
+    const SKIP = 'pre, code, textarea, script, style, .kd-math, .katex, .kdx-block, .kdx-pk-inline, .kdx-def, .kdx-val, .kdx-set, .kdx-input, .kd-tpl-keep, [data-kdx-skip]';
     const BLOCK = /^(DIV|P|LI|H[1-6]|BLOCKQUOTE|PRE|UL|OL|TABLE|SECTION|ARTICLE|FIGURE|HEADER|FOOTER|DL|DT|DD|FIGCAPTION|HR)$/;
     const changed = (el) => { try { el.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {} };
     const isEditing = (el) => !!(el && (el.isContentEditable || (el.closest && el.closest('[contenteditable="true"]')) || (el.querySelector && el.querySelector('[contenteditable="true"]'))));
@@ -48,6 +48,7 @@
             '.kdx-input b{min-width:1.6em;text-align:center;font-variant-numeric:tabular-nums}',
             '.kdx-block{display:block;margin:10px 0;padding:12px 14px;border-radius:14px;border:1px solid rgba(2,132,199,.35);background:linear-gradient(180deg,#fff,#f0f9ff);color:#0c4a6e;font:14px/1.45 system-ui,sans-serif;box-shadow:0 4px 14px rgba(3,105,161,.12);user-select:none;max-width:640px}',
             '.kdx-block :is(button,input,select){user-select:none}',
+            '.kdx-block.kdx-pk{padding:8px 16px;background:#f4fcff;border-color:#bfeaf9}.kdx-pk-inline{white-space:normal}',
             '.kdx-title{font-weight:800;color:#075985;margin:0 0 8px;font-size:15px}',
             '.kdx-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}',
             '.kdx-chart svg{display:block;width:100%;height:auto}.kdx-legend{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:6px;font-size:12.5px}.kdx-legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}',
@@ -705,8 +706,75 @@
         f.srcdoc = page;
         el.appendChild(f);
     }
+    /* ==================================================================
+       POOLSIDE KEYDOWN:  ;;pk{ Poolside text }  draws Waterflow's own marks with their original Poolside styles
+       (a whole line or several lines make a block, words inside a sentence make an inline piece). The translator is
+       poolside.js (window.PK); without it the text just stays as it was typed.
+       ================================================================== */
+    const PKOPEN = ';;pk{';
+    const pkReady = () => !!(root.PK && root.kdDoc && typeof root.PK.toKD === 'function');
+    // where the braces of the ;;pk{ at `from` close in `text` (-1 while it is still open)
+    function pkClose(text, from) {
+        let depth = 0;
+        for (let k = from + 4; k < text.length; k++) {
+            const c = text[k];
+            if (c === '{') depth++;
+            else if (c === '}') { depth--; if (!depth) return k; }
+        }
+        return -1;
+    }
+    const pkInner = (src) => src.slice(src.indexOf('{') + 1, src.lastIndexOf('}')).replace(/^\n/, '').replace(/\n$/, '');
+    function buildPkBlock(src) {
+        const el = doc.createElement('div');
+        el.className = 'kdx kdx-block kdx-pk kd-pk';
+        el.setAttribute('contenteditable', 'false');
+        el.setAttribute('data-kd-src', src);
+        if (pkReady()) {
+            try { el.innerHTML = root.kdDoc.textToHtml(root.PK.toKD(pkInner(src))); } catch (e) { el.textContent = src; }
+        } else el.textContent = src;
+        return el;
+    }
+    function buildPkInline(src) {
+        const el = doc.createElement('span');
+        el.className = 'kdx kdx-pk-inline kd-pk';
+        el.setAttribute('contenteditable', 'false');
+        el.setAttribute('data-kd-src', src);
+        if (pkReady()) {
+            try { el.innerHTML = root.kdDoc.inlineHtml(root.PK.toKD(pkInner(src))); } catch (e) { el.textContent = src; }
+        } else el.textContent = src;
+        return el;
+    }
+    // ;;pk{ words } inside a sentence
+    function makePkInline(rootEl) {
+        if (!pkReady()) return 0;
+        const w = doc.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT);
+        const hits = [];
+        for (let t = w.nextNode(); t; t = w.nextNode()) {
+            if (t.nodeValue.includes(PKOPEN) && !(t.parentElement && t.parentElement.closest(SKIP))) hits.push(t);
+        }
+        let n = 0;
+        hits.forEach((t) => {
+            let text = t.nodeValue, at = text.indexOf(PKOPEN);
+            const frag = doc.createDocumentFragment();
+            let done = 0;
+            while (at >= 0) {
+                const end = pkClose(text, at);
+                if (end < 0) break;
+                if (at > done) frag.appendChild(doc.createTextNode(text.slice(done, at)));
+                const el = buildPkInline(text.slice(at, end + 1)); el._kdx = true;
+                frag.appendChild(el); n++;
+                done = end + 1;
+                at = text.indexOf(PKOPEN, done);
+            }
+            if (!done) return;
+            if (done < text.length) frag.appendChild(doc.createTextNode(text.slice(done)));
+            t.parentNode.replaceChild(frag, t);
+        });
+        return n;
+    }
     // a block, from its Keydown text
     function buildBlock(src, editing) {
+        if (src.startsWith(PKOPEN)) return buildPkBlock(src);
         const L = src.split('\n');
         const m = /^::(\w+)\s*(.*)$/.exec(L[0].trim());
         const kind = m[1].toLowerCase(), arg = m[2] || '';
@@ -740,6 +808,22 @@
         const ls = lines(rootEl);
         for (let i = 0; i < ls.length; i++) {
             const t = ls[i].text.trim();
+            if (!ls[i].widget && t.startsWith(PKOPEN) && pkReady()) {
+                // the braces may close on this line or on a later one; a closing brace that has more text after it makes it an inline piece instead
+                let acc = '', end = -1, j = i;
+                for (; j < ls.length && j - i < 150; j++) {
+                    acc += (j > i ? '\n' : '') + (j === i ? ls[j].text.trim() : ls[j].text);
+                    end = pkClose(acc, 0);
+                    if (end >= 0) break;
+                }
+                if (end >= 0 && !acc.slice(end + 1).trim()) {
+                    const el = buildPkBlock(acc.slice(0, end + 1)); el._kdx = true;
+                    insertBefore(ls[i], el);
+                    for (let k = i; k <= j; k++) removeLine(ls[k]);
+                    n++; i = j;
+                }
+                continue;
+            }
             if (ls[i].widget || !t.startsWith('::')) continue;
             if (SINGLE.test(t)) {
                 const el = buildBlock(t, editing); el._kdx = true;
@@ -770,7 +854,7 @@
         const editing = opts.editing !== undefined ? !!opts.editing : isEditing(rootEl);
         rootEl.classList.toggle('kdx-editing', editing);
         if (!editing) splitNewlines(rootEl);
-        const blocks = makeBlocks(rootEl, editing);
+        const blocks = makeBlocks(rootEl, editing) + makePkInline(rootEl);
         const defs = collectDefs(rootEl, editing);
         const tags = applyTags(rootEl, defs);
         const values = makeLive(rootEl, editing);

@@ -84,6 +84,7 @@ export const KEYDOWN_CSS = [
     absUrls(read('phosphor/keydown-marketplace.css'), 'phosphor/'),
     absUrls(read('writeout/annotate-hl.css'), 'writeout/'),
     absUrls(read('writeout/unique-styles.css'), 'writeout/'),
+    read('writeout/poolside-embed.css'),
     absUrls(read('bitbook/mobile/skills-lite.css'), 'bitbook/mobile/'),
     absUrls(pickRules(read('bitbook/style.css'), (sel) => SKILL_SEL.test(sel)), 'bitbook/'),
     EXTRA_CSS,
@@ -200,6 +201,9 @@ ${table}
 
 /* ===== The document engine (from writeout/keydown-doc.js) ===== */
 ${docEngine}
+
+/* ===== Poolside Keydown (writeout/poolside.js): the marks ;;pk{ ... } turns into Keydown ===== */
+${read('writeout/poolside.js')}
 
 /* ===== Keydown Next: custom @style tags, {{live values}} and ::chart / ::poll / ::quiz / ::timer / ::map / ::scene (from writeout/keydown-next.js) ===== */
 ${nextJs}
