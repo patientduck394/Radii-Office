@@ -1,20 +1,97 @@
 [
-  {"id": "writeout", "name": "Writeout", "icon": "writeout/icon-512.png"},
-  {"id": "bitbook", "name": "Bitbook", "icon": "bitbook/icon-512.png"},
-  {"id": "amber", "name": "Amber", "icon": "amber/icon-512.png"},
-  {"id": "imbuer", "name": "Imbuer", "icon": "icon-src/imbuer.svg"},
-  {"id": "mainkey", "name": "Mainkey", "icon": "icon-src/mainkey.svg"},
-  {"id": "inkpath", "name": "Inkpath", "icon": "icon-src/inkpath.svg"},
-  {"id": "omicron", "name": "Omicron", "icon": "omicron/icon-512.png"},
-  {"id": "formly", "name": "Formly", "icon": "formly/favicon.svg"},
-  {"id": "opendb", "name": "OpenDB", "icon": "opendb/favicon.svg"},
-  {"id": "peeker", "name": "Peeker", "icon": "peeker/icon-512.png"},
-  {"id": "cabinet", "name": "Cabinet", "icon": "cabinet/icon-512.png"},
-  {"id": "phosphor", "name": "Phosphor", "icon": "icon-src/phosphor.svg"},
-  {"id": "hexa", "name": "Hexa", "icon": "hexa/icon-512.png"},
-  {"id": "taskra", "name": "Taskra", "icon": "taskra/icon-512.png"},
-  {"id": "zonerider", "name": "Zonerider", "icon": "zonerider/icon-512.png"},
-  {"id": "yuzu", "name": "Yuzu", "icon": "yuzu/icon-512.png"},
-  {"id": "antimony", "name": "Antimony", "icon": "antimony/favicon.svg"},
-  {"id": "waterflow", "name": "Waterflow", "icon": "waterflow/favicon.png"}
+  {
+    "id": "writeout",
+    "name": "Writeout",
+    "icon": "writeout/icon-512.png"
+  },
+  {
+    "id": "bitbook",
+    "name": "Bitbook",
+    "icon": "bitbook/icon-512.png"
+  },
+  {
+    "id": "amber",
+    "name": "Amber",
+    "icon": "amber/icon-512.png"
+  },
+  {
+    "id": "imbuer",
+    "name": "Imbuer",
+    "icon": "icon-src/imbuer.svg"
+  },
+  {
+    "id": "mainkey",
+    "name": "Mainkey",
+    "icon": "icon-src/mainkey.svg"
+  },
+  {
+    "id": "inkpath",
+    "name": "Inkpath",
+    "icon": "icon-src/inkpath.svg"
+  },
+  {
+    "id": "omicron",
+    "name": "Omicron",
+    "icon": "omicron/icon-512.png"
+  },
+  {
+    "id": "formly",
+    "name": "Formly",
+    "icon": "formly/favicon.svg"
+  },
+  {
+    "id": "opendb",
+    "name": "OpenDB",
+    "icon": "opendb/favicon.svg"
+  },
+  {
+    "id": "peeker",
+    "name": "Peeker",
+    "icon": "peeker/icon-512.png"
+  },
+  {
+    "id": "cabinet",
+    "name": "Cabinet",
+    "icon": "cabinet/icon-512.png"
+  },
+  {
+    "id": "phosphor",
+    "name": "Phosphor",
+    "icon": "icon-src/phosphor.svg"
+  },
+  {
+    "id": "hexa",
+    "name": "Hexa",
+    "icon": "hexa/icon-512.png"
+  },
+  {
+    "id": "taskra",
+    "name": "Taskra",
+    "icon": "taskra/icon-512.png"
+  },
+  {
+    "id": "zonerider",
+    "name": "Zonerider",
+    "icon": "zonerider/icon-512.png"
+  },
+  {
+    "id": "yuzu",
+    "name": "Yuzu",
+    "icon": "yuzu/icon-512.png"
+  },
+  {
+    "id": "antimony",
+    "name": "Antimony",
+    "icon": "antimony/favicon.svg"
+  },
+  {
+    "id": "waterflow",
+    "name": "Waterflow",
+    "icon": "waterflow/favicon.png"
+  },
+  {
+    "id": "trigger",
+    "name": "Trigger",
+    "icon": "icon-src/trigger.svg"
+  }
 ]
