@@ -80,6 +80,11 @@
     "icon": "yuzu/icon-512.png"
   },
   {
+    "id": "delta",
+    "name": "Delta",
+    "icon": "delta/icon-512.png"
+  },
+  {
     "id": "antimony",
     "name": "Antimony",
     "icon": "antimony/favicon.svg"
