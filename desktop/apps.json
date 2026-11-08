@@ -93,5 +93,10 @@
     "id": "trigger",
     "name": "Trigger",
     "icon": "icon-src/trigger.svg"
+  },
+  {
+    "id": "waterflow-legacy",
+    "name": "Waterflow Legacy",
+    "icon": "waterflow-legacy/favicon.png"
   }
 ]
