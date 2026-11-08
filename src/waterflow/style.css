@@ -302,3 +302,7 @@ body[data-theme="night"] .wf-dlg-body h4 { color: var(--or1); }
 body[data-theme="night"] .wf-gel { --soft: #12395e; color: #bfe6ff; }
 body[data-theme="night"] .wf-new { --soft: #4a2a0c; color: #ffd2a0; }
 body[data-theme="night"] .wf-modes button[aria-selected="true"], body[data-theme="night"] .wf-mini.on, body[data-theme="night"] .wf-tag.on, body[data-theme="night"] .wf-tag:hover, body[data-theme="night"] .wf-palrow.on, body[data-theme="night"] .wf-toast { background: #12395e; color: #bfe6ff; }
+
+/* inline code looks like it does in Writeout: a soft slate chip (styled `code`{neon} ones keep their own look) */
+.wf-paper :not(pre) > code:not(.kd-ic) { background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border: 1px solid #cbd5e1; color: #475569; padding: 3px 6px; border-radius: 5px; font-size: 14px; box-shadow: 0 1px 2px rgba(0, 0, 0, .05); font-family: monospace; }
+body[data-theme="night"] .wf-paper :not(pre) > code:not(.kd-ic) { background: linear-gradient(180deg, #24384d, #1b2c3f); border-color: #3b5774; color: #cfe3f5; }
