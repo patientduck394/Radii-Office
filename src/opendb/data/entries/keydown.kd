@@ -911,7 +911,7 @@ Applets are small interactive widgets: click the ones below to try them. Wrap a 
 
 ## Unique Styles
 
-All 4,950 styles from Bitbook's Unique Styles Gallery are Keydown tags too: 990 designs in 11 collections, each in 5 colorways. Write `@family-N@text@`, where N is the colorway from 1 to 5, like `@neontube-2@Hello@`. Leave the number out for the first colorway: `@neontube@Hello@`.
+All 4,950 styles from Bitbook's Unique Styles Gallery are Keydown tags too: 990 designs in 11 collections, each in 5 colorways. Write `@family-N@text@`, where N is the colorway from 1 to 5, like `@neontube-2@Hello@`. Leave the number out for the first colorway: `@neontube@Hello@`. The five Poolside collections (2,250 of them) are no longer in the Gallery: search them with Poolside Style Lookup, and write them in Poolside Keydown as `<id-N words>` (see [[poolside-keydown]]).
 
 ### Regular (90 designs)
 

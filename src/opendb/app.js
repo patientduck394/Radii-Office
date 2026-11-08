@@ -385,6 +385,7 @@
                     flush();
                     const srcText = acc.slice(0, end + 1), inner = srcText.slice(srcText.indexOf('{') + 1, srcText.lastIndexOf('}')).replace(/^\n/, '').replace(/\n$/, '');
                     let body; try { body = kdDoc.textToHtml(window.PK.toKD(inner), { notes: {} }); } catch (e) { body = esc(srcText); }
+                    if (body.indexOf('us-chip') !== -1) { try { if (typeof kdEnsureUniqueStyles === 'function') kdEnsureUniqueStyles(); } catch (e) {} }   // (Poolside styles from Poolside Style Lookup need the Unique Styles sheet)
                     out.push('<div class="kdx kdx-block kdx-pk kd-pk" contenteditable="false" data-kd-src="' + esc(srcText) + '">' + body + '</div>');
                     i = j;
                     continue;

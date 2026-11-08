@@ -675,7 +675,7 @@
         </div>
     </dialog>
 
-    <!-- Unique Chip Styles Dialog Box (Skills! a 4050-style gallery: Regular, Frutiger Aero 1-4, Poolside 1-4 + Favorites!) -->
+    <!-- Unique Chip Styles Dialog Box (Skills! a gallery of Regular and Frutiger Aero styles + Favorites; the Poolside styles live in Poolside Style Lookup!) -->
     <dialog id="uniquechip-dialog" class="aero-dialog-box sk-dialog us-dialog">
         <div class="sk-head">
             <h3>Unique Chip Styles</h3>
@@ -688,16 +688,12 @@
             <button type="button" class="format-segment-btn" data-us-col="aero3" role="tab" aria-selected="false">Frutiger Aero 3</button>
             <button type="button" class="format-segment-btn" data-us-col="aero4" role="tab" aria-selected="false">Frutiger Aero 4</button>
             <button type="button" class="format-segment-btn" data-us-col="aero5" role="tab" aria-selected="false">Frutiger Aero 5</button>
-            <button type="button" class="format-segment-btn" data-us-col="pool" role="tab" aria-selected="false">Poolside</button>
-            <button type="button" class="format-segment-btn" data-us-col="pool2" role="tab" aria-selected="false">Poolside 2</button>
-            <button type="button" class="format-segment-btn" data-us-col="pool3" role="tab" aria-selected="false">Poolside 3</button>
-            <button type="button" class="format-segment-btn" data-us-col="pool4" role="tab" aria-selected="false">Poolside 4</button>
-            <button type="button" class="format-segment-btn" data-us-col="pool5" role="tab" aria-selected="false">Poolside 5</button>
             <button type="button" class="format-segment-btn" data-us-col="fav" role="tab" aria-selected="false">★ Favorites</button>
         </div>
         <div class="us-toolbar">
             <input id="us-search" class="unichip-text" type="search" placeholder="Search styles (neon, gold, jelly...)" autocomplete="off" spellcheck="false" aria-label="Search styles">
             <select id="us-family" class="unichip-text" aria-label="Design family"></select>
+            <button type="button" id="us-psl-btn" class="style-bar-btn" style="padding:4px 12px;cursor:pointer;font-weight:bold;" title="The Poolside styles moved to Poolside Style Lookup!">Poolside Style Lookup</button>
             <span id="us-count" class="us-count">450 styles</span>
         </div>
         <div id="us-grid" class="us-grid" role="group" aria-label="Chip styles"></div>
@@ -2024,9 +2020,11 @@
         </div>
         <div class="an-stage" id="an-stage"></div>
     </div>
+    <script src="../writeout/psl-data.js?v=20261215a"></script>
+    <script src="../writeout/psl.js?v=20261215a"></script>
     <script src="css-presets.js?v=20261201p"></script>
     <script src="radii-table.js?v=20261202d"></script>
-    <script src="app.js?v=20261213e"></script>
+    <script src="app.js?v=20261215a"></script>
     <script src="chip-guard.js?v=20261202b"></script>
     <script src="overlay-image.js?v=20261202c"></script>
     <script src="marketplace.js?v=20261210c"></script>
@@ -2039,7 +2037,7 @@
     <script src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"></script>
     <script src="latex.js?v=20261206a"></script>
     <script src="keydown-doc.js?v=20261212a"></script>
-    <script src="../writeout/poolside.js?v=20261212b"></script>
+    <script src="../writeout/poolside.js?v=20261215a"></script>
     <script src="../writeout/keydown-next.js?v=20261211a"></script>
     <script src="office-shell.js?v=20261204a"></script>
     <script src="docs-library.js?v=20261210r"></script>

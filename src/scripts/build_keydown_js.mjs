@@ -203,6 +203,7 @@ ${table}
 ${docEngine}
 
 /* ===== Poolside Keydown (writeout/poolside.js): the marks ;;pk{ ... } turns into Keydown ===== */
+${read('writeout/psl-data.js')}
 ${read('writeout/poolside.js')}
 
 /* ===== Keydown Next: custom @style tags, {{live values}} and ::chart / ::poll / ::quiz / ::timer / ::map / ::scene (from writeout/keydown-next.js) ===== */

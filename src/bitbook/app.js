@@ -6309,14 +6309,23 @@ var US_PREF_KEY = 'bitbook_unique_chip_style';
 var usSelected = US_STYLES[0].id;
 var usFamFilter = 'all';
 var usCollection = 'regular';
-var US_COLLECTIONS = ['regular', 'aero', 'aero2', 'aero3', 'aero4', 'aero5', 'pool', 'pool2', 'pool3', 'pool4', 'pool5', 'fav'];
+// (the Poolside collections moved out of the Gallery into Poolside Style Lookup: window.PSL, writeout/psl.js)
+var US_COLLECTIONS = ['regular', 'aero', 'aero2', 'aero3', 'aero4', 'aero5', 'fav'];
+var usIsPoolId = function (id) { return /^p[lwtfv][a-z0-9]*-[1-5]$/.test(id) && !!(window.PSL && window.PSL.find(id)); };
 var US_FAV_KEY = 'bitbook_unique_chip_favs';
 var US_VIEW_KEY = 'bitbook_unique_chip_view';
 var usFavs = [];
 try {
     const raw = JSON.parse(localStorage.getItem(US_FAV_KEY) || '[]');
     // Only keep favorites that still exist (styles removed from the gallery drop out)!
-    if (Array.isArray(raw)) usFavs = raw.filter(function (id) { return typeof id === 'string' && US_STYLES.some(function (s) { return s.id === id; }); });
+    if (Array.isArray(raw)) {
+        const valid = raw.filter(function (id) { return typeof id === 'string' && US_STYLES.some(function (s) { return s.id === id; }); });
+        // Poolside favorites are sent to Poolside Style Lookup (shared with Waterflow)!
+        const pools = valid.filter(usIsPoolId);
+        if (pools.length && window.PSL) { window.PSL.add(pools); }
+        usFavs = pools.length && window.PSL ? valid.filter(function (id) { return !usIsPoolId(id); }) : valid;
+        if (pools.length && window.PSL) { try { localStorage.setItem(US_FAV_KEY, JSON.stringify(usFavs)); } catch (e2) {} }
+    }
 } catch (e) {}
 var usSavedRange = null;
 try {
@@ -6609,6 +6618,11 @@ function usWireSkills() {
         usApplyStyle();
     });
     on('us-fav-btn', 'click', function () { usToggleFav(usSelected); });
+    on('us-psl-btn', 'click', function () {
+        if (!window.PSL) return;
+        usCloseDialog();   // (the selected text stays remembered, so the style lands on it)
+        window.PSL.open({ verb: 'apply it to your text', insert: function (st) { usSelected = st.id; usApplyStyle(); } });
+    });
     on('us-insert-btn', 'click', function () { usApplyStyle(); });
     on('us-cancel-btn', 'click', function () { usSavedRange = null; usCloseDialog(); });
     on('us-close-btn', 'click', function () { usSavedRange = null; usCloseDialog(); });
@@ -12246,7 +12260,7 @@ function csfEntries() {
     } catch (e) {}
     try {
         if (typeof US_STYLES !== 'undefined') US_STYLES.forEach(function (st) {
-            add({ name: st.famName + ' · ' + st.name, cls: st.cls, src: 'gallery', where: 'Gallery · ' + (CSF_GALLERY_COLS[st.col] || st.col), fid: 'g:' + st.id, usId: st.id });
+            add({ name: st.famName + ' · ' + st.name, cls: st.cls, src: 'gallery', where: (/^pool/.test(st.col) ? 'Poolside Style Lookup · ' : 'Gallery · ') + (CSF_GALLERY_COLS[st.col] || st.col), fid: 'g:' + st.id, usId: st.id });
         });
     } catch (e) {}
     try {
@@ -14818,7 +14832,7 @@ function rcClose() {
 function rcItems(tab) {
     const out = [];
     if (tab === 'gallery') {
-        (typeof usFavs !== 'undefined' ? usFavs : []).forEach(function (id) {
+        (typeof usFavs !== 'undefined' ? usFavs : []).concat(window.PSL ? window.PSL.favs() : []).forEach(function (id) {
             const st = US_STYLES.filter(function (x) { return x.id === id; })[0];
             if (!st) return;
             out.push({

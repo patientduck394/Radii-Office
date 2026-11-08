@@ -80,6 +80,10 @@
     ];
     const NAMES = INLINE.map((r) => r[0]).concat(['blank', 'box', 'link', 'pic']);
     const FORWARD = new RegExp('<(' + NAMES.join('|') + ')\\s([^<>\\n]+)>(?=(<)?)', 'g');
+    // Poolside styles from the Style Gallery (now found with Poolside Style Lookup): <plripple-2 words> is @plripple-2@words@ in Keydown
+    const PSL_SET = new Set(window.PSL_DATA ? window.PSL_DATA.fams.map((f) => f[0]) : []);
+    const PSL_FWD = /<([a-z][a-z0-9]*)-([1-5])\s([^<>\n]+)>(?=(<)?)/g;
+    const PSL_BACK = /@([a-z][a-z0-9]*)-([1-5])@([^@\n]+)@/g;
     const ZW = '\u200b';   // (an invisible separator, so two chips written side by side do not run their # marks together)
     const DIVIDERS = { rope: 'poolside', lane: 'dual', tile: 'notched', wave: 'swallow', reef: 'triple', step: 'stepped', crest: 'crest', ticket: 'ticket', buoy: 'gel', glass: 'glass', ring: 'rim', water: 'aqua',
         ripple: 'wavy', dots: 'dotted', dash: 'dashed', zigzag: 'zigzag', glow: 'glow', ruler: 'ruler', stitch: 'stitched', bubbles: 'bubbles', scallop: 'scallop', beacon: 'neon', arrows: 'arrows', fade: 'fade' };
@@ -119,6 +123,7 @@
                 const r = INLINE.find((x) => x[0] === name);
                 return r[1] + body + r[2] + (next ? ZW : '');
             });
+            if (PSL_SET.size) s = s.replace(PSL_FWD, (all, id, n, body, next) => (PSL_SET.has(id) ? '@' + id + '-' + n + '@' + body + '@' + (next ? ZW : '') : all));
         } while (s !== prev);
         return s;
     }
@@ -148,6 +153,7 @@
     /* ---------- Keydown  ->  Poolside Keydown ---------- */
     function inlineToPK(s) {
         INLINE.forEach((r) => { s = s.replace(r[3], (all, body) => '<' + r[0] + ' ' + body + '>'); });
+        if (PSL_SET.size) s = s.replace(PSL_BACK, (all, id, n, body) => (PSL_SET.has(id) ? '<' + id + '-' + n + ' ' + body + '>' : all));
         s = s.replace(/(?<!!)\[([^\]<>\n]+)\]\((https?:\/\/[^)\s]+)\)/g, (a, w, u) => '<link ' + u + ' ' + w + '>');
         s = s.replace(/\u200b(?=<)/g, '');
         return s.replace(/\[__(\d+)(?:\|([^\]<>\n]*))?\]/g, (a, n, ans) => '<blank ' + n + (ans ? '|' + ans : '') + '>')
@@ -202,6 +208,7 @@
         ['More chips: badges and frames', [['<badge badge> <capsule capsule> <split split> <dots dots> <cone cone> <frost frost> <neon neon> <shimmer shimmer>', '']]],
         ['Underline, strike and frame', [['<under underlined> <strike struck> <frame framed>', '']]],
         ['Marks and inks', [['<halo halo> <sunhalo sunhalo> <mark marker> <flag flag> <ink ink> <fire fire>', '']]],
+        ['Every Poolside style (find them with Styles)', [['<plripple-2 Pool Ripples> <plclear-3 Clear> <pvdotlead-5 Dot Leader>', '']]],
         ['Blanks to write in', [['Water is <blank 8|wet> and a box is <box 6>', ''], ['(_ box|2|Write here _)', '']]],
         ['Dividers', [['/~ rope | Lane one | blue', ''], ['/~ ring | Lane two | orange', ''], ['/~ glass | Lane three | cyan', ''], ['/~ ripple | Ripple | blue', ''], ['/~ dots | Dots | cyan', ''], ['/~ dash | Dash | orange', ''], ['/~ zigzag | Zigzag | blue', ''], ['/~ glow | Glow | cyan', ''], ['/~ ruler | Ruler | blue', ''], ['/~ stitch | Stitch | orange', ''], ['/~ bubbles | Bubbles | cyan', ''], ['/~ scallop | Scallop | blue', ''], ['/~ beacon | Beacon | orange', ''], ['/~ arrows | Arrows | blue', ''], ['/~ fade | Fade | cyan', ''], ['/~ crest | Crest | orange', ''], ['/~ ticket | Ticket | blue', '']]],
         ['Code styles', [['```js{deep|Deep}\nlet a = 1;\n```', ''], ['```js{foam|Foam}\nlet a = 1;\n```', ''], ['```js{buoy|Buoy}\nlet a = 1;\n```', ''], ['```js{lane|Lane}\nls -la\n```', ''], ['```js{tile|Tile}\nlet a = 1;\n```', ''], ['```js{night|Night}\nlet a = 1;\n```', ''], ['```js{glow|Glow}\nlet a = 1;\n```', ''], ['```js{drop|Drop}\nlet a = 1;\n```', '']]],
@@ -215,5 +222,5 @@
 
     // what the toolbar menus list
     const NOTES = [['Quiet quote', '<<'], ['Alert', '<!'], ['Question', '<?'], ['Blue note', '<:'], ['Pulled quote', '<>'], ['Marker note', '<*'], ['Tip', '<+'], ['Stop note', '<-'], ['Lane box', '<='], ['Whisper', '<~'], ['Sticky note', '<$'], ['Console note', '<#'], ['Ribbon note', '<^'], ['Speech bubble', '<@'], ['Tile card', '<&']];
-    window.PK = { toKD: toKD, toPK: toPK, guide: guide, NAMES: NAMES, DIVIDERS: DIVIDERS, FENCES: FENCES, NOTES: NOTES, QUOTE_MARKS: QUOTE_MARKS };
+    window.PK = { PSL_SET: PSL_SET, toKD: toKD, toPK: toPK, guide: guide, NAMES: NAMES, DIVIDERS: DIVIDERS, FENCES: FENCES, NOTES: NOTES, QUOTE_MARKS: QUOTE_MARKS };
 })();
