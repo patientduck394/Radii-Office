@@ -10185,7 +10185,8 @@ function printWriteoutPage() {
     // Auto-save content state before opening print dialog
     autoSaveCanvasContent();
     
-    // Trigger the browser print/export modal window
+    // Trigger the browser print/export modal window (in Firefox, once the chips and dividers have their high-resolution pictures)
+    try { if (window.KdPrintRaster && KdPrintRaster.active) { KdPrintRaster.prepare(document.getElementById('wysiwyg-canvas')).then(function () { window.print(); }, function () { window.print(); }); return; } } catch (e) {}
     window.print();
 }
 

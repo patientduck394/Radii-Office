@@ -1093,6 +1093,7 @@
         printTilesOff();
         if (!/Firefox\//.test(navigator.userAgent)) return;
         Array.from(ed.querySelectorAll('.kd-div-line, .aero-liquid-divider')).forEach(function (el, n) {
+            if (el.classList.contains('kd-rasted')) return;   // (already drawn as a high-resolution picture)
             const cs = getComputedStyle(el);
             const m = /^url\("data:image\/svg\+xml[;,]([^"]*)"\)$/.exec((cs.backgroundImage || '').trim());
             if (!m) return;
@@ -1143,6 +1144,14 @@
         const d = pageDims(), m = MARGINS[prefs.margins] || MARGINS.normal;
         st.textContent = on ? '@media print { @page { size: ' + d.w + 'px ' + d.h + 'px; margin: 0; } }' : '';
     }
+    // Firefox: the chips and divider lines are drawn ahead of time as high-resolution pictures (print-raster.js), a moment after the page changes
+    (function () {
+        if (!window.KdPrintRaster || !KdPrintRaster.active) return;
+        let t = 0;
+        const go = function () { clearTimeout(t); t = setTimeout(function () { try { KdPrintRaster.prepare(ed); } catch (e) {} }, 1200); };
+        new MutationObserver(go).observe(ed, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['class', 'style'] });
+        setTimeout(go, 1500);
+    })();
     // Page numbers on paper! The sheets (and the numbers written on them) are hidden when printing, so each page's number is
     // written into the printed flow instead: a layer of labels, one per page, each sitting (page number x page height) down from the top
     // (the pages are laid edge to edge with the margins repeated on each, so page i ends exactly i page heights down). It lives next to
@@ -1173,7 +1182,7 @@
         document.body.classList.remove('bb-printnums');
         if (zoomer) zoomer.style.removeProperty('--bb-print-h');
     }
-    window.addEventListener('beforeprint', function () { printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; try { printTilesOn(); } catch (e) { console.warn('print tiles', e); } try { printNumbersOn(); } catch (e) { console.warn('print numbers', e); } });
+    window.addEventListener('beforeprint', function () { try { if (window.KdPrintRaster && KdPrintRaster.active) KdPrintRaster.on(); } catch (e) { console.warn('print raster', e); } printPageSize(true); if (ruleStyle) ruleStyle.disabled = true; try { printTilesOn(); } catch (e) { console.warn('print tiles', e); } try { printNumbersOn(); } catch (e) { console.warn('print numbers', e); } });
     window.addEventListener('afterprint', function () { printPageSize(false); printTilesOff(); printNumbersOff(); if (ruleStyle) ruleStyle.disabled = false; paginateSoon(); });
     // Color previews: see the pages as a printout in black and white, or as people with color blindness see them (screen only, never printed)
     const COLOR_PREVIEWS = [['', 'Normal vision'], ['gray', 'Grayscale (a black and white printout)'], ['protan', 'Protanopia (no red)'], ['deutan', 'Deuteranopia (no green)'], ['tritan', 'Tritanopia (no blue)']];
