@@ -1,25 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" data-os-phone>
+<html lang="en">
 <head>
-    <!-- Made by scripts/build_mobile.mjs from /waterflow/index.html: edit that page, not this one! -->
-    <base href="../">
-    <script>
-    (function () {
-        // remember that this phone uses the New style for waterflow
-        try { localStorage.setItem('radii-mobile-style-waterflow', 'new'); } catch (e) {}
-        // with <base>, a link like href="#/e/qubit" would jump to the desktop page: keep it on this page
-        document.addEventListener('click', function (e) {
-            var a = e.target && e.target.closest && e.target.closest('a[href^="#"]');
-            if (!a || e.defaultPrevented || a.target) return;
-            var h = a.getAttribute('href');
-            if (!h || h.length < 2) return;
-            e.preventDefault();
-            location.hash = h.slice(1);
-        });
-    })();
-    </script>
     <meta charset="UTF-8">
-    <title>Waterflow WYSIWYG</title>
+    <title>Waterflow Legacy</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
@@ -29,14 +12,13 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
     <script src="/offline.js?v=20261132g" defer></script>
     <script src="/phone-drawer.js?v=20261201k" defer></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 </head>
 <body>
 
     <div id="top-bar">
         <h1>
             <img class="brand-logo" src="favicon.png?v=1" alt="" style="width:30px;height:30px;margin-right:10px;filter:drop-shadow(0 2px 4px rgba(0,40,90,0.35))">
-            Waterflow Note Workspace
+            Waterflow Legacy
         </h1>
         <!-- Injected Skeuomorphic Memory Tracker Orbs -->
         <div class="system-meter">

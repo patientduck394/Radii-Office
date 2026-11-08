@@ -1,0 +1,14 @@
+{
+  "name": "Waterflow",
+  "short_name": "Waterflow",
+  "description": "A clear, glassy notebook: streams, notebooks, tags, a quick switcher and live Keydown formatting.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#8fd3fb",
+  "theme_color": "#2aa9f0",
+  "icons": [
+    { "src": "favicon.png", "sizes": "any", "type": "image/png", "purpose": "any" },
+    { "src": "apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ]
+}
