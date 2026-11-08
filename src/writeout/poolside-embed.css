@@ -206,7 +206,7 @@
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-gradient)::after { position: absolute; left: 14px; top: 50%; width: 30px; margin-top: -11px; text-align: center; font: 800 18px/22px system-ui, sans-serif; }
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-neon::after { content: "!"; color: var(--pk-od); }
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-glass::after { content: "?"; color: var(--pk-cd); }
-:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-gradient { background: var(--pk-b2); color: var(--pk-bd); border: 2px dashed var(--pk-b); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-gradient { background: var(--pk-b2); color: var(--pk-bd); border: 3px dotted var(--pk-b); }
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-gradient::before { background: repeating-conic-gradient(var(--pk-b) 0 45deg, #fff 45deg 90deg); }
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-gradient::after { content: ":"; color: var(--pk-bd); }
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-pull { display: block; margin: 22px 0; padding: 22px 16px; text-align: center; color: var(--pk-bd); font: italic 500 1.3em/1.45 Georgia, "Times New Roman", serif; background: repeating-linear-gradient(90deg, var(--pk-o) 0 14px, #fff 14px 28px) top / 100% 5px no-repeat, repeating-linear-gradient(90deg, var(--pk-c) 0 14px, #fff 14px 28px) bottom / 100% 5px no-repeat; }

@@ -293,7 +293,7 @@ body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, bl
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-neon::after { content: "!"; color: var(--pk-od); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-glass::after { content: "?"; color: var(--pk-cd); }
 /* <: the same note in blue */
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-gradient { background: var(--pk-b2); color: var(--pk-bd); border: 2px dashed var(--pk-b); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-gradient { background: var(--pk-b2); color: var(--pk-bd); border: 3px dotted var(--pk-b); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-gradient::before { background: repeating-conic-gradient(var(--pk-b) 0 45deg, #fff 45deg 90deg); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-gradient::after { content: ":"; color: var(--pk-bd); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-pull { display: block; margin: 22px 0; padding: 22px 16px; text-align: center; color: var(--pk-bd); font: italic 500 1.3em/1.45 Georgia, "Times New Roman", serif; background: repeating-linear-gradient(90deg, var(--pk-o) 0 14px, #fff 14px 28px) top / 100% 5px no-repeat, repeating-linear-gradient(90deg, var(--pk-c) 0 14px, #fff 14px 28px) bottom / 100% 5px no-repeat; }
