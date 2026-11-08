@@ -21,7 +21,9 @@
         book: '<svg viewBox="0 0 24 24"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>',
         plus: '<svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>'
     };
-    const COLORS = ['', '#1b9be8', '#2fc26a', '#ff8a1b', '#e5484d', '#a855f7', '#ec4899', '#14b8a6'];
+    // Poolside colors: foam, cyan, blue, deep blue, sun and orange (nothing else)
+    const COLORS = ['', '#5fd8f7', '#18bfe8', '#1b7fe0', '#0b3f9a', '#ffb35c', '#ff8a1b'];
+    const OLD_COLOR = { '#1b9be8': '#1b7fe0', '#2fc26a': '#18bfe8', '#e5484d': '#ffb35c', '#a855f7': '#0b3f9a', '#ec4899': '#5fd8f7', '#14b8a6': '#5fd8f7' };
     let toastT = 0;
     function toast(msg) {
         const t = $('wf-toast'); t.textContent = msg; t.hidden = false;
@@ -435,7 +437,7 @@
         let n = notes.find((x) => !x.trashed && x.title === key);
         if (!n) {
             let jb = nbs.find((b) => b.name === 'Journal');
-            if (!jb) { jb = { id: uid(), name: 'Journal', color: COLORS[3] }; nbs.push(jb); saveNbs(); }
+            if (!jb) { jb = { id: uid(), name: 'Journal', color: COLORS[6] }; nbs.push(jb); saveNbs(); }
             n = blank({ title: key, nb: jb.id, tags: ['journal'], text: (newLang() === 'pk' ? '/ ' : '# ') + new Date().toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }) + '\n' });
             notes.push(n); touch(n);
         }
@@ -752,6 +754,11 @@
         const old = notes.filter((n) => n.trashed && Date.now() - n.trashed > 30 * 864e5);
         for (const n of old) { await store.del(n.id); }
         notes = notes.filter((n) => !old.includes(n));
+        // notes and notebooks colored before Waterflow went Poolside move to the nearest pool color
+        let moved = false;
+        notes.forEach((n) => { if (OLD_COLOR[n.color]) { n.color = OLD_COLOR[n.color]; dirty.add(n.id); moved = true; } });
+        nbs.forEach((b) => { if (OLD_COLOR[b.color]) { b.color = OLD_COLOR[b.color]; moved = true; } });
+        if (moved) { saveNbs(); flush(); }
         showMode(mode);
         renderAll(); meter(); legacyOffer();
         const m = /#n=([\w-]+)/.exec(location.hash);
@@ -759,7 +766,7 @@
         if (first) openNote(first);
         else if (!notes.length) {
             const pkOn = newLang() === 'pk';
-            const hello = blank({ title: 'Welcome to Waterflow', tags: ['welcome'], pinned: true, color: COLORS[1], text: pkOn
+            const hello = blank({ title: 'Welcome to Waterflow', tags: ['welcome'], pinned: true, color: COLORS[3], text: pkOn
                 ? '/ Welcome to Waterflow!\nThis note is written in <b Poolside Keydown>: Waterflow\'s own marks, symbols and styles. Type a mark, press Space or Enter, and it turns into formatting!\n\n// Try these\n() A heading starts with a slash: / Title, // Section\n() A quiet quote: << a thought\n() A callout: <! heads up\n() A <ring ring chip>, a <foam foam chip>, a <tile tile chip> and a <drop water drop>\n() A blank to fill in: <blank 8|answer>\n\n/~ rope | Lanes | blue\n\n// Find your way\n(+) Press Ctrl+K to find anything, or Ctrl+Alt+N for a new note\n(+) Switch between View, Visual and Source at the top\n(+) Open the Guide (bottom left) for every Poolside mark\n<< Prefer plain Keydown? Switch any note from its ... menu!\n'
                 : '# Welcome to Waterflow!\nThis is a note, and it is written in **Keydown**: type a tag, press Space or Enter, and it turns into formatting right away!\n\n## Try these\n- Type `#G#a green highlight#` and press Space\n- Write `**bold**` or `*italic*`, then press Enter\n- Add a divider: `::divider{aqua|Section|blue}`\n- A blank to fill in: [__8|answer]\n\n## Find your way\n- Press Ctrl+K to find anything, or Ctrl+Alt+N for a new note\n- Switch between View, Visual and Source at the top\n- Make notebooks on the left, and add #tags to any note!\n' });
             notes.push(hello); await store.put(hello); renderAll(); openNote(hello); body.dataset.view = 'list';
