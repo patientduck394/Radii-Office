@@ -372,6 +372,24 @@
         for (let i = 0; i < lines.length; i++) {
             let t = lines[i].trim();
             let m;
+            // ;;pk{ Poolside Keydown } over one or several lines is read as ONE block (Keydown Next draws it live afterwards)
+            if (t.startsWith(';;pk{') && window.PK && window.kdDoc && kdDoc.textToHtml) {
+                let acc = '', end = -1, j = i;
+                for (; j < lines.length && j - i < 150; j++) {
+                    acc += (j > i ? '\n' : '') + (j === i ? lines[j].replace(/^\s+/, '') : lines[j]);
+                    let depth = 0;
+                    for (let k = 4; k < acc.length; k++) { const c = acc[k]; if (c === '{') depth++; else if (c === '}') { depth--; if (!depth) { end = k; break; } } }
+                    if (end >= 0) break;
+                }
+                if (end >= 0 && !acc.slice(end + 1).trim()) {
+                    flush();
+                    const srcText = acc.slice(0, end + 1), inner = srcText.slice(srcText.indexOf('{') + 1, srcText.lastIndexOf('}')).replace(/^\n/, '').replace(/\n$/, '');
+                    let body; try { body = kdDoc.textToHtml(window.PK.toKD(inner), { notes: {} }); } catch (e) { body = esc(srcText); }
+                    out.push('<div class="kdx kdx-block kdx-pk kd-pk" contenteditable="false" data-kd-src="' + esc(srcText) + '">' + body + '</div>');
+                    i = j;
+                    continue;
+                }
+            }
             if (/^```/.test(t)) {
                 flush();
                 const body = [];

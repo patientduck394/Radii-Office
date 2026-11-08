@@ -384,6 +384,25 @@
         for (let i = 0; i < lines.length; i++) {
             let t = lines[i].trim();
             let m;
+            // ;;pk{ Poolside Keydown } is read as ONE block (its lines are not Keydown, so none of them is formatted here)
+            if (t.startsWith(';;pk{')) {
+                let acc = '', end = -1, j = i;
+                for (; j < lines.length && j - i < 150; j++) {
+                    acc += (j > i ? '\n' : '') + (j === i ? lines[j].replace(/^\s+/, '') : lines[j]);
+                    let depth = 0;
+                    for (let k = 4; k < acc.length; k++) { const c = acc[k]; if (c === '{') depth++; else if (c === '}') { depth--; if (!depth) { end = k; break; } } }
+                    if (end >= 0) break;
+                }
+                if (end >= 0 && !acc.slice(end + 1).trim()) {
+                    endList();
+                    const srcText = acc.slice(0, end + 1), inner = srcText.slice(srcText.indexOf('{') + 1, srcText.lastIndexOf('}')).replace(/^\n/, '').replace(/\n$/, '');
+                    let body;
+                    try { body = root.PK && root.PK.toKD ? textToHtml(root.PK.toKD(inner), opts) : esc(srcText); } catch (e) { body = esc(srcText); }
+                    out.push('<div class="kdx kdx-block kdx-pk kd-pk" contenteditable="false" data-kd-src="' + esc(srcText) + '">' + body + '</div>');
+                    i = j;
+                    continue;
+                }
+            }
             // a pipe table is checked first (| a | b | rows with a | --- | line), so a leading | on any other line can be an indent
             if (/^\|.*\|(\{[a-z]+\})?$/.test(t)) {
                 const block = [];

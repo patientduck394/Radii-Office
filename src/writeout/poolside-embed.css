@@ -239,3 +239,223 @@
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glass .kd-div-line { height: 12px; border-radius: 7px; background: linear-gradient(90deg, rgba(24, 191, 232, .08), rgba(24, 191, 232, .38), rgba(24, 191, 232, .08)); box-shadow: inset 0 0 0 1px var(--dv); }
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-gel .kd-div-line { height: 16px; background: radial-gradient(circle, var(--dv) 0 5px, transparent 6px) left center / 22px 16px repeat-x; }
 :is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-aqua .kd-div-line { height: 10px; border-radius: 6px; background: linear-gradient(90deg, #8ee8ff, var(--dv)); box-shadow: inset 0 2px 0 rgba(255, 255, 255, .6); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-marker,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-marker::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-marker::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-green,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-green::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-green::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-red,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-red::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-red::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-dashed,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-dashed::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-dashed::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-whisper,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-whisper::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-whisper::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-paper,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-paper::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-paper::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-terminal,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-terminal::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-terminal::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-ribbon,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-ribbon::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-ribbon::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-bubble,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-bubble::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-bubble::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-card,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-card::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-card::after { all: unset; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-marker { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 8px 14px 8px 18px; border-left: 6px solid var(--pk-c); background: linear-gradient(transparent 14%, rgba(24, 191, 232, .26) 14% 86%, transparent 86%); color: var(--pk-ink); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-green { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 12px 18px 12px 58px; border: 2px solid var(--pk-b); border-radius: 12px; background: var(--pk-b2); color: var(--pk-bd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-green::before { content: ""; position: absolute; left: 14px; top: 50%; width: 30px; height: 30px; margin-top: -15px; border-radius: 50%; background: repeating-conic-gradient(var(--pk-b) 0 45deg, #fff 45deg 90deg); -webkit-mask: radial-gradient(circle, transparent 0 8px, #000 9px); mask: radial-gradient(circle, transparent 0 8px, #000 9px); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-green::after { content: "+"; position: absolute; left: 14px; top: 50%; width: 30px; margin-top: -11px; text-align: center; font: 800 18px/22px system-ui, sans-serif; color: var(--pk-bd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-red { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 12px 18px 12px 58px; border: 2px solid var(--pk-o); border-radius: 12px; background: var(--pk-o2); color: var(--pk-od); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-red::before { content: ""; position: absolute; left: 14px; top: 50%; width: 30px; height: 30px; margin-top: -15px; border-radius: 50%; background: repeating-conic-gradient(var(--pk-o) 0 45deg, #fff 45deg 90deg); -webkit-mask: radial-gradient(circle, transparent 0 8px, #000 9px); mask: radial-gradient(circle, transparent 0 8px, #000 9px); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-red::after { content: "\00d7"; position: absolute; left: 14px; top: 50%; width: 30px; margin-top: -11px; text-align: center; font: 800 18px/22px system-ui, sans-serif; color: var(--pk-od); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-dashed { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 12px 18px; border: 2px dashed var(--pk-c); border-radius: 6px; color: var(--pk-ink); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-dashed::before { content: ""; position: absolute; left: -2px; top: -2px; width: 14px; height: 14px; border-top: 4px solid var(--pk-o); border-left: 4px solid var(--pk-o); border-radius: 6px 0 0 0; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-dashed::after { content: ""; position: absolute; right: -2px; bottom: -2px; width: 14px; height: 14px; border-bottom: 4px solid var(--pk-o); border-right: 4px solid var(--pk-o); border-radius: 0 0 6px 0; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-whisper { display: block; margin: 10px 0; padding: 2px 14px; border-left: 3px dotted var(--pk-c); color: color-mix(in srgb, var(--pk-ink) 62%, transparent); font-style: italic; font-size: .93em; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-paper { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 16px 18px 12px; border: 2px solid var(--pk-o); border-radius: 4px; background: var(--pk-o2); color: var(--pk-od); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-paper::before { content: ""; position: absolute; top: -10px; left: 50%; width: 56px; height: 16px; margin-left: -28px; background: rgba(24, 191, 232, .32); border: 1px solid rgba(24, 191, 232, .75); transform: rotate(-3deg); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-terminal { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 11px 16px 11px 36px; border: 2px solid var(--pk-b); border-radius: 8px; background: var(--pk-b2); color: var(--pk-bd); font: 600 .95em/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-terminal::before { content: ">"; position: absolute; left: 14px; top: 11px; color: var(--pk-o); font-weight: 800; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-ribbon { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 12px 18px; border: 2px solid var(--pk-o); border-left-width: 14px; border-radius: 4px 14px 14px 4px; background: var(--pk-o2); color: var(--pk-od); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-bubble { position: relative; display: block; margin: 14px 0; line-height: 1.55; margin-bottom: 22px; padding: 12px 18px; border: 2px solid var(--pk-c); border-radius: 18px; background: var(--pk-c2); color: var(--pk-cd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-bubble::after { content: ""; position: absolute; left: 24px; bottom: -11px; width: 0; height: 0; border-left: 9px solid transparent; border-right: 9px solid transparent; border-top: 10px solid var(--pk-c); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk blockquote.kd-bq-card { position: relative; display: block; margin: 14px 0; line-height: 1.55; padding: 14px 18px; border: 1px solid var(--pk-tile); border-top: 5px solid var(--pk-o); border-radius: 10px; background: #fff; color: var(--pk-ink); box-shadow: 0 4px 14px rgba(27, 155, 232, .18); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest :is(.kd-div-line, .kd-div-label)::after,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket :is(.kd-div-line, .kd-div-label),
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket :is(.kd-div-line, .kd-div-label)::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket :is(.kd-div-line, .kd-div-label)::after { all: unset; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket { --dv: var(--pk-b); display: flex; align-items: center; gap: 16px; margin: 22px 0; user-select: none; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest .kd-div-line,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket .kd-div-line { display: block; flex: 1; min-width: 12px; height: 12px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest .kd-div-label,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket .kd-div-label { display: block; color: var(--pk-bd); font: 800 .78em/1 system-ui, sans-serif; letter-spacing: 1.6px; text-transform: uppercase; white-space: nowrap; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-wavy,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-dotted,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-dashed,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-zigzag,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-glow,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-ruler,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-stitched,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-bubbles,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-scallop,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-neon,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-arrows,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-fade,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-crest,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-cyan.kd-div-ticket { --dv: var(--pk-c); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-wavy,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-dotted,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-dashed,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-zigzag,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-glow,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-ruler,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-stitched,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-bubbles,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-scallop,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-neon,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-arrows,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-fade,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-crest,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-c-orange.kd-div-ticket { --dv: var(--pk-o); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-wavy .kd-div-line { height: 14px; background: var(--dv); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='14'%3E%3Cpath d='M0 4Q3 0 6 4T12 4 M0 10Q3 6 6 10T12 10' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-x center / 12px 14px; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='14'%3E%3Cpath d='M0 4Q3 0 6 4T12 4 M0 10Q3 6 6 10T12 10' fill='none' stroke='black' stroke-width='1.8' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-x center / 12px 14px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dotted .kd-div-line { height: 10px; background: radial-gradient(circle, var(--dv) 0 2.5px, transparent 3px) left center / 12px 10px repeat-x; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-dashed .kd-div-line { height: 4px; border-radius: 2px; background: repeating-linear-gradient(90deg, var(--dv) 0 18px, transparent 18px 26px); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-zigzag .kd-div-line { height: 12px; background: var(--dv); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 10L6 2L12 10' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-x center / 12px 12px; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12'%3E%3Cpath d='M0 10L6 2L12 10' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-x center / 12px 12px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-glow .kd-div-line { height: 4px; border-radius: 2px; background: var(--dv); box-shadow: 0 0 10px 2px color-mix(in srgb, var(--dv) 55%, transparent); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ruler .kd-div-line { height: 16px; background: repeating-linear-gradient(90deg, var(--dv) 0 2px, transparent 2px 10px) bottom / 100% 7px no-repeat, repeating-linear-gradient(90deg, var(--dv) 0 2px, transparent 2px 50px) bottom / 100% 14px no-repeat, linear-gradient(var(--dv), var(--dv)) bottom / 100% 2px no-repeat; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-stitched .kd-div-line { height: 8px; background: repeating-linear-gradient(90deg, var(--dv) 0 8px, transparent 8px 13px) center / 100% 2px no-repeat; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-bubbles .kd-div-line { height: 18px; background: radial-gradient(circle at 8px 12px, transparent 0 3px, var(--dv) 3.5px 4.5px, transparent 5px), radial-gradient(circle at 24px 6px, transparent 0 2px, var(--dv) 2.5px 3.5px, transparent 4px), radial-gradient(circle at 36px 11px, transparent 0 4px, var(--dv) 4.5px 5.5px, transparent 6px); background-size: 48px 18px; background-repeat: repeat-x; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-scallop .kd-div-line { height: 10px; background: radial-gradient(circle at 10px 0, transparent 0 7px, var(--dv) 7.5px 9px, transparent 9.5px) 0 0 / 20px 10px repeat-x; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-neon .kd-div-line { height: 16px; background: radial-gradient(circle, var(--pk-o) 0 4px, transparent 4.5px) left center / 16px 16px no-repeat, radial-gradient(circle, var(--pk-o) 0 4px, transparent 4.5px) right center / 16px 16px no-repeat, linear-gradient(var(--dv), var(--dv)) center / calc(100% - 24px) 3px no-repeat; filter: drop-shadow(0 0 3px color-mix(in srgb, var(--dv) 70%, transparent)); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-arrows .kd-div-line { height: 12px; background: var(--dv); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12'%3E%3Cpath d='M2 1L8 6L2 11' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-x center / 14px 12px; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='12'%3E%3Cpath d='M2 1L8 6L2 11' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-x center / 14px 12px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-fade .kd-div-line { height: 4px; border-radius: 2px; background: linear-gradient(90deg, transparent, var(--dv) 22% 78%, transparent); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-crest .kd-div-line { height: 16px; background: radial-gradient(ellipse at 50% 100%, var(--dv) 0 7px, transparent 7.5px) center bottom / 40px 16px no-repeat, linear-gradient(var(--dv), var(--dv)) bottom / 100% 3px no-repeat; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-div-ticket .kd-div-line { height: 14px; background: radial-gradient(circle, var(--dv) 0 2px, transparent 2.5px) left center / 10px 100% repeat-x; border-left: 6px solid var(--dv); border-right: 6px solid var(--dv); border-radius: 7px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb { margin: 14px 0; padding: 14px 16px; border-width: 2px; border-style: solid; border-radius: 12px; box-shadow: none; text-shadow: none; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb[data-title]::before { margin: -14px -16px 10px; padding: 5px 16px; border-radius: 10px 10px 0 0; font: 700 11px/1.4 system-ui, sans-serif; letter-spacing: .05em; background: rgba(27, 127, 224, .14); color: var(--pk-bd); border-bottom: 2px solid var(--pk-b); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-blueprint { border-color: var(--pk-b); background: linear-gradient(rgba(27,127,224,.16) 1px, transparent 1px) 0 0 / 16px 16px, linear-gradient(90deg, rgba(27,127,224,.16) 1px, transparent 1px) 0 0 / 16px 16px, var(--pk-b2); color: var(--pk-bd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-blueprint[data-title]::before { background: rgba(27,127,224,.2); color: var(--pk-bd); border-bottom: 2px solid var(--pk-b); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-paper { border-color: var(--pk-c); background: var(--pk-c2); color: var(--pk-cd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-paper[data-title]::before { background: rgba(24,191,232,.22); color: var(--pk-cd); border-bottom: 2px solid var(--pk-c); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-ember { border-color: var(--pk-o); background: var(--pk-o2); color: var(--pk-od); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-ember[data-title]::before { background: rgba(255,138,27,.22); color: var(--pk-od); border-bottom: 2px solid var(--pk-o); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-terminal { border-color: var(--pk-c); background: var(--pk-c2); color: var(--pk-cd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-terminal[data-title]::before { background: repeating-linear-gradient(90deg, #ffc58a 0 14px, #fff 14px 28px); color: var(--pk-cd); border-bottom: 2px solid var(--pk-c); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-terminal .kd-ln::before { color: var(--pk-o); opacity: 1; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-mac { border-color: var(--pk-b); background: var(--pk-b2); color: var(--pk-bd); padding-top: 42px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-mac[data-title]::before { background: rgba(27,127,224,.16); color: var(--pk-bd); border-bottom: 2px solid var(--pk-b); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-mac[data-title]::before,
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-mac::before { margin: 0; padding: 0 0 0 74px; height: 30px; line-height: 30px; background: radial-gradient(circle at 16px 50%, var(--pk-o) 0 5px, transparent 5.5px), radial-gradient(circle at 36px 50%, var(--pk-c) 0 5px, transparent 5.5px), radial-gradient(circle at 56px 50%, var(--pk-b) 0 5px, transparent 5.5px), rgba(27,127,224,.16); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-dark { border-color: #4fa8ff; background: #0d2a4a; color: #cfeaff; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-dark[data-title]::before { background: #12395e; color: #cfeaff; border-bottom: 2px solid #4fa8ff; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-neon { border-color: var(--pk-c); background: var(--pk-c2); color: var(--pk-cd); box-shadow: 0 0 12px rgba(24,191,232,.55), inset 0 0 8px rgba(24,191,232,.25); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-neon[data-title]::before { background: rgba(24,191,232,.22); color: var(--pk-cd); border-bottom: 2px solid var(--pk-c); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-gel { border-color: var(--pk-b); background: var(--pk-b2); color: var(--pk-bd); border-radius: 22px 22px 22px 4px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-gel[data-title]::before { background: rgba(27,127,224,.16); color: var(--pk-bd); border-bottom: 2px solid var(--pk-b); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-diff { border-color: var(--pk-b); background: var(--pk-b2); color: var(--pk-bd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-diff[data-title]::before { background: rgba(27,127,224,.16); color: var(--pk-bd); border-bottom: 2px solid var(--pk-b); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-diff .kd-ln-add { background: rgba(24,191,232,.3); color: var(--pk-cd); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk pre.kd-cb.kd-cb-diff .kd-ln-del { background: rgba(255,138,27,.3); color: var(--pk-od); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-spoiler { padding: 0 .4em; border: 2px solid var(--pk-b); border-radius: 6px; background: repeating-linear-gradient(135deg, var(--pk-b2) 0 7px, #fff 7px 14px); color: transparent !important; text-shadow: none !important; cursor: pointer; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-spoiler[data-open] { border-color: var(--pk-o); background: var(--pk-o2); color: var(--pk-od) !important; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk .kd-spoiler[data-open] * { color: inherit !important; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk figure.kd-figure { display: table; margin: 14px 0; padding: 6px; border: 2px solid var(--pk-c); border-radius: 12px; background: var(--pk-c2); }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk figure.kd-figure img { display: block; max-width: 100%; border-radius: 8px; }
+:is(#wysiwyg-canvas, .keydown-doc, .kd-doc, body) .kd-pk figure.kd-figure figcaption { margin-top: 6px; color: var(--pk-cd); font-size: .88em; font-style: italic; text-align: center; }

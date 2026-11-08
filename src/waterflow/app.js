@@ -511,14 +511,15 @@
         ['Heading', 'A heading', '', null, '/ Heading'], ['List', 'A ring list', '', null, '() First\n() Second\n() Third'],
         ['Quote', 'A quiet quote', '', null, '<< A thought worth keeping'], ['Callout', 'A callout', '', null, '<! Heads up'],
         ['Code block', 'A styled code block', '', null, '```js{terminal|Code}\nconsole.log("flow!");\n```'],
-        ['Table', 'A table (written the Keydown way)', '', null, '| Name | Note |\n| --- | --- |\n| One | First |'],
+        ['Table', 'A table', '', null, '[= Name | Note =]\n[ One | First ]\n[ Two | Second ]'],
+        ['Cover', 'A pool cover over a secret', '', (s) => '<cover ' + (s || 'secret') + '>'], ['Link', 'A link', '', (s) => '<link https://example.com ' + (s || 'link') + '>'],
         ['Math', 'An equation', '', null, '$$e^{i\\pi} + 1 = 0$$'],
         ['Practice box', 'Room to write', '', null, '(_ box|3|Write here _)']
     ];
     let TOOLS = TOOLS_PK;
     function buildTools() {
         TOOLS = isPK(cur) ? TOOLS_PK : TOOLS_KD;
-        $('wf-tools').innerHTML = TOOLS.map((t, i) => '<button type="button" class="' + t[2] + '" data-t="' + i + '" title="' + esc(t[1]) + '">' + esc(t[0]) + '</button>').join('') + (isPK(cur) ? '<button type="button" data-t="chips" title="Every Poolside chip">Chips</button>' : '') + '<button type="button" data-t="skills" title="Dice, timers, flashcards and more">Skills</button>';
+        $('wf-tools').innerHTML = TOOLS.map((t, i) => '<button type="button" class="' + t[2] + '" data-t="' + i + '" title="' + esc(t[1]) + '">' + esc(t[0]) + '</button>').join('') + (isPK(cur) ? '<button type="button" data-t="chips" title="Every Poolside chip">Chips</button><button type="button" data-t="notes" title="Quotes, callouts and notes">Notes</button><button type="button" data-t="dividers" title="All the lane dividers">Dividers</button><button type="button" data-t="codes" title="Code block styles">Code</button>' : '') + '<button type="button" data-t="skills" title="Dice, timers, flashcards and more">Skills</button>';
     }
     function insertText(snippet, wrapFn) {
         if (!cur) return;
@@ -549,6 +550,9 @@
         const b = e.target.closest('button'); if (!b) return;
         if (b.dataset.t === 'skills') { skillsMenu(b); return; }
         if (b.dataset.t === 'chips') { chipsMenu(b); return; }
+        if (b.dataset.t === 'notes') { notesMenu(b); return; }
+        if (b.dataset.t === 'dividers') { dividersMenu(b); return; }
+        if (b.dataset.t === 'codes') { codesMenu(b); return; }
         const t = TOOLS[Number(b.dataset.t)];
         if (!t) return;
         if (t[3]) insertText(null, t[3]); else insertText(t[4]);
@@ -558,6 +562,9 @@
         const names = PKX.NAMES.filter((n) => n !== 'blank' && n !== 'box' && n !== 'b' && n !== 'i');
         menu(btn, names.map((n) => [n, () => insertText(null, (sel) => '<' + n + ' ' + (sel || n) + '>')]));
     }
+    function notesMenu(btn) { menu(btn, PKX.NOTES.map((n) => [n[0] + '   ' + n[1], () => insertText(n[1] + ' A thought worth keeping')])); }
+    function dividersMenu(btn) { menu(btn, Object.keys(PKX.DIVIDERS).map((d) => [d, () => insertText('/~ ' + d + ' | Section | blue')])); }
+    function codesMenu(btn) { menu(btn, Object.keys(PKX.FENCES).map((f) => [f, () => insertText('```js{' + f + '|Code}\nconsole.log("flow!");\n```')])); }
     function skillsMenu(btn) {
         if (mode !== 'visual') { toast('Skills live in Visual mode: switch to Visual to add one!'); return; }
         const list = KD.skills || [];

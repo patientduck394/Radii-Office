@@ -47,6 +47,20 @@ A heading starts with slashes, one for each level, and a space.
 <: <: A note in blue, like a question.
 <> <> A pulled quote between two lane ropes.}
 
+### More notes
+`<` followed by one of Keydown's other quote marks makes ten more note styles, each drawn in its own Poolside design.
+
+;;pk{<* A marker note, with a highlighter stripe
+<+ A tip, with a plus in a ring
+<- A stop note, with a cross in a ring
+<= A lane box, dashed, with orange corners
+<~ A whisper, small and quiet
+<$ A sticky note, taped on
+<# A console note
+<^ A ribbon note
+<@ A speech bubble
+<& A tile card}
+
 ## Lists
 A list item starts with a ring, written `()`. A mark inside the ring chooses the marker.
 
@@ -114,7 +128,7 @@ A chip is an angle tag with a name and the words it holds: `<name words>`. There
 (_ box|2|Write here _)}
 
 ## Dividers
-`/~ style | Title | color` draws a divider. The styles are `rope`, `lane`, `tile`, `wave`, `reef`, `step`, `ring`, `glass`, `buoy` and `water`, and the colors are `cyan`, `blue` and `orange`.
+`/~ style | Title | color` draws a divider. There are 24 styles. The first ten are `rope`, `lane`, `tile`, `wave`, `reef`, `step`, `ring`, `glass`, `buoy` and `water`, and the others are `ripple`, `dots`, `dash`, `zigzag`, `glow`, `ruler`, `stitch`, `bubbles`, `scallop`, `beacon`, `arrows`, `fade`, `crest` and `ticket`. The colors are `cyan`, `blue` and `orange`.
 
 ;;pk{/~ rope | rope | blue
 /~ lane | lane | cyan
@@ -127,14 +141,41 @@ A chip is an angle tag with a name and the words it holds: `<name words>`. There
 /~ buoy | buoy | orange
 /~ water | water | blue}
 
+## Code styles
+A code block keeps Keydown's fence, `` ```js{style|Title} ``, but the style names are Poolside ones: `deep`, `foam`, `buoy`, `lane`, `tile`, `night`, `glow`, `drop` and `diff`.
+
+;;pk{```js{deep|Deep}
+const water = "clear";
+```
+```js{lane|Lane}
+ls -la
+```
+```js{tile|Tile}
+const pool = 25;
+```}
+
+## Covers, links and pictures
+`<cover words>` is a pool cover: the words stay under a striped tarp until you click them. `<link url words>` is a link, and `<pic url words>` on a line of its own is a picture with a caption.
+
+;;pk{The <cover secret lane> is lane four. Visit <link https://radii-office.com the Radii Office site> for more.}
+
+## Tables
+A table row is written `[ a | b ]`, and the header row is `[= a | b =]`.
+
+;;pk{[= Lane | Swimmer | Time =]
+[ 1 | Ada | 52.3 ]
+[ 2 | Bo | 53.0 ]}
+
 ## Everything else is Keydown
-Poolside Keydown has no marks for tables, equations or code fences, so those are written the [[keydown|Keydown]] way inside it, and any Keydown tag works too. A note keeps its own language, so a Classic Keydown note and a Poolside Keydown note can sit side by side in Waterflow.
+Poolside Keydown has no marks for equations, so those are written the [[keydown|Keydown]] way inside it, and any Keydown tag works too. A note keeps its own language, so a Classic Keydown note and a Poolside Keydown note can sit side by side in Waterflow.
 
 ## How it translates
 Each Poolside mark stands for exactly one Keydown mark, so the translation goes both ways.
 
 * `/ Title` is `# Title`
-* `<< quote` is `> quote`, `<! alert` is `!> alert`, and `<: note` is `%> note`
+* `<< quote` is `> quote`, `<! alert` is `!> alert`, `<: note` is `%> note`, and `<+ tip` is `+> tip`
+* `[= a | b =]` is a table header (`| a | b |` and a `| --- | --- |` line), and `[ a | b ]` is a row
+* `<cover words>` is `*sp(words)`, `<link url words>` is `[words](url)`, and `<pic url words>` is `![words](url)`
 * `() item` is `- item`, and `(+) item` is `+ item`
 * `<b words>` is `**words**`, and `<i words>` is `*words*`
 * `<ring words>` is `!!:O#words#`
