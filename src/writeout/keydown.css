@@ -11011,9 +11011,10 @@
    style already has its own shadow filter, which does the same job). Firefox is left out: it prints every filtered box as one 72 dpi picture, but keeps
    gradients, clip-paths and SVG tiles as sharp vector drawings */
 @media print { @supports not (-moz-appearance: none) { .kd-div:not(.kd-div-notched), .aero-liquid-divider { filter: brightness(1.001); } } }
-/* CHIPS IN CHROME'S PDF: chips that mix soft gradients, shadows and glows (Aero bubbles, Rim frost, dots and stripes, the split chips) were printed as pictures
-   with a gray rectangle behind them, or with their text washed out. A hair of opacity makes each chip one clean group; :where keeps it from beating a chip's own opacity */
-@media print { @supports not (-moz-appearance: none) { :where([class*="-chip"]) { opacity: 0.999; } } }
+/* CHIPS IN CHROME'S PDF: chips that mix soft gradients, shadows and glows (Aero bubbles, Rim frost, dots and stripes, the split chips) were printed as dozens of
+   thin picture slices with a gray rectangle behind them (and a bare hair of opacity only made the slices blurrier and flatter). A filter that changes nothing
+   sends each chip through Chrome's sharp path as ONE high-resolution picture, like the dividers; :where keeps a chip's own filter in charge */
+@media print { @supports not (-moz-appearance: none) { :where([class*="-chip"]) { filter: brightness(1.001); } } }
 
 /* FIREFOX PRINTING: Firefox keeps gradients, clip-paths and SVG drawings as sharp vector shapes, but prints any box with a CSS filter as one
    72 dpi picture. These dividers lose only a faint 2 to 3 pixel shadow there, and the ticket's round bites become a clip-path instead of a mask */
