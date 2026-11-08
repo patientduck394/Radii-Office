@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'c69c4d0c93ab';
+const VERSION = 'ec4718255d63';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","c5e15f09bd"],
@@ -188,23 +188,23 @@ const CORE = [["/","c5e15f09bd"],
   ["/imbuer/ribbon.js?v=20261210zj","74b1cfd5bb"],
   ["/imbuer/style.css?v=20261210p","db50b9dde9"],
   ["/index.html","c5e15f09bd"],
-  ["/inkpath/","d75dd57036"],
-  ["/inkpath/animation.js?v=20261212c","8140a2c03c"],
-  ["/inkpath/app.js?v=20261212b","2bd5b9d748"],
+  ["/inkpath/","1f4550d01e"],
+  ["/inkpath/animation.js?v=20261212d","c1b41975a3"],
+  ["/inkpath/app.js?v=20261212d","6da59acbd3"],
   ["/inkpath/apple-touch-icon.png","be49b899f3"],
   ["/inkpath/bezmath.js","344ed5f815"],
-  ["/inkpath/blur-behind.js?v=20261212b","e4becb7783"],
+  ["/inkpath/blur-behind.js?v=20261212d","e4becb7783"],
   ["/inkpath/collab-inkpath.js?v=20261042","80b49895b7"],
   ["/inkpath/css2svg.js?v=20261204d","198ba068a1"],
   ["/inkpath/docs-library.js?v=20261210r","3861948818"],
   ["/inkpath/favicon-96.png","4af36efa9d"],
-  ["/inkpath/index.html","d75dd57036"],
-  ["/inkpath/mobile/","4806f7efbc"],
-  ["/inkpath/mobile/index.html","4806f7efbc"],
+  ["/inkpath/index.html","1f4550d01e"],
+  ["/inkpath/mobile/","d68a433195"],
+  ["/inkpath/mobile/index.html","d68a433195"],
   ["/inkpath/radii-collab.css?v=20261042","8b8ee6cb67"],
   ["/inkpath/radii-collab.js?v=20261211b","39950cbb0a"],
   ["/inkpath/radii-file.js?v=20261211a","35211af971"],
-  ["/inkpath/render.html","b675c6a30b"],
+  ["/inkpath/render.html","eee0b1919c"],
   ["/inkpath/style.css?v=20261210p","c979dbf3e8"],
   ["/inkpath/svg-extras.js?v=20261103a","4cc8d98b71"],
   ["/inkpath/svg-import.js?v=20261202q","a4240c7433"],

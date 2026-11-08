@@ -402,13 +402,9 @@
     function exportAnimated() {
         if (!anyAnimation()) { note('Nothing is animated yet: add keyframes or a preset first!'); return; }
         beginExport();
-        const clone = sv().cloneNode(true);
+        const text = cleanedExportSvg();
         endExport();
-        clone.querySelector('#ui-layer') && clone.querySelector('#ui-layer').remove();
-        clone.querySelector('#preview-layer') && clone.querySelector('#preview-layer').remove();
-        clone.removeAttribute('style'); clone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-        clone.setAttribute('viewBox', '0 0 ' + CANVAS_BOUNDS.width + ' ' + CANVAS_BOUNDS.height);
-        downloadFile(new Blob([clone.outerHTML], { type: 'image/svg+xml' }), 'animation.svg');
+        downloadFile(new Blob([text], { type: 'image/svg+xml' }), 'animation.svg');
         note('Saved animation.svg: it plays by itself in any browser!');
     }
     // SVG export keeps the animation inside the file: shapes are drawn with it for a moment, then drawn plainly again

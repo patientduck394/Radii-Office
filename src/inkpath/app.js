@@ -3399,23 +3399,40 @@ function importKV(evt) {
     reader.readAsText(file);
 }
 
+// The drawing as a clean, standalone SVG: the editor's own bits (click handlers, the dashed canvas border, the pan and zoom
+// transform, the selection and preview layers) are left out, and it has its namespace and a viewBox, so it opens in any
+// browser or editor (the plain outerHTML of the editor's <svg> had none of that, so the exported file was not valid SVG).
+function cleanedExportSvg() {
+    const c = svg.cloneNode(true);
+    ['#ui-layer', '#preview-layer'].forEach((sel) => { const e = c.querySelector(sel); if (e) e.remove(); });
+    ['id', 'style', 'class', 'onmousedown', 'onmousemove', 'onmouseup', 'onwheel', 'oncontextmenu', 'ondblclick'].forEach((a) => c.removeAttribute(a));
+    c.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    c.setAttribute('viewBox', '0 0 ' + CANVAS_BOUNDS.width + ' ' + CANVAS_BOUNDS.height);
+    c.setAttribute('width', CANVAS_BOUNDS.width); c.setAttribute('height', CANVAS_BOUNDS.height);
+    const layer = c.querySelector('#drawing-layer');
+    if (layer) {
+        layer.removeAttribute('transform'); layer.removeAttribute('id');
+        const first = layer.firstElementChild;
+        if (first && first.getAttribute('stroke-dasharray')) first.remove();
+    }
+    c.querySelectorAll('[data-idx], [data-blur-behind], [data-bb-keep], [class]').forEach((e) => { ['data-idx', 'data-blur-behind', 'data-bb-keep', 'class'].forEach((a) => e.removeAttribute(a)); });
+    return new XMLSerializer().serializeToString(c);
+}
+
 function exportSVG() {
     playUISound('click');
     // (an animated drawing is exported WITH its animation: the SVG plays by itself)
     if (window.inkpathAnim) window.inkpathAnim.beginExport();
-    const cloneSvg = svg.cloneNode(true);
+    const text = cleanedExportSvg();
     if (window.inkpathAnim) window.inkpathAnim.endExport();
-    cloneSvg.querySelector('#ui-layer').remove(); cloneSvg.querySelector('#preview-layer').remove();
-    downloadFile(new Blob([cloneSvg.outerHTML], { type: 'image/svg+xml' }), 'export.svg');
+    downloadFile(new Blob([text], { type: 'image/svg+xml' }), 'export.svg');
 }
 
 function exportPNG() {
     playUISound('click');
-    const cloneSvg = svg.cloneNode(true);
-    cloneSvg.querySelector('#ui-layer').remove(); cloneSvg.querySelector('#preview-layer').remove();
-    const svgData = new XMLSerializer().serializeToString(cloneSvg);
+    const svgData = cleanedExportSvg();
     const img = new Image();
-    img.src = 'data:image/svg+xml;base64,' + btoa(svgData);
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgData);
     img.onload = () => {
         const canvas = document.createElement('canvas');
         canvas.width = CANVAS_BOUNDS.width; canvas.height = CANVAS_BOUNDS.height;
