@@ -1,6 +1,6 @@
 /* Waterflow! A clear, glassy notebook: streams, notebooks, tags, and live Keydown formatting. */
 :root {
-    --sky1: #d9f2ff; --sky2: #8fd3fb; --sky3: #4cc0ee;
+    --sky1: #9fe0f8; --sky2: #60c8f0; --sky3: #4cc0ee;
     --ink: #0b2a44; --mute: #4d6e89; --line: rgba(14, 90, 150, .22);
     --glass: rgba(255, 255, 255, .62); --glass2: rgba(255, 255, 255, .85);
     --aqua1: #6fe0ff; --aqua2: #4cc0ee; --aqua3: #0a68c4;
