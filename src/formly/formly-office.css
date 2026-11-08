@@ -23,3 +23,9 @@ body.os-office .form-meta-card, body.os-office .form-field-card { border: 1px so
 .fm-bs-doc img { width: 36px; height: 36px; }
 .fm-classic-layout { margin-top: 2px; }
 .os-dlg.fm-layout-dlg { width: 560px; }
+
+/* The File screen's "this document" card (the shared bb-bs-doc class had no rules here, so the icon blew up and the text ran together!) */
+.bb-bs-doc { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--os-menu-line); border-radius: 10px; max-width: 560px; }
+.bb-bs-doc img { width: 36px; height: 36px; flex: none; }
+.bb-bs-doc div { display: flex; flex-direction: column; gap: 3px; }
+.bb-bs-doc span { color: var(--os-dim); font-size: 12.5px; }

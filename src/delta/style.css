@@ -1,0 +1,662 @@
+:root {
+    --bg-dark: #0f172a;
+    --bg-gradient: radial-gradient(circle at 50% 50%, #1e293b 0%, #0f172a 100%);
+    --glass-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 240, 245, 0.9) 100%);
+    --glass-border: rgba(255, 255, 255, 0.9);
+    --accent-magenta: #EE0058;
+    --accent-magenta-hover: #ff3377;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    margin: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--bg-gradient);
+    color: #fff;
+    display: flex;
+}
+
+/* --- Aero Sidebar Navigation --- */
+.aero-sidebar {
+    width: 260px;
+    min-width: 260px;
+    height: 100vh;
+    background: linear-gradient(90deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.03) 100%);
+    backdrop-filter: blur(20px);
+    border-right: 2px solid rgba(255,255,255,0.15);
+    display: flex;
+    flex-direction: column;
+    padding: 25px 15px;
+    box-shadow: 5px 0 25px rgba(0,0,0,0.2);
+    z-index: 50;
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+    padding-left: 10px;
+}
+
+.sidebar-brand h2 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(238, 0, 88, 0.7);
+}
+
+.nav-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    color: #fff;
+    padding: 12px 16px;
+    font-weight: bold;
+    font-size: 0.95rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+.nav-btn:hover, .nav-btn.active {
+    background: linear-gradient(180deg, var(--accent-magenta-hover) 0%, var(--accent-magenta) 100%);
+    border-color: #ff80ab;
+    box-shadow: 0 4px 15px rgba(238, 0, 88, 0.4);
+    color: #ffffff;
+    transform: translateY(-1px);
+}
+
+/* --- Main Viewport --- */
+.workspace-wrapper {
+    flex: 1;
+    height: 100vh;
+    padding: 25px 35px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.view-panel {
+    display: none;
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    height: 100%;
+    flex-direction: column;
+}
+
+.view-panel.active {
+    display: flex;
+}
+
+.panel-card {
+    background: var(--glass-bg);
+    border: 2px solid var(--glass-border);
+    border-radius: 14px;
+    padding: 24px;
+    color: var(--text-dark);
+    box-shadow: 0 15px 45px rgba(0,0,0,0.25);
+    backdrop-filter: blur(12px);
+}
+
+.panel-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--accent-magenta);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-transform: uppercase;
+}
+
+/* --- Mode: Homepage --- */
+.grid-modes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.mode-card {
+    background: linear-gradient(180deg, rgba(255,255,255,0.9) 0%, rgba(255,240,245,0.7) 100%);
+    border: 2px solid rgba(255,255,255,0.9);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: var(--text-dark);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.mode-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 25px rgba(238, 0, 88, 0.35);
+    border-color: var(--accent-magenta);
+}
+
+.mode-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent-magenta);
+    margin-bottom: 8px;
+}
+
+/* --- Inputs & Controls --- */
+.input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+input[type="text"], textarea {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+input[type="text"]:focus, textarea:focus {
+    border-color: var(--accent-magenta);
+    box-shadow: 0 0 0 2px rgba(238, 0, 88, 0.2);
+}
+
+.action-btn {
+    background: linear-gradient(180deg, var(--accent-magenta-hover) 0%, var(--accent-magenta) 100%);
+    border: 1px solid #ff80ab;
+    border-radius: 8px;
+    color: #fff;
+    padding: 10px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(238, 0, 88, 0.25);
+    transition: transform 0.1s;
+}
+
+.action-btn:active {
+    transform: scale(0.96);
+}
+
+/* --- Mode Specifics --- */
+#plotter {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    height: 450px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    overflow: hidden;
+    position: relative;
+}
+
+.latex-output {
+    min-height: 150px;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #1e293b;
+}
+
+/* Calculator Keypad */
+.calc-display {
+    width: 100%;
+    height: 60px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    text-align: right;
+    padding: 10px 15px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.8rem;
+    color: #1e293b;
+}
+
+.calc-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.calc-btn {
+    padding: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #334155;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.1s ease;
+}
+
+.calc-btn:hover {
+    background: #e2e8f0;
+    color: var(--accent-magenta);
+}
+
+.calc-btn.op-btn {
+    background: linear-gradient(180deg, #fff0f5 0%, #ffe4e9 100%);
+    color: var(--accent-magenta);
+    border-color: #fbcfe8;
+}
+
+/* --- Graph Mode Split Layout --- */
+.graph-workspace {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.graph-container {
+    display: flex;
+    gap: 15px;
+    height: 480px;
+}
+
+.expressions-sidebar {
+    width: 320px;
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.6);
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 12px;
+    overflow-y: auto;
+}
+
+#expressions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.expr-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+    transition: border-color 0.15s;
+}
+
+.expr-row:focus-within {
+    border-color: var(--accent-magenta);
+    box-shadow: 0 0 0 2px rgba(238, 0, 88, 0.15);
+}
+
+.expr-color-badge {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    cursor: pointer;
+    border: 2px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.expr-color-badge:hover {
+    transform: scale(1.15);
+    box-shadow: 0 0 0 2px var(--accent-magenta);
+}
+
+.expr-input {
+    flex: 1;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+}
+
+.expr-remove-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.expr-remove-btn:hover {
+    color: var(--accent-magenta);
+}
+
+.add-expr-btn {
+    background: linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%);
+    border: 1px dashed #cbd5e1;
+    border-radius: 8px;
+    color: var(--text-dark);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: bold;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    transition: all 0.15s ease;
+}
+
+.add-expr-btn:hover {
+    border-color: var(--accent-magenta);
+    color: var(--accent-magenta);
+    background: #fff0f5;
+}
+
+/* Floating Popover */
+.style-popover {
+    position: absolute;
+    width: 250px;
+    max-height: 480px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 2px solid var(--accent-magenta);
+    border-radius: 10px;
+    padding: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.style-popover.hidden {
+    display: none;
+}
+
+.popover-header {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--accent-magenta);
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 4px;
+}
+
+.popover-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.popover-section label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: bold;
+    color: var(--text-muted);
+}
+
+.preset-row {
+    display: flex;
+    gap: 6px;
+}
+
+.preset-swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1);
+    transition: transform 0.1s;
+}
+
+.preset-swatch:hover {
+    transform: scale(1.2);
+}
+
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+/* Custom Stylized Checkbox */
+.delta-checkbox {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.delta-checkbox input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 18px;
+    width: 18px;
+    background-color: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.delta-checkbox:hover input ~ .checkmark {
+    border-color: var(--accent-magenta);
+}
+
+.delta-checkbox input:checked ~ .checkmark {
+    background-color: var(--accent-magenta);
+    border-color: var(--accent-magenta);
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 5px;
+    top: 2px;
+    width: 4px;
+    height: 8px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.delta-checkbox input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.delta-select {
+    width: 100%;
+    padding: 6px 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-dark);
+    background: #ffffff;
+    outline: none;
+    cursor: pointer;
+}
+
+.delta-select:focus {
+    border-color: var(--accent-magenta);
+}
+
+input[type="color"] {
+    width: 100%;
+    height: 32px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: transparent;
+}
+
+input[type="range"] {
+    accent-color: var(--accent-magenta);
+    cursor: pointer;
+}
+
+/* --- Row extras: sliders, list/set chips, errors (under each expression) --- */
+.expr-extra {
+    flex-basis: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 2px 4px 0 26px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+}
+
+.expr-extra[hidden],
+.expr-extra [hidden] {
+    display: none;
+}
+
+.expr-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.expr-slider {
+    flex: 1;
+    min-width: 0;
+}
+
+.expr-slider:disabled {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.expr-slider-bound {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    min-width: 2ch;
+    text-align: center;
+}
+
+.expr-computed {
+    font-weight: bold;
+    color: var(--accent-magenta);
+}
+
+.expr-chip {
+    align-self: flex-start;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: bold;
+    font-size: 0.7rem;
+    color: #fff;
+    background: linear-gradient(180deg, #38bdf8 0%, #0284c7 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 3px rgba(2, 132, 199, 0.35);
+}
+
+.expr-chip-set {
+    background: linear-gradient(180deg, #c084fc 0%, #7e22ce 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 3px rgba(126, 34, 206, 0.35);
+}
+
+.expr-chip-polygon {
+    background: linear-gradient(180deg, #34d399 0%, #059669 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5), 0 1px 3px rgba(5, 150, 105, 0.35);
+}
+
+.expr-chip-preview {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.expr-error {
+    color: #b45309;
+    font-weight: bold;
+}
+
+.expr-add-slider-btn {
+    align-self: flex-start;
+    background: linear-gradient(180deg, #fff0f5 0%, #ffe4e9 100%);
+    border: 1px solid #fbcfe8;
+    border-radius: 6px;
+    color: var(--accent-magenta);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    cursor: pointer;
+}
+
+.expr-add-slider-btn:hover {
+    border-color: var(--accent-magenta);
+}
+
+/* --- Equations in Computer Modern (KaTeX's fonts are Computer Modern) --- */
+.mq-math-mode,
+.mq-math-mode .mq-nonSymbola,
+.mq-math-mode .mq-text-mode,
+.mq-math-mode .mq-operator-name {
+    font-family: KaTeX_Main, 'Latin Modern Roman', 'CMU Serif', 'Times New Roman', serif;
+}
+
+.mq-math-mode var {
+    font-family: KaTeX_Math, KaTeX_Main, 'Times New Roman', serif;
+}
+
+.mq-math-mode var.mq-operator-name,
+.mq-math-mode .mq-operator-name var {
+    font-family: KaTeX_Main, 'Times New Roman', serif;
+    font-style: normal;
+}
+
+
+/* --- Icons (line drawings, no emoji!) --- */
+.dl-ico { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -4px; margin-right: 6px; }
+.nav-btn .dl-ico { margin-right: 0; }
+.mode-card h3 { display: flex; align-items: center; gap: 8px; }
+.mode-card h3 .dl-ico { margin-right: 0; }
+.mode-card p { color: var(--text-muted); font-size: 0.9rem; }
+.dl-lead { color: var(--text-muted); margin-bottom: 20px; }
+.expr-remove-btn svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; display: block; }
+.expr-error { display: flex; align-items: flex-start; gap: 6px; }
+.expr-error svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; margin-top: 1px; }
+.dl-calc-card { max-width: 400px; margin: auto; }
+.calc-btn.dl-eq { grid-column: span 2; }

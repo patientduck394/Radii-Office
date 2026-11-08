@@ -1,0 +1,31 @@
+{
+  "name": "Delta — Radii Office Math",
+  "short_name": "Delta",
+  "description": "A math workspace: a live graphing calculator, a LaTeX renderer and a calculator, with two looks to use it in.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fff3f7",
+  "theme_color": "#ee0058",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

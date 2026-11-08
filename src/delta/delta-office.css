@@ -1,0 +1,59 @@
+/* =====================================================================
+   Delta's New layout! (body.os-office) Light pink page, pink chrome,
+   the app's own panels in the middle. Delta Classic stays untouched!
+   ===================================================================== */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #fff3f7;
+    color: #252525;
+}
+body.os-office.os-dark { background: #1f0d14; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .aero-sidebar { display: none !important; }
+body.os-office .workspace-wrapper {
+    grid-column: 1;
+    grid-row: 2;
+    height: auto;
+    min-height: 0;
+    padding: 18px 26px 18px;
+    animation: osFade 0.3s;
+    color: #1e293b;
+}
+body.os-office .view-panel { max-width: 1180px; }
+body.os-office .panel-card {
+    background: #fff;
+    border: 1px solid #f7d3e0;
+    box-shadow: 0 1px 3px rgba(238, 0, 88, 0.12);
+    backdrop-filter: none;
+    color: #1e293b;
+}
+body.os-office .mode-card { background: #fff7fa; border: 1px solid #f7d3e0; box-shadow: none; }
+body.os-office .mode-card:hover { box-shadow: 0 4px 14px rgba(238, 0, 88, 0.2); border-color: var(--accent-magenta); }
+body.os-office .graph-workspace { flex: 1; min-height: 0; height: auto; }
+body.os-office .graph-container { flex: 1; min-height: 280px; height: auto; }
+body.os-office .expressions-sidebar { background: #fff9fb; border-color: #f7d3e0; }
+body.os-office .latex-output { border-color: #f7d3e0; }
+body.os-office .view-panel#panel-latex .panel-card, body.os-office .view-panel#panel-home .panel-card { height: auto; }
+.dl-bs-doc img { width: 36px; height: 36px; }
+.os-dlg.dl-layout-dlg { width: 560px; }
+
+/* dark mode */
+body.os-office.os-dark .panel-card { background: #2a1119; border-color: #4a1f2e; color: #f5dbe3; box-shadow: none; }
+body.os-office.os-dark .panel-card .panel-title { color: #ff7aa6; }
+body.os-office.os-dark .mode-card { background: #351622; border-color: #4a1f2e; color: #f5dbe3; }
+body.os-office.os-dark .mode-card p, body.os-office.os-dark .dl-lead { color: #d3a9b8; }
+body.os-office.os-dark .expressions-sidebar { background: #351622; border-color: #4a1f2e; }
+body.os-office.os-dark .add-expr-btn { background: #4a1f2e; color: #f5dbe3; border-color: #6b2f44; }
+
+/* phones */
+body.os-phone .workspace-wrapper { padding: 10px 10px 12px; }
+body.os-phone .graph-container { flex-direction: column; }
+body.os-phone .expressions-sidebar { width: 100%; min-width: 0; max-height: 38%; }
+body.os-phone #plotter { min-height: 280px; }
+body.os-phone .grid-modes { grid-template-columns: 1fr; }
+body.os-phone .panel-card { padding: 14px; }

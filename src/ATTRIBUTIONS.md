@@ -66,3 +66,13 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 * **Source:** https://github.com/jgraph/drawio
 * **How it is used:** Radii Office does not copy or modify draw.io's code. Writeout, Bitbook, Imbuer and Amber open the official draw.io editor in embed mode from https://embed.diagrams.net and keep the PNG picture it exports (with the diagram stored inside it).
 * **Trademark:** draw.io is a registered EU trademark (#018062448) of draw.io Ltd. Radii Office is not affiliated with, endorsed by or sponsored by draw.io; the name is used only to say which editor opens, and the draw.io logo is not used.
+
+---
+
+### 10. Libraries bundled with Delta (`delta/vendor/`)
+* **KaTeX 0.16.8** (LaTeX typesetting and its fonts): MIT License, Copyright (c) 2013-2020 Khan Academy and other contributors, https://github.com/KaTeX/KaTeX
+* **d3 7.9.0** (graph drawing): ISC License, Copyright 2010-2023 Mike Bostock, https://github.com/d3/d3
+* **function-plot 1.25.1** (the plotting engine): MIT License, Copyright (c) Mauricio Poppe, https://github.com/mauriciopoppe/function-plot
+* **jQuery 3.6.0** (needed by MathQuill): MIT License, Copyright OpenJS Foundation and other contributors, https://jquery.com
+* **MathQuill 0.10.1** (the equation boxes in Graph mode): Mozilla Public License 2.0, Copyright (c) the MathQuill contributors, https://github.com/mathquill/mathquill (unmodified, with its Symbola font files)
+* **How it is used:** the files are copied unchanged from their npm packages so Delta works offline and in the desktop app.

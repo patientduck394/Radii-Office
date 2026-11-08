@@ -36,6 +36,7 @@ places =
     , Place "taskra" "Taskra" "To-dos"
     , Place "zonerider" "Zonerider" "3D editor"
     , Place "yuzu" "Yuzu" "Email"
+    , Place "delta" "Delta" "Math"
     , Place "antimony" "Antimony" "Live posts"
     , Place "waterflow" "Waterflow" "Note workspace"
     , Place "products" "Products" "Every app"
