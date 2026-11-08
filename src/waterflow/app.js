@@ -24,7 +24,7 @@
     };
     // Poolside colors: foam, cyan, blue, deep blue, sun and orange (nothing else)
     const COLORS = ['', '#5fd8f7', '#18bfe8', '#1b7fe0', '#0b3f9a', '#ffb35c', '#ff8a1b'];
-    const OLD_COLOR = { '#4cc0ee': '#1b7fe0', '#2fc26a': '#18bfe8', '#e5484d': '#ffb35c', '#a855f7': '#0b3f9a', '#ec4899': '#5fd8f7', '#14b8a6': '#5fd8f7' };
+    const OLD_COLOR = { '#36cdee': '#1b7fe0', '#2fc26a': '#18bfe8', '#e5484d': '#ffb35c', '#a855f7': '#0b3f9a', '#ec4899': '#5fd8f7', '#14b8a6': '#5fd8f7' };
     let toastT = 0;
     function toast(msg) {
         const t = $('wf-toast'); t.textContent = msg; t.hidden = false;
@@ -59,7 +59,7 @@
         body.classList.toggle('wf-nobubbles', !S.bubbles);
         body.classList.toggle('wf-noside', !S.outline);
         $('wf-visual').setAttribute('spellcheck', S.spell ? 'true' : 'false');
-        const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = S.theme === 'night' ? '#0a2540' : S.theme === 'sand' ? '#ff9f43' : '#4cc0ee';
+        const m = document.querySelector('meta[name="theme-color"]'); if (m) m.content = S.theme === 'night' ? '#0a2540' : S.theme === 'sand' ? '#ff9f43' : '#36cdee';
         LS('waterflow2_settings', JSON.stringify(S));
     }
     // a soft water-drop blip on gel buttons (off unless you turn sounds on)
