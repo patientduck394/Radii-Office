@@ -77,7 +77,8 @@
             'const resolve = (from, spec) => { const parts = from.split("/").slice(0, -1); for (const p of spec.split("/")) { if (p === "..") parts.pop(); else if (p !== ".") parts.push(p); } return parts.join("/"); };' +
             'const done = new Map(), busy = new Set();' +
             'let compile;' +
-            'const fix = (code, from) => code.replace(/(\\bfrom\\s*|\\bimport\\s*\\(\\s*|\\bimport\\s+)(["\'])([^"\'\\n]+)\\2/g, (m, pre, q, spec) => {' +
+            // (only real import / export-from lines are rewritten, never words inside a long string, like a big bundled engine has)
+            'const fix = (code, from) => code.replace(/^([ \\t]*(?:import\\s+[^"\';]*?from\\s*|import\\s*|export\\s+[^"\';]*?from\\s*))(["\'])([^"\'\\n]+)\\2/gm, (m, pre, q, spec) => {' +
             '  if (spec === "svelte" || spec.startsWith("svelte/")) return pre + q + "https://esm.sh/svelte@" + V + spec.slice(6) + q;' +
             '  if (spec.startsWith("./") || spec.startsWith("../")) return pre + q + url(resolve(from, spec)) + q;' +
             '  if (/^https?:/.test(spec)) return m;' +
@@ -93,7 +94,7 @@
             '  else if (/\\.css$/i.test(name)) code = "const s = document.createElement(\\"style\\"); s.textContent = " + JSON.stringify(f.code) + "; document.head.appendChild(s); export default \\"\\";";' +
             '  else if (/\\.json$/i.test(name)) code = "export default " + f.code + ";";' +
             '  else code = f.code;' +
-            '  const u = "data:text/javascript;charset=utf-8," + encodeURIComponent(fix(code, name)).replace(/\x27/g, "%27");' +
+            '  const u = URL.createObjectURL(new Blob([fix(code, name)], { type: "text/javascript" }));' +
             '  busy.delete(name); done.set(name, u); return u;' +
             '}' +
             'try {' +
