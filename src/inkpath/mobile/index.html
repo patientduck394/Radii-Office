@@ -20,6 +20,7 @@
     </script>
     <script src="radii-file.js?v=20261211a"></script>
     <script>RadiiFile.scope(/^(inkpath_doc_v1$|inkpath_collab_backup$)/);</script>
+    <script src="docs-library.js?v=20261210r"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inkpath - Vector Studio</title>
@@ -98,6 +99,7 @@
             </div>
 
             <span class="section-label">File Options</span>
+            <button class="action-btn" onclick="if (window.RadiiDocs) RadiiDocs.openDialog()" title="Every drawing saved in this browser: open, new, copy, rename, delete">🗂️ Documents</button>
             <button class="action-btn" onclick="exportKV()">💾 Export .KV</button>
             <button class="action-btn" onclick="document.getElementById('file-kv').click()">📂 Import .KV</button>
             <button class="action-btn" onclick="document.getElementById('file-svg').click()" title="Every shape in the SVG becomes an editable Inkpath shape!">📥 Import SVG</button>

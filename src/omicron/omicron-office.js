@@ -554,8 +554,9 @@
     function setTitle(t) { try { localStorage.setItem(TITLE_KEY, String(t).substring(0, 80)); } catch (e) {} if (window.onOmicronChange) window.onOmicronChange(); }
     function setAccent(c) { accentColor = c; const i = document.getElementById('accent-color'); if (i) i.value = c; renderDocument(); }
     function newPage() {
-        OS.confirm('New Page', 'Start a blank page?', 'Start Fresh').then(function (ok) {
+        OS.confirm('New Page', 'Start a blank page? The one you have now is kept in File > Documents!', 'Start Fresh').then(function (ok) {
             if (!ok) return;
+            if (window.RadiiDocs) RadiiDocs.archive();
             elementsList = [{ id: newBlockId(), type: 'heading', variant: 'h1', content: 'Your Title' }, { id: newBlockId(), type: 'paragraph', variant: 'standard', content: 'Start typing, or try ::aqua then Space!' }];
             setTitle('My Omicron Page');
             renderDocument();

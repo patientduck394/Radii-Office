@@ -398,6 +398,7 @@ function setTool(tool) {
 }
 
 function clearCanvas() {
+    if (objects.length && window.RadiiDocs) RadiiDocs.archive();
     pushHistory(true);
     playUISound('delete');
     objects = []; selectedIndices = []; activePathNodes = []; render();

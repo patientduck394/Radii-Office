@@ -901,6 +901,7 @@ function download(name, data, type) {
 function saveFile() { download('scene.zr', JSON.stringify(serialize()), 'application/json'); toast('Saved scene.zr!'); }
 function newScene(ask = true) {
     const go = () => {
+        if (window.RadiiDocs) RadiiDocs.archive();
         commit();
         if (state.mode === 'edit') setMode('object');
         while (world.children.length) world.remove(world.children[0]);
@@ -1270,10 +1271,10 @@ function confirmDlg(title, text, ok) { return dialog(title, '<p>' + esc(text) + 
 
 const MENUS = {
     file: () => [
-        ['New Scene', 'Ctrl N', () => newScene(), 'plus'], ['Open…', 'Ctrl O', () => pickFile('.zr,.json'), 'folder'], ['Save (.zr)', 'Ctrl S', saveFile, 'save'], '-',
+        ['New Scene', 'Ctrl N', () => newScene(), 'plus'], ['Documents…', '', () => { if (window.RadiiDocs) RadiiDocs.openDialog(); }, 'folder'], ['Open…', 'Ctrl O', () => pickFile('.zr,.json'), 'folder'], ['Save (.zr)', 'Ctrl S', saveFile, 'save'], '-',
         ['Import glTF / GLB…', '', () => pickFile('.glb,.gltf'), 'import'], ['Import OBJ…', '', () => pickFile('.obj'), 'import'], ['Import STL…', '', () => pickFile('.stl'), 'import'], ['Open .gdshader (Godot shader)…', '', () => pickFile('.gdshader'), 'sparkle'], '-',
         ['Export GLB', '', () => exportAs('glb'), 'export'], ['Export glTF', '', () => exportAs('gltf'), 'export'], ['Export OBJ', '', () => exportAs('obj'), 'export'], ['Export STL (3D printing)', '', () => exportAs('stl'), 'export'], ['Export shader (.gdshader)', '', () => { const m = selectedMeshes().find((x) => x.material.userData.gdshader); if (m) download((m.name || 'material') + '.gdshader', m.material.userData.gdshader, 'text/plain'); else if (state.screenShader) download('screen.gdshader', state.screenShader.src, 'text/plain'); else toast('Select an object with a shader first!'); }, 'export'], '-',
-        ['Share and collaborate…', '', () => { if (window.RadiiCollab) RadiiCollab.toggle('people'); }, 'people']
+        ['Share and collaborate…', '', () => { if (window.RadiiCollab) RadiiCollab.toggle('people'); }, 'people'], ['New file in a new tab', '', () => { if (window.RadiiFile) RadiiFile.open(); }, 'newtab']
     ],
     edit: () => [['Undo', 'Ctrl Z', undo, 'undo'], ['Redo', 'Ctrl Shift Z', redo, 'redo'], '-', ['Select All', 'Ctrl A', () => selectAll(true), ''], ['Select None', 'Alt A', () => selectAll(false), ''], '-', ['Duplicate', 'Shift D', duplicate, 'duplicate'], ['Delete', 'X', del, 'trash']],
     add: () => [['#Mesh']].concat(Object.keys(PRIMS).map((k) => [PRIMS[k].label, '', () => addPrim(k), PRIMS[k].icon]))

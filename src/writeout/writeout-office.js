@@ -821,7 +821,14 @@
                     { label: 'New page', hint: 'Add a page to this document: the text after it starts on a fresh sheet!', icon: 'newDoc', run: newPage },
                     { label: 'Open a .kd file', hint: 'Import a Writeout document!', icon: 'folder', run: openFile }
                 ]));
-                b.insertAdjacentHTML('beforeend', '<h2>This document</h2><div class="wo-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((kdActiveTab() || {}).name || 'Main') + '</b><span>' + OS.esc(statsLine()) + '</span></div></div>');
+                // every saved document lives right here on Home (rename, copy, delete, switch), like Bitbook!
+                if (window.RadiiDocs && RadiiDocs.mount) {
+                    b.insertAdjacentHTML('beforeend', '<h2>Your documents</h2>');
+                    const box = document.createElement('div');
+                    box.className = 'rd-embed';
+                    b.appendChild(box);
+                    RadiiDocs.mount(box);
+                } else b.insertAdjacentHTML('beforeend', '<h2>This document</h2><div class="wo-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc((kdActiveTab() || {}).name || 'Main') + '</b><span>' + OS.esc(statsLine()) + '</span></div></div>');
             }
         },
         { id: 'new', label: 'New', icon: 'newDoc', render: function (b) { b.innerHTML = '<h1>New</h1>'; b.appendChild(OS.bsCards([{ label: 'Blank document', hint: 'Clears every page!', preview: '<div class="os-card-prev wo-prev-blank"></div>', run: newDocument }, { label: 'New page', hint: 'A fresh page after this one, keeping the rest!', icon: 'newDoc', run: newPage }])); } },

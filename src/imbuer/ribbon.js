@@ -2624,6 +2624,13 @@ function closeBackstage() {
 function showBackstagePage(page) {
     document.querySelectorAll('.bs-nav [data-bs]').forEach(b => b.classList.toggle('on', b.dataset.bs === page));
     const body = document.getElementById('bs-body');
+    // Documents: every workbook saved in this browser (open, new, copy, rename, delete)
+    if (page === 'docs' && window.RadiiDocs) {
+        window.RadiiDocs.setTitle(() => (book && book.name) || '');
+        body.innerHTML = '';
+        window.RadiiDocs.mount(body);
+        return;
+    }
     const tpl = (typeof TEMPLATES !== 'undefined' ? TEMPLATES : []);
     const tplCards = tpl.map((t, i) => `<button class="tpl" data-tpl="${i}"><div class="tpl-thumb" style="--a:${t.color}">${t.thumb || ''}</div><b>${escapeHtml(t.name)}</b><span>${escapeHtml(t.desc)}</span></button>`).join('');
     const blank = `<button class="tpl" data-new="1"><div class="tpl-thumb blank"><div class="tpl-grid"></div></div><b>Blank workbook</b><span>Start fresh!</span></button>`;
@@ -2686,11 +2693,12 @@ function wireBackstage() {
     bs.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeBackstage(); });
     document.getElementById('bs-body').addEventListener('click', async (e) => {
         const t = e.target.closest('[data-tpl]');
-        if (t) { closeBackstage(); loadTemplate(+t.dataset.tpl); return; }
+        if (t) { closeBackstage(); if (window.RadiiDocs) RadiiDocs.archive(); loadTemplate(+t.dataset.tpl); return; }
         if (e.target.closest('[data-new]')) {
             closeBackstage();
             const hasData = book.sheets.some(s => Object.keys(s.data).length);
-            if (hasData && !(await confirmDialog('New Workbook', 'Start a new blank workbook?', 'Start New'))) return;
+            if (hasData && !(await confirmDialog('New Workbook', 'Start a new blank workbook? The one you have now is kept in File > Documents!', 'Start New'))) return;
+            if (hasData && window.RadiiDocs) RadiiDocs.archive();
             pushUndo();
             book = newBook();
             resetTransient();
