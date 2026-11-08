@@ -457,11 +457,13 @@
         const count = notes.filter((n) => n.nb === id && !n.trashed).length;
         dialog('Notebook', '<div class="wf-row"><span>Name</span><input type="text" id="nb-name" maxlength="40" value="' + esc(nb.name) + '"></div>' +
             '<div class="wf-row"><span>Color<small>The color on its notes in the list</small></span><span class="wf-colors wf-nbcolors" id="nb-colors">' + COLORS.map((c) => '<button type="button" data-c="' + c + '" class="' + ((nb.color || '') === c ? 'on' : '') + '" style="background:' + (c || 'linear-gradient(135deg,#fff 45%,#ff8a1b 46%,#ff8a1b 54%,#fff 55%)') + '" aria-label="Color ' + (c || 'none') + '"></button>').join('') + '</span></div>' +
+            '<div class="wf-row"><span>Save this notebook<small>A .kw file with its ' + count + (count === 1 ? ' note' : ' notes') + ', which Waterflow can open again</small></span><button type="button" class="wf-btn" id="nb-kw">Export .kw</button></div>' +
             '<div class="wf-row"><span>Delete this notebook<small>' + (count ? 'Its ' + count + (count === 1 ? ' note stays' : ' notes stay') + ' in All notes, just without a notebook.' : 'It has no notes in it.') + '</small></span><button type="button" class="wf-btn danger" id="nb-del">Delete notebook</button></div>', (b) => {
             const name = b.querySelector('#nb-name');
             const save = () => { const v = name.value.trim().slice(0, 40); if (v && v !== nb.name) { nb.name = v; saveNbs(); renderAll(); if (cur) renderMeta(); } };
             name.addEventListener('change', save); name.addEventListener('keydown', (e) => { if (e.key === 'Enter') { save(); closeDialog(); } });
             b.querySelector('#nb-colors').addEventListener('click', (e) => { const c = e.target.closest('button'); if (!c) return; nb.color = c.dataset.c; saveNbs(); b.querySelectorAll('#nb-colors button').forEach((x) => x.classList.toggle('on', x === c)); renderAll(); });
+            b.querySelector('#nb-kw').addEventListener('click', () => exportNotebook(id));
             b.querySelector('#nb-del').addEventListener('click', () => {
                 if (!confirm('Delete the notebook "' + nb.name + '"?' + (count ? ' Its notes will stay in All notes.' : ''))) return;
                 notes.forEach((n) => { if (n.nb === id) { n.nb = ''; touch(n); } });
@@ -604,7 +606,7 @@
         const items = [];
         if (cur.trashed) items.push(['Restore', () => { restore(cur); closeNote(); }], ['Delete forever', () => { if (confirm('Delete this note forever?')) wipe(cur); }, 'danger']);
         else {
-            items.push(['Duplicate', duplicate], PKX ? [isPK(cur) ? 'Switch to Classic Keydown' : 'Switch to Poolside Keydown', convertLang] : '-', ['Export as .kd', () => exportNote(cur)], ['Copy as Keydown', () => { readMode(); try { navigator.clipboard.writeText(cur.text); toast('Copied the Keydown text!'); } catch (x) { toast('Could not copy here!'); } }], ['Print or save as PDF', printNote]);
+            items.push(['Duplicate', duplicate], PKX ? [isPK(cur) ? 'Switch to Classic Keydown' : 'Switch to Poolside Keydown', convertLang] : '-', [isPK(cur) ? 'Export as .kdp' : 'Export as .kd', () => exportNote(cur)], isPK(cur) ? ['Export as .kd (plain Keydown)', () => exportNote(cur, true)] : '-', ['Copy as Keydown', () => { readMode(); try { navigator.clipboard.writeText(cur.text); toast('Copied the Keydown text!'); } catch (x) { toast('Could not copy here!'); } }], ['Print or save as PDF', printNote]);
             if (!cur.scratch) items.push('-', ['Move to trash', () => trash(cur), 'danger']);
             else items.push('-', ['Clear the scratch note', () => { cur.text = ''; loadMode(); touch(cur); afterTextChange(false); }, 'danger']);
         }
@@ -636,7 +638,42 @@
         if ((n.tags || []).length) head.push('tags: [' + n.tags.join(', ') + ']');
         return head.concat(['---', '', kdOf(n), '']).join('\n');
     }
-    function exportNote(n) { readMode(); download(fileName(n) + '.kd', kdFile(n)); toast('Exported ' + fileName(n) + '.kd!'); }
+    // Poolside Keydown notes are saved as .kdp: the same header, then the note exactly as it is written in Poolside Keydown
+    function kdpFile(n) {
+        const head = ['---', 'format: "poolside-keydown-text"', 'app: "Waterflow"', 'title: ' + JSON.stringify(titleOf(n)), 'created: ' + new Date(n.created).toISOString()];
+        if ((n.tags || []).length) head.push('tags: [' + n.tags.join(', ') + ']');
+        return head.concat(['---', '', String(n.text || '').replace(/\s+$/, ''), '']).join('\n');
+    }
+    function exportNote(n, plain) {
+        readMode();
+        if (isPK(n) && !plain) { download(fileName(n) + '.kdp', kdpFile(n)); toast('Exported ' + fileName(n) + '.kdp!'); }
+        else { download(fileName(n) + '.kd', kdFile(n)); toast('Exported ' + fileName(n) + '.kd!'); }
+    }
+    // a whole notebook is a .kw file: its name and color, and every note in it (each keeps its own language)
+    function exportNotebook(id) {
+        const nb = nbs.find((b) => b.id === id); if (!nb) return;
+        readMode();
+        const list = notes.filter((n) => n.nb === id && !n.trashed && !n.scratch);
+        const out = { format: 'waterflow-notebook', version: 1, app: 'Waterflow', exported: new Date().toISOString(), notebook: { name: nb.name, color: nb.color || '' },
+            notes: list.map((n) => ({ title: n.title || '', text: n.text || '', lang: n.lang === 'pk' ? 'pk' : 'kd', tags: n.tags || [], pinned: !!n.pinned, color: n.color || '', created: n.created, updated: n.updated })) };
+        const name = (nb.name.replace(/[^\w\- ]+/g, '').trim() || 'notebook').slice(0, 60);
+        download(name + '.kw', JSON.stringify(out, null, 1), 'application/json');
+        toast('Exported ' + name + '.kw with ' + list.length + (list.length === 1 ? ' note!' : ' notes!'));
+    }
+    function importNotebook(o) {
+        const src = o.notebook || {};
+        const name = String(src.name || 'Notebook').slice(0, 40);
+        let nb = nbs.find((b) => b.name === name);
+        if (!nb) { nb = { id: uid(), name: name, color: src.color || '' }; nbs.push(nb); saveNbs(); }
+        let made = 0;
+        (o.notes || []).forEach((n) => {
+            const dup = notes.find((x) => x.nb === nb.id && !x.trashed && x.title === (n.title || '') && x.created === n.created && x.text === (n.text || ''));
+            if (dup) return;
+            const nn = blank({ lang: n.lang === 'pk' ? 'pk' : 'kd', title: n.title || '', text: n.text || '', nb: nb.id, tags: Array.isArray(n.tags) ? n.tags : [], pinned: !!n.pinned, color: n.color || '', created: n.created || Date.now() });
+            notes.push(nn); touch(nn); made++;
+        });
+        return made;
+    }
     function fromKd(text, name) {
         let meta = {}, bodyText = String(text).replace(/\r/g, '');
         const m = /^---\n([\s\S]*?)\n---\n?/.exec(bodyText);
@@ -650,11 +687,19 @@
         if (/^\s*<(div|h[1-6]|p|span|ul|ol|table)\b/i.test(bodyText)) { const d = document.createElement('div'); d.innerHTML = bodyText; try { bodyText = KD.toText(d); } catch (e) {} }
         return blank({ lang: 'kd', title: title, text: bodyText.replace(/\s+$/, '') + '\n', tags: tags, created: meta.created && !isNaN(Date.parse(meta.created)) ? Date.parse(meta.created) : Date.now() });
     }
+    function fromKdp(text, name) { const n = fromKd(text, name); n.lang = 'pk'; return n; }
     async function importFiles(files) {
-        let made = 0;
+        let made = 0, lastNb = null;
         for (const f of files) {
             const text = await f.text();
-            if (/\.(json|waterflow)$/i.test(f.name)) {
+            if (/\.kw$/i.test(f.name)) {
+                try {
+                    const o = JSON.parse(text);
+                    if (!o || o.format !== 'waterflow-notebook' || !Array.isArray(o.notes)) throw 0;
+                    made += importNotebook(o); lastNb = nbs.find((b) => b.name === String((o.notebook || {}).name || 'Notebook').slice(0, 40)) || lastNb;
+                } catch (e) { toast(f.name + ' is not a Waterflow notebook!'); }
+            } else if (/\.kdp$/i.test(f.name)) { const n = fromKdp(text, f.name); notes.push(n); touch(n); made++; }
+            else if (/\.(json|waterflow)$/i.test(f.name)) {
                 try {
                     const o = JSON.parse(text);
                     if (!o || !Array.isArray(o.notes)) throw 0;
@@ -663,8 +708,9 @@
                 } catch (e) { toast(f.name + ' is not a Waterflow backup!'); }
             } else { const n = fromKd(text, f.name); notes.push(n); touch(n); made++; }
         }
+        if (lastNb && files.length === 1) stream = { kind: 'nb', id: lastNb.id };
         renderAll(); toast(made ? 'Brought in ' + made + (made === 1 ? ' note!' : ' notes!') : 'Nothing new to bring in!');
-        if (made === 1 && files.length === 1) openNote(notes[notes.length - 1]);
+        if (made === 1 && files.length === 1 && !lastNb) openNote(notes[notes.length - 1]);
     }
     $('wf-file').addEventListener('change', (e) => { importFiles(Array.from(e.target.files)); e.target.value = ''; });
     window.addEventListener('dragover', (e) => { if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) e.preventDefault(); });
@@ -672,12 +718,15 @@
     function dataDialog() {
         dialog('Your notes, your files', '<h4>Export</h4>' +
             '<div class="wf-row"><span>All notes<small>One backup file with every note and notebook</small></span><button type="button" class="wf-btn" id="d-all">Export backup</button></div>' +
-            '<div class="wf-row"><span>This note<small>A .kd file other Radii apps can open</small></span><button type="button" class="wf-btn" id="d-one"' + (cur ? '' : ' disabled') + '>Export .kd</button></div>' +
-            '<h4>Import</h4><div class="wf-row"><span>.kd, .txt, .md or a Waterflow backup<small>You can also drop files anywhere in the window</small></span><button type="button" class="wf-btn" id="d-imp">Choose files</button></div>' +
+            '<div class="wf-row"><span>This note<small>' + (cur && isPK(cur) ? 'A .kdp file (Poolside Keydown), or plain Keydown as .kd' : 'A .kd file other Radii apps can open') + '</small></span><button type="button" class="wf-btn" id="d-one"' + (cur ? '' : ' disabled') + '>Export ' + (cur && isPK(cur) ? '.kdp' : '.kd') + '</button>' + (cur && isPK(cur) ? '<button type="button" class="wf-btn" id="d-onekd">Export .kd</button>' : '') + '</div>' +
+            '<div class="wf-row"><span>A notebook<small>' + (stream.kind === 'nb' ? 'A .kw file with every note in the open notebook' : 'Open a notebook first, then export it as a .kw file') + '</small></span><button type="button" class="wf-btn" id="d-nb"' + (stream.kind === 'nb' ? '' : ' disabled') + '>Export .kw</button></div>' +
+            '<h4>Import</h4><div class="wf-row"><span>.kd, .kdp, .kw, .txt, .md or a Waterflow backup<small>You can also drop files anywhere in the window</small></span><button type="button" class="wf-btn" id="d-imp">Choose files</button></div>' +
             '<h4>Clean up</h4><div class="wf-row"><span>Trash<small>' + notes.filter((n) => n.trashed).length + ' notes waiting (they are removed for good after 30 days)</small></span><button type="button" class="wf-btn danger" id="d-trash">Empty the trash</button></div>' +
             '<h4>The old Waterflow</h4><div class="wf-row"><span>Waterflow Legacy<small>Still available in The Archives</small></span><a class="wf-btn" href="/waterflow-legacy/">Open Legacy</a><button type="button" class="wf-btn" id="d-leg">Bring its notes in</button></div>', (b) => {
             b.querySelector('#d-all').onclick = () => { readMode(); download('waterflow-backup-' + ymd(new Date()) + '.waterflow', JSON.stringify({ app: 'Waterflow', version: 2, exported: new Date().toISOString(), notebooks: nbs, notes: notes }, null, 1), 'application/json'); toast('Backup saved!'); };
             b.querySelector('#d-one').onclick = () => cur && exportNote(cur);
+            const dk = b.querySelector('#d-onekd'); if (dk) dk.onclick = () => cur && exportNote(cur, true);
+            b.querySelector('#d-nb').onclick = () => { if (stream.kind === 'nb') exportNotebook(stream.id); };
             b.querySelector('#d-imp').onclick = () => $('wf-file').click();
             b.querySelector('#d-trash').onclick = async () => { const t = notes.filter((n) => n.trashed); if (!t.length) return; if (!confirm('Delete ' + t.length + ' notes forever?')) return; for (const n of t) await wipe(n); closeDialog(); toast('Trash emptied!'); };
             b.querySelector('#d-leg').onclick = () => { closeDialog(); importLegacy(true); };
