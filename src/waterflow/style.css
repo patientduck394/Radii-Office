@@ -126,7 +126,9 @@ body[data-theme="night"] .wf-cardn { background: linear-gradient(180deg, rgba(20
 .wf-empty h2 { margin: 14px 0 4px; font-size: 24px; }
 .wf-empty p { color: var(--mute); }
 .wf-hint { font-size: 12px; margin-top: 18px; }
-.wf-drop { width: 86px; height: 110px; margin: 0 auto; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; background: radial-gradient(circle at 34% 26%, #fff 0 8%, rgba(255, 255, 255, 0) 30%), linear-gradient(180deg, #8be9ff, #36cdee 60%, #0a93b2); box-shadow: inset 0 -8px 14px rgba(0, 60, 140, .4), 0 12px 26px rgba(10, 100, 190, .4); animation: wf-bob 4s ease-in-out infinite; }
+.wf-drop { position: relative; width: 86px; height: 110px; margin: 0 auto; border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%; border: 4px solid #36cdee; background: #d2f7fc; box-sizing: border-box; animation: wf-bob 4s ease-in-out infinite; }
+.wf-drop::before { content: ""; position: absolute; left: 14px; top: 20px; width: 24px; height: 14px; border-radius: 50%; background: #fff; transform: rotate(-35deg); }
+body[data-theme="night"] .wf-drop { background: #12395e; }
 @keyframes wf-bob { 50% { transform: translateY(-8px); } }
 .wf-legacy { margin-top: 20px; padding: 14px; border-radius: 14px; border: 1px dashed var(--aqua2); background: var(--glass2); font-size: 13px; text-align: left; }
 .wf-legacy .wf-gel { margin-top: 8px; padding: 6px 14px; }
