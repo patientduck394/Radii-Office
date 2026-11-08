@@ -113,8 +113,8 @@
         if (!vis.length) return;
         const c = center(obj), groups = motion(obj, c), tr = obj.anim;
         // the frosted-glass copy keeps pace with the shape: its clip outline gets the same motion
-        const use = root.inkpathBB && root.inkpathBB.uses[idx];
-        if (use) motion(obj, c).forEach((els) => els.forEach((e) => use.appendChild(e)));
+        const uses = root.inkpathBB && root.inkpathBB.uses[idx];
+        if (uses) uses.forEach((use) => motion(obj, c).forEach((els) => els.forEach((e) => use.appendChild(e))));
         const leaf = vis.find((n) => n.classList && n.classList.contains('shape-element'));
         if (tr.fill && tr.fill.length && leaf && (!obj.fillType || obj.fillType === 'color')) {
             const ts = timesOf(tr.fill), col = (t) => rgba(valueAt(tr.fill, t, obj.fill || '#a305ff', true));

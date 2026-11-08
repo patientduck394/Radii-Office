@@ -1736,10 +1736,11 @@ function render() {
     drawLayer.appendChild(boundaryBox);
 
     objects.forEach((obj, idx) => {
-        const start = drawLayer.childNodes.length;
+        let start = drawLayer.childNodes.length;
         renderOne(obj, idx);
         // Blur Behind (frosted glass) and animation wrap what the object just drew (inkpath/blur-behind.js, animation.js)
-        if (window.inkpathBB) window.inkpathBB.after(obj, idx, start, drawLayer);
+        // (Blur Behind moves the shapes drawn before this one into a masked group, so it says where this shape's nodes start now)
+        if (window.inkpathBB) { const at = window.inkpathBB.after(obj, idx, start, drawLayer); if (typeof at === 'number') start = at; }
         if (window.inkpathAnim) window.inkpathAnim.after(obj, idx, start, drawLayer);
     });
 

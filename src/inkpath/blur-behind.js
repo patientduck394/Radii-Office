@@ -11,7 +11,7 @@
     const NS = 'http://www.w3.org/2000/svg';
     const GEOMETRY = ['x', 'y', 'width', 'height', 'rx', 'ry', 'cx', 'cy', 'r', 'd', 'points', 'transform', 'font-size', 'font-family', 'font-weight', 'text-anchor', 'letter-spacing'];
     const FLAT = /^(boolean|clip|mask|line)$/;
-    const uses = {};   // idx -> the <use> that draws the clip outline (animation.js animates it with the shape)
+    const uses = {};   // idx -> the <use> elements that draw the shape's outline in the clip and the mask (animation.js animates them with the shape)
 
     function outlineOf(el) {
         const tag = el.tagName.toLowerCase();
@@ -34,14 +34,15 @@
 
     function after(obj, idx, start, layer) {
         uses[idx] = null;
+        const noChange = start;
         const amount = Math.max(0, Math.min(60, +obj.blurBehind || 0));
-        if (!amount || FLAT.test(obj.type)) return;
+        if (!amount || FLAT.test(obj.type)) return noChange;
         const nodes = Array.from(layer.childNodes).slice(start);
         const el = nodes.find((n) => n.classList && n.classList.contains('shape-element'));
-        if (!el) return;
+        if (!el) return noChange;
         // everything drawn before this shape (the first child is the canvas border)
         const before = Array.from(layer.childNodes).slice(1, start);
-        if (!before.length) return;
+        if (!before.length) return noChange;
         const defs = document.getElementById('svg-defs');
 
         const outline = outlineOf(el);
@@ -53,7 +54,23 @@
         use.setAttribute('href', '#bbs-' + idx);
         clip.appendChild(use);
         defs.appendChild(clip);
-        uses[idx] = use;
+
+        // the sharp originals are hidden inside the glass (a mask that is white everywhere except the shape),
+        // so only the blurred copy shows there, not a blurred copy over a sharp one
+        const W0 = typeof CANVAS_BOUNDS !== 'undefined' ? CANVAS_BOUNDS.width : 1200, H0 = typeof CANVAS_BOUNDS !== 'undefined' ? CANVAS_BOUNDS.height : 800;
+        const mask = document.createElementNS(NS, 'mask');
+        mask.setAttribute('id', 'bbm-' + idx);
+        mask.setAttribute('maskUnits', 'userSpaceOnUse');
+        mask.setAttribute('x', -120); mask.setAttribute('y', -120); mask.setAttribute('width', W0 + 240); mask.setAttribute('height', H0 + 240);
+        const white = document.createElementNS(NS, 'rect');
+        white.setAttribute('x', -120); white.setAttribute('y', -120); white.setAttribute('width', W0 + 240); white.setAttribute('height', H0 + 240);
+        white.setAttribute('fill', '#fff');
+        const hole = document.createElementNS(NS, 'use');
+        hole.setAttribute('href', '#bbs-' + idx);
+        hole.setAttribute('fill', '#000'); hole.setAttribute('stroke', 'none');
+        mask.appendChild(white); mask.appendChild(hole);
+        defs.appendChild(mask);
+        uses[idx] = [use, hole];
 
         const f = document.createElementNS(NS, 'filter');
         f.setAttribute('id', 'bbf-' + idx);
@@ -74,7 +91,14 @@
         inner.setAttribute('filter', 'url(#bbf-' + idx + ')');
         before.forEach((n) => inner.appendChild(copyOf(n)));
         g.appendChild(inner);
+        // the originals move into one group wearing the mask (they keep working: moving nodes keeps their handlers)
+        const keep = document.createElementNS(NS, 'g');
+        keep.setAttribute('mask', 'url(#bbm-' + idx + ')');
+        keep.setAttribute('data-bb-keep', idx);
+        before.forEach((n) => keep.appendChild(n));
+        layer.insertBefore(keep, layer.childNodes[1] || null);
         layer.insertBefore(g, nodes[0]);
+        return Array.prototype.indexOf.call(layer.childNodes, g);   // where this shape's own nodes start now
     }
 
     root.inkpathBB = { after: after, uses: uses };
