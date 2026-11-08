@@ -2750,6 +2750,20 @@ function download(name, text, type) {
     setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
+// The file "Keep a file on this computer" writes and reads: an Imbuer workbook (.ks), the same as Save a copy
+window.radiiFileFormat = {
+    ext: '.ks', mime: 'application/json',
+    make: function () { return JSON.stringify({ imbuer: 2, book }); },
+    load: function (text) {
+        const parsed = JSON.parse(text);
+        if (!parsed || parsed.imbuer !== 2 || !parsed.book || !Array.isArray(parsed.book.sheets)) throw new Error('That is not an Imbuer workbook');
+        book = parsed.book;
+        book.sheets.forEach(fixSheet);
+        book.active = Math.min(book.active | 0, book.sheets.length - 1);
+        resetTransient(); recalc(); initGrid(); drawSheetTabs(); syncBookName(); persistSheets();
+    }
+};
+
 function safeFileName(n) {
     return (n || 'Book1').replace(/[\\/:*?"<>|]+/g, '_');
 }

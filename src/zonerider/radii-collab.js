@@ -1267,6 +1267,14 @@
         const hasFS = !!(window.showSaveFilePicker && window.showOpenFilePicker);
         const kind = TI ? 'tauri' : hasFS ? 'web' : 'none';
         let h = null, fname = '', lastText = '', lastMod = 0, timer = null, poller = null, busy = false, needPerm = false, status = '', applyingDisk = false;
+        // each app can describe its own file format with window.radiiFileFormat = { ext, make(), load(text), mime }:
+        // a linked file is then saved as that (a .kd, .tk, .ka, .kv...) and the app opens it again the way it opens its own files
+        const FMT = function () { return window.radiiFileFormat && typeof window.radiiFileFormat.make === 'function' && typeof window.radiiFileFormat.load === 'function' ? window.radiiFileFormat : null; };
+        const nativeFile = function () { return !!FMT() && !/\.radii$/i.test(fname || ''); };
+        const extOf = function () { return FMT() ? FMT().ext : '.radii'; };
+        // (a saved copy has the time it was made in it; that must not count as a change)
+        const stable = function (t) { return String(t).replace(/^.*(?:exported_at|exportedAt|savedAt|submittedAt).*$/gm, ''); };
+        const pickTypes = function (list) { return [{ description: (cfg.appName || cfg.app) + ' file', accept: { [FMT() && FMT().mime || 'text/plain']: list.map(function (e) { return e.replace(/^\.[^.]+\.(json)$/i, '.$1'); }) } }]; };
         const fid = function () { return (window.RadiiFile && window.RadiiFile.id) ? '@' + window.RadiiFile.id : ''; };
         const key = function () { return 'radii_disk_' + cfg.app + fid(); };
         const rawLS = function (m, k, v) { try { const P = Storage.prototype; return m === 'g' ? localStorage.getItem(k) : localStorage.setItem(k, v); } catch (e) { return null; } };
@@ -1282,6 +1290,7 @@
         function idbSet(k, v) { return idb().then(function (d) { return new Promise(function (res) { const t = d.transaction('h', 'readwrite'); if (v) t.objectStore('h').put(v, k); else t.objectStore('h').delete(k); t.oncomplete = function () { res(); }; t.onerror = function () { res(); }; }); }).catch(function () {}); }
         const inv = function (cmd, args) { return TI.invoke(cmd, args || {}); };
         function serialize() {
+            if (nativeFile()) return String(FMT().make());
             return JSON.stringify({ radii: 1, app: cfg.app, name: cfg.docName, saved: Date.now(), units: readSnapshot() });
         }
         function ui_() { try { ui.renderPeople(); } catch (e) {} }
@@ -1305,7 +1314,7 @@
         async function save(force) {
             if (!h || needPerm || applyingDisk || busy) return;
             const text = serialize();
-            const cmp = function (t) { try { const o = JSON.parse(t); delete o.saved; return JSON.stringify(o); } catch (e) { return t; } };
+            const cmp = function (t) { if (nativeFile()) return stable(t); try { const o = JSON.parse(t); delete o.saved; return JSON.stringify(o); } catch (e) { return t; } };
             if (!force && cmp(text) === cmp(lastText)) return;
             busy = true;
             try {
@@ -1347,6 +1356,10 @@
             if (!live) room.units = new Map();
             else { try { send('d', { t: 'ops', from: me.id, units: (function () { const o = {}; fresh.forEach(function (u, k) { if (u.w === me.id) o[k] = u; }); return o; })() }); } catch (e) {} }
         }
+        async function loadNative(text) {
+            applyingDisk = true; applying = true;
+            try { await FMT().load(text); } catch (e) { console.error(e); throw e; } finally { applying = false; applyingDisk = false; }
+        }
         async function tick() {
             if (!h || needPerm || busy || timer) return;
             try {
@@ -1354,10 +1367,9 @@
                 if (m === lastMod) return;
                 lastMod = m;
                 const r = await readFile();
-                if (r.text === lastText) return;
-                const o = fromText(r.text);
-                lastText = r.text;
-                applyUnits(o.units);
+                if (nativeFile() ? stable(r.text) === stable(lastText) : r.text === lastText) return;
+                if (nativeFile()) { await loadNative(r.text); lastText = r.text; }
+                else { const o = fromText(r.text); lastText = r.text; applyUnits(o.units); }
                 status = 'Updated from the file at ' + stamp();
                 ui_();
             } catch (e) { /* the file may be mid-write: try again next beat */ }
@@ -1370,10 +1382,9 @@
             h = handle; fname = name; needPerm = false;
             if (mode === 'open') {
                 const r = await readFile();
-                const o = fromText(r.text);
                 try { cfg.adapter.begin && cfg.adapter.begin('guest'); } catch (e) { console.error(e); }
-                lastText = r.text; lastMod = r.mod;
-                applyUnits(o.units);
+                if (nativeFile()) { await loadNative(r.text); lastText = r.text; lastMod = r.mod; }
+                else { const o = fromText(r.text); lastText = r.text; lastMod = r.mod; applyUnits(o.units); }
                 status = 'Opened and watching';
             } else {
                 await save(true);
@@ -1385,12 +1396,13 @@
         async function newFile() {
             const base = String(cfg.docName || cfg.app).replace(/[^\w\- ]+/g, '').trim() || cfg.app;
             try {
+                const ext = extOf(), short = ext.replace(/^.*\./, '');
                 if (kind === 'tauri') {
-                    const p = await inv('radii_pick', { save: true, name: base + '.radii' });
+                    const p = await inv('radii_pick', { save: true, name: base + ext, exts: [short] });
                     if (!p) return;
                     await useHandle(p, p.split(/[\\/]/).pop(), 'new');
                 } else {
-                    const fh = await window.showSaveFilePicker({ suggestedName: base + '.radii', types: [{ description: 'Radii file', accept: { 'application/json': ['.radii'] } }] });
+                    const fh = await window.showSaveFilePicker({ suggestedName: base + ext, types: FMT() ? pickTypes([ext]) : [{ description: 'Radii file', accept: { 'application/json': ['.radii'] } }] });
                     await useHandle(fh, fh.name, 'new');
                 }
                 ui.toast('Done! Every change now saves to ' + fname + ' by itself!');
@@ -1398,12 +1410,13 @@
         }
         async function openFile() {
             try {
+                const ext = extOf(), short = ext.replace(/^.*\./, '');
                 if (kind === 'tauri') {
-                    const p = await inv('radii_pick', { save: false, name: '' });
+                    const p = await inv('radii_pick', { save: false, name: '', exts: FMT() ? [short, 'radii', 'json'] : ['radii', 'json'] });
                     if (!p) return;
                     await useHandle(p, p.split(/[\\/]/).pop(), 'open');
                 } else {
-                    const r = await window.showOpenFilePicker({ types: [{ description: 'Radii file', accept: { 'application/json': ['.radii', '.json'] } }] });
+                    const r = await window.showOpenFilePicker({ types: FMT() ? pickTypes([ext, '.json', '.radii']) : [{ description: 'Radii file', accept: { 'application/json': ['.radii', '.json'] } }] });
                     await useHandle(r[0], r[0].name, 'open');
                 }
                 ui.toast('Opened ' + fname + '! It updates live from now on!');
@@ -1426,11 +1439,16 @@
         async function settle() {
             try {
                 const r = await readFile();
-                const o = fromText(r.text);
                 const mine = Number(rawLS('g', key() + '_ts')) || 0;
                 lastMod = r.mod;
-                if ((o.saved || 0) > mine + 1500) { lastText = r.text; applyUnits(o.units); status = 'Updated from the file at ' + stamp(); }
-                else { lastText = r.text; await save(true); }
+                if (nativeFile()) {
+                    if (r.mod > mine + 1500) { await loadNative(r.text); lastText = r.text; status = 'Updated from the file at ' + stamp(); }
+                    else { lastText = r.text; await save(true); }
+                } else {
+                    const o = fromText(r.text);
+                    if ((o.saved || 0) > mine + 1500) { lastText = r.text; applyUnits(o.units); status = 'Updated from the file at ' + stamp(); }
+                    else { lastText = r.text; await save(true); }
+                }
             } catch (e) { await save(true); }
         }
         async function boot() {
@@ -1458,8 +1476,8 @@
         function download() {
             const t = serialize();
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([t], { type: 'application/json' }));
-            a.download = (String(cfg.docName || cfg.app).replace(/[^\w\- ]+/g, '').trim() || cfg.app) + '.radii';
+            a.href = URL.createObjectURL(new Blob([t], { type: FMT() && FMT().mime || 'application/json' }));
+            a.download = (String(cfg.docName || cfg.app).replace(/[^\w\- ]+/g, '').trim() || cfg.app) + (FMT() ? extOf() : '.radii');
             document.body.appendChild(a); a.click(); a.remove();
             setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
         }
@@ -1469,7 +1487,7 @@
             if (kind === 'none') {
                 html += '<p class="rc-fine">This browser cannot keep a file up to date by itself. Chrome, Edge and the Radii desktop apps can! You can still download a copy.</p><div class="rc-row">' + dl + '</div>';
             } else if (!h) {
-                html += '<p class="rc-fine">Save this ' + esc(cfg.docName) + ' as a real file. After that, every change you make is written to it as you type, and if the file changes somewhere else (a synced folder, another window) this ' + esc(cfg.docName) + ' updates live!</p>' +
+                html += '<p class="rc-fine">Save this ' + esc(cfg.docName) + ' as a real ' + (FMT() ? '<b>' + esc(extOf()) + '</b> ' : '') + 'file. After that, every change you make is written to it as you type, and if the file changes somewhere else (a synced folder, another window) this ' + esc(cfg.docName) + ' updates live!</p>' +
                     '<div class="rc-row"><button type="button" class="rc-btn rc-gel rc-disk-new">Save to a file…</button><button type="button" class="rc-btn rc-disk-open">Open a file…</button></div>';
             } else {
                 html += '<p class="rc-fine"><b>' + esc(fname) + '</b><br>' + esc(status || 'Keeping it up to date!') + '</p><div class="rc-row">' +

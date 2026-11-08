@@ -3399,6 +3399,24 @@ function importKV(evt) {
     reader.readAsText(file);
 }
 
+// The file "Keep a file on this computer" writes and reads: a .kv drawing, the same as Export .KV
+window.radiiFileFormat = {
+    ext: '.kv', mime: 'text/yaml',
+    make: function () {
+        const kvDoc = { inkpath_version: "2.5", shapes: objects };
+        const animSettings = window.inkpathAnim && window.inkpathAnim.settings();
+        if (animSettings) kvDoc.animation = animSettings;
+        return jsyaml.dump(kvDoc);
+    },
+    load: function (text) {
+        const doc = jsyaml.load(text);
+        if (!doc || !doc.shapes) throw new Error('That is not an Inkpath drawing');
+        objects = doc.shapes; selectedIndices = [];
+        if (window.inkpathAnim) window.inkpathAnim.load(doc.animation);
+        render();
+    }
+};
+
 // The drawing as a clean, standalone SVG: the editor's own bits (click handlers, the dashed canvas border, the pan and zoom
 // transform, the selection and preview layers) are left out, and it has its namespace and a viewBox, so it opens in any
 // browser or editor (the plain outerHTML of the editor's <svg> had none of that, so the exported file was not valid SVG).

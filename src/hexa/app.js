@@ -687,6 +687,13 @@
         download(new Blob([JSON.stringify(kh(), null, 2)], { type: 'application/json' }), 'hexa-calendar.kh');
     }
 
+    // The file "Keep a file on this computer" writes and reads: a .kh calendar, the same as Export
+    window.radiiFileFormat = {
+        ext: '.kh', mime: 'application/json',
+        make: () => JSON.stringify(kh(), null, 2),
+        load: (text) => { if (!applyKh(JSON.parse(text))) throw new Error('Invalid .kh file'); persist(); render(); if (state.view === 'boards') renderBoards(); }
+    };
+
     function readFile(evt, onText) {
         clickSound(850, 0.15);
         const file = evt.target.files[0];

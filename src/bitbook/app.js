@@ -2821,6 +2821,8 @@ function kdLoadKeydownFile(text) {
         if (typeof autoSaveCanvasContent === 'function') autoSaveCanvasContent();
     });
 }
+// The file the Share panel's "Keep a file on this computer" writes and reads: this app's own format (a Keydown text file)
+window.radiiFileFormat = { ext: '.kn', mime: 'text/plain', make: function () { return kdDoc.toFileText(kdFileMeta(), kdTabsForFile()); }, load: function (text) { return kdLoadKeydownFile(text); } };
 
 function exportKeydownFile() {
     if (isExporting) return; // Prevent double firing completely!

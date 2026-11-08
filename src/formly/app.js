@@ -512,6 +512,19 @@
         }
     }
 
+    // The file "Keep a file on this computer" writes and reads: a .kfe editable form
+    window.radiiFileFormat = {
+        ext: '.kfe', mime: 'application/json',
+        make: () => pretty({ format: 'kfe', version: '1.0', form: form() }),
+        load: (text) => {
+            const doc = JSON.parse(text);
+            const f = doc.form || (Array.isArray(doc.fields) ? doc : null);
+            if (!f) throw new Error('Invalid form');
+            state.form = f; state.mode = 'builder'; state.locked = false;
+            render();
+        }
+    };
+
     // --- Wiring the page ---
     function on(id, ev, f) { const e = $(id); if (e) e.addEventListener(ev, f); }
 

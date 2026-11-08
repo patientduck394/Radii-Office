@@ -2059,6 +2059,19 @@
     });
   }
 
+  // The file "Keep a file on this computer" writes and reads: a .kc drawer (the open one)
+  window.radiiFileFormat = {
+    ext: '.kc', mime: 'text/yaml',
+    make: function () { return cabinetSerializeDrawer(); },
+    load: function (text) {
+      const parsed = cabinetParseDrawer(text);
+      if (!parsed) throw new Error('That is not a Cabinet drawer');
+      const d = D();
+      d.name = parsed.name; d.files = parsed.files; d.folders = parsed.folders || [];
+      saveDrawer(); renderDrawer();
+    }
+  };
+
   function cabinetNewDrawer() {
     const d = { id: uid(), name: 'Drawer ' + (drawers.length + 1), files: [], folders: [] };
     drawers.push(d);

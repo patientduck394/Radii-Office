@@ -274,6 +274,9 @@
         reader.readAsText(file);
     }
 
+    // The file "Keep a file on this computer" writes and reads: a .tk task list, the same as Export
+    window.radiiFileFormat = { ext: '.tk', mime: 'application/json', make: () => JSON.stringify(tasksFile(), null, 2), load: (text) => { if (!applyTasksFile(JSON.parse(text))) throw new Error('Invalid .tk file'); } };
+
     // The ribbon (office.js) and live collaboration (collab.js) build on this!
     window.Taskra = {
         state, renderHooks, persistHooks, STORAGE_KEY,

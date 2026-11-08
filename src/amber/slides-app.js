@@ -1492,6 +1492,23 @@ function importKaFile(e) {
     };
     reader.readAsText(f);
 }
+// The file "Keep a file on this computer" writes and reads: a .ka deck, the same as File > Save
+window.radiiFileFormat = {
+    ext: '.ka', mime: 'application/json',
+    make: function () { return JSON.stringify({ app: 'amber', kind: 'slides', version: 1, savedAt: new Date().toISOString(), activeSlideIndex: activeSlideIndex, slides: slides }, null, 2); },
+    load: function (text) {
+        const data = JSON.parse(text);
+        const deck = Array.isArray(data) ? data : data.slides;
+        if (!Array.isArray(deck) || !deck.length) throw new Error('empty deck');
+        const clean = deck.map(sanitizeKaSlide).filter(Boolean);
+        if (!clean.length) throw new Error('empty deck');
+        slides = clean;
+        const wantIdx = (data && !Array.isArray(data)) ? data.activeSlideIndex : 0;
+        activeSlideIndex = Math.max(0, Math.min(clean.length - 1, wantIdx | 0));
+        activeElementId = null; editingElementId = null;
+        renderThumbnails(); renderActiveSlide();
+    }
+};
 
 function addTextBox() {
     saveState();

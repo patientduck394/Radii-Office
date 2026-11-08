@@ -551,6 +551,19 @@
             });
         });
     }
+    // The file "Keep a file on this computer" writes and reads: an Omicron project (.omicron.json)
+    window.radiiFileFormat = {
+        ext: '.omicron.json', mime: 'application/json',
+        make: function () { return JSON.stringify({ omicron: 1, title: docTitle(), accentColor: accentColor, width: document.getElementById('canvas-width-select').value, elementsList: elementsList }, null, 1); },
+        load: function (text) {
+            const d = JSON.parse(text);
+            if (!d || !Array.isArray(d.elementsList)) throw new Error('That is not an Omicron project');
+            elementsList = d.elementsList.map(function (x) { x.content = x.type === 'image' ? String(x.content) : clean(String(x.content)); return x; });
+            if (d.title) setTitle(d.title);
+            if (d.width) updateCanvasWidth(d.width);
+            setAccent(d.accentColor || '#00D6B6');
+        }
+    };
     function setTitle(t) { try { localStorage.setItem(TITLE_KEY, String(t).substring(0, 80)); } catch (e) {} if (window.onOmicronChange) window.onOmicronChange(); }
     function setAccent(c) { accentColor = c; const i = document.getElementById('accent-color'); if (i) i.value = c; renderDocument(); }
     function newPage() {

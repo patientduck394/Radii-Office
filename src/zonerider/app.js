@@ -2155,4 +2155,6 @@ if (EMBED) {
     });
     tell({ zr: 'ready' });
 }
+// The file "Keep a file on this computer" writes and reads: a .zr scene, the same as File > Save
+window.radiiFileFormat = { ext: '.zr', mime: 'application/json', make: () => JSON.stringify(serialize()), load: (text) => { restore(JSON.parse(text), true); } };
 window.Zonerider = { gd: { parseGd, openGdText, applyObjectShader, applyScreenShader, gdCheck, EXAMPLES, error: () => gdError }, collab: () => collab, viewCam: () => cam, viewTarget: () => orbit.target, THREE, scene, world, state, addPrim, addLight, addCamera, addEmpty, select, setMode, setShading, setTool, view, insertKey, goFrame, serialize, restore, exportAs, renderImage, undo, redo, editSelectAll, editMerge, del, duplicate, frameObjects };
