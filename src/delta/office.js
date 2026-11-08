@@ -131,6 +131,8 @@
                 { big: true, icon: 'plus', label: 'Add\nFunction', run: () => { goTo('graph'); D.addExpressionRow(); sync(); } },
                 { big: true, icon: 'dl-slider', label: 'Add\nSlider', title: 'Adds a number you can drag, like a = 1',
                     run: () => { goTo('graph'); D.addSliderRow(D.nextFreeLetter()); sync(); } },
+                { big: true, icon: 'arrowUp', label: 'Move\nUp', title: 'Move the selected function up: the top function is drawn on top!', run: () => { const id = D.focusedId(); if (id !== null) { D.moveExpression(id, D.expressions().findIndex((e) => e.id === id) - 1); sync(); } else OS.toast('Click a function first!'); } },
+                { big: true, icon: 'arrowDown', label: 'Move\nDown', title: 'Move the selected function down', run: () => { const id = D.focusedId(); if (id !== null) { D.moveExpression(id, D.expressions().findIndex((e) => e.id === id) + 1); sync(); } else OS.toast('Click a function first!'); } },
                 { big: true, icon: 'dl-graph', label: 'Samples', menu: () => SAMPLE_FUNCS.map((x) => ({ label: x[0] + '  (' + x[1] + ')', run: () => addFunction(x[1]) })) },
             ] },
             { label: 'View', items: [
@@ -138,6 +140,7 @@
                 { big: true, icon: 'zoomOut', label: 'Zoom\nOut', run: () => D.zoomGraph(1.6) },
                 { big: true, icon: 'reset', label: 'Reset\nView', run: () => D.resetView() },
                 { big: true, icon: 'dl-grid', label: 'Grid', run: () => { D.toggleGrid(); sync(); }, checked: () => D.grid() },
+                { big: true, icon: 'keyboard', label: 'Keyboard', title: 'Symbol keyboard', run: () => { goTo('graph'); D.keyboard.toggle(); }, checked: () => D.keyboard.isOpen() },
             ] },
             { label: 'Export', items: [
                 { big: true, icon: 'image', label: 'PNG', title: 'Save the graph as a picture', run: () => exportImage('png') },
@@ -155,6 +158,7 @@
             ] },
             { label: 'Formula', items: [
                 { big: true, icon: 'sparkle', label: 'Examples', menu: () => EXAMPLES.map((x) => ({ label: x[0], run: () => { goTo('latex'); D.setLatex(x[1]); sync(); } })) },
+                { big: true, icon: 'keyboard', label: 'Keyboard', title: 'Symbol keyboard', run: () => { goTo('latex'); D.keyboard.toggle(); }, checked: () => D.keyboard.isOpen() },
                 { big: true, icon: 'copy', label: 'Copy\nLaTeX', run: () => copyText(D.latexText(), 'LaTeX copied!') },
                 { big: true, icon: 'trash', label: 'Clear', run: () => { goTo('latex'); D.setLatex(''); sync(); } },
             ] },

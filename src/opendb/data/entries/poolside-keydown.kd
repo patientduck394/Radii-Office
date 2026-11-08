@@ -48,11 +48,11 @@ A heading starts with slashes, one for each level, and a space.
 <> <> A pulled quote between two lane ropes.}
 
 ### More notes
-`<` followed by one of Keydown's other quote marks makes ten more note styles, each drawn in its own Poolside design.
+`<` followed by one of Keydown's other quote marks makes ten more note styles, each drawn in its own Poolside design. Tips are the one exception to cyan, blue and orange: they are warm yellow, and stop notes use the Sunburn red-orange.
 
 ;;pk{<* A marker note, with a highlighter stripe
-<+ A tip, with a plus in a ring
-<- A stop note, with a cross in a ring
+<+ A tip, in warm yellow with a plus in a ring
+<- A stop note, in Sunburn red-orange with a cross in a ring
 <= A lane box, dashed, with orange corners
 <~ A whisper, small and quiet
 <$ A sticky note, taped on

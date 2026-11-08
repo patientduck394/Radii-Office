@@ -208,7 +208,8 @@ input[type="text"]:focus, textarea:focus {
     flex: 1;
     min-width: 0;
     width: 100%;
-    height: 450px;
+    height: auto;
+    align-self: stretch;
     background: #ffffff;
     border-radius: 8px;
     border: 1px solid #cbd5e1;
@@ -660,3 +661,33 @@ input[type="range"] {
 .expr-error svg { width: 14px; height: 14px; flex: none; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; margin-top: 1px; }
 .dl-calc-card { max-width: 400px; margin: auto; }
 .calc-btn.dl-eq { grid-column: span 2; }
+
+
+/* --- Reordering: the grip on each function row --- */
+.expr-grip { flex: none; display: grid; place-items: center; width: 16px; height: 22px; margin: 0 -2px 0 -4px; color: #b8bfca; cursor: grab; touch-action: none; user-select: none; }
+.expr-grip:hover { color: var(--accent-magenta); }
+.expr-grip svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 3.2; stroke-linecap: round; }
+.expr-row.dragging { opacity: 0.85; border-color: var(--accent-magenta); box-shadow: 0 6px 18px rgba(238, 0, 88, 0.3); position: relative; z-index: 3; }
+.dragging-list, .dragging-list * { cursor: grabbing !important; }
+
+/* --- The symbol keyboard --- */
+.panel-title .dl-kb-toggle { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; border-radius: 8px; border: 1px solid #fbcfe8; background: linear-gradient(180deg, #fff0f5 0%, #ffe4e9 100%); color: var(--accent-magenta); font: 700 0.72rem 'JetBrains Mono', monospace; text-transform: none; cursor: pointer; }
+.panel-title .dl-kb-toggle .dl-ico { width: 16px; height: 16px; margin: 0; }
+.panel-title .dl-kb-toggle:hover, .panel-title .dl-kb-toggle.active { border-color: var(--accent-magenta); background: var(--accent-magenta); color: #fff; }
+.dl-kb { flex: none; margin-top: 12px; padding: 8px; border: 1px solid #f7d3e0; border-radius: 12px; background: #fff7fa; color: #1e293b; user-select: none; }
+.dl-kb[hidden] { display: none; }
+.dl-kb-head { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+.dl-kb-tab { padding: 4px 12px; border-radius: 999px; border: 1px solid #fbcfe8; background: #fff; color: #64748b; font: 700 0.78rem 'JetBrains Mono', monospace; cursor: pointer; }
+.dl-kb-tab.active { background: var(--accent-magenta); border-color: var(--accent-magenta); color: #fff; }
+.dl-kb-hint { margin-left: auto; font-size: 0.7rem; color: #94a3b8; }
+.dl-kb-close { display: grid; place-items: center; width: 24px; height: 24px; border: none; background: transparent; color: #94a3b8; cursor: pointer; border-radius: 6px; }
+.dl-kb-close:hover { color: var(--accent-magenta); background: #ffe4e9; }
+.dl-kb-close svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+.dl-kb-grid { display: grid; grid-template-columns: repeat(var(--cols, 10), minmax(0, 1fr)); gap: 5px; }
+.dl-key { height: 36px; min-width: 0; padding: 0 2px; border: 1px solid #f3c5d6; border-radius: 8px; background: linear-gradient(180deg, #fff 0%, #fff0f5 100%); color: #1e293b; font: 600 0.92rem KaTeX_Main, 'Times New Roman', serif; cursor: pointer; display: grid; place-items: center; box-shadow: 0 1px 0 rgba(238, 0, 88, 0.12); transition: transform 0.08s, background 0.12s; overflow: hidden; }
+.dl-key:hover { border-color: var(--accent-magenta); color: var(--accent-magenta); }
+.dl-key:active { transform: scale(0.94); background: #ffd6e4; }
+.dl-key > svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.dl-key .katex { font-size: 1em; }
+.dl-key-fn { font: 700 0.76rem 'JetBrains Mono', monospace; }
+.dl-kb-tex .dl-key { height: 40px; font-size: 0.85rem; }

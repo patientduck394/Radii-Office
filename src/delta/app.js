@@ -45,6 +45,7 @@ let listStore = {};  // A = [(1,1)]  -> { A: { kind: 'list', items: [[1,1]], poi
 let rowInfo = {};    // expression id -> what the row shows under it (slider, list chip, error...)
 let activeExprIdForStyle = null;
 let gridOn = true;
+let focusedExprId = null; // the row you last clicked into
 let currentMode = 'home';
 const DEFAULT_LATEX = '\\int_{0}^{\\infty} x^2 e^{-x} dx = 2';
 const SAVE_KEY = 'delta_workspace_v1';
@@ -146,6 +147,8 @@ function addExpressionRow() {
     });
     renderExpressionRows();
     renderGraph();
+    focusedExprId = newId; // the new function is the one the symbol keyboard types into
+    if (mathFields[newId]) mathFields[newId].focus();
 }
 
 function removeExpressionRow(id) {
@@ -660,6 +663,10 @@ function renderGraph() {
         }
     });
 
+    // function-plot draws entry 0 first (at the bottom), so reverse them: the function at the top of the list is drawn on top!
+    funcData.reverse();
+    plottedExprs.reverse();
+
     updateRowExtras();
     if (!plotterEl.offsetWidth) return; // Graph mode isn't open yet
 
@@ -769,6 +776,22 @@ document.addEventListener("DOMContentLoaded", () => {
     let resizeT = 0;
     window.addEventListener('resize', () => { clearTimeout(resizeT); resizeT = setTimeout(() => { if (currentMode === 'graph') renderGraph(); }, 150); });
     document.addEventListener('keydown', calcKey);
+    const listEl = document.getElementById('expressions-list');
+    if (listEl) {
+        listEl.addEventListener('focusin', (ev) => {
+            const row = ev.target.closest('.expr-row');
+            if (row) focusedExprId = +row.dataset.id;
+        });
+        listEl.addEventListener('keydown', (ev) => {
+            if (!ev.altKey || (ev.key !== 'ArrowUp' && ev.key !== 'ArrowDown')) return;
+            const row = ev.target.closest('.expr-row');
+            if (!row) return;
+            ev.preventDefault();
+            const id = +row.dataset.id;
+            moveExpression(id, expressions.findIndex(e => e.id === id) + (ev.key === 'ArrowUp' ? -1 : 1));
+            setTimeout(() => { if (mathFields[id]) mathFields[id].focus(); }, 0);
+        });
+    }
 });
 
 const MQ = MathQuill.getInterface(2);
@@ -788,13 +811,16 @@ function renderExpressionRows() {
     expressions.forEach((expr) => {
         const row = document.createElement('div');
         row.className = 'expr-row';
+        row.dataset.id = expr.id;
         row.innerHTML = `
+            <span class="expr-grip" title="Drag to reorder (the top function is drawn on top!)"><svg viewBox="0 0 24 24"><path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01"/></svg></span>
             <span class="expr-color-badge" style="background: ${expr.color}" onclick="openStylePopover(event, ${expr.id})"></span>
             <span id="mq-input-${expr.id}" class="mq-math-field" style="flex: 1; border: none; padding: 4px;"></span>
             ${expressions.length > 1 ? `<button class="expr-remove-btn" title="Remove" onclick="removeExpressionRow(${expr.id})"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>` : ''}
             <div id="expr-extra-${expr.id}" class="expr-extra" hidden></div>
         `;
         listEl.appendChild(row);
+        row.querySelector('.expr-grip').addEventListener('pointerdown', (ev) => startRowDrag(ev, row));
 
         const mathFieldEl = document.getElementById(`mq-input-${expr.id}`);
         const mathField = MQ.MathField(mathFieldEl, {
@@ -1094,5 +1120,60 @@ window.Delta = {
     expressions: () => expressions, renderGraph, zoomGraph, resetView, toggleGrid, grid: () => gridOn,
     exportGraph, exportWorkspace, importWorkspaceText, newWorkspace,
     insertLatex, setLatex, latexText, clearCalc, backCalc, appendCalc, solveCalc, calc: () => calcExpr,
-    workspaceData, instance: () => instance
+    moveExpression, focusedId: () => focusedExprId, workspaceData, instance: () => instance
 };
+
+
+// ==========================================
+// REORDERING (the function at the top of the list is drawn on top of the others!)
+// ==========================================
+function moveExpression(id, to) {
+    const from = expressions.findIndex(e => e.id === id);
+    if (from < 0) return false;
+    to = Math.max(0, Math.min(expressions.length - 1, to));
+    if (to === from) return false;
+    const [item] = expressions.splice(from, 1);
+    expressions.splice(to, 0, item);
+    renderExpressionRows();
+    renderGraph();
+    return true;
+}
+
+// Drag a row by its grip: the row follows the pointer through the list, and the graph redraws when it lands
+function startRowDrag(ev, row) {
+    if (ev.button > 0) return;
+    ev.preventDefault();
+    const list = row.parentNode;
+    row.classList.add('dragging');
+    list.classList.add('dragging-list');
+    const move = (e) => {
+        const others = Array.from(list.children).filter(r => r !== row);
+        let before = null;
+        for (const r of others) {
+            const b = r.getBoundingClientRect();
+            if (e.clientY < b.top + b.height / 2) { before = r; break; }
+        }
+        if (before !== row.nextSibling) list.insertBefore(row, before);
+        // scroll the list when the pointer nears its edge
+        const box = list.parentNode.getBoundingClientRect();
+        if (e.clientY < box.top + 24) list.parentNode.scrollTop -= 12;
+        else if (e.clientY > box.bottom - 24) list.parentNode.scrollTop += 12;
+    };
+    const end = () => {
+        document.removeEventListener('pointermove', move);
+        document.removeEventListener('pointerup', end);
+        document.removeEventListener('pointercancel', end);
+        row.classList.remove('dragging');
+        list.classList.remove('dragging-list');
+        const byId = new Map(expressions.map(e => [e.id, e]));
+        const next = Array.from(list.children).map(r => byId.get(+r.dataset.id)).filter(Boolean);
+        if (next.length === expressions.length && next.some((e, i) => e !== expressions[i])) {
+            expressions = next;
+            renderExpressionRows();
+            renderGraph();
+        }
+    };
+    document.addEventListener('pointermove', move);
+    document.addEventListener('pointerup', end);
+    document.addEventListener('pointercancel', end);
+}

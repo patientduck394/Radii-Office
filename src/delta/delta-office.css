@@ -35,7 +35,8 @@ body.os-office .panel-card {
 body.os-office .mode-card { background: #fff7fa; border: 1px solid #f7d3e0; box-shadow: none; }
 body.os-office .mode-card:hover { box-shadow: 0 4px 14px rgba(238, 0, 88, 0.2); border-color: var(--accent-magenta); }
 body.os-office .graph-workspace { flex: 1; min-height: 0; height: auto; }
-body.os-office .graph-container { flex: 1; min-height: 280px; height: auto; }
+body.os-office .graph-container { flex: 1; min-height: 240px; height: auto; }
+body.os-office .graph-workspace { overflow: hidden; }
 body.os-office .expressions-sidebar { background: #fff9fb; border-color: #f7d3e0; }
 body.os-office .latex-output { border-color: #f7d3e0; }
 body.os-office .view-panel#panel-latex .panel-card, body.os-office .view-panel#panel-home .panel-card { height: auto; }
@@ -53,7 +54,22 @@ body.os-office.os-dark .add-expr-btn { background: #4a1f2e; color: #f5dbe3; bord
 /* phones */
 body.os-phone .workspace-wrapper { padding: 10px 10px 12px; }
 body.os-phone .graph-container { flex-direction: column; }
-body.os-phone .expressions-sidebar { width: 100%; min-width: 0; max-height: 38%; }
-body.os-phone #plotter { min-height: 280px; }
+body.os-phone .view-panel { height: auto; min-height: 100%; }
+body.os-phone .graph-workspace { overflow: visible; height: auto; flex: none; }
+body.os-phone .graph-container { flex: none; height: auto; }
+body.os-phone .expressions-sidebar { width: 100%; min-width: 0; max-height: 230px; flex: none; }
+body.os-phone #plotter { flex: none; height: 320px; min-height: 320px; }
 body.os-phone .grid-modes { grid-template-columns: 1fr; }
 body.os-phone .panel-card { padding: 14px; }
+
+body.os-office .dl-kb { background: #fff9fb; }
+body.os-office.os-dark .dl-kb { background: #351622; border-color: #4a1f2e; color: #f5dbe3; }
+body.os-office.os-dark .dl-key { background: #4a1f2e; border-color: #6b2f44; color: #f5dbe3; }
+body.os-office.os-dark .dl-kb-tab { background: #4a1f2e; border-color: #6b2f44; color: #d3a9b8; }
+body.os-office.os-dark .dl-kb-tab.active { background: var(--accent-magenta); color: #fff; }
+body.os-office.os-dark .expr-grip { color: #8a5668; }
+body.os-office .view-panel#panel-latex .panel-card { height: auto; }
+body.os-phone .dl-kb-hint { display: none; }
+body.os-phone .dl-kb-grid { grid-template-columns: repeat(min(var(--cols, 10), 8), minmax(0, 1fr)); }
+body.os-phone .dl-key { height: 34px; }
+body.os-phone .panel-title .dl-kb-toggle { padding: 4px 8px; }

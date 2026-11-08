@@ -13,9 +13,9 @@
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="vendor/katex/katex.min.css">
     <link rel="stylesheet" href="vendor/mathquill/mathquill.css">
-    <link rel="stylesheet" href="style.css?v=20261214a">
+    <link rel="stylesheet" href="style.css?v=20261214b">
     <link rel="stylesheet" href="office-shell.css?v=20261210m">
-    <link rel="stylesheet" href="delta-office.css?v=20261214a">
+    <link rel="stylesheet" href="delta-office.css?v=20261214b">
     <link rel="icon" type="image/png" sizes="96x96" href="/delta/favicon-96.png">
     <link rel="apple-touch-icon" href="/delta/apple-touch-icon.png">
     <link rel="manifest" href="manifest.json">
@@ -71,7 +71,7 @@
         <!-- GRAPH MODE PANEL -->
         <section id="panel-graph" class="view-panel">
             <div class="panel-card graph-workspace">
-                <div class="panel-title">Graphing Engine</div>
+                <div class="panel-title">Graphing Engine<button type="button" class="dl-kb-toggle" title="Symbol keyboard"><svg class="dl-ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>Keyboard</button></div>
                 <div class="graph-container">
                     <div class="expressions-sidebar">
                         <div id="expressions-list">
@@ -139,7 +139,7 @@
         <!-- LATEX MODE PANEL -->
         <section id="panel-latex" class="view-panel">
             <div class="panel-card">
-                <div class="panel-title">LaTeX Live Renderer</div>
+                <div class="panel-title">LaTeX Live Renderer<button type="button" class="dl-kb-toggle" title="Symbol keyboard"><svg class="dl-ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M10 10h.01M14 10h.01M18 10h.01M7 14h10"/></svg>Keyboard</button></div>
                 <div class="input-group">
                     <textarea id="latex-input" rows="3" placeholder="Type LaTeX formula here...">\int_{0}^{\infty} x^2 e^{-x} dx = 2</textarea>
                 </div>
@@ -182,6 +182,7 @@
 
     </main>
 
+    <div id="dl-kb" class="dl-kb" hidden></div>
     <input type="file" id="delta-file" accept=".delta,.json" hidden>
 
     <script src="vendor/katex/katex.min.js"></script>
@@ -190,7 +191,8 @@
     <script src="vendor/jquery.min.js"></script>
     <script src="vendor/mathquill/mathquill.min.js"></script>
     <script src="office-shell.js?v=20261202i"></script>
-    <script src="app.js?v=20261214a"></script>
-    <script src="office.js?v=20261214a"></script>
+    <script src="app.js?v=20261214b"></script>
+    <script src="keyboard.js?v=20261214b"></script>
+    <script src="office.js?v=20261214b"></script>
 </body>
 </html>
