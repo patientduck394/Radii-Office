@@ -519,7 +519,7 @@
     let TOOLS = TOOLS_PK;
     function buildTools() {
         TOOLS = isPK(cur) ? TOOLS_PK : TOOLS_KD;
-        $('wf-tools').innerHTML = TOOLS.map((t, i) => '<button type="button" class="' + t[2] + '" data-t="' + i + '" title="' + esc(t[1]) + '">' + esc(t[0]) + '</button>').join('') + (isPK(cur) ? '<button type="button" data-t="chips" title="Every Poolside chip">Chips</button><button type="button" data-t="notes" title="Quotes, callouts and notes">Notes</button><button type="button" data-t="dividers" title="All the lane dividers">Dividers</button><button type="button" data-t="codes" title="Code block styles">Code</button>' : '') + '<button type="button" data-t="psl" title="Poolside Style Lookup: search 2,250 Poolside styles">Styles</button><button type="button" data-t="skills" title="Dice, timers, flashcards and more">Skills</button>';
+        $('wf-tools').innerHTML = TOOLS.map((t, i) => '<button type="button" class="' + t[2] + '" data-t="' + i + '" title="' + esc(t[1]) + '">' + esc(t[0]) + '</button>').join('') + (isPK(cur) ? '<button type="button" data-t="chips" title="Every Poolside chip">Chips</button><button type="button" data-t="notes" title="Quotes, callouts and notes">Notes</button><button type="button" data-t="dividers" title="All the lane dividers">Dividers</button><button type="button" data-t="codes" title="Code block styles">Code</button>' : '') + '<button type="button" data-t="psl" title="Poolside Style Lookup: search 4,500 Poolside styles">Styles</button><button type="button" data-t="skills" title="Dice, timers, flashcards and more">Skills</button>';
     }
     function insertText(snippet, wrapFn) {
         if (!cur) return;
@@ -558,7 +558,7 @@
         if (!t) return;
         if (t[3]) insertText(null, t[3]); else insertText(t[4]);
     });
-    // Poolside Style Lookup: any of the 2,250 Poolside styles, put on the selected words (or a sample word)
+    // Poolside Style Lookup: any of the 4,500 Poolside styles, put on the selected words (or a sample word)
     function pslOpen() {
         if (!window.PSL) { toast('Poolside Style Lookup did not load!'); return; }
         window.PSL.open({ verb: 'put it on your words', insert: (st) => {

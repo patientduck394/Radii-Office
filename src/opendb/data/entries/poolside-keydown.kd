@@ -167,7 +167,7 @@ A table row is written `[ a | b ]`, and the header row is `[= a | b =]`.
 [ 2 | Bo | 53.0 ]}
 
 ## Every Poolside style: Poolside Style Lookup
-The Poolside collections that used to be in the Style Gallery (Poolside 1 to 5: 450 designs with 5 colorways each, 2,250 styles) are written in Poolside Keydown as `<style-id words>`, where the id is the design's id and a colorway number from 1 to 5, like `<plripple-2 words>`. In plain Keydown the same style is `@plripple-2@words@`.
+The Poolside collections that used to be in the Style Gallery (Poolside 1 to 10: 900 designs with 5 colorways each, 4,500 styles) are written in Poolside Keydown as `<style-id words>`, where the id is the design's id and a colorway number from 1 to 5, like `<plripple-2 words>`. In plain Keydown the same style is `@plripple-2@words@`.
 
 ;;pk{<plripple-2 Pool Ripples> and <plclear-3 Clear> and <pvdotlead-5 Dot Leader>}
 

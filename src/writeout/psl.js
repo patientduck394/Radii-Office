@@ -1,5 +1,5 @@
 /* =====================================================================
-   POOLSIDE STYLE LOOKUP (PSL)! Search every Poolside style (450 designs x 5 colorways = 2,250 styles) that used to live in the
+   POOLSIDE STYLE LOOKUP (PSL)! Search every Poolside style (900 designs x 5 colorways = 4,500 styles) that used to live in the
    Style Gallery. Pick one to insert it; star the ones you love. Favorites are kept in ONE place for every Radii Office app on
    this address (Bitbook, Waterflow...), so a star in one shows up in the other right away!
      PSL.open({ insert(style) })   opens the lookup; insert gets { id, fam, famName, name, col, cls, kd, pk(words) }
@@ -162,7 +162,7 @@
         box = document.createElement('div');
         box.className = 'psl-back';
         box.innerHTML = '<div class="psl-box" role="dialog" aria-modal="true" aria-label="Poolside Style Lookup"><div class="psl-head"><h3>Poolside Style Lookup</h3><button type="button" class="psl-x" aria-label="Close">×</button></div>' +
-            '<div class="psl-tools"><input class="psl-q" type="search" placeholder="Search 2,250 Poolside styles (ripple, gold, tag, wave...)" autocomplete="off" spellcheck="false" aria-label="Search Poolside styles"></div>' +
+            '<div class="psl-tools"><input class="psl-q" type="search" placeholder="Search 4,500 Poolside styles (ripple, gold, tag, wave...)" autocomplete="off" spellcheck="false" aria-label="Search Poolside styles"></div>' +
             '<div class="psl-cols"></div><div class="psl-grid"></div>' +
             '<div class="psl-foot">Click a style to ' + (opts.verb || 'use it') + '. Star the ones you love: favorites are shared by every Radii Office app! In Poolside Keydown a style is written <b>&lt;style-id words&gt;</b>.</div></div>';
         document.body.appendChild(box);

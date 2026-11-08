@@ -6334,6 +6334,8 @@ try {
 } catch (e) {}
 function usFind(id) {
     for (let i = 0; i < US_STYLES.length; i++) if (US_STYLES[i].id === id) return US_STYLES[i];
+    // Poolside 6 to 10 live only in Poolside Style Lookup
+    try { const p = window.PSL && window.PSL.find(id); if (p) return { id: p.id, fam: p.fam, famName: p.famName, name: p.name, col: p.col, cls: p.cls }; } catch (e) {}
     return US_STYLES[0];
 }
 function usIsFav(id) { return usFavs.indexOf(id) !== -1; }
