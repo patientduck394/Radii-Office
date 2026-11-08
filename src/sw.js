@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '8e0268d2549d';
+const VERSION = 'e61b041e62c3';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","c5e15f09bd"],
@@ -267,12 +267,14 @@ const CORE = [["/","c5e15f09bd"],
   ["/opendb/data/entries/imaginary-number.kd","126bc26493"],
   ["/opendb/data/entries/joyfully.kd","295b9ad118"],
   ["/opendb/data/entries/julia-programming-language.kd","ee7348b600"],
-  ["/opendb/data/entries/keydown.kd","3396c1dace"],
+  ["/opendb/data/entries/keydown.kd","2e6b50ace8"],
   ["/opendb/data/entries/opendb-architecture.kd","250e9bbb43"],
   ["/opendb/data/entries/opendb.kd","f3ec28155e"],
   ["/opendb/data/entries/perma-language.kd","07d9d0f40c"],
   ["/opendb/data/entries/photosynthesis-diagram.kd","0ff51a7a2c"],
   ["/opendb/data/entries/photosynthesis.kd","f7bb6f299b"],
+  ["/opendb/data/entries/poolside-keydown.kd","4e3e199725"],
+  ["/opendb/data/entries/poolside-style.kd","d73c648f83"],
   ["/opendb/data/entries/poolside-water-gdshader.kd","07f60e7a97"],
   ["/opendb/data/entries/poolsideui.kd","5ad9eb41c3"],
   ["/opendb/data/entries/prime-number.kd","02b8f548b5"],

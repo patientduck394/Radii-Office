@@ -1,0 +1,145 @@
+---
+format: keydown-text
+id: poolside-keydown
+type: article
+title: Poolside Keydown
+summary: Poolside Keydown is Waterflow's own way of writing Keydown, with different marks, formatting and styles: lane marks for headings, rings for lists, angle chips with forty original looks, and lane dividers, all drawn in clear cyan, blue and orange.
+tags: [keydown, poolside, waterflow, formatting, markup language, chips]
+created: 2026-11-07
+updated: 2026-11-07
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Short name: PK
+infobox.Kind: Dialect of Keydown
+infobox.Used in: Waterflow, Writeout, Bitbook, OpenDB, Keydown.js
+infobox.Block: ;;pk{ ... }
+infobox.Chips: 40
+infobox.Style: [[poolside-style|Poolside]]
+---
+**Poolside Keydown** (PK) is a dialect of [[keydown]] written for Waterflow. It has its own marks, its own way of formatting and its own styles: headings start with lane marks, lists use rings, chips are written as angle tags such as `<ring words>`, and every one of them is drawn with an original design (life rings, lane ropes, buoys, pool tiles and drops) in the [[poolside-style|Poolside style]]: clear cyan and blue water with crisp orange.
+
+Poolside Keydown is translated to and from ordinary Keydown, so nothing is lost. The Keydown engine draws it, a note can be switched between the two at any time, and exporting a note as a `.kd` file writes plain Keydown that [[radii-office|Writeout and Bitbook]] can open.
+
+## Where to use it
+* **In Waterflow**, every new note is written in Poolside Keydown (Settings has a choice for new notes, and the note's menu switches a single note).
+* **Anywhere else** that draws Keydown (Writeout, Bitbook, this page and Keydown.js), wrap Poolside Keydown in `;;pk{ }`. It works as a block, on one line or over several, and as words inside a sentence.
+
+;;pk{/ A block of Poolside Keydown
+<< Written between the braces of a block.
+() Lists, quotes, chips and dividers all work in it.
+<ring Chips> and <foam more chips> too.}
+
+A sentence can hold ;;pk{<sun a chip>} or ;;pk{<neon a neon sign>} written the same way.
+
+## Headings
+A heading starts with slashes, one for each level, and a space.
+
+;;pk{/ / A big title
+// // A section
+/// /// A small heading}
+
+## Quotes and callouts
+`<<` starts a quiet quote. `<` followed by one of Keydown's quote marks makes a callout, so `<!` is an alert, `<?` is a question and `<>` is a pulled quote.
+
+;;pk{<< << A quiet quote, a tile with an orange edge.
+<! <! Heads up: an alert with a life ring.
+<? <? A question to think about.
+<> <> A pulled quote between two lane ropes.}
+
+## Lists
+A list item starts with a ring, written `()`. A mark inside the ring chooses the marker.
+
+;;pk{() () A life ring
+(+) (+) A water drop
+(.) (.) A bubble
+(~) (~) An orange tile
+(=) (=) A wave chevron}
+
+## Text styles
+`<b words>` is bold and `<i words>` is italic, drawn in deep blue and orange.
+
+;;pk{Some <b bold words> and <i italic words>.}
+
+## Chips
+A chip is an angle tag with a name and the words it holds: `<name words>`. There are forty, and each has its own look.
+
+### Rings, ropes and floats
+* `<ring words>` is a striped life ring: ;;pk{<ring ring>}
+* `<lap words>` has a lane rope under it: ;;pk{<lap lap>}
+* `<reef words>` has a wave under it: ;;pk{<reef reef>}
+* `<buoy words>` is an orange float: ;;pk{<buoy buoy>}
+* `<hoop words>` is rings inside rings: ;;pk{<hoop hoop>}
+* `<dots words>` is a dotted lane line: ;;pk{<dots dots>}
+* `<cone words>` is a cone, orange and white stripes: ;;pk{<cone cone>}
+
+### Water and light
+* `<foam words>` is sea foam full of bubbles: ;;pk{<foam foam>}
+* `<bubble words>` is a round bubble with a shine: ;;pk{<bubble bubble>}
+* `<pearl words>` is a pearl: ;;pk{<pearl pearl>}
+* `<drop words>` is a water drop: ;;pk{<drop drop>}
+* `<splash words>` is a splash with flying drops: ;;pk{<splash splash>}
+* `<lagoon words>` is shaded water in a double frame: ;;pk{<lagoon lagoon>}
+* `<mist words>` is a patch of mist: ;;pk{<mist mist>}
+* `<beam words>` is an underwater light beam: ;;pk{<beam beam>}
+* `<lens words>` is a glass lens: ;;pk{<lens lens>}
+* `<frost words>` is frosted glass: ;;pk{<frost frost>}
+* `<shimmer words>` is water shimmer with an orange edge: ;;pk{<shimmer shimmer>}
+* `<neon words>` is a blue neon sign: ;;pk{<neon neon>}
+* `<sun words>` is a sun with rays: ;;pk{<sun sun>}
+
+### Signs, flags and badges
+* `<deep words>` is the deep end, with a waterline on top: ;;pk{<deep deep>}
+* `<tile words>` is a square of pool tile: ;;pk{<tile tile>}
+* `<sign words>` is a pool sign with an orange header: ;;pk{<sign sign>}
+* `<pennant words>` is a pennant: ;;pk{<pennant pennant>}
+* `<banner words>` is a swallowtail banner: ;;pk{<banner banner>}
+* `<tab words>` is a folder tab: ;;pk{<tab tab>}
+* `<badge words>` is a lifeguard badge with a cross: ;;pk{<badge badge>}
+* `<pass words>` is a pool pass: ;;pk{<pass pass>}
+* `<say words>` is a speech bubble: ;;pk{<say say>}
+* `<capsule words>` is a two-tone capsule: ;;pk{<capsule capsule>}
+* `<split words>` is a chip split in two tones: ;;pk{<split split>}
+
+### Marks and inks
+* `<halo words>` and `<sunhalo words>` glow: ;;pk{<halo halo> <sunhalo sunhalo>}
+* `<mark words>` and `<flag words>` are highlighter strokes: ;;pk{<mark mark> <flag flag>}
+* `<ink words>` and `<fire words>` look written with a pen: ;;pk{<ink ink> <fire fire>}
+* `<under words>`, `<strike words>` and `<frame words>` underline, strike through and frame: ;;pk{<under under> <strike strike> <frame frame>}
+
+## Blanks and practice boxes
+`<blank 8|answer>` is a blank to write in, eight characters wide, with the answer hidden until it is clicked, and `<box 6>` is the same as an empty box. `(_ box|3|Write here _)` leaves room to write.
+
+;;pk{Water is <blank 8|wet> and a box is <box 6>.
+(_ box|2|Write here _)}
+
+## Dividers
+`/~ style | Title | color` draws a divider. The styles are `rope`, `lane`, `tile`, `wave`, `reef`, `step`, `ring`, `glass`, `buoy` and `water`, and the colors are `cyan`, `blue` and `orange`.
+
+;;pk{/~ rope | rope | blue
+/~ lane | lane | cyan
+/~ tile | tile | orange
+/~ wave | wave | blue
+/~ reef | reef | cyan
+/~ step | step | blue
+/~ ring | ring | orange
+/~ glass | glass | cyan
+/~ buoy | buoy | orange
+/~ water | water | blue}
+
+## Everything else is Keydown
+Poolside Keydown has no marks for tables, equations or code fences, so those are written the [[keydown|Keydown]] way inside it, and any Keydown tag works too. A note keeps its own language, so a Classic Keydown note and a Poolside Keydown note can sit side by side in Waterflow.
+
+## How it translates
+Each Poolside mark stands for exactly one Keydown mark, so the translation goes both ways.
+
+* `/ Title` is `# Title`
+* `<< quote` is `> quote`, and `<! alert` is `!> alert`
+* `() item` is `- item`, and `(+) item` is `+ item`
+* `<b words>` is `**words**`, and `<i words>` is `*words*`
+* `<ring words>` is `!!:O#words#`
+* `<foam words>` is `#C#words#`
+* `<sun words>` is `++O~words++`
+
+A blank is `<blank 8|answer>` in Poolside Keydown and `[__8|answer]` in Keydown, and a divider is `/~ rope | Title | blue` in Poolside Keydown and `::divider{poolside|Title|blue}` in Keydown.
+
+The translator is `poolside.js`, and the styles are `poolside-keydown.css` (and `poolside-embed.css` for `;;pk{ }` blocks). See also [[poolside-style]], [[poolsideui]] and [[keydown-components]].

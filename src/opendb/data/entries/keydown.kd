@@ -2682,21 +2682,5 @@ The war ended in [##6|1945] and began in [##6].
 `::pagenumbers{style|start}` is a small marker that changes how page numbers look from the page it sits on, until the next marker. The styles are `none` (front matter, no number), `arabic`, `roman` (i, ii, iii), `upper-roman` (I, II, III), `alpha` (a, b, c), `upper-alpha`, `greek` (α, β, γ) and `upper-greek`. The start number is optional and defaults to 1, so `::pagenumbers{roman|1}` starts a Roman section and `::pagenumbers{arabic|1}` starts the main text again at 1. Writeout and Bitbook show the numbers on their page sheets (turn on Page Numbers), and the marker itself never prints. In Writeout and Bitbook, use Layout > Pages > Page Number Format (or View in Bitbook) to place one at the caret!
 
 ## Poolside Keydown
-**Poolside Keydown** (PK) is Waterflow's own way of writing Keydown, with different marks, formatting and styles. It is translated to and from ordinary Keydown, so you can also use it anywhere that draws Keydown with the `;;pk{ }` block: write Poolside Keydown inside the braces, on one line or over several lines, or inside a sentence.
+**Poolside Keydown** is a dialect of Keydown written for Waterflow, with its own marks and forty original chips. Write it anywhere with the `;;pk{ }` block, for example ;;pk{<ring a ring chip>} inside a sentence. The full reference is in [[poolside-keydown]], and the look behind it is the [[poolside-style|Poolside style]].
 
-;;pk{/ A Poolside title
-<< a quiet quote
-<! heads up, an alert
-() ring bullet
-() second lane
-<ring ring> <buoy buoy> <foam foam> <deep deep> <lens lens> <splash splash>
-/~ rope | Lane one | blue}
-
-A sentence with ;;pk{<sun a sun chip>} and ;;pk{<neon a neon sign>} inside it.
-
-* `/ Title`, `// Section`, `/// Small` are headings, and `<< quote`, `<! callout`, `<? question`, `<> pulled quote` are quotes.
-* `() item`, `(+) item`, `(.) item`, `(~) item`, `(=) item` are lists, with ring, drop, bubble, tile and wave markers.
-* `<b bold>` and `<i italic>` are text styles. Forty chips are written the same way: `<ring>`, `<lap>`, `<reef>`, `<buoy>`, `<foam>`, `<deep>`, `<sun>`, `<lagoon>`, `<tile>`, `<drop>`, `<bubble>`, `<pennant>`, `<sign>`, `<pearl>`, `<hoop>`, `<beam>`, `<mist>`, `<badge>`, `<pass>`, `<say>`, `<capsule>`, `<banner>`, `<tab>`, `<splash>`, `<split>`, `<lens>`, `<dots>`, `<cone>`, `<frost>`, `<neon>`, `<shimmer>` and the marks `<halo>`, `<sunhalo>`, `<mark>`, `<flag>`, `<ink>`, `<fire>`, `<under>`, `<strike>`, `<frame>`.
-* `<blank 8|answer>` and `<box 6>` are blanks to write in, `/~ rope | Title | blue` is a divider (rope, lane, tile, wave, reef, step, ring, glass, buoy or water), and `(_ box|3|Write here _)` is room to write.
-
-Everything Poolside Keydown has no mark for (tables, equations, code fences) is written the Keydown way inside it. Poolside blocks work in Writeout, Bitbook and Keydown.js, and Waterflow writes whole notes in Poolside Keydown.

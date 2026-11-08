@@ -1,0 +1,67 @@
+---
+format: keydown-text
+id: poolside-style
+type: article
+title: Poolside style
+summary: The Poolside style is a design language of clear cyan-to-blue water with crisp orange accents, built from lane ropes, life rings, pool tiles, bubbles and buoys. It is used by PoolsideUI, Waterflow, Poolside Keydown and the pool-themed lites.
+tags: [poolside, design, style, ui, color, cyan, orange]
+created: 2026-11-07
+updated: 2026-11-07
+authors: [OpenDB contributors]
+license: CC0-1.0
+infobox.Palette: Cyan, blue and orange
+infobox.Accent: Orange
+infobox.Motifs: Lane ropes, life rings, pool tiles, bubbles, buoys
+infobox.Used in: PoolsideUI, Waterflow, Poolside Keydown
+infobox.Cousin of: [[frutiger-aero|Frutiger Aero]]
+---
+The **Poolside style** is a design language for interfaces that feel like a bright pool on a sunny day: clear water running from cyan to blue, with **orange** as a crisp accent. It grew out of [[frutiger-aero|Frutiger Aero]] but is simpler and flatter, and it keeps to a very small palette on purpose.
+
+## The palette
+Only three families of color are used, and nothing else.
+
+* **Cyan**, for shallow, sunny water: `#67e8f9`, `#22d3ee` and `#18bfe8`.
+* **Blue**, for the deep end and for text: `#1b7fe0`, `#0a68c4` and `#075985`.
+* **Orange**, for the accent: `#ff8a1b` and `#f97316`, with `#ffe3c2` as the light fill and `#8a3d00` as the dark text on it.
+
+Greens, reds, purples and pinks do not belong in the pool. When something needs several colors (like the note colors in Waterflow), it uses shades of these three: foam, cyan, blue, deep blue, sun and orange.
+
+## One rule: the orange is crisp
+Orange is never blended into the water. It shows up as stripes, edges, rings and small solid shapes sitting on the cyan and blue, the way a lane rope or a life ring does, and never as a gradient from blue into orange or a muddy mix of the two.
+
+;;pk{/~ rope | A lane rope | blue
+() Orange stripes on white, like the rope between swimming lanes.
+() A solid orange edge on the card you are in.
+<ring A life ring>, <buoy a buoy> and <sun a sun> are small orange shapes.}
+
+## The motifs
+* **Lane ropes**: a bar of alternating orange and white (or cyan and white) stripes, used under titles and as dividers.
+* **Life rings**: a ring striped orange and white, used as a bullet, an alert icon or a button shape.
+* **Pool tiles**: a pale grid on a white or foam-colored floor, with square-cornered tiles and grout lines.
+* **Bubbles and foam**: round, translucent chips with a small white shine.
+* **The waterline**: a thin cyan band along the top of a dark blue block.
+* **Buoys and floats**: solid orange pills with a white dot.
+
+## Surfaces and shapes
+Surfaces are flat and clear. They are white, foam (`#e6f8ff`) or light cyan (`#d4f6ff`), with thin blue borders and generous round corners. Depth comes from a soft blue shadow, not from gloss. Buttons are simple: the main color as the border and a lighter shade of it as the fill.
+
+## Where it is used
+* [[poolsideui]]: twenty-six Svelte 5 components built in this style, with its design tokens (`--pool-water-1` to `--pool-orange`).
+* **Waterflow**: the glassy notebook, with orange lane ropes under the titles, a life-ring New note button, tile edges on the open note and a buoy at the end of the storage meter.
+* [[poolside-keydown]]: a dialect of Keydown whose forty chips, callouts, bullets and dividers are all drawn in this style.
+* [[poolside-water-gdshader]], [[zonerider-pool-toys]] and [[python-pool-calculator]]: lites and articles with the same pool theme.
+
+## Making something Poolside
+1. Start with white or foam surfaces and thin blue borders.
+2. Use cyan for what is light and active, and blue for text and for the deep parts.
+3. Pick one or two places for orange: a stripe, an edge or a ring.
+4. Keep it flat, with round corners and soft blue shadows.
+5. Use the motifs for details: a rope under a title, a ring for a bullet, a tile grid behind the page.
+
+;;pk{/ A Poolside page in six marks
+<< Quiet quotes are pool tiles with an orange edge.
+() Bullets are rings.
+<lap Lane ropes> sit under words, and <deep the deep end> sits on a waterline.
+/~ rope | Done | orange}
+
+See also [[poolside-keydown]] and [[keydown-components]].
