@@ -1,0 +1,82 @@
+/* =====================================================================
+   POOLSIDE KEYDOWN! A heavy modification of how Keydown looks inside Waterflow.
+   Clear cyan and blue water with crisp orange: life rings, lane ropes and pool tiles.
+   It only changes how things are DRAWN (the Keydown text is never touched), and it
+   switches off with Settings > Keydown style > Classic Keydown (body[data-kd="classic"]).
+   Keydown's own rules start with :is(#wysiwyg-canvas, .kd-doc, body), so these start with an id too.
+   ===================================================================== */
+body[data-kd="poolside"] {
+    --pk-ink: #0b3552; --pk-water: #1b9be8; --pk-deep: #0a68c4; --pk-cyan: #22c8f0; --pk-foam: #e6f8ff; --pk-tile: #bfeaf9;
+    --pk-orange: #ff8a1b; --pk-orange-d: #c85f00; --pk-sun: #fff0dc;
+}
+body[data-kd="poolside"][data-theme="night"] {
+    --pk-ink: #dff3ff; --pk-water: #4fc3ff; --pk-deep: #8fd6ff; --pk-cyan: #4fe0ff; --pk-foam: #12354f; --pk-tile: #1e4d6e;
+    --pk-orange: #ff9b3d; --pk-orange-d: #ffb066; --pk-sun: #3a2a14;
+}
+body[data-kd="poolside"][data-theme="sand"] { --pk-water: #1b9be8; --pk-deep: #0a68c4; --pk-orange-d: #b85500; }
+
+/* ---------- the page: a faint pool-tile floor ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) {
+    color: var(--pk-ink);
+    background-image: linear-gradient(rgba(27, 155, 232, .055) 1px, transparent 1px), linear-gradient(90deg, rgba(27, 155, 232, .055) 1px, transparent 1px);
+    background-size: 36px 36px;
+}
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(strong, b) { color: var(--pk-deep); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(em, i) { color: var(--pk-orange-d); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) a { color: var(--pk-water); text-decoration: underline; text-decoration-color: var(--pk-orange); text-decoration-thickness: 2px; text-underline-offset: 3px; }
+
+/* ---------- headings: a lane rope, a life ring, a tile ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) h1 { position: relative; color: var(--pk-deep); border-bottom: 0; padding-bottom: 14px; margin: 18px 0 16px; font-weight: 800; letter-spacing: -.2px; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) h1::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 6px; border-radius: 5px; background: repeating-linear-gradient(90deg, var(--pk-orange) 0 14px, #fff 14px 28px); box-shadow: 0 0 0 1px rgba(27, 155, 232, .35); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) h2 { color: var(--pk-water); font-weight: 700; margin: 26px 0 8px; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) h2::before { content: ""; display: inline-block; width: .7em; height: .7em; margin-right: .5em; vertical-align: -.03em; border-radius: 50%; background: conic-gradient(var(--pk-orange) 0 25%, #fff 0 50%, var(--pk-orange) 0 75%, #fff 0); -webkit-mask: radial-gradient(circle, transparent 0 34%, #000 36%); mask: radial-gradient(circle, transparent 0 34%, #000 36%); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) h3 { color: var(--pk-orange-d); font-weight: 700; margin: 20px 0 6px; padding-bottom: 3px; border-bottom: 2px dotted var(--pk-cyan); display: inline-block; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) h4 { color: var(--pk-deep); font-size: .8em; text-transform: uppercase; letter-spacing: 1.4px; font-weight: 800; }
+
+/* ---------- quotes: a pool tile with an orange edge ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.blockquote-list:not([class*="kd-bq-"]) { margin: 14px 0; padding: 12px 18px 12px 20px; background: var(--pk-foam); color: var(--pk-ink); border: 1px solid var(--pk-tile); border-left: 7px solid var(--pk-orange); border-radius: 4px 14px 14px 4px; box-shadow: 0 2px 8px rgba(27, 155, 232, .14); font-style: normal; }
+
+/* ---------- lists: orange life-ring markers ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.bulleted-list > li::before { color: var(--pk-orange); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) ul.bulleted-list li::marker, body[data-kd="poolside"] :is(#wf-visual, #wf-view) ol li::marker { color: var(--pk-orange); font-weight: 800; }
+
+/* ---------- tables: tiles ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) table { border-collapse: separate; border-spacing: 0; border: 2px solid var(--pk-water); border-radius: 12px; overflow: hidden; background: var(--pk-foam); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(th, td) { border: 0; border-right: 1px solid var(--pk-tile); border-bottom: 1px solid var(--pk-tile); padding: 7px 12px; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) th { background: var(--pk-water); color: #fff; border-bottom: 3px solid var(--pk-orange); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) tr:nth-child(even) td { background: rgba(27, 155, 232, .08); }
+
+/* ---------- code: a deep-water console for fences with no style of their own ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) pre.kd-cb:not([class*="kd-cb-"]) { background: #06323d; color: #d4f5fb; border: 1px solid #0f6a7d; border-left: 6px solid var(--pk-orange); border-radius: 12px; padding: 14px 16px; box-shadow: inset 0 2px 10px rgba(0, 20, 30, .4); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) pre.kd-cb:not([class*="kd-cb-"]) code { background: none; border: 0; color: inherit; padding: 0; box-shadow: none; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :not(pre) > code:not(.kd-ic) { background: var(--pk-foam); border: 1px solid var(--pk-tile); color: var(--pk-deep); border-radius: 6px; box-shadow: none; }
+
+/* ---------- blanks and practice boxes: written on pool tile, answered in orange ---------- */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-fill { border-bottom-color: var(--pk-orange); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-blank { border-color: var(--pk-water); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .kd-blank-label { color: var(--pk-orange-d); }
+
+/* ---------- every highlight, chip and divider colour is pulled into the pool: cyan, blue and orange ----------
+   (a turn of hue on the drawn chip; the colour you typed is still the one in your text!) */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is([class*="gel-"], mark[class*="an-hl-"], [class*="kd-div-c-"]):is([class*="-red"], [class*="-green"], [class*="-lime"], [class*="-yellow"], [class*="-gold"], [class*="-turquoise"], [class*="-teal"], [class*="-purple"], [class*="-pink"]) { filter: hue-rotate(var(--pk-spin)); }
+/* red, yellow and gold become orange; lime, green, turquoise and teal become cyan; purple and pink become blue */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-red"] { --pk-spin: 26deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-yellow"] { --pk-spin: -22deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-gold"] { --pk-spin: -18deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-lime"] { --pk-spin: 118deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-green"] { --pk-spin: 64deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-turquoise"] { --pk-spin: 8deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-teal"] { --pk-spin: 16deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-purple"] { --pk-spin: -58deg; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) [class*="-pink"] { --pk-spin: -112deg; }
+/* the one-letter gel orbs (=G=, =R=, =P=...) */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-r) { filter: hue-rotate(26deg); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-y) { filter: hue-rotate(-22deg); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-g, .gel-lm) { filter: hue-rotate(64deg); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-p, .gel-v, .gel-mg) { filter: hue-rotate(-58deg); }
+
+/* ---------- print keeps the plain colours (filters would turn the dividers into low-resolution pictures) ---------- */
+@media print {
+    body[data-kd="poolside"] :is(#wf-visual, #wf-view) * { filter: none !important; }
+    body[data-kd="poolside"] :is(#wf-visual, #wf-view) { background-image: none; }
+}

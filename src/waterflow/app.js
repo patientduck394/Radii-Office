@@ -38,11 +38,12 @@
     const ymd = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
     /* ---------- settings ---------- */
-    const DEF = { theme: 'day', width: 780, bubbles: true, sound: false, spell: true, outline: true, mode: 'visual' };
+    const DEF = { theme: 'day', kd: 'poolside', width: 780, bubbles: true, sound: false, spell: true, outline: true, mode: 'visual' };
     let S = Object.assign({}, DEF);
     try { Object.assign(S, JSON.parse(LS('waterflow2_settings') || '{}')); } catch (e) {}
     function applySettings() {
         body.dataset.theme = S.theme;
+        body.dataset.kd = S.kd === 'classic' ? 'classic' : 'poolside';
         document.documentElement.style.setProperty('--doc-w', S.width + 'px');
         body.classList.toggle('wf-nobubbles', !S.bubbles);
         body.classList.toggle('wf-noside', !S.outline);
@@ -569,15 +570,16 @@
     function settingsDialog() {
         const sw = (id, on) => '<input type="checkbox" class="wf-switch" id="' + id + '"' + (on ? ' checked' : '') + '>';
         dialog('Settings', '<div class="wf-row"><span>Look<small>Day water, night water or warm sand</small></span><select id="s-theme"><option value="day">Aero day</option><option value="night">Lagoon night</option><option value="sand">Warm sand</option></select></div>' +
+            '<div class="wf-row"><span>Keydown style<small>Poolside Keydown draws headings, quotes, lists, tables and every chip colour in cyan, blue and orange</small></span><select id="s-kd"><option value="poolside">Poolside Keydown</option><option value="classic">Classic Keydown</option></select></div>' +
             '<div class="wf-row"><span>Page width<small>How wide the note paper is</small></span><select id="s-width"><option value="640">Narrow</option><option value="780">Comfortable</option><option value="960">Wide</option></select></div>' +
             '<div class="wf-row"><span>Drifting bubbles</span>' + sw('s-bub', S.bubbles) + '</div>' +
             '<div class="wf-row"><span>Water-drop sounds<small>A soft blip on the gel buttons</small></span>' + sw('s-snd', S.sound) + '</div>' +
             '<div class="wf-row"><span>Spell checking</span>' + sw('s-spl', S.spell) + '</div>' +
             '<div class="wf-row"><span>Outline panel</span>' + sw('s-out', S.outline) + '</div>' +
             '<h4>Shortcuts</h4><div class="wf-row"><span><kbd>Ctrl</kbd> <kbd>K</kbd> quick switcher<br><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>N</kbd> new note<br><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>F</kbd> focus mode<br><kbd>Ctrl</kbd> <kbd>Alt</kbd> <kbd>M</kbd> switch View, Visual and Source</span></div>', (b) => {
-            b.querySelector('#s-theme').value = S.theme; b.querySelector('#s-width').value = String(S.width);
+            b.querySelector('#s-theme').value = S.theme; b.querySelector('#s-kd').value = S.kd === 'classic' ? 'classic' : 'poolside'; b.querySelector('#s-width').value = String(S.width);
             const bind = (id, key, fn) => { const el = b.querySelector(id); el.onchange = () => { S[key] = el.type === 'checkbox' ? el.checked : (key === 'width' ? Number(el.value) : el.value); applySettings(); if (fn) fn(); }; };
-            bind('#s-theme', 'theme'); bind('#s-width', 'width'); bind('#s-bub', 'bubbles'); bind('#s-snd', 'sound', blip); bind('#s-spl', 'spell'); bind('#s-out', 'outline');
+            bind('#s-theme', 'theme'); bind('#s-kd', 'kd'); bind('#s-width', 'width'); bind('#s-bub', 'bubbles'); bind('#s-snd', 'sound', blip); bind('#s-spl', 'spell'); bind('#s-out', 'outline');
         });
     }
     $('wf-open-settings').addEventListener('click', settingsDialog);
