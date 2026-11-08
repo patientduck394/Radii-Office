@@ -1736,6 +1736,44 @@ function render() {
     drawLayer.appendChild(boundaryBox);
 
     objects.forEach((obj, idx) => {
+        const start = drawLayer.childNodes.length;
+        renderOne(obj, idx);
+        // Blur Behind (frosted glass) and animation wrap what the object just drew (inkpath/blur-behind.js, animation.js)
+        if (window.inkpathBB) window.inkpathBB.after(obj, idx, start, drawLayer);
+        if (window.inkpathAnim) window.inkpathAnim.after(obj, idx, start, drawLayer);
+    });
+
+    if (selectedIndices.length > 0 && currentTool === 'select') drawTransformHandles();
+
+    if ((currentTool === 'node' || currentTool === 'bezier') && (selectedIndices.length > 0 || activePathNodes.length > 0)) {
+        const nodes = selectedPathNodes() || (currentTool === 'bezier' ? activePathNodes : objects[selectedIndices[0]].nodes);
+        const showControls = activeCurveMode() === 'bezier';
+        if (nodes) {
+            nodes.forEach((node, i) => {
+                if (showControls) {
+                    createLine(node.x, node.y, node.cx1, node.cy1, 'control-line');
+                    createLine(node.x, node.y, node.cx2, node.cy2, 'control-line');
+                    createCircle(node.cx1, node.cy1, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control1', index: i }; });
+                    createCircle(node.cx2, node.cy2, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control2', index: i }; });
+                }
+
+                const circle = createCircle(node.x, node.y, 7, 'node-handle', (e) => {
+                    e.stopPropagation();
+                    dragTarget = { kind: 'node', index: i };
+                    if (currentTool === 'bezier') nodePress = { nodes, index: i, x: e.clientX, y: e.clientY };
+                });
+                circle.ondblclick = () => { if (nodes.length > 2) { nodes.splice(i, 1); playUISound('delete'); render(); } };
+            });
+        }
+    }
+
+    applyTransform();
+    syncInspector();
+    if (window.inkpathExtras) window.inkpathExtras.sync();
+    if (window.inkpathAnim) window.inkpathAnim.sync();
+}
+
+function renderOne(obj, idx) {
         if (obj.type === 'boolean' || obj.type === 'clip' || obj.type === 'mask') {
             renderContainerInto(obj, `${idx}`, drawLayer, idx);
             return;
@@ -1854,35 +1892,6 @@ function render() {
             };
             drawLayer.appendChild(el);
         }
-    });
-
-    if (selectedIndices.length > 0 && currentTool === 'select') drawTransformHandles();
-
-    if ((currentTool === 'node' || currentTool === 'bezier') && (selectedIndices.length > 0 || activePathNodes.length > 0)) {
-        const nodes = selectedPathNodes() || (currentTool === 'bezier' ? activePathNodes : objects[selectedIndices[0]].nodes);
-        const showControls = activeCurveMode() === 'bezier';
-        if (nodes) {
-            nodes.forEach((node, i) => {
-                if (showControls) {
-                    createLine(node.x, node.y, node.cx1, node.cy1, 'control-line');
-                    createLine(node.x, node.y, node.cx2, node.cy2, 'control-line');
-                    createCircle(node.cx1, node.cy1, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control1', index: i }; });
-                    createCircle(node.cx2, node.cy2, 5, 'control-handle', (e) => { e.stopPropagation(); dragTarget = { kind: 'control2', index: i }; });
-                }
-
-                const circle = createCircle(node.x, node.y, 7, 'node-handle', (e) => {
-                    e.stopPropagation();
-                    dragTarget = { kind: 'node', index: i };
-                    if (currentTool === 'bezier') nodePress = { nodes, index: i, x: e.clientX, y: e.clientY };
-                });
-                circle.ondblclick = () => { if (nodes.length > 2) { nodes.splice(i, 1); playUISound('delete'); render(); } };
-            });
-        }
-    }
-
-    applyTransform();
-    syncInspector();
-    if (window.inkpathExtras) window.inkpathExtras.sync();
 }
 
 function getCenter(obj) {
@@ -3020,6 +3029,11 @@ function syncInspector() {
         const opacityInput = document.getElementById('insp-opacity');
         const blurInput = document.getElementById('insp-blur');
         const rotationInput = document.getElementById('insp-rotation');
+        const bbVal = getMixedProperty('blurBehind');
+        const bbInput = document.getElementById('insp-blur-behind');
+        if (bbInput && document.activeElement !== bbInput) bbInput.value = (bbVal === 'MIXED' || bbVal === undefined) ? 0 : bbVal;
+        const bbLabel = document.getElementById('val-blur-behind');
+        if (bbLabel) bbLabel.innerText = (bbVal === 'MIXED' || bbVal === undefined) ? 0 : bbVal;
         if (opacityInput && document.activeElement !== opacityInput && opacityVal !== 'MIXED' && opacityVal !== undefined) {
             opacityInput.value = opacityVal;
         }
@@ -3095,6 +3109,7 @@ function updateSelectedObject() {
     const cornerInput = document.getElementById('insp-corner-radius');
     const opacityInput = document.getElementById('insp-opacity');
     const blurInput = document.getElementById('insp-blur');
+    const bbInput = document.getElementById('insp-blur-behind');
     const rotationInput = document.getElementById('insp-rotation');
     const newText = textInput ? textInput.value : '';
     const newFontSize = fontInput ? parseInt(fontInput.value, 10) : NaN;
@@ -3102,6 +3117,8 @@ function updateSelectedObject() {
     const newCorner = cornerInput ? parseFloat(cornerInput.value) : NaN;
     const newOpacity = opacityInput ? parseFloat(opacityInput.value) : NaN;
     const newBlur = blurInput ? parseFloat(blurInput.value) : NaN;
+    const newBB = bbInput ? parseFloat(bbInput.value) : NaN;
+    const bbNow = getMixedProperty('blurBehind');
     const newRotation = rotationInput ? parseFloat(rotationInput.value) : NaN;
     const textIsMixedPlaceholder = textInput && textInput.placeholder === 'MIXED' && textInput.value === '';
     const fontIsMixedPlaceholder = fontInput && fontInput.placeholder === 'MIXED' && fontInput.value === '';
@@ -3117,6 +3134,7 @@ function updateSelectedObject() {
         if (editingCorner && !isNaN(newCorner) && (paint.type === 'rect')) paint.rx = Math.max(0, Math.min(100, newCorner));
         if (!isNaN(newOpacity)) obj.opacity = Math.max(0, Math.min(1, newOpacity));
         if (!isNaN(newBlur)) obj.blur = Math.max(0, Math.min(20, newBlur));
+        if (!isNaN(newBB) && (activeId === 'insp-blur-behind' || (bbNow !== 'MIXED' && (+bbNow || 0) !== newBB))) { if (newBB > 0) obj.blurBehind = Math.min(40, newBB); else delete obj.blurBehind; }
         if (!isNaN(newRotation)) obj.rotation = Math.max(0, Math.min(360, newRotation));
         if (obj.type === 'text') {
             const editingText = activeId === 'insp-text-val' || !textIsMixedPlaceholder;
@@ -3362,7 +3380,10 @@ function renderLayerList() {
 
 function exportKV() {
     playUISound('click');
-    const kvStr = jsyaml.dump({ inkpath_version: "2.5", shapes: objects });
+    const kvDoc = { inkpath_version: "2.5", shapes: objects };
+    const animSettings = window.inkpathAnim && window.inkpathAnim.settings();
+    if (animSettings) kvDoc.animation = animSettings;
+    const kvStr = jsyaml.dump(kvDoc);
     downloadFile(new Blob([kvStr], { type: 'text/yaml' }), 'drawing.kv');
 }
 
@@ -3371,14 +3392,17 @@ function importKV(evt) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const doc = jsyaml.load(e.target.result);
-        if (doc && doc.shapes) { pushHistory(true); objects = doc.shapes; selectedIndices = []; playUISound('snap'); render(); }
+        if (doc && doc.shapes) { pushHistory(true); objects = doc.shapes; selectedIndices = []; if (window.inkpathAnim) window.inkpathAnim.load(doc.animation); playUISound('snap'); render(); }
     };
     reader.readAsText(file);
 }
 
 function exportSVG() {
     playUISound('click');
+    // (an animated drawing is exported WITH its animation: the SVG plays by itself)
+    if (window.inkpathAnim) window.inkpathAnim.beginExport();
     const cloneSvg = svg.cloneNode(true);
+    if (window.inkpathAnim) window.inkpathAnim.endExport();
     cloneSvg.querySelector('#ui-layer').remove(); cloneSvg.querySelector('#preview-layer').remove();
     downloadFile(new Blob([cloneSvg.outerHTML], { type: 'image/svg+xml' }), 'export.svg');
 }
