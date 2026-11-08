@@ -231,7 +231,7 @@
             if (/^\s*```/.test(l)) { fence = !fence; return hlLines(l)[0]; }
             if (fence) return hlCode(l);
             if ((m = /^(\s*)(\/{1,4})(\s+)(.*)$/.exec(l))) return escH(m[1]) + sp('m-h', m[2] + m[3]) + '<span class="m-h">' + withHold(m[4], hlInline) + '</span>';
-            if ((m = /^(\s*)(<[<>!?%*+\-=~$#^@&])(\s)(.*)$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + withHold(m[4], hlInline);
+            if ((m = /^(\s*)(<[<>:!?%*+\-=~$#^@&])(\s)(.*)$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + withHold(m[4], hlInline);
             if ((m = /^(\s*)(\([+.~=*]?\))(\s)(.*)$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + withHold(m[4], hlInline);
             if ((m = /^(\s*)(\/~)(\s+)(.*)$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + sp('m-p', m[4]);
             if ((m = /^(\s*)(\(_)(\s+)(.*?)(\s+)(_\))\s*$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + sp('m-p', m[4]) + escH(m[5]) + sp('m-k', m[6]);
@@ -265,7 +265,7 @@
     }
 
     /* ---------- text helpers ---------- */
-    const plain = (t) => String(t || '').replace(/^\s*(\/{1,4}|<[<>!?%*+\-=~$#^@&]|\([+.~=*]?\)|\/~)\s/gm, ' ').replace(/<[a-z]+\s/g, ' ').replace(/^::[a-z]+.*$/gm, ' ').replace(/```[^\n]*/g, ' ').replace(/[#*~=`>|_^%&+;!@$\[\]{}\\]/g, ' ').replace(/\s+/g, ' ').trim();
+    const plain = (t) => String(t || '').replace(/^\s*(\/{1,4}|<[<>:!?%*+\-=~$#^@&]|\([+.~=*]?\)|\/~)\s/gm, ' ').replace(/<[a-z]+\s/g, ' ').replace(/^::[a-z]+.*$/gm, ' ').replace(/```[^\n]*/g, ' ').replace(/[#*~=`>|_^%&+;!@$\[\]{}\\]/g, ' ').replace(/\s+/g, ' ').trim();
     const titleOf = (n) => (n.title || '').trim() || (plain(n.text).slice(0, 48)) || 'Untitled note';
     const words = (t) => { const p = plain(t); return p ? p.split(' ').length : 0; };
     const preview = (n) => { const lines = String(n.text || '').split('\n').filter((l) => l.trim() && !/^\s*(#{1,4}|\/{1,4})\s/.test(l)); return plain(lines.join(' ')).slice(0, 170); };

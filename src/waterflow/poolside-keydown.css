@@ -280,18 +280,22 @@ body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-orange.an-s-
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) mark.an-hl.an-hl-blue.an-s-bx { display: inline-block; padding: 0 8px; color: var(--pk-bd); font-weight: 700; background: linear-gradient(var(--pk-b), var(--pk-b)) 0 0 / 9px 2px no-repeat, linear-gradient(var(--pk-b), var(--pk-b)) 0 0 / 2px 9px no-repeat, linear-gradient(var(--pk-b), var(--pk-b)) 100% 0 / 9px 2px no-repeat, linear-gradient(var(--pk-b), var(--pk-b)) 100% 0 / 2px 9px no-repeat, linear-gradient(var(--pk-b), var(--pk-b)) 0 100% / 9px 2px no-repeat, linear-gradient(var(--pk-b), var(--pk-b)) 0 100% / 2px 9px no-repeat, linear-gradient(var(--pk-b), var(--pk-b)) 100% 100% / 9px 2px no-repeat, linear-gradient(var(--pk-b), var(--pk-b)) 100% 100% / 2px 9px no-repeat; }
 
 /* ---------- callouts: <! an alert ring, <? a question ring, <> a pulled quote between two lane ropes ---------- */
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull),
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull)::before,
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull)::after { all: unset; }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass) { position: relative; display: block; margin: 14px 0; padding: 12px 18px 12px 58px; border-radius: 12px; line-height: 1.55; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull, blockquote.kd-bq-gradient),
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull, blockquote.kd-bq-gradient)::before,
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-pull, blockquote.kd-bq-gradient)::after { all: unset; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-gradient) { position: relative; display: block; margin: 14px 0; padding: 12px 18px 12px 58px; border-radius: 12px; line-height: 1.55; }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-neon { background: var(--pk-o2); color: var(--pk-od); border: 2px solid var(--pk-o); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-glass { background: var(--pk-c2); color: var(--pk-cd); border: 2px dashed var(--pk-c); }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass)::before { content: ""; position: absolute; left: 14px; top: 50%; width: 30px; height: 30px; margin-top: -15px; border-radius: 50%; -webkit-mask: radial-gradient(circle, transparent 0 8px, #000 9px); mask: radial-gradient(circle, transparent 0 8px, #000 9px); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-gradient)::before { content: ""; position: absolute; left: 14px; top: 50%; width: 30px; height: 30px; margin-top: -15px; border-radius: 50%; -webkit-mask: radial-gradient(circle, transparent 0 8px, #000 9px); mask: radial-gradient(circle, transparent 0 8px, #000 9px); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-neon::before { background: repeating-conic-gradient(var(--pk-o) 0 45deg, #fff 45deg 90deg); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-glass::before { background: repeating-conic-gradient(var(--pk-c) 0 45deg, #fff 45deg 90deg); }
-body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass)::after { position: absolute; left: 14px; top: 50%; width: 30px; margin-top: -11px; text-align: center; font: 800 18px/22px system-ui, sans-serif; }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) :is(blockquote.kd-bq-neon, blockquote.kd-bq-glass, blockquote.kd-bq-gradient)::after { position: absolute; left: 14px; top: 50%; width: 30px; margin-top: -11px; text-align: center; font: 800 18px/22px system-ui, sans-serif; }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-neon::after { content: "!"; color: var(--pk-od); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-glass::after { content: "?"; color: var(--pk-cd); }
+/* <: the same note in blue */
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-gradient { background: var(--pk-b2); color: var(--pk-bd); border: 2px dashed var(--pk-b); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-gradient::before { background: repeating-conic-gradient(var(--pk-b) 0 45deg, #fff 45deg 90deg); }
+body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-gradient::after { content: ":"; color: var(--pk-bd); }
 body[data-kd="poolside"] :is(#wf-visual, #wf-view) blockquote.kd-bq-pull { display: block; margin: 22px 0; padding: 22px 16px; text-align: center; color: var(--pk-bd); font: italic 500 1.3em/1.45 Georgia, "Times New Roman", serif; background: repeating-linear-gradient(90deg, var(--pk-o) 0 14px, #fff 14px 28px) top / 100% 5px no-repeat, repeating-linear-gradient(90deg, var(--pk-c) 0 14px, #fff 14px 28px) bottom / 100% 5px no-repeat; }
 
 /* ---------- bullets: ring, drop, bubble, tile and wave markers ---------- */

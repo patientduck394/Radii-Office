@@ -39,11 +39,12 @@ A heading starts with slashes, one for each level, and a space.
 /// /// A small heading}
 
 ## Quotes and callouts
-`<<` starts a quiet quote. `<` followed by one of Keydown's quote marks makes a callout, so `<!` is an alert, `<?` is a question and `<>` is a pulled quote.
+`<<` starts a quiet quote. `<` followed by one of Keydown's quote marks makes a callout, so `<!` is an alert, `<?` is a question (cyan), `<:` is the same kind of note in blue and `<>` is a pulled quote.
 
 ;;pk{<< << A quiet quote, a tile with an orange edge.
 <! <! Heads up: an alert with a life ring.
 <? <? A question to think about.
+<: <: A note in blue, like a question.
 <> <> A pulled quote between two lane ropes.}
 
 ## Lists
@@ -133,7 +134,7 @@ Poolside Keydown has no marks for tables, equations or code fences, so those are
 Each Poolside mark stands for exactly one Keydown mark, so the translation goes both ways.
 
 * `/ Title` is `# Title`
-* `<< quote` is `> quote`, and `<! alert` is `!> alert`
+* `<< quote` is `> quote`, `<! alert` is `!> alert`, and `<: note` is `%> note`
 * `() item` is `- item`, and `(+) item` is `+ item`
 * `<b words>` is `**words**`, and `<i words>` is `*words*`
 * `<ring words>` is `!!:O#words#`

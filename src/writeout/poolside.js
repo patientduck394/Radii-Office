@@ -8,6 +8,7 @@
      / Title   // Sub   /// Small    # Title   ## Sub   ### Small          (lane marks make headings)
      << a quiet quote                > a quiet quote
      <! a callout   <? a question    !> a callout   ?> a question          (<  plus the Keydown quote mark)
+     <: a blue note                  %> a blue note                         (a blue question-style note)
      () dash   (+) plus   (.) dot    - dash   + plus   . dot               (rings make bullets)
      <b bold>   <i italic>           **bold**   *italic*
      <ring x> <lap x> <reef x>       !!:O#x#  !!:C#x#  !!:B#x#             (rim chips: orange, cyan, blue)
@@ -75,7 +76,7 @@
     const FORWARD = new RegExp('<(' + NAMES.join('|') + ')\\s([^<>\\n]+)>', 'g');
     const DIVIDERS = { rope: 'poolside', lane: 'dual', tile: 'notched', wave: 'swallow', reef: 'triple', step: 'stepped', crest: 'crest', ticket: 'ticket', buoy: 'gel', glass: 'glass', ring: 'rim', water: 'aqua' };
     const DIV_BACK = {}; Object.keys(DIVIDERS).forEach((k) => { DIV_BACK[DIVIDERS[k]] = k; });
-    const QUOTE_MARKS = '!?%*+\\-=~$#^@&';
+    const QUOTE_MARKS = '!?*+\\-=~$#^@&';   // (a quote written < plus one of these; <: has its own line below)
 
     // text outside of code fences, inline code and math is where translating happens
     const SKIP = /(`[^`\n]+`(?:\{[^}\n]*\})?|\$\$[\s\S]*?\$\$|\$[^$\s][^$\n]*\$)/g;
@@ -111,6 +112,7 @@
         let m;
         if ((m = /^(\s*)(\/{1,4})\s+(.*)$/.exec(l))) return m[1] + '#'.repeat(m[2].length) + ' ' + m[3];
         if ((m = /^(\s*)<<\s(.*)$/.exec(l))) return m[1] + '> ' + m[2];
+        if ((m = /^(\s*)<:\s(.*)$/.exec(l))) return m[1] + '%> ' + m[2];
         if ((m = new RegExp('^(\\s*)<([' + QUOTE_MARKS + '>])\\s(.*)$').exec(l))) return m[1] + m[2] + '> ' + m[3];
         if ((m = /^(\s*)\(([+.~=*]?)\)\s(.*)$/.exec(l))) return m[1] + (m[2] || '-') + ' ' + m[3];
         if ((m = /^(\s*)\/~\s+(.*)$/.exec(l))) {
@@ -136,6 +138,7 @@
         if ((m = /^(\s*)(#{1,4})\s+(.*)$/.exec(l))) return m[1] + '/'.repeat(m[2].length) + ' ' + m[3];
         if ((m = /^(\s*)>>\s(.*)$/.exec(l))) return m[1] + '<> ' + m[2];
         if ((m = /^(\s*)>\s(.*)$/.exec(l))) return m[1] + '<< ' + m[2];
+        if ((m = /^(\s*)%>\s(.*)$/.exec(l))) return m[1] + '<: ' + m[2];
         if ((m = new RegExp('^(\\s*)([' + QUOTE_MARKS + '])>\\s(.*)$').exec(l))) return m[1] + '<' + m[2] + ' ' + m[3];
         if ((m = /^(\s*)([-+.~=*])\s(.*)$/.exec(l))) return m[1] + '(' + (m[2] === '-' ? '' : m[2]) + ') ' + m[3];
         if ((m = /^(\s*)::divider\{([^}|]*)((?:\|[^}|]*){0,2})\}\s*$/.exec(l)) && DIV_BACK[m[2].trim()]) return m[1] + '/~ ' + DIV_BACK[m[2].trim()] + m[3].split('|').slice(1).map((x) => ' | ' + x.trim()).join('');
@@ -150,7 +153,7 @@
     /* ---------- the reference, drawn live from the same translator ---------- */
     const GUIDE = [
         ['Headings', [['/ A big title', ''], ['// A section', ''], ['/// A small heading', '']]],
-        ['Quotes and callouts', [['<< A quiet quote', ''], ['<! Heads up, a callout', ''], ['<? A question to think about', ''], ['<> A pulled quote', '']]],
+        ['Quotes and callouts', [['<< A quiet quote', ''], ['<! Heads up, a callout', ''], ['<? A question to think about', ''], ['<: A note in blue', ''], ['<> A pulled quote', '']]],
         ['Lists', [['() First lane', ''], ['() Second lane', ''], ['(+) A plus item', '']]],
         ['Bold, italic and drops', [['Some <b bold> and <i italic> and a <drop water drop>', '']]],
         ['Chips', [['<ring orange ring> <lap cyan ring> <reef blue ring>', ''], ['<buoy buoy> <foam foam> <deep deep>', ''], ['<sun sun> <lagoon lagoon> <tile tile>', '']]],
