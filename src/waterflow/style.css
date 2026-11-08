@@ -215,7 +215,7 @@ body[data-theme="night"] .wf-card { background: #0d2640; border-color: rgba(120,
 .wf-switch::after { content: ""; position: absolute; left: 2px; top: 2px; width: 18px; height: 18px; border-radius: 50%; background: #fff; box-shadow: 0 1px 3px rgba(0, 0, 0, .35); transition: transform .2s; }
 .wf-switch:checked { background: linear-gradient(180deg, var(--aqua1), var(--aqua2)); }
 .wf-switch:checked::after { transform: translateX(18px); }
-.wf-menu { position: fixed; z-index: 60; min-width: 190px; padding: 6px; border-radius: 14px; background: var(--glass2); border: 1px solid rgba(255, 255, 255, .8); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
+.wf-menu { position: fixed; z-index: 60; min-width: 190px; max-height: 62vh; overflow: auto; padding: 6px; border-radius: 14px; background: var(--glass2); border: 1px solid rgba(255, 255, 255, .8); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
 body[data-theme="night"] .wf-menu { background: #0d2640; border-color: rgba(120, 200, 255, .3); }
 .wf-menu button { display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 10px; border: 0; background: none; border-radius: 9px; text-align: left; }
 .wf-menu button:hover { background: rgba(42, 169, 240, .18); }

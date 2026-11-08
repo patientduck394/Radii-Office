@@ -487,7 +487,7 @@
     let TOOLS = TOOLS_PK;
     function buildTools() {
         TOOLS = isPK(cur) ? TOOLS_PK : TOOLS_KD;
-        $('wf-tools').innerHTML = TOOLS.map((t, i) => '<button type="button" class="' + t[2] + '" data-t="' + i + '" title="' + esc(t[1]) + '">' + esc(t[0]) + '</button>').join('') + '<button type="button" data-t="skills" title="Dice, timers, flashcards and more">Skills</button>';
+        $('wf-tools').innerHTML = TOOLS.map((t, i) => '<button type="button" class="' + t[2] + '" data-t="' + i + '" title="' + esc(t[1]) + '">' + esc(t[0]) + '</button>').join('') + (isPK(cur) ? '<button type="button" data-t="chips" title="Every Poolside chip">Chips</button>' : '') + '<button type="button" data-t="skills" title="Dice, timers, flashcards and more">Skills</button>';
     }
     function insertText(snippet, wrapFn) {
         if (!cur) return;
@@ -517,10 +517,16 @@
     $('wf-tools').addEventListener('click', (e) => {
         const b = e.target.closest('button'); if (!b) return;
         if (b.dataset.t === 'skills') { skillsMenu(b); return; }
+        if (b.dataset.t === 'chips') { chipsMenu(b); return; }
         const t = TOOLS[Number(b.dataset.t)];
         if (!t) return;
         if (t[3]) insertText(null, t[3]); else insertText(t[4]);
     });
+    // every Poolside chip, to put on the selected words (or on a sample word)
+    function chipsMenu(btn) {
+        const names = PKX.NAMES.filter((n) => n !== 'blank' && n !== 'box' && n !== 'b' && n !== 'i');
+        menu(btn, names.map((n) => [n, () => insertText(null, (sel) => '<' + n + ' ' + (sel || n) + '>')]));
+    }
     function skillsMenu(btn) {
         if (mode !== 'visual') { toast('Skills live in Visual mode: switch to Visual to add one!'); return; }
         const list = KD.skills || [];

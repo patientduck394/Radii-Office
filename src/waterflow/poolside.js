@@ -17,6 +17,8 @@
      <halo x> <sunhalo x>            #C.halo(x)  #O.halo(x)                (halo marks)
      <mark x> <flag x>               #C.marker(x)  #O.marker(x)            (highlighter marks)
      <ink x> <fire x>                #B(x)  #O(x)                          (inks)
+     <bubble pennant sign hoop beam mist pearl badge pass say capsule banner tab splash split lens
+      dots cone frost neon shimmer under strike frame x>   more chips, each on its own Keydown mark
      <blank 8|answer> <box 6>        [__8|answer]  [##6]                   (blanks to write in)
      /~ rope | Title | blue          ::divider{poolside|Title|blue}        (a divider)
      (_ box|3|Write here _)          ::blank{box|3|Write here}             (room to write)
@@ -43,6 +45,30 @@
         ['flag', '#O.marker(', ')', /#O\.marker\(([^()<>\n]+)\)/g],
         ['ink', '#B(', ')', /(?<![.\w])#B\(([^()<>\n]+)\)/g],
         ['fire', '#O(', ')', /(?<![.\w])#O\(([^()<>\n]+)\)/g],
+        ['bubble', '++C!', '++', /\+\+C!([^+<>\n]+)\+\+/g],
+        ['pennant', '++O?', '++', /\+\+O\?([^+<>\n]+)\+\+/g],
+        ['sign', '++B%', '++', /\+\+B%([^+<>\n]+)\+\+/g],
+        ['hoop', '++O:', '++', /\+\+O:([^+<>\n]+)\+\+/g],
+        ['beam', '++B^', '++', /\+\+B\^([^+<>\n]+)\+\+/g],
+        ['mist', '++C+', '++', /\+\+C\+([^+<>\n]+)\+\+/g],
+        ['pearl', '=C=', '=C=', /(?<![=\w])=C=([^=<>\n]+)=C=/g],
+        ['badge', ';;O;', ';;', /;;O;([^;<>\n]+);;/g],
+        ['pass', '!!B!', '!!', /!!B!([^!<>\n]+)!!/g],
+        ['say', '^^C^', '^^', /\^\^C\^([^^<>\n]+)\^\^/g],
+        ['capsule', '%C%', '%', /(?<![%\w#])%C%([^%<>\n]+)%(?![\w])/g],
+        ['banner', '#%O%', '%', /#%O%([^%<>\n]+)%(?![\w])/g],
+        ['tab', '#^B^', '^', /#\^B\^([^^<>\n]+)\^/g],
+        ['splash', '#+C+', '+', /#\+C\+([^+<>\n]+)\+/g],
+        ['split', '#:O:', ':', /#:O:([^:<>\n]+):/g],
+        ['lens', '#;C;', ';', /#;C;([^;<>\n]+);/g],
+        ['dots', '!!;C#', '#', /!!;C#([^#<>\n]+)#(?![_~=.])/g],
+        ['cone', '!!~O#', '#', /!!~O#([^#<>\n]+)#(?![_~=.])/g],
+        ['frost', '!!%C#', '#', /!!%C#([^#<>\n]+)#(?![_~=.])/g],
+        ['neon', '!!+B#', '#', /!!\+B#([^#<>\n]+)#(?![_~=.])/g],
+        ['shimmer', '!!/C#', '#', /!!\/C#([^#<>\n]+)#(?![_~=.])/g],
+        ['under', '#C#', '#_', /(?<![#:!\w])#C#([^#<>\n]+)#_/g],
+        ['strike', '#O#', '#~', /(?<![#:!\w])#O#([^#<>\n]+)#~/g],
+        ['frame', '#B#', '#=', /(?<![#:!\w])#B#([^#<>\n]+)#=/g],
         ['i', '*', '*', /(?<![*\w])\*([^*\s<>][^*<>\n]*?)\*(?![*\w(])/g]
     ];
     const NAMES = INLINE.map((r) => r[0]).concat(['blank', 'box']);
@@ -128,6 +154,10 @@
         ['Lists', [['() First lane', ''], ['() Second lane', ''], ['(+) A plus item', '']]],
         ['Bold, italic and drops', [['Some <b bold> and <i italic> and a <drop water drop>', '']]],
         ['Chips', [['<ring orange ring> <lap cyan ring> <reef blue ring>', ''], ['<buoy buoy> <foam foam> <deep deep>', ''], ['<sun sun> <lagoon lagoon> <tile tile>', '']]],
+        ['More chips: signs and flags', [['<bubble bubble> <pennant pennant> <sign sign> <banner banner> <tab tab> <pass pass>', '']]],
+        ['More chips: water and light', [['<pearl pearl> <hoop hoop> <beam beam> <mist mist> <lens lens> <splash splash> <say say>', '']]],
+        ['More chips: badges and frames', [['<badge badge> <capsule capsule> <split split> <dots dots> <cone cone> <frost frost> <neon neon> <shimmer shimmer>', '']]],
+        ['Underline, strike and frame', [['<under underlined> <strike struck> <frame framed>', '']]],
         ['Marks and inks', [['<halo halo> <sunhalo sunhalo> <mark marker> <flag flag> <ink ink> <fire fire>', '']]],
         ['Blanks to write in', [['Water is <blank 8|wet> and a box is <box 6>', ''], ['(_ box|2|Write here _)', '']]],
         ['Dividers', [['/~ rope | Lane one | blue', ''], ['/~ ring | Lane two | orange', ''], ['/~ glass | Lane three | cyan', '']]]
