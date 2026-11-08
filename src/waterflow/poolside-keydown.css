@@ -80,3 +80,12 @@ body[data-kd="poolside"] :is(#wf-visual, #wf-view) .gel-orb:is(.gel-p, .gel-v, .
     body[data-kd="poolside"] :is(#wf-visual, #wf-view) * { filter: none !important; }
     body[data-kd="poolside"] :is(#wf-visual, #wf-view) { background-image: none; }
 }
+
+/* ---------- the Poolside Keydown reference in the Guide ---------- */
+.pk-guide h4 { margin: 16px 0 6px; font-size: 12px; text-transform: uppercase; letter-spacing: .9px; color: #c85f00; }
+.pk-guide .pk-lead { margin: 0 0 6px; color: var(--mute, #4d6e89); font-size: 13px; }
+.pk-row { display: grid; grid-template-columns: minmax(150px, 42%) 1fr; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px dotted rgba(27, 155, 232, .3); }
+.pk-row code { font: 12.5px ui-monospace, Menlo, Consolas, monospace; color: #0a68c4; background: #e6f8ff; border: 1px solid #bfeaf9; border-radius: 6px; padding: 3px 7px; word-break: break-word; }
+.pk-draw > * { margin: 0 !important; }
+.pk-draw h1, .pk-draw h2, .pk-draw h3 { font-size: 1.15em !important; }
+@media (max-width: 600px) { .pk-row { grid-template-columns: 1fr; } }

@@ -37,13 +37,21 @@
     };
     const ymd = (d) => d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
 
+    /* ---------- Poolside Keydown (PK): a note is written in PK or in Classic Keydown ('kd') ---------- */
+    const PKX = window.PK;
+    const isPK = (n) => !!n && n.lang === 'pk' && !!PKX;
+    const kdOf = (n) => (isPK(n) ? PKX.toKD(n.text || '') : (n.text || ''));        // the Keydown the engine draws
+    const keep = (n, kd) => (isPK(n) ? PKX.toPK(kd) : kd);                             // what a note stores, from drawn Keydown
+    const newLang = () => (S.kd === 'classic' || !PKX ? 'kd' : 'pk');
+
     /* ---------- settings ---------- */
     const DEF = { theme: 'day', kd: 'poolside', width: 780, bubbles: true, sound: false, spell: true, outline: true, mode: 'visual' };
     let S = Object.assign({}, DEF);
     try { Object.assign(S, JSON.parse(LS('waterflow2_settings') || '{}')); } catch (e) {}
+    function skin() { body.dataset.kd = cur ? (isPK(cur) ? 'poolside' : 'classic') : (S.kd === 'classic' ? 'classic' : 'poolside'); }
     function applySettings() {
         body.dataset.theme = S.theme;
-        body.dataset.kd = S.kd === 'classic' ? 'classic' : 'poolside';
+        skin();
         document.documentElement.style.setProperty('--doc-w', S.width + 'px');
         body.classList.toggle('wf-nobubbles', !S.bubbles);
         body.classList.toggle('wf-noside', !S.outline);
@@ -110,7 +118,7 @@
         let t = ''; try { t = sessionStorage.getItem('waterflow2_scratch'); } catch (e) {}
         scratch = { id: 'scratch', scratch: true, title: 'Scratch', text: t === null || t === undefined ? '# Scratch\nA one-time table: everything here is wiped when you close Waterflow. Use it for quick thoughts that do not need a home!' : t, nb: '', tags: [], pinned: false, color: '', created: Date.now(), updated: Date.now(), trashed: 0 };
     }
-    function blank(extra) { return Object.assign({ id: uid(), title: '', text: '', nb: '', tags: [], pinned: false, color: '', created: Date.now(), updated: Date.now(), trashed: 0 }, extra || {}); }
+    function blank(extra) { return Object.assign({ id: uid(), lang: newLang(), title: '', text: '', nb: '', tags: [], pinned: false, color: '', created: Date.now(), updated: Date.now(), trashed: 0 }, extra || {}); }
 
     /* ---------- saving ---------- */
     const dirty = new Set();
@@ -204,11 +212,60 @@
     }
     function highlight(text) { return hlLines(text).join('\n'); }
 
+    /* ---------- Poolside Keydown in the Source box ---------- */
+    const PK_IN = window.PK ? new RegExp('<(' + window.PK.NAMES.join('|') + ')\\s([^<>\\n]+)>', 'g') : /$^/g;
+    // Poolside chips are set aside as markers, the rest is colored as Keydown, then the chips are colored and put back
+    function withHold(t, color) {
+        const hold = []; let s = t, prev;
+        do { prev = s; s = s.replace(PK_IN, (all, name, body) => { hold.push([name, body]); return '\uE100' + (hold.length - 1) + '\uE101'; }); } while (s !== prev);
+        const fill = (str) => str.replace(/\uE100(\d+)\uE101/g, (m, i) => sp('m-p', '<' + hold[i][0] + ' ') + fill(hlInline(hold[i][1])) + sp('m-p', '>'));
+        return fill(color(s));
+    }
+    function highlightPK(text) {
+        let fence = false;
+        return String(text).split('\n').map((l) => {
+            let m;
+            if (/^\s*```/.test(l)) { fence = !fence; return hlLines(l)[0]; }
+            if (fence) return hlCode(l);
+            if ((m = /^(\s*)(\/{1,4})(\s+)(.*)$/.exec(l))) return escH(m[1]) + sp('m-h', m[2] + m[3]) + '<span class="m-h">' + withHold(m[4], hlInline) + '</span>';
+            if ((m = /^(\s*)(<[<>!?%*+\-=~$#^@&])(\s)(.*)$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + withHold(m[4], hlInline);
+            if ((m = /^(\s*)(\([+.~=*]?\))(\s)(.*)$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + withHold(m[4], hlInline);
+            if ((m = /^(\s*)(\/~)(\s+)(.*)$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + sp('m-p', m[4]);
+            if ((m = /^(\s*)(\(_)(\s+)(.*?)(\s+)(_\))\s*$/.exec(l))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + sp('m-p', m[4]) + escH(m[5]) + sp('m-k', m[6]);
+            return withHold(l, (x) => hlLines(x)[0]);
+        }).join('\n');
+    }
+    // typing in Visual: a line written with Poolside marks becomes Keydown the moment Enter or Space is pressed, so the editor formats it
+    function pkLive(onlyIfChanged) {
+        if (!isPK(cur) || mode !== 'visual') return false;
+        const sel = window.getSelection(); if (!sel.rangeCount || !sel.isCollapsed) return false;
+        const root = $('wf-visual'); let b = sel.anchorNode;
+        while (b && b.parentNode !== root) b = b.parentNode;
+        if (!b || b.nodeType !== 1 || /^(H[1-6]|UL|OL|TABLE|PRE|BLOCKQUOTE)$/.test(b.tagName)) return false;
+        if (b.children.length && Array.from(b.children).some((c) => c.tagName !== 'BR')) {
+            // a line that already holds a chip or a bold word: only the plain text just typed after it is translated
+            const n = sel.anchorNode;
+            if (!n || n.nodeType !== 3 || n.parentNode !== b || sel.anchorOffset !== n.nodeValue.length) return false;
+            const t = n.nodeValue.replace(/\u00a0/g, ' ');
+            const k = PKX.toKD('x' + t).slice(1);
+            if (k === t) return false;
+            n.nodeValue = k.replace(/ $/, '\u00a0');
+            const r2 = document.createRange(); r2.setStart(n, n.nodeValue.length); r2.collapse(true); sel.removeAllRanges(); sel.addRange(r2);
+            return true;
+        }
+        const txt = b.textContent.replace(/\u00a0/g, ' ');
+        const kd = PKX.toKD(txt);
+        if (kd === txt) return false;
+        b.textContent = kd.replace(/ $/, '\u00a0');   // (a plain space at the end would collapse, and the next letter would stick to the mark)
+        const r = document.createRange(); r.selectNodeContents(b); r.collapse(false); sel.removeAllRanges(); sel.addRange(r);
+        return true;
+    }
+
     /* ---------- text helpers ---------- */
-    const plain = (t) => String(t || '').replace(/^::[a-z]+.*$/gm, ' ').replace(/```[^\n]*/g, ' ').replace(/[#*~=`>|_^%&+;!@$\[\]{}\\]/g, ' ').replace(/\s+/g, ' ').trim();
+    const plain = (t) => String(t || '').replace(/^\s*(\/{1,4}|<[<>!?%*+\-=~$#^@&]|\([+.~=*]?\)|\/~)\s/gm, ' ').replace(/<[a-z]+\s/g, ' ').replace(/^::[a-z]+.*$/gm, ' ').replace(/```[^\n]*/g, ' ').replace(/[#*~=`>|_^%&+;!@$\[\]{}\\]/g, ' ').replace(/\s+/g, ' ').trim();
     const titleOf = (n) => (n.title || '').trim() || (plain(n.text).slice(0, 48)) || 'Untitled note';
     const words = (t) => { const p = plain(t); return p ? p.split(' ').length : 0; };
-    const preview = (n) => { const lines = String(n.text || '').split('\n').filter((l) => l.trim() && !/^\s*#{1,4}\s/.test(l)); return plain(lines.join(' ')).slice(0, 170); };
+    const preview = (n) => { const lines = String(n.text || '').split('\n').filter((l) => l.trim() && !/^\s*(#{1,4}|\/{1,4})\s/.test(l)); return plain(lines.join(' ')).slice(0, 170); };
     const nbName = (id) => { const b = nbs.find((x) => x.id === id); return b ? b.name : ''; };
 
     /* ---------- the rail ---------- */
@@ -272,14 +329,14 @@
     }
     function loadMode() {
         if (!cur) return;
-        if (mode === 'visual') { ed.setText(cur.text); }
-        else if (mode === 'view') { const v = $('wf-view'); v.innerHTML = KD.render(cur.text); try { KD.upgrade(v); } catch (e) {} }
+        if (mode === 'visual') { ed.setText(kdOf(cur)); }
+        else if (mode === 'view') { const v = $('wf-view'); v.innerHTML = KD.render(kdOf(cur)); try { KD.upgrade(v); } catch (e) {} }
         else { $('wf-source').value = cur.text; paintSource(); }
         const s = $('wf-stage'); s.querySelectorAll('.wf-pane').forEach((p) => { p.scrollTop = 0; });
     }
     function readMode() {   // the text as the visible editor has it
         if (!cur) return;
-        if (mode === 'visual' && ed) cur.text = ed.getText();
+        if (mode === 'visual' && ed) cur.text = keep(cur, ed.getText());
         else if (mode === 'source') cur.text = $('wf-source').value;
     }
     function switchMode(m) {
@@ -288,7 +345,7 @@
     }
     document.querySelectorAll('.wf-modes button').forEach((b) => b.addEventListener('click', () => switchMode(b.dataset.mode)));
 
-    function paintSource() { const t = $('wf-source').value; $('wf-hl').innerHTML = highlight(t) + '\n'; }
+    function paintSource() { const t = $('wf-source').value; $('wf-hl').innerHTML = (isPK(cur) ? highlightPK(t) : highlight(t)) + '\n'; }
     $('wf-source').addEventListener('input', () => { cur.text = $('wf-source').value; paintSource(); afterTextChange(true); });
     $('wf-source').addEventListener('scroll', (e) => { $('wf-hl').scrollTop = e.target.scrollTop; $('wf-hl').scrollLeft = e.target.scrollLeft; });
     $('wf-source').addEventListener('keydown', (e) => {
@@ -303,7 +360,7 @@
         const c = document.querySelector('.wf-cardn.on'); if (c && save) { clearTimeout(afterTextChange.t); afterTextChange.t = setTimeout(renderList, 600); }
     }
     function outline() {
-        const hs = []; String(cur.text || '').split('\n').forEach((l) => { const m = /^(#{1,4})\s+(.+)$/.exec(l); if (m) hs.push([m[1].length, plain(m[2]) || m[2], hs.length]); });
+        const hs = []; String(cur.text || '').split('\n').forEach((l) => { const m = (isPK(cur) ? /^(\/{1,4})\s+(.+)$/ : /^(#{1,4})\s+(.+)$/).exec(l); if (m) hs.push([m[1].length, plain(m[2]) || m[2], hs.length]); });
         $('wf-outline').innerHTML = hs.length ? hs.map((h) => '<button type="button" class="l' + h[0] + '" data-i="' + h[2] + '">' + esc(h[1]) + '</button>').join('') : '<p>Headings (start a line with #) show up here!</p>';
     }
     $('wf-outline').addEventListener('click', (e) => {
@@ -311,7 +368,7 @@
         const i = Number(b.dataset.i);
         if (mode === 'source') {
             const ta = $('wf-source'); let pos = 0, k = -1; const lines = ta.value.split('\n');
-            for (let j = 0; j < lines.length; j++) { if (/^#{1,4}\s+/.test(lines[j])) { k++; if (k === i) break; } pos += lines[j].length + 1; }
+            for (let j = 0; j < lines.length; j++) { if ((isPK(cur) ? /^\/{1,4}\s+/ : /^#{1,4}\s+/).test(lines[j])) { k++; if (k === i) break; } pos += lines[j].length + 1; }
             ta.focus(); ta.setSelectionRange(pos, pos);
             const ratio = pos / Math.max(1, ta.value.length); ta.scrollTop = Math.max(0, ratio * ta.scrollHeight - 80); $('wf-hl').scrollTop = ta.scrollTop;
         } else {
@@ -338,6 +395,7 @@
         if (cur && cur !== n) { readMode(); if (!cur.scratch && dirty.has(cur.id) === false && false) {} }
         cur = n;
         $('wf-empty').hidden = true; $('wf-note').hidden = false;
+        skin(); buildTools(); $('wf-source').placeholder = isPK(n) ? 'Write Poolside Keydown here' : 'Write Keydown here';
         renderMeta(); showMode(mode); loadMode(); afterTextChange(false);
         body.dataset.view = 'edit';
         try { history.replaceState(null, '', n.scratch ? location.pathname : '#n=' + n.id); } catch (e) {}
@@ -345,7 +403,7 @@
         if (!n.text && !n.title && !n.scratch) setTimeout(() => $('wf-title').focus(), 50);
     }
     function closeNote() {
-        cur = null; $('wf-note').hidden = true; $('wf-empty').hidden = false; body.dataset.view = 'list';
+        cur = null; skin(); $('wf-note').hidden = true; $('wf-empty').hidden = false; body.dataset.view = 'list';
         try { history.replaceState(null, '', location.pathname); } catch (e) {}
         legacyOffer(); renderList();
     }
@@ -378,7 +436,7 @@
         if (!n) {
             let jb = nbs.find((b) => b.name === 'Journal');
             if (!jb) { jb = { id: uid(), name: 'Journal', color: COLORS[3] }; nbs.push(jb); saveNbs(); }
-            n = blank({ title: key, nb: jb.id, tags: ['journal'], text: '# ' + new Date().toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }) + '\n' });
+            n = blank({ title: key, nb: jb.id, tags: ['journal'], text: (newLang() === 'pk' ? '/ ' : '# ') + new Date().toLocaleDateString([], { weekday: 'long', month: 'long', day: 'numeric' }) + '\n' });
             notes.push(n); touch(n);
         }
         stream = { kind: 'today' }; renderAll(); openNote(n);
@@ -399,7 +457,7 @@
     document.addEventListener('click', (e) => { if (body.dataset.rail === 'open' && !e.target.closest('#wf-rail') && !e.target.closest('#wf-railopen')) body.dataset.rail = ''; });
 
     /* ---------- inserting (the toolbar) ---------- */
-    const TOOLS = [
+    const TOOLS_KD = [
         ['B', 'Bold', 'wf-b', (s) => '**' + (s || 'bold') + '**'], ['I', 'Italic', 'wf-i', (s) => '*' + (s || 'italic') + '*'],
         ['Code', 'Inline code', '', (s) => '`' + (s || 'code') + '`'], ['Highlight', 'Highlight with a color chip', '', (s) => '#Y#' + (s || 'highlight') + '#'],
         ['Blank', 'A blank to fill in', '', () => '[__8|answer]'],
@@ -411,7 +469,24 @@
         ['Math', 'An equation', '', null, '$$e^{i\\pi} + 1 = 0$$'],
         ['Practice box', 'Room to write', '', null, '::blank{box|3|Write here}']
     ];
+    // the same tools in Poolside Keydown's own marks (in Visual they are turned into Keydown as they go in)
+    const TOOLS_PK = [
+        ['B', 'Bold', 'wf-b', (s) => '<b ' + (s || 'bold') + '>'], ['I', 'Italic', 'wf-i', (s) => '<i ' + (s || 'italic') + '>'],
+        ['Ring', 'An orange ring chip', '', (s) => '<ring ' + (s || 'ring') + '>'], ['Buoy', 'An orange bubble chip', '', (s) => '<buoy ' + (s || 'buoy') + '>'],
+        ['Foam', 'A cyan bubble chip', '', (s) => '<foam ' + (s || 'foam') + '>'], ['Deep', 'A blue bubble chip', '', (s) => '<deep ' + (s || 'deep') + '>'],
+        ['Tile', 'A blue toast chip', '', (s) => '<tile ' + (s || 'tile') + '>'], ['Drop', 'A water drop', '', (s) => '<drop ' + (s || 'drop') + '>'],
+        ['Halo', 'A halo mark', '', (s) => '<halo ' + (s || 'halo') + '>'], ['Blank', 'A blank to fill in', '', () => '<blank 8|answer>'],
+        ['Divider', 'A divider line', '', null, '/~ rope | Section | blue'],
+        ['Heading', 'A heading', '', null, '/ Heading'], ['List', 'A ring list', '', null, '() First\n() Second\n() Third'],
+        ['Quote', 'A quiet quote', '', null, '<< A thought worth keeping'], ['Callout', 'A callout', '', null, '<! Heads up'],
+        ['Code block', 'A styled code block', '', null, '```js{terminal|Code}\nconsole.log("flow!");\n```'],
+        ['Table', 'A table (written the Keydown way)', '', null, '| Name | Note |\n| --- | --- |\n| One | First |'],
+        ['Math', 'An equation', '', null, '$$e^{i\\pi} + 1 = 0$$'],
+        ['Practice box', 'Room to write', '', null, '(_ box|3|Write here _)']
+    ];
+    let TOOLS = TOOLS_PK;
     function buildTools() {
+        TOOLS = isPK(cur) ? TOOLS_PK : TOOLS_KD;
         $('wf-tools').innerHTML = TOOLS.map((t, i) => '<button type="button" class="' + t[2] + '" data-t="' + i + '" title="' + esc(t[1]) + '">' + esc(t[0]) + '</button>').join('') + '<button type="button" data-t="skills" title="Dice, timers, flashcards and more">Skills</button>';
     }
     function insertText(snippet, wrapFn) {
@@ -423,17 +498,18 @@
             ta.focus(); ta.setRangeText(pre + text, a, b, 'end'); ta.dispatchEvent(new Event('input'));
             return;
         }
-        // Visual: one line is typed at the caret and formatted at once; longer pieces are added at the end of the note
-        if (wrapFn || (snippet && snippet.indexOf('\n') === -1)) {
+        // Visual: a word-sized mark is typed at the caret and formatted at once; whole blocks are added at the end of the note
+        if (wrapFn) {
             const sel = String(window.getSelection && window.getSelection() || '');
-            const text = wrapFn ? wrapFn(sel) : snippet;
+            let text = wrapFn ? wrapFn(sel) : snippet;
+            if (isPK(cur)) text = PKX.toKD(text);
             const v = $('wf-visual'); v.focus();
             document.execCommand('insertText', false, text);
             try { ed.format(); } catch (e) {}
-            cur.text = ed.getText(); touch(cur); afterTextChange(false);
+            cur.text = keep(cur, ed.getText()); touch(cur); afterTextChange(false);
         } else {
-            cur.text = ed.getText().replace(/\s+$/, '') + '\n\n' + snippet + '\n';
-            ed.setText(cur.text); touch(cur); afterTextChange(false);
+            ed.setText(ed.getText().replace(/\s+$/, '') + '\n\n' + (isPK(cur) ? PKX.toKD(snippet) : snippet) + '\n');
+            cur.text = keep(cur, ed.getText()); touch(cur); afterTextChange(false);
             const v = $('wf-visual'); v.scrollTop = v.scrollHeight;
         }
     }
@@ -442,12 +518,13 @@
         const b = e.target.closest('button'); if (!b) return;
         if (b.dataset.t === 'skills') { skillsMenu(b); return; }
         const t = TOOLS[Number(b.dataset.t)];
+        if (!t) return;
         if (t[3]) insertText(null, t[3]); else insertText(t[4]);
     });
     function skillsMenu(btn) {
         if (mode !== 'visual') { toast('Skills live in Visual mode: switch to Visual to add one!'); return; }
         const list = KD.skills || [];
-        menu(btn, list.map((s) => [s.label || s.name, () => { try { ed.insertSkill(s.name); cur.text = ed.getText(); touch(cur); afterTextChange(false); } catch (e) { toast('That skill did not open!'); } }]));
+        menu(btn, list.map((s) => [s.label || s.name, () => { try { ed.insertSkill(s.name); cur.text = keep(cur, ed.getText()); touch(cur); afterTextChange(false); } catch (e) { toast('That skill did not open!'); } }]));
     }
 
     /* ---------- menus and dialogs ---------- */
@@ -474,16 +551,25 @@
         const items = [];
         if (cur.trashed) items.push(['Restore', () => { restore(cur); closeNote(); }], ['Delete forever', () => { if (confirm('Delete this note forever?')) wipe(cur); }, 'danger']);
         else {
-            items.push(['Duplicate', duplicate], ['Export as .kd', () => exportNote(cur)], ['Copy as Keydown', () => { readMode(); try { navigator.clipboard.writeText(cur.text); toast('Copied the Keydown text!'); } catch (x) { toast('Could not copy here!'); } }], ['Print or save as PDF', printNote]);
+            items.push(['Duplicate', duplicate], PKX ? [isPK(cur) ? 'Switch to Classic Keydown' : 'Switch to Poolside Keydown', convertLang] : '-', ['Export as .kd', () => exportNote(cur)], ['Copy as Keydown', () => { readMode(); try { navigator.clipboard.writeText(cur.text); toast('Copied the Keydown text!'); } catch (x) { toast('Could not copy here!'); } }], ['Print or save as PDF', printNote]);
             if (!cur.scratch) items.push('-', ['Move to trash', () => trash(cur), 'danger']);
             else items.push('-', ['Clear the scratch note', () => { cur.text = ''; loadMode(); touch(cur); afterTextChange(false); }, 'danger']);
         }
         menu($('wf-more'), items);
     });
-    function duplicate() { readMode(); const n = blank({ title: (cur.title || titleOf(cur)) + ' copy', text: cur.text, nb: cur.nb, tags: (cur.tags || []).slice(), color: cur.color }); notes.push(n); touch(n); renderAll(); openNote(n); }
+    function convertLang() {
+        if (!cur || !PKX) return;
+        readMode();
+        const kd = kdOf(cur), to = isPK(cur) ? 'kd' : 'pk';
+        cur.lang = to; cur.text = to === 'pk' ? PKX.toPK(kd) : kd;
+        touch(cur); skin(); buildTools(); $('wf-source').placeholder = to === 'pk' ? 'Write Poolside Keydown here' : 'Write Keydown here';
+        loadMode(); afterTextChange(false); renderList();
+        toast(to === 'pk' ? 'This note is written in Poolside Keydown now!' : 'This note is written in Classic Keydown now!');
+    }
+    function duplicate() { readMode(); const n = blank({ lang: cur.lang, title: (cur.title || titleOf(cur)) + ' copy', text: cur.text, nb: cur.nb, tags: (cur.tags || []).slice(), color: cur.color }); notes.push(n); touch(n); renderAll(); openNote(n); }
     function printNote() {
         readMode(); const v = $('wf-view'); const was = mode;
-        v.innerHTML = KD.render(cur.text); try { KD.upgrade(v); } catch (e) {}
+        v.innerHTML = KD.render(kdOf(cur)); try { KD.upgrade(v); } catch (e) {}
         v.hidden = false; body.dataset.printing = '1';
         const done = () => { body.dataset.printing = ''; v.hidden = was !== 'view'; window.removeEventListener('afterprint', done); };
         window.addEventListener('afterprint', done); setTimeout(() => window.print(), 80);
@@ -495,7 +581,7 @@
     function kdFile(n) {
         const head = ['---', 'format: "keydown-text"', 'app: "Waterflow"', 'title: ' + JSON.stringify(titleOf(n)), 'created: ' + new Date(n.created).toISOString()];
         if ((n.tags || []).length) head.push('tags: [' + n.tags.join(', ') + ']');
-        return head.concat(['---', '', n.text || '', '']).join('\n');
+        return head.concat(['---', '', kdOf(n), '']).join('\n');
     }
     function exportNote(n) { readMode(); download(fileName(n) + '.kd', kdFile(n)); toast('Exported ' + fileName(n) + '.kd!'); }
     function fromKd(text, name) {
@@ -509,7 +595,7 @@
         const tags = meta.tags ? meta.tags.replace(/[\[\]]/g, '').split(',').map((t) => t.trim()).filter(Boolean) : [];
         // an old export keeps the page as HTML after the header: it becomes Keydown text
         if (/^\s*<(div|h[1-6]|p|span|ul|ol|table)\b/i.test(bodyText)) { const d = document.createElement('div'); d.innerHTML = bodyText; try { bodyText = KD.toText(d); } catch (e) {} }
-        return blank({ title: title, text: bodyText.replace(/\s+$/, '') + '\n', tags: tags, created: meta.created && !isNaN(Date.parse(meta.created)) ? Date.parse(meta.created) : Date.now() });
+        return blank({ lang: 'kd', title: title, text: bodyText.replace(/\s+$/, '') + '\n', tags: tags, created: meta.created && !isNaN(Date.parse(meta.created)) ? Date.parse(meta.created) : Date.now() });
     }
     async function importFiles(files) {
         let made = 0;
@@ -562,7 +648,7 @@
         const s = legacySlots(); if (!s.length) { toast('There are no Waterflow Legacy notes in this browser!'); return; }
         let nb = nbs.find((b) => b.name === 'From Legacy');
         if (!nb) { nb = { id: uid(), name: 'From Legacy', color: COLORS[2] }; nbs.push(nb); saveNbs(); }
-        s.forEach((p) => { const d = document.createElement('div'); d.innerHTML = p[1]; let t = ''; try { t = KD.toText(d); } catch (e) { t = d.textContent; } const n = blank({ title: p[0].replace('Legacy: ', ''), text: t.replace(/\s+$/, '') + '\n', nb: nb.id }); notes.push(n); touch(n); });
+        s.forEach((p) => { const d = document.createElement('div'); d.innerHTML = p[1]; let t = ''; try { t = KD.toText(d); } catch (e) { t = d.textContent; } const n = blank({ title: p[0].replace('Legacy: ', ''), text: (PKX && newLang() === 'pk' ? PKX.toPK(t.replace(/\s+$/, '') + '\n') : t.replace(/\s+$/, '') + '\n'), nb: nb.id }); notes.push(n); touch(n); });
         LS('waterflow2_legacy_done', '1'); stream = { kind: 'nb', id: nb.id }; renderAll(); legacyOffer(); toast('Brought in ' + s.length + (s.length === 1 ? ' pad!' : ' pads!'));
     }
 
@@ -570,7 +656,7 @@
     function settingsDialog() {
         const sw = (id, on) => '<input type="checkbox" class="wf-switch" id="' + id + '"' + (on ? ' checked' : '') + '>';
         dialog('Settings', '<div class="wf-row"><span>Look<small>Day water, night water or warm sand</small></span><select id="s-theme"><option value="day">Aero day</option><option value="night">Lagoon night</option><option value="sand">Warm sand</option></select></div>' +
-            '<div class="wf-row"><span>Keydown style<small>Poolside Keydown draws headings, quotes, lists, tables and every chip colour in cyan, blue and orange</small></span><select id="s-kd"><option value="poolside">Poolside Keydown</option><option value="classic">Classic Keydown</option></select></div>' +
+            '<div class="wf-row"><span>Keydown for new notes<small>Poolside Keydown has its own marks (/ Title, &lt;ring text&gt;, () lists) and styles. Classic Keydown is the one Writeout uses. You can switch any note from its ... menu</small></span><select id="s-kd"><option value="poolside">Poolside Keydown</option><option value="classic">Classic Keydown</option></select></div>' +
             '<div class="wf-row"><span>Page width<small>How wide the note paper is</small></span><select id="s-width"><option value="640">Narrow</option><option value="780">Comfortable</option><option value="960">Wide</option></select></div>' +
             '<div class="wf-row"><span>Drifting bubbles</span>' + sw('s-bub', S.bubbles) + '</div>' +
             '<div class="wf-row"><span>Water-drop sounds<small>A soft blip on the gel buttons</small></span>' + sw('s-snd', S.sound) + '</div>' +
@@ -583,7 +669,10 @@
         });
     }
     $('wf-open-settings').addEventListener('click', settingsDialog);
-    $('wf-open-guide').addEventListener('click', () => { dialog('Every Keydown tag', '<div class="keydown-doc" style="padding:4px 0">' + KD.guide() + '</div>', (b) => { try { KD.upgrade(b); } catch (e) {} }); });
+    $('wf-open-guide').addEventListener('click', () => {
+        const pk = PKX && (cur ? isPK(cur) : S.kd !== 'classic');
+        dialog(pk ? 'Poolside Keydown' : 'Every Keydown tag', (pk ? PKX.guide((t) => KD.render(t)) + '<h4>Everything else is Keydown</h4>' : '') + '<div class="keydown-doc" style="padding:4px 0">' + KD.guide() + '</div>', (b) => { try { KD.upgrade(b); } catch (e) {} });
+    });
 
     /* ---------- the quick switcher ---------- */
     let palSel = 0, palItems = [];
@@ -593,7 +682,7 @@
             ['Switch mode: View, Visual, Source', 'Ctrl+Alt+M', cycleMode], ['Focus mode', 'Ctrl+Alt+F', toggleFocus],
             ['Theme: next look', '', () => { const o = ['day', 'night', 'sand']; S.theme = o[(o.indexOf(S.theme) + 1) % 3]; applySettings(); }],
             ['Settings', '', settingsDialog], ['Import, export and backups', '', dataDialog], ['Keydown guide', '', () => $('wf-open-guide').click()],
-            ['Print or save as PDF', '', () => cur && printNote()]
+            ['Print or save as PDF', '', () => cur && printNote()], ['Switch this note between Poolside and Classic Keydown', '', convertLang]
         ];
     }
     function palRender() {
@@ -647,9 +736,11 @@
         mode = ['view', 'visual', 'source'].includes(S.mode) ? S.mode : 'visual';
         ed = KD.editor($('wf-visual'), {
             value: '', delay: 300, spellcheck: S.spell,
-            onChange: (t) => { if (cur && mode === 'visual') { cur.text = t; afterTextChange(true); } }
+            onChange: (t) => { if (cur && mode === 'visual') { cur.text = keep(cur, t); afterTextChange(true); } }
         });
-        $('wf-visual').addEventListener('input', () => { if (cur && mode === 'visual') { cur.text = ed.getText(); afterTextChange(true); } });
+        $('wf-visual').addEventListener('input', () => { if (cur && mode === 'visual') { cur.text = keep(cur, ed.getText()); afterTextChange(true); } });
+        $('wf-stage').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) pkLive(); }, true);
+        $('wf-visual').addEventListener('keyup', (e) => { if (e.key === ' ' && !e.isComposing && pkLive()) { try { ed.format(); } catch (x) {} cur.text = keep(cur, ed.getText()); afterTextChange(true); } });
         notes = await store.all();
         // the trash empties itself after 30 days
         const old = notes.filter((n) => n.trashed && Date.now() - n.trashed > 30 * 864e5);
@@ -661,7 +752,10 @@
         const first = m && notes.find((n) => n.id === m[1]);
         if (first) openNote(first);
         else if (!notes.length) {
-            const hello = blank({ title: 'Welcome to Waterflow', tags: ['welcome'], pinned: true, color: COLORS[1], text: '# Welcome to Waterflow!\nThis is a note, and it is written in **Keydown**: type a tag, press Space or Enter, and it turns into formatting right away!\n\n## Try these\n- Type `#G#a green highlight#` and press Space\n- Write `**bold**` or `*italic*`, then press Enter\n- Add a divider: `::divider{aqua|Section|blue}`\n- A blank to fill in: [__8|answer]\n\n## Find your way\n- Press Ctrl+K to find anything, or Ctrl+Alt+N for a new note\n- Switch between View, Visual and Source at the top\n- Make notebooks on the left, and add #tags to any note!\n' });
+            const pkOn = newLang() === 'pk';
+            const hello = blank({ title: 'Welcome to Waterflow', tags: ['welcome'], pinned: true, color: COLORS[1], text: pkOn
+                ? '/ Welcome to Waterflow!\nThis note is written in <b Poolside Keydown>: Waterflow\'s own marks, symbols and styles. Type a mark, press Space or Enter, and it turns into formatting!\n\n// Try these\n() A heading starts with a slash: / Title, // Section\n() A quiet quote: << a thought\n() A callout: <! heads up\n() A <ring ring chip>, a <foam foam chip>, a <tile tile chip> and a <drop water drop>\n() A blank to fill in: <blank 8|answer>\n\n/~ rope | Lanes | blue\n\n// Find your way\n(+) Press Ctrl+K to find anything, or Ctrl+Alt+N for a new note\n(+) Switch between View, Visual and Source at the top\n(+) Open the Guide (bottom left) for every Poolside mark\n<< Prefer plain Keydown? Switch any note from its ... menu!\n'
+                : '# Welcome to Waterflow!\nThis is a note, and it is written in **Keydown**: type a tag, press Space or Enter, and it turns into formatting right away!\n\n## Try these\n- Type `#G#a green highlight#` and press Space\n- Write `**bold**` or `*italic*`, then press Enter\n- Add a divider: `::divider{aqua|Section|blue}`\n- A blank to fill in: [__8|answer]\n\n## Find your way\n- Press Ctrl+K to find anything, or Ctrl+Alt+N for a new note\n- Switch between View, Visual and Source at the top\n- Make notebooks on the left, and add #tags to any note!\n' });
             notes.push(hello); await store.put(hello); renderAll(); openNote(hello); body.dataset.view = 'list';
         }
     }
