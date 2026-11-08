@@ -249,3 +249,52 @@ body[data-theme="night"] .wf-menu { background: #0d2640; border-color: rgba(120,
     #wf-visual, #wf-view, #wf-srcwrap { display: none !important; }
     body[data-printing="1"] #wf-view { display: block !important; border: 0; padding: 0; box-shadow: none; }
 }
+
+/* ===== POOLSIDE: crisp orange accents on the clear cyan and blue water (life rings, lane ropes, tile edges) ===== */
+:root { --or1: #ffb35c; --or2: #ff8a1b; --or3: #d96a00; }
+body[data-theme="sand"] { --or1: #7ad3ff; --or2: #1b9be8; --or3: #0a68c4; }
+::selection { background: rgba(255, 138, 27, .35); }
+/* the New note button is a life ring: orange gel */
+.wf-new { background: linear-gradient(180deg, var(--or1) 0%, var(--or2) 52%, var(--or3) 100%); border-color: var(--or3); text-shadow: 0 1px 1px rgba(120, 50, 0, .45); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 3px 10px rgba(217, 106, 0, .38); }
+.wf-new:hover { filter: brightness(1.06); }
+/* lane ropes: a stripe of orange and white under each panel title */
+.wf-listhead::after, .wf-brand::after { content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 5px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--or2) 0 12px, #fff 12px 24px); box-shadow: 0 1px 2px rgba(0, 60, 120, .25); opacity: .95; }
+.wf-listhead, .wf-brand { position: relative; margin-bottom: 8px; }
+/* the stream you are in gets an orange tile edge */
+.wf-st.on { box-shadow: inset 4px 0 0 var(--or2), 0 1px 4px rgba(8, 70, 130, .2), inset 0 0 0 1px rgba(255, 255, 255, .9); }
+.wf-st.on svg { color: var(--or3); }
+.wf-st em { color: var(--or3); font-weight: 700; }
+body[data-theme="night"] .wf-st em { color: var(--or1); }
+.wf-sect { color: var(--or3); }
+body[data-theme="night"] .wf-sect { color: var(--or1); }
+/* the open note card, pins and the color strip */
+.wf-cardn.on { outline: 0; box-shadow: inset 5px 0 0 var(--or2), 0 6px 16px rgba(8, 70, 130, .22); }
+.wf-cardn.on::before { display: none; }
+.wf-cardn b svg { color: var(--or2); fill: var(--or2); }
+.wf-mini.on { background: linear-gradient(180deg, var(--or1), var(--or2) 55%, var(--or3)); border-color: var(--or3); color: #fff; }
+.wf-mini:hover { border-color: var(--or2); color: var(--or3); }
+/* tags and chips */
+.wf-tag:hover, .wf-tag.on { background: linear-gradient(180deg, var(--or1), var(--or2)); border-color: var(--or3); color: #fff; }
+.wf-chip { background: rgba(255, 138, 27, .16); color: var(--or3); box-shadow: inset 0 0 0 1px rgba(255, 138, 27, .5); }
+body[data-theme="night"] .wf-chip { color: var(--or1); }
+/* focus rings and the active insert buttons */
+.wf-title:focus { background: rgba(255, 255, 255, .5); box-shadow: 0 2px 0 var(--or2); border-radius: 10px 10px 0 0; }
+.wf-taginput:focus, .wf-search:focus-within, .wf-pal input:focus { border-color: var(--or2); }
+.wf-search:focus-within { box-shadow: 0 0 0 3px rgba(255, 138, 27, .28), inset 0 1px 3px rgba(0, 60, 120, .12); }
+.wf-tools button:hover { border-color: var(--or2); color: var(--or3); }
+.wf-colors button.on { outline-color: var(--or2); }
+/* the water meter ends in an orange buoy */
+.wf-meter-track { position: relative; overflow: visible; }
+.wf-meter-track::after { content: ""; position: absolute; right: -2px; top: -3px; width: 6px; height: 16px; border-radius: 3px; background: var(--or2); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .6); }
+.wf-meter-track i { border-radius: 999px; }
+/* the quick switcher, toasts and the legacy offer */
+.wf-palrow.on { background: linear-gradient(180deg, var(--or1), var(--or2) 55%, var(--or3)); color: #fff; }
+.wf-toast { background: linear-gradient(180deg, var(--or1), var(--or2) 55%, var(--or3)); text-shadow: 0 1px 1px rgba(120, 50, 0, .4); }
+.wf-legacy { border-color: var(--or2); }
+.wf-empty .wf-gel, .wf-legacy .wf-gel { background: linear-gradient(180deg, var(--or1) 0%, var(--or2) 52%, var(--or3) 100%); border-color: var(--or3); text-shadow: 0 1px 1px rgba(120, 50, 0, .45); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .7), 0 3px 10px rgba(217, 106, 0, .38); }
+.wf-outline button:hover { background: rgba(255, 138, 27, .14); }
+.wf-dlg-body h4 { color: var(--or3); }
+body[data-theme="night"] .wf-dlg-body h4 { color: var(--or1); }
+/* a tile-edge stripe along the top of the note paper */
+.wf-stage::before { content: ""; position: absolute; left: 14px; right: 14px; top: 0; height: 4px; z-index: 2; border-radius: 0 0 4px 4px; background: repeating-linear-gradient(90deg, var(--or2) 0 14px, transparent 14px 28px); pointer-events: none; }
+@media print { .wf-stage::before, .wf-listhead::after, .wf-brand::after { display: none; } }
