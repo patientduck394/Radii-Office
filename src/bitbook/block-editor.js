@@ -1003,5 +1003,5 @@
     }
 
     ensureBlocks();
-    window.KdBlockEditor = { keepFocus: keepFocusSoon, setBlock: setBlock, align: align, toggleList: toggleList, currentBoxTag: currentBoxTag, selectAll: selectAllVS, clearSelection: clearVS, hasVirtualSelection: function () { return !!vsRange(); }, ensureBlocks: ensureBlocks, blockOf: blockOf, splitBox: splitBox, undo: undo, redo: redoIt, allBoxes: allBoxes };
+    window.KdBlockEditor = { keepFocus: keepFocusSoon, setBlock: setBlock, align: align, toggleList: toggleList, currentBoxTag: currentBoxTag, selectAll: selectAllVS, clearSelection: clearVS, hasVirtualSelection: function () { return !!vsRange(); }, virtualRange: vsRange, ensureBlocks: ensureBlocks, blockOf: blockOf, splitBox: splitBox, undo: undo, redo: redoIt, allBoxes: allBoxes };
 })();

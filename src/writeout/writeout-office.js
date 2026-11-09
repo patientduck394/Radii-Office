@@ -716,6 +716,7 @@
         }
     };
     const PLUS = function () { return window.WriteoutPlus || {}; };
+    const MORE = function () { return window.WriteoutMore || {}; };
     const PRO = function () { return window.WriteoutPro || {}; };
 
     function setPagesView(on) { prefs.pages = !!on; savePrefs(); applyView(); }
@@ -962,7 +963,17 @@
                 { label: 'Editing', items: [{ stack: [
                     { sm: true, icon: 'search', label: 'Find', kbd: '⌘F', run: function () { findDialog(false); } },
                     { sm: true, icon: 'reset', label: 'Replace', run: function () { findDialog(true); } }
-                ] }] }
+                ] }] },
+                { label: 'More', items: [
+                    { stack: [
+                        { sm: true, icon: 'font', label: 'Superscript', title: 'x\u00b2: raise the selected text!', run: function () { if (MORE().script) MORE().script('superscript'); } },
+                        { sm: true, icon: 'font', label: 'Subscript', title: 'H\u2082O: lower the selected text!', run: function () { if (MORE().script) MORE().script('subscript'); } }
+                    ] },
+                    { stack: [
+                        { sm: true, icon: 'arrowUp', label: 'Sort A to Z', title: 'Sort the selected paragraphs or list items!', run: function () { if (MORE().sortLines) MORE().sortLines(false); } },
+                        { sm: true, icon: 'arrowDown', label: 'Sort Z to A', title: 'Sort the selected paragraphs or list items backwards!', run: function () { if (MORE().sortLines) MORE().sortLines(true); } }
+                    ] }
+                ] }
             ]
         },
         {
@@ -988,6 +999,15 @@
                     { big: true, icon: 'font', label: 'Drop\nCap', title: 'A big first letter!', menu: function () { return PLUS().dropCapMenu ? PLUS().dropCapMenu() : []; } }
                 ] },
                 { label: 'Emoji', items: [{ big: true, icon: 'sparkle', label: 'Custom\nEmoji', title: 'Draw your own emoji or symbol on a square canvas and put it in your text!', run: function () { if (window.KdEmoji) window.KdEmoji.insert(); } }] },
+                { label: 'Symbols', items: [
+                    { big: true, icon: 'symbol', label: 'Symbols', title: 'Arrows, math, Greek, currency and more!', run: function () { if (MORE().symbols) MORE().symbols(); } },
+                    { big: true, icon: 'notes', label: 'Quick\nParts', title: 'Save a piece of text and drop it back in whenever you like!', menu: function () { return MORE().quickPartsMenu ? MORE().quickPartsMenu() : []; } },
+                    { big: true, icon: 'lines', label: 'Lorem\nIpsum', title: 'Filler paragraphs!', menu: function () { return MORE().loremMenu ? MORE().loremMenu() : []; } }
+                ] },
+                { label: 'Captions', items: [
+                    { big: true, icon: 'tag', label: 'Insert\nCaption', title: 'Figure 1, Table 2... numbered for you!', menu: function () { return MORE().captionMenu ? MORE().captionMenu() : []; } },
+                    { big: true, icon: 'lines', label: 'Table of\nFigures', title: 'A clickable list of every caption!', menu: function () { return MORE().tofMenu ? MORE().tofMenu() : []; } }
+                ] },
                 { label: 'Math', items: [{ big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } }] },
                 { label: 'Text', items: [{ stack: [
                     { sm: true, icon: 'calendar', label: 'Date', run: function () { insertKind('date'); } },
@@ -1055,7 +1075,8 @@
             id: 'review', label: 'Review', groups: [
                 { label: 'Proofing', items: [
                     { big: true, icon: 'numbers', label: 'Word\nCount', run: wordCount },
-                    { big: true, icon: 'search', label: 'Find &\nReplace', run: function () { findDialog(true); } }
+                    { big: true, icon: 'search', label: 'Find &\nReplace', run: function () { findDialog(true); } },
+                    { stack: [{ check: true, label: 'AutoCorrect', get: function () { return MORE().autoCorrect ? MORE().autoCorrect() : false; }, set: function (v) { if (MORE().setAutoCorrect) MORE().setAutoCorrect(v); } }] }
                 ] },
                 { label: 'Comments', items: [
                     { big: true, icon: 'annotate', label: 'New\nComment', title: 'Pin a note to the selected text!', run: function () { if (PLUS().newComment) PLUS().newComment(); } },
