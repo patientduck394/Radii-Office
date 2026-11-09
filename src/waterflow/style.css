@@ -318,3 +318,59 @@ body[data-theme="night"] .wf-paper :not(pre) > code:not(.kd-ic) { background: li
 .wf-nbcolors { display: inline-flex; gap: 6px; margin: 0; flex: 0 0 auto; }
 .wf-nbcolors button { width: 22px; height: 22px; padding: 0; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .2); }
 .wf-nbcolors button.on { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+/* ---------- BitLang programs, dressed in the Waterflow theme (chip, running view, editor) ---------- */
+body .bl-prog { gap: 8px; padding: 3px 6px 3px 4px; border-radius: 999px; border: 2px solid var(--aqua2); border-bottom-color: var(--aqua3); background: linear-gradient(180deg, #fff 0%, color-mix(in srgb, var(--aqua1) 38%, #fff) 100%); color: var(--paper-ink); font: 600 13px/1.3 var(--font); box-shadow: 0 2px 0 color-mix(in srgb, var(--aqua3) 55%, transparent), inset 0 1px 0 #fff; }
+body[data-theme="night"] .bl-prog { background: linear-gradient(180deg, #0f2f4d 0%, #0a2540 100%); color: var(--ink); }
+body .bl-prog:hover { filter: none; background: linear-gradient(180deg, #fff 0%, color-mix(in srgb, var(--aqua1) 62%, #fff) 100%); box-shadow: 0 2px 0 var(--aqua3), 0 4px 12px color-mix(in srgb, var(--aqua2) 40%, transparent), inset 0 1px 0 #fff; }
+body[data-theme="night"] .bl-prog:hover { background: linear-gradient(180deg, #14405f 0%, #0d3254 100%); }
+body .bl-prog.bl-playing { border-color: var(--orange); border-bottom-color: var(--or3); box-shadow: 0 2px 0 var(--or3), 0 0 0 3px color-mix(in srgb, var(--orange) 28%, transparent); }
+body .bl-chip-icon { width: 22px; height: 22px; border-radius: 50%; background: radial-gradient(circle at 32% 26%, #fff 0 12%, transparent 13%), linear-gradient(180deg, var(--aqua1), var(--aqua3)); box-shadow: inset 0 -2px 3px rgba(0, 60, 90, .35), 0 1px 2px rgba(0, 40, 70, .35); }
+body .bl-chip-icon::before { color: #fff; font-size: 9px; text-shadow: 0 1px 1px rgba(0, 50, 80, .6); }
+body .bl-prog.bl-playing .bl-chip-icon { background: radial-gradient(circle at 32% 26%, #fff 0 12%, transparent 13%), linear-gradient(180deg, var(--or1), var(--or3)); }
+body .bl-prog.bl-playing .bl-chip-icon::before { color: #fff; }
+body .bl-chip-text::before { color: var(--orange); font-weight: 700; }
+body .bl-chip-text::after { color: var(--aqua3); }
+body .bl-chip-edit { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--aqua2); background: color-mix(in srgb, var(--aqua1) 30%, #fff); color: var(--aqua3); }
+body[data-theme="night"] .bl-chip-edit { background: #0d3254; color: var(--aqua1); }
+body .bl-chip-edit:hover { color: #fff; background: var(--aqua2); border-color: var(--aqua3); }
+
+/* the running program: a glass panel with a gel Stop */
+body .bl-view { padding: 16px 18px; border-radius: 18px; border: 2px solid var(--aqua2); background: var(--glass2); color: var(--paper-ink); box-shadow: var(--shadow), inset 0 1px 0 #fff; backdrop-filter: blur(6px); }
+body .bl-over-stop { top: 10px; right: 10px; font: 700 12px var(--font); padding: 5px 14px; border-radius: 999px; border: 2px solid var(--orange); background: #fff2e0; color: var(--or3); text-shadow: none; box-shadow: 0 2px 0 var(--or3); }
+body .bl-over-stop:hover { filter: none; background: var(--or1); color: #fff; }
+body .bl-btn { font: 700 13px var(--font); padding: 6px 16px; border: 2px solid var(--aqua2); background: color-mix(in srgb, var(--aqua1) 28%, #fff); color: var(--aqua3); text-shadow: none; box-shadow: 0 2px 0 var(--aqua3); }
+body .bl-btn:hover { filter: none; background: var(--aqua2); color: #fff; }
+body .bl-btn:active { transform: translateY(2px); box-shadow: none; }
+body .bl-in { border: 2px solid var(--aqua2); border-radius: 12px; background: #fff; color: #12263a; box-shadow: none; }
+body .bl-in:focus { border-color: var(--orange); box-shadow: 0 0 0 3px color-mix(in srgb, var(--orange) 28%, transparent); }
+body .bl-error { color: var(--red); background: color-mix(in srgb, var(--red) 12%, #fff); border-radius: 10px; }
+
+/* the program editor and the guide */
+body .bl-edit-back, body .bl-docs-back { background: rgba(6, 40, 66, .55); font-family: var(--font); }
+body .bl-edit-dlg, body .bl-docs-dlg { border: 2px solid var(--aqua2); border-radius: 22px; background: var(--paper); color: var(--paper-ink); box-shadow: var(--shadow); }
+body .bl-docs-head { background: linear-gradient(180deg, var(--aqua1), var(--aqua2)); color: #06323d; font-weight: 700; padding: 12px 18px; }
+body .bl-docs-x { background: rgba(255, 255, 255, .6); color: #06323d; border-radius: 50%; }
+body .bl-docs-x:hover { background: #fff; }
+body .bl-edit-lbl { color: var(--aqua3); font-weight: 700; }
+body[data-theme="night"] .bl-edit-lbl { color: var(--aqua1); }
+body .bl-edit-name { font: 14px var(--font); border: 2px solid var(--aqua2); border-radius: 12px; background: var(--paper); color: var(--paper-ink); outline: none; }
+body .bl-edit-name:focus { border-color: var(--orange); }
+body .bl-edit-foot { background: color-mix(in srgb, var(--aqua1) 22%, var(--paper)); border-top: 2px solid var(--line); }
+body .bl-docs { background: #fff; color: var(--aqua3); }
+body .bl-seg { border: 2px solid var(--aqua2); box-shadow: none; }
+body .bl-seg-b { font: 700 11px var(--font); background: #fff; color: var(--aqua3); }
+body .bl-seg-b + .bl-seg-b { border-left: 2px solid var(--aqua2); }
+body .bl-seg-b.on { background: var(--aqua2); color: #fff; text-shadow: none; }
+body .bl-seg-note { color: var(--mute); }
+body .bl-docs-body h1 { color: var(--aqua3); }
+body .bl-docs-body h2 { color: var(--aqua3); border-bottom-color: var(--line); }
+body .bl-docs-body code { background: color-mix(in srgb, var(--aqua1) 30%, #fff); color: var(--aqua3); }
+body .bl-docs-body pre, body .bl-edit-wrap { background: #06323d; }
+body .bl-edit-wrap { border: 2px solid #0f6a7d; border-radius: 14px; box-shadow: inset 0 2px 12px rgba(0, 20, 30, .45); }
+body .bl-hl, body .bl-edit-code { font: 13px/1.65 var(--mono); padding: 14px 16px; }
+body .bl-hl { color: #d6f4fa; }
+body .bl-edit-code { caret-color: #ffa94d; }
+body .bl-edit-code::selection { background: #0f7a90; }
+body .bl-t-k { color: #ff9b3d; } body .bl-t-s { color: #a8f1ff; } body .bl-t-n { color: #5aa9ff; } body .bl-t-c { color: #4f93a3; }
+body .bl-t-b { color: #2ee6ff; } body .bl-t-f { color: #ffb066; } body .bl-t-e { color: #ffd08a; } body .bl-t-tag { color: #6fe7ff; }
