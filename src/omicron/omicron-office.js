@@ -1287,7 +1287,7 @@
                 { label: 'Insert', items: [{ big: true, icon: 'code', label: 'HTML\nBlock', title: 'Your own HTML, with a live preview!', run: function () { addBlock('html', '', '<div style="padding:20px;border-radius:12px;background:#f1f5f9">Hello from your own HTML!</div>'); } }] },
                 { label: 'Page Code', items: [
                     { big: true, icon: 'css', label: 'CSS', title: 'Styles for the whole page', run: function () { codeDialog('css'); } },
-                    { big: true, icon: 'jumper', label: 'JavaScript', title: 'Script for the exported page', run: function () { codeDialog('js'); } },
+                    { big: true, icon: 'js', label: 'JavaScript', title: 'Script for the exported page', run: function () { codeDialog('js'); } },
                     { big: true, icon: 'web', label: 'Head\nHTML', title: 'Extra tags for <head>', run: function () { codeDialog('head'); } }
                 ] },
                 { label: 'Run', items: [{ big: true, icon: 'eye', label: 'Preview\nPage', title: 'Run the page with your CSS and JavaScript', run: previewPage }] }

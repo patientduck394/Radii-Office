@@ -932,6 +932,11 @@
                         { glyph: 'U', glyphCls: 'u', title: 'Underline', kbd: '⌘U', run: function () { fmt('underline'); }, checked: function () { return inTag('u'); } },
                         { glyph: 'ab', glyphCls: 's', title: 'Strikethrough', run: function () { fmt('strikethrough'); }, checked: function () { return inTag('s, strike, del'); } },
                         { icon: 'code', title: 'Inline Code', run: inlineCode, checked: function () { return inTag('code'); } },
+                        { icon: 'smallCaps', title: 'Small Caps (Keydown {sc}text{/sc})', run: function () { if (MORE().emphasis) MORE().emphasis('sc'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('sc') : false; } },
+                        { icon: 'superscript', title: 'Superscript', run: function () { if (MORE().script) MORE().script('superscript'); }, checked: function () { return inTag('sup'); } },
+                        { icon: 'subscript', title: 'Subscript', run: function () { if (MORE().script) MORE().script('subscript'); }, checked: function () { return inTag('sub'); } },
+                        { icon: 'emphasisDots', title: 'Emphasis Dots (Keydown {dots}text{/dots})', run: function () { if (MORE().emphasis) MORE().emphasis('dots'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('dots') : false; } },
+                        { icon: 'dim', title: 'Dim: half strength, like a terminal (Keydown {dim}text{/dim})', run: function () { if (MORE().emphasis) MORE().emphasis('dim'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('dim') : false; } },
                         { sep: true },
                         { icon: 'fontColor', title: 'Font Color', bar: function () { return lastColor; }, run: function () { applyColor(lastColor); }, menu: colorMenu },
                         { icon: 'orb', title: 'Gel Orbs', menu: function () { return swatchMenu('Gel Orbs', chips, fmtApplyChip, 'cp-swatch'); } },
@@ -965,16 +970,7 @@
                     { sm: true, icon: 'reset', label: 'Replace', run: function () { findDialog(true); } }
                 ] }] },
                 { label: 'More', items: [
-                    { stack: [
-                        { sm: true, icon: 'font', label: 'Small Caps', title: 'SMALL CAPS: Keydown {sc}text{/sc}', run: function () { if (MORE().emphasis) MORE().emphasis('sc'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('sc') : false; } },
-                        { sm: true, icon: 'highlighter', label: 'Emphasis Dots', title: 'A dot over every letter: Keydown {dots}text{/dots}', run: function () { if (MORE().emphasis) MORE().emphasis('dots'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('dots') : false; } },
-                        { sm: true, icon: 'moon', label: 'Dim', title: 'Fade the text to half strength, like a terminal\'s dim: Keydown {dim}text{/dim}', run: function () { if (MORE().emphasis) MORE().emphasis('dim'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('dim') : false; } }
-                    ] },
-                    { stack: [
-                        { sm: true, icon: 'font', label: 'Superscript', title: 'x\u00b2: raise the selected text!', run: function () { if (MORE().script) MORE().script('superscript'); } },
-                        { sm: true, icon: 'font', label: 'Subscript', title: 'H\u2082O: lower the selected text!', run: function () { if (MORE().script) MORE().script('subscript'); } }
-                    ] },
-                    { big: true, icon: 'pen', label: 'Change\nBar', title: 'A thin bar in the margin beside the selected paragraphs, like revision bars in contracts!', run: function () { if (MORE().barDialog) MORE().barDialog(); } },
+                    { big: true, icon: 'changeBar', label: 'Change\nBar', title: 'A thin bar in the margin beside the selected paragraphs, like revision bars in contracts!', run: function () { if (MORE().barDialog) MORE().barDialog(); } },
                     { stack: [
                         { sm: true, icon: 'arrowUp', label: 'Sort A to Z', title: 'Sort the selected paragraphs or list items!', run: function () { if (MORE().sortLines) MORE().sortLines(false); } },
                         { sm: true, icon: 'arrowDown', label: 'Sort Z to A', title: 'Sort the selected paragraphs or list items backwards!', run: function () { if (MORE().sortLines) MORE().sortLines(true); } }
