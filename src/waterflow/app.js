@@ -788,7 +788,18 @@
             ['Theme: next look', '', () => { const o = ['day', 'night', 'sand']; S.theme = o[(o.indexOf(S.theme) + 1) % 3]; applySettings(); }],
             ['Settings', '', settingsDialog], ['Import, export and backups', '', dataDialog], ['Keydown guide', '', () => $('wf-open-guide').click()], ['BitLang guide (programs)', '', () => { try { BL().openDocs(); } catch (e) { toast('The BitLang guide did not open!'); } }],
             ['Print or save as PDF', '', () => cur && printNote()], ['Switch this note between Poolside and Classic Keydown', '', convertLang]
-        ];
+        ].concat(cur ? [['Delete this note', cur.trashed ? 'forever' : 'to the trash', deleteCurrent], ['Recolor this note', '', recolorCurrent]] : []);
+    }
+    function deleteCurrent() {
+        if (!cur) return;
+        if (cur.trashed) { if (confirm('Delete this note forever?')) wipe(cur); return; }
+        trash(cur);
+    }
+    function recolorCurrent() {
+        if (!cur) return;
+        dialog('Recolor this note', '<div class="wf-colors" id="rc-colors">' + COLORS.map((c) => '<button type="button" data-c="' + c + '" class="' + ((cur.color || '') === c ? 'on' : '') + '" title="' + (c ? 'Use this color' : 'No color') + '" style="background:' + (c || 'linear-gradient(135deg,#fff 46%,#e5484d 47% 53%,#fff 54%)') + '"></button>').join('') + '</div>', (b) => {
+            b.querySelector('#rc-colors').addEventListener('click', (e) => { const x = e.target.closest('button'); if (!x || !cur) return; cur.color = x.dataset.c; touch(cur); renderMeta(); renderList(); closeDialog(); toast(cur.color ? 'Recolored!' : 'Color removed!'); });
+        });
     }
     function palRender() {
         const q = $('wf-palq').value.trim().toLowerCase();
