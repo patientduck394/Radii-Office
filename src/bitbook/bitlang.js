@@ -1807,6 +1807,20 @@ fn guess(n):
 
     // Sanitized rich text + Keydown (=Y=gel=Y=, **bold**, #C#chip#…) when the Keydown renderer is around!
     function richText(html) {
+        // ;;pk{ Poolside Keydown } parts are set aside first (PK's < > would be read as HTML tags) and drawn at the end!
+        const pkParts = [];
+        if (typeof html === 'string' && html.indexOf(';;pk{') >= 0 && window.PK && window.PK.toKD && window.kdDoc && window.kdDoc.textToHtml) {
+            let out = '', at = 0, i;
+            while ((i = html.indexOf(';;pk{', at)) >= 0) {
+                let depth = 0, end = -1;
+                for (let k = i + 4; k < html.length; k++) { const c = html[k]; if (c === '\\') { k++; continue; } if (c === '{') depth++; else if (c === '}') { depth--; if (!depth) { end = k; break; } } }
+                if (end < 0) break;
+                out += html.slice(at, i) + '\uE000' + pkParts.length + '\uE001';
+                pkParts.push(html.slice(i + 5, end).replace(/^\s*\n/, '').replace(/\n\s*$/, '').trim());
+                at = end + 1;
+            }
+            html = out + html.slice(at);
+        }
         const d = new DOMParser().parseFromString('<body>' + html + '</body>', 'text/html');
         d.querySelectorAll('script, iframe, object, embed, link, meta, style').forEach(function (n) { n.remove(); });
         d.querySelectorAll('*').forEach(function (n) { [].slice.call(n.attributes).forEach(function (a) { if (/^on/i.test(a.name) || (/^(href|src|xlink:href)$/i.test(a.name) && /^\s*javascript:/i.test(a.value))) n.removeAttribute(a.name); }); });
@@ -1851,7 +1865,22 @@ fn guess(n):
                 n.replaceWith.apply(n, [].slice.call(sp.childNodes));
             });
         }
-        return d.body.innerHTML;
+        let result = d.body.innerHTML;
+        if (pkParts.length) {
+            result = result.replace(/\uE000(\d+)\uE001/g, function (m0, n) {
+                const src = pkParts[+n];
+                if (src === undefined) return '';
+                try {
+                    let h = window.kdDoc.textToHtml(window.PK.toKD(src), { notes: {} });
+                    const box = document.createElement('div');
+                    box.innerHTML = h;
+                    // one plain line stays inline, so ;;pk{<tip Hi>} can sit in the middle of a sentence
+                    if (box.children.length === 1 && /^(DIV|P)$/.test(box.firstElementChild.tagName) && !box.firstElementChild.className) h = box.firstElementChild.innerHTML;
+                    return '<span class="bl-pk">' + h + '</span>';
+                } catch (e) { return esc(';;pk{' + src + '}'); }
+            });
+        }
+        return result;
     }
 
     /* ================= Libraries: sqlite (sql.js), python (Pyodide), lua (Fengari) ================= */
@@ -1934,7 +1963,7 @@ fn guess(n):
         if (current && current !== prog) stop(current, true);
         stop(prog, true);
         const ta = prog.querySelector('.bl-code');
-        const cont = prog.closest('#wysiwyg-canvas, #wysiwyg-page, .page-paper') || document.body;
+        const cont = prog.closest('#wysiwyg-canvas, #wysiwyg-page, .page-paper, [data-bl-host]') || document.body;
         // The document itself becomes the program until it stops: the real content is set aside
         // (same nodes, nothing copied) and comes straight back afterwards!
         const over = document.createElement('div');
@@ -2314,7 +2343,7 @@ fn guess(n):
     // the drawing as an @@ink="strokes='...'" line (nothing is drawn: nothing comes back)
     function openDraw(prog, done) {
         if (!window.AnnotateInk) return;
-        const cont = prog.closest('#wysiwyg-canvas, #wysiwyg-page, .page-paper') || document.body;
+        const cont = prog.closest('#wysiwyg-canvas, #wysiwyg-page, .page-paper, [data-bl-host]') || document.body;
         // (the program's page is the note inside its margins, so the blank page is exactly that size, and a stroke lands where you drew it)
         const cs = getComputedStyle(cont), pad = (k) => parseFloat(cs[k]) || 0;
         const w = Math.max(240, (cont.clientWidth || 800) - pad('paddingLeft') - pad('paddingRight'));
@@ -2509,7 +2538,7 @@ for item in items:
 <h2>Text output</h2>
 <table>
 <tr><td><code>print(a, b, ...)</code></td><td>Adds a line of plain text</td></tr>
-<tr><td><code>renderRT(html, line="1")</code></td><td>Shows <b>rich text</b> on a numbered line. <code>line="2"</code> <b>takes over</b> line 2, replacing whatever was written there before (by <code>renderRT</code>, a quick command, or <code>print</code>). Leave <code>line</code> out and it adds the next free line instead (the same statement keeps its own line, so a loop or <code>onframe</code> updates it in place). It understands HTML and Keydown: <code>=Y=gel=Y=</code>, <code>**bold**</code>, <code>#C#chip#</code>…</td></tr>
+<tr><td><code>renderRT(html, line="1")</code></td><td>Shows <b>rich text</b> on a numbered line. <code>line="2"</code> <b>takes over</b> line 2, replacing whatever was written there before (by <code>renderRT</code>, a quick command, or <code>print</code>). Leave <code>line</code> out and it adds the next free line instead (the same statement keeps its own line, so a loop or <code>onframe</code> updates it in place). It understands HTML and Keydown: <code>=Y=gel=Y=</code>, <code>**bold**</code>, <code>#C#chip#</code>… Where Poolside Keydown is loaded (Bitbook, Waterflow, Writeout, OpenDB), a part of the text can be written in it with <code>;;pk{ ... }</code>, like <code>renderRT("Score: ;;pk{ &lt;tip Nice!&gt; }")</code> (use single quotes for any quotes inside).</td></tr>
 <tr><td><code>ink("gel:red:9:M10 10L80 40")</code></td><td>Draws on the program's page with Bitbook's Annotate inks, over everything else. The easy way: press <b>✏️ Draw</b> in the editor, draw, and press <b>Done</b>: the drawing goes into your code as an <code>@@ink="strokes='...'"</code> line, which runs just like <code>ink(...)</code>!</td></tr>
 <tr><td><code>wait(2)</code></td><td><b>Pauses</b> the program for that many seconds (<code>wait(0.5)</code> is half a second), then carries on with the next line! It works on a line of its own: at the top level, in <code>onstart</code>, buttons, keys, and functions of your own called on their own line. A <code>while true:</code> loop with a <code>wait</code> inside never runs out of time, and <b>Stop</b> ends the waiting.</td></tr>
 <tr><td><code>inkc()</code></td><td><b>Clears the ink</b>: every drawing made with <code>ink(...)</code> (or an <code>@@ink</code> line) leaves the page. Draw again any time with <code>ink(...)</code>!</td></tr>

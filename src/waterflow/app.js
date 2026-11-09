@@ -43,6 +43,8 @@
     /* ---------- Poolside Keydown (PK): a note is written in PK or in Classic Keydown ('kd') ---------- */
     const PKX = window.PK;
     const isPK = (n) => !!n && n.lang === 'pk' && !!PKX;
+    const BL = () => window.BitLang;
+    const playing = () => !!document.querySelector('#wf-stage .bl-view');   // a BitLang program has taken over the note: nothing of it is saved
     const kdOf = (n) => (isPK(n) ? PKX.toKD(n.text || '') : (n.text || ''));        // the Keydown the engine draws
     const keep = (n, kd) => (isPK(n) ? PKX.toPK(kd) : kd);                             // what a note stores, from drawn Keydown
     const newLang = () => (S.kd === 'classic' || !PKX ? 'kd' : 'pk');
@@ -268,7 +270,7 @@
     const plain = (t) => String(t || '').replace(/^\s*(\/{1,4}|<[<>:!?%*+\-=~$#^@&]|\([+.~=*]?\)|\/~)\s/gm, ' ').replace(/<[a-z]+\s/g, ' ').replace(/^::[a-z]+.*$/gm, ' ').replace(/```[^\n]*/g, ' ').replace(/[#*~=`>|_^%&+;!@$\[\]{}\\]/g, ' ').replace(/\s+/g, ' ').trim();
     const titleOf = (n) => (n.title || '').trim() || (plain(n.text).slice(0, 48)) || 'Untitled note';
     const words = (t) => { const p = plain(t); return p ? p.split(' ').length : 0; };
-    const preview = (n) => { const lines = String(n.text || '').split('\n').filter((l) => l.trim() && !/^\s*(#{1,4}|\/{1,4})\s/.test(l)); return plain(lines.join(' ')).slice(0, 170); };
+    const preview = (n) => { const lines = String(n.text || '').replace(/@@program[^\n]*```[\s\S]*?```/g, '').split('\n').filter((l) => l.trim() && !/^\s*(#{1,4}|\/{1,4})\s/.test(l)); return plain(lines.join(' ')).slice(0, 170); };
     const nbName = (id) => { const b = nbs.find((x) => x.id === id); return b ? b.name : ''; };
 
     /* ---------- the rail ---------- */
@@ -346,6 +348,7 @@
     }
     function readMode() {   // the text as the visible editor has it
         if (!cur) return;
+        if (playing()) return;
         if (mode === 'visual' && ed) cur.text = keep(cur, ed.getText());
         else if (mode === 'source') cur.text = $('wf-source').value;
     }
@@ -783,7 +786,7 @@
             ['New note', 'Ctrl+Alt+N', () => newNote()], ['Open today\'s note', '', today], ['New notebook', '', addNotebook],
             ['Switch mode: View, Visual, Source', 'Ctrl+Alt+M', cycleMode], ['Focus mode', 'Ctrl+Alt+F', toggleFocus],
             ['Theme: next look', '', () => { const o = ['day', 'night', 'sand']; S.theme = o[(o.indexOf(S.theme) + 1) % 3]; applySettings(); }],
-            ['Settings', '', settingsDialog], ['Import, export and backups', '', dataDialog], ['Keydown guide', '', () => $('wf-open-guide').click()],
+            ['Settings', '', settingsDialog], ['Import, export and backups', '', dataDialog], ['Keydown guide', '', () => $('wf-open-guide').click()], ['BitLang guide (programs)', '', () => { try { BL().openDocs(); } catch (e) { toast('The BitLang guide did not open!'); } }],
             ['Print or save as PDF', '', () => cur && printNote()], ['Switch this note between Poolside and Classic Keydown', '', convertLang]
         ];
     }
@@ -838,9 +841,15 @@
         mode = ['view', 'visual', 'source'].includes(S.mode) ? S.mode : 'visual';
         ed = KD.editor($('wf-visual'), {
             value: '', delay: 300, spellcheck: S.spell,
-            onChange: (t) => { if (cur && mode === 'visual') { cur.text = keep(cur, t); afterTextChange(true); } }
+            onChange: (t) => { if (cur && mode === 'visual' && !playing()) { cur.text = keep(cur, t); afterTextChange(true); } }
         });
-        $('wf-visual').addEventListener('input', () => { if (cur && mode === 'visual') { cur.text = keep(cur, ed.getText()); afterTextChange(true); } });
+        $('wf-visual').addEventListener('input', () => { if (cur && mode === 'visual' && !playing()) { cur.text = keep(cur, ed.getText()); afterTextChange(true); } });
+        // BitLang programs (@@program) come alive in Visual and View, and play over the note
+        ['wf-visual', 'wf-view'].forEach((id) => {
+            const el = $(id); el.setAttribute('data-bl-host', '');
+            let q = 0; const wake = () => { clearTimeout(q); q = setTimeout(() => { try { if (BL() && !playing()) BL().hydrate(el); } catch (e) {} }, 60); };
+            new MutationObserver(wake).observe(el, { childList: true, subtree: true }); wake();
+        });
         $('wf-stage').addEventListener('keydown', (e) => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing) pkLive(); }, true);
         $('wf-visual').addEventListener('keyup', (e) => { if (e.key === ' ' && !e.isComposing && pkLive()) { try { ed.format(); } catch (x) {} cur.text = keep(cur, ed.getText()); afterTextChange(true); } });
         notes = await store.all();

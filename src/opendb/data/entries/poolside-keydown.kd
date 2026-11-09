@@ -191,4 +191,8 @@ Each Poolside mark stands for exactly one Keydown mark, so the translation goes 
 
 A blank is `<blank 8|answer>` in Poolside Keydown and `[__8|answer]` in Keydown, and a divider is `/~ rope | Title | blue` in Poolside Keydown and `::divider{poolside|Title|blue}` in Keydown.
 
+### BitLang programs
+
+Waterflow runs BitLang programs, in Poolside and Classic notes alike. Add one from **Skills** in Visual mode (or write `@@program` in Source), then click its chip to play it over the note and press **Esc** to stop. The words a program shows are Classic Keydown, but any part of them can be Poolside Keydown inside `;;pk{ }`, like `renderRT("Score: ;;pk{ <b 10> }")`. This works in Bitbook programs too. Waterflow's command palette has a **BitLang guide**.
+
 The translator is `poolside.js`, and the styles are `poolside-keydown.css` (and `poolside-embed.css` for `;;pk{ }` blocks). See also [[poolside-style]], [[poolsideui]] and [[keydown-components]].
