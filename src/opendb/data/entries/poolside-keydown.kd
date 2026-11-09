@@ -167,11 +167,11 @@ A table row is written `[ a | b ]`, and the header row is `[= a | b =]`.
 [ 2 | Bo | 53.0 ]}
 
 ## Every Poolside style: Poolside Style Lookup
-The Poolside collections that used to be in the Style Gallery (Poolside 1 to 10: 900 designs with 5 colorways each, 4,500 styles) are written in Poolside Keydown as `<style-id words>`, where the id is the design's id and a colorway number from 1 to 5, like `<plripple-2 words>`. In plain Keydown the same style is `@plripple-2@words@`.
+The Poolside collections that used to be in the Style Gallery (Poolside 1 to 10, plus 2A, 3A and 4A: 1,170 designs with 5 colorways each, 5,850 styles) are written in Poolside Keydown as `<style-id words>`, where the id is the design's id and a colorway number from 1 to 5, like `<plripple-2 words>`. In plain Keydown the same style is `@plripple-2@words@`.
 
 ;;pk{<plripple-2 Pool Ripples> and <plclear-3 Clear> and <pvdotlead-5 Dot Leader>}
 
-They are found with **Poolside Style Lookup** (PSL): in Waterflow press **Styles** in the toolbar, and in Bitbook open the Unique Chip Styles gallery and press **Poolside Style Lookup**. Search by design, colorway or collection, click a style to put it on your words, and star the ones you love. Favorites are shared by every Radii Office app on the same address, so a star in Bitbook shows up in Waterflow at once! Poolside favorites that were starred in the Gallery were moved to PSL.
+They are found with **Poolside Style Lookup** (PSL): in Waterflow press **Styles** in the toolbar, and in Bitbook open the Unique Chip Styles gallery and press **Poolside Style Lookup**. Search by design, colorway or collection, click a style to put it on your words, and star the ones you love. Favorites are shared by every Radii Office app on the same address, so a star in Bitbook shows up in Waterflow at once! Poolside favorites that were starred in the Gallery were moved to PSL. Poolside 2A, 3A and 4A are continuations of Poolside 2, 3 and 4 with the same colorways and feel: pool-party lights and music, camp and boardwalk gear, and summer picnic details.
 
 ## Everything else is Keydown
 Poolside Keydown has no marks for equations, so those are written the [[keydown|Keydown]] way inside it, and any Keydown tag works too. A note keeps its own language, so a Classic Keydown note and a Poolside Keydown note can sit side by side in Waterflow.

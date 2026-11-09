@@ -563,7 +563,7 @@
         if (!t) return;
         if (t[3]) insertText(null, t[3]); else insertText(t[4]);
     });
-    // Poolside Style Lookup: any of the 4,500 Poolside styles, put on the selected words (or a sample word)
+    // Poolside Style Lookup: any of the 5,850 Poolside styles, put on the selected words (or a sample word)
     function pslOpen() {
         if (!window.PSL) { toast('Poolside Style Lookup did not load!'); return; }
         window.PSL.open({ verb: 'put it on your words', insert: (st) => {

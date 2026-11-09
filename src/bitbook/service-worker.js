@@ -31,7 +31,7 @@ var BITBOOK_SHELL = [
   'collab-kd.js?v=20261201j',
   'manifest.json',
   'latex.js?v=20261130',
-  'keydown-doc.js?v=20261204g',
+  'keydown-doc.js?v=20261219b',
   '../writeout/keydown-next.js?v=20261204h',
   'annotate-ink.js?v=20261202e',
   'radii-table.js?v=20261202d',
