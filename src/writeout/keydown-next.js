@@ -179,6 +179,12 @@
         if ((parts.before !== undefined || parts.after !== undefined) && !/position\s*:/.test(body)) css += '.' + cls + '{position:relative}';
         return { open, close, cls, css };
     }
+    // built-in tags that every document knows, no @style line needed:  {sc}Small Caps{/sc}  {dots}emphasis dots{/dots}  {dim}dimmed like a terminal's \033[2m{/dim}
+    const BUILTINS = [
+        { open: '{sc}', close: '{/sc}', cls: 'kdx-t-sc', css: '.kdx-t-sc{font-variant-caps:small-caps;font-variant:small-caps;letter-spacing:.04em}' },
+        { open: '{dots}', close: '{/dots}', cls: 'kdx-t-dots', css: '.kdx-t-dots{-webkit-text-emphasis:filled dot;text-emphasis:filled dot;-webkit-text-emphasis-position:over right;text-emphasis-position:over right}' },
+        { open: '{dim}', close: '{/dim}', cls: 'kdx-t-dim', css: '.kdx-t-dim{opacity:.5}' }
+    ];
     function useDef(d) {
         if (!tagRules.has(d.cls)) { tagRules.set(d.cls, d.css); tagCssEl().textContent = Array.from(tagRules.values()).join('\n'); }
     }
@@ -855,7 +861,8 @@
         rootEl.classList.toggle('kdx-editing', editing);
         if (!editing) splitNewlines(rootEl);
         const blocks = makeBlocks(rootEl, editing) + makePkInline(rootEl);
-        const defs = collectDefs(rootEl, editing);
+        BUILTINS.forEach(useDef);
+        const defs = BUILTINS.concat(collectDefs(rootEl, editing));
         const tags = applyTags(rootEl, defs);
         const values = makeLive(rootEl, editing);
         wireInputs(rootEl, editing);
@@ -891,7 +898,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back

@@ -3176,6 +3176,16 @@ Smaller packs that each add one style:
 
 The newest step for Keydown: three things at once, working everywhere Keydown works (Writeout, Bitbook, Amber, OpenDB, Keydown.js and the Svelte components).
 
+### Built-in emphasis tags
+
+Three tags that need no `@style` line:
+
+* `{sc}text{/sc}` small caps: {sc}Small Caps Look Like This{/sc}
+* `{dots}text{/dots}` emphasis dots, a dot over every letter: {dots}remember this{/dots}
+* `{dim}text{/dim}` dimmed to half strength, like a terminal's dim: {dim}a quiet aside{/dim}
+
+In Writeout they are also buttons on the Home tab (More group), next to Change Bar, which puts a thin bar in the page margin beside the selected paragraphs!
+
 ### Custom tags
 
 Invent your own Keydown tag right inside a document! A line starting with `@style` defines it:

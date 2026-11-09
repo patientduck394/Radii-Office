@@ -249,7 +249,81 @@
     /* ---------- superscript and subscript ---------- */
     function script(kind) { ed.focus(); document.execCommand(kind, false, null); save(); }
 
+    /* ---------- small caps, emphasis dots and dimming (the built-in Keydown tags {sc} {dots} {dim}) ---------- */
+    function emphasis(kind) {
+        const KN = window.KeydownNext;
+        const def = KN && KN.builtins && KN.builtins.filter(function (d) { return d.cls === 'kdx-t-' + kind; })[0];
+        if (!def) { toast('Emphasis needs Keydown Next, and it did not load!'); return; }
+        KN.useDef(def);
+        const kb = window.KdBlockEditor;
+        if (kb && kb.virtualRange && kb.virtualRange()) { toast('Select text inside one line for this!'); return; }
+        const s = window.getSelection();
+        if (!s.rangeCount || !ed.contains(s.anchorNode)) { toast('Select some text first!'); return; }
+        const r = s.getRangeAt(0);
+        const start = r.startContainer.nodeType === 3 ? r.startContainer.parentElement : r.startContainer;
+        const on = start && start.closest && start.closest('.' + def.cls);
+        if (on) {   // already this way: take it off
+            const k = document.createDocumentFragment();
+            while (on.firstChild) k.appendChild(on.firstChild);
+            const last = k.lastChild; on.replaceWith(k);
+            if (last) { const rr = document.createRange(); rr.selectNodeContents(last); s.removeAllRanges(); s.addRange(rr); }
+            save(); return;
+        }
+        if (r.collapsed) { toast('Select some text first!'); return; }
+        const span = document.createElement('span');
+        span.className = 'kdx-tag ' + def.cls; span.setAttribute('data-kd-open', def.open); span.setAttribute('data-kd-close', def.close);
+        try { r.surroundContents(span); } catch (e) { span.appendChild(r.extractContents()); r.insertNode(span); }
+        s.removeAllRanges(); const rr = document.createRange(); rr.selectNodeContents(span); s.addRange(rr);
+        save();
+    }
+    function emphasisActive(kind) {
+        const s = window.getSelection();
+        if (!s.rangeCount || !ed.contains(s.anchorNode)) return false;
+        const n = s.anchorNode.nodeType === 3 ? s.anchorNode.parentElement : s.anchorNode;
+        return !!(n && n.closest && n.closest('.kdx-t-' + kind));
+    }
+
+    /* ---------- margin change bars: a thin bar in the page margin beside a paragraph (like revision bars in contracts) ---------- */
+    (function () {
+        if (document.getElementById('wo-bar-css')) return;
+        const st = document.createElement('style'); st.id = 'wo-bar-css';
+        st.textContent = '#wysiwyg-canvas .wo-bar{position:relative}' +
+            '#wysiwyg-canvas .wo-bar::before{content:"";position:absolute;top:2px;bottom:2px;width:3px;border-radius:2px;background:var(--wo-bar,#e5484d);left:-14px;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
+            '#wysiwyg-canvas .wo-bar.wo-bar-right::before{left:auto;right:-14px}';
+        document.head.appendChild(st);
+    })();
+    const BAR_COLORS = [['Red', '#e5484d'], ['Orange', '#ff8a1b'], ['Blue', '#1b7fe0'], ['Green', '#2fc26a'], ['Black', '#111111']];
+    function barBoxes() {
+        const kb = window.KdBlockEditor, out = [];
+        const vr = kb && kb.virtualRange && kb.virtualRange();
+        if (vr && kb.allBoxes) { kb.allBoxes().forEach(function (b) { if (b.getAttribute && b.getAttribute('contenteditable') === 'true' && vr.intersectsNode(b)) out.push(b); }); if (out.length) return out; }
+        const r = remember();
+        const b = r ? blockOf(r.startContainer) : null;
+        const box = b && b.closest ? (b.closest('[contenteditable="true"]') || b) : null;
+        return box && box !== ed ? [box] : [];
+    }
+    function setBar(color, side) {
+        const boxes = barBoxes();
+        if (!boxes.length) { toast('Click in a paragraph first!'); return; }
+        boxes.forEach(function (b) {
+            if (!color) { b.classList.remove('wo-bar', 'wo-bar-right'); b.style.removeProperty('--wo-bar'); if (!b.getAttribute('style')) b.removeAttribute('style'); return; }
+            b.classList.add('wo-bar'); b.classList.toggle('wo-bar-right', side === 'right'); b.style.setProperty('--wo-bar', color);
+        });
+        save();
+        toast(color ? 'Change bar added!' : 'Change bar removed!');
+    }
+    function barMenu() {
+        remember();
+        const items = [];
+        BAR_COLORS.forEach(function (c) { items.push({ label: c[0] + ' bar on the left', icon: 'pen', run: function () { setBar(c[1], 'left'); } }); });
+        items.push({ label: 'Bar on the right (blue)', icon: 'pen', run: function () { setBar('#1b7fe0', 'right'); } });
+        items.push({ label: 'Remove change bar', icon: 'x', run: function () { setBar(null); } });
+        return items;
+    }
+
     window.WriteoutMore = {
+        barMenu: barMenu, setBar: setBar,
+        emphasis: emphasis, emphasisActive: emphasisActive,
         symbols: symbols, quickPartsMenu: quickPartsMenu, saveQuickPart: saveQuickPart, loremMenu: loremMenu, lorem: lorem,
         captionMenu: captionMenu, tofMenu: tofMenu, sortLines: sortLines, script: script,
         autoCorrect: function () { return acOn; }, setAutoCorrect: setAutoCorrect, remember: remember
