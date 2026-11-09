@@ -336,9 +336,8 @@ body[data-theme="night"] .bl-chip-edit { background: #0b2a4a; color: var(--aqua1
 body .bl-chip-edit:hover { color: #fff; background: var(--main); border-color: var(--main); }
 
 /* the running program and its dialogs follow the Poolside Style Lookup (PSL) UI: 2px main-color borders, light fills, round pills */
-body .bl-view { padding: 16px 18px; border-radius: 18px; border: 2px solid #36cdee; background: #f2fcff; color: #0b2a44; box-shadow: none; }
-body[data-theme="night"] .bl-view { background: #0d2640; color: #e6f4ff; }
-body .bl-over-stop { top: 10px; right: 10px; font: 700 12px var(--font); padding: 4px 14px; border-radius: 999px; border: 2px solid var(--orange); background: #ffe9d0; color: var(--or3); text-shadow: none; box-shadow: none; }
+body .bl-view { padding: 0; border: 0; border-radius: 0; background: none; box-shadow: none; min-height: 0; color: inherit; }
+body .bl-over-stop { top: 0; right: 0; font: 700 12px var(--font); padding: 4px 14px; border-radius: 999px; border: 2px solid var(--orange); background: #ffe9d0; color: var(--or3); text-shadow: none; box-shadow: none; }
 body .bl-over-stop:hover { filter: none; background: var(--orange); color: #fff; }
 body .bl-btn { font: 700 13px var(--font); padding: 5px 14px; border: 2px solid #36cdee; background: #d2f7fc; color: #0a93b2; text-shadow: none; box-shadow: none; transform: none; }
 body .bl-btn:hover { filter: none; transform: none; background: #36cdee; color: #fff; }
