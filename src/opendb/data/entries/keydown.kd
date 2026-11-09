@@ -3184,6 +3184,8 @@ Three tags that need no `@style` line:
 * `{dots}text{/dots}` emphasis dots, a dot over every letter: {dots}remember this{/dots}
 * `{dim}text{/dim}` dimmed to half strength, like a terminal's dim: {dim}a quiet aside{/dim}
 
+A margin change bar goes at the start of a line: `{bar red}`, `{bar blue dashed}`, `{bar pink dotted right}`. Colors are the Annotate colors (red, orange, gold, yellow, lime, green, turquoise, teal, cyan, blue, purple, pink, slate) plus black; styles are solid, dashed, dotted, rounded and rounddash; add `right` for the right margin.
+
 In Writeout they are also buttons on the Home tab (More group), next to Change Bar, which puts a thin bar in the page margin beside the selected paragraphs!
 
 ### Custom tags

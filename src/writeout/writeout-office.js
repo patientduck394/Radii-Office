@@ -974,7 +974,7 @@
                         { sm: true, icon: 'font', label: 'Superscript', title: 'x\u00b2: raise the selected text!', run: function () { if (MORE().script) MORE().script('superscript'); } },
                         { sm: true, icon: 'font', label: 'Subscript', title: 'H\u2082O: lower the selected text!', run: function () { if (MORE().script) MORE().script('subscript'); } }
                     ] },
-                    { big: true, icon: 'pen', label: 'Change\nBar', title: 'A thin bar in the margin beside the selected paragraphs, like revision bars in contracts!', menu: function () { return MORE().barMenu ? MORE().barMenu() : []; } },
+                    { big: true, icon: 'pen', label: 'Change\nBar', title: 'A thin bar in the margin beside the selected paragraphs, like revision bars in contracts!', run: function () { if (MORE().barDialog) MORE().barDialog(); } },
                     { stack: [
                         { sm: true, icon: 'arrowUp', label: 'Sort A to Z', title: 'Sort the selected paragraphs or list items!', run: function () { if (MORE().sortLines) MORE().sortLines(false); } },
                         { sm: true, icon: 'arrowDown', label: 'Sort Z to A', title: 'Sort the selected paragraphs or list items backwards!', run: function () { if (MORE().sortLines) MORE().sortLines(true); } }

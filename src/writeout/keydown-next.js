@@ -69,6 +69,14 @@
             '.kdx-frame{display:block;width:100%;height:280px;border:0;border-radius:10px;background:#2b2f35}',
             '.kdx-map .kdx-frame{background:#e5e7eb}',
             '.kdx-block a{color:#0369a1}',
+            // margin change bars: {bar red dashed left} at the start of a line
+            '.kdx-hasbar{position:relative}.kdx-barmark{display:none !important}',
+            '.kdx-hasbar::before{content:"";position:absolute;top:2px;bottom:2px;left:-14px;width:3px;border-radius:2px;background:var(--kdx-bar-c,#ef4444);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-hasbar[data-kdx-bar-side="right"]::before{left:auto;right:-14px}',
+            '.kdx-hasbar[data-kdx-bar-style="dashed"]::before{border-radius:0;-webkit-mask:repeating-linear-gradient(180deg,#000 0 9px,transparent 9px 14px);mask:repeating-linear-gradient(180deg,#000 0 9px,transparent 9px 14px)}',
+            '.kdx-hasbar[data-kdx-bar-style="dotted"]::before{width:4px;border-radius:0;-webkit-mask:radial-gradient(circle at 50% 50%,#000 0 1.7px,transparent 2.1px) 0 0/4px 7px repeat-y;mask:radial-gradient(circle at 50% 50%,#000 0 1.7px,transparent 2.1px) 0 0/4px 7px repeat-y}',
+            '.kdx-hasbar[data-kdx-bar-style="rounded"]::before{width:5px;border-radius:999px}',
+            '.kdx-hasbar[data-kdx-bar-style="rounddash"]::before{width:5px;border-radius:0;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'5\' height=\'15\'%3E%3Cline x1=\'2.5\' y1=\'2.5\' x2=\'2.5\' y2=\'9.5\' stroke=\'%23000\' stroke-width=\'5\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/5px 15px repeat-y;mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'5\' height=\'15\'%3E%3Cline x1=\'2.5\' y1=\'2.5\' x2=\'2.5\' y2=\'9.5\' stroke=\'%23000\' stroke-width=\'5\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/5px 15px repeat-y}',
             '@media (prefers-reduced-motion:reduce){.kdx-opt .kdx-fill,.kdx-bar i{transition:none}.kdx-timer.kdx-done .kdx-clock{animation:none}}'
         ].join('\n');
         (doc.head || doc.documentElement).appendChild(st);
@@ -215,6 +223,52 @@
             i = j;
         }
         return defs;
+    }
+    /* ---------- margin change bars: {bar red dashed left} at the start of a line ---------- */
+    const BAR_COLORS = { red: '#ef4444', orange: '#f97316', gold: '#ea9f08', yellow: '#ead708', lime: '#84cc16', green: '#10b981', turquoise: '#30e5cd', teal: '#06b6d4', cyan: '#30d3e5', blue: '#3b82f6', purple: '#a855f7', pink: '#ec4899', slate: '#b4b4b4', black: '#111111' };
+    const BAR_STYLES = ['solid', 'dashed', 'dotted', 'rounded', 'rounddash'];
+    function parseBar(args) {
+        const o = { color: 'red', style: 'solid', side: 'left' };
+        String(args || '').trim().split(/\s+/).filter(Boolean).forEach((w) => {
+            w = w.toLowerCase();
+            if (BAR_STYLES.indexOf(w) >= 0) o.style = w; else if (w === 'left' || w === 'right') o.side = w;
+            else if (BAR_COLORS[w] || /^#[0-9a-f]{3,8}$/.test(w)) o.color = w;
+        });
+        return o;
+    }
+    const barText = (o) => '{bar ' + o.color + (o.style !== 'solid' ? ' ' + o.style : '') + (o.side === 'right' ? ' right' : '') + '}';
+    function paintBar(box, o) {
+        if (!o) { box.classList.remove('kdx-hasbar'); box.removeAttribute('data-kdx-bar-style'); box.removeAttribute('data-kdx-bar-side'); box.style.removeProperty('--kdx-bar-c'); if (!box.getAttribute('style')) box.removeAttribute('style'); return; }
+        box.classList.add('kdx-hasbar');
+        box.style.setProperty('--kdx-bar-c', BAR_COLORS[o.color] || o.color);
+        box.setAttribute('data-kdx-bar-style', o.style); box.setAttribute('data-kdx-bar-side', o.side);
+    }
+    // one line's box (the thing that holds the bar), with its hidden marker (which is what Source and saving read)
+    function setBar(box, o) {
+        if (!box) return;
+        box.querySelectorAll(':scope > .kdx-barmark').forEach((m) => m.remove());
+        if (!o) { paintBar(box, null); return; }
+        const mk = doc.createElement('span');
+        mk.className = 'kdx kdx-barmark'; mk.setAttribute('contenteditable', 'false'); mk.setAttribute('data-kd-src', barText(o));
+        box.insertBefore(mk, box.firstChild);
+        paintBar(box, o);
+    }
+    function makeBars(rootEl) {
+        let n = 0;
+        lines(rootEl).forEach((L) => {
+            if (L.widget || !L.block) return;
+            const m = /^\s*\{bar((?:\s+[#\w-]+)*)\}/.exec(L.text);
+            if (!m) return;
+            const map = textMap(L, L.block);
+            const r0 = map.at(0), r1 = map.at(L.text.indexOf('}') + 1);
+            if (!r0 || !r1) return;
+            const cut = doc.createRange(); cut.setStart(r0.node, r0.offset); cut.setEnd(r1.node, r1.offset); cut.deleteContents();
+            setBar(L.block, parseBar(m[1])); n++;
+        });
+        // a box whose marker is gone loses its bar; a marker (loaded from a saved page) paints its box
+        rootEl.querySelectorAll('.kdx-hasbar').forEach((b) => { if (!b.querySelector(':scope > .kdx-barmark')) paintBar(b, null); });
+        rootEl.querySelectorAll('.kdx-barmark').forEach((mk) => { const b = mk.parentElement; if (b && !b.classList.contains('kdx-hasbar')) paintBar(b, parseBar(String(mk.getAttribute('data-kd-src') || '').replace(/^\{bar|\}$/g, ''))); });
+        return n;
     }
     // wrap OPEN…CLOSE runs inside one line (they may hold other formatting, like **bold**)
     function applyTags(rootEl, defs) {
@@ -862,6 +916,7 @@
         if (!editing) splitNewlines(rootEl);
         const blocks = makeBlocks(rootEl, editing) + makePkInline(rootEl);
         BUILTINS.forEach(useDef);
+        makeBars(rootEl);
         const defs = BUILTINS.concat(collectDefs(rootEl, editing));
         const tags = applyTags(rootEl, defs);
         const values = makeLive(rootEl, editing);
@@ -898,7 +953,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back
@@ -906,7 +961,12 @@
         const kd = root.kdDoc;
         if (!kd || kd.__kdxHooked) return;
         kd.__kdxHooked = true;
-        const origFormat = kd.formatLine, origRe = kd.reformat, origUn = kd.unformat, origToText = kd.htmlToText;
+        const origFormat = kd.formatLine, origRe = kd.reformat, origUn = kd.unformat, origToText = kd.htmlToText, origSourceOf = kd.sourceOf;
+        // Source view and saving read an element through sourceOf: custom tags (and the built-in {sc} {dots} {dim}) must give their marks back there too
+        if (origSourceOf) kd.sourceOf = function (el) {
+            if (el && el.querySelector && el.querySelector('[data-kd-open]')) { const copy = el.cloneNode(true); restoreTags(copy); return origSourceOf.call(this, copy); }
+            return origSourceOf.apply(this, arguments);
+        };
         if (origFormat) kd.formatLine = function (canvas) { const r = origFormat.apply(this, arguments); setTimeout(() => { try { apply(canvas, { editing: true }); } catch (e) { console.warn('[KeydownNext]', e); } }, 0); return r; };
         if (origRe) kd.reformat = function (box) { const r = origRe.apply(this, arguments); try { const a = apply(box, { editing: isEditing(box) || box.id === 'wysiwyg-canvas' }); if (r && typeof r === 'object') r.formatted = (r.formatted || 0) + a.tags + a.values + a.blocks; } catch (e) { console.warn('[KeydownNext]', e); } return r; };
         if (origUn) kd.unformat = function (box) { const n = restore(box); const r = origUn.apply(this, arguments); return (typeof r === 'number' ? r : 0) + n; };

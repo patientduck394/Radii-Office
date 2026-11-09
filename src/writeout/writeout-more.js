@@ -283,16 +283,8 @@
         return !!(n && n.closest && n.closest('.kdx-t-' + kind));
     }
 
-    /* ---------- margin change bars: a thin bar in the page margin beside a paragraph (like revision bars in contracts) ---------- */
-    (function () {
-        if (document.getElementById('wo-bar-css')) return;
-        const st = document.createElement('style'); st.id = 'wo-bar-css';
-        st.textContent = '#wysiwyg-canvas .wo-bar{position:relative}' +
-            '#wysiwyg-canvas .wo-bar::before{content:"";position:absolute;top:2px;bottom:2px;width:3px;border-radius:2px;background:var(--wo-bar,#e5484d);left:-14px;-webkit-print-color-adjust:exact;print-color-adjust:exact}' +
-            '#wysiwyg-canvas .wo-bar.wo-bar-right::before{left:auto;right:-14px}';
-        document.head.appendChild(st);
-    })();
-    const BAR_COLORS = [['Red', '#e5484d'], ['Orange', '#ff8a1b'], ['Blue', '#1b7fe0'], ['Green', '#2fc26a'], ['Black', '#111111']];
+    /* ---------- margin change bars: the bar itself lives in keydown-next.js as {bar red dashed left} at the start of a line,
+       so it travels through Source, saving and every other Keydown app ---------- */
     function barBoxes() {
         const kb = window.KdBlockEditor, out = [];
         const vr = kb && kb.virtualRange && kb.virtualRange();
@@ -302,27 +294,45 @@
         const box = b && b.closest ? (b.closest('[contenteditable="true"]') || b) : null;
         return box && box !== ed ? [box] : [];
     }
-    function setBar(color, side) {
+    function setBar(o) {
+        const KN = window.KeydownNext;
+        if (!KN || !KN.setBar) { toast('Change bars need Keydown Next, and it did not load!'); return; }
         const boxes = barBoxes();
         if (!boxes.length) { toast('Click in a paragraph first!'); return; }
-        boxes.forEach(function (b) {
-            if (!color) { b.classList.remove('wo-bar', 'wo-bar-right'); b.style.removeProperty('--wo-bar'); if (!b.getAttribute('style')) b.removeAttribute('style'); return; }
-            b.classList.add('wo-bar'); b.classList.toggle('wo-bar-right', side === 'right'); b.style.setProperty('--wo-bar', color);
-        });
+        boxes.forEach(function (b) { KN.setBar(b, o || null); });
         save();
-        toast(color ? 'Change bar added!' : 'Change bar removed!');
+        toast(o ? 'Change bar added!' : 'Change bar removed!');
     }
-    function barMenu() {
-        remember();
-        const items = [];
-        BAR_COLORS.forEach(function (c) { items.push({ label: c[0] + ' bar on the left', icon: 'pen', run: function () { setBar(c[1], 'left'); } }); });
-        items.push({ label: 'Bar on the right (blue)', icon: 'pen', run: function () { setBar('#1b7fe0', 'right'); } });
-        items.push({ label: 'Remove change bar', icon: 'x', run: function () { setBar(null); } });
-        return items;
+    async function barDialog() {
+        const KN = window.KeydownNext;
+        if (!KN || !KN.BAR_COLORS) { toast('Change bars need Keydown Next, and it did not load!'); return; }
+        const boxes = barBoxes();
+        let cur = { color: 'red', style: 'solid', side: 'left' };
+        const mk = boxes[0] && boxes[0].querySelector(':scope > .kdx-barmark');
+        if (mk) cur = KN.parseBar(String(mk.getAttribute('data-kd-src')).replace(/^\{bar|\}$/g, ''));
+        const STYLES = [['solid', 'Solid'], ['dashed', 'Dashed'], ['dotted', 'Dotted'], ['rounded', 'Rounded'], ['rounddash', 'Rounded dash']];
+        const wrap = document.createElement('div');
+        const draw = function () {
+            wrap.innerHTML = '<div style="font-weight:700;margin-bottom:6px">Color</div><div class="wo-bar-colors" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">' +
+                Object.keys(KN.BAR_COLORS).map(function (n) { return '<button type="button" data-c="' + n + '" title="' + n + '" style="width:28px;height:28px;border-radius:50%;border:3px solid ' + (cur.color === n ? 'currentColor' : 'transparent') + ';background:' + KN.BAR_COLORS[n] + ';cursor:pointer;padding:0"></button>'; }).join('') + '</div>' +
+                '<div style="font-weight:700;margin-bottom:6px">Style</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">' +
+                STYLES.map(function (x) { return '<button type="button" class="os-dlg-btn' + (cur.style === x[0] ? ' primary' : '') + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+                '<div style="font-weight:700;margin-bottom:6px">Side of the page</div><div style="display:flex;gap:6px;margin-bottom:12px">' +
+                ['left', 'right'].map(function (x) { return '<button type="button" class="os-dlg-btn' + (cur.side === x ? ' primary' : '') + '" data-d="' + x + '">' + x.charAt(0).toUpperCase() + x.slice(1) + '</button>'; }).join('') + '</div>' +
+                '<p style="margin:0;font-size:12px;opacity:.7">Keydown: <code>' + esc(KN.barText(cur)) + '</code> at the start of a line!</p>';
+        };
+        draw();
+        wrap.addEventListener('click', function (e) {
+            const c = e.target.closest('[data-c]'), st = e.target.closest('[data-s]'), d = e.target.closest('[data-d]');
+            if (c) cur.color = c.dataset.c; else if (st) cur.style = st.dataset.s; else if (d) cur.side = d.dataset.d; else return;
+            draw();
+        });
+        const v = await dialog('Change Bar', wrap, [{ label: 'Cancel', value: null }, { label: 'Remove bar', value: 'remove' }, { label: 'Add bar', primary: true, value: 'add' }]);
+        if (v === 'add') setBar(cur); else if (v === 'remove') setBar(null);
     }
 
     window.WriteoutMore = {
-        barMenu: barMenu, setBar: setBar,
+        barDialog: barDialog, setBar: setBar,
         emphasis: emphasis, emphasisActive: emphasisActive,
         symbols: symbols, quickPartsMenu: quickPartsMenu, saveQuickPart: saveQuickPart, loremMenu: loremMenu, lorem: lorem,
         captionMenu: captionMenu, tofMenu: tofMenu, sortLines: sortLines, script: script,
