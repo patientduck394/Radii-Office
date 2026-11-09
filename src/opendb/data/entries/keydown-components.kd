@@ -10916,7 +10916,7 @@ radial-gradient(70% 90% at 50% 50%, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255,
 :global(.gel-logo-purple){--lg-c: #bd1bff;--lg-l: #f6c0ff;}
 :global(.gel-logo-blue){--lg-c: #1b7dff;--lg-l: #2edbff;}
 :global(.gel-logo-red){--lg-c: #ee0000;--lg-l: #ffbcbc;--lg-at: 27.9%;}
-:global(.gel-logo-orange){--lg-c: #ff9d1b;--lg-l: #ffff17;}
+:global(.gel-logo-orange){--lg-c: #ff7a00;--lg-l: #ffb340;}
 :global(.gel-logo-green){--lg-c: #08b500;--lg-l: #52ff1b;}
 :global(.gel-logo-gold){--lg-c: #e6a800;--lg-l: #fff06e;}
 :global(.gel-logo-yellow){--lg-c: #ffc800;--lg-l: #ffff8a;}
