@@ -19,7 +19,7 @@
     const keep = function (a) { try { localStorage.setItem(KEY, JSON.stringify(a)); } catch (e) {} };
     const uid = function () { return Math.random().toString(36).slice(2, 9); };
 
-    (function () { if (document.getElementById('wo-tpl-css')) return; const st = document.createElement('style'); st.id = 'wo-tpl-css'; st.textContent = '.os-dlg.wt-dlg{width:min(880px,94vw);max-width:none}'; document.head.appendChild(st); })();
+    (function () { if (document.getElementById('wo-tpl-css')) return; const st = document.createElement('style'); st.id = 'wo-tpl-css'; st.textContent = '.os-dlg.wt-dlg{width:min(880px,94vw);max-width:none}.wt-wrap .kd-hl,.wt-wrap .kd-src{padding:12px 14px;font-size:13px;min-height:280px}.wt-wrap .kd-src{overflow:hidden}.wt-wrap .kd-hl{min-height:100%}'; document.head.appendChild(st); })();
 
     /* ---------- the pre-made ones (Keydown text) ---------- */
     const PRE = [
@@ -140,11 +140,24 @@
                 '<div id="wt-list" style="overflow:auto;max-height:420px;padding-right:6px">' + listHtml() + '</div>' +
                 '<div style="display:flex;flex-direction:column;gap:8px;min-width:0"><div style="display:flex;gap:6px;align-items:center"><input id="wt-name" class="os-dlg-input" style="flex:1" maxlength="60" placeholder="Template name" spellcheck="true"' + (cur.kind === 'pre' ? ' readonly' : '') + '>' +
                 '<button type="button" class="os-dlg-btn" data-a="new">New</button><button type="button" class="os-dlg-btn" data-a="copy" title="Keep a copy in My templates">' + (cur.kind === 'pre' ? 'Save a copy' : 'Save') + '</button>' + (cur.kind === 'mine' ? '<button type="button" class="os-dlg-btn danger" data-a="del">Delete</button>' : '') + '</div>' +
-                '<textarea id="wt-text" spellcheck="false" style="flex:1;min-height:280px;resize:vertical;font:13px/1.55 ui-monospace,Menlo,monospace;padding:10px 12px;border-radius:10px;border:1px solid rgba(128,128,128,.4);background:#272822;color:#f8f8f2;tab-size:4"></textarea>' +
-                '<div style="font-size:12px;opacity:.7">This is Keydown, the same text Source mode shows. Change it before you insert, if you like!</div></div></div>';
+                '<div class="wt-wrap" style="position:relative;flex:1;min-height:280px;max-height:380px;overflow:auto;border-radius:10px;border:1px solid var(--kc-line,#0f6a7d);background:var(--kc-bg,#06323d)"><pre class="kd-hl" id="wt-hl" aria-hidden="true"></pre><textarea id="wt-text" class="kd-src" spellcheck="false" aria-label="Template (Keydown)"></textarea></div>' +
+                '<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:12px"><span style="opacity:.7;flex:1;min-width:200px">This is Keydown, the same text Source mode shows. Change it before you insert, if you like!</span><label style="display:flex;align-items:center;gap:6px;font-weight:700">Code theme <select id="wt-theme" class="os-dlg-input" style="width:auto;padding:2px 8px"></select></label></div></div></div>';
             wrap.querySelector('#wt-name').value = name;
-            const ta = wrap.querySelector('#wt-text'); ta.value = keepText !== undefined ? keepText : working;
-            ta.addEventListener('input', function () { working = ta.value; });
+            const ta = wrap.querySelector('#wt-text'), hl = wrap.querySelector('#wt-hl'), KM = window.KdModes;
+            ta.value = keepText !== undefined ? keepText : working;
+            // the colored copy (the same highlighter Source mode uses) sits under the see-through box; the box grows with its text so both line up
+            const paint = function () {
+                try { hl.innerHTML = KM && KM.highlight ? KM.highlight(ta.value) : esc(ta.value); } catch (e) { hl.textContent = ta.value; }
+                ta.style.height = 'auto'; ta.style.height = Math.max(280, ta.scrollHeight) + 'px';
+            };
+            ta.addEventListener('input', function () { working = ta.value; paint(); });
+            ta.addEventListener('keydown', function (e) { if (e.key === 'Tab') { e.preventDefault(); ta.setRangeText('    ', ta.selectionStart, ta.selectionEnd, 'end'); ta.dispatchEvent(new Event('input')); } });
+            setTimeout(paint, 0); paint();
+            const sel = wrap.querySelector('#wt-theme');
+            if (KM && KM.themes) {
+                sel.innerHTML = KM.themes.map(function (t) { return '<option value="' + t[0] + '"' + (KM.codeTheme() === t[0] ? ' selected' : '') + '>' + t[1] + '</option>'; }).join('');
+                sel.addEventListener('change', function () { KM.setCodeTheme(sel.value); });
+            } else sel.parentNode.remove();
         };
         working = PRE[0][2]; draw();
         wrap.addEventListener('click', function (e) {

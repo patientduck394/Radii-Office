@@ -1124,7 +1124,8 @@
                 { label: 'Editing', items: [
                     { big: true, icon: 'eye', label: 'View', title: 'Read the page, fully formatted (no editing)!', run: function () { if (window.KdModes) KdModes.set('view'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'view'; } },
                     { big: true, icon: 'pen', label: 'Visual', title: 'Edit the formatted page!', run: function () { if (window.KdModes) KdModes.set('visual'); }, checked: function () { return !window.KdModes || KdModes.get() === 'visual'; } },
-                    { big: true, icon: 'code', label: 'Source', title: 'Edit the page as Keydown text! Going back formats all of it!', run: function () { if (window.KdModes) KdModes.set('source'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'source'; } }
+                    { big: true, icon: 'code', label: 'Source', title: 'Edit the page as Keydown text! Going back formats all of it!', run: function () { if (window.KdModes) KdModes.set('source'); }, checked: function () { return !!window.KdModes && KdModes.get() === 'source'; } },
+                    { big: true, icon: 'codeTheme', label: 'Code\nTheme', title: 'Colors for Source mode and the Templates window: Monokai, Poolside or Poolside Light!', menu: function () { return window.KdModes && KdModes.themes ? KdModes.themes.map(function (t) { return { label: t[1], icon: 'codeTheme', checked: KdModes.codeTheme() === t[0], run: function () { KdModes.setCodeTheme(t[0]); } }; }) : []; } }
                 ] },
                 { label: 'Views', items: [
                     { big: true, icon: 'pages', label: 'Pages', title: 'Print Layout: separate pages!', run: function () { setPagesView(true); }, checked: function () { return prefs.pages; } },
