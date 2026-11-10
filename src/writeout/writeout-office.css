@@ -180,7 +180,7 @@ body.os-office #aero-selection-toolbar, body.os-office #aero-block-toolbar { z-i
 .wo-gp-h1 { color: #0284c7; font-weight: 800; font-size: 15px; border-bottom: 2px solid #38bdf8; }
 .wo-gp-h2 { color: #059669; font-weight: 700; font-size: 14px; }
 .wo-gp-h3 { color: #d97706; font-weight: 700; }
-.wo-gp-q { color: #0369a1; font-style: italic; border-left: 3px solid #0284c7; padding-left: 4px; }
+.wo-gp-q { color: #3c5670; font-style: normal; border-left: 3px solid #9cc9ec; padding-left: 4px; }
 .wo-gp-c { background: #e2e8f0; border-radius: 3px; padding: 2px 3px; color: #475569; }
 body.os-dark .wo-gp-p { color: #e5e5e5; }
 

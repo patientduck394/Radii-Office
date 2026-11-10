@@ -21,12 +21,12 @@
 }
 
 #wysiwyg-canvas blockquote {
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
-  border-left: 5px solid #0284c7;
+  background: #f4f9fe;
+  border-left: 4px solid #9cc9ec;
   margin: 15px 0;
   padding: 10px 20px;
-  color: #0369a1;
-  font-style: italic;
+  color: #3c5670;
+  font-style: normal;
   border-radius: 0 8px 8px 0;
 }
 
@@ -4110,12 +4110,12 @@
 }
 
 .blockquote-list {
-  background: linear-gradient(90deg, rgba(56, 189, 248, 0.15) 0%, rgba(255, 255, 255, 0) 100%);
-  border-left: 5px solid #0284c7;
+  background: #f4f9fe;
+  border-left: 4px solid #9cc9ec;
   margin: 15px 0;
   padding: 10px 20px;
-  color: #0369a1;
-  font-style: italic;
+  color: #3c5670;
+  font-style: normal;
   border-radius: 0 8px 8px 0;
 } /* --- Sidebar Highlighter Washes (hl-1..hl-25, Frutiger Aero gloss!) --- */
 .hl-1 {

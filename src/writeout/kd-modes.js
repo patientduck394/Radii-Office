@@ -191,19 +191,51 @@
         }
         return out;
     }
+    // Folded parts are remembered (by their own text), so they are folded again whenever Source mode is opened!
+    const FOLD_KEY = 'writeout_source_folds_v1';
+    const foldHash = function (t) { let h = 5381; for (let i = 0; i < t.length; i++) h = ((h << 5) + h + t.charCodeAt(i)) >>> 0; return h.toString(36) + ':' + t.length; };
+    function foldMem() { try { const a = JSON.parse(localStorage.getItem(FOLD_KEY) || '[]'); return new Set(Array.isArray(a) ? a : []); } catch (e) { return new Set(); } }
+    function foldRemember(key, on) {
+        const m = foldMem();
+        if (on) { m.delete(key); m.add(key); } else m.delete(key);
+        try { localStorage.setItem(FOLD_KEY, JSON.stringify(Array.from(m).slice(-300))); } catch (e) {}
+    }
+    const foldSize = function (n) { return n > 1024 ? Math.round(n / 1024) + ' KB' : n + ' characters'; };
+    function autoFold() {
+        if (!src) return;
+        const mem = foldMem();
+        if (!mem.size) return;
+        const lines = src.value.split('\n');
+        let changed = false;
+        // (bottom up, so the line numbers of the parts still to fold stay right)
+        foldInfo(lines).filter(function (f) { return !f.folded; }).reverse().forEach(function (f) {
+            if (f.kind === 'block') {
+                const inner = lines.slice(f.i + 1, f.j);
+                if (!mem.has('b' + foldHash(inner.join('\n')))) return;
+                const id = nextFold++; folds[id] = inner.join('\n');
+                lines.splice(f.i + 1, inner.length, '⟪…' + inner.length + (inner.length === 1 ? ' line #' : ' lines #') + id + '⟫'); changed = true;
+            } else {
+                const m = IMG.exec(lines[f.i]) || SKILL.exec(lines[f.i]);
+                if (!m || !mem.has('l' + foldHash(m[2]))) return;
+                const id = nextFold++; folds[id] = m[2];
+                lines[f.i] = m[1] + '⟪…' + foldSize(m[2].length) + ' #' + id + '⟫' + m[3]; changed = true;
+            }
+        });
+        if (changed) { src.value = lines.join('\n'); refresh(); }
+    }
     function toggleFold(i) {
         const sc0 = scroller(), top0 = sc0.scrollTop;
         const lines = src.value.split('\n'), info = foldInfo(lines).find(function (f) { return f.i === i; });
         if (!info) return;
         let caret;
         if (info.kind === 'block') {
-            if (info.folded) { const id = (PH_G.exec(lines[i + 1]) || [])[1]; PH_G.lastIndex = 0; if (folds[id] !== undefined) { lines[i + 1] = folds[id]; delete folds[id]; } }
-            else { const id = nextFold++; const inner = lines.slice(i + 1, info.j); folds[id] = inner.join('\n'); lines.splice(i + 1, inner.length, '⟪…' + inner.length + (inner.length === 1 ? ' line #' : ' lines #') + id + '⟫'); }
+            if (info.folded) { const id = (PH_G.exec(lines[i + 1]) || [])[1]; PH_G.lastIndex = 0; if (folds[id] !== undefined) { foldRemember('b' + foldHash(folds[id]), false); lines[i + 1] = folds[id]; delete folds[id]; } }
+            else { const id = nextFold++; const inner = lines.slice(i + 1, info.j); folds[id] = inner.join('\n'); foldRemember('b' + foldHash(folds[id]), true); lines.splice(i + 1, inner.length, '⟪…' + inner.length + (inner.length === 1 ? ' line #' : ' lines #') + id + '⟫'); }
         } else if (info.folded) {
-            lines[i] = lines[i].replace(PH_G, function (all, id) { const o = folds[id] !== undefined ? folds[id] : all; delete folds[id]; return o; });
+            lines[i] = lines[i].replace(PH_G, function (all, id) { const o = folds[id] !== undefined ? folds[id] : all; if (folds[id] !== undefined) foldRemember('l' + foldHash(folds[id]), false); delete folds[id]; return o; });
         } else {
             const id = nextFold++, m = IMG.exec(lines[i]) || SKILL.exec(lines[i]);
-            folds[id] = m[2];
+            folds[id] = m[2]; foldRemember('l' + foldHash(m[2]), true);
             lines[i] = m[1] + '⟪…' + (m[2].length > 1024 ? Math.round(m[2].length / 1024) + ' KB' : m[2].length + ' characters') + ' #' + id + '⟫' + m[3];
         }
         caret = lines.slice(0, i).join('\n').length + (i ? 1 : 0);
@@ -268,7 +300,7 @@
         });
         if (typing === true) caretInView();
     }
-    function setSrc(v) { folds = {}; nextFold = 1; ensureSrc().value = v; refresh(); }
+    function setSrc(v) { folds = {}; nextFold = 1; ensureSrc().value = v; refresh(); autoFold(); }
 
     /* ---------- Source ---------- */
     function ensureSrc() {
