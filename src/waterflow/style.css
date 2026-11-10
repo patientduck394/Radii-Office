@@ -371,11 +371,3 @@ body .bl-seg-note { color: #4d6e89; }
 body .bl-docs-body h1, body .bl-docs-body h2 { color: #0a93b2; }
 body .bl-docs-body h2 { border-bottom: 1px solid #b9ecf7; }
 body .bl-docs-body code { background: #d2f7fc; color: #0a93b2; }
-body .bl-docs-body pre, body .bl-edit-wrap { background: #06323d; }
-body .bl-edit-wrap { border: 2px solid #0f6a7d; border-radius: 14px; box-shadow: inset 0 2px 12px rgba(0, 20, 30, .45); }
-body .bl-hl, body .bl-edit-code { font: 13px/1.65 var(--mono); padding: 14px 16px; }
-body .bl-hl { color: #d6f4fa; }
-body .bl-edit-code { caret-color: #ffa94d; }
-body .bl-edit-code::selection { background: #0f7a90; }
-body .bl-t-k { color: #ff9b3d; } body .bl-t-s { color: #a8f1ff; } body .bl-t-n { color: #5aa9ff; } body .bl-t-c { color: #4f93a3; }
-body .bl-t-b { color: #2ee6ff; } body .bl-t-f { color: #ffb066; } body .bl-t-e { color: #ffd08a; } body .bl-t-tag { color: #6fe7ff; }
