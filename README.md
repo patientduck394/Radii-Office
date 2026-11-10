@@ -4,7 +4,7 @@
   <a href="https://radii-office.com/"><img src="https://img.shields.io/badge/deployment-passing-green"/></a>
   <a href="https://github.com/patientduck394/Radii-Office/releases/"><img src="https://img.shields.io/badge/release-8.0.5-green"/></a>
   <a href="https://github.com/patientduck394/Radii-Office/graphs/contributors"><img src="https://img.shields.io/badge/contributors-3 (1 is an agent)-green"/></a>
-  <a href="https://github.com/patientduck394/Radii-Office/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT,_Apache,_ISC,_PMPL--NTM--BY-blue"/></a>
+  <a href="https://github.com/patientduck394/Radii-Office/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT,_Apache,_ISC,_Unlicense,_CC0-blue"/></a>
 </p>
 
 # Radii Office
