@@ -101,6 +101,11 @@ function config(app) {
             icon: ['32x32.png', '128x128.png', '128x128@2x.png', 'icon.icns', 'icon.ico', 'icon.png'].map((f) => 'icons/' + app.id + '/' + f)
         }
     };
+    // Code signing switches on by itself when the release workflow has the certificates (see .github/workflows/desktop.yml):
+    // macOS: APPLE_SIGNING_IDENTITY (plus APPLE_CERTIFICATE, APPLE_ID... which the Tauri CLI reads itself to sign and notarize)
+    // Windows: WINDOWS_CERTIFICATE_THUMBPRINT (the workflow imports the certificate and sets it)
+    if (process.env.APPLE_SIGNING_IDENTITY) conf.bundle.macOS = { signingIdentity: process.env.APPLE_SIGNING_IDENTITY };
+    if (process.env.WINDOWS_CERTIFICATE_THUMBPRINT) conf.bundle.windows = { certificateThumbprint: process.env.WINDOWS_CERTIFICATE_THUMBPRINT, digestAlgorithm: 'sha256', timestampUrl: process.env.WINDOWS_TIMESTAMP_URL || 'http://timestamp.digicert.com', nsis: { installMode: 'currentUser' } };
     const file = path.join(HERE, 'src-tauri', 'conf', app.id + '.json');
     fs.mkdirSync(path.dirname(file), { recursive: true });
     fs.writeFileSync(file, JSON.stringify(conf, null, 2));

@@ -15,6 +15,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write       # (for the signed build records below)
+  attestations: write
 
 concurrency:
   group: desktop-apps
@@ -61,6 +63,42 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf libfuse2
 
+      # Code signing is optional: add these as repository secrets (Settings, Secrets and variables, Actions) and the apps are signed
+      # (and, on macOS, notarized) by themselves on the next build. Without them everything still builds, unsigned.
+      #   APPLE_CERTIFICATE (a Developer ID Application certificate, .p12, as base64), APPLE_CERTIFICATE_PASSWORD,
+      #   APPLE_SIGNING_IDENTITY (like: Developer ID Application: Your Name (TEAMID)), APPLE_ID, APPLE_PASSWORD (app-specific), APPLE_TEAM_ID
+      #   WINDOWS_CERTIFICATE (a code-signing certificate, .pfx, as base64), WINDOWS_CERTIFICATE_PASSWORD
+      # (Only the secrets that exist are passed on: an empty value would make the Tauri tools try to use a certificate that is not there.)
+      - name: Prepare code signing
+        shell: bash
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        run: |
+          for v in APPLE_CERTIFICATE APPLE_CERTIFICATE_PASSWORD APPLE_SIGNING_IDENTITY APPLE_ID APPLE_PASSWORD APPLE_TEAM_ID WINDOWS_CERTIFICATE WINDOWS_CERTIFICATE_PASSWORD; do
+            val="${!v}"
+            if [ -n "$val" ]; then
+              { echo "$v<<__RADII_EOF__"; echo "$val"; echo "__RADII_EOF__"; } >> "$GITHUB_ENV"
+              echo "$v is set"
+            fi
+          done
+
+      - name: Import the Windows code-signing certificate
+        if: runner.os == 'Windows' && env.WINDOWS_CERTIFICATE != ''
+        shell: pwsh
+        run: |
+          $pfx = Join-Path $env:RUNNER_TEMP 'codesign.pfx'
+          [IO.File]::WriteAllBytes($pfx, [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE))
+          $cert = Import-PfxCertificate -FilePath $pfx -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString $env:WINDOWS_CERTIFICATE_PASSWORD -AsPlainText -Force)
+          Remove-Item $pfx
+          "WINDOWS_CERTIFICATE_THUMBPRINT=$($cert.Thumbprint)" | Out-File -FilePath $env:GITHUB_ENV -Append
+
       - name: Install the Tauri CLI
         working-directory: desktop
         run: npm ci
@@ -90,6 +128,17 @@ jobs:
       - name: List the files
         run: ls -la dist
 
+      # A list of fingerprints, so a download can be checked: shasum -a 256 -c SHA256SUMS
+      - name: Write SHA256SUMS
+        run: cd dist && sha256sum * > SHA256SUMS && cat SHA256SUMS
+
+      # A signed build record (GitHub's build provenance): it proves each file came from this workflow in this repository.
+      # Check a download with:  gh attestation verify <file> --repo patientduck394/Radii-Office
+      - uses: actions/attest-build-provenance@v2
+        continue-on-error: true   # (a problem here must never stop the release itself)
+        with:
+          subject-path: 'dist/*'
+
       - uses: softprops/action-gh-release@v2
         with:
           tag_name: desktop
@@ -98,8 +147,11 @@ jobs:
             Every Radii Office app as a desktop app, for macOS (Apple Silicon and Intel), Windows and Linux!
             Download them from https://radii-office.pages.dev/products or right here below.
 
-            macOS: the apps are not notarized yet, so the first time, right-click the app and pick Open.
-            Windows: if SmartScreen warns you, click "More info" then "Run anyway".
+            macOS: until an Apple Developer ID is added to this repository, the apps are not notarized: the first time, right-click the app and pick Open.
+            Windows: until a code-signing certificate is added, SmartScreen may warn you: click "More info" then "Run anyway".
             Linux: make the .AppImage executable (chmod +x) and run it.
+
+            Check a download: SHA256SUMS lists every file's fingerprint (shasum -a 256 -c SHA256SUMS), and every file has a signed build record:
+            gh attestation verify <file> --repo patientduck394/Radii-Office
           files: dist/*
           make_latest: true
