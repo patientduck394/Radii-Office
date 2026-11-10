@@ -21,10 +21,10 @@ const KD_MKT = [{"o": "~AU10~", "c": "~AU10~", "cls": "mkt-autumn-orchard"}, {"o
 // gel underline and #R#text#~ the gel strike (they go first, so #R#chip# never takes them)!
 const KD_HL_COLORS = [["R", "red"], ["O", "orange"], ["GL", "gold"], ["Y", "yellow"], ["L", "lime"], ["G", "green"], ["TU", "turquoise"],
     ["T", "teal"], ["C", "cyan"], ["B", "blue"], ["PR", "purple"], ["PK", "pink"], ["SL", "slate"]];
-const KD_HL = [].concat(...[["##", ""], ["#_", " an-s-ul"], ["#~", " an-s-st"], ["#=", " an-s-bx"], ["#]", " an-s-cb"], ["#-", " an-s-sl"], ["#[", " an-s-br"], ["#>", " an-s-gu"], ["#{", " an-s-db"]].map(([c, style]) =>
+const KD_HL = [].concat(...[["##", ""], ["#_", " an-s-ul"], ["#~", " an-s-st"], ["#=", " an-s-bx"], ["#]", " an-s-cb"], ["#-", " an-s-sl"], ["#[", " an-s-br"], ["#>", " an-s-gu"], ["#[[", " an-s-db"]].map(([c, style]) =>
     KD_HL_COLORS.map(([k, color]) => ({ o: "#" + k + "#", c: c, cls: "an-hl an-hl-" + color + style, tag: "mark", flags: [] }))));
 // each highlight pairs with its NEAREST ending (## #_ #~), and its text has no #, just like a chip's!
-const KD_HL_RE = new RegExp("#(" + KD_HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join("|") + ")#([^#]+?)#([#_~=\\]\\[>{-])", "g");
+const KD_HL_RE = new RegExp("#(" + KD_HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join("|") + ")#([^#]+?)#(\\[\\[|[#_~=\\]\\[>-])", "g");
 // Color Ink, the Annotator's Color Ink pen: #R(text) writes the words in the color (no strip, no box)! Its text has no parentheses.
 KD_HL_COLORS.forEach(([k, color]) => KD_HL.push({ o: "#" + k + "(", c: ")", cls: "an-hl an-hl-" + color + " an-s-ink", tag: "mark", flags: [] }));
 const KD_INK_RE = new RegExp("#(" + KD_HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join("|") + ")\\(([^()]+?)\\)", "g");
@@ -424,7 +424,7 @@ function kdRender(raw) {
     // gel highlights first; the text inside them still gets bold, chips and the rest below!
     s = s.replace(KD_HL_RE, (m, k, inner, end) => {
         const color = KD_HL_COLORS.find((x) => x[0] === k)[1];
-        return stash('<mark class="an-hl an-hl-' + color + ({ "_": " an-s-ul", "~": " an-s-st", "=": " an-s-bx", "]": " an-s-cb", "-": " an-s-sl", "[": " an-s-br", ">": " an-s-gu", "{": " an-s-db" }[end] || "") + '">') + inner + stash("</mark>");
+        return stash('<mark class="an-hl an-hl-' + color + ({ "_": " an-s-ul", "~": " an-s-st", "=": " an-s-bx", "]": " an-s-cb", "-": " an-s-sl", "[": " an-s-br", ">": " an-s-gu", "[[": " an-s-db" }[end] || "") + '">') + inner + stash("</mark>");
     });
     s = s.replace(KD_AN_RE, (m, k, name, inner) => (name in KD_AN_BY ? stash('<mark class="an-hl an-hl-' + KD_HL_COLORS.find((x) => x[0] === k)[1] + KD_AN_BY[name] + '">') + inner + stash("</mark>") : m));
     s = s.replace(KD_INK_RE, (m, k, inner) => stash('<mark class="an-hl an-hl-' + KD_HL_COLORS.find((x) => x[0] === k)[1] + ' an-s-ink">') + inner + stash("</mark>"));

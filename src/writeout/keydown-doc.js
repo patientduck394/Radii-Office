@@ -17,7 +17,7 @@
     // Gel highlights, the Annotator's tools: #R#text## #R#text#_ #R#text#~, plus its Gel Box #R#text#=, Corner Brackets #R#text#] Gel Select #R#text#- and Color Ink #R(text), in its 13 colors!
     const HL_COLORS = [['R', 'red'], ['O', 'orange'], ['GL', 'gold'], ['Y', 'yellow'], ['L', 'lime'], ['G', 'green'], ['TU', 'turquoise'],
         ['T', 'teal'], ['C', 'cyan'], ['B', 'blue'], ['PR', 'purple'], ['PK', 'pink'], ['SL', 'slate']];
-    const HL_STYLES = [['##', ''], ['#_', ' an-s-ul'], ['#~', ' an-s-st'], ['#=', ' an-s-bx'], ['#]', ' an-s-cb'], ['#-', ' an-s-sl'], ['#[', ' an-s-br'], ['#>', ' an-s-gu'], ['#{', ' an-s-db']];
+    const HL_STYLES = [['##', ''], ['#_', ' an-s-ul'], ['#~', ' an-s-st'], ['#=', ' an-s-bx'], ['#]', ' an-s-cb'], ['#-', ' an-s-sl'], ['#[', ' an-s-br'], ['#>', ' an-s-gu'], ['#[[', ' an-s-db']];
     const HIGHLIGHTS = [];
     HL_COLORS.forEach(([k, c]) => HL_STYLES.forEach(([close, s]) => HIGHLIGHTS.push(['#' + k + '#', close, 'mark', 'an-hl an-hl-' + c + s])));
     // Color Ink, the Annotator's Color Ink pen: #R(text) writes the words in the color (its text has no parentheses)!
@@ -64,7 +64,7 @@
     // longest openers first (so ** beats * and !#R# beats #R#); highlights go before all of them, each with its NEAREST ending
     // (a lone & is matched by its own rule below, so "AT&T and R&D" stays as typed)
     const ORDER = TRIGGERS.slice().filter((d) => d[0] !== '&').sort((a, b) => b[0].length - a[0].length);
-    const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#([#_~=\\]\\[>{-])', 'g');
+    const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#(\\[\\[|[#_~=\\]\\[>-])', 'g');
     const INK_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')\\(([^()]+?)\\)', 'g');
     // Every Annotate style by name: #R.halo(text), #B.neon(text), #Y.marker(text)... ([name, class, label])
     const AN_STYLES = [["highlight","","Highlight"],["underline"," an-s-ul","Gel Underline"],["strike"," an-s-st","Gel Strike"],["box"," an-s-bx","Gel Box"],["brackets"," an-s-cb","Corner Brackets"],["select"," an-s-sl","Gel Select"],["ink"," an-s-ink","Color Ink"],["marker"," an-s-mk","Marker"],["glow"," an-s-gl","Glow Pen"],["lasso"," an-s-ls","Lasso"],["halo"," an-s-ha","Halo"],["spotlight"," an-s-gf","Spotlight"],["accent"," an-s-ga","Gel Accent"],["bubble"," an-s-gb","Gel Bubble"],["dusk"," an-s-dk","Dusk"],["prism"," an-s-pr","Prism"],["complement"," an-s-cm","Complement"],["ticket"," an-s-tk","Ticket"],["neon"," an-s-nn","Neon"],["stamp"," an-s-sm","Stamp"],["washi"," an-s-tp","Washi Tape"],["checker"," an-s-ck","Checker"],["halftone"," an-s-ht","Halftone"],["aurora"," an-s-au","Aurora"],["mild"," an-s-ml","Mild"],["wrap"," an-s-gw","Gel Wrap"],["belt"," an-s-bt","Highlight Belt"],["bucket"," an-s-bk","Gel Bucket"],["torpedo"," an-s-tr","Gel Torpedo"],["bottle"," an-s-bo","Gel Bottle"],["packet"," an-s-pk","Gel Packet"],["capsule"," an-s-cs","Gel Capsule"],["frost"," an-s-fr","Frost"],["pixel"," an-s-px","Pixel"],["flag"," an-s-fl","Gel Flag"],["gem"," an-s-gm","Gel Gem"],["bracket"," an-s-br","Gel Bracket"],["guillemets"," an-s-gu","Gel Guillemets"],["dbracket"," an-s-db","Gel Double Brackets"]];

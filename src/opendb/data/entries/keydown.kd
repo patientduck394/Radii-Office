@@ -3194,7 +3194,7 @@ Three more gel marks, in all 13 Annotate colors, built like the Gel Underline (g
 
 * `#R#words#[` Gel Bracket: #R#words#[
 * `#B#words#>` Gel Guillemets: #B#words#>
-* `#PR#words#{` Gel Double Brackets: #PR#words#{
+* `#PR#words#[[` Gel Double Brackets: #PR#words#[[
 
 By name they are `#R.bracket(words)`, `#B.guillemets(words)` and `#PR.dbracket(words)`.
 

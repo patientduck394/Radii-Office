@@ -17126,7 +17126,7 @@ mark.an-hl.an-s-ls {
     background: none;
     box-shadow: none;
 }
-/* Gel Bracket (#C#text#[), Gel Guillemets (#C#text#>) and Gel Double Brackets (#C#text#{): the Gel Underline's glossy tube (light-to-color fill, top shine, a deeper edge and round ends),
+/* Gel Bracket (#C#text#[), Gel Guillemets (#C#text#>) and Gel Double Brackets (#C#text#[[): the Gel Underline's glossy tube (light-to-color fill, top shine, a deeper edge and round ends),
    bent into [ ], « » and ⟦ ⟧. The brackets are tiny SVGs (one per color), drawn left and right of the words; the right one is the left one mirrored! */
 mark.an-hl.an-s-br, mark.an-hl.an-s-gu, mark.an-hl.an-s-db { --bw: 0.5em; padding: 0 0.12em; margin: 0 0.04em; border: 0; border-radius: 0; background: none; box-shadow: none; }
 mark.an-hl.an-s-gu { --bw: 0.72em; } mark.an-hl.an-s-db { --bw: 0.78em; }
