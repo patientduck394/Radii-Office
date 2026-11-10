@@ -26,7 +26,8 @@ body[data-theme="sand"] {
 * { box-sizing: border-box; }
 html, body { height: 100%; margin: 0; }
 body { font: 14px/1.45 var(--font); color: var(--ink); background: linear-gradient(180deg, var(--sky1) 0%, var(--sky2) 45%, var(--sky3) 90%) fixed; overflow: hidden; -webkit-font-smoothing: antialiased; }
-svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg:not(.an-ink-layer) { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+svg:not(.an-ink-layer):not([width]) { width: 18px; height: 18px; }   /* (icons only: a drawing layer or a chart that sets its own size keeps it) */
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; }
 [hidden] { display: none !important; }

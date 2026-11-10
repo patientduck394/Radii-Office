@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '10d268312f27';
+const VERSION = '29caa0629911';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","1116deaf53"],
@@ -456,14 +456,14 @@ const CORE = [["/","1116deaf53"],
   ["/waterflow-legacy/mobile/index.html","dccf1a06b1"],
   ["/waterflow-legacy/radii-file.js?v=20261208e","35211af971"],
   ["/waterflow-legacy/style.css","d387a9e301"],
-  ["/waterflow/","0212956ec1"],
+  ["/waterflow/","35ff47f7d7"],
   ["/waterflow/app.js?v=20261219g","094fb1a615"],
   ["/waterflow/apple-touch-icon.png","75c392bd03"],
   ["/waterflow/favicon.png?v=1","96d9cb6690"],
-  ["/waterflow/index.html","0212956ec1"],
+  ["/waterflow/index.html","35ff47f7d7"],
   ["/waterflow/manifest.json","52bf1b8ddf"],
   ["/waterflow/poolside-keydown.css?v=20261214b","a4737e2b91"],
-  ["/waterflow/style.css?v=20261219h","b64bb50c06"],
+  ["/waterflow/style.css?v=20261219i","9b8b0b51b9"],
   ["/writeout/","67772e277e"],
   ["/writeout/annotate-hl.css?v=20261219h","58463c76c4"],
   ["/writeout/annotate-ink.js?v=20261210c","97cad31386"],
