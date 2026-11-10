@@ -455,8 +455,19 @@
                 continue;
             }
             // !> ?> >> %> *> +> -> => ~> $> #> ^> @> &> start a styled quote (a warning, a question, a pull quote...)
-            if ((m = /^(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(t))) { out.push(ind('<blockquote class="blockquote-list kd-bq kd-bq-' + BQ_BY_SYM[m[1]] + '">' + inline(m[2], opts) + '</blockquote>')); continue; }
-            if ((m = /^>\s+(\S.*)$/.exec(t))) { out.push(ind('<blockquote class="blockquote-list">' + inline(m[1], opts) + '</blockquote>')); continue; }
+            // (quote lines that follow with the SAME symbol join the quote as its next lines; a line with only the symbol is a blank line inside it)
+            const quoteMore = (sym) => {
+                const parts = []; let n = 0;
+                for (let j = i + 1; j < lines.length; j++) {
+                    const q = BQ_LINE.exec(lines[j].trim());
+                    if (!q || q[1] !== sym) break;
+                    parts.push(q[2] || ''); if (q[2]) n = parts.length;
+                }
+                parts.length = n; i += n;
+                return parts.map((x) => '<br>' + (x ? inline(x, opts) : '<br>')).join('').replace(/<br><br><br>/g, '<br><br>');
+            };
+            if ((m = /^(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(t))) { const first = inline(m[2], opts); out.push(ind('<blockquote class="blockquote-list kd-bq kd-bq-' + BQ_BY_SYM[m[1]] + '">' + first + quoteMore(m[1]) + '</blockquote>')); continue; }
+            if ((m = /^>\s+(\S.*)$/.exec(t))) { const first = inline(m[1], opts); out.push(ind('<blockquote class="blockquote-list">' + first + quoteMore('>') + '</blockquote>')); continue; }
             if ((m = /^\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(t))) {
                 out.push('<div class="kd-footnote-def" id="fn-' + slug(m[1]) + '"><span class="kd-footnote-tag">' + esc(m[1]) + '</span> <span class="kd-footnote-text">' + inline(m[2], opts) + '</span></div>');
                 continue;
@@ -657,7 +668,14 @@
                 });
                 return;
             }
-            if (tag === 'BLOCKQUOTE') { push('|'.repeat(indentOf(el)) + alignOf(el) + bqSym(el) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim()); return; }
+            if (tag === 'BLOCKQUOTE') {
+                const sym = bqSym(el), rows = kidsText(el).replace(/\u200b/g, '').split('\n').map((x) => x.trim());
+                while (rows.length && !rows[0]) rows.shift();
+                while (rows.length && !rows[rows.length - 1]) rows.pop();
+                if (!rows.length) rows.push('');
+                rows.forEach((row, k) => push((k ? '' : '|'.repeat(indentOf(el)) + alignOf(el)) + sym + (row ? ' ' + row : '')));
+                return;
+            }
             if (tag === 'TABLE') {
                 flush();
                 const rows = Array.from(el.rows);
@@ -1195,6 +1213,8 @@
     const KD_BLOCK_PANELS = { gsky: ['panel-sky', '🔹 SKY COMPONENT', 'Sky log notes...'], gemerald: ['panel-emerald', '🌿 ECO COMPONENT', 'Organic project logs...'], gamber: ['panel-amber', '☀️ AMBER MATRIX', 'Highlights...'], gcrimson: ['panel-crimson', '🚨 ALERT MANIFEST', 'Urgent warnings...'] };
     // ::divider{style} or ::divider{style|Title}: the original aqua strip and twelve more styles, each can carry a title
     const BQ_STYLES = [['!>','neon'],['?>','glass'],['>>','pull'],['%>','gradient'],['*>','marker'],['+>','green'],['->','red'],['=>','dashed'],['~>','whisper'],['$>','paper'],['#>','terminal'],['^>','ribbon'],['@>','bubble'],['&>','card']];
+    // a line of a quote: its symbol, then (usually) its words (a symbol alone is a blank line inside the quote)
+    const BQ_LINE = /^(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>|>)(?:\s+(.*))?$/;
     const BQ_BY_SYM = {}, BQ_BY_NAME = {};
     BQ_STYLES.forEach((q) => { BQ_BY_SYM[q[0]] = q[1]; BQ_BY_NAME[q[1]] = q[0]; });
     const bqSym = (el) => { const c = Array.from(el.classList || []).find((k) => /^kd-bq-/.test(k)); return (c && BQ_BY_NAME[c.slice(6)]) || '>'; };
@@ -1374,7 +1394,7 @@
             const lines = listLines(ul);
             ul.replaceWith(...lines); n += lines.length;
         });
-        root.querySelectorAll('blockquote.blockquote-list').forEach((q) => { if (root.contains(q) && !isProtected(q, root)) { q.replaceWith(lineEl(bqSym(q) + ' ' + kidsText(q).replace(/[\n​]+/g, ' ').trim(), q)); n++; } });
+        root.querySelectorAll('blockquote.blockquote-list').forEach((q) => { if (root.contains(q) && !isProtected(q, root)) { const sym = bqSym(q), rows = kidsText(q).replace(/\u200b/g, '').split('\n').map((x) => x.trim()); while (rows.length && !rows[rows.length - 1]) rows.pop(); q.replaceWith(...(rows.length ? rows : ['']).map((row, k) => lineEl(sym + (row ? ' ' + row : ''), k ? null : q))); n++; } });
         root.querySelectorAll('.kd-footnote-def').forEach((d) => {
             if (!root.contains(d)) return;
             const tag = d.querySelector('.kd-footnote-tag'), text = d.querySelector('.kd-footnote-text');

@@ -6104,3 +6104,7 @@
 /* AERO BUBBLE REFLECTION: the small white reflection used percentages that put it past the rounded edge on tall, narrow chips (math like (H)),
    so it poked out of the bubble. It now sits well inside the curve in every shape */
 .gel-aerobubble-chip::after { right: 15%; bottom: 13%; }
+
+/* Quote lines typed one after another (each is its own box while you type) look like one quote; the Source and View modes join them for real */
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq) + .blockquote-list:not(.kd-bq) { margin-top: 0; border-top-right-radius: 0; }
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq):has(+ .blockquote-list:not(.kd-bq)) { margin-bottom: 0; border-bottom-right-radius: 0; }

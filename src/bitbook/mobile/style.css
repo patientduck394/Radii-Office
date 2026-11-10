@@ -1951,3 +1951,7 @@ body {
     border-color: #e9d5ff;
     box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
+
+/* Quote lines typed one after another (each is its own box while you type) look like one quote; the Source and View modes join them for real */
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq) + .blockquote-list:not(.kd-bq) { margin-top: 0; border-top-right-radius: 0; }
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq):has(+ .blockquote-list:not(.kd-bq)) { margin-bottom: 0; border-bottom-right-radius: 0; }

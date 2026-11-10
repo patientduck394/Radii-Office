@@ -479,3 +479,7 @@ body.odb-embed .view { padding: 8px; max-width: none; }
 :is(#wysiwyg-canvas, .kd-doc, body) code.kd-ic-ember { background: #3a1a06; color: #fdba74; border-color: #f97316; box-shadow: 0 0 8px rgba(249,115,22,.4); }
 :is(#wysiwyg-canvas, .kd-doc, body) code.kd-ic-gel { background: linear-gradient(180deg, #38bdf8, #0369a1); color: #fff; border-color: #7dd3fc; box-shadow: inset 0 1px 0 rgba(255,255,255,.55); text-shadow: 0 1px 1px rgba(3,52,100,.6); }
 :is(#wysiwyg-canvas, .kd-doc, body) code.kd-ic-key { background: linear-gradient(180deg, #fff, #e2e8f0); color: #0f172a; border-color: #94a3b8; border-bottom-width: 3px; border-radius: 5px; box-shadow: 0 1px 0 #fff inset; }
+
+/* Quote lines typed one after another (each is its own box while you type) look like one quote; the Source and View modes join them for real */
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq) + .blockquote-list:not(.kd-bq) { margin-top: 0; border-top-right-radius: 0; }
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq):has(+ .blockquote-list:not(.kd-bq)) { margin-bottom: 0; border-bottom-right-radius: 0; }

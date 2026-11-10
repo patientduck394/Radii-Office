@@ -2831,3 +2831,7 @@ body {
     fill: none !important; 
     margin-top: auto; /* Drops the Help item cleanly to the bottom of your sidebar tray layout */
 }
+
+/* Quote lines typed one after another (each is its own box while you type) look like one quote; the Source and View modes join them for real */
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq) + .blockquote-list:not(.kd-bq) { margin-top: 0; border-top-right-radius: 0; }
+:is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq):has(+ .blockquote-list:not(.kd-bq)) { margin-bottom: 0; border-bottom-right-radius: 0; }

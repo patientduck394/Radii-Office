@@ -466,6 +466,17 @@ Start a line with a mark and a space to make a bullet, and the mark picks the lo
 
 Write `*sp(text)` to hide words behind a dark bar until someone clicks them, like *sp(the butler did it)! Click again to hide them. Saved as text it stays `*sp(text)`. The words cannot contain a `)`.
 
+## Multi-line quotes
+
+Lines that follow each other with the same quote symbol are ONE quote with several lines:
+
+> First line of the quote
+> Second line of the quote
+>
+> A blank line (just the symbol) leaves a gap inside the quote
+
+Write it with `> ` at the start of every line (or `!> `, `>> ` and the other looks: the symbol has to match). A line with only the symbol is a blank line inside the quote, a different symbol starts a new quote, and a line without a symbol ends it. In Visual mode Shift+Enter adds a line inside a quote, and Source writes each line with its symbol.
+
 ## Blockquote looks
 
 A line that starts with a symbol, `>` and a space is a quote with a different look, like the plain `> quote` but dressed up. They are all the same kind of quote, only the look changes. Type the line and press Enter (or use Re-format); saving as text gives the same line back. There are 14 looks:
