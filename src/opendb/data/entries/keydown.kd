@@ -3186,7 +3186,18 @@ Three tags that need no `@style` line:
 
 A margin change bar goes at the start of a line: `{bar red}`, `{bar blue dashed}`, `{bar pink dotted right}`. Colors are the Annotate colors (red, orange, gold, yellow, lime, green, turquoise, teal, cyan, blue, purple, pink, slate) plus black; styles are solid, dashed, dotted, rounded and rounddash; add `right` for the right margin.
 
-In Writeout they are also buttons on the Home tab (More group), next to Change Bar, which puts a thin bar in the page margin beside the selected paragraphs!
+In Writeout they are also buttons in the Font group, and Margin Marks (Home, More) puts bars and badges in the page margin beside the selected paragraphs!
+
+### Margin marks
+
+Put these at the start of a line (both can go on the same line):
+
+* `{bar COLOR SHAPE LOOK SIDE WIDTH}` a bar. Color: the 13 Annotate colors, black or a hex. Shape: `solid` (default), `dashed`, `dotted`, `rounded`, `rounddash`. Look: `flat` (default), `gel` (a glossy tube like the Gel Underline), `aero` (the notched divider's glass), `neon`, `candy`, `double`. Side: `left` (default) or `right`. Width: `thin` or `thick`. Example: `{bar blue gel dashed thick}`
+* `{mark SYMBOL COLOR LOOK SIDE SIZE POSITION|label}` a badge or label. Symbol: `star bang ask check cross flag arrow heart idea note warn dot plus text` (`text` shows only the label). Look: `flat`, `gel`, `aero`, `outline`, `plain`. Size: `small`, `large`. Position: `middle`, `bottom`. Example: `{mark flag purple gel large middle|Review}`
+
+### Templates
+
+Templates are snippets of Keydown (the text Source shows). In Writeout, Insert, Templates opens a window with 13 pre-made ones (meeting notes, planners, a letter, a recipe...) and your own: save the selection (or the whole page) as a template, edit the text, and insert it. In Source mode it is typed in at the cursor; otherwise it is formatted and put after the line you are on.
 
 ### Gel brackets, underline and strike
 

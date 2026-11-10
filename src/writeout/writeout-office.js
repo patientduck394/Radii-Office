@@ -971,7 +971,7 @@
                     { sm: true, icon: 'reset', label: 'Replace', run: function () { findDialog(true); } }
                 ] }] },
                 { label: 'More', items: [
-                    { big: true, icon: 'changeBar', label: 'Change\nBar', title: 'A thin bar in the margin beside the selected paragraphs, like revision bars in contracts!', run: function () { if (MORE().barDialog) MORE().barDialog(); } },
+                    { big: true, icon: 'marginMarks', label: 'Margin\nMarks', title: 'Bars, badges and labels in the page margin: change bars in flat, gel, aero, neon, candy or double looks, stars, flags, notes...', run: function () { if (MORE().marksDialog) MORE().marksDialog(); } },
                     { stack: [
                         { sm: true, icon: 'arrowUp', label: 'Sort A to Z', title: 'Sort the selected paragraphs or list items!', run: function () { if (MORE().sortLines) MORE().sortLines(false); } },
                         { sm: true, icon: 'arrowDown', label: 'Sort Z to A', title: 'Sort the selected paragraphs or list items backwards!', run: function () { if (MORE().sortLines) MORE().sortLines(true); } }
@@ -1010,6 +1010,9 @@
                 { label: 'Captions', items: [
                     { big: true, icon: 'tag', label: 'Insert\nCaption', title: 'Figure 1, Table 2... numbered for you!', menu: function () { return MORE().captionMenu ? MORE().captionMenu() : []; } },
                     { big: true, icon: 'lines', label: 'Table of\nFigures', title: 'A clickable list of every caption!', menu: function () { return MORE().tofMenu ? MORE().tofMenu() : []; } }
+                ] },
+                { label: 'Templates', items: [
+                    { big: true, icon: 'templates', label: 'Templates', title: 'Snippets of Keydown you can save and paste: meeting notes, planners, letters and your own!', run: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.manager(); }, menu: function () { return window.WriteoutTemplates ? window.WriteoutTemplates.menu() : []; } }
                 ] },
                 { label: 'Math', items: [{ big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } }] },
                 { label: 'Text', items: [{ stack: [

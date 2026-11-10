@@ -79,14 +79,32 @@
             '.kdx-tipu::before{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + .5em);transform:translateX(-50%) translateY(4px);width:max-content;max-width:18em;padding:4px 10px;border-radius:9px;background:var(--tc);color:var(--tt);font:600 12px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;text-align:center;text-decoration:none;white-space:normal;box-shadow:0 4px 12px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:20}',
             '.kdx-tipu:hover::before,.kdx-tipu:focus::before{opacity:1;transform:translateX(-50%)}',
             '@media print{.kdx-tipu::before{display:none}}',
-            // margin change bars: {bar red dashed left} at the start of a line
-            '.kdx-hasbar{position:relative}.kdx-barmark{display:none !important}',
-            '.kdx-hasbar::before{content:"";position:absolute;top:2px;bottom:2px;left:-14px;width:3px;border-radius:2px;background:var(--kdx-bar-c,#ef4444);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            // margin marks: bars ({bar red dashed gel left thick}) and badges ({mark star red gel left large top|label})
+            '.kdx-hasbar,.kdx-hasmk{position:relative}.kdx-barmark,.kdx-mkmark{display:none !important}',
+            '.kdx-hasbar::before{content:"";position:absolute;top:2px;bottom:2px;left:-14px;width:var(--kb-w,var(--kb-dw,3px));border-radius:2px;background:var(--kdx-bar-c,#ef4444);--kb-l:color-mix(in srgb,var(--kdx-bar-c,#ef4444) 45%,#fff);--kb-e:color-mix(in srgb,var(--kdx-bar-c,#ef4444) 72%,#000);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
             '.kdx-hasbar[data-kdx-bar-side="right"]::before{left:auto;right:-14px}',
+            '.kdx-hasbar[data-kdx-bar-size="thin"]::before{--kb-w:2px}.kdx-hasbar[data-kdx-bar-size="thick"]::before{--kb-w:7px}',
+            // the LOOKS: gel (a glossy tube like the Gel Underline), aero (the notched divider's glass), neon, candy and double
+            '.kdx-hasbar[data-kdx-bar-look="gel"]::before{--kb-dw:6px;border-radius:999px;background:linear-gradient(90deg,rgba(255,255,255,.6) 0 28%,rgba(255,255,255,0) 52%),linear-gradient(90deg,var(--kb-e) 0 18%,var(--kb-l) 18% 38%,var(--kdx-bar-c) 38% 82%,var(--kb-e) 82%)}',
+            '.kdx-hasbar[data-kdx-bar-look="aero"]::before{--kb-dw:5px;border-radius:3px;background:linear-gradient(90deg,rgba(255,255,255,.55),rgba(255,255,255,0) 55%),linear-gradient(180deg,var(--kdx-bar-c),var(--kb-l) 50%,var(--kdx-bar-c));filter:drop-shadow(0 0 3px color-mix(in srgb,var(--kdx-bar-c) 55%,transparent))}',
+            '.kdx-hasbar[data-kdx-bar-look="neon"]::before{--kb-dw:4px;border-radius:999px;background:linear-gradient(90deg,var(--kdx-bar-c),#fff 50%,var(--kdx-bar-c));box-shadow:0 0 3px var(--kdx-bar-c),0 0 9px var(--kdx-bar-c)}',
+            '.kdx-hasbar[data-kdx-bar-look="candy"]::before{--kb-dw:6px;border-radius:3px;box-shadow:inset 0 0 0 1px var(--kb-e);background:repeating-linear-gradient(135deg,var(--kdx-bar-c) 0 4px,var(--kb-l) 4px 8px)}',
+            '.kdx-hasbar[data-kdx-bar-look="double"]::before{--kb-dw:8px;border-radius:1px;background:linear-gradient(90deg,var(--kdx-bar-c) 0 28%,transparent 28% 56%,var(--kdx-bar-c) 56% 84%,transparent 84%)}',
+            // the SHAPES (they cut the bar: dashes, dots, round ends)
             '.kdx-hasbar[data-kdx-bar-style="dashed"]::before{border-radius:0;-webkit-mask:repeating-linear-gradient(180deg,#000 0 9px,transparent 9px 14px);mask:repeating-linear-gradient(180deg,#000 0 9px,transparent 9px 14px)}',
-            '.kdx-hasbar[data-kdx-bar-style="dotted"]::before{width:4px;border-radius:0;-webkit-mask:radial-gradient(circle at 50% 50%,#000 0 1.7px,transparent 2.1px) 0 0/4px 7px repeat-y;mask:radial-gradient(circle at 50% 50%,#000 0 1.7px,transparent 2.1px) 0 0/4px 7px repeat-y}',
-            '.kdx-hasbar[data-kdx-bar-style="rounded"]::before{width:5px;border-radius:999px}',
-            '.kdx-hasbar[data-kdx-bar-style="rounddash"]::before{width:5px;border-radius:0;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'5\' height=\'15\'%3E%3Cline x1=\'2.5\' y1=\'2.5\' x2=\'2.5\' y2=\'9.5\' stroke=\'%23000\' stroke-width=\'5\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/5px 15px repeat-y;mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'5\' height=\'15\'%3E%3Cline x1=\'2.5\' y1=\'2.5\' x2=\'2.5\' y2=\'9.5\' stroke=\'%23000\' stroke-width=\'5\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/5px 15px repeat-y}',
+            '.kdx-hasbar[data-kdx-bar-style="dotted"]::before{min-width:4px;border-radius:0;-webkit-mask:radial-gradient(circle at 50% 50%,#000 0 1.7px,transparent 2.1px) 0 0/100% 7px repeat-y;mask:radial-gradient(circle at 50% 50%,#000 0 1.7px,transparent 2.1px) 0 0/100% 7px repeat-y}',
+            '.kdx-hasbar[data-kdx-bar-style="rounded"]::before{min-width:5px;border-radius:999px}',
+            '.kdx-hasbar[data-kdx-bar-style="rounddash"]::before{min-width:5px;border-radius:0;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'5\' height=\'15\' preserveAspectRatio=\'none\'%3E%3Cline x1=\'2.5\' y1=\'2.5\' x2=\'2.5\' y2=\'9.5\' stroke=\'%23000\' stroke-width=\'5\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/100% 15px repeat-y;mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'5\' height=\'15\' preserveAspectRatio=\'none\'%3E%3Cline x1=\'2.5\' y1=\'2.5\' x2=\'2.5\' y2=\'9.5\' stroke=\'%23000\' stroke-width=\'5\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/100% 15px repeat-y}',
+            // the badges and labels
+            '.kdx-hasmk::after{content:attr(data-kdx-mk-g);position:absolute;right:calc(100% + 22px);top:2px;box-sizing:border-box;min-width:var(--md,20px);height:var(--md,20px);padding:0 4px;display:flex;align-items:center;justify-content:center;border-radius:999px;font:700 calc(var(--md,20px) * .55)/1 system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--kdx-mk-t,#fff);background:var(--kdx-mk-c,#ef4444);white-space:nowrap;--ml:color-mix(in srgb,var(--kdx-mk-c,#ef4444) 45%,#fff);--me:color-mix(in srgb,var(--kdx-mk-c,#ef4444) 72%,#000);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-hasmk[data-kdx-mk-side="right"]::after{right:auto;left:calc(100% + 22px)}',
+            '.kdx-hasmk[data-kdx-mk-size="small"]::after{--md:16px}.kdx-hasmk[data-kdx-mk-size="large"]::after{--md:28px}',
+            '.kdx-hasmk[data-kdx-mk-pos="middle"]::after{top:50%;transform:translateY(-50%)}.kdx-hasmk[data-kdx-mk-pos="bottom"]::after{top:auto;bottom:2px}',
+            '.kdx-hasmk[data-kdx-mk-kind="text"]::after,.kdx-hasmk[data-kdx-mk-g*=" "]::after{padding:0 10px;font-size:calc(var(--md,20px) * .5)}',
+            '.kdx-hasmk[data-kdx-mk-look="gel"]::after{background:linear-gradient(180deg,rgba(255,255,255,.42) 0 46%,rgba(255,255,255,0) 52%),linear-gradient(180deg,var(--ml),var(--kdx-mk-c) 62%);box-shadow:0 0 0 1.5px var(--me),inset 0 -2px 3px rgba(0,0,0,.18)}',
+            '.kdx-hasmk[data-kdx-mk-look="aero"]::after{background:linear-gradient(180deg,rgba(255,255,255,.7) 0 46%,rgba(255,255,255,.05) 52%),linear-gradient(180deg,var(--kdx-mk-c),var(--ml));box-shadow:0 0 0 1px var(--me),0 0 8px color-mix(in srgb,var(--kdx-mk-c) 55%,transparent)}',
+            '.kdx-hasmk[data-kdx-mk-look="outline"]::after{background:#fff;color:var(--kdx-mk-c);box-shadow:inset 0 0 0 2px var(--kdx-mk-c)}',
+            '.kdx-hasmk[data-kdx-mk-look="plain"]::after{background:none;color:var(--kdx-mk-c);font-size:calc(var(--md,20px) * .95)}',
             '@media (prefers-reduced-motion:reduce){.kdx-opt .kdx-fill,.kdx-bar i{transition:none}.kdx-timer.kdx-done .kdx-clock{animation:none}}'
         ].join('\n');
         (doc.head || doc.documentElement).appendChild(st);
@@ -234,26 +252,52 @@
         }
         return defs;
     }
-    /* ---------- margin change bars: {bar red dashed left} at the start of a line ---------- */
+    /* ---------- margin marks: {bar red dashed gel left thick} and {mark star red gel left large top|note} at the start of a line ---------- */
     const BAR_COLORS = { red: '#ef4444', orange: '#f97316', gold: '#ea9f08', yellow: '#ead708', lime: '#84cc16', green: '#10b981', turquoise: '#30e5cd', teal: '#06b6d4', cyan: '#30d3e5', blue: '#3b82f6', purple: '#a855f7', pink: '#ec4899', slate: '#b4b4b4', black: '#111111' };
-    const BAR_STYLES = ['solid', 'dashed', 'dotted', 'rounded', 'rounddash'];
+    const BAR_STYLES = ['solid', 'dashed', 'dotted', 'rounded', 'rounddash'];                // the SHAPE of a bar
+    const BAR_LOOKS = ['flat', 'gel', 'aero', 'neon', 'candy', 'double'];                   // the LOOK of a bar (and of a mark's badge)
+    const MARK_LOOKS = ['flat', 'gel', 'aero', 'outline', 'plain'];
+    const MARK_KINDS = { star: '★', bang: '!', ask: '?', check: '✓', cross: '✕', flag: '⚑', arrow: '➜', heart: '♥', idea: '✦', note: '✎', warn: '⚠', dot: '●', plus: '+', text: '' };
+    const MARK_SIZES = ['small', 'medium', 'large'], MARK_POS = ['top', 'middle', 'bottom'];
+    const hexOf = (c) => BAR_COLORS[c] || c;
+    const lumOf = (hex) => { const m = /^#([0-9a-f]{6})$/i.exec(hex); return m ? (parseInt(m[1].slice(0, 2), 16) * 0.299 + parseInt(m[1].slice(2, 4), 16) * 0.587 + parseInt(m[1].slice(4, 6), 16) * 0.114) / 255 : 0.3; };
+    const isColor = (w) => !!BAR_COLORS[w] || /^#[0-9a-f]{3,8}$/.test(w);
     function parseBar(args) {
-        const o = { color: 'red', style: 'solid', side: 'left' };
+        const o = { color: 'red', style: 'solid', look: 'flat', side: 'left', size: 'medium' };
         String(args || '').trim().split(/\s+/).filter(Boolean).forEach((w) => {
             w = w.toLowerCase();
-            if (BAR_STYLES.indexOf(w) >= 0) o.style = w; else if (w === 'left' || w === 'right') o.side = w;
-            else if (BAR_COLORS[w] || /^#[0-9a-f]{3,8}$/.test(w)) o.color = w;
+            if (BAR_STYLES.indexOf(w) >= 0) o.style = w; else if (BAR_LOOKS.indexOf(w) >= 0) o.look = w; else if (w === 'left' || w === 'right') o.side = w;
+            else if (w === 'thin' || w === 'thick') o.size = w; else if (isColor(w)) o.color = w;
         });
         return o;
     }
-    const barText = (o) => '{bar ' + o.color + (o.style !== 'solid' ? ' ' + o.style : '') + (o.side === 'right' ? ' right' : '') + '}';
-    function paintBar(box, o) {
-        if (!o) { box.classList.remove('kdx-hasbar'); box.removeAttribute('data-kdx-bar-style'); box.removeAttribute('data-kdx-bar-side'); box.style.removeProperty('--kdx-bar-c'); if (!box.getAttribute('style')) box.removeAttribute('style'); return; }
-        box.classList.add('kdx-hasbar');
-        box.style.setProperty('--kdx-bar-c', BAR_COLORS[o.color] || o.color);
-        box.setAttribute('data-kdx-bar-style', o.style); box.setAttribute('data-kdx-bar-side', o.side);
+    const barText = (o) => '{bar ' + o.color + (o.style !== 'solid' ? ' ' + o.style : '') + (o.look !== 'flat' ? ' ' + o.look : '') + (o.side === 'right' ? ' right' : '') + (o.size !== 'medium' ? ' ' + o.size : '') + '}';
+    function parseMark(args, text) {
+        const o = { kind: 'star', color: 'red', look: 'flat', side: 'left', size: 'medium', pos: 'top', text: String(text || '').trim() };
+        String(args || '').trim().split(/\s+/).filter(Boolean).forEach((w) => {
+            w = w.toLowerCase();
+            if (MARK_KINDS[w] !== undefined) o.kind = w; else if (MARK_LOOKS.indexOf(w) >= 0) o.look = w; else if (w === 'left' || w === 'right') o.side = w;
+            else if (MARK_SIZES.indexOf(w) >= 0) o.size = w; else if (MARK_POS.indexOf(w) >= 0) o.pos = w; else if (isColor(w)) o.color = w;
+        });
+        if (o.kind === 'text' && !o.text) o.text = 'Note';
+        return o;
     }
-    // one line's box (the thing that holds the bar), with its hidden marker (which is what Source and saving read)
+    const markText = (o) => '{mark ' + o.kind + ' ' + o.color + (o.look !== 'flat' ? ' ' + o.look : '') + (o.side === 'right' ? ' right' : '') + (o.size !== 'medium' ? ' ' + o.size : '') + (o.pos !== 'top' ? ' ' + o.pos : '') + (o.text ? '|' + o.text.replace(/[{}\n]+/g, ' ') : '') + '}';
+    function paintBar(box, o) {
+        if (!o) { ['kdx-hasbar'].forEach((c) => box.classList.remove(c)); ['style', 'look', 'side', 'size'].forEach((k) => box.removeAttribute('data-kdx-bar-' + k)); box.style.removeProperty('--kdx-bar-c'); if (!box.getAttribute('style')) box.removeAttribute('style'); return; }
+        box.classList.add('kdx-hasbar');
+        box.style.setProperty('--kdx-bar-c', hexOf(o.color));
+        box.setAttribute('data-kdx-bar-style', o.style); box.setAttribute('data-kdx-bar-look', o.look); box.setAttribute('data-kdx-bar-side', o.side); box.setAttribute('data-kdx-bar-size', o.size);
+    }
+    function paintMark(box, o) {
+        if (!o) { box.classList.remove('kdx-hasmk'); ['kind', 'look', 'side', 'size', 'pos', 'g'].forEach((k) => box.removeAttribute('data-kdx-mk-' + k)); box.style.removeProperty('--kdx-mk-c'); box.style.removeProperty('--kdx-mk-t'); if (!box.getAttribute('style')) box.removeAttribute('style'); return; }
+        box.classList.add('kdx-hasmk');
+        const hex = hexOf(o.color);
+        box.style.setProperty('--kdx-mk-c', hex); box.style.setProperty('--kdx-mk-t', lumOf(hex) > 0.62 ? '#1a1a1a' : '#ffffff');
+        box.setAttribute('data-kdx-mk-kind', o.kind); box.setAttribute('data-kdx-mk-look', o.look); box.setAttribute('data-kdx-mk-side', o.side); box.setAttribute('data-kdx-mk-size', o.size); box.setAttribute('data-kdx-mk-pos', o.pos);
+        box.setAttribute('data-kdx-mk-g', (MARK_KINDS[o.kind] || '') + (MARK_KINDS[o.kind] && o.text ? ' ' : '') + o.text);
+    }
+    // one line's box (the thing that holds the margin marks), with hidden markers inside (what Source and saving read)
     function setBar(box, o) {
         if (!box) return;
         box.querySelectorAll(':scope > .kdx-barmark').forEach((m) => m.remove());
@@ -263,21 +307,36 @@
         box.insertBefore(mk, box.firstChild);
         paintBar(box, o);
     }
+    function setMark(box, o) {
+        if (!box) return;
+        box.querySelectorAll(':scope > .kdx-mkmark').forEach((m) => m.remove());
+        if (!o) { paintMark(box, null); return; }
+        const mk = doc.createElement('span');
+        mk.className = 'kdx kdx-mkmark'; mk.setAttribute('contenteditable', 'false'); mk.setAttribute('data-kd-src', markText(o));
+        box.insertBefore(mk, box.firstChild);
+        paintMark(box, o);
+    }
+    const MARK_HEAD = /^\s*\{(bar|mark)((?:\s+[#\w-]+)*)(?:\|([^{}\n]*))?\}/;
     function makeBars(rootEl) {
         let n = 0;
         lines(rootEl).forEach((L) => {
             if (L.widget || !L.block) return;
-            const m = /^\s*\{bar((?:\s+[#\w-]+)*)\}/.exec(L.text);
-            if (!m) return;
-            const map = textMap(L, L.block);
-            const r0 = map.at(0), r1 = map.at(L.text.indexOf('}') + 1);
-            if (!r0 || !r1) return;
-            const cut = doc.createRange(); cut.setStart(r0.node, r0.offset); cut.setEnd(r1.node, r1.offset); cut.deleteContents();
-            setBar(L.block, parseBar(m[1])); n++;
+            for (let guard = 0; guard < 4; guard++) {
+                const map = textMap(L, L.block);
+                const m = MARK_HEAD.exec(map.text);
+                if (!m) break;
+                const r0 = map.at(0), r1 = map.at(m[0].length);
+                if (!r0 || !r1) break;
+                const cut = doc.createRange(); cut.setStart(r0.node, r0.offset); cut.setEnd(r1.node, r1.offset); cut.deleteContents();
+                if (m[1] === 'bar') setBar(L.block, parseBar(m[2])); else setMark(L.block, parseMark(m[2], m[3]));
+                n++;
+            }
         });
-        // a box whose marker is gone loses its bar; a marker (loaded from a saved page) paints its box
+        // a box whose marker is gone loses its bar or mark; a marker (loaded from a saved page) paints its box
         rootEl.querySelectorAll('.kdx-hasbar').forEach((b) => { if (!b.querySelector(':scope > .kdx-barmark')) paintBar(b, null); });
+        rootEl.querySelectorAll('.kdx-hasmk').forEach((b) => { if (!b.querySelector(':scope > .kdx-mkmark')) paintMark(b, null); });
         rootEl.querySelectorAll('.kdx-barmark').forEach((mk) => { const b = mk.parentElement; if (b && !b.classList.contains('kdx-hasbar')) paintBar(b, parseBar(String(mk.getAttribute('data-kd-src') || '').replace(/^\{bar|\}$/g, ''))); });
+        rootEl.querySelectorAll('.kdx-mkmark').forEach((mk) => { const b = mk.parentElement; if (b && !b.classList.contains('kdx-hasmk')) { const t = /^\{mark((?:\s+[#\w-]+)*)(?:\|([^{}\n]*))?\}$/.exec(String(mk.getAttribute('data-kd-src') || '')); if (t) paintMark(b, parseMark(t[1], t[2])); } });
         return n;
     }
     /* ---------- Tooltip Underline: {tip red dashed|Tooltip text}words{/tip} ---------- */
@@ -1008,7 +1067,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back

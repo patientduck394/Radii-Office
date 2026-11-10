@@ -383,45 +383,72 @@
         const box = b && b.closest ? (b.closest('[contenteditable="true"]') || b) : null;
         return box && box !== ed ? [box] : [];
     }
-    function setBar(o) {
+    (function () { if (document.getElementById('wo-mm-css')) return; const st = document.createElement('style'); st.id = 'wo-mm-css'; st.textContent = '.os-dlg.mm-dlg{width:min(660px,94vw);max-width:none}'; document.head.appendChild(st); })();
+    function applyMarks(bar, mark) {
         const KN = window.KeydownNext;
-        if (!KN || !KN.setBar) { toast('Change bars need Keydown Next, and it did not load!'); return; }
+        if (!KN || !KN.setBar) { toast('Margin marks need Keydown Next, and it did not load!'); return; }
         const boxes = barBoxes();
         if (!boxes.length) { toast('Click in a paragraph first!'); return; }
-        boxes.forEach(function (b) { KN.setBar(b, o || null); });
+        boxes.forEach(function (b) { KN.setBar(b, bar || null); KN.setMark(b, mark || null); });
         save();
-        toast(o ? 'Change bar added!' : 'Change bar removed!');
+        toast(bar || mark ? 'Margin marks added!' : 'Margin marks removed!');
     }
-    async function barDialog() {
+    function setBar(o) { applyMarks(o || null, null); }
+    // Margin Marks: a bar and/or a badge or label in the page margin, in any color, look and size
+    async function marksDialog() {
         const KN = window.KeydownNext;
-        if (!KN || !KN.BAR_COLORS) { toast('Change bars need Keydown Next, and it did not load!'); return; }
+        if (!KN || !KN.BAR_COLORS || !KN.setMark) { toast('Margin marks need Keydown Next, and it did not load!'); return; }
         const boxes = barBoxes();
-        let cur = { color: 'red', style: 'solid', side: 'left' };
-        const mk = boxes[0] && boxes[0].querySelector(':scope > .kdx-barmark');
-        if (mk) cur = KN.parseBar(String(mk.getAttribute('data-kd-src')).replace(/^\{bar|\}$/g, ''));
-        const STYLES = [['solid', 'Solid'], ['dashed', 'Dashed'], ['dotted', 'Dotted'], ['rounded', 'Rounded'], ['rounddash', 'Rounded dash']];
+        const st = { bar: { on: true, color: 'red', style: 'solid', look: 'flat', side: 'left', size: 'medium' }, mark: { on: false, kind: 'star', color: 'red', look: 'gel', side: 'left', size: 'medium', pos: 'top', text: '' } };
+        const first = boxes[0];
+        if (first) {
+            const bm = first.querySelector(':scope > .kdx-barmark'), mm = first.querySelector(':scope > .kdx-mkmark');
+            if (bm) st.bar = Object.assign({ on: true }, KN.parseBar(String(bm.getAttribute('data-kd-src')).replace(/^\{bar|\}$/g, ''))); else if (mm) st.bar.on = false;
+            if (mm) { const t = /^\{mark((?:\s+[#\w-]+)*)(?:\|([^{}\n]*))?\}$/.exec(String(mm.getAttribute('data-kd-src'))); if (t) st.mark = Object.assign({ on: true }, KN.parseMark(t[1], t[2])); }
+        }
         const wrap = document.createElement('div');
-        const draw = function () {
-            wrap.innerHTML = '<div style="font-weight:700;margin-bottom:6px">Color</div><div class="wo-bar-colors" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">' +
-                Object.keys(KN.BAR_COLORS).map(function (n) { return '<button type="button" data-c="' + n + '" title="' + n + '" style="width:28px;height:28px;border-radius:50%;border:3px solid ' + (cur.color === n ? 'currentColor' : 'transparent') + ';background:' + KN.BAR_COLORS[n] + ';cursor:pointer;padding:0"></button>'; }).join('') + '</div>' +
-                '<div style="font-weight:700;margin-bottom:6px">Style</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px">' +
-                STYLES.map(function (x) { return '<button type="button" class="os-dlg-btn' + (cur.style === x[0] ? ' primary' : '') + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
-                '<div style="font-weight:700;margin-bottom:6px">Side of the page</div><div style="display:flex;gap:6px;margin-bottom:12px">' +
-                ['left', 'right'].map(function (x) { return '<button type="button" class="os-dlg-btn' + (cur.side === x ? ' primary' : '') + '" data-d="' + x + '">' + x.charAt(0).toUpperCase() + x.slice(1) + '</button>'; }).join('') + '</div>' +
-                '<p style="margin:0;font-size:12px;opacity:.7">Keydown: <code>' + esc(KN.barText(cur)) + '</code> at the start of a line!</p>';
-        };
+        const lab = function (t) { return '<div style="font-weight:700;margin:10px 0 5px">' + t + '</div>'; };
+        const btns = function (list, cur, attr, label) { return '<div style="display:flex;flex-wrap:wrap;gap:5px">' + list.map(function (x) { return '<button type="button" class="os-dlg-btn' + (cur === x ? ' primary' : '') + '" data-' + attr + '="' + x + '" style="padding:3px 10px">' + (label ? label(x) : x) + '</button>'; }).join('') + '</div>'; };
+        const swatches = function (cur, attr) { return '<div style="display:flex;flex-wrap:wrap;gap:6px">' + Object.keys(KN.BAR_COLORS).map(function (n) { return '<button type="button" data-' + attr + '="' + n + '" title="' + n + '" style="width:24px;height:24px;border-radius:50%;border:3px solid ' + (cur === n ? 'currentColor' : 'transparent') + ';background:' + KN.BAR_COLORS[n] + ';cursor:pointer;padding:0"></button>'; }).join('') + '</div>'; };
+        const cap = function (x) { return x.charAt(0).toUpperCase() + x.slice(1).replace('rounddash', ' dash'); };
+        function preview() {
+            const box = wrap.querySelector('#mm-sample'); if (!box) return;
+            KN.setBar(box, st.bar.on ? st.bar : null); KN.setMark(box, st.mark.on ? st.mark : null);
+        }
+        function draw() {
+            const b = st.bar, m = st.mark;
+            wrap.innerHTML =
+                '<div style="position:sticky;top:-2px;z-index:3;padding:12px 100px;background:rgba(150,150,150,.2);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-radius:10px;margin-bottom:6px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.12)"><div id="mm-sample" style="position:relative;padding:4px 0;min-height:30px">A paragraph with margin marks beside it, like this one!</div></div>' +
+                '<label style="display:flex;align-items:center;gap:8px;font-weight:800;margin-top:8px"><input type="checkbox" id="mm-bar-on"' + (b.on ? ' checked' : '') + '> Bar</label>' +
+                (b.on ? lab('Color') + swatches(b.color, 'bc') + lab('Shape') + btns(KN.BAR_STYLES, b.style, 'bs', cap) + lab('Look') + btns(KN.BAR_LOOKS, b.look, 'bl', cap) +
+                    '<div style="display:flex;gap:24px;flex-wrap:wrap"><div>' + lab('Side') + btns(['left', 'right'], b.side, 'bd', cap) + '</div><div>' + lab('Width') + btns(['thin', 'medium', 'thick'], b.size, 'bz', cap) + '</div></div>' : '') +
+                '<label style="display:flex;align-items:center;gap:8px;font-weight:800;margin-top:14px"><input type="checkbox" id="mm-mk-on"' + (m.on ? ' checked' : '') + '> Badge or label</label>' +
+                (m.on ? lab('Symbol') + '<div style="display:flex;flex-wrap:wrap;gap:5px">' + Object.keys(KN.MARK_KINDS).map(function (k) { return '<button type="button" class="os-dlg-btn' + (m.kind === k ? ' primary' : '') + '" data-mk="' + k + '" title="' + k + '" style="min-width:34px;padding:3px 8px">' + (k === 'text' ? 'Aa' : KN.MARK_KINDS[k]) + '</button>'; }).join('') + '</div>' +
+                    '<label class="os-field" style="margin-top:10px"><span>' + (m.kind === 'text' ? 'Label' : 'Label (optional, shown beside the symbol)') + '</span><input class="os-dlg-input" id="mm-text" maxlength="30" spellcheck="true"></label>' +
+                    lab('Color') + swatches(m.color, 'mc') + lab('Look') + btns(KN.MARK_LOOKS, m.look, 'ml', cap) +
+                    '<div style="display:flex;gap:24px;flex-wrap:wrap"><div>' + lab('Side') + btns(['left', 'right'], m.side, 'md', cap) + '</div><div>' + lab('Size') + btns(KN.MARK_SIZES, m.size, 'mz', cap) + '</div><div>' + lab('Position') + btns(KN.MARK_POS, m.pos, 'mp', cap) + '</div></div>' : '') +
+                '<p style="margin:14px 0 0;font-size:12px;opacity:.7">Keydown, at the start of a line: ' + (b.on ? '<code>' + esc(KN.barText(b)) + '</code> ' : '') + (m.on ? '<code>' + esc(KN.markText(m)) + '</code>' : '') + '</p>';
+            const t = wrap.querySelector('#mm-text'); if (t) { t.value = m.text; t.addEventListener('input', function () { m.text = t.value; preview(); }); }
+            preview();
+        }
         draw();
+        wrap.addEventListener('change', function (e) {
+            if (e.target.id === 'mm-bar-on') { st.bar.on = e.target.checked; draw(); } else if (e.target.id === 'mm-mk-on') { st.mark.on = e.target.checked; draw(); }
+        });
         wrap.addEventListener('click', function (e) {
-            const c = e.target.closest('[data-c]'), st = e.target.closest('[data-s]'), d = e.target.closest('[data-d]');
-            if (c) cur.color = c.dataset.c; else if (st) cur.style = st.dataset.s; else if (d) cur.side = d.dataset.d; else return;
+            const x = e.target.closest('button'); if (!x) return;
+            const d = x.dataset;
+            if (d.bc) st.bar.color = d.bc; else if (d.bs) st.bar.style = d.bs; else if (d.bl) st.bar.look = d.bl; else if (d.bd) st.bar.side = d.bd; else if (d.bz) st.bar.size = d.bz;
+            else if (d.mk) { st.mark.kind = d.mk; if (d.mk === 'text' && !st.mark.text) st.mark.text = 'Note'; } else if (d.mc) st.mark.color = d.mc; else if (d.ml) st.mark.look = d.ml; else if (d.md) st.mark.side = d.md; else if (d.mz) st.mark.size = d.mz; else if (d.mp) st.mark.pos = d.mp;
+            else return;
             draw();
         });
-        const v = await dialog('Change Bar', wrap, [{ label: 'Cancel', value: null }, { label: 'Remove bar', value: 'remove' }, { label: 'Add bar', primary: true, value: 'add' }]);
-        if (v === 'add') setBar(cur); else if (v === 'remove') setBar(null);
+        const v = await dialog('Margin Marks', wrap, [{ label: 'Cancel', value: null }, { label: 'Remove marks', value: 'remove' }, { label: 'Apply', primary: true, value: 'add' }], { cls: 'mm-dlg' });
+        if (v === 'add') applyMarks(st.bar.on ? st.bar : null, st.mark.on ? st.mark : null); else if (v === 'remove') applyMarks(null, null);
     }
 
     window.WriteoutMore = {
-        barDialog: barDialog, setBar: setBar,
+        marksDialog: marksDialog, applyMarks: applyMarks, setBar: setBar,
         emphasis: emphasis, emphasisActive: emphasisActive, code: code, codeActive: codeActive, tooltipDialog: tooltipDialog,
         symbols: symbols, quickPartsMenu: quickPartsMenu, saveQuickPart: saveQuickPart, loremMenu: loremMenu, lorem: lorem,
         captionMenu: captionMenu, tofMenu: tofMenu, sortLines: sortLines, script: script,

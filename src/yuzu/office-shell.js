@@ -142,6 +142,8 @@
         dim: '<circle cx="12" cy="12" r="4.2" fill="currentColor" fill-opacity=".3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6" stroke-opacity=".55" stroke-dasharray="1.2 1.8"/>',
         changeBar: '<path d="M3.5 4v16" stroke-width="3"/><path d="M8.5 6h12M8.5 10h12M8.5 14h12M8.5 18h7"/>',
         tooltipUnderline: '<path d="M4 3.500h16v8.500h-6.500L10 15.500V12H4z"/><path d="M4 20.500h16" stroke-width="2.500"/>',
+        marginMarks: '<rect x="8" y="3" width="13" height="18" rx="2"/><path d="M12 8h5M12 12h5M12 16h3"/><path d="M3.5 5v6" stroke-width="2.6"/><circle cx="4" cy="16.5" r="2" fill="currentColor"/>',
+        templates: '<path d="M6 3h9l4 4v14H6z"/><path d="M15 3v4h4"/><path d="M9 12h7M9 16h7M9 9h3"/><path d="M3 8v12a2 2 0 0 0 2 2h10" stroke-opacity=".55"/>',
         js: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M10 9v5.5c0 1.5-.8 2.2-2 2.2-.9 0-1.5-.4-1.9-1.1M17.3 9.8c-.4-.5-1-.8-1.7-.8-1 0-1.7.6-1.7 1.4 0 2.1 3.6 1.1 3.6 3.2 0 .9-.8 1.6-1.9 1.6-.9 0-1.5-.3-2-1"/>'
     };
 
