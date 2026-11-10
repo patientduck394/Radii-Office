@@ -978,6 +978,9 @@ if (canvas) {
                 { open: '#' + k + '#', close: '#~', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-st' },
                 { open: '#' + k + '#', close: '#=', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-bx' },
                 { open: '#' + k + '#', close: '#]', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-cb' },
+                { open: '#' + k + '#', close: '#[', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-br' },
+                { open: '#' + k + '#', close: '#>', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-gu' },
+                { open: '#' + k + '#', close: '#{', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-db' },
                 { open: '#' + k + '#', close: '#-', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-sl' },
                 { open: '#' + k + '(', close: ')', tagName: 'mark', className: 'an-hl an-hl-' + c + ' an-s-ink' },
                 // every other Annotate style by name: #R.halo(text), #B.neon(text), #Y.marker(text)...

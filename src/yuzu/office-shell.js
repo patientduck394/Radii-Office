@@ -141,6 +141,7 @@
         subscript: '<path d="M3 5l8 10M11 5L3 15"/><path d="M14.5 17c0-2.5 4.5-2.5 4.5-.3 0 2-4.5 2.5-4.5 4.8h4.8" stroke-width="1.5"/>',
         dim: '<circle cx="12" cy="12" r="4.2" fill="currentColor" fill-opacity=".3"/><path d="M12 3v2.2M12 18.8V21M3 12h2.2M18.8 12H21M5.6 5.6l1.6 1.6M16.8 16.8l1.6 1.6M5.6 18.4l1.6-1.6M16.8 7.2l1.6-1.6" stroke-opacity=".55" stroke-dasharray="1.2 1.8"/>',
         changeBar: '<path d="M3.5 4v16" stroke-width="3"/><path d="M8.5 6h12M8.5 10h12M8.5 14h12M8.5 18h7"/>',
+        tooltipUnderline: '<path d="M4 3.500h16v8.500h-6.500L10 15.500V12H4z"/><path d="M4 20.500h16" stroke-width="2.500"/>',
         js: '<rect x="3" y="3" width="18" height="18" rx="3"/><path d="M10 9v5.5c0 1.5-.8 2.2-2 2.2-.9 0-1.5-.4-1.9-1.1M17.3 9.8c-.4-.5-1-.8-1.7-.8-1 0-1.7.6-1.7 1.4 0 2.1 3.6 1.1 3.6 3.2 0 .9-.8 1.6-1.9 1.6-.9 0-1.5-.3-2-1"/>'
     };
 

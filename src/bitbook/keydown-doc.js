@@ -17,7 +17,7 @@
     // Gel highlights, the Annotator's tools: #R#text## #R#text#_ #R#text#~, plus its Gel Box #R#text#=, Corner Brackets #R#text#] Gel Select #R#text#- and Color Ink #R(text), in its 13 colors!
     const HL_COLORS = [['R', 'red'], ['O', 'orange'], ['GL', 'gold'], ['Y', 'yellow'], ['L', 'lime'], ['G', 'green'], ['TU', 'turquoise'],
         ['T', 'teal'], ['C', 'cyan'], ['B', 'blue'], ['PR', 'purple'], ['PK', 'pink'], ['SL', 'slate']];
-    const HL_STYLES = [['##', ''], ['#_', ' an-s-ul'], ['#~', ' an-s-st'], ['#=', ' an-s-bx'], ['#]', ' an-s-cb'], ['#-', ' an-s-sl']];
+    const HL_STYLES = [['##', ''], ['#_', ' an-s-ul'], ['#~', ' an-s-st'], ['#=', ' an-s-bx'], ['#]', ' an-s-cb'], ['#-', ' an-s-sl'], ['#[', ' an-s-br'], ['#>', ' an-s-gu'], ['#{', ' an-s-db']];
     const HIGHLIGHTS = [];
     HL_COLORS.forEach(([k, c]) => HL_STYLES.forEach(([close, s]) => HIGHLIGHTS.push(['#' + k + '#', close, 'mark', 'an-hl an-hl-' + c + s])));
     // Color Ink, the Annotator's Color Ink pen: #R(text) writes the words in the color (its text has no parentheses)!
@@ -64,10 +64,10 @@
     // longest openers first (so ** beats * and !#R# beats #R#); highlights go before all of them, each with its NEAREST ending
     // (a lone & is matched by its own rule below, so "AT&T and R&D" stays as typed)
     const ORDER = TRIGGERS.slice().filter((d) => d[0] !== '&').sort((a, b) => b[0].length - a[0].length);
-    const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#([#_~=\\]-])', 'g');
+    const HL_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')#([^#]+?)#([#_~=\\]\\[>{-])', 'g');
     const INK_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')\\(([^()]+?)\\)', 'g');
     // Every Annotate style by name: #R.halo(text), #B.neon(text), #Y.marker(text)... ([name, class, label])
-    const AN_STYLES = [["highlight","","Highlight"],["underline"," an-s-ul","Gel Underline"],["strike"," an-s-st","Gel Strike"],["box"," an-s-bx","Gel Box"],["brackets"," an-s-cb","Corner Brackets"],["select"," an-s-sl","Gel Select"],["ink"," an-s-ink","Color Ink"],["marker"," an-s-mk","Marker"],["glow"," an-s-gl","Glow Pen"],["lasso"," an-s-ls","Lasso"],["halo"," an-s-ha","Halo"],["spotlight"," an-s-gf","Spotlight"],["accent"," an-s-ga","Gel Accent"],["bubble"," an-s-gb","Gel Bubble"],["dusk"," an-s-dk","Dusk"],["prism"," an-s-pr","Prism"],["complement"," an-s-cm","Complement"],["ticket"," an-s-tk","Ticket"],["neon"," an-s-nn","Neon"],["stamp"," an-s-sm","Stamp"],["washi"," an-s-tp","Washi Tape"],["checker"," an-s-ck","Checker"],["halftone"," an-s-ht","Halftone"],["aurora"," an-s-au","Aurora"],["mild"," an-s-ml","Mild"],["wrap"," an-s-gw","Gel Wrap"],["belt"," an-s-bt","Highlight Belt"],["bucket"," an-s-bk","Gel Bucket"],["torpedo"," an-s-tr","Gel Torpedo"],["bottle"," an-s-bo","Gel Bottle"],["packet"," an-s-pk","Gel Packet"],["capsule"," an-s-cs","Gel Capsule"],["frost"," an-s-fr","Frost"],["pixel"," an-s-px","Pixel"],["flag"," an-s-fl","Gel Flag"],["gem"," an-s-gm","Gel Gem"]];
+    const AN_STYLES = [["highlight","","Highlight"],["underline"," an-s-ul","Gel Underline"],["strike"," an-s-st","Gel Strike"],["box"," an-s-bx","Gel Box"],["brackets"," an-s-cb","Corner Brackets"],["select"," an-s-sl","Gel Select"],["ink"," an-s-ink","Color Ink"],["marker"," an-s-mk","Marker"],["glow"," an-s-gl","Glow Pen"],["lasso"," an-s-ls","Lasso"],["halo"," an-s-ha","Halo"],["spotlight"," an-s-gf","Spotlight"],["accent"," an-s-ga","Gel Accent"],["bubble"," an-s-gb","Gel Bubble"],["dusk"," an-s-dk","Dusk"],["prism"," an-s-pr","Prism"],["complement"," an-s-cm","Complement"],["ticket"," an-s-tk","Ticket"],["neon"," an-s-nn","Neon"],["stamp"," an-s-sm","Stamp"],["washi"," an-s-tp","Washi Tape"],["checker"," an-s-ck","Checker"],["halftone"," an-s-ht","Halftone"],["aurora"," an-s-au","Aurora"],["mild"," an-s-ml","Mild"],["wrap"," an-s-gw","Gel Wrap"],["belt"," an-s-bt","Highlight Belt"],["bucket"," an-s-bk","Gel Bucket"],["torpedo"," an-s-tr","Gel Torpedo"],["bottle"," an-s-bo","Gel Bottle"],["packet"," an-s-pk","Gel Packet"],["capsule"," an-s-cs","Gel Capsule"],["frost"," an-s-fr","Frost"],["pixel"," an-s-px","Pixel"],["flag"," an-s-fl","Gel Flag"],["gem"," an-s-gm","Gel Gem"],["bracket"," an-s-br","Gel Bracket"],["guillemets"," an-s-gu","Gel Guillemets"],["dbracket"," an-s-db","Gel Double Brackets"]];
     const AN_BY = Object.fromEntries(AN_STYLES.map((x) => [x[0], x[1]]));
     AN_STYLES.slice(7).forEach(([name, cls]) => HL_COLORS.forEach(([k, c]) => HIGHLIGHTS.push(['#' + k + '.' + name + '(', ')', 'mark', 'an-hl an-hl-' + c + cls])));
     const AN_RE = new RegExp('#(' + HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join('|') + ')\\.([a-z]+)\\(([^()]+?)\\)', 'g');
@@ -335,6 +335,9 @@
             });
             // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
             str = str.replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, (m, pre, body) => pre + stash('<span class="sparklet-text" spellcheck="false">\u0002' + triggers(body) + '\u0003</span>'));
+            // __strike__ and _underline_ hugging the words (never inside snake_case words, and not a [__ fill-in blank)
+            str = str.replace(/(^|[^\w_\[])__(?=[^\s_])([^\n]*?[^\s_])__(?![\w_\]])/g, (m, pre, body) => pre + stash('<s>\u0002' + triggers(body) + '\u0003</s>'));
+            str = str.replace(/(^|[^\w_\[])_(?=[^\s_])([^_\n]*?[^\s_])_(?![\w_\]])/g, (m, pre, body) => pre + stash('<u>\u0002' + triggers(body) + '\u0003</u>'));
             return str;
         };
         s = triggers(s);
@@ -548,6 +551,8 @@
         }
         if (tag === 'STRONG' || tag === 'B') return wrap('**', kids());
         if (tag === 'EM' || tag === 'I') return wrap('*', kids());
+        if (tag === 'U') return wrap('_', kids());
+        if (tag === 'S' || tag === 'STRIKE' || tag === 'DEL') return wrap('__', kids());
         if (tag === 'CODE') { const ic = /kd-ic-(\w+)/.exec(el.className || ''); return wrap('`', el.textContent) + (ic ? '{' + ic[1] + '}' : ''); }
         if (tag === 'MARK' && (el.classList.contains('an-hl') || el.classList.contains('wa-hl'))) {
             const color = (Array.from(el.classList).find((c) => /^an-hl-/.test(c)) || 'an-hl-yellow').slice(6);
@@ -557,7 +562,7 @@
             if (code && wa === 'ink') return '#' + code + '(' + kids() + ')';
             if (code && wa) return '#' + code + '.' + wa + '(' + kids() + ')';
             if (code && el.classList.contains('an-s-ink')) return '#' + code + '(' + kids() + ')';
-            const named = AN_STYLES.slice(7).find((x) => el.classList.contains(x[1].trim()));
+            const named = AN_STYLES.slice(7).find((x) => el.classList.contains(x[1].trim()) && !HL_STYLES.some((h) => h[1] === x[1]));
             if (code && named) return '#' + code + '.' + named[0] + '(' + kids() + ')';
             const kdStyle = HL_STYLES.find((x) => x[1] && el.classList.contains(x[1].trim()));
             const style = kdStyle ? kdStyle[0] : (Array.from(el.classList).some((c) => /^an-s-/.test(c)) ? null : '##');
@@ -1412,6 +1417,8 @@
             if (n.classList.contains('kd-esc')) { out += '\\' + n.textContent; return; }
             if (t === 'EM' || t === 'I') { out += '*' + lineSource(n) + '*'; return; }
             if (t === 'STRONG' || t === 'B') { out += '**' + lineSource(n) + '**'; return; }
+            if (t === 'U') { out += '_' + lineSource(n) + '_'; return; }
+            if (t === 'S' || t === 'STRIKE' || t === 'DEL') { out += '__' + lineSource(n) + '__'; return; }
             if (t === 'CODE') { const ic = /kd-ic-(\w+)/.exec(n.className || ''); out += '`' + n.textContent + '`' + (ic ? '{' + ic[1] + '}' : ''); return; }
             out += lineSource(n);
         });

@@ -250,32 +250,121 @@
     function script(kind) { ed.focus(); document.execCommand(kind, false, null); save(); }
 
     /* ---------- small caps, emphasis dots and dimming (the built-in Keydown tags {sc} {dots} {dim}) ---------- */
+    // Inline marks (small caps, dots, dim, code, tooltip underline) work on a selection AND at the caret: with nothing selected, the mark opens
+    // empty (holding one zero-width character) and the next words you type go inside it; pressing the button again steps out of it
+    const ZW = '\u200b', ours = new WeakSet();
+    function inMark(sel, n) { const el = n && (n.nodeType === 3 ? n.parentElement : n); const hit = el && el.closest ? el.closest(sel) : null; return hit && ed.contains(hit) ? hit : null; }
+    function toggleMark(sel, make) {
+        const KB = window.KdBlockEditor;
+        if (KB && KB.virtualRange && KB.virtualRange()) { toast('Select text inside one line for this!'); return false; }
+        ed.focus();
+        const s = window.getSelection();
+        if (!s.rangeCount || !ed.contains(s.anchorNode)) { toast('Click in the text first!'); return false; }
+        const r = s.getRangeAt(0);
+        const on = inMark(sel, r.startContainer);
+        if (on) {
+            if (r.collapsed) {   // step out of it
+                const tail = document.createTextNode(ZW); ours.add(tail);
+                on.parentNode.insertBefore(tail, on.nextSibling);
+                const nr = document.createRange(); nr.setStart(tail, 1); nr.collapse(true); s.removeAllRanges(); s.addRange(nr);
+            } else {             // take it off
+                const frag = document.createDocumentFragment();
+                while (on.firstChild) frag.appendChild(on.firstChild);
+                const last = frag.lastChild; on.replaceWith(frag);
+                if (last) { const rr = document.createRange(); rr.selectNodeContents(last); s.removeAllRanges(); s.addRange(rr); }
+            }
+            save(); return true;
+        }
+        const el = make();
+        if (r.collapsed) {
+            const z = document.createTextNode(ZW); ours.add(z); el.appendChild(z);
+            r.insertNode(el);
+            const nr = document.createRange(); nr.setStart(z, 1); nr.collapse(true); s.removeAllRanges(); s.addRange(nr);
+        } else {
+            try { r.surroundContents(el); } catch (e) { el.appendChild(r.extractContents()); r.insertNode(el); }
+            s.removeAllRanges(); const rr = document.createRange(); rr.selectNodeContents(el); s.addRange(rr);
+        }
+        save(); return true;
+    }
+    // the zero-width character only holds the caret open: once there are real letters next to it, drop it (and keep the caret where it was)
+    ed.addEventListener('input', function () {
+        const s = window.getSelection();
+        if (!s.rangeCount) return;
+        const n = s.anchorNode;
+        if (!n || n.nodeType !== 3 || !ours.has(n) || n.data.length < 2 || n.data.indexOf(ZW) < 0) return;
+        const off = s.anchorOffset, idx = n.data.indexOf(ZW);
+        n.data = n.data.replace(ZW, '');
+        const nr = document.createRange(); nr.setStart(n, Math.max(0, off - (idx < off ? 1 : 0))); nr.collapse(true); s.removeAllRanges(); s.addRange(nr);
+    });
     function emphasis(kind) {
         const KN = window.KeydownNext;
         const def = KN && KN.builtins && KN.builtins.filter(function (d) { return d.cls === 'kdx-t-' + kind; })[0];
         if (!def) { toast('Emphasis needs Keydown Next, and it did not load!'); return; }
         KN.useDef(def);
-        const kb = window.KdBlockEditor;
-        if (kb && kb.virtualRange && kb.virtualRange()) { toast('Select text inside one line for this!'); return; }
-        const s = window.getSelection();
-        if (!s.rangeCount || !ed.contains(s.anchorNode)) { toast('Select some text first!'); return; }
-        const r = s.getRangeAt(0);
-        const start = r.startContainer.nodeType === 3 ? r.startContainer.parentElement : r.startContainer;
-        const on = start && start.closest && start.closest('.' + def.cls);
-        if (on) {   // already this way: take it off
-            const k = document.createDocumentFragment();
-            while (on.firstChild) k.appendChild(on.firstChild);
-            const last = k.lastChild; on.replaceWith(k);
-            if (last) { const rr = document.createRange(); rr.selectNodeContents(last); s.removeAllRanges(); s.addRange(rr); }
-            save(); return;
-        }
-        if (r.collapsed) { toast('Select some text first!'); return; }
-        const span = document.createElement('span');
-        span.className = 'kdx-tag ' + def.cls; span.setAttribute('data-kd-open', def.open); span.setAttribute('data-kd-close', def.close);
-        try { r.surroundContents(span); } catch (e) { span.appendChild(r.extractContents()); r.insertNode(span); }
-        s.removeAllRanges(); const rr = document.createRange(); rr.selectNodeContents(span); s.addRange(rr);
-        save();
+        toggleMark('.' + def.cls, function () {
+            const span = document.createElement('span');
+            span.className = 'kdx-tag ' + def.cls; span.setAttribute('data-kd-open', def.open); span.setAttribute('data-kd-close', def.close);
+            return span;
+        });
     }
+    function code() { return toggleMark('code', function () { return document.createElement('code'); }); }
+    function codeActive() { const s = window.getSelection(); return !!(s.rangeCount && ed.contains(s.anchorNode) && inMark('code', s.anchorNode)); }
+
+    /* ---------- Tooltip Underline: {tip red dashed|Tooltip text}words{/tip} ---------- */
+    async function tooltipDialog() {
+        const KN = window.KeydownNext;
+        if (!KN || !KN.tipSpan) { toast('Tooltip Underline needs Keydown Next, and it did not load!'); return; }
+        remember();
+        const sel = window.getSelection();
+        const existing = sel.rangeCount ? inMark('.kdx-tipu', sel.getRangeAt(0).startContainer) : null;
+        let cur = { color: 'blue', style: 'straight', text: '' };
+        if (existing) { cur = KN.parseTip((existing.getAttribute('data-kd-open') || '').replace(/^\{tip|\|.*$/g, '')); cur.text = existing.getAttribute('data-tip') || ''; }
+        const STY = [['straight', 'Straight'], ['rounded', 'Rounded'], ['dashed', 'Dashed'], ['rounddash', 'Rounded dash'], ['dotted', 'Dotted']];
+        const wrap = document.createElement('div');
+        const draw = function () {
+            wrap.innerHTML = '<label class="os-field"><span>Tooltip text</span><input class="os-dlg-input" id="tip-text" spellcheck="true" maxlength="200" placeholder="What shows when someone points at the words"></label>' +
+                '<div style="font-weight:700;margin:10px 0 6px">Color</div><div style="display:flex;flex-wrap:wrap;gap:6px">' +
+                Object.keys(KN.BAR_COLORS).map(function (n) { return '<button type="button" data-c="' + n + '" title="' + n + '" style="width:28px;height:28px;border-radius:50%;border:3px solid ' + (cur.color === n ? 'currentColor' : 'transparent') + ';background:' + KN.BAR_COLORS[n] + ';cursor:pointer;padding:0"></button>'; }).join('') + '</div>' +
+                '<div style="font-weight:700;margin:12px 0 6px">Underline</div><div style="display:flex;flex-wrap:wrap;gap:6px">' +
+                STY.map(function (x) { return '<button type="button" class="os-dlg-btn' + (cur.style === x[0] ? ' primary' : '') + '" data-s="' + x[0] + '">' + x[1] + '</button>'; }).join('') + '</div>' +
+                '<p style="margin:12px 0 0;font-size:12px;opacity:.7">Keydown: <code>' + esc(KN.tipOpen(cur, cur.text || 'tooltip')) + 'words{/tip}</code></p>';
+            const inp = wrap.querySelector('#tip-text'); inp.value = cur.text;
+            inp.addEventListener('input', function () { cur.text = inp.value; });
+        };
+        draw();
+        wrap.addEventListener('click', function (e) {
+            const c = e.target.closest('[data-c]'), st = e.target.closest('[data-s]');
+            if (c) cur.color = c.dataset.c; else if (st) cur.style = st.dataset.s; else return;
+            const keep = cur.text; draw(); cur.text = keep; wrap.querySelector('#tip-text').value = keep;
+        });
+        const v = await dialog('Tooltip Underline', wrap, [{ label: 'Cancel', value: null }, { label: existing ? 'Remove' : 'Close', value: 'remove' }, { label: existing ? 'Update' : 'Add', primary: true, value: 'add' }].filter(function (b) { return b.label !== 'Close'; }));
+        if (v === null) return;
+        restore();
+        const s = window.getSelection();
+        if (existing && ed.contains(existing)) {
+            if (v === 'remove') { const f = document.createDocumentFragment(); while (existing.firstChild) f.appendChild(existing.firstChild); existing.replaceWith(f); save(); return; }
+            const fresh = KN.tipSpan(cur);
+            while (existing.firstChild) fresh.appendChild(existing.firstChild);
+            existing.replaceWith(fresh); save(); return;
+        }
+        if (v !== 'add') return;
+        if (!s.rangeCount) return;
+        let r = s.getRangeAt(0);
+        if (r.collapsed) {   // no selection: use the word at the caret
+            const n = r.startContainer;
+            if (n.nodeType === 3) {
+                let a = r.startOffset, b = a;
+                while (a > 0 && /\S/.test(n.data[a - 1])) a--;
+                while (b < n.data.length && /\S/.test(n.data[b])) b++;
+                if (b > a) { r = document.createRange(); r.setStart(n, a); r.setEnd(n, b); }
+            }
+            if (r.collapsed) { toast('Select the words to underline first!'); return; }
+        }
+        const span = KN.tipSpan(cur);
+        try { r.surroundContents(span); } catch (e) { span.appendChild(r.extractContents()); r.insertNode(span); }
+        save(); toast('Tooltip underline added!');
+    }
+
     function emphasisActive(kind) {
         const s = window.getSelection();
         if (!s.rangeCount || !ed.contains(s.anchorNode)) return false;
@@ -333,7 +422,7 @@
 
     window.WriteoutMore = {
         barDialog: barDialog, setBar: setBar,
-        emphasis: emphasis, emphasisActive: emphasisActive,
+        emphasis: emphasis, emphasisActive: emphasisActive, code: code, codeActive: codeActive, tooltipDialog: tooltipDialog,
         symbols: symbols, quickPartsMenu: quickPartsMenu, saveQuickPart: saveQuickPart, loremMenu: loremMenu, lorem: lorem,
         captionMenu: captionMenu, tofMenu: tofMenu, sortLines: sortLines, script: script,
         autoCorrect: function () { return acOn; }, setAutoCorrect: setAutoCorrect, remember: remember

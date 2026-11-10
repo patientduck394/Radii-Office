@@ -3188,6 +3188,22 @@ A margin change bar goes at the start of a line: `{bar red}`, `{bar blue dashed}
 
 In Writeout they are also buttons on the Home tab (More group), next to Change Bar, which puts a thin bar in the page margin beside the selected paragraphs!
 
+### Gel brackets, underline and strike
+
+Three more gel marks, in all 13 Annotate colors, built like the Gel Underline (glossy tube, deeper edge, round ends):
+
+* `#R#words#[` Gel Bracket: #R#words#[
+* `#B#words#>` Gel Guillemets: #B#words#>
+* `#PR#words#{` Gel Double Brackets: #PR#words#{
+
+By name they are `#R.bracket(words)`, `#B.guillemets(words)` and `#PR.dbracket(words)`.
+
+Plain underline and strike are Keydown text too: `_underline_` and `__strike__` (the Underline and Strikethrough buttons write them in Source). They never trigger inside snake_case words.
+
+### Tooltip Underline
+
+`{tip red dashed|Tooltip text}words{/tip}` draws a colored underline and shows the note when someone points at the words (or tabs to them). The first word is the color (the 13 Annotate colors, black or a hex like #ff8800), then one of `straight`, `rounded`, `dashed`, `rounddash` or `dotted`: {tip blue rounded|A rounded blue underline!}point here{/tip}
+
 ### Custom tags
 
 Invent your own Keydown tag right inside a document! A line starting with `@style` defines it:

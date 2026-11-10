@@ -69,6 +69,16 @@
             '.kdx-frame{display:block;width:100%;height:280px;border:0;border-radius:10px;background:#2b2f35}',
             '.kdx-map .kdx-frame{background:#e5e7eb}',
             '.kdx-block a{color:#0369a1}',
+            // Tooltip Underline: {tip red dashed|text}words{/tip}
+            '.kdx-tipu{position:relative;cursor:help;--tc:#3b82f6;--tt:#fff;padding-bottom:.08em}.kdx-tipu:focus-visible{outline:2px solid var(--tc);outline-offset:3px;border-radius:3px}',
+            '.kdx-tipu::after{content:"";position:absolute;left:0;right:0;bottom:-.12em;height:.17em;min-height:2px;background:var(--tc);pointer-events:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-tipu[data-tipu-style="rounded"]::after{height:.26em;border-radius:999px}',
+            '.kdx-tipu[data-tipu-style="dashed"]::after{-webkit-mask:repeating-linear-gradient(90deg,#000 0 .62em,transparent .62em .95em);mask:repeating-linear-gradient(90deg,#000 0 .62em,transparent .62em .95em)}',
+            '.kdx-tipu[data-tipu-style="dotted"]::after{height:4px;bottom:-.2em;-webkit-mask:radial-gradient(circle at 50% 50%,#000 0 1.4px,transparent 1.8px) 0 0/5px 100% repeat-x;mask:radial-gradient(circle at 50% 50%,#000 0 1.4px,transparent 1.8px) 0 0/5px 100% repeat-x}',
+            '.kdx-tipu[data-tipu-style="rounddash"]::after{height:4px;bottom:-.2em;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'4\'%3E%3Cline x1=\'2\' y1=\'2\' x2=\'7\' y2=\'2\' stroke=\'%23000\' stroke-width=\'4\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/10px 4px repeat-x;mask:url("data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'10\' height=\'4\'%3E%3Cline x1=\'2\' y1=\'2\' x2=\'7\' y2=\'2\' stroke=\'%23000\' stroke-width=\'4\' stroke-linecap=\'round\'/%3E%3C/svg%3E") 0 0/10px 4px repeat-x}',
+            '.kdx-tipu::before{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + .5em);transform:translateX(-50%) translateY(4px);width:max-content;max-width:18em;padding:4px 10px;border-radius:9px;background:var(--tc);color:var(--tt);font:600 12px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;text-align:center;text-decoration:none;white-space:normal;box-shadow:0 4px 12px rgba(0,0,0,.25);opacity:0;pointer-events:none;transition:opacity .15s,transform .15s;z-index:20}',
+            '.kdx-tipu:hover::before,.kdx-tipu:focus::before{opacity:1;transform:translateX(-50%)}',
+            '@media print{.kdx-tipu::before{display:none}}',
             // margin change bars: {bar red dashed left} at the start of a line
             '.kdx-hasbar{position:relative}.kdx-barmark{display:none !important}',
             '.kdx-hasbar::before{content:"";position:absolute;top:2px;bottom:2px;left:-14px;width:3px;border-radius:2px;background:var(--kdx-bar-c,#ef4444);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
@@ -270,6 +280,47 @@
         rootEl.querySelectorAll('.kdx-barmark').forEach((mk) => { const b = mk.parentElement; if (b && !b.classList.contains('kdx-hasbar')) paintBar(b, parseBar(String(mk.getAttribute('data-kd-src') || '').replace(/^\{bar|\}$/g, ''))); });
         return n;
     }
+    /* ---------- Tooltip Underline: {tip red dashed|Tooltip text}words{/tip} ---------- */
+    const TIP_STYLES = ['straight', 'rounded', 'dashed', 'rounddash', 'dotted'];
+    const TIP_RE = /\{tip((?:\s+[#\w-]+)*)\|([^{}\n]*)\}/g;
+    function parseTip(args) {
+        const o = { color: 'blue', style: 'straight' };
+        String(args || '').trim().split(/\s+/).filter(Boolean).forEach((w) => {
+            w = w.toLowerCase();
+            if (w === 'solid') w = 'straight';
+            if (TIP_STYLES.indexOf(w) >= 0) o.style = w; else if (BAR_COLORS[w] || /^#[0-9a-f]{3,8}$/.test(w)) o.color = w;
+        });
+        return o;
+    }
+    const tipOpen = (o, text) => '{tip ' + o.color + (o.style !== 'straight' ? ' ' + o.style : '') + '|' + String(text || '').replace(/[{}\n]+/g, ' ').trim() + '}';
+    function styleTip(span, o, text) {
+        const hex = BAR_COLORS[o.color] || o.color;
+        const m = /^#([0-9a-f]{6})$/i.exec(hex);
+        const lum = m ? (parseInt(m[1].slice(0, 2), 16) * 0.299 + parseInt(m[1].slice(2, 4), 16) * 0.587 + parseInt(m[1].slice(4, 6), 16) * 0.114) / 255 : 0.3;
+        span.classList.add('kdx-tipu');
+        span.style.setProperty('--tc', hex); span.style.setProperty('--tt', lum > 0.62 ? '#1a1a1a' : '#ffffff');
+        span.setAttribute('data-tipu-style', o.style); span.setAttribute('data-tip', text);
+        span.setAttribute('tabindex', '0');
+    }
+    // one definition per distinct opener on the page, so the ordinary tag pass wraps them
+    function tipDefs(rootEl) {
+        const seen = new Map();
+        lines(rootEl).forEach((L) => {
+            if (L.widget) return;
+            let m; TIP_RE.lastIndex = 0;
+            while ((m = TIP_RE.exec(L.text))) if (!seen.has(m[0])) { const o = parseTip(m[1]), text = m[2].trim(), open = m[0]; seen.set(open, { open, close: '{/tip}', cls: 'kdx-tip', css: '', after: (span) => styleTip(span, o, text) }); }
+        });
+        return Array.from(seen.values());
+    }
+    // a span for the ribbon: KeydownNext.tipSpan({ color, style, text })
+    function tipSpan(o) {
+        o = Object.assign({ color: 'blue', style: 'straight', text: '' }, o || {});
+        const span = doc.createElement('span');
+        span.className = 'kdx-tag';
+        span.setAttribute('data-kd-open', tipOpen(o, o.text)); span.setAttribute('data-kd-close', '{/tip}');
+        styleTip(span, o, String(o.text).replace(/[{}\n]+/g, ' ').trim());
+        return span;
+    }
     // wrap OPEN…CLOSE runs inside one line (they may hold other formatting, like **bold**)
     function applyTags(rootEl, defs) {
         if (!defs.length) return 0;
@@ -295,6 +346,7 @@
                     span.className = 'kdx-tag ' + d.cls;
                     span.setAttribute('data-kd-open', d.open);
                     span.setAttribute('data-kd-close', d.close);
+                    if (d.after) d.after(span);
                     span.appendChild(inner.extractContents());
                     inner.insertNode(span);
                     // the markers: the text right after the span begins with CLOSE, right before it ends with OPEN
@@ -917,7 +969,7 @@
         const blocks = makeBlocks(rootEl, editing) + makePkInline(rootEl);
         BUILTINS.forEach(useDef);
         makeBars(rootEl);
-        const defs = BUILTINS.concat(collectDefs(rootEl, editing));
+        const defs = BUILTINS.concat(tipDefs(rootEl), collectDefs(rootEl, editing));
         const tags = applyTags(rootEl, defs);
         const values = makeLive(rootEl, editing);
         wireInputs(rootEl, editing);
@@ -928,6 +980,9 @@
     function restoreTags(rootEl) {
         let n = 0;
         rootEl.querySelectorAll('.kdx-tag[data-kd-open]').forEach((el) => {
+            // (a mark made at the caret and never typed into holds only a zero-width character: it writes nothing)
+            Array.from(el.childNodes).forEach((c) => { if (c.nodeType === 3 && c.nodeValue.includes('\u200b')) c.nodeValue = c.nodeValue.replace(/\u200b/g, ''); });
+            if (!el.textContent) { el.remove(); return; }
             el.insertBefore(doc.createTextNode(el.getAttribute('data-kd-open')), el.firstChild);
             el.appendChild(doc.createTextNode(el.getAttribute('data-kd-close')));
             el.replaceWith(...Array.from(el.childNodes));
@@ -953,7 +1008,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back

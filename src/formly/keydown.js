@@ -21,15 +21,15 @@ const KD_MKT = [{"o": "~AU10~", "c": "~AU10~", "cls": "mkt-autumn-orchard"}, {"o
 // gel underline and #R#text#~ the gel strike (they go first, so #R#chip# never takes them)!
 const KD_HL_COLORS = [["R", "red"], ["O", "orange"], ["GL", "gold"], ["Y", "yellow"], ["L", "lime"], ["G", "green"], ["TU", "turquoise"],
     ["T", "teal"], ["C", "cyan"], ["B", "blue"], ["PR", "purple"], ["PK", "pink"], ["SL", "slate"]];
-const KD_HL = [].concat(...[["##", ""], ["#_", " an-s-ul"], ["#~", " an-s-st"], ["#=", " an-s-bx"], ["#]", " an-s-cb"], ["#-", " an-s-sl"]].map(([c, style]) =>
+const KD_HL = [].concat(...[["##", ""], ["#_", " an-s-ul"], ["#~", " an-s-st"], ["#=", " an-s-bx"], ["#]", " an-s-cb"], ["#-", " an-s-sl"], ["#[", " an-s-br"], ["#>", " an-s-gu"], ["#{", " an-s-db"]].map(([c, style]) =>
     KD_HL_COLORS.map(([k, color]) => ({ o: "#" + k + "#", c: c, cls: "an-hl an-hl-" + color + style, tag: "mark", flags: [] }))));
 // each highlight pairs with its NEAREST ending (## #_ #~), and its text has no #, just like a chip's!
-const KD_HL_RE = new RegExp("#(" + KD_HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join("|") + ")#([^#]+?)#([#_~=\\]-])", "g");
+const KD_HL_RE = new RegExp("#(" + KD_HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join("|") + ")#([^#]+?)#([#_~=\\]\\[>{-])", "g");
 // Color Ink, the Annotator's Color Ink pen: #R(text) writes the words in the color (no strip, no box)! Its text has no parentheses.
 KD_HL_COLORS.forEach(([k, color]) => KD_HL.push({ o: "#" + k + "(", c: ")", cls: "an-hl an-hl-" + color + " an-s-ink", tag: "mark", flags: [] }));
 const KD_INK_RE = new RegExp("#(" + KD_HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join("|") + ")\\(([^()]+?)\\)", "g");
 // Every Annotate style by name: #R.halo(text), #B.neon(text), #Y.marker(text)... ([name, class, label])
-const KD_AN = [["highlight","","Highlight"],["underline"," an-s-ul","Gel Underline"],["strike"," an-s-st","Gel Strike"],["box"," an-s-bx","Gel Box"],["brackets"," an-s-cb","Corner Brackets"],["select"," an-s-sl","Gel Select"],["ink"," an-s-ink","Color Ink"],["marker"," an-s-mk","Marker"],["glow"," an-s-gl","Glow Pen"],["lasso"," an-s-ls","Lasso"],["halo"," an-s-ha","Halo"],["spotlight"," an-s-gf","Spotlight"],["accent"," an-s-ga","Gel Accent"],["bubble"," an-s-gb","Gel Bubble"],["dusk"," an-s-dk","Dusk"],["prism"," an-s-pr","Prism"],["complement"," an-s-cm","Complement"],["ticket"," an-s-tk","Ticket"],["neon"," an-s-nn","Neon"],["stamp"," an-s-sm","Stamp"],["washi"," an-s-tp","Washi Tape"],["checker"," an-s-ck","Checker"],["halftone"," an-s-ht","Halftone"],["aurora"," an-s-au","Aurora"],["mild"," an-s-ml","Mild"],["wrap"," an-s-gw","Gel Wrap"],["belt"," an-s-bt","Highlight Belt"],["bucket"," an-s-bk","Gel Bucket"],["torpedo"," an-s-tr","Gel Torpedo"],["bottle"," an-s-bo","Gel Bottle"],["packet"," an-s-pk","Gel Packet"],["capsule"," an-s-cs","Gel Capsule"],["frost"," an-s-fr","Frost"],["pixel"," an-s-px","Pixel"],["flag"," an-s-fl","Gel Flag"],["gem"," an-s-gm","Gel Gem"]];
+const KD_AN = [["highlight","","Highlight"],["underline"," an-s-ul","Gel Underline"],["strike"," an-s-st","Gel Strike"],["box"," an-s-bx","Gel Box"],["brackets"," an-s-cb","Corner Brackets"],["select"," an-s-sl","Gel Select"],["ink"," an-s-ink","Color Ink"],["marker"," an-s-mk","Marker"],["glow"," an-s-gl","Glow Pen"],["lasso"," an-s-ls","Lasso"],["halo"," an-s-ha","Halo"],["spotlight"," an-s-gf","Spotlight"],["accent"," an-s-ga","Gel Accent"],["bubble"," an-s-gb","Gel Bubble"],["dusk"," an-s-dk","Dusk"],["prism"," an-s-pr","Prism"],["complement"," an-s-cm","Complement"],["ticket"," an-s-tk","Ticket"],["neon"," an-s-nn","Neon"],["stamp"," an-s-sm","Stamp"],["washi"," an-s-tp","Washi Tape"],["checker"," an-s-ck","Checker"],["halftone"," an-s-ht","Halftone"],["aurora"," an-s-au","Aurora"],["mild"," an-s-ml","Mild"],["wrap"," an-s-gw","Gel Wrap"],["belt"," an-s-bt","Highlight Belt"],["bucket"," an-s-bk","Gel Bucket"],["torpedo"," an-s-tr","Gel Torpedo"],["bottle"," an-s-bo","Gel Bottle"],["packet"," an-s-pk","Gel Packet"],["capsule"," an-s-cs","Gel Capsule"],["frost"," an-s-fr","Frost"],["pixel"," an-s-px","Pixel"],["flag"," an-s-fl","Gel Flag"],["gem"," an-s-gm","Gel Gem"],["bracket"," an-s-br","Gel Bracket"],["guillemets"," an-s-gu","Gel Guillemets"],["dbracket"," an-s-db","Gel Double Brackets"]];
 const KD_AN_BY = Object.fromEntries(KD_AN.map((x) => [x[0], x[1]]));
 const KD_AN_RE = new RegExp("#(" + KD_HL_COLORS.map((x) => x[0]).sort((a, b) => b.length - a.length).join("|") + ")\\.([a-z]+)\\(([^()]+?)\\)", "g");
 // (the guide shows each named style once, the colors taking turns)
@@ -409,6 +409,9 @@ function kdRender(raw) {
     mtext = mtext.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (m, pre, t) => pre + stash(kdMathHtml(t, false)));
     // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
     mtext = mtext.replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, (m, pre, inner) => pre + stash('<span class="sparklet-text">' + kdEscapeHtml(inner) + "</span>"));
+    // __strike__ and _underline_ hugging the words (never inside snake_case words)
+    mtext = mtext.replace(/(^|[^\w_\[])__(?=[^\s_])([^\n]*?[^\s_])__(?![\w_\]])/g, (m, pre, inner) => pre + stash("<s>" + kdEscapeHtml(inner) + "</s>"));
+    mtext = mtext.replace(/(^|[^\w_\[])_(?=[^\s_])([^_\n]*?[^\s_])_(?![\w_\]])/g, (m, pre, inner) => pre + stash("<u>" + kdEscapeHtml(inner) + "</u>"));
     // a backslash keeps the next symbol as itself (\#R#x# shows "#R#x#"), and \\ shows one backslash; letters and digits are never touched
     let s = kdEscapeHtml(mtext.replace(/\\([^A-Za-z0-9\s])/g, (m, c) => stash(kdEscapeHtml(c))));
     const escRe = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
@@ -421,7 +424,7 @@ function kdRender(raw) {
     // gel highlights first; the text inside them still gets bold, chips and the rest below!
     s = s.replace(KD_HL_RE, (m, k, inner, end) => {
         const color = KD_HL_COLORS.find((x) => x[0] === k)[1];
-        return stash('<mark class="an-hl an-hl-' + color + ({ "_": " an-s-ul", "~": " an-s-st", "=": " an-s-bx", "]": " an-s-cb", "-": " an-s-sl" }[end] || "") + '">') + inner + stash("</mark>");
+        return stash('<mark class="an-hl an-hl-' + color + ({ "_": " an-s-ul", "~": " an-s-st", "=": " an-s-bx", "]": " an-s-cb", "-": " an-s-sl", "[": " an-s-br", ">": " an-s-gu", "{": " an-s-db" }[end] || "") + '">') + inner + stash("</mark>");
     });
     s = s.replace(KD_AN_RE, (m, k, name, inner) => (name in KD_AN_BY ? stash('<mark class="an-hl an-hl-' + KD_HL_COLORS.find((x) => x[0] === k)[1] + KD_AN_BY[name] + '">') + inner + stash("</mark>") : m));
     s = s.replace(KD_INK_RE, (m, k, inner) => stash('<mark class="an-hl an-hl-' + KD_HL_COLORS.find((x) => x[0] === k)[1] + ' an-s-ink">') + inner + stash("</mark>"));
