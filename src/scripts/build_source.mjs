@@ -118,3 +118,5 @@ fs.writeFileSync(path.join(OUT, 'radii-office-source.kc'), lines.join('\n') + '\
 const info = { built: new Date().toISOString(), zipFiles: files.length, zipBytes: fs.statSync(path.join(OUT, 'radii-office-source.zip')).size, kcFiles: kcCount, kcBytes: fs.statSync(path.join(OUT, 'radii-office-source.kc')).size };
 fs.writeFileSync(path.join(OUT, 'source-info.json'), JSON.stringify(info, null, 1) + '\n');
 console.log(info);
+// ...and fingerprint + sign the downloads (downloads/SHA256SUMS and SHA256SUMS.sig), so anyone can check them
+await import('./sign_downloads.mjs').then((m) => m.sign());

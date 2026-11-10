@@ -142,7 +142,11 @@ self.addEventListener('fetch', (event) => {
     return;
   }
   if (CDN.test(req.url)) {
-    event.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => save(req, res))));
+    // (a copy saved before the pages asked with integrity checks is "opaque": it cannot be checked, so it is fetched again; offline it still beats nothing)
+    event.respondWith(caches.match(req).then((hit) => {
+      if (hit && !(hit.type === 'opaque' && req.mode === 'cors')) return hit;
+      return fetch(req).then((res) => save(req, res)).catch(() => hit || Response.error());
+    }));
   }
 });
 `;

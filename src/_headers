@@ -1,0 +1,16 @@
+# Security headers for every page of Radii Office (Cloudflare Pages reads this file)!
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(self), microphone=(self), geolocation=(self), payment=(), usb=(), serial=(), bluetooth=()
+  Strict-Transport-Security: max-age=15552000
+  # nobody else's site can put Radii Office in a frame (the suite's own pages can, for 3D scenes, lites and previews)
+  Content-Security-Policy: frame-ancestors 'self'; base-uri 'self'; object-src 'none'
+
+# the offline worker must always be checked for a new version
+/sw.js
+  Cache-Control: no-cache
+
+# the keys and fingerprints people check downloads against stay readable by everyone
+/signing/*
+  Access-Control-Allow-Origin: *
