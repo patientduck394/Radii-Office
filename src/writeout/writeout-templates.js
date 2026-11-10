@@ -2,7 +2,7 @@
    Writeout Templates! Snippets of Keydown (the same text Source mode shows) that you can save and paste back in.
      Pre-made   Meeting Notes, Weekly Planner, Project Brief, Pros and Cons, Cornell Notes, a Letter, a Recipe... (edit before you paste!)
      Your own   select some of the page (or nothing, for the whole page) and Save as a Template; or write one by hand in the Templates window
-   In Source mode a template is typed in at the cursor; in Visual or View mode it is formatted and put after the line you are on.
+   In Source mode a template is typed in at the cursor; in Visual or View mode it is formatted and put in right at the caret (one line lands inside your words, a longer template splits the line around it).
    Your templates live in this browser (localStorage "writeout_templates_v1"). Loaded after writeout-more.js!
    ===================================================================== */
 (function () {
@@ -82,24 +82,57 @@
         let html = '';
         try { html = await kdDoc.toEditorHtml(text); } catch (e) { toast('That template did not format!'); return false; }
         ed.focus();
-        const KB = window.KdBlockEditor;
-        let box = null;
-        if (saved && ed.contains(saved.startContainer)) {
-            let n = saved.startContainer.nodeType === 3 ? saved.startContainer.parentElement : saved.startContainer;
-            while (n && n !== ed && n.parentNode !== ed && !(n.getAttribute && n.getAttribute('contenteditable') === 'true' && /^(DIV|P|H[1-6]|LI|BLOCKQUOTE|PRE)$/.test(n.tagName))) n = n.parentNode;
-            box = n && n !== ed ? n : null;
-            // an UL or OL box lives deeper: put the template after the whole list
-            if (box && box.parentNode && /^(UL|OL)$/.test(box.parentNode.tagName) && box.parentNode.parentNode === ed) box = box.parentNode;
-        }
+        const KB = window.KdBlockEditor, ZW = /​/g;
         const t = document.createElement('template'); t.innerHTML = html;
         const frag = t.content;
-        if (box && box.parentNode) {
-            const empty = !box.textContent.replace(/​/g, '').trim() && !box.querySelector('img,table,svg,canvas,video,iframe');
-            box.parentNode.insertBefore(frag, box.nextSibling);
-            if (empty && box.parentNode === ed) box.remove();
-        } else ed.appendChild(frag);
+        const sel = window.getSelection();
+        if (saved && ed.contains(saved.startContainer)) { sel.removeAllRanges(); sel.addRange(saved); }
+        const r = sel.rangeCount && ed.contains(sel.anchorNode) ? sel.getRangeAt(0) : null;
+        const blocksIn = Array.prototype.filter.call(frag.childNodes, function (n) { return n.nodeType === 1 || (n.nodeType === 3 && n.nodeValue.trim()); });
+        let last = null;
+        if (r) {
+            let box = r.startContainer.nodeType === 3 ? r.startContainer.parentElement : r.startContainer;
+            while (box && box !== ed && !(box.parentNode === ed || (box.getAttribute && box.getAttribute('contenteditable') === 'true' && /^(DIV|P|H[1-6]|LI|BLOCKQUOTE|PRE)$/.test(box.tagName)))) box = box.parentNode;
+            if (box === ed) box = null;
+            const oneLine = blocksIn.length === 1 && blocksIn[0].nodeType === 1 && /^(DIV|P)$/.test(blocksIn[0].tagName) && !blocksIn[0].querySelector('table,pre,ul,ol,h1,h2,h3,h4,h5,h6,blockquote,hr');
+            const inList = box && box.parentNode && /^(UL|OL)$/.test(box.parentNode.tagName);
+            if (box && oneLine) {
+                // one line of Keydown goes into the words right where the caret is
+                if (!r.collapsed) r.deleteContents();
+                const inner = blocksIn[0].innerHTML;
+                if (!document.execCommand('insertHTML', false, inner)) { const tt = document.createElement('template'); tt.innerHTML = inner; r.insertNode(tt.content); }
+                try { if (window.KeydownNext) window.KeydownNext.apply(ed, { editing: true }); } catch (e) {}
+                try { ed.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
+                save(); return true;
+            }
+            if (box && !inList) {
+                if (!r.collapsed) r.deleteContents();
+                const head = document.createRange(); head.selectNodeContents(box); head.setEnd(r.startContainer, r.startOffset);
+                const tail = document.createRange(); tail.selectNodeContents(box); tail.setStart(r.startContainer, r.startOffset);
+                const plain = function (range) { const d = range.cloneContents(); return !d.textContent.replace(ZW, '').trim() && !d.querySelector('img,table,svg,canvas,video,iframe'); };
+                const atStart = plain(head), atEnd = plain(tail);
+                last = frag.lastChild;
+                const kids = Array.prototype.slice.call(frag.childNodes);
+                if (atStart && atEnd) { box.parentNode.replaceChild(frag, box); }            // an empty line: the template takes its place
+                else if (atStart) box.parentNode.insertBefore(frag, box);                       // caret at the start: the template goes above this line's words
+                else if (atEnd) box.parentNode.insertBefore(frag, box.nextSibling);             // caret at the end: right after them
+                else {                                                                          // caret in the middle: the line splits around the template
+                    const rest = box.cloneNode(false); rest.removeAttribute('id');
+                    rest.appendChild(tail.extractContents());
+                    box.parentNode.insertBefore(rest, box.nextSibling);
+                    box.parentNode.insertBefore(frag, rest);
+                }
+                last = kids[kids.length - 1] || null;
+            } else if (box && inList) {
+                const list = box.parentNode; last = frag.lastChild; list.parentNode.insertBefore(frag, list.nextSibling);   // (a block cannot sit inside a list: it follows the list)
+            } else { last = frag.lastChild; ed.appendChild(frag); }
+        } else { last = frag.lastChild; ed.appendChild(frag); }
         try { if (KB && KB.ensureBlocks) KB.ensureBlocks(); } catch (e) {}
         try { if (window.KeydownNext) window.KeydownNext.apply(ed, { editing: true }); } catch (e) {}
+        // the caret ends up at the end of what was put in
+        try {
+            if (last && last.isConnected) { const w = document.createTreeWalker(last, NodeFilter.SHOW_TEXT); let tn = null, n; while ((n = w.nextNode())) tn = n; const nr = document.createRange(); if (tn) { nr.setStart(tn, tn.nodeValue.length); } else nr.selectNodeContents(last); nr.collapse(tn ? true : false); sel.removeAllRanges(); sel.addRange(nr); }
+        } catch (e) {}
         try { ed.dispatchEvent(new Event('input', { bubbles: true })); } catch (e) {}
         save();
         return true;

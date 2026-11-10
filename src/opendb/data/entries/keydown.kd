@@ -3197,7 +3197,7 @@ Put these at the start of a line (both can go on the same line):
 
 ### Templates
 
-Templates are snippets of Keydown (the text Source shows). In Writeout, Insert, Templates opens a window with 13 pre-made ones (meeting notes, planners, a letter, a recipe...) and your own: save the selection (or the whole page) as a template, edit the text, and insert it. In Source mode it is typed in at the cursor; otherwise it is formatted and put after the line you are on.
+Templates are snippets of Keydown (the text Source shows). In Writeout, Insert, Templates opens a window with 13 pre-made ones (meeting notes, planners, a letter, a recipe...) and your own: save the selection (or the whole page) as a template, edit the text, and insert it. It goes in right at the caret: typed in at the cursor in Source mode; otherwise one line lands inside your words, and a longer template splits the line around it.
 
 ### Gel brackets, underline and strike
 
