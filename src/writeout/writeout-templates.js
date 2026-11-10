@@ -192,5 +192,21 @@
         return items;
     }
 
-    window.WriteoutTemplates = { menu: menu, manager: manager, saveCurrent: saveCurrent, insertSource: insertSource, premade: function () { return PRE.map(function (p) { return { name: p[0], category: p[1], text: p[2] }; }); }, mine: mine };
+    /* ---------- search: "temp:name" in the command search (⌘K) ---------- */
+    const SKEY = 'writeout_premade_search_v1';
+    function premadeInSearch() { try { return localStorage.getItem(SKEY) === '1'; } catch (e) { return false; } }
+    function setPremadeInSearch(v) { try { localStorage.setItem(SKEY, v ? '1' : '0'); } catch (e) {} }
+    // your own templates always show up; the pre-made ones only when Settings says so (default: no)
+    function searchHits(rest) {
+        rest = String(rest || '').trim().toLowerCase();
+        remember();
+        const out = [], match = function (n) { return !rest || n.toLowerCase().indexOf(rest) !== -1; };
+        const put = function (name, text, where) { out.push({ label: name, icon: 'templates', where: where, it: { run: function () { insertSource(text).then(function (ok) { if (ok) toast('Template added!'); }); } } }); };
+        mine().forEach(function (t) { if (match(t.name)) put(t.name, t.text, 'My template'); });
+        if (premadeInSearch()) PRE.forEach(function (p) { if (match(p[0])) put(p[0], p[2], 'Pre-made template'); });
+        return out;
+    }
+
+    window.WriteoutTemplates = {
+        searchHits: searchHits, premadeInSearch: premadeInSearch, setPremadeInSearch: setPremadeInSearch, menu: menu, manager: manager, saveCurrent: saveCurrent, insertSource: insertSource, premade: function () { return PRE.map(function (p) { return { name: p[0], category: p[1], text: p[2] }; }); }, mine: mine };
 })();

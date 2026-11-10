@@ -886,6 +886,7 @@
         const WS = window.WriteoutSettings;
         if (WS) {
             o2.appendChild(OS.optRow('Floating spheres', 'The drifting glass bubbles from Writeout Classic!', function () { return !WS.ambientHidden(); }, function (v) { WS.setAmbientHidden(!v); }));
+            o2.appendChild(OS.optRow('Pre-made templates in search', 'Search temp:name in the command search (\u2318K) can also find the built-in templates, not just your own!', function () { return !!(window.WriteoutTemplates && window.WriteoutTemplates.premadeInSearch()); }, function (v) { if (window.WriteoutTemplates) window.WriteoutTemplates.setPremadeInSearch(v); }));
             o2.appendChild(OS.optRow('Restore documents on start', 'Reopen your pages when Writeout starts!', function () { return WS.restoreDocs(); }, function (v) { WS.setRestoreDocs(v); }));
         }
         b.appendChild(o2);
@@ -983,42 +984,63 @@
             id: 'insert', label: 'Insert', groups: [
                 { label: 'Pages', items: [
                     { big: true, icon: 'newDoc', label: 'New\nPage', title: 'Add a page to this document (Ctrl/Cmd+Enter): the text after it starts on a fresh sheet!', run: newPage },
-                    { big: true, icon: 'divider', label: 'Divider', title: 'Insert a divider line: pick a style!', menu: function () { return KD_DIVIDER_STYLES.map(function (d) { return { label: d[1], icon: 'divider', run: function () { insertKind('divider:' + d[0]); paginateSoon(); } }; }); } },
-                    { big: true, icon: 'table', label: 'Blank\nSpace', title: 'Leave empty room to write in, for practice sheets: pick a style!', menu: function () { return [['box', 'Box'], ['dashed', 'Dashed box'], ['lines', 'Ruled lines'], ['grid', 'Grid'], ['dots', 'Dot grid']].map(function (d) { return { label: d[1], icon: 'table', run: function () { insertKind('blank:' + d[0]); paginateSoon(); } }; }); } }
+                    { stack: [
+                        { sm: true, icon: 'divider', label: 'Divider', title: 'Insert a divider line: pick a style!', menu: function () { return KD_DIVIDER_STYLES.map(function (d) { return { label: d[1], icon: 'divider', run: function () { insertKind('divider:' + d[0]); paginateSoon(); } }; }); } },
+                        { sm: true, cls: 'os-dim', icon: 'table', label: 'Blank Space', title: 'Leave empty room to write in, for practice sheets: pick a style!', menu: function () { return [['box', 'Box'], ['dashed', 'Dashed box'], ['lines', 'Ruled lines'], ['grid', 'Grid'], ['dots', 'Dot grid']].map(function (d) { return { label: d[1], icon: 'table', run: function () { insertKind('blank:' + d[0]); paginateSoon(); } }; }); } }
+                    ] }
                 ] },
-                { label: 'Tables', items: [{ big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } }] },
-                { label: 'Media', items: [
+                { label: 'Illustrations', items: [
+                    { big: true, icon: 'table', label: 'Table', title: 'Insert a table, or bring one in from Imbuer!', run: function () { insertKind('table'); } },
                     { big: true, icon: 'image', label: 'Picture', run: function () { insertKind('image'); } },
-                    { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
-                    { big: true, icon: 'shapes', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
-                    { big: true, icon: 'pen', label: 'Inkpath', title: 'Add an Inkpath drawing (.kv file)!', run: function () { if (window.insertInkpathDrawing) window.insertInkpathDrawing(); } },
-                    { big: true, icon: 'cube', label: '3D\nScene', title: 'Build a 3D scene in Zonerider and put it here! (Double-click it later to keep editing)', run: function () { if (window.insertZoneriderScene) window.insertZoneriderScene(); } },
-                    { big: true, icon: 'bringFront', label: 'Image\non Top', title: 'Add image on top of document (from your computer or OpenDB)', menu: function () { return [{ label: 'Picture from your computer...', icon: 'image', run: function () { if (window.DocOverlay) window.DocOverlay.pickFile(); } }, { label: 'OpenDB image...', icon: 'search', run: function () { if (window.DocOverlay) window.DocOverlay.pickOpenDB(); } }]; } },
-                    { big: true, icon: 'attach', label: 'File', run: function () { insertKind('file'); } }
+                    { stack: [
+                        { sm: true, cls: 'os-dim', icon: 'search', label: 'OpenDB Images', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
+                        { sm: true, cls: 'os-dim', icon: 'shapes', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
+                        { sm: true, cls: 'os-dim', icon: 'pen', label: 'Inkpath', title: 'Add an Inkpath drawing (.kv file)!', run: function () { if (window.insertInkpathDrawing) window.insertInkpathDrawing(); } }
+                    ] },
+                    { stack: [
+                        { sm: true, cls: 'os-dim', icon: 'cube', label: '3D Scene', title: 'Build a 3D scene in Zonerider and put it here! (Double-click it later to keep editing)', run: function () { if (window.insertZoneriderScene) window.insertZoneriderScene(); } },
+                        { sm: true, cls: 'os-dim', icon: 'bringFront', label: 'Image on Top', title: 'Add image on top of document (from your computer or OpenDB)', menu: function () { return [{ label: 'Picture from your computer...', icon: 'image', run: function () { if (window.DocOverlay) window.DocOverlay.pickFile(); } }, { label: 'OpenDB image...', icon: 'search', run: function () { if (window.DocOverlay) window.DocOverlay.pickOpenDB(); } }]; } },
+                        { sm: true, cls: 'os-dim', icon: 'attach', label: 'File', run: function () { insertKind('file'); } }
+                    ] }
                 ] },
-                { label: 'Links', items: [{ big: true, icon: 'link', label: 'Link', run: insertLink }, { big: true, icon: 'pages', label: 'Bookmark', title: 'Name a place in the document!', run: function () { if (PLUS().bookmark) PLUS().bookmark(); } }] },
+                { label: 'Links', items: [
+                    { big: true, icon: 'link', label: 'Link', run: insertLink },
+                    { stack: [
+                        { sm: true, cls: 'os-dim', icon: 'pages', label: 'Bookmark', title: 'Name a place in the document!', run: function () { if (PLUS().bookmark) PLUS().bookmark(); } }
+                    ] }
+                ] },
                 { label: 'Header & Footer', items: [
                     { big: true, icon: 'pages', label: 'Header &\nFooter', title: 'Text and page numbers at the top and bottom of every page!', run: function () { if (PLUS().headerFooter) PLUS().headerFooter(); } },
-                    { big: true, icon: 'font', label: 'Drop\nCap', title: 'A big first letter!', menu: function () { return PLUS().dropCapMenu ? PLUS().dropCapMenu() : []; } }
+                    { stack: [
+                        { sm: true, cls: 'os-dim', icon: 'font', label: 'Drop Cap', title: 'A big first letter!', menu: function () { return PLUS().dropCapMenu ? PLUS().dropCapMenu() : []; } }
+                    ] }
                 ] },
-                { label: 'Emoji', items: [{ big: true, icon: 'sparkle', label: 'Custom\nEmoji', title: 'Draw your own emoji or symbol on a square canvas and put it in your text!', run: function () { if (window.KdEmoji) window.KdEmoji.insert(); } }] },
                 { label: 'Symbols', items: [
                     { big: true, icon: 'symbol', label: 'Symbols', title: 'Arrows, math, Greek, currency and more!', run: function () { if (MORE().symbols) MORE().symbols(); } },
-                    { big: true, icon: 'notes', label: 'Quick\nParts', title: 'Save a piece of text and drop it back in whenever you like!', menu: function () { return MORE().quickPartsMenu ? MORE().quickPartsMenu() : []; } },
-                    { big: true, icon: 'lines', label: 'Lorem\nIpsum', title: 'Filler paragraphs!', menu: function () { return MORE().loremMenu ? MORE().loremMenu() : []; } }
+                    { stack: [
+                        { sm: true, cls: 'os-dim', icon: 'notes', label: 'Quick Parts', title: 'Save a piece of text and drop it back in whenever you like!', menu: function () { return MORE().quickPartsMenu ? MORE().quickPartsMenu() : []; } },
+                        { sm: true, cls: 'os-dim', icon: 'lines', label: 'Lorem Ipsum', title: 'Filler paragraphs!', menu: function () { return MORE().loremMenu ? MORE().loremMenu() : []; } }
+                    ] }
                 ] },
                 { label: 'Captions', items: [
                     { big: true, icon: 'tag', label: 'Insert\nCaption', title: 'Figure 1, Table 2... numbered for you!', menu: function () { return MORE().captionMenu ? MORE().captionMenu() : []; } },
-                    { big: true, icon: 'lines', label: 'Table of\nFigures', title: 'A clickable list of every caption!', menu: function () { return MORE().tofMenu ? MORE().tofMenu() : []; } }
+                    { stack: [
+                        { sm: true, cls: 'os-dim', icon: 'lines', label: 'Table of Figures', title: 'A clickable list of every caption!', menu: function () { return MORE().tofMenu ? MORE().tofMenu() : []; } }
+                    ] }
                 ] },
                 { label: 'Templates', items: [
                     { big: true, icon: 'templates', label: 'Templates', title: 'Snippets of Keydown you can save and paste: meeting notes, planners, letters and your own!', run: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.manager(); }, menu: function () { return window.WriteoutTemplates ? window.WriteoutTemplates.menu() : []; } }
                 ] },
-                { label: 'Math', items: [{ big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } }] },
+                { label: 'Math & Emoji', items: [
+                    { big: true, icon: 'sigma', label: 'Equation', title: 'Insert LaTeX math! (Or type $x^2$ then Space, or $$...$$ then Space)', run: function () { if (window.kdMathInsert) window.kdMathInsert(true); }, menu: function () { return [{ label: 'Equation (centered)', icon: 'sigma', run: function () { window.kdMathInsert(true); } }, { label: 'Inline math', icon: 'sigma', run: function () { window.kdMathInsert(false); } }]; } },
+                    { stack: [
+                        { sm: true, cls: 'os-dim', icon: 'sparkle', label: 'Custom Emoji', title: 'Draw your own emoji or symbol on a square canvas and put it in your text!', run: function () { if (window.KdEmoji) window.KdEmoji.insert(); } }
+                    ] }
+                ] },
                 { label: 'Text', items: [{ stack: [
-                    { sm: true, icon: 'calendar', label: 'Date', run: function () { insertKind('date'); } },
-                    { sm: true, icon: 'clock', label: 'Timestamp', run: function () { insertKind('timestamp'); } },
-                    { sm: true, icon: 'code', label: 'Code Block', run: function () { setBlock('code'); } }
+                    { sm: true, cls: 'os-dim', icon: 'calendar', label: 'Date', run: function () { insertKind('date'); } },
+                    { sm: true, cls: 'os-dim', icon: 'clock', label: 'Timestamp', run: function () { insertKind('timestamp'); } },
+                    { sm: true, cls: 'os-dim', icon: 'code', label: 'Code Block', run: function () { setBlock('code'); } }
                 ] }] },
                 { label: 'Lists', items: [
                     { big: true, icon: 'bullets', label: 'Bulleted\nList', run: function () { list(false); } },
@@ -1215,6 +1237,7 @@
         ],
         zoom: { get: function () { return prefs.zoom; }, set: setZoom, min: 50, max: 200 },
         searchExtra: function (q) {
+            if (/^temp:/.test(q)) return window.WriteoutTemplates ? window.WriteoutTemplates.searchHits(q.slice(5)) : [];
             const out = [];
             try {
                 kdTabs.forEach(function (t) { if (t.name.toLowerCase().indexOf(q) !== -1) out.push({ label: 'Go to page "' + t.name + '"', icon: 'page', where: 'Pages', it: { run: function () { kdActivateTab(t.id); } } }); });

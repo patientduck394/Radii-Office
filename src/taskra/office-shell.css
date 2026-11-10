@@ -547,3 +547,7 @@ body.os-phone .os-tc { justify-content: flex-start; overflow: hidden; }
 body.os-phone #os-docname { width: 100%; max-width: none; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 body.os-phone .os-qat .os-qbtn:nth-child(n+3) { display: none; }
 body.os-phone .os-logo { display: none; }
+
+/* small, secondary ribbon buttons sit dimmed under the bigger ones until you point at them */
+.os-rb.os-dim { opacity: 0.62; }
+.os-rb.os-dim:hover, .os-rb.os-dim:focus-visible, .os-rb.os-dim.on { opacity: 1; }

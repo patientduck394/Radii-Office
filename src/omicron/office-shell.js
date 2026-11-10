@@ -974,6 +974,61 @@
     function savePrefs() { lsSet(prefsKey(), JSON.stringify(prefs)); }
 
     /* ---------- Command search ---------- */
+    // every hit for a query (what the top search box shows): tools, File pages, settings and the app's own extras; "temp:name" asks the app for templates
+    function searchHits(q, limit) {
+        const extra = (cfg.searchExtra ? cfg.searchExtra(q) : []) || [];
+        if (/^temp:/.test(q)) return extra.slice(0, limit);
+        const pages = backstagePages().map(function (p) { return { label: p.label, icon: p.icon, where: 'File', it: { run: function () { if (p.action) p.action(); else openBackstage(p.id); } } }; });
+        const all = commandIndex.concat(pages, [{ label: 'Switch to ' + cfg.app + ' Classic layout', icon: 'layout', where: 'Settings', it: { run: function () { setLayout('classic'); } } }]);
+        return extra.concat(all.filter(function (c) { return c.label.toLowerCase().indexOf(q) !== -1 || (c.where || '').toLowerCase() === q; })).slice(0, limit);
+    }
+
+    /* ---------- the ⌘K palette: a box in the middle of the page with the results below it, like Waterflow's quick switcher ---------- */
+    let palEl = null;
+    function openPalette() {
+        if (palEl) { palEl.querySelector('input').focus(); return; }
+        if (!document.getElementById('os-pal-css')) {
+            const st = el('style');
+            st.id = 'os-pal-css';
+            st.textContent = '.os-pal-back{position:fixed;inset:0;z-index:2147483100;display:grid;place-items:start center;padding:14vh 12px 12px;background:rgba(5,30,55,.38);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}' +
+                '.os-pal{width:min(600px,100%);overflow:hidden;border-radius:16px;background:var(--os-menu,#fff);color:var(--os-text,#1f2937);border:1px solid var(--os-menu-line,rgba(0,0,0,.15));box-shadow:0 24px 70px rgba(0,0,0,.4);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}' +
+                '.os-pal-in{display:flex;align-items:center;gap:10px;padding:0 16px;border-bottom:1px solid var(--os-menu-line,rgba(0,0,0,.12))}.os-pal-in svg{width:18px;height:18px;flex:none;opacity:.6}' +
+                '.os-pal input{flex:1;min-width:0;border:0;background:none;color:inherit;padding:15px 0;font-size:17px;outline:none}' +
+                '.os-pal-list{max-height:48vh;overflow:auto;padding:6px}.os-pal-row{display:flex;align-items:center;gap:10px;width:100%;padding:8px 12px;border:0;border-radius:10px;background:none;color:inherit;text-align:left;font:inherit;cursor:pointer}' +
+                '.os-pal-row svg{width:18px;height:18px;flex:none;opacity:.75}.os-pal-row small{margin-left:auto;opacity:.65;font-size:11px;white-space:nowrap}.os-pal-row.on{background:var(--os-hover,#e6f0fa);box-shadow:inset 0 0 0 2px var(--os-accent,#2b7de9)}' +
+                '.os-pal-hint{padding:8px 16px 10px;font-size:12px;opacity:.65;border-top:1px solid var(--os-menu-line,rgba(0,0,0,.12))}.os-pal-none{padding:14px;text-align:center;opacity:.7}';
+            document.head.appendChild(st);
+        }
+        const back = el('div', 'os-pal-back');
+        back.innerHTML = '<div class="os-pal" role="dialog" aria-label="Search for tools and help"><div class="os-pal-in">' + ico('search') + '<input type="text" placeholder="Search for tools and help (temp:name finds templates)" spellcheck="false" autocomplete="off" aria-label="Search"></div><div class="os-pal-list" role="listbox"></div><div class="os-pal-hint">Up and down to choose, Enter to run, Esc to close</div></div>';
+        document.body.appendChild(back);
+        palEl = back;
+        const inp = back.querySelector('input'), list = back.querySelector('.os-pal-list');
+        let hits = [], sel = 0;
+        const close = function () { back.remove(); palEl = null; restoreSelection(); };
+        const draw = function () {
+            const q = inp.value.trim().toLowerCase();
+            hits = q ? searchHits(q, 40) : commandIndex.slice(0, 8);
+            sel = Math.min(sel, Math.max(0, hits.length - 1));
+            list.innerHTML = hits.length ? hits.map(function (h, i) {
+                return '<button type="button" class="os-pal-row' + (i === sel ? ' on' : '') + '" role="option" data-i="' + i + '">' + ico(h.icon) + '<span>' + esc(h.label) + '</span><small>' + esc(h.where || '') + '</small></button>';
+            }).join('') : '<div class="os-pal-none">' + (/^temp:/.test(q) ? 'No templates match! (Pre-made ones show up when you turn them on in Settings.)' : 'No matches!') + '</div>';
+            const on = list.querySelector('.on'); if (on) on.scrollIntoView({ block: 'nearest' });
+        };
+        const go = function (i) { const h = hits[i]; if (!h) return; back.remove(); palEl = null; run(h.it); };
+        inp.addEventListener('input', function () { sel = 0; draw(); });
+        inp.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowDown') { e.preventDefault(); sel = Math.min(hits.length - 1, sel + 1); draw(); }
+            else if (e.key === 'ArrowUp') { e.preventDefault(); sel = Math.max(0, sel - 1); draw(); }
+            else if (e.key === 'Enter') { e.preventDefault(); go(sel); }
+            else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); close(); }
+        });
+        list.addEventListener('click', function (e) { const b = e.target.closest('.os-pal-row'); if (b) go(Number(b.dataset.i)); });
+        back.addEventListener('mousedown', function (e) { if (e.target === back) close(); });
+        draw();
+        inp.focus();   // (right away: the first letters of a fast typist must land in the box)
+    }
+
     function wireSearch() {
         const inp = document.getElementById('os-search');
         const res = document.getElementById('os-search-res');
@@ -981,10 +1036,7 @@
         const render = function () {
             const q = inp.value.trim().toLowerCase();
             if (!q) { res.hidden = true; return; }
-            const extra = (cfg.searchExtra ? cfg.searchExtra(q) : []) || [];
-            const pages = backstagePages().map(function (p) { return { label: p.label, icon: p.icon, where: 'File', it: { run: function () { if (p.action) p.action(); else openBackstage(p.id); } } }; });
-            const all = commandIndex.concat(pages, [{ label: 'Switch to ' + cfg.app + ' Classic layout', icon: 'layout', where: 'Settings', it: { run: function () { setLayout('classic'); } } }]);
-            hits = extra.concat(all.filter(function (c) { return c.label.toLowerCase().indexOf(q) !== -1 || (c.where || '').toLowerCase() === q; })).slice(0, 12);
+            hits = searchHits(q, 12);
             idx = 0;
             res.innerHTML = hits.length ? hits.map(function (h, i) {
                 return '<button type="button" class="os-mitem' + (i === 0 ? ' kb' : '') + '" data-i="' + i + '"><span class="os-mico">' + ico(h.icon) + '</span><span class="os-mlabel">' + esc(h.label) + '<small>' + esc(h.where || '') + '</small></span></button>';
@@ -1145,7 +1197,7 @@
             if (e.key === 'Escape' && menuEl) { e.preventDefault(); e.stopPropagation(); closeMenu(); restoreSelection(); return; }
             if ((e.metaKey || e.ctrlKey) && !e.shiftKey && !e.altKey && e.key.toLowerCase() === 'k') {
                 e.preventDefault();
-                document.getElementById('os-search').focus();
+                openPalette();
             }
         }, true);
         document.addEventListener('selectionchange', trackSelection);
