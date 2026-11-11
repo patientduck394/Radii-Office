@@ -4574,3 +4574,32 @@
 .gel-aerostack-chip {
   box-shadow: 0 3px 0 -2px var(--tk-bg), 0 3px 0 -1px var(--tk-bd), 0 6px 0 -4px var(--tk-bg), 0 6px 0 -3px var(--tk-bd), inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
+
+/* ========================================================
+   RIM JELLY CHIPS (!!*R#text#): a Rim Chip cousin made of jelly. Same size and thick rim, but a solid juicy body of the color, a big wet shine
+   across the top, a soft glow where the jelly pools along the bottom and an outer glow. Words are white (deep ink on the light colors).
+   ======================================================== */
+.gel-rimjelly-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  position: relative; isolation: isolate;
+  padding: 0.034em 0.4em 0; margin: 0 2px; border-radius: 0.667em;
+  border: 0.133em solid var(--rc-rim, #04c3ca);
+  line-height: 1.216; min-height: 1.216em; letter-spacing: 0.019em; font-weight: 700; white-space: nowrap; vertical-align: middle;
+  color: #fff; text-shadow: 0 0.04em 0.09em rgba(0, 0, 0, 0.5);
+  background: linear-gradient(180deg, #5fe0e4, #04c3ca);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 78%, #fff) 0%, var(--rc-fill, #02fff1) 48%, color-mix(in srgb, var(--rc-fill, #02fff1) 80%, var(--rc-rim, #04c3ca)) 100%);
+  box-shadow: 0 0.05em 0.26em color-mix(in srgb, var(--rc-fill, #02fff1) 50%, transparent);
+}
+.gel-rimjelly-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 0.3em; right: 0.3em; top: 0.07em; height: 0.46em; border-radius: 0.3em / 0.24em;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.12) 100%);
+}
+.gel-rimjelly-chip::after {
+  content: ''; position: absolute; pointer-events: none; inset: -0.133em; border-radius: inherit;
+  box-shadow: inset 0 0 0.09em 0.01em rgba(253, 255, 255, 0.7), inset 0 -0.2em 0.2em -0.05em rgba(255, 255, 255, 0.38);
+}
+.gel-rimjelly-chip.gel-rim-gold, .gel-rimjelly-chip.gel-rim-yellow, .gel-rimjelly-chip.gel-rim-lime, .gel-rimjelly-chip.gel-rim-turquoise, .gel-rimjelly-chip.gel-rim-cyan, .gel-rimjelly-chip.gel-rim-white, .gel-rimjelly-chip.gel-rim-fog {
+  color: color-mix(in srgb, var(--rc-ink, #219a9e) 55%, #000); text-shadow: 0 0.04em 0 rgba(255, 255, 255, 0.5);
+}
+.gel-rimjelly-chip.gel-rim-white { --rc-fill: #f4f7fa; }
