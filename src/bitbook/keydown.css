@@ -7201,3 +7201,42 @@
 /* Quote lines typed one after another (each is its own box while you type) look like one quote; the Source and View modes join them for real */
 :is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq) + .blockquote-list:not(.kd-bq) { margin-top: 0; border-top-right-radius: 0; }
 :is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq):has(+ .blockquote-list:not(.kd-bq)) { margin-bottom: 0; border-bottom-right-radius: 0; }
+
+/* ========================================================
+   LOGO CHIP COUSINS: Logo Glass (;;B:text;;) and Logo Ribbon (;;B~text;;), in the Logo chip's 16 colors (they use its .gel-logo-<color> variables)!
+   Glass: a pale tinted tile with a colored rim, deep colored words, the Logo chip's curved gloss on top.
+   Ribbon: the Logo chip's body and gloss, cut with swallowtail ends.
+   ======================================================== */
+.gel-logoglass-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: 0.5px 10.5px; margin: 0 2px; border-radius: 0.32em; border: 1.5px solid var(--lg-c);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--lg-c) 26%, #ffffff) 0%, color-mix(in srgb, var(--lg-l) 34%, #ffffff) 100%);
+  box-shadow: 0 2px 5px color-mix(in srgb, var(--lg-c) 32%, transparent), inset 0 0 0 1px rgba(255, 255, 255, 0.75), inset 0 -3px 6px color-mix(in srgb, var(--lg-l) 45%, transparent);
+  color: color-mix(in srgb, var(--lg-c) 62%, #000000); font-weight: 800; white-space: nowrap; vertical-align: middle;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+.gel-logoglass-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -29.6%; width: 148%; top: -17%; height: 63%; border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.18) 100%);
+}
+.gel-logoribbon-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  position: relative; isolation: isolate; overflow: hidden;
+  padding: 2px calc(12px + 0.5em); margin: 0 2px; border-radius: 0;
+  background: linear-gradient(180deg, var(--lg-c) 0%, var(--lg-c) var(--lg-at, 37.5%), var(--lg-l) 100%);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.14);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.5em) 50%, 100% 100%, 0 100%, 0.5em 50%);
+  color: #ffffff; font-weight: 800; white-space: nowrap; vertical-align: middle;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+.gel-logoribbon-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: -29.6%; width: 148%; top: -17%; height: 63%; border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.34) 100%);
+}
+.gel-logoribbon-chip.gel-logo-white { color: #5c5c5c; text-shadow: none; box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.14), inset 0 0 0 1px rgba(0, 0, 0, 0.1); }
+.gel-logoribbon-chip.gel-logo-fog { color: #2e2e2e; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45); }
+.gel-logoglass-chip.gel-logo-white { color: #4a4a4a; border-color: #bdbdbd; }
+.gel-logoglass-chip.gel-logo-black { color: #1a1a1a; }
