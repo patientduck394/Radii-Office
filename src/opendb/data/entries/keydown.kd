@@ -931,6 +931,28 @@ A cousin of the Rim Hail chip with the same pill, rim and top-to-bottom color fi
 * `!!&FG#text#` !!&FG#fog#
 * `!!&BK#text#` !!&BK#black#
 
+
+## Rim badge chips
+
+A status badge in the Rim family (no dot): a compact pill with a soft tinted fill, a crisp colored rim and deep colored words, wearing a glowing halo ring around it like the Rim Hail chip's outer ring! Written `!!!color#text#`, in the same 16 colors:
+
+* `!!!R#text#` !!!R#red#
+* `!!!O#text#` !!!O#orange#
+* `!!!GL#text#` !!!GL#gold#
+* `!!!Y#text#` !!!Y#yellow#
+* `!!!L#text#` !!!L#lime#
+* `!!!G#text#` !!!G#green#
+* `!!!TU#text#` !!!TU#turquoise#
+* `!!!T#text#` !!!T#teal#
+* `!!!C#text#` !!!C#cyan#
+* `!!!B#text#` !!!B#blue#
+* `!!!PR#text#` !!!PR#purple#
+* `!!!PK#text#` !!!PK#pink#
+* `!!!SL#text#` !!!SL#slate#
+* `!!!W#text#` !!!W#white#
+* `!!!FG#text#` !!!FG#fog#
+* `!!!BK#text#` !!!BK#black#
+
 ## Logo chips
 
 Chips made like the Radii Office app icons: a softly rounded tile, solid color through its top third fading to a bright tint, under a wide white gloss with a curved lower edge. Written `;;color;text;;`, in 16 colors (the 13 Annotate colors plus white, fog and black):
