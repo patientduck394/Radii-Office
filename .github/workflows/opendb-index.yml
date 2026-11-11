@@ -1,0 +1,41 @@
+# Rebuilds OpenDB's list (src/opendb/data/index.json) whenever an entry or a media file is added, changed or deleted,
+# so uploads made on the GitHub website show up in OpenDB without anyone running the build by hand!
+name: OpenDB list
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'src/opendb/data/entries/**'
+      - 'src/opendb/data/media/**'
+
+permissions:
+  contents: write
+
+concurrency:
+  group: opendb-list
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Build the list
+        run: node src/scripts/build_opendb.mjs
+      - name: Save it if it changed
+        run: |
+          if git diff --quiet -- src/opendb/data/index.json; then
+            echo "The list is already up to date!"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/opendb/data/index.json
+          git commit -m "Rebuild the OpenDB list"
+          git pull --rebase origin main
+          git push origin main
