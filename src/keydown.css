@@ -4595,3 +4595,75 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 .gel-label-fog { --gl-c: #d9d9d9; --gl-e: #808080; --gl-i: #404040; }
 .gel-label-slate { --gl-c: #b4b4b4; --gl-e: #6f6f6f; --gl-i: #363636; }
 .gel-label-black { --gl-c: #919191; --gl-e: #454545; --gl-i: #222222; }
+
+/* ========================================================
+   FIVE MORE AERO MARK CHIP COUSINS: Pane (++R#text++), Window (++R&text++), Tab (++R.text++), Meter (++R,text++) and Bevel (++R_text++).
+   Same --ae-* color classes as every other Aero chip, in the same 16 colors!
+   ======================================================== */
+.gel-aeropane-chip, .gel-aerowindow-chip, .gel-aerotab-chip, .gel-aerometer-chip, .gel-aerobevel-chip {
+  display: inline-flex !important; align-items: center; justify-content: center; position: relative; isolation: isolate;
+  margin: 0 2px; font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle;
+}
+/* Pane: clear tinted glass in a double frame, with two slanted light streaks */
+.gel-aeropane-chip {
+  padding: 1px 13px; border-radius: 5px; overflow: hidden;
+  border: 2px solid color-mix(in srgb, var(--ae-c) 70%, var(--ae-e1));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--ae-l) 38%, #fff) 0%, color-mix(in srgb, var(--ae-l) 18%, #fff) 100%);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.85), inset 0 0 0 3px color-mix(in srgb, var(--ae-c) 35%, transparent), 0 2px 5px rgba(0, 0, 0, 0.1);
+  color: color-mix(in srgb, var(--ae-e1) 75%, #000); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.gel-aeropane-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; top: -30%; bottom: -30%; left: 0; right: 0;
+  background: linear-gradient(112deg, transparent 0 28%, rgba(255, 255, 255, 0.7) 28% 40%, transparent 40% 46%, rgba(255, 255, 255, 0.5) 46% 50%, transparent 50%);
+}
+/* Window: a tiny title bar with a glass caption button */
+.gel-aerowindow-chip {
+  padding: 1px calc(10px + 1.35em) 1px 10px; border-radius: 8px 8px 3px 3px;
+  border: 1px solid color-mix(in srgb, var(--ae-e1) 80%, transparent);
+  background: linear-gradient(180deg, var(--ae-c) 0%, var(--ae-c) 50%, var(--ae-l) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), inset 0 0 0 1px color-mix(in srgb, var(--ae-l) 60%, transparent), 0 2px 5px rgba(0, 0, 0, 0.14);
+  color: var(--ae-ink, #ffffff); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+}
+.gel-aerowindow-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0; right: 0; top: 0; height: 48%; border-radius: 7px 7px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.08));
+}
+.gel-aerowindow-chip::after {
+  content: ''; position: absolute; pointer-events: none; right: 3px; top: 3px; bottom: 5px; width: 1.05em; border-radius: 3px 3px 5px 3px;
+  border: 1px solid rgba(0, 0, 0, 0.32);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.3) 48%, color-mix(in srgb, var(--ae-e2) 70%, transparent) 52%, var(--ae-c) 100%);
+}
+/* Tab: a folder tab, rounded on top, flat below, with a thick colored base line */
+.gel-aerotab-chip {
+  padding: 1px 13px 3px; border-radius: 9px 9px 0 0; margin-bottom: 0;
+  border: 2px solid color-mix(in srgb, var(--ae-c) 70%, var(--ae-e1)); border-bottom: 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 55%, #fff) 0%, color-mix(in srgb, var(--ae-l) 22%, #fff) 100%);
+  box-shadow: inset 0 -0.22em 0 var(--ae-c), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  color: color-mix(in srgb, var(--ae-e1) 75%, #000);
+}
+/* Meter: a tiny progress bar, a glossy fill over two thirds of a pale track */
+.gel-aerometer-chip {
+  padding: 1px 13px; border-radius: 999px; overflow: hidden;
+  border: 2px solid color-mix(in srgb, var(--ae-c) 65%, var(--ae-e1));
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 52%),
+    linear-gradient(90deg, rgba(0, 0, 0, 0) 0 68%, color-mix(in srgb, var(--ae-l) 14%, #fff) 68% 100%),
+    linear-gradient(180deg, var(--ae-l), var(--ae-c));
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), inset 0 1px 2px rgba(0, 0, 0, 0.12);
+  color: color-mix(in srgb, var(--ae-e1) 80%, #000); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+}
+/* Bevel: a glossy button with cut corners */
+.gel-aerobevel-chip {
+  padding: 1px calc(9px + 0.36em); border: 0; border-radius: 0;
+  background: linear-gradient(180deg, var(--ae-c) 0%, var(--ae-c) 55%, var(--ae-l) 100%);
+  clip-path: polygon(0.36em 0, calc(100% - 0.36em) 0, 100% 0.36em, 100% calc(100% - 0.36em), calc(100% - 0.36em) 100%, 0.36em 100%, 0 calc(100% - 0.36em), 0 0.36em);
+  box-shadow: inset 0 0 0 2px var(--ae-e2), inset 0 3px 1px rgba(255, 255, 255, 0.6);
+  color: var(--ae-ink, #ffffff); text-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+}
+.gel-aerobevel-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 3px; right: 3px; top: 2px; height: 42%; border-radius: 0.2em;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0));
+}
+.gel-aeropane-chip.gel-aero-white, .gel-aerotab-chip.gel-aero-white, .gel-aerometer-chip.gel-aero-white { --ae-l: #e4e4e4; --ae-c: #bdbdbd; }
+.gel-aeropane-chip.gel-aero-black, .gel-aerotab-chip.gel-aero-black, .gel-aerometer-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; color: #111111; }
+.gel-aeropane-chip.gel-aero-fog, .gel-aerotab-chip.gel-aero-fog, .gel-aerometer-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }

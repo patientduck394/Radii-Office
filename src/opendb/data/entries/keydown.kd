@@ -609,6 +609,111 @@ Underline, wavy underline and strikethrough each have their own marks, and each 
 
 In Writeout, the Font ribbon has an Underline, a Wavy Underline and a Strikethrough button, and each has an arrow with the Annotate and Draw ink colors (plus More Colors)! The old single `_text_` still reads as an underline.
 
+## Aero pane chips
+
+A mark chip cousin shaped like a pane of glass: clear tinted glass in a double frame, with two slanted light streaks across it! Written `++color#text++`, in the same 16 colors as the Aero chips:
+
+* `++R#text++` ++R#red++
+* `++O#text++` ++O#orange++
+* `++GL#text++` ++GL#gold++
+* `++Y#text++` ++Y#yellow++
+* `++L#text++` ++L#lime++
+* `++G#text++` ++G#green++
+* `++TU#text++` ++TU#turquoise++
+* `++T#text++` ++T#teal++
+* `++C#text++` ++C#cyan++
+* `++B#text++` ++B#blue++
+* `++PR#text++` ++PR#purple++
+* `++PK#text++` ++PK#pink++
+* `++SL#text++` ++SL#slate++
+* `++W#text++` ++W#white++
+* `++FG#text++` ++FG#fog++
+* `++BK#text++` ++BK#black++
+
+## Aero window chips
+
+A mark chip cousin that is a tiny window title bar: glassy top, a colored caption and a small glass button on the right! Written `++color&text++`, in the same 16 colors as the Aero chips:
+
+* `++R&text++` ++R&red++
+* `++O&text++` ++O&orange++
+* `++GL&text++` ++GL&gold++
+* `++Y&text++` ++Y&yellow++
+* `++L&text++` ++L&lime++
+* `++G&text++` ++G&green++
+* `++TU&text++` ++TU&turquoise++
+* `++T&text++` ++T&teal++
+* `++C&text++` ++C&cyan++
+* `++B&text++` ++B&blue++
+* `++PR&text++` ++PR&purple++
+* `++PK&text++` ++PK&pink++
+* `++SL&text++` ++SL&slate++
+* `++W&text++` ++W&white++
+* `++FG&text++` ++FG&fog++
+* `++BK&text++` ++BK&black++
+
+## Aero tab chips
+
+A mark chip cousin shaped like a folder tab: rounded top corners, flat bottom and a thick colored base line! Written `++color.text++`, in the same 16 colors as the Aero chips:
+
+* `++R.text++` ++R.red++
+* `++O.text++` ++O.orange++
+* `++GL.text++` ++GL.gold++
+* `++Y.text++` ++Y.yellow++
+* `++L.text++` ++L.lime++
+* `++G.text++` ++G.green++
+* `++TU.text++` ++TU.turquoise++
+* `++T.text++` ++T.teal++
+* `++C.text++` ++C.cyan++
+* `++B.text++` ++B.blue++
+* `++PR.text++` ++PR.purple++
+* `++PK.text++` ++PK.pink++
+* `++SL.text++` ++SL.slate++
+* `++W.text++` ++W.white++
+* `++FG.text++` ++FG.fog++
+* `++BK.text++` ++BK.black++
+
+## Aero meter chips
+
+A mark chip cousin that is a tiny progress bar: a glossy colored fill over two thirds of a pale track! Written `++color,text++`, in the same 16 colors as the Aero chips:
+
+* `++R,text++` ++R,red++
+* `++O,text++` ++O,orange++
+* `++GL,text++` ++GL,gold++
+* `++Y,text++` ++Y,yellow++
+* `++L,text++` ++L,lime++
+* `++G,text++` ++G,green++
+* `++TU,text++` ++TU,turquoise++
+* `++T,text++` ++T,teal++
+* `++C,text++` ++C,cyan++
+* `++B,text++` ++B,blue++
+* `++PR,text++` ++PR,purple++
+* `++PK,text++` ++PK,pink++
+* `++SL,text++` ++SL,slate++
+* `++W,text++` ++W,white++
+* `++FG,text++` ++FG,fog++
+* `++BK,text++` ++BK,black++
+
+## Aero bevel chips
+
+A mark chip cousin with cut corners, like a glossy bevelled button! Written `++color_text++`, in the same 16 colors as the Aero chips:
+
+* `++R_text++` ++R_red++
+* `++O_text++` ++O_orange++
+* `++GL_text++` ++GL_gold++
+* `++Y_text++` ++Y_yellow++
+* `++L_text++` ++L_lime++
+* `++G_text++` ++G_green++
+* `++TU_text++` ++TU_turquoise++
+* `++T_text++` ++T_teal++
+* `++C_text++` ++C_cyan++
+* `++B_text++` ++B_blue++
+* `++PR_text++` ++PR_purple++
+* `++PK_text++` ++PK_pink++
+* `++SL_text++` ++SL_slate++
+* `++W_text++` ++W_white++
+* `++FG_text++` ++FG_fog++
+* `++BK_text++` ++BK_black++
+
 ## Custom emoji and symbols
 
 In Writeout (Insert > Custom Emoji) and Bitbook (Skills > Custom Emoji / Symbol) you can draw your own emoji or symbol on a square canvas with a pen, a gel pen, a marker, a neon tube or a dashed line, and it goes into your text like a picture the size of a letter. Double-click it later to keep drawing. Saved as text it is `@@emoji="d='g:ff7a1a:6:10,20;30,40',size='md'"`: each stroke is `ink:color:width:x,y;x,y;...` on a 100 by 100 square, strokes are joined with `|`, and the size is `sm`, `md` or `lg`.
