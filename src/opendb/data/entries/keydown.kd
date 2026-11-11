@@ -3679,6 +3679,23 @@ Three more gel marks, in all 13 Annotate colors, built like the Gel Underline (g
 
 By name they are `#R.bracket(words)`, `#B.guillemets(words)` and `#PR.dbracket(words)`.
 
+### More highlight styles
+
+Twelve more highlight styles, written by name in any highlight color:
+
+* `#Y.half(words)` Half, the marker covers only the lower half of the words: #Y.half(half words)
+* `#Y.sweep(words)` Sweep, a stroke that starts strong and fades to the right: #Y.sweep(sweep words)
+* `#Y.pop(words)` Pop, a tinted block with a hard offset shadow, like a sticker: #Y.pop(pop words)
+* `#Y.tick(words)` Tick, a thick bar on the left, like a bookmark: #Y.tick(tick words)
+* `#Y.hatch(words)` Hatch, fine diagonal pen lines: #Y.hatch(hatch words)
+* `#Y.grid(words)` Grid, graph paper: #Y.grid(grid words)
+* `#Y.dashbox(words)` Dashbox, a tinted box with a dashed outline: #Y.dashbox(dashbox words)
+* `#Y.stitch(words)` Stitch, a stitched line above and below: #Y.stitch(stitch words)
+* `#Y.squiggle(words)` Squiggle, a faint tint with a wavy underline: #Y.squiggle(squiggle words)
+* `#Y.double(words)` Double, a faint tint with a double underline: #Y.double(double words)
+* `#Y.spot(words)` Spot, a soft glowing blob with no edges: #Y.spot(spot words)
+* `#Y.leaf(words)` Leaf, opposite corners rounded wide, like a leaf: #Y.leaf(leaf words)
+
 Plain underline and strike are Keydown text too: `_underline_` and `__strike__` (the Underline and Strikethrough buttons write them in Source). They never trigger inside snake_case words.
 
 ### Tooltip Underline

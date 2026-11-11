@@ -607,3 +607,37 @@ mark.an-hl-blue.an-s-db { --brg: url("data:image/svg+xml,%3Csvg xmlns='http://ww
 mark.an-hl-purple.an-s-db { --brg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 28'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%239333ea' stroke-width='5.6'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%23a855f7' stroke-width='4.3'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%23d4aafb' stroke-width='2.7' transform='translate(-.25 -.45)'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%2523fff' stroke-opacity='.85' stroke-width='1.05' transform='translate(-.75 -1)'/%3E%3C/g%3E%3C/svg%3E"); }
 mark.an-hl-pink.an-s-db { --brg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 28'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%23db2777' stroke-width='5.6'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%23ec4899' stroke-width='4.3'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%23f6a4cc' stroke-width='2.7' transform='translate(-.25 -.45)'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%2523fff' stroke-opacity='.85' stroke-width='1.05' transform='translate(-.75 -1)'/%3E%3C/g%3E%3C/svg%3E"); }
 mark.an-hl-slate.an-s-db { --brg: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 19 28'%3E%3Cg fill='none' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%236f6f6f' stroke-width='5.6'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%23b4b4b4' stroke-width='4.3'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%23dadada' stroke-width='2.7' transform='translate(-.25 -.45)'/%3E%3Cpath d='M16.4 2.8H5.4a2 2 0 0 0-2 2v18.4a2 2 0 0 0 2 2h11M11 2.8v22.4' stroke='%2523fff' stroke-opacity='.85' stroke-width='1.05' transform='translate(-.75 -1)'/%3E%3C/g%3E%3C/svg%3E"); }
+
+/* ========================================================
+   TWELVE MORE ANNOTATE HIGHLIGHT STYLES, written by name: #R.half(words), #B.sweep(words) ... in every highlight color (var --hl-c / --hl-edge)!
+   half, sweep, pop, tick, hatch, grid, dashbox, stitch, squiggle, double, spot, leaf
+   ======================================================== */
+mark.an-hl.an-s-hf, mark.an-hl.an-s-sw, mark.an-hl.an-s-po, mark.an-hl.an-s-tc, mark.an-hl.an-s-hc, mark.an-hl.an-s-gr,
+mark.an-hl.an-s-dx, mark.an-hl.an-s-sh, mark.an-hl.an-s-sq, mark.an-hl.an-s-dl, mark.an-hl.an-s-sp, mark.an-hl.an-s-lf {
+    border: 0; box-shadow: none; border-radius: 3px; padding: 0.05em 0.3em; margin: 0 -0.3em;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+/* Half: the marker only covers the lower half of the words */
+mark.an-hl.an-s-hf { background: linear-gradient(180deg, transparent 50%, color-mix(in srgb, var(--hl-c) 72%, transparent) 50%); border-radius: 1px; }
+/* Sweep: a stroke that starts strong and fades away to the right */
+mark.an-hl.an-s-sw { background: linear-gradient(90deg, color-mix(in srgb, var(--hl-c) 78%, transparent) 0%, color-mix(in srgb, var(--hl-c) 4%, transparent) 100%); border-radius: 0.4em 0 0 0.4em; }
+/* Pop: a tinted block with a hard offset shadow behind it, like a sticker */
+mark.an-hl.an-s-po { background: color-mix(in srgb, var(--hl-c) 38%, transparent); border: 2px solid var(--hl-edge); box-shadow: 0.14em 0.14em 0 var(--hl-edge); margin-right: calc(-0.3em + 0.14em); }
+/* Tick: a thick bar on the left, like a quote or a bookmark */
+mark.an-hl.an-s-tc { background: linear-gradient(90deg, color-mix(in srgb, var(--hl-c) 52%, transparent), color-mix(in srgb, var(--hl-c) 10%, transparent)); border-left: 0.28em solid var(--hl-edge); border-radius: 0 3px 3px 0; padding-left: 0.4em; margin-left: -0.4em; }
+/* Hatch: fine diagonal pen lines over a pale tint */
+mark.an-hl.an-s-hc { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--hl-c) 60%, transparent) 0 1.5px, transparent 1.5px 5px), color-mix(in srgb, var(--hl-c) 12%, transparent); }
+/* Grid: graph paper */
+mark.an-hl.an-s-gr { background: linear-gradient(90deg, color-mix(in srgb, var(--hl-c) 50%, transparent) 1px, transparent 1px) 0 0 / 0.5em 0.5em, linear-gradient(0deg, color-mix(in srgb, var(--hl-c) 50%, transparent) 1px, transparent 1px) 0 0 / 0.5em 0.5em, color-mix(in srgb, var(--hl-c) 10%, transparent); border: 1px solid color-mix(in srgb, var(--hl-edge) 55%, transparent); border-radius: 2px; }
+/* Dashbox: a tinted box with a dashed outline */
+mark.an-hl.an-s-dx { background: color-mix(in srgb, var(--hl-c) 14%, transparent); border: 2px dashed var(--hl-edge); border-radius: 0.3em; }
+/* Stitch: a tinted strip with a stitched line above and below */
+mark.an-hl.an-s-sh { background: color-mix(in srgb, var(--hl-c) 24%, transparent); border-top: 2px dashed var(--hl-edge); border-bottom: 2px dashed var(--hl-edge); border-radius: 2px; }
+/* Squiggle: a faint tint with a wavy line underneath */
+mark.an-hl.an-s-sq { background: color-mix(in srgb, var(--hl-c) 16%, transparent); text-decoration: underline wavy var(--hl-edge) 1px; text-underline-offset: 0.16em; text-decoration-skip-ink: none; }
+/* Double: a faint tint with a double underline */
+mark.an-hl.an-s-dl { background: color-mix(in srgb, var(--hl-c) 14%, transparent); text-decoration: underline double var(--hl-edge); text-decoration-thickness: 1.5px; text-underline-offset: 0.12em; }
+/* Spot: a soft glowing blob behind the words, with no edges */
+mark.an-hl.an-s-sp { background: radial-gradient(ellipse 62% 105% at 50% 55%, color-mix(in srgb, var(--hl-c) 80%, transparent) 0%, color-mix(in srgb, var(--hl-c) 36%, transparent) 55%, color-mix(in srgb, var(--hl-c) 0%, transparent) 100%); padding: 0.1em 0.6em; margin: 0 -0.6em; border-radius: 999px; }
+/* Leaf: opposite corners rounded wide, like a leaf */
+mark.an-hl.an-s-lf { background: color-mix(in srgb, var(--hl-c) 42%, transparent); border: 2px solid var(--hl-edge); border-radius: 0.9em 0 0.9em 0; padding: 0.05em 0.55em; margin: 0 -0.55em; }
