@@ -4288,3 +4288,63 @@
 .gel-logoribbon-chip.gel-logo-fog { color: #2e2e2e; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45); }
 .gel-logoglass-chip.gel-logo-white { color: #4a4a4a; border-color: #bdbdbd; }
 .gel-logoglass-chip.gel-logo-black { color: #1a1a1a; }
+
+/* ========================================================
+   AERO MARK + TOAST CHIP COUSINS: Swipe (++R/text++) and Tape (++R-text++) are mark chips; Tail (++R@text++) and Stack (++R;text++) are toast chips.
+   They use the same --ae-* color classes as every other Aero chip.
+   ======================================================== */
+.gel-aeroswipe-chip {
+  display: inline-flex !important; align-items: center; justify-content: center; position: relative; isolation: isolate;
+  padding: 1px calc(9px + 0.45em); margin: 0 2px; border: 0; border-radius: 0;
+  background: #bfeef2;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 55%, #ffffff) 0%, var(--ae-l) 55%, color-mix(in srgb, var(--ae-c) 60%, var(--ae-l)) 100%);
+  clip-path: polygon(0.45em 0, 100% 0, calc(100% - 0.45em) 100%, 0 100%);
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--ae-c) 75%, transparent);
+  color: #063c42; color: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+}
+.gel-aeroswipe-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0; right: 0; top: 0; height: 46%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+}
+.gel-aeroswipe-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-aeroswipe-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-aeroswipe-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; color: #111111; }
+
+.gel-aerotape-chip {
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 14px; margin: 0 2px; border: 0; border-radius: 0;
+  background: #bfeef2;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 255, 255, 0.34) 0 3px, rgba(255, 255, 255, 0) 3px 7px),
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 78%, transparent) 0%, color-mix(in srgb, var(--ae-c) 58%, transparent) 100%);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 4px) 25%, 100% 50%, calc(100% - 4px) 75%, 100% 100%, 0 100%, 4px 75%, 0 50%, 4px 25%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), inset 0 -1px 0 color-mix(in srgb, var(--ae-e1) 35%, transparent);
+  color: #063c42; color: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+}
+.gel-aerotape-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-aerotape-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-aerotape-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; color: #111111; }
+
+.gel-aerotail-chip, .gel-aerostack-chip {
+  --tk-bd: #6bbcc6; --tk-bg: #f1fbfc;
+  --tk-bd: color-mix(in srgb, var(--ae-c) 62%, var(--ae-e1));
+  --tk-bg: color-mix(in srgb, var(--ae-l) 14%, #fff);
+  display: inline-flex !important; align-items: center; justify-content: center; position: relative;
+  padding: 1px 9px; margin: 0 2px 6px; border-radius: 10px;
+  border: 2px solid var(--tk-bd);
+  background: linear-gradient(180deg, #d9f3f6 0%, #f1fbfc 100%);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 46%, #fff) 0%, var(--tk-bg) 100%);
+  color: #063c42; color: color-mix(in srgb, var(--ae-e1) 55%, #000);
+  font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+}
+.gel-aerotail-chip { box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08), inset 0 1px 1px rgba(255, 255, 255, 0.6); }
+.gel-aerotail-chip::after {
+  content: ''; position: absolute; pointer-events: none; left: 11px; bottom: -7px; width: 8px; height: 8px;
+  background: var(--tk-bg); border-right: 2px solid var(--tk-bd); border-bottom: 2px solid var(--tk-bd);
+  border-radius: 0 0 3px 0; transform: rotate(45deg); transform-origin: center;
+}
+.gel-aerostack-chip {
+  box-shadow: 0 3px 0 -2px var(--tk-bg), 0 3px 0 -1px var(--tk-bd), 0 6px 0 -4px var(--tk-bg), 0 6px 0 -3px var(--tk-bd), inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}

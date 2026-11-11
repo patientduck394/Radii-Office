@@ -426,6 +426,90 @@ A toast chip cousin for highlighting: not a bordered card but a fat marker strok
 * `++FG?text++` ++FG?fog++
 * `++BK?text++` ++BK?black++
 
+## Aero swipe chips
+
+A mark chip cousin cut like a real highlighter swipe: a slanted bright stroke of the color with a darker ink edge along the bottom! Written `++color/text++`, in the same 16 colors as the Aero chips:
+
+* `++R/text++` ++R/red++
+* `++O/text++` ++O/orange++
+* `++GL/text++` ++GL/gold++
+* `++Y/text++` ++Y/yellow++
+* `++L/text++` ++L/lime++
+* `++G/text++` ++G/green++
+* `++TU/text++` ++TU/turquoise++
+* `++T/text++` ++T/teal++
+* `++C/text++` ++C/cyan++
+* `++B/text++` ++B/blue++
+* `++PR/text++` ++PR/purple++
+* `++PK/text++` ++PK/pink++
+* `++SL/text++` ++SL/slate++
+* `++W/text++` ++W/white++
+* `++FG/text++` ++FG/fog++
+* `++BK/text++` ++BK/black++
+
+## Aero tape chips
+
+A mark chip cousin made like washi tape: see-through color with faint diagonal stripes, shiny edges and torn zigzag ends! Written `++color-text++`, in the same 16 colors as the Aero chips:
+
+* `++R-text++` ++R-red++
+* `++O-text++` ++O-orange++
+* `++GL-text++` ++GL-gold++
+* `++Y-text++` ++Y-yellow++
+* `++L-text++` ++L-lime++
+* `++G-text++` ++G-green++
+* `++TU-text++` ++TU-turquoise++
+* `++T-text++` ++T-teal++
+* `++C-text++` ++C-cyan++
+* `++B-text++` ++B-blue++
+* `++PR-text++` ++PR-purple++
+* `++PK-text++` ++PK-pink++
+* `++SL-text++` ++SL-slate++
+* `++W-text++` ++W-white++
+* `++FG-text++` ++FG-fog++
+* `++BK-text++` ++BK-black++
+
+## Aero tail chips
+
+A toast chip cousin that is a speech bubble: the same tinted card and colored border, with a little pointer under its left side! Written `++color@text++`, in the same 16 colors as the Aero chips:
+
+* `++R@text++` ++R@red++
+* `++O@text++` ++O@orange++
+* `++GL@text++` ++GL@gold++
+* `++Y@text++` ++Y@yellow++
+* `++L@text++` ++L@lime++
+* `++G@text++` ++G@green++
+* `++TU@text++` ++TU@turquoise++
+* `++T@text++` ++T@teal++
+* `++C@text++` ++C@cyan++
+* `++B@text++` ++B@blue++
+* `++PR@text++` ++PR@purple++
+* `++PK@text++` ++PK@pink++
+* `++SL@text++` ++SL@slate++
+* `++W@text++` ++W@white++
+* `++FG@text++` ++FG@fog++
+* `++BK@text++` ++BK@black++
+
+## Aero stack chips
+
+A toast chip cousin that is a pile of notifications: the toast card with two more cards peeking out underneath! Written `++color;text++`, in the same 16 colors as the Aero chips:
+
+* `++R;text++` ++R;red++
+* `++O;text++` ++O;orange++
+* `++GL;text++` ++GL;gold++
+* `++Y;text++` ++Y;yellow++
+* `++L;text++` ++L;lime++
+* `++G;text++` ++G;green++
+* `++TU;text++` ++TU;turquoise++
+* `++T;text++` ++T;teal++
+* `++C;text++` ++C;cyan++
+* `++B;text++` ++B;blue++
+* `++PR;text++` ++PR;purple++
+* `++PK;text++` ++PK;pink++
+* `++SL;text++` ++SL;slate++
+* `++W;text++` ++W;white++
+* `++FG;text++` ++FG;fog++
+* `++BK;text++` ++BK;black++
+
 ## Custom emoji and symbols
 
 In Writeout (Insert > Custom Emoji) and Bitbook (Skills > Custom Emoji / Symbol) you can draw your own emoji or symbol on a square canvas with a pen, a gel pen, a marker, a neon tube or a dashed line, and it goes into your text like a picture the size of a letter. Double-click it later to keep drawing. Saved as text it is `@@emoji="d='g:ff7a1a:6:10,20;30,40',size='md'"`: each stroke is `ink:color:width:x,y;x,y;...` on a 100 by 100 square, strokes are joined with `|`, and the size is `sm`, `md` or `lg`.
