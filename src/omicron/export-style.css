@@ -21130,3 +21130,9 @@ mark.an-hl-slate.an-s-db { --brg: url("data:image/svg+xml,%3Csvg xmlns='http://w
   box-shadow: inset 0 0 0.09em 0.01em rgba(253, 255, 255, 0.9), inset 0 0.14em 0.16em -0.04em color-mix(in srgb, var(--rc-rim, #04c3ca) 55%, transparent), inset 0 -0.2em 0.18em -0.08em rgba(255, 255, 255, 0.55);
 }
 .gel-rimjelly-chip.gel-rim-white { --rc-fill: #dfe6ee; }
+
+/* ========================================================
+   WAVY UNDERLINE (~_text_~): the same thickness as a plain underline, with a fine wave (a thick line makes the wave big and square).
+   An underline or strike can carry its own color ([R]__text__), which is just text-decoration-color.
+   ======================================================== */
+u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-decoration-thickness: 1px; text-underline-offset: 0.14em; text-decoration-skip-ink: none; }

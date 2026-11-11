@@ -409,8 +409,17 @@ function kdRender(raw) {
     mtext = mtext.replace(/(^|[^\w$])\$(?=\S)([^$\n]*?\S)\$(?![\w$])/g, (m, pre, t) => pre + stash(kdMathHtml(t, false)));
     // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
     mtext = mtext.replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, (m, pre, inner) => pre + stash('<span class="sparklet-text">' + kdEscapeHtml(inner) + "</span>"));
-    // __strike__ and _underline_ hugging the words (never inside snake_case words)
-    mtext = mtext.replace(/(^|[^\w_\[])__(?=[^\s_])([^\n]*?[^\s_])__(?![\w_\]])/g, (m, pre, inner) => pre + stash("<s>" + kdEscapeHtml(inner) + "</s>"));
+    // [color]__underline__, [color]~_wavy underline_~ and [color]-_strike_-, hugging the words (the [color] is optional: a code like R or a #hex; the old single _underline_ works too)
+    const KD_DECO_PAL = {R:"#dc2626",O:"#ea580c",GL:"#d97706",Y:"#ca8a04",L:"#65a30d",G:"#16a34a",TU:"#059669",T:"#0d9488",C:"#0891b2",B:"#2563eb",PR:"#7c3aed",PK:"#db2777",SL:"#64748b"};
+    const kdDeco = (kind, c, inner, pre) => {
+        const col = c ? (KD_DECO_PAL[c] || (/^#/.test(c) ? c : "")) : "";
+        if (c && !col) return null;
+        const st = col ? ' style="text-decoration-color:' + col + '"' : "";
+        return pre + stash((kind === "s" ? "<s" + st + ">" : kind === "w" ? '<u class="kd-wavy"' + st + ">" : "<u" + st + ">") + kdEscapeHtml(inner) + (kind === "s" ? "</s>" : "</u>"));
+    };
+    mtext = mtext.replace(/(^|[^\w\[])(?:\[(#[0-9a-fA-F]{3,8}|[A-Z]{1,2})\])?~_(?=[^\s_])([^\n]*?[^\s_])_~(?!\w)/g, (m, pre, c, inner) => kdDeco("w", c, inner, pre) || m);
+    mtext = mtext.replace(/(^|[^\w\[-])(?:\[(#[0-9a-fA-F]{3,8}|[A-Z]{1,2})\])?-_(?=[^\s_])([^\n]*?[^\s_])_-(?!\w)/g, (m, pre, c, inner) => kdDeco("s", c, inner, pre) || m);
+    mtext = mtext.replace(/(^|[^\w_\[])(?:\[(#[0-9a-fA-F]{3,8}|[A-Z]{1,2})\])?__(?=[^\s_])([^\n]*?[^\s_])__(?![\w_\]])/g, (m, pre, c, inner) => kdDeco("u", c, inner, pre) || m);
     mtext = mtext.replace(/(^|[^\w_\[])_(?=[^\s_])([^_\n]*?[^\s_])_(?![\w_\]])/g, (m, pre, inner) => pre + stash("<u>" + kdEscapeHtml(inner) + "</u>"));
     // a backslash keeps the next symbol as itself (\#R#x# shows "#R#x#"), and \\ shows one backslash; letters and digits are never touched
     let s = kdEscapeHtml(mtext.replace(/\\([^A-Za-z0-9\s])/g, (m, c) => stash(kdEscapeHtml(c))));

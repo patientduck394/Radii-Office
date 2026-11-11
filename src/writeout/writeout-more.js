@@ -307,6 +307,27 @@
             return span;
         });
     }
+
+    /* ---------- underline, wavy underline and strikethrough, each with its own color ([R]__text__  ~_wavy_~  -_strike_-) ---------- */
+    const DECO = {
+        u: { sel: 'u:not(.kd-wavy)', make: function () { return document.createElement('u'); } },
+        w: { sel: 'u.kd-wavy', make: function () { const e = document.createElement('u'); e.className = 'kd-wavy'; return e; } },
+        s: { sel: 's, strike, del', make: function () { return document.createElement('s'); } }
+    };
+    // toggle false: color the underline/strike the words are already in (or add one; '' takes the color off). toggle true: switch it on or off. Works at the caret too.
+    function decorate(kind, color, toggle) {
+        const d = DECO[kind]; if (!d) return false;
+        const sel = window.getSelection();
+        const here = sel.rangeCount && ed.contains(sel.anchorNode) ? inMark(d.sel, sel.getRangeAt(0).startContainer) : null;
+        if (here && !toggle && color !== null && color !== undefined) { here.style.textDecorationColor = color; if (!here.getAttribute('style')) here.removeAttribute('style'); save(); return true; }
+        return toggleMark(d.sel, function () { const e = d.make(); if (color) e.style.textDecorationColor = color; return e; });
+    }
+    function decorateColor(kind) {
+        const sel = window.getSelection(); const d = DECO[kind];
+        const here = d && sel.rangeCount && ed.contains(sel.anchorNode) ? inMark(d.sel, sel.getRangeAt(0).startContainer) : null;
+        return here ? (here.style.textDecorationColor || '') : null;
+    }
+    function decorateActive(kind) { const sel = window.getSelection(); return !!(sel.rangeCount && ed.contains(sel.anchorNode) && inMark(DECO[kind].sel, sel.anchorNode)); }
     function code() { return toggleMark('code', function () { return document.createElement('code'); }); }
     function codeActive() { const s = window.getSelection(); return !!(s.rangeCount && ed.contains(s.anchorNode) && inMark('code', s.anchorNode)); }
 
@@ -449,7 +470,7 @@
 
     window.WriteoutMore = {
         marksDialog: marksDialog, applyMarks: applyMarks, setBar: setBar,
-        emphasis: emphasis, emphasisActive: emphasisActive, code: code, codeActive: codeActive, tooltipDialog: tooltipDialog,
+        emphasis: emphasis, emphasisActive: emphasisActive, code: code, codeActive: codeActive, decorate: decorate, decorateActive: decorateActive, tooltipDialog: tooltipDialog,
         symbols: symbols, quickPartsMenu: quickPartsMenu, saveQuickPart: saveQuickPart, loremMenu: loremMenu, lorem: lorem,
         captionMenu: captionMenu, tofMenu: tofMenu, sortLines: sortLines, script: script,
         autoCorrect: function () { return acOn; }, setAutoCorrect: setAutoCorrect, remember: remember

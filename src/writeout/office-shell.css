@@ -214,6 +214,7 @@ body.os-dark .os-rb:hover, body.os-dark .os-split-arrow:hover, body.os-dark .os-
 .os-glyph.it { font-style: italic; }
 .os-glyph.u { text-decoration: underline; }
 .os-glyph.s { text-decoration: line-through; }
+.os-glyph.uw { text-decoration: underline wavy; text-decoration-thickness: 1px; text-underline-offset: 2px; }
 .os-glyph.b { font-weight: 700; }
 .os-cbar { position: absolute; left: 5px; right: 5px; bottom: 2px; height: 4px; border-radius: 1px; }
 .os-rb.sm .os-cbar { left: 4px; right: auto; width: 16px; bottom: 1px; height: 3px; }

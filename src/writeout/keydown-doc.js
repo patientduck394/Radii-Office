@@ -136,6 +136,19 @@
         if (!m) return String(v).trim().replace(/\s+/g, '');
         return '#' + hex2(+m[1]) + hex2(+m[2]) + hex2(+m[3]) + (m[4] !== undefined && +m[4] < 1 ? hex2(+m[4] * 255) : '');
     }
+    const DECO_PAL = {R:'#dc2626',O:'#ea580c',GL:'#d97706',Y:'#ca8a04',L:'#65a30d',G:'#16a34a',TU:'#059669',T:'#0d9488',C:'#0891b2',B:'#2563eb',PR:'#7c3aed',PK:'#db2777',SL:'#64748b'};
+    // an underline/strike's own color as the [color] that goes before its markers: a code (R) for the palette colors, else #hex, else nothing
+    function decoPrefix(el) {
+        const c = el.style && el.style.textDecorationColor; if (!c) return '';
+        const h = cssColor(c).toLowerCase(); if (!/^#[0-9a-f]{3,8}$/.test(h)) return '';
+        const code = Object.keys(DECO_PAL).find((k) => DECO_PAL[k] === h);
+        return '[' + (code || h) + ']';
+    }
+    function decoMarks(el) {
+        const t = el.tagName, pre = decoPrefix(el);
+        if (t === 'U') return el.classList.contains('kd-wavy') ? [pre + '~_', '_~'] : [pre + '__', '__'];
+        return [pre + '-_', '_-'];
+    }
     const quoteIf = (v) => (/[\s}"]/.test(v) ? '"' + v.replace(/"/g, '') + '"' : v);
     // an element's own toolbar styles as {color=... bg=...}, or '' when it has none
     const FONT_SIZES = { 1: '10px', 2: '13px', 3: '16px', 4: '18px', 5: '24px', 6: '32px', 7: '48px' };
@@ -335,8 +348,18 @@
             });
             // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
             str = str.replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, (m, pre, body) => pre + stash('<span class="sparklet-text" spellcheck="false">\u0002' + triggers(body) + '\u0003</span>'));
-            // __strike__ and _underline_ hugging the words (never inside snake_case words, and not a [__ fill-in blank)
-            str = str.replace(/(^|[^\w_\[])__(?=[^\s_])([^\n]*?[^\s_])__(?![\w_\]])/g, (m, pre, body) => pre + stash('<s>\u0002' + triggers(body) + '\u0003</s>'));
+            // [color]__underline__, [color]~_wavy underline_~ and [color]-_strike_-, hugging the words (the [color] is optional: a code like R or a #hex)
+            // (the old single _underline_ still reads as an underline too; never inside snake_case words, and not a [__ fill-in blank)
+            const decoTag = (kind, c, body, pre) => {
+                const col = c ? (DECO_PAL[c] || (/^#/.test(c) ? c : '')) : '';
+                if (c && !col) return null;
+                const st = col ? ' style="text-decoration-color:' + col + '"' : '';
+                const open = kind === 's' ? '<s' + st + '>' : kind === 'w' ? '<u class="kd-wavy"' + st + '>' : '<u' + st + '>';
+                return pre + stash(open + '\u0002' + triggers(body) + '\u0003</' + (kind === 's' ? 's' : 'u') + '>');
+            };
+            str = str.replace(/(^|[^\w\[])(?:\[(#[0-9a-fA-F]{3,8}|[A-Z]{1,2})\])?~_(?=[^\s_])([^\n]*?[^\s_])_~(?!\w)/g, (m, pre, c, body) => decoTag('w', c, body, pre) || m);
+            str = str.replace(/(^|[^\w\[-])(?:\[(#[0-9a-fA-F]{3,8}|[A-Z]{1,2})\])?-_(?=[^\s_])([^\n]*?[^\s_])_-(?!\w)/g, (m, pre, c, body) => decoTag('s', c, body, pre) || m);
+            str = str.replace(/(^|[^\w_\[])(?:\[(#[0-9a-fA-F]{3,8}|[A-Z]{1,2})\])?__(?=[^\s_])([^\n]*?[^\s_])__(?![\w_\]])/g, (m, pre, c, body) => decoTag('u', c, body, pre) || m);
             str = str.replace(/(^|[^\w_\[])_(?=[^\s_])([^_\n]*?[^\s_])_(?![\w_\]])/g, (m, pre, body) => pre + stash('<u>\u0002' + triggers(body) + '\u0003</u>'));
             return str;
         };
@@ -562,8 +585,7 @@
         }
         if (tag === 'STRONG' || tag === 'B') return wrap('**', kids());
         if (tag === 'EM' || tag === 'I') return wrap('*', kids());
-        if (tag === 'U') return wrap('_', kids());
-        if (tag === 'S' || tag === 'STRIKE' || tag === 'DEL') return wrap('__', kids());
+        if (tag === 'U' || tag === 'S' || tag === 'STRIKE' || tag === 'DEL') { const mk = decoMarks(el); const m = /^(\s*)([\s\S]*?)(\s*)$/.exec(kids()); return m[2] ? m[1] + mk[0] + m[2] + mk[1] + m[3] : kids(); }
         if (tag === 'CODE') { const ic = /kd-ic-(\w+)/.exec(el.className || ''); return wrap('`', el.textContent) + (ic ? '{' + ic[1] + '}' : ''); }
         if (tag === 'MARK' && (el.classList.contains('an-hl') || el.classList.contains('wa-hl'))) {
             const color = (Array.from(el.classList).find((c) => /^an-hl-/.test(c)) || 'an-hl-yellow').slice(6);
@@ -1437,8 +1459,7 @@
             if (n.classList.contains('kd-esc')) { out += '\\' + n.textContent; return; }
             if (t === 'EM' || t === 'I') { out += '*' + lineSource(n) + '*'; return; }
             if (t === 'STRONG' || t === 'B') { out += '**' + lineSource(n) + '**'; return; }
-            if (t === 'U') { out += '_' + lineSource(n) + '_'; return; }
-            if (t === 'S' || t === 'STRIKE' || t === 'DEL') { out += '__' + lineSource(n) + '__'; return; }
+            if (t === 'U' || t === 'S' || t === 'STRIKE' || t === 'DEL') { const mk = decoMarks(n); out += mk[0] + lineSource(n) + mk[1]; return; }
             if (t === 'CODE') { const ic = /kd-ic-(\w+)/.exec(n.className || ''); out += '`' + n.textContent + '`' + (ic ? '{' + ic[1] + '}' : ''); return; }
             out += lineSource(n);
         });

@@ -116,6 +116,28 @@
         inp.click();
     }
 
+    // underline, wavy underline and strikethrough each remember the color last picked from their arrow (null = the text's own color)
+    const lastDeco = { u: null, w: null, s: null };
+    function decoRun(kind) { if (MORE().decorate) MORE().decorate(kind, lastDeco[kind], true); else fmt(kind === 's' ? 'strikethrough' : 'underline'); }
+    function decoPick(kind, c) { lastDeco[kind] = c || null; if (MORE().decorate) MORE().decorate(kind, c || ''); }
+    function decoMenu(kind, title) {
+        return [
+            { header: title },
+            { swatches: COLORS.map(function (c) { return { color: c, title: c, run: function () { decoPick(kind, c); } }; }) },
+            { sep: true },
+            { label: 'Automatic (the text color)', icon: 'reset', run: function () { decoPick(kind, null); } },
+            { label: 'More Colors…', icon: 'palette', run: function () {
+                const inp = document.createElement('input');
+                inp.type = 'color'; inp.value = lastDeco[kind] || '#e11d48';
+                inp.style.cssText = 'position:fixed;left:-40px;top:0;opacity:0';
+                document.body.appendChild(inp);
+                inp.addEventListener('change', function () { OS.restoreSelection(); decoPick(kind, inp.value); inp.remove(); });
+                inp.addEventListener('blur', function () { setTimeout(function () { inp.remove(); }, 400); });
+                inp.click();
+            } }
+        ];
+    }
+
     function swatchMenu(title, list, applyFn, swCls) {
         return [
             { header: title },
@@ -930,8 +952,9 @@
                     [
                         { glyph: 'B', glyphCls: 'b', title: 'Bold', kbd: '⌘B', run: function () { fmt('bold'); }, checked: function () { return inTag('b, strong'); } },
                         { glyph: 'I', glyphCls: 'it', title: 'Italic', kbd: '⌘I', run: function () { fmt('italic'); }, checked: function () { return inTag('i, em'); } },
-                        { glyph: 'U', glyphCls: 'u', title: 'Underline', kbd: '⌘U', run: function () { fmt('underline'); }, checked: function () { return inTag('u'); } },
-                        { glyph: 'ab', glyphCls: 's', title: 'Strikethrough', run: function () { fmt('strikethrough'); }, checked: function () { return inTag('s, strike, del'); } },
+                        { glyph: 'U', glyphCls: 'u', title: 'Underline (the arrow picks a color: Keydown [R]__text__)', kbd: '⌘U', run: function () { decoRun('u'); }, menu: function () { return decoMenu('u', 'Underline Color'); }, bar: function () { return lastDeco.u; }, checked: function () { return inTag('u:not(.kd-wavy)'); } },
+                        { glyph: 'U', glyphCls: 'uw', title: 'Wavy Underline (the arrow picks a color: Keydown ~_text_~ or [R]~_text_~)', run: function () { decoRun('w'); }, menu: function () { return decoMenu('w', 'Wavy Underline Color'); }, bar: function () { return lastDeco.w; }, checked: function () { return inTag('u.kd-wavy'); } },
+                        { glyph: 'ab', glyphCls: 's', title: 'Strikethrough (the arrow picks a color: Keydown -_text_- or [R]-_text_-)', run: function () { decoRun('s'); }, menu: function () { return decoMenu('s', 'Strikethrough Color'); }, bar: function () { return lastDeco.s; }, checked: function () { return inTag('s, strike, del'); } },
                         { icon: 'code', title: 'Inline Code (works at the caret too)', run: function () { if (MORE().code) MORE().code(); else inlineCode(); }, checked: function () { return inTag('code'); } },
                         { icon: 'smallCaps', title: 'Small Caps (Keydown {sc}text{/sc})', run: function () { if (MORE().emphasis) MORE().emphasis('sc'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('sc') : false; } },
                         { icon: 'superscript', title: 'Superscript', run: function () { if (MORE().script) MORE().script('superscript'); }, checked: function () { return inTag('sup'); } },
