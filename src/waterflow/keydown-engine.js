@@ -459,7 +459,7 @@ function kdRender(raw) {
     // &sparklet&: a lone & on each side, hugging the words (not inside a word like AT&T, and never part of &&)
     mtext = mtext.replace(/(^|[^\w&])&(?=[^\s&])([^\s&](?:[^&\n]*[^\s&])?)&(?![\w&])/g, (m, pre, inner) => pre + stash('<span class="sparklet-text">' + kdEscapeHtml(inner) + "</span>"));
     // [color]__underline__, [color]~_wavy underline_~ and [color]-_strike_-, hugging the words (the [color] is optional: a code like R or a #hex; the old single _underline_ works too)
-    const KD_DECO_PAL = {R:"#dc2626",O:"#ea580c",GL:"#d97706",Y:"#ca8a04",L:"#65a30d",G:"#16a34a",TU:"#059669",T:"#0d9488",C:"#0891b2",B:"#2563eb",PR:"#7c3aed",PK:"#db2777",SL:"#64748b"};
+    const KD_DECO_PAL = {"R": "#ef4444", "O": "#f97316", "GL": "#ea9f08", "Y": "#ead708", "L": "#84cc16", "G": "#10b981", "TU": "#30e5cd", "T": "#06b6d4", "C": "#30d3e5", "B": "#3b82f6", "PR": "#a855f7", "PK": "#ec4899", "SL": "#b4b4b4"};
     const kdDeco = (kind, c, inner, pre) => {
         const col = c ? (KD_DECO_PAL[c] || (/^#/.test(c) ? c : "")) : "";
         if (c && !col) return null;
@@ -5799,7 +5799,7 @@ fn onstart():
         if (!m) return String(v).trim().replace(/\s+/g, '');
         return '#' + hex2(+m[1]) + hex2(+m[2]) + hex2(+m[3]) + (m[4] !== undefined && +m[4] < 1 ? hex2(+m[4] * 255) : '');
     }
-    const DECO_PAL = {R:'#dc2626',O:'#ea580c',GL:'#d97706',Y:'#ca8a04',L:'#65a30d',G:'#16a34a',TU:'#059669',T:'#0d9488',C:'#0891b2',B:'#2563eb',PR:'#7c3aed',PK:'#db2777',SL:'#64748b'};
+    const DECO_PAL = {R:'#ef4444',O:'#f97316',GL:'#ea9f08',Y:'#ead708',L:'#84cc16',G:'#10b981',TU:'#30e5cd',T:'#06b6d4',C:'#30d3e5',B:'#3b82f6',PR:'#a855f7',PK:'#ec4899',SL:'#b4b4b4'};  // the Annotate / Draw ink colors
     // an underline/strike's own color as the [color] that goes before its markers: a code (R) for the palette colors, else #hex, else nothing
     function decoPrefix(el) {
         const c = el.style && el.style.textDecorationColor; if (!c) return '';

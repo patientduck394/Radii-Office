@@ -117,13 +117,15 @@
     }
 
     // underline, wavy underline and strikethrough each remember the color last picked from their arrow (null = the text's own color)
+    // the Annotate / Draw ink colors (the same ones the [R] [O] [GL]... codes mean)
+    const INK = [['Red', '#ef4444'], ['Orange', '#f97316'], ['Gold', '#ea9f08'], ['Yellow', '#ead708'], ['Lime', '#84cc16'], ['Green', '#10b981'], ['Turquoise', '#30e5cd'], ['Teal', '#06b6d4'], ['Cyan', '#30d3e5'], ['Blue', '#3b82f6'], ['Purple', '#a855f7'], ['Pink', '#ec4899'], ['Slate', '#b4b4b4']];
     const lastDeco = { u: null, w: null, s: null };
     function decoRun(kind) { if (MORE().decorate) MORE().decorate(kind, lastDeco[kind], true); else fmt(kind === 's' ? 'strikethrough' : 'underline'); }
     function decoPick(kind, c) { lastDeco[kind] = c || null; if (MORE().decorate) MORE().decorate(kind, c || ''); }
     function decoMenu(kind, title) {
         return [
             { header: title },
-            { swatches: COLORS.map(function (c) { return { color: c, title: c, run: function () { decoPick(kind, c); } }; }) },
+            { swatches: INK.map(function (c) { return { color: c[1], title: c[0], run: function () { decoPick(kind, c[1]); } }; }) },
             { sep: true },
             { label: 'Automatic (the text color)', icon: 'reset', run: function () { decoPick(kind, null); } },
             { label: 'More Colors…', icon: 'palette', run: function () {
@@ -952,9 +954,9 @@
                     [
                         { glyph: 'B', glyphCls: 'b', title: 'Bold', kbd: '⌘B', run: function () { fmt('bold'); }, checked: function () { return inTag('b, strong'); } },
                         { glyph: 'I', glyphCls: 'it', title: 'Italic', kbd: '⌘I', run: function () { fmt('italic'); }, checked: function () { return inTag('i, em'); } },
-                        { glyph: 'U', glyphCls: 'u', title: 'Underline (the arrow picks a color: Keydown [R]__text__)', kbd: '⌘U', run: function () { decoRun('u'); }, menu: function () { return decoMenu('u', 'Underline Color'); }, bar: function () { return lastDeco.u; }, checked: function () { return inTag('u:not(.kd-wavy)'); } },
-                        { glyph: 'U', glyphCls: 'uw', title: 'Wavy Underline (the arrow picks a color: Keydown ~_text_~ or [R]~_text_~)', run: function () { decoRun('w'); }, menu: function () { return decoMenu('w', 'Wavy Underline Color'); }, bar: function () { return lastDeco.w; }, checked: function () { return inTag('u.kd-wavy'); } },
-                        { glyph: 'ab', glyphCls: 's', title: 'Strikethrough (the arrow picks a color: Keydown -_text_- or [R]-_text_-)', run: function () { decoRun('s'); }, menu: function () { return decoMenu('s', 'Strikethrough Color'); }, bar: function () { return lastDeco.s; }, checked: function () { return inTag('s, strike, del'); } },
+                        { glyph: 'U', glyphCls: 'u', title: 'Underline (the arrow picks a color: Keydown [R]__text__)', kbd: '⌘U', run: function () { decoRun('u'); }, menu: function () { return decoMenu('u', 'Underline Ink'); }, bar: function () { return lastDeco.u; }, checked: function () { return inTag('u:not(.kd-wavy)'); } },
+                        { glyph: 'U', glyphCls: 'uw', title: 'Wavy Underline (the arrow picks a color: Keydown ~_text_~ or [R]~_text_~)', run: function () { decoRun('w'); }, menu: function () { return decoMenu('w', 'Wavy Underline Ink'); }, bar: function () { return lastDeco.w; }, checked: function () { return inTag('u.kd-wavy'); } },
+                        { glyph: 'ab', glyphCls: 's', title: 'Strikethrough (the arrow picks a color: Keydown -_text_- or [R]-_text_-)', run: function () { decoRun('s'); }, menu: function () { return decoMenu('s', 'Strikethrough Ink'); }, bar: function () { return lastDeco.s; }, checked: function () { return inTag('s, strike, del'); } },
                         { icon: 'code', title: 'Inline Code (works at the caret too)', run: function () { if (MORE().code) MORE().code(); else inlineCode(); }, checked: function () { return inTag('code'); } },
                         { icon: 'smallCaps', title: 'Small Caps (Keydown {sc}text{/sc})', run: function () { if (MORE().emphasis) MORE().emphasis('sc'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('sc') : false; } },
                         { icon: 'superscript', title: 'Superscript', run: function () { if (MORE().script) MORE().script('superscript'); }, checked: function () { return inTag('sup'); } },

@@ -512,7 +512,7 @@ A toast chip cousin that is a pile of notifications: the toast card with two mor
 
 ## Underlines and strikethrough
 
-Underline, wavy underline and strikethrough each have their own marks, and each can have its own color! Put a color in square brackets right before the opening marks: a color code (R O GL Y L G TU T C B PR PK SL) or a `#hex`:
+Underline, wavy underline and strikethrough each have their own marks, and each can have its own color! Put a color in square brackets right before the opening marks: a color code (R O GL Y L G TU T C B PR PK SL, the same ink colors as Annotate and Draw) or a `#hex`:
 
 * `__text__` __underline__
 * `~_text_~` ~_wavy underline_~ (a fine wave, the same thickness as the straight underline)
@@ -521,7 +521,7 @@ Underline, wavy underline and strikethrough each have their own marks, and each 
 * `[#2563eb]~_text_~` [#2563eb]~_blue wavy underline_~
 * `[G]-_text_-` [G]-_green strikethrough_-
 
-In Writeout, the Font ribbon has an Underline, a Wavy Underline and a Strikethrough button, and each has an arrow with the same colors as Font Color! The old single `_text_` still reads as an underline.
+In Writeout, the Font ribbon has an Underline, a Wavy Underline and a Strikethrough button, and each has an arrow with the Annotate and Draw ink colors (plus More Colors)! The old single `_text_` still reads as an underline.
 
 ## Custom emoji and symbols
 
