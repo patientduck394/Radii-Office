@@ -25,7 +25,7 @@ OpenDB has three collections:
 
 ## How it works
 
-Every entry is a small text file with a few facts at the top (its title, summary, tags and dates) and the content below, written in **Keydown**, the formatting language used across Radii Office. Keydown gives entries headings, lists and glossy styles like =B=gel orbs=B=, #G#bubble chips#, ^^B^speech bubbles^^, #Y#gel highlights## and %16%PK%Gel Lavales%##, and entries can include LaTeX math such as $e^{i\pi} + 1 = 0$. The files live in a public repository, so every change is recorded and reviewable. When you contribute, OpenDB prepares the file for you and you submit it as a proposal, which a maintainer reviews before it appears for everyone.
+Every entry is a small text file with a few facts at the top (its title, summary, tags and dates) and the content below, written in **Keydown**, the formatting language used across Radii Office. Keydown gives entries headings, lists and glossy styles like =B=gel orbs=B=, #G#bubble chips#, ^^B^speech bubbles^^, #Y#gel highlights## and %16%PK%Gel Sparkles%##, and entries can include LaTeX math such as $e^{i\pi} + 1 = 0$. The files live in a public repository, so every change is recorded and reviewable. When you contribute, OpenDB prepares the file for you and you submit it as a proposal, which a maintainer reviews before it appears for everyone.
 
 Articles can also hold quotes and callout boxes, written as lines that start with `> `:
 

@@ -7472,24 +7472,27 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 .gel-glaze-black { --gz-c: #919191; --gz-e: #454545; --gz-i: #222222; }
 
 /* ========================================================
-   GEL LAVA (#/R/text/) and GEL LABEL (#&R&text&): two more Gel chips, in the Bubble Chip's 16 colors!
-   Lava: a solid Gel pill with lighter blobs floating inside it, like a lava lamp.
+   PLUSH CHIP (#/R/text/) and GEL LABEL (#&R&text&): two more Gel chips, in the Bubble Chip's 16 colors!
+   Plush: a soft, puffy, pillow-like chip with no outline (a new chip category, ready for cousins).
    Label: a pale Gel tag with a dashed stitched line inside its edge, like a stamp.
    ======================================================== */
-.gel-lava-chip {
-  --gv-c: #3b82f6; --gv-e: #2563eb; --gv-i: #172554;
-  position: relative;
+.plush-chip {
+  --pl-c: #3b82f6; --pl-e: #2563eb; --pl-i: #172554;
+  position: relative; isolation: isolate;
   display: inline-flex !important; align-items: center; justify-content: center;
-  padding: 2px 13px; border-radius: 12px; border: 2px solid var(--gv-e); color: var(--gv-i);
-  font-family: inherit; font-weight: 800; white-space: nowrap; margin: 0 2px; vertical-align: middle;
-  background:
-    radial-gradient(circle at 14% 78%, color-mix(in srgb, var(--gv-c) 35%, white) 0 0.34em, transparent 0.36em),
-    radial-gradient(circle at 46% 22%, color-mix(in srgb, var(--gv-c) 42%, white) 0 0.24em, transparent 0.26em),
-    radial-gradient(circle at 80% 70%, color-mix(in srgb, var(--gv-c) 30%, white) 0 0.4em, transparent 0.42em),
-    radial-gradient(circle at 92% 20%, color-mix(in srgb, var(--gv-c) 40%, white) 0 0.2em, transparent 0.22em),
-    linear-gradient(180deg, color-mix(in srgb, var(--gv-c) 70%, white) 0%, var(--gv-c) 100%);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.7), inset 0 -3px 5px color-mix(in srgb, var(--gv-e) 40%, transparent);
-  transition: background-color 0.35s ease, border-color 0.35s ease;
+  padding: 3px 15px; border-radius: 999px; border: 0; color: var(--pl-i);
+  font-family: inherit; font-weight: 800; white-space: nowrap; margin: 0 3px 4px; vertical-align: middle;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pl-c) 62%, white) 0%, var(--pl-c) 100%);
+  box-shadow:
+    inset 0 0.14em 0.22em rgba(255, 255, 255, 0.75),
+    inset 0 -0.26em 0.34em color-mix(in srgb, var(--pl-e) 55%, transparent),
+    0 0.2em 0.42em color-mix(in srgb, var(--pl-c) 50%, transparent);
+  transition: background-color 0.35s ease, box-shadow 0.35s ease;
+}
+.plush-chip::before {
+  content: ""; position: absolute; z-index: -1; top: 0.1em; left: 0.55em; right: 0.55em; height: 0.3em; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6); filter: blur(0.05em); pointer-events: none;
 }
 .gel-label-chip {
   --gl-c: #3b82f6; --gl-e: #2563eb; --gl-i: #172554;
@@ -7505,22 +7508,22 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   content: ""; position: absolute; z-index: -1; inset: 2px; border-radius: 3px; pointer-events: none;
   border: 1.5px dashed color-mix(in srgb, var(--gl-e) 70%, transparent);
 }
-.gel-lava-red { --gv-c: #ef4444; --gv-e: #dc2626; --gv-i: #450a0a; }
-.gel-lava-orange { --gv-c: #f97316; --gv-e: #ea580c; --gv-i: #431407; }
-.gel-lava-gold { --gv-c: #ea9f08; --gv-e: #ca8a04; --gv-i: #451a03; }
-.gel-lava-yellow { --gv-c: #ead708; --gv-e: #caa604; --gv-i: #452b03; }
-.gel-lava-lime { --gv-c: #84cc16; --gv-e: #65a30d; --gv-i: #1a2e05; }
-.gel-lava-green { --gv-c: #10b981; --gv-e: #059669; --gv-i: #022c22; }
-.gel-lava-turquoise { --gv-c: #30e5cd; --gv-e: #26b1a5; --gv-i: #044439; }
-.gel-lava-teal { --gv-c: #06b6d4; --gv-e: #0891b2; --gv-i: #083344; }
-.gel-lava-cyan { --gv-c: #30d3e5; --gv-e: #26a3b1; --gv-i: #043e44; }
-.gel-lava-blue { --gv-c: #3b82f6; --gv-e: #2563eb; --gv-i: #172554; }
-.gel-lava-purple { --gv-c: #a855f7; --gv-e: #9333ea; --gv-i: #2e1065; }
-.gel-lava-pink { --gv-c: #ec4899; --gv-e: #db2777; --gv-i: #4c0519; }
-.gel-lava-white { --gv-c: #f3f3f3; --gv-e: #b3b3b3; --gv-i: #7a7a7a; }
-.gel-lava-fog { --gv-c: #d9d9d9; --gv-e: #808080; --gv-i: #404040; }
-.gel-lava-slate { --gv-c: #b4b4b4; --gv-e: #6f6f6f; --gv-i: #363636; }
-.gel-lava-black { --gv-c: #919191; --gv-e: #454545; --gv-i: #222222; }
+.plush-red { --pl-c: #ef4444; --pl-e: #dc2626; --pl-i: #450a0a; }
+.plush-orange { --pl-c: #f97316; --pl-e: #ea580c; --pl-i: #431407; }
+.plush-gold { --pl-c: #ea9f08; --pl-e: #ca8a04; --pl-i: #451a03; }
+.plush-yellow { --pl-c: #ead708; --pl-e: #caa604; --pl-i: #452b03; }
+.plush-lime { --pl-c: #84cc16; --pl-e: #65a30d; --pl-i: #1a2e05; }
+.plush-green { --pl-c: #10b981; --pl-e: #059669; --pl-i: #022c22; }
+.plush-turquoise { --pl-c: #30e5cd; --pl-e: #26b1a5; --pl-i: #044439; }
+.plush-teal { --pl-c: #06b6d4; --pl-e: #0891b2; --pl-i: #083344; }
+.plush-cyan { --pl-c: #30d3e5; --pl-e: #26a3b1; --pl-i: #043e44; }
+.plush-blue { --pl-c: #3b82f6; --pl-e: #2563eb; --pl-i: #172554; }
+.plush-purple { --pl-c: #a855f7; --pl-e: #9333ea; --pl-i: #2e1065; }
+.plush-pink { --pl-c: #ec4899; --pl-e: #db2777; --pl-i: #4c0519; }
+.plush-white { --pl-c: #f3f3f3; --pl-e: #b3b3b3; --pl-i: #7a7a7a; }
+.plush-fog { --pl-c: #d9d9d9; --pl-e: #808080; --pl-i: #404040; }
+.plush-slate { --pl-c: #b4b4b4; --pl-e: #6f6f6f; --pl-i: #363636; }
+.plush-black { --pl-c: #919191; --pl-e: #454545; --pl-i: #222222; }
 .gel-label-red { --gl-c: #ef4444; --gl-e: #dc2626; --gl-i: #450a0a; }
 .gel-label-orange { --gl-c: #f97316; --gl-e: #ea580c; --gl-i: #431407; }
 .gel-label-gold { --gl-c: #ea9f08; --gl-e: #ca8a04; --gl-i: #451a03; }
