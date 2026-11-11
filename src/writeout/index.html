@@ -3,6 +3,24 @@
 <head>
     <script src="radii-file.js?v=20261211a"></script>
     <script>RadiiFile.scope(/^(writedown_save_slot_|writeout_tabs_v1$|writeout_tabs_active$|writeout_doc_password$|writeout_collab_backup$)/);</script>
+    <script>
+    // Opening plain /writeout lands on the document you were last in (not always the main one)! Skipped when you come from inside Writeout itself,
+    // so choosing the main document in File > Documents still opens it, and when the last document was deleted.
+    (function () {
+        try {
+            var K = 'radii_last_doc_writeout', RF = window.RadiiFile, ls = window.localStorage;
+            if (RF.id) { ls.setItem(K, RF.id); return; }
+            var last = ls.getItem(K) || '', fromHere = false;
+            try { var ref = new URL(document.referrer); fromHere = ref.origin === location.origin && /\/writeout(\/|$)/.test(ref.pathname); } catch (e) {}
+            if (!last) return;
+            if (fromHere || location.search) { ls.setItem(K, ''); return; }
+            var known = false;
+            try { known = !!(JSON.parse(ls.getItem('radii_docs_writeout') || '{}').docs || {})[last]; } catch (e) {}
+            if (!RF.size(last) && !known) { ls.setItem(K, ''); return; }
+            location.replace(RF.link(last) + location.hash);
+        } catch (e) {}
+    })();
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
