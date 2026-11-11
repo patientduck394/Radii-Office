@@ -6396,8 +6396,9 @@
 }
 
 /* ========================================================
-   RIM JELLY CHIPS (!!*R#text#): a Rim Chip cousin made of jelly. Same size and thick rim, but a solid juicy body of the color, a big wet shine
-   across the top, a soft glow where the jelly pools along the bottom and an outer glow. Words are white (deep ink on the light colors).
+   RIM JELLY CHIPS (!!*R#text#): a Rim Chip cousin that is a blob of jelly. Same size, thick rim, shine sliver, white inner glow and deep colored
+   words as the Rim Chip, but the body is see-through colored jelly: dense at the top, thinning in the middle, pooling again at the bottom,
+   with light caught inside along the bottom edge, a dark inner shade under the top rim, a round glint and a soft shadow underneath.
    ======================================================== */
 .gel-rimjelly-chip {
   display: inline-flex !important; align-items: center; justify-content: center;
@@ -6405,21 +6406,24 @@
   padding: 0.034em 0.4em 0; margin: 0 2px; border-radius: 0.667em;
   border: 0.133em solid var(--rc-rim, #04c3ca);
   line-height: 1.216; min-height: 1.216em; letter-spacing: 0.019em; font-weight: 700; white-space: nowrap; vertical-align: middle;
-  color: #fff; text-shadow: 0 0.04em 0.09em rgba(0, 0, 0, 0.5);
-  background: linear-gradient(180deg, #5fe0e4, #04c3ca);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 78%, #fff) 0%, var(--rc-fill, #02fff1) 48%, color-mix(in srgb, var(--rc-fill, #02fff1) 80%, var(--rc-rim, #04c3ca)) 100%);
-  box-shadow: 0 0.05em 0.26em color-mix(in srgb, var(--rc-fill, #02fff1) 50%, transparent);
+  color: var(--rc-ink, #219a9e); text-shadow: 0 0.03em 0 rgba(255, 255, 255, 0.5);
+  background: linear-gradient(180deg, #8ceff2, #c9f7f8);
+  background:
+    radial-gradient(circle at 0.34em 0.3em, rgba(255, 255, 255, 0.95) 0 0.045em, rgba(255, 255, 255, 0) 0.1em),
+    radial-gradient(ellipse 72% 58% at 50% 108%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 72%),
+    linear-gradient(180deg,
+      color-mix(in srgb, color-mix(in srgb, var(--rc-fill, #02fff1) 72%, #fff) 88%, transparent) 0%,
+      color-mix(in srgb, color-mix(in srgb, var(--rc-fill, #02fff1) 50%, #fff) 62%, transparent) 45%,
+      color-mix(in srgb, color-mix(in srgb, var(--rc-fill, #02fff1) 62%, #fff) 80%, transparent) 100%);
+  box-shadow: 0 0.1em 0.12em -0.03em color-mix(in srgb, var(--rc-fill, #02fff1) 55%, transparent), 0 0.16em 0.3em color-mix(in srgb, var(--rc-fill, #02fff1) 28%, transparent);
 }
 .gel-rimjelly-chip::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none;
-  left: 0.3em; right: 0.3em; top: 0.07em; height: 0.46em; border-radius: 0.3em / 0.24em;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.12) 100%);
+  left: 0.38em; right: 0.38em; top: 0.08em; height: 0.3em; border-radius: 0.26em / 0.14em;
+  background: linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0.1) 100%);
 }
 .gel-rimjelly-chip::after {
   content: ''; position: absolute; pointer-events: none; inset: -0.133em; border-radius: inherit;
-  box-shadow: inset 0 0 0.09em 0.01em rgba(253, 255, 255, 0.7), inset 0 -0.2em 0.2em -0.05em rgba(255, 255, 255, 0.38);
+  box-shadow: inset 0 0 0.09em 0.01em rgba(253, 255, 255, 0.9), inset 0 0.14em 0.16em -0.04em color-mix(in srgb, var(--rc-rim, #04c3ca) 55%, transparent), inset 0 -0.2em 0.18em -0.08em rgba(255, 255, 255, 0.55);
 }
-.gel-rimjelly-chip.gel-rim-gold, .gel-rimjelly-chip.gel-rim-yellow, .gel-rimjelly-chip.gel-rim-lime, .gel-rimjelly-chip.gel-rim-turquoise, .gel-rimjelly-chip.gel-rim-cyan, .gel-rimjelly-chip.gel-rim-white, .gel-rimjelly-chip.gel-rim-fog {
-  color: color-mix(in srgb, var(--rc-ink, #219a9e) 55%, #000); text-shadow: 0 0.04em 0 rgba(255, 255, 255, 0.5);
-}
-.gel-rimjelly-chip.gel-rim-white { --rc-fill: #f4f7fa; }
+.gel-rimjelly-chip.gel-rim-white { --rc-fill: #dfe6ee; }
