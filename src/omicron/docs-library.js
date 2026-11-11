@@ -78,7 +78,7 @@
         input.addEventListener('dblclick', function () { input.readOnly = false; input.focus(); input.select(); });
         input.addEventListener('blur', function () { input.readOnly = true; });
     };
-    const go = function (id) { setTimeout(function () { location.href = RF.link(id); }, 220); };
+    const go = function (id) { try { window.localStorage.setItem('radii_last_doc_' + (cfgRef ? cfgRef.key : 'app'), id); } catch (e) {} setTimeout(function () { location.href = RF.link(id); }, 220); };
 
     function newDocument(r) {
         const id = RF.newId();
