@@ -844,7 +844,7 @@
         if (e.fork) h.push('fork: ' + e.fork);
         if (e.preview && e.preview !== 'auto') h.push('preview: ' + e.preview);
         h.push('created: ' + e.created, 'updated: ' + (e.updated || e.created), 'authors: ' + yamlList(e.authors), 'license: CC0-1.0');
-        if (e.type === 'media') { h.push('file: media/' + e.id + extOf(e), 'mime: ' + (e.mime || '')); if (e.width) h.push('width: ' + e.width, 'height: ' + e.height); if (e.duration) h.push('duration: ' + Math.round(e.duration * 10) / 10); }
+        if (e.type === 'media') { h.push('file: ' + (e.file && !e.dataUrl ? e.file : 'media/' + e.id + extOf(e)), 'mime: ' + (e.mime || '')); if (e.width) h.push('width: ' + e.width, 'height: ' + e.height); if (e.duration) h.push('duration: ' + Math.round(e.duration * 10) / 10); }
         Object.entries(e.infobox || {}).forEach(([k, v]) => h.push('infobox.' + String(k).replace(/[:\n]/g, ' ').trim() + ': ' + yamlStr(String(v).replace(/\n/g, ' '))));
         h.push('---');
         return h.join('\n') + '\n' + String(e.body || '').trim() + '\n';
@@ -933,7 +933,8 @@
                 });
             }
             if (!$('f-cc0').checked) p.push('Tick the public domain (CC0) box: everything in OpenDB is free for everyone!');
-            if (publishing && type === 'media' && !e.dataUrl) p.push('Choose the file again so it can be included!');
+            // an entry that is already on GitHub keeps its file when only the words change, so there is nothing to choose again! A brand new entry (or one only saved here) still needs its file included
+            if (publishing && type === 'media' && !e.dataUrl && !(base && !base.local && e.file)) p.push('Choose the file again so it can be included!');
             return p;
         }
         function preview() {
@@ -1211,6 +1212,7 @@
         let steps;
         if (existing) {
             steps = '<ol><li>Your new version is copied below (and to your clipboard)!</li><li><a href="' + editUrl + '" target="_blank" rel="noopener noreferrer">Open the entry on GitHub</a>, select everything in the editor and paste!</li><li>Choose “Propose changes”. A maintainer reviews it, and then it is live for everyone!</li></ol>';
+            if (e.type === 'media' && e.dataUrl) { downloadUrl(e.id + extOf(e), e.dataUrl); steps = steps.replace('</ol>', '<li>You chose a new file, so <b>' + esc(e.id + extOf(e)) + '</b> was downloaded too: <a href="' + uploadMedia + '" target="_blank" rel="noopener noreferrer">upload it to the media folder</a> (it replaces the old one)!</li></ol>'); }
             copy(md);
         } else if (e.type === 'media') {
             download(e.id + '.kd', md, 'text/plain');
