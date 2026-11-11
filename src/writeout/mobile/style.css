@@ -191,7 +191,7 @@ h3 {
 #wysiwyg-canvas h1 { color: #0284c7; font-weight: 800; border-bottom: 3px solid #38bdf8; padding-bottom: 6px; margin: 15px 0; }
 #wysiwyg-canvas h2 { color: #059669; font-weight: 700; margin: 20px 0 8px 0; }
 #wysiwyg-canvas h3 { color: #d97706; font-size: 18px; margin: 15px 0 5px 0; }
-#wysiwyg-canvas blockquote { background: #f4f9fe; border-left: 4px solid #9cc9ec; margin: 15px 0; padding: 10px 20px; color: #3c5670; font-style: normal; border-radius: 0 8px 8px 0; }
+#wysiwyg-canvas blockquote { background: linear-gradient(90deg, rgba(156, 201, 236, 0.28) 0%, rgba(156, 201, 236, 0.03) 100%); border-left: 4px solid #9cc9ec; margin: 15px 0; padding: 10px 20px; color: #3c5670; font-style: normal; border-radius: 0 8px 8px 0; }
 #wysiwyg-canvas code { background: linear-gradient(180deg, #f1f5f9 0%, #e2e8f0 100%); border: 1px solid #cbd5e1; color: #475569; padding: 3px 6px; border-radius: 5px; font-size: 14px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-family: monospace; }
 
 /* 12-Color Liquid Gel Highlighter spectrum */

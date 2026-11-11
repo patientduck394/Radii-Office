@@ -4,7 +4,7 @@
 #wysiwyg-canvas h2 { color: #059669; font-weight: 700; margin: 20px 0 8px 0; }
 #wysiwyg-canvas h3 { color: #d97706; font-size: 18px; margin: 15px 0 5px 0; }
 #wysiwyg-canvas blockquote {
-    background: #f4f9fe;
+    background: linear-gradient(90deg, rgba(156, 201, 236, 0.28) 0%, rgba(156, 201, 236, 0.03) 100%);
     border-left: 4px solid #9cc9ec; margin: 15px 0; padding: 10px 20px; color: #3c5670; font-style: normal; border-radius: 0 8px 8px 0;
     transition: background-color 0.35s ease, border-color 0.35s ease;
 }
@@ -2846,7 +2846,7 @@
 .header-2 { color: #059669; font-weight: 700; margin: 20px 0 8px 0; font-size: 1.5em; }
 .header-3 { color: #d97706; font-size: 18px; margin: 15px 0 5px 0; font-size: 1.17em; }
 .blockquote-list {
-    background: #f4f9fe;
+    background: linear-gradient(90deg, rgba(156, 201, 236, 0.28) 0%, rgba(156, 201, 236, 0.03) 100%);
     border-left: 4px solid #9cc9ec; margin: 15px 0; padding: 10px 20px; color: #3c5670; font-style: normal; border-radius: 0 8px 8px 0;
     transition: background-color 0.35s ease, border-color 0.35s ease;
 }

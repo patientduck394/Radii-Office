@@ -111,7 +111,7 @@ h1.page { font-family: var(--serif); font-size: 32px; font-weight: 600; margin-b
 .kd-doc p, .kd-doc ul, .kd-doc ol, .kd-doc blockquote, .kd-doc pre, .kd-doc figure { margin: 0 0 14px; }
 .kd-doc ul, .kd-doc ol { padding-left: 26px; }
 .kd-doc li { margin: 3px 0; }
-.kd-doc blockquote { border-left: 4px solid #9cc9ec; padding: 4px 14px; color: var(--ink-2); background: #f4f9fe; border-radius: 0 10px 10px 0; }
+.kd-doc blockquote { border-left: 4px solid #9cc9ec; padding: 4px 14px; color: var(--ink-2); background: linear-gradient(90deg, rgba(156, 201, 236, 0.28) 0%, rgba(156, 201, 236, 0.03) 100%); border-radius: 0 10px 10px 0; }
 .kd-doc code { font-family: var(--mono); font-size: 0.86em; background: #eef4fa; border: 1px solid #dbe7f2; padding: 1px 5px; border-radius: 6px; }
 .kd-doc pre { background: #0f2236; color: #dff1ff; padding: 12px 14px; border-radius: 12px; overflow: auto; }
 .kd-doc pre code { background: none; border: 0; padding: 0; color: inherit; }

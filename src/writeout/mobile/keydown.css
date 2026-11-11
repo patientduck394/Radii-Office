@@ -21,7 +21,7 @@
 }
 
 #wysiwyg-canvas blockquote {
-  background: #f4f9fe;
+  background: linear-gradient(90deg, rgba(156, 201, 236, 0.28) 0%, rgba(156, 201, 236, 0.03) 100%);
   border-left: 4px solid #9cc9ec;
   margin: 15px 0;
   padding: 10px 20px;
@@ -4110,7 +4110,7 @@
 }
 
 .blockquote-list {
-  background: #f4f9fe;
+  background: linear-gradient(90deg, rgba(156, 201, 236, 0.28) 0%, rgba(156, 201, 236, 0.03) 100%);
   border-left: 4px solid #9cc9ec;
   margin: 15px 0;
   padding: 10px 20px;
