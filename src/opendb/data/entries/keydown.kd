@@ -218,7 +218,7 @@ A lens-shaped Bubble Chip cousin, with the gel glowing out from the center and a
 
 ## Gel aqua chips
 
-A glossy raised Gel pill: light on top, a sharp horizon across the middle, fine pinstripes and a bright gloss cap, like an old Aqua button! Written `#@color@text@`, in the Bubble Chip's 16 colors:
+The Bubble Chip gel in the Rim Chip pill: color on top melting to clear, a shine bar, a white inner glow and a pool of color along the bottom, like water in a glass! Written `#@color@text@`, in the Bubble Chip's 16 colors:
 
 * `#@R@text@` #@R@red@
 * `#@O@text@` #@O@orange@
@@ -237,9 +237,9 @@ A glossy raised Gel pill: light on top, a sharp horizon across the middle, fine 
 * `#@SL@text@` #@SL@slate@
 * `#@BK@text@` #@BK@black@
 
-## Gel well chips
+## Gel glaze chips
 
-The opposite of Gel Aqua: a Gel slot pressed into the page, with a dark shadow at the top, a glowing floor and a bright lip along the bottom edge! Written `#?color?text?`, in the same 16 colors:
+A chunky pale glazed Gel button with a glossy bar on top and a solid colored lip underneath, like a pressed key! Written `#?color?text?`, in the same 16 colors:
 
 * `#?R?text?` #?R?red?
 * `#?O?text?` #?O?orange?
