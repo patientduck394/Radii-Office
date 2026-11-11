@@ -1,4 +1,5 @@
 ---
+format: keydown-text
 id: poolside-style-image
 type: media
 title: Poolside style picture
@@ -8,9 +9,11 @@ created: 2026-11-11
 updated: 2026-11-11
 authors: [OpenDB contributors]
 license: CC0-1.0
-file: media/poolside-style.svg
+file: media/poolside-style-image.svg
 mime: image/svg+xml
 width: 800
 height: 450
 ---
+{{file improvement}}
+
 A picture for the [[poolside-style|Poolside style]]: clear cyan-to-blue water over a pale tile floor, two orange lane ropes and a blue one, a striped life ring, orange buoys with white dots, bubbles and a small sun on the deck. The orange stays crisp and solid, and never blends into the water. Drawn as a vector image, so it stays sharp at any size!
