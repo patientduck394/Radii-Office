@@ -21498,3 +21498,37 @@ mark.an-hl.an-s-dl { background: color-mix(in srgb, var(--hl-c) 14%, transparent
 mark.an-hl.an-s-sp { background: radial-gradient(ellipse 62% 105% at 50% 55%, color-mix(in srgb, var(--hl-c) 80%, transparent) 0%, color-mix(in srgb, var(--hl-c) 36%, transparent) 55%, color-mix(in srgb, var(--hl-c) 0%, transparent) 100%); padding: 0.1em 0.6em; margin: 0 -0.6em; border-radius: 999px; }
 /* Leaf: opposite corners rounded wide, like a leaf */
 mark.an-hl.an-s-lf { background: color-mix(in srgb, var(--hl-c) 42%, transparent); border: 2px solid var(--hl-edge); border-radius: 0.9em 0 0.9em 0; padding: 0.05em 0.55em; margin: 0 -0.55em; }
+
+/* ========================================================
+   TWELVE EVEN MORE ANNOTATE HIGHLIGHT STYLES, written by name: #R.underbar(words) ... in every highlight color (var --hl-c / --hl-edge)!
+   underbar, overbar, zigzag, dotted, sunken, glass, pinstripe, band, misprint, ring, dashline, weave
+   ======================================================== */
+mark.an-hl.an-s-ub, mark.an-hl.an-s-ob, mark.an-hl.an-s-zz, mark.an-hl.an-s-dt, mark.an-hl.an-s-sk, mark.an-hl.an-s-gs,
+mark.an-hl.an-s-pn, mark.an-hl.an-s-bn, mark.an-hl.an-s-mp, mark.an-hl.an-s-rg, mark.an-hl.an-s-dn, mark.an-hl.an-s-wv {
+    border: 0; box-shadow: none; background: none; border-radius: 3px; padding: 0.05em 0.3em; margin: 0 -0.3em;
+    -webkit-box-decoration-break: clone; box-decoration-break: clone;
+}
+/* Underbar: just a thick colored bar under the words */
+mark.an-hl.an-s-ub { border-bottom: 0.24em solid var(--hl-c); border-radius: 0; padding: 0 0.15em; margin: 0 -0.15em; }
+/* Overbar: a thick bar over the words, with a faint tint */
+mark.an-hl.an-s-ob { border-top: 0.24em solid var(--hl-edge); border-radius: 0; background: color-mix(in srgb, var(--hl-c) 12%, transparent); }
+/* Zigzag: a sawtooth line along the bottom */
+mark.an-hl.an-s-zz { padding-bottom: 0.2em; background: linear-gradient(135deg, var(--hl-edge) 25%, transparent 25%) 0 100% / 0.4em 0.2em repeat-x, linear-gradient(225deg, var(--hl-edge) 25%, transparent 25%) 0 100% / 0.4em 0.2em repeat-x, color-mix(in srgb, var(--hl-c) 12%, transparent); }
+/* Dotted: round dots under the words, with a faint tint */
+mark.an-hl.an-s-dt { border-bottom: 0.2em dotted var(--hl-edge); border-radius: 0; background: color-mix(in srgb, var(--hl-c) 12%, transparent); }
+/* Sunken: pressed into the page, like a slot */
+mark.an-hl.an-s-sk { background: color-mix(in srgb, var(--hl-c) 22%, transparent); box-shadow: inset 0 0.12em 0.22em color-mix(in srgb, var(--hl-edge) 60%, transparent), 0 1px 0 rgba(255, 255, 255, 0.8); }
+/* Glass: two tones with a sharp horizon, like a glossy button */
+mark.an-hl.an-s-gs { background: linear-gradient(180deg, color-mix(in srgb, var(--hl-c) 38%, transparent) 0 50%, color-mix(in srgb, var(--hl-c) 70%, transparent) 50% 100%); border: 1px solid color-mix(in srgb, var(--hl-edge) 75%, transparent); border-radius: 0.3em; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7); }
+/* Pinstripe: fine vertical stripes between two edge lines */
+mark.an-hl.an-s-pn { background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--hl-c) 46%, transparent) 0 2px, color-mix(in srgb, var(--hl-c) 12%, transparent) 2px 4px); border-top: 2px solid var(--hl-edge); border-bottom: 2px solid var(--hl-edge); border-radius: 0; }
+/* Band: a soft glowing band that fades away above and below */
+mark.an-hl.an-s-bn { background: linear-gradient(180deg, color-mix(in srgb, var(--hl-c) 0%, transparent) 0%, color-mix(in srgb, var(--hl-c) 70%, transparent) 50%, color-mix(in srgb, var(--hl-c) 0%, transparent) 100%); border-radius: 0; padding: 0.15em 0.3em; }
+/* Misprint: two colored copies slightly off to the side, like a badly lined-up print */
+mark.an-hl.an-s-mp { box-shadow: 0.16em 0.12em 0 color-mix(in srgb, var(--hl-c) 62%, transparent), -0.12em -0.08em 0 color-mix(in srgb, var(--hl-edge) 30%, transparent); }
+/* Ring: just a round outline, no fill */
+mark.an-hl.an-s-rg { border: 2px solid var(--hl-edge); border-radius: 999px; padding: 0.02em 0.5em; margin: 0 -0.5em; }
+/* Dashline: a dashed line under the words, with a faint tint */
+mark.an-hl.an-s-dn { border-bottom: 2px dashed var(--hl-edge); border-radius: 0; background: color-mix(in srgb, var(--hl-c) 16%, transparent); }
+/* Weave: crossing diagonal lines, like fabric */
+mark.an-hl.an-s-wv { background: repeating-linear-gradient(45deg, color-mix(in srgb, var(--hl-c) 52%, transparent) 0 1px, transparent 1px 4px), repeating-linear-gradient(-45deg, color-mix(in srgb, var(--hl-c) 52%, transparent) 0 1px, transparent 1px 4px), color-mix(in srgb, var(--hl-c) 10%, transparent); }

@@ -3696,6 +3696,23 @@ Twelve more highlight styles, written by name in any highlight color:
 * `#Y.spot(words)` Spot, a soft glowing blob with no edges: #Y.spot(spot words)
 * `#Y.leaf(words)` Leaf, opposite corners rounded wide, like a leaf: #Y.leaf(leaf words)
 
+### Even more highlight styles
+
+Twelve more, written by name in any highlight color:
+
+* `#Y.underbar(words)` a thick colored bar under the words: #Y.underbar(underbar words)
+* `#Y.overbar(words)` a thick bar over the words: #Y.overbar(overbar words)
+* `#Y.zigzag(words)` a sawtooth line along the bottom: #Y.zigzag(zigzag words)
+* `#Y.dotted(words)` round dots under the words: #Y.dotted(dotted words)
+* `#Y.sunken(words)` pressed into the page, like a slot: #Y.sunken(sunken words)
+* `#Y.glass(words)` two tones with a sharp horizon, like a glossy button: #Y.glass(glass words)
+* `#Y.pinstripe(words)` fine vertical stripes between two lines: #Y.pinstripe(pinstripe words)
+* `#Y.band(words)` a soft band that fades above and below: #Y.band(band words)
+* `#Y.misprint(words)` two colored copies slightly off to the side: #Y.misprint(misprint words)
+* `#Y.ring(words)` a round outline with no fill: #Y.ring(ring words)
+* `#Y.dashline(words)` a dashed line under the words: #Y.dashline(dashline words)
+* `#Y.weave(words)` crossing diagonal lines, like fabric: #Y.weave(weave words)
+
 Plain underline and strike are Keydown text too: `_underline_` and `__strike__` (the Underline and Strikethrough buttons write them in Source). They never trigger inside snake_case words.
 
 ### Tooltip Underline
