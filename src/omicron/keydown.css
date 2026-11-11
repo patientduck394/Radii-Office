@@ -4097,36 +4097,37 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 /* ========================================================
    RIM HAIL CHIPS (!!@R#text#): the Rim Chip turned into a CUBE (an ice cube, drawn the cartoon way). The front face is the Rim Chip itself: its thick rim,
    deep colored words, a fill that starts as the main color at the top and lightens toward the bottom, and a white inner shadow. A top face and a
-   right face (lighter versions of the color, each with its own rim) are added on the top-right, like a block seen from above-right.
+   right face (lighter versions of the color, each with its own thin rim) sit on the top-right, like a block seen from above-right. The three faces
+   touch edge to edge (nothing overlaps), and every corner is only slightly rounded so the faces meet cleanly.
    ======================================================== */
 .gel-rimhail-chip {
-  --hl-d: 0.5em;
+  --hl-d: 0.5em; --hl-b: 0.133em; --hl-fb: 0.07em;
   display: inline-flex !important; align-items: center; justify-content: center;
   position: relative; isolation: isolate;
-  padding: 0.034em 0.4em 0; margin: 0.54em 0.56em 0 2px; border-radius: 0.3em;
-  border: 0.133em solid var(--rc-rim, #04c3ca);
+  padding: 0.034em 0.4em 0; margin: 0.54em 0.56em 0 2px; border-radius: 0.1em;
+  border: var(--hl-b) solid var(--rc-rim, #04c3ca);
   line-height: 1.216; min-height: 1.216em; letter-spacing: 0.019em; font-weight: 700; white-space: nowrap; vertical-align: middle;
   color: var(--rc-ink, #219a9e); text-shadow: 0 0.03em 0 rgba(255, 255, 255, 0.55);
   background: linear-gradient(180deg, #5fe8ee, #c9f8fb);
   background:
-    linear-gradient(180deg, #ffffff 0%, rgba(255, 255, 255, 0) 100%) 0.3em 0.07em / calc(100% - 0.6em) 0.2em no-repeat,
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 42%),
     linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 72%, #fff) 0%, color-mix(in srgb, var(--rc-fill, #02fff1) 38%, #fff) 55%, color-mix(in srgb, var(--rc-fill, #02fff1) 20%, #fff) 100%);
   box-shadow: inset 0 0 0.2em 0.03em rgba(255, 255, 255, 0.95), inset 0 0 0.05em 0.02em rgba(255, 255, 255, 0.9);
 }
-/* the top face: a flat slab leaning right (skewed 45 degrees), lighter than the front */
+/* the top face: a slab leaning right (skewed 45 degrees) that sits exactly on the front's top edge */
 .gel-rimhail-chip::before {
   content: ''; position: absolute; z-index: -1; pointer-events: none; box-sizing: border-box;
-  left: -0.133em; bottom: calc(100% - 0.133em); width: calc(100% + 0.133em); height: var(--hl-d);
-  border: 0.1em solid color-mix(in srgb, var(--rc-rim, #04c3ca) 70%, #fff); border-radius: 0.12em;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 18%, #fff), color-mix(in srgb, var(--rc-fill, #02fff1) 36%, #fff));
+  left: calc(var(--hl-b) * -1); bottom: calc(100% + var(--hl-b)); width: calc(100% + var(--hl-b) * 2); height: var(--hl-d);
+  border: var(--hl-fb) solid color-mix(in srgb, var(--rc-rim, #04c3ca) 80%, #fff); border-radius: 0.06em 0.06em 0 0;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 16%, #fff), color-mix(in srgb, var(--rc-fill, #02fff1) 34%, #fff));
   box-shadow: inset 0 0 0.12em rgba(255, 255, 255, 0.95);
   transform: skewX(-45deg); transform-origin: 0 100%;
 }
-/* the right face: a slab going up and back, a bit darker than the top (but still light) */
+/* the right face: a slab going up and back that sits exactly on the front's right edge (its far corner meets the top face's) */
 .gel-rimhail-chip::after {
   content: ''; position: absolute; z-index: -1; pointer-events: none; box-sizing: border-box;
-  left: calc(100% - 0.133em); top: 0; width: var(--hl-d); height: calc(100% + 0.07em);
-  border: 0.1em solid color-mix(in srgb, var(--rc-rim, #04c3ca) 70%, #fff); border-radius: 0.12em;
+  left: calc(100% + var(--hl-b)); top: calc(var(--hl-b) * -1); width: var(--hl-d); height: calc(100% + var(--hl-b) * 2);
+  border: var(--hl-fb) solid color-mix(in srgb, var(--rc-rim, #04c3ca) 80%, #fff); border-radius: 0;
   background: linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 44%, #fff), color-mix(in srgb, var(--rc-fill, #02fff1) 62%, #fff));
   box-shadow: inset 0 0 0.12em rgba(255, 255, 255, 0.9);
   transform: skewY(-45deg); transform-origin: 0 0;
