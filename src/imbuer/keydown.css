@@ -4615,62 +4615,42 @@
 u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-decoration-thickness: 1px; text-underline-offset: 0.14em; text-decoration-skip-ink: none; }
 
 /* ========================================================
-   RIM HAIL CHIPS (!!@R#text#): the Rim Chip as a see-through ICE CUBE, drawn the classic cartoon way: the front face is the Rim Chip (thick rim, deep
-   colored words, a frosted fill that starts as the main color at the top and lightens downward, a white inner shadow), a second lighter outline
-   (the back face) sits behind it, up and to the right, and four short edges join the corners, so you look through the front into the cube.
+   RIM HAIL CHIPS (!!@R#text#): the Rim Chip as a HAILSTONE. The same pill, thick rim, deep colored words and top-to-bottom fill (the main color at the
+   top, frosting toward the bottom) with a white inner shadow, plus what makes hail hail: a frosty grain with a few bright flecks, a glint across the
+   top-left, and two paler rings growing outward from the rim, like the layers of ice on a real hailstone. One element, no shapes to line up.
    ======================================================== */
 .gel-rimhail-chip {
-  --hl-d: 0.3em; --hl-b: 0.133em; --hl-fb: 0.06em; --hl-a: 0.082em; --hl-k: 0.022em;
-  --hl-edge: #8fe3e8; --hl-edge: color-mix(in srgb, var(--rc-rim, #04c3ca) 60%, #fff);
   display: inline-flex !important; align-items: center; justify-content: center;
   position: relative; isolation: isolate;
-  padding: 0.034em 0.4em 0; margin: 0.36em 0.38em 0 2px; border-radius: 0.28em;
-  border: var(--hl-b) solid var(--rc-rim, #04c3ca);
+  padding: 0.034em 0.4em 0; margin: 0 calc(2px + 0.16em); border-radius: 0.667em;
+  border: 0.133em solid var(--rc-rim, #04c3ca);
   line-height: 1.216; min-height: 1.216em; letter-spacing: 0.019em; font-weight: 700; white-space: nowrap; vertical-align: middle;
   color: var(--rc-ink, #219a9e); text-shadow: 0 0.03em 0 rgba(255, 255, 255, 0.55);
   background: linear-gradient(180deg, #5fe8ee, #c9f8fb);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 42%),
+    radial-gradient(circle at 13% 64%, #ffffff 0 0.03em, rgba(255, 255, 255, 0) 0.055em),
+    radial-gradient(circle at 90% 30%, #ffffff 0 0.026em, rgba(255, 255, 255, 0) 0.05em),
+    radial-gradient(circle at 62% 82%, #ffffff 0 0.022em, rgba(255, 255, 255, 0) 0.045em),
+    radial-gradient(circle at 38% 24%, #ffffff 0 0.02em, rgba(255, 255, 255, 0) 0.04em),
+    radial-gradient(circle, rgba(255, 255, 255, 0.4) 0 0.012em, rgba(255, 255, 255, 0) 0.024em) 0.03em 0.05em / 0.137em 0.113em,
+    radial-gradient(circle, rgba(255, 255, 255, 0.3) 0 0.01em, rgba(255, 255, 255, 0) 0.02em) 0.07em 0.02em / 0.089em 0.101em,
     linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 72%, #fff) 0%, color-mix(in srgb, var(--rc-fill, #02fff1) 38%, #fff) 55%, color-mix(in srgb, var(--rc-fill, #02fff1) 20%, #fff) 100%);
-  box-shadow: inset 0 0 0.2em 0.03em rgba(255, 255, 255, 0.95), inset 0 0 0.05em 0.02em rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 0 0.2em 0.03em rgba(255, 255, 255, 0.95), inset 0 0 0.05em 0.02em rgba(255, 255, 255, 0.9),
+    0 0 0 0.07em color-mix(in oklab, var(--rc-rim, #04c3ca) 40%, #ffffff),
+    0 0 0 0.14em color-mix(in oklab, var(--rc-rim, #04c3ca) 18%, #ffffff),
+    0 0.12em 0.22em 0.12em color-mix(in srgb, var(--rc-fill, #02fff1) 22%, transparent);
 }
-/* the back face: the same rounded box, lighter, shifted up and to the right */
+/* the glint: a bright curved streak near the top-left */
 .gel-rimhail-chip::before {
-  content: ''; position: absolute; z-index: -1; pointer-events: none; box-sizing: border-box;
-  left: calc(var(--hl-d) - var(--hl-b)); top: calc(var(--hl-b) * -1 - var(--hl-d)); width: calc(100% + var(--hl-b) * 2); height: calc(100% + var(--hl-b) * 2);
-  border: var(--hl-fb) solid var(--hl-edge); border-radius: 0.28em;
-  background: rgba(255, 255, 255, 0.35);
-  background: linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 26%, rgba(255, 255, 255, 0.18)), color-mix(in srgb, var(--rc-fill, #02fff1) 8%, rgba(255, 255, 255, 0.18)));
-  box-shadow: inset 0 0 0.12em rgba(255, 255, 255, 0.9);
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  left: 0.26em; top: 0.08em; width: 0.62em; height: 0.17em; border-radius: 50%;
+  background: linear-gradient(90deg, #ffffff 0%, rgba(255, 255, 255, 0.1) 100%);
+  transform: rotate(-7deg);
 }
-/* the four edges that join the corners of the front to the corners of the back: thin strips along the 45-degree line through the point where each corner arc turns 45 degrees (touching both arcs, square ends) */
+/* the white glow just inside the whole outline (like the Rim Chip's) */
 .gel-rimhail-chip::after {
-  content: ''; position: absolute; z-index: -1; pointer-events: none; box-sizing: border-box;
-  left: calc(var(--hl-b) * -1); top: calc(var(--hl-b) * -1 - var(--hl-d)); width: calc(100% + var(--hl-b) * 2 + var(--hl-d)); height: calc(100% + var(--hl-b) * 2 + var(--hl-d));
-  background: var(--hl-edge);
-  clip-path: polygon(
-    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)) calc(0px + var(--hl-a) - var(--hl-k)),
-    calc(0px + var(--hl-a) - var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
-    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
-    calc(100% - var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-k)),
-    calc(100% - var(--hl-a) - var(--hl-k)) calc(0px + var(--hl-a) - var(--hl-k)),
-    calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)),
-    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)),
-    calc(0px + var(--hl-a) - var(--hl-k)) calc(100% - var(--hl-a) - var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)),
-    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
-    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)),
-    calc(100% - var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)),
-    calc(100% - var(--hl-a) - var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)),
-    calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)) calc(100% - var(--hl-a) - var(--hl-k)),
-    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)));
+  content: ''; position: absolute; pointer-events: none; inset: -0.133em; border-radius: inherit;
+  box-shadow: inset 0 0 0.09em 0.01em rgba(253, 255, 255, 0.85);
 }
 .gel-rimhail-chip.gel-rim-white { --rc-fill: #cfd8e1; }

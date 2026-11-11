@@ -890,7 +890,7 @@ A Rim Chip cousin that is a blob of see-through jelly: the same thick rim, shine
 
 ## Rim hail chips
 
-The Rim Chip as a see-through ice cube, drawn the classic cartoon way: the front face is the Rim Chip itself (same thick rim, deep colored words, a frosted fill that starts as the main color at the top and lightens downward, and a white inner shadow), a second lighter outline sits behind it up and to the right, and four short edges join the corners, so you look through the front into the cube! Written `!!@color#text#`, in the same 16 colors:
+The Rim Chip as a hailstone: the same pill, thick rim, deep colored words and top-to-bottom fill (the main color at the top, frosting toward the bottom) with a white inner shadow, plus a frosty grain with a few bright flecks, a glint across the top-left, and two paler rings growing outward from the rim, like the layers of ice on a real hailstone! Written `!!@color#text#`, in the same 16 colors:
 
 * `!!@R#text#` !!@R#red#
 * `!!@O#text#` !!@O#orange#
