@@ -217,9 +217,9 @@ A lens-shaped Bubble Chip cousin, with the gel glowing out from the center and a
 
 
 
-## Gel spark chips
+## Gel lava chips
 
-A Bubble Chip gel (color on top melting to clear) with a little twinkling star in the corner! Written `#/color/text/`, in the Bubble Chip's 16 colors:
+A solid Gel pill with lighter blobs floating inside it, like a lava lamp! Written `#/color/text/`, in the Bubble Chip's 16 colors:
 
 * `#/R/text/` #/R/red/
 * `#/O/text/` #/O/orange/
@@ -1099,7 +1099,7 @@ Twenty numbered Bubble Chip cousins, all in the same 16 colors. Written `%number
 * `%13%color%text%##` Gel Waves, a scalloped wave of gel along the bottom: %13%R%red%## %13%O%orange%## %13%GL%gold%## %13%Y%yellow%## %13%L%lime%## %13%G%green%## %13%TU%turquoise%## %13%T%teal%## %13%C%cyan%## %13%B%blue%## %13%PR%purple%## %13%PK%pink%## %13%W%white%## %13%FG%fog%## %13%SL%slate%## %13%BK%black%##
 * `%14%color%text%##` Gel Checks, a checkerboard of gel under a glossy wash: %14%R%red%## %14%O%orange%## %14%GL%gold%## %14%Y%yellow%## %14%L%lime%## %14%G%green%## %14%TU%turquoise%## %14%T%teal%## %14%C%cyan%## %14%B%blue%## %14%PR%purple%## %14%PK%pink%## %14%W%white%## %14%FG%fog%## %14%SL%slate%## %14%BK%black%##
 * `%15%color%text%##` Gel Bookends, thick colored edges on both ends: %15%R%red%## %15%O%orange%## %15%GL%gold%## %15%Y%yellow%## %15%L%lime%## %15%G%green%## %15%TU%turquoise%## %15%T%teal%## %15%C%cyan%## %15%B%blue%## %15%PR%purple%## %15%PK%pink%## %15%W%white%## %15%FG%fog%## %15%SL%slate%## %15%BK%black%##
-* `%16%color%text%##` Gel Sparkles, tiny white sparkles scattered over the gel: %16%R%red%## %16%O%orange%## %16%GL%gold%## %16%Y%yellow%## %16%L%lime%## %16%G%green%## %16%TU%turquoise%## %16%T%teal%## %16%C%cyan%## %16%B%blue%## %16%PR%purple%## %16%PK%pink%## %16%W%white%## %16%FG%fog%## %16%SL%slate%## %16%BK%black%##
+* `%16%color%text%##` Gel Lavales, tiny white sparkles scattered over the gel: %16%R%red%## %16%O%orange%## %16%GL%gold%## %16%Y%yellow%## %16%L%lime%## %16%G%green%## %16%TU%turquoise%## %16%T%teal%## %16%C%cyan%## %16%B%blue%## %16%PR%purple%## %16%PK%pink%## %16%W%white%## %16%FG%fog%## %16%SL%slate%## %16%BK%black%##
 * `%17%color%text%##` Gel Grids, graph-paper lines on tinted glass: %17%R%red%## %17%O%orange%## %17%GL%gold%## %17%Y%yellow%## %17%L%lime%## %17%G%green%## %17%TU%turquoise%## %17%T%teal%## %17%C%cyan%## %17%B%blue%## %17%PR%purple%## %17%PK%pink%## %17%W%white%## %17%FG%fog%## %17%SL%slate%## %17%BK%black%##
 * `%18%color%text%##` Gel Insets, pressed into the page, with the shadow on the inside: %18%R%red%## %18%O%orange%## %18%GL%gold%## %18%Y%yellow%## %18%L%lime%## %18%G%green%## %18%TU%turquoise%## %18%T%teal%## %18%C%cyan%## %18%B%blue%## %18%PR%purple%## %18%PK%pink%## %18%W%white%## %18%FG%fog%## %18%SL%slate%## %18%BK%black%##
 * `%19%color%text%##` Gel Glows, a neon glow inside and out, with glowing text: %19%R%red%## %19%O%orange%## %19%GL%gold%## %19%Y%yellow%## %19%L%lime%## %19%G%green%## %19%TU%turquoise%## %19%T%teal%## %19%C%cyan%## %19%B%blue%## %19%PR%purple%## %19%PK%pink%## %19%W%white%## %19%FG%fog%## %19%SL%slate%## %19%BK%black%##
