@@ -47,6 +47,8 @@ Orange is never blended into the water. It shows up as stripes, edges, rings and
 ## Surfaces and shapes
 Surfaces are flat and clear. They are white, foam (`#e6f8ff`) or light cyan (`#d4f6ff`), with thin blue borders and generous round corners. Depth comes from a soft blue shadow, not from gloss. Buttons are simple: the main color as the border and a lighter shade of it as the fill.
 
+![A pool seen from the side, with a diving board, depth markers and a life ring](media:poolside-deep-end)
+
 ## Where it is used
 * [[poolsideui]]: twenty-six Svelte 5 components built in this style, with its design tokens (`--pool-water-1` to `--pool-orange`).
 * **Waterflow**: the glassy notebook, with orange lane ropes under the titles, a life-ring New note button, tile edges on the open note and a buoy at the end of the storage meter.

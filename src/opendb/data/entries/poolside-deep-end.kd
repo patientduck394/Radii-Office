@@ -1,0 +1,17 @@
+---
+format: keydown-text
+id: poolside-deep-end
+type: media
+title: Poolside deep end
+summary: A side view of a pool with an orange diving board, a ladder, depth markers and a floating life ring, drawn in the Poolside palette of cyan, blue and orange.
+tags: [poolside, design, style, illustration]
+created: 2026-11-11
+updated: 2026-11-11
+authors: [OpenDB contributors]
+license: CC0-1.0
+file: media/poolside-deep-end.svg
+mime: image/svg+xml
+width: 800
+height: 450
+---
+A second picture for the [[poolside-style|Poolside style]], this time from the side: a white deck with an orange diving board, a pool wall with round depth markers, a ladder at the far end and a striped life ring floating on the waterline. The orange stays crisp and solid, and the water runs from cyan to blue. Drawn as a vector image, so it stays sharp at any size!
