@@ -4695,7 +4695,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   transition: background-color 0.35s ease, border-color 0.35s ease;
 }
 .gel-aqua-chip::before {
-  content: ""; position: absolute; z-index: -1; top: 2px; left: 0.38em; right: 0.38em; height: 0.22em; border-radius: 0.26em 0.26em 0.1em 0.1em;
+  content: ""; position: absolute; z-index: -1; top: 2px; left: 0.62em; right: 0.62em; height: 0.34em; border-radius: 0.2em 0.2em 0.12em 0.12em;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.1)); pointer-events: none;
 }
 .gel-glaze-chip {
