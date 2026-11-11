@@ -4100,7 +4100,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
    (the back face) sits behind it, up and to the right, and four short edges join the corners, so you look through the front into the cube.
    ======================================================== */
 .gel-rimhail-chip {
-  --hl-d: 0.3em; --hl-b: 0.133em; --hl-fb: 0.06em; --hl-a: 0.082em;
+  --hl-d: 0.3em; --hl-b: 0.133em; --hl-fb: 0.06em; --hl-a: 0.082em; --hl-k: 0.022em;
   --hl-edge: #8fe3e8; --hl-edge: color-mix(in srgb, var(--rc-rim, #04c3ca) 60%, #fff);
   display: inline-flex !important; align-items: center; justify-content: center;
   position: relative; isolation: isolate;
@@ -4123,14 +4123,34 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   background: linear-gradient(180deg, color-mix(in srgb, var(--rc-fill, #02fff1) 26%, rgba(255, 255, 255, 0.18)), color-mix(in srgb, var(--rc-fill, #02fff1) 8%, rgba(255, 255, 255, 0.18)));
   box-shadow: inset 0 0 0.12em rgba(255, 255, 255, 0.9);
 }
-/* the four edges that join the corners of the front to the corners of the back */
+/* the four edges that join the corners of the front to the corners of the back: thin strips along the 45-degree line through the point where each corner arc turns 45 degrees (touching both arcs, square ends) */
 .gel-rimhail-chip::after {
   content: ''; position: absolute; z-index: -1; pointer-events: none; box-sizing: border-box;
   left: calc(var(--hl-b) * -1); top: calc(var(--hl-b) * -1 - var(--hl-d)); width: calc(100% + var(--hl-b) * 2 + var(--hl-d)); height: calc(100% + var(--hl-b) * 2 + var(--hl-d));
-  background:
-    linear-gradient(to top left, transparent calc(50% - 0.04em), var(--hl-edge) calc(50% - 0.04em) calc(50% + 0.04em), transparent calc(50% + 0.04em)) right var(--hl-a) top var(--hl-a) / var(--hl-d) var(--hl-d) no-repeat,
-    linear-gradient(to top left, transparent calc(50% - 0.04em), var(--hl-edge) calc(50% - 0.04em) calc(50% + 0.04em), transparent calc(50% + 0.04em)) right var(--hl-a) bottom var(--hl-a) / var(--hl-d) var(--hl-d) no-repeat,
-    linear-gradient(to top left, transparent calc(50% - 0.04em), var(--hl-edge) calc(50% - 0.04em) calc(50% + 0.04em), transparent calc(50% + 0.04em)) left var(--hl-a) top var(--hl-a) / var(--hl-d) var(--hl-d) no-repeat,
-    linear-gradient(to top left, transparent calc(50% - 0.04em), var(--hl-edge) calc(50% - 0.04em) calc(50% + 0.04em), transparent calc(50% + 0.04em)) left var(--hl-a) bottom var(--hl-a) / var(--hl-d) var(--hl-d) no-repeat;
+  background: var(--hl-edge);
+  clip-path: polygon(
+    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)) calc(0px + var(--hl-a) - var(--hl-k)),
+    calc(0px + var(--hl-a) - var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
+    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
+    calc(100% - var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-k)),
+    calc(100% - var(--hl-a) - var(--hl-k)) calc(0px + var(--hl-a) - var(--hl-k)),
+    calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)),
+    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-d) - var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)),
+    calc(0px + var(--hl-a) - var(--hl-k)) calc(100% - var(--hl-a) - var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)),
+    calc(0px + var(--hl-a) + var(--hl-k)) calc(0px + var(--hl-a) + var(--hl-d) + var(--hl-k)),
+    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)),
+    calc(100% - var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)),
+    calc(100% - var(--hl-a) - var(--hl-k)) calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)),
+    calc(100% - var(--hl-d) - var(--hl-a) - var(--hl-k)) calc(100% - var(--hl-a) - var(--hl-k)),
+    calc(100% - var(--hl-d) - var(--hl-a) + var(--hl-k)) calc(100% - var(--hl-a) + var(--hl-k)));
 }
 .gel-rimhail-chip.gel-rim-white { --rc-fill: #cfd8e1; }
