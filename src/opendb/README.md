@@ -33,7 +33,7 @@ tags: [biology, insects]
 created: 2026-10-27
 updated: 2026-10-27
 authors: [Your Name]
-license: CC0-1.0              # required: OpenDB only accepts CC0
+license: CC0-1.0              # required: CC0-1.0, or Public Domain for a work no one owns (see {{public domain}})
 infobox.Kingdom: Animalia     # optional facts for the side box
 ---
 The **honey bee** lives in #G#colonies#. Link other entries with [[photosynthesis]]

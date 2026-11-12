@@ -36,6 +36,9 @@ export function parseEntry(text, file) {
     return entry;
 }
 
+// "Public Domain" is for works that were never covered by copyright (or the copyright ran out), as opposed to a CC0 dedication
+const isPublicDomain = (l) => /^(public[ -]?domain|pd)$/i.test(String(l || '').trim());
+
 function check(entry, file) {
     const problems = [];
     const base = path.basename(file, '.kd');
@@ -43,7 +46,7 @@ function check(entry, file) {
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(String(entry.id))) problems.push('id must use lowercase letters, digits and dashes');
     if (!TYPES.has(entry.type)) problems.push('type must be article, media, paper or lite');
     ['title', 'summary', 'created'].forEach((k) => { if (!entry[k]) problems.push(k + ' is missing'); });
-    if (entry.license !== 'CC0-1.0') problems.push('license must be CC0-1.0 (everything in OpenDB is public domain)');
+    if (entry.license !== 'CC0-1.0' && !isPublicDomain(entry.license)) problems.push('license must be CC0-1.0 or Public Domain (everything in OpenDB is free for everyone)');
     if (entry.type === 'media') {
         if (!entry.file) problems.push('media entries need a file');
         else if (!fs.existsSync(path.join(ROOT, entry.file))) problems.push('the file ' + entry.file + ' does not exist');
@@ -63,6 +66,7 @@ export function build() {
     const entries = files.map((f) => {
         const e = parseEntry(fs.readFileSync(path.join(ENTRIES, f), 'utf8'), f);
         check(e, f);
+        e.license = isPublicDomain(e.license) ? 'Public Domain' : 'CC0-1.0';
         if (!Object.keys(e.infobox).length) delete e.infobox;
         e.updated = e.updated || e.created;
         return e;

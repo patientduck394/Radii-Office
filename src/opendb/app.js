@@ -612,7 +612,7 @@
         const re = /\{\{([^{}]+)\}\}/g;
         let m;
         while ((m = re.exec(e.body || ''))) { const t = findTpl(m[1]); if (t && t.name === 'public domain') return tplContext(m[1]); }
-        return null;
+        return /^(public[ -]?domain|pd)$/i.test(String(e.license || '').trim()) ? tplContext('public domain') : null; // the license line says so, even without the template
     }
     const pdBox = (c) => '<div class="side-box pd-box"><p><a class="pdbadge" href="#/e/public-domain">Public domain</a>' + findTpl('public domain').text(c) + '</p></div>';
     const cc0Box = '<div class="side-box cc0-box"><p><a class="cc0" href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a><b>No rights reserved!</b> Copy, change, translate and use this for anything, even commercially, with no credit needed!</p></div>';
@@ -857,7 +857,7 @@
         if (e.type === 'paper') h.push('categories: ' + yamlList(e.categories));
         if (e.fork) h.push('fork: ' + e.fork);
         if (e.preview && e.preview !== 'auto') h.push('preview: ' + e.preview);
-        h.push('created: ' + e.created, 'updated: ' + (e.updated || e.created), 'authors: ' + yamlList(e.authors), 'license: CC0-1.0');
+        h.push('created: ' + e.created, 'updated: ' + (e.updated || e.created), 'authors: ' + yamlList(e.authors), 'license: ' + (publicDomainOf(e) ? 'Public Domain' : 'CC0-1.0'));
         if (e.type === 'media') { h.push('file: ' + (e.file && !e.dataUrl ? e.file : 'media/' + e.id + extOf(e)), 'mime: ' + (e.mime || '')); if (e.width) h.push('width: ' + e.width, 'height: ' + e.height); if (e.duration) h.push('duration: ' + Math.round(e.duration * 10) / 10); }
         Object.entries(e.infobox || {}).forEach(([k, v]) => h.push('infobox.' + String(k).replace(/[:\n]/g, ' ').trim() + ': ' + yamlStr(String(v).replace(/\n/g, ' '))));
         h.push('---');
@@ -918,7 +918,7 @@
             const e = {
                 id: get('f-id').trim(), type, title: get('f-title').trim(), summary: get('f-summary').trim(), body: get('f-body'),
                 tags: list('f-tags'), authors: list('f-authors'), infobox: info,
-                created: d.created || today(), updated: today(), license: 'CC0-1.0',
+                created: d.created || today(), updated: today(), license: /\{\{\s*(public[ -]?domain|pd)\s*(\|[^{}]*)?\}\}/i.test(get('f-body')) ? 'Public Domain' : 'CC0-1.0',
             };
             if (type === 'paper') { e.abstract = get('f-abstract').trim(); e.categories = list('f-categories'); }
             if (type === 'lite') { e.body = liteJoin(get('f-body'), liteUsed()); if (d.fork) e.fork = d.fork; if (get('f-preview') !== 'auto') e.preview = get('f-preview'); }
