@@ -868,21 +868,24 @@
     function currentLayout() {
         // a New-style phone page always opens in the New style (its Classic is a separate page)
         if (document.documentElement.hasAttribute('data-os-classic-url')) return 'office';
-        return lsGet(layoutKey(), 'office') === 'classic' ? 'classic' : 'office';
+        const saved = lsGet(layoutKey(), 'office');
+        return saved === 'classic' || saved === 'pool' ? saved : 'office';
     }
 
     function applyLayout(l) {
         const b = document.body;
-        b.classList.toggle('os-office', l === 'office');
-        b.classList.toggle('os-classic', l !== 'office');
+        // Poolside is an Office-style layout too (the app's own office page layout stays), with its own chrome on top
+        b.classList.toggle('os-office', l !== 'classic');
+        b.classList.toggle('os-classic', l === 'classic');
+        b.classList.toggle('os-pool', l === 'pool');
         b.classList.toggle('os-dark', !!prefs.dark);
         b.classList.toggle('os-no-anim', !prefs.anim);
         b.classList.toggle('os-ribbon-min', !!prefs.ribbonMin);
-        if (l === 'office') requestAnimationFrame(function () { moveInk(); sync(); });
+        if (l !== 'classic') requestAnimationFrame(function () { moveInk(); sync(); });
     }
 
     function setLayout(l) {
-        l = l === 'classic' ? 'classic' : 'office';
+        l = l === 'classic' || l === 'pool' ? l : 'office';
         // a phone page whose Classic style is a separate mobile app (Writeout and Bitbook): Classic goes there
         const classicUrl = document.documentElement.getAttribute('data-os-classic-url');
         if (l === 'classic' && classicUrl) {
@@ -890,8 +893,8 @@
             location.href = classicUrl;
             return;
         }
-        if (currentLayout() === l && document.body.classList.contains(l === 'office' ? 'os-office' : 'os-classic')) {
-            toast(l === 'office' ? 'Already in the ' + cfg.officeName + ' layout!' : 'Already in ' + cfg.app + ' Classic!');
+        if (currentLayout() === l && document.body.classList.contains(l === 'classic' ? 'os-classic' : 'os-office') && document.body.classList.contains('os-pool') === (l === 'pool')) {
+            toast(l === 'office' ? 'Already in the ' + cfg.officeName + ' layout!' : l === 'pool' ? 'Already in the Poolside layout!' : 'Already in ' + cfg.app + ' Classic!');
             syncLayoutCards();
             return;
         }
@@ -904,7 +907,7 @@
             syncLayoutCards();
             try { if (cfg.onLayout) cfg.onLayout(l); } catch (e) { console.error(e); }
             window.dispatchEvent(new Event('resize'));
-            toast(l === 'office' ? cfg.officeName + ' layout: ribbon, tabs and a status bar!' : (cfg.classicToast || cfg.app + ' Classic: the original glassy layout!'));
+            toast(l === 'pool' ? 'Poolside layout: a waterline on top and the tools on the pool deck!' : l === 'office' ? cfg.officeName + ' layout: ribbon, tabs and a status bar!' : (cfg.classicToast || cfg.app + ' Classic: the original glassy layout!'));
         };
         if (!animOn()) { swap(); return; }
         const cur = el('div', 'os-curtain', '<img src="' + esc(cfg.icon) + '" alt="">');
@@ -931,6 +934,7 @@
         const box = el('div', 'os-lay-cards');
         [
             { id: 'office', name: cfg.officeName, hint: cfg.officeHint || ('A ribbon, tabs and a status bar, like ' + cfg.officeName + '!') },
+            { id: 'pool', name: 'Poolside', hint: 'A waterline across the top, and every tool on a pool deck at the right, with numbered lanes for tabs!' },
             { id: 'classic', name: cfg.app + ' Classic', hint: cfg.classicHint || ('The original ' + cfg.app + ': glass sidebars, gel buttons and floating orbs!') }
         ].forEach(function (c) {
             const b = el('button', 'os-lay-card', thumbHTML(c.id) + '<b>' + esc(c.name) + '</b><span>' + esc(c.hint) + '</span>');
@@ -980,7 +984,7 @@
         const extra = (cfg.searchExtra ? cfg.searchExtra(q) : []) || [];
         if (/^temp:/.test(q)) return extra.slice(0, limit);
         const pages = backstagePages().map(function (p) { return { label: p.label, icon: p.icon, where: 'File', it: { run: function () { if (p.action) p.action(); else openBackstage(p.id); } } }; });
-        const all = commandIndex.concat(pages, [{ label: 'Switch to ' + cfg.app + ' Classic layout', icon: 'layout', where: 'Settings', it: { run: function () { setLayout('classic'); } } }]);
+        const all = commandIndex.concat(pages, [{ label: 'Switch to ' + cfg.app + ' Classic layout', icon: 'layout', where: 'Settings', it: { run: function () { setLayout('classic'); } } }, { label: 'Switch to the Poolside layout', icon: 'layout', where: 'Settings', it: { run: function () { setLayout('pool'); } } }]);
         return extra.concat(all.filter(function (c) { return c.label.toLowerCase().indexOf(q) !== -1 || (c.where || '').toLowerCase() === q; })).slice(0, limit);
     }
 
@@ -1079,7 +1083,7 @@
                 '<div class="os-tl"><img class="os-logo" src="' + esc(cfg.icon) + '" alt=""><div class="os-qat"></div><span class="os-brand">' + esc(cfg.app) + '</span></div>' +
                 '<div class="os-tc"><input id="os-docname" spellcheck="false" aria-label="Name"><span id="os-saved" class="os-saved">Saved</span></div>' +
                 '<div class="os-tr"><div class="os-search">' + ico('search') + '<input id="os-search" placeholder="Search for tools and help (⌘K)" spellcheck="false" autocomplete="off"><div id="os-search-res" class="os-menu os-search-res" hidden></div></div>' +
-                '<button type="button" class="os-qbtn" data-os="layout" title="Layout: ' + esc(cfg.officeName) + ' or ' + esc(cfg.app) + ' Classic">' + ico('layout') + '</button>' +
+                '<button type="button" class="os-qbtn" data-os="layout" title="Layout: ' + esc(cfg.officeName) + ', Poolside or ' + esc(cfg.app) + ' Classic">' + ico('layout') + '</button>' +
                 '<button type="button" class="os-qbtn" data-os="settings" title="Settings">' + ico('gear') + '</button></div>' +
             '</div>' +
             '<nav id="os-tabs" role="tablist"><button type="button" class="os-tab os-file">File</button><span id="os-ink"></span>' +
@@ -1165,6 +1169,7 @@
             else if (b.dataset.os === 'layout') {
                 openMenu(b, [
                     { label: cfg.officeName, icon: 'layout', checked: currentLayout() === 'office', run: function () { setLayout('office'); } },
+                    { label: 'Poolside', icon: 'layout', checked: currentLayout() === 'pool', run: function () { setLayout('pool'); } },
                     { label: cfg.app + ' Classic', icon: 'sparkle', checked: currentLayout() === 'classic', run: function () { setLayout('classic'); } },
                     { sep: true },
                     { label: 'Settings…', icon: 'gear', run: function () { openBackstage('settings'); } }
@@ -1254,6 +1259,7 @@
         setLayout: setLayout,
         layout: currentLayout,
         isOffice: isOffice,
+        isPool: function () { return document.body.classList.contains('os-pool'); },
         isPhone: function () { return document.body.classList.contains('os-phone'); },
         sync: queueSync,
         showTab: showTab,

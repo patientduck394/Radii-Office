@@ -551,3 +551,106 @@ body.os-phone .os-logo { display: none; }
 /* small, secondary ribbon buttons sit dimmed under the bigger ones until you point at them */
 .os-rb.os-dim { opacity: 0.62; }
 .os-rb.os-dim:hover, .os-rb.os-dim:focus-visible, .os-rb.os-dim.on { opacity: 1; }
+
+/* =====================================================================
+   POOLSIDE LAYOUT (body.os-pool)! A third layout: a deep-blue waterline across the top, and every tool on a
+   "pool deck" panel down the right side, with numbered swimming lanes for tabs, lane-rope edges and tile cards
+   for the groups. Cyan, blue and orange only; the orange stays crisp. (Identical copy in each shell app!)
+   ===================================================================== */
+body.os-pool {
+    --pp-foam: #e6f8ff; --pp-cyan-l: #d4f6ff; --pp-cyan: #22d3ee; --pp-cyan-s: #67e8f9; --pp-blue: #1b7fe0; --pp-blue-d: #0a68c4; --pp-deep: #075985;
+    --pp-orange: #ff8a1b; --pp-orange-l: #ffe3c2; --pp-orange-d: #8a3d00;
+    --pp-bg: var(--pp-foam); --pp-card: #fff; --pp-line: var(--pp-cyan-s); --pp-text: var(--pp-deep); --pp-dim: var(--pp-blue-d);
+    --os-accent: var(--pp-blue); --os-accent-d: var(--pp-blue-d); --os-accent-l: var(--pp-cyan-l); --os-title: var(--pp-deep);
+    --os-gel1: var(--pp-cyan); --os-gel2: var(--pp-blue); --os-glow: rgba(103, 232, 249, 0.8);
+    --os-ribbon: var(--pp-bg); --os-ribbon-line: var(--pp-line); --os-ui: var(--pp-bg); --os-text: var(--pp-text); --os-dim: var(--pp-dim);
+    --os-hover: var(--pp-cyan-l); --os-on: var(--pp-cyan-l);
+}
+body.os-pool.os-dark {
+    --pp-bg: var(--pp-deep); --pp-card: var(--pp-blue-d); --pp-line: var(--pp-blue); --pp-text: #fff; --pp-dim: var(--pp-cyan-s);
+    --os-hover: var(--pp-blue-d); --os-on: var(--pp-blue); --os-field: var(--pp-deep); --os-field-line: var(--pp-cyan-s);
+    --os-menu: var(--pp-deep); --os-menu-line: var(--pp-blue);
+}
+/* the waterline: a deep-blue block with a cyan line along the bottom */
+body.os-pool #os-title {
+    height: 44px; background: var(--pp-deep); border-bottom: 4px solid var(--pp-cyan); box-shadow: none; text-shadow: none;
+}
+body.os-pool .os-brand { text-shadow: none; color: #fff; letter-spacing: 0.02em; }
+body.os-pool .os-logo { filter: none; }
+body.os-pool #os-docname { background: var(--pp-card); color: var(--pp-deep); border: 2px solid var(--pp-cyan-s); border-radius: 999px; padding: 2px 14px; }
+body.os-pool #os-docname:hover { border-color: var(--pp-cyan); }
+body.os-pool .os-saved { background: var(--pp-orange); color: #fff; font-weight: 700; }
+body.os-pool #os-search { background: var(--pp-card); color: var(--pp-deep); border: 2px solid var(--pp-cyan-s); border-radius: 999px; height: 28px; }
+body.os-pool #os-search::placeholder { color: var(--pp-blue); }
+body.os-pool .os-search > .os-ico { color: var(--pp-blue); top: 6px; }
+body.os-pool .os-qbtn:hover { background: var(--pp-blue-d); }
+/* File: a crisp orange buoy */
+body.os-pool .os-file {
+    background: var(--pp-orange) !important; border: 2px solid var(--pp-orange-d); color: #fff !important; text-shadow: none; box-shadow: none; border-radius: 999px;
+}
+body.os-pool .os-file:hover { filter: none; background: var(--pp-orange-d) !important; }
+body.os-pool #os-ink { display: none; }
+/* tabs are numbered swimming lanes */
+body.os-pool #os-tabs { background: var(--pp-bg); counter-reset: lane; gap: 6px; }
+body.os-pool .os-tab { border-radius: 999px; border: 2px solid transparent; color: var(--pp-text); }
+body.os-pool .os-tab:hover { background: var(--pp-cyan-l); border-color: var(--pp-cyan-s); }
+body.os-pool .os-tab.on, body.os-pool.os-dark .os-tab.on { background: var(--pp-blue); border-color: var(--pp-blue-d); color: #fff !important; font-weight: 700; }
+body.os-pool .os-tab:not(.os-file):not(.os-ctx)::before {
+    counter-increment: lane; content: counter(lane); display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 6px;
+    border-radius: 50%; background: var(--pp-cyan-s); color: var(--pp-deep); font-size: 10.5px; font-weight: 800; vertical-align: 1px;
+}
+body.os-pool .os-tab.on:not(.os-file):not(.os-ctx)::before { background: var(--pp-orange); color: #fff; }
+body.os-pool .os-tab.os-ctx { color: var(--pp-orange-d); }
+/* the ribbon: tile cards, each with a small lane rope under its name */
+body.os-pool #os-ribbon { background: var(--pp-bg); border-bottom: 0; box-shadow: none; }
+body.os-pool .os-group { background: var(--pp-card); border: 2px solid var(--pp-line); border-radius: 14px; }
+body.os-pool .os-group::after { display: none; }
+body.os-pool .os-glabel { color: var(--pp-dim); font-weight: 700; }
+body.os-pool .os-glabel::after { content: ""; display: block; height: 4px; margin: 3px auto 0; width: 44px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--pp-orange) 0 6px, #fff 6px 12px); }
+body.os-pool .os-rb:hover, body.os-pool .os-split-arrow:hover, body.os-pool .os-gal-more:hover { background: var(--pp-cyan-l); border-color: var(--pp-cyan-s); box-shadow: none; }
+body.os-pool .os-rb.on, body.os-pool .os-rb.os-menu-on, body.os-pool .os-split-arrow.os-menu-on { background: var(--pp-cyan-s); border-color: var(--pp-blue); }
+/* the status bar sits under a lane rope */
+body.os-pool #os-status { background: var(--pp-bg); border-top: 0; border-image: none; box-shadow: inset 0 5px 0 #fff, inset 0 -0px 0 transparent; }
+body.os-pool #os-status::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px; background: repeating-linear-gradient(90deg, var(--pp-orange) 0 14px, #fff 14px 28px); }
+body.os-pool .os-st-chip { background: var(--pp-orange); box-shadow: none; text-shadow: none; }
+
+/* wide screens: the pool deck! The title becomes a full-width waterline and the tabs + tools stand in a panel at the right */
+@media (min-width: 900px) {
+    body.os-pool:not(.os-phone) { box-sizing: border-box !important; padding: 48px 304px 0 0 !important; }
+    body.os-pool:not(.os-phone) #os-title { position: fixed; top: 0; left: 0; right: 0; z-index: 61; }
+    body.os-pool:not(.os-phone) #os-top {
+        position: fixed; top: 48px; right: 0; bottom: 0; width: 304px; z-index: 60; display: flex; flex-direction: column;
+        background: var(--pp-bg); padding-left: 10px; box-shadow: -4px 0 14px color-mix(in srgb, var(--pp-blue) 18%, transparent);
+    }
+    body.os-pool:not(.os-phone) #os-top::before {
+        content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 10px; z-index: 2;
+        background: repeating-linear-gradient(180deg, var(--pp-orange) 0 14px, #fff 14px 28px);
+    }
+    body.os-pool:not(.os-phone) #os-tabs { height: auto; flex-wrap: wrap; padding: 10px 10px 4px; flex: none; }
+    body.os-pool:not(.os-phone) .os-tab { padding: 5px 11px; }
+    body.os-pool:not(.os-phone) .os-file { flex: 1 0 100%; margin: 0 0 4px; padding: 6px 15px; text-align: center; }
+    body.os-pool:not(.os-phone) #os-collapse { display: none; }
+    body.os-pool:not(.os-phone) #os-ribbon, body.os-pool:not(.os-phone).os-ribbon-min #os-ribbon, body.os-pool:not(.os-phone).os-ribbon-min.os-ribbon-peek #os-ribbon {
+        flex: 1; height: auto; position: relative; left: auto; right: auto; overflow-x: hidden; overflow-y: auto; padding: 6px 10px 12px; box-shadow: none;
+    }
+    body.os-pool:not(.os-phone) .os-panel { height: auto; flex-direction: column; gap: 10px; padding: 0; }
+    body.os-pool:not(.os-phone) .os-group { padding: 0 0 6px; min-width: 0; }
+    body.os-pool:not(.os-phone) .os-glabel { order: -1; padding: 7px 0 2px; font-size: 11.5px; }
+    body.os-pool:not(.os-phone) .os-gbody { flex-wrap: wrap; justify-content: center; gap: 4px; padding: 4px 8px 0; overflow-x: auto; }
+    body.os-pool:not(.os-phone) .os-rb.big, body.os-pool:not(.os-phone) .os-split.big .os-rb.big { height: auto; min-height: 68px; padding-bottom: 4px; }
+    body.os-pool:not(.os-phone) .os-rows { align-items: center; }
+    body.os-pool:not(.os-phone) .os-row { flex-wrap: wrap; justify-content: center; }
+    body.os-pool:not(.os-phone) #os-status { position: relative; }
+    /* floating helpers that sit at the right edge move left of the deck */
+    body.os-pool:not(.os-phone) .kd-modes { right: 320px; }
+}
+/* narrow screens keep the usual ribbon rows, just in pool colors */
+body.os-pool.os-phone #os-title { border-bottom-width: 3px; }
+
+/* the layout card's little picture */
+.os-lt-pool { background: #e6f8ff; }
+.os-lt-pool .lt-orb, .os-lt-pool .lt-list, .os-lt-pool .lt-strip { display: none; }
+.os-lt-pool .lt-bar { left: 0; right: 0; top: 0; height: 20px; background: #075985; border-bottom: 4px solid #22d3ee; }
+.os-lt-pool .lt-side { right: 0; top: 24px; bottom: 0; width: 50px; background: #fff; border-left: 6px solid #ff8a1b; background-image: repeating-linear-gradient(#d4f6ff 0 14px, #fff 14px 18px); }
+.os-lt-pool .lt-page, .os-lt-pool .lt-note { left: 14px; right: 66px; top: 34px; bottom: -6px; background: #fff; box-shadow: 0 2px 6px rgba(7, 89, 133, 0.25); background-image: repeating-linear-gradient(transparent 0 7px, #d4f6ff 7px 8px); }
+.os-lt-pool .lt-slide { left: 14px; right: 66px; top: 36px; height: 72px; background: #22d3ee; border: 3px solid #fff; box-shadow: 0 2px 6px rgba(7, 89, 133, 0.25); }
