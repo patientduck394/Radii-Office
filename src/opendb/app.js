@@ -551,6 +551,9 @@
             text: (c) => 'Not to be confused with ' + c.links() + '.' },
         { name: 'about', kind: 'hatnote', group: 'Hatnotes', example: '{{about|the license|the idea|public-domain}}', hint: 'What this entry is about, then another use and where to find it.',
             text: (c) => 'This ' + c.noun + ' is about ' + (c.args[0] ? esc(c.args[0]) : 'its title') + '.' + (c.args[2] ? ' For ' + esc(c.args[1] || 'other uses') + ', see ' + c.links(c.args.slice(2)) + '.' : '') },
+        // rights: not drawn in the text, they change the license note in the sidebar
+        { name: 'public domain', aliases: ['publicdomain', 'pd', 'public-domain'], kind: 'rights', group: 'Rights', example: '{{public domain|its copyright ran out in 1996}}', hint: 'This work is in the public domain (not a CC0 dedication). It changes the license note in the sidebar! Add why after a |.',
+            text: (c) => '<b>This work is in the public domain!</b> Its copyright has expired, never applied, or was given up, so no one owns it. Copy, change, translate and use it for anything, even commercially, with no credit needed!' + c.reason().replace('Reason:', 'Why:') },
         // tags inside a sentence
         { name: 'citation needed', aliases: ['cn', 'fact'], kind: 'inline', group: 'Inline tags', tag: 'citation needed', hint: 'Right after a claim that needs a source.' },
         { name: 'clarify', kind: 'inline', group: 'Inline tags', tag: 'clarification needed', hint: 'After a sentence that is hard to understand.' },
@@ -592,6 +595,7 @@
         const t = findTpl(raw);
         const c = tplContext(raw);
         const more = ' <a class="tpl-more" href="#/template/' + tplSlug(t.name) + '" title="About this notice, and every entry that has it" aria-label="About this notice">' + tplIcon('info', 'tpl-more-icon') + '</a>';
+        if (t.kind === 'rights') return ''; // it shows in the sidebar, not in the text
         if (t.kind === 'hatnote') return '<div class="tpl-hatnote" role="note">' + t.text(c) + '</div>';
         if (t.kind === 'stub') return '<p class="tpl-stub" role="note">' + tplIcon(t.icon) + ' <i>' + t.text(c) + '</i>' + more + '</p>';
         return '<div class="tpl tpl-' + t.kind + '" role="note">' + tplIcon(t.icon) + '<div>' + t.text(c) + more + '</div></div>';
@@ -603,6 +607,15 @@
         if (t.kind === 'inline') return '<sup class="tpl-tag">[<a href="#/template/' + tplSlug(t.name) + '">' + esc(t.tag) + '</a>]</sup>';
         return '<a class="tpl-chip" href="#/template/' + tplSlug(t.name) + '">' + (t.icon ? tplIcon(t.icon, 'tpl-chip-icon') : '↪') + ' ' + esc(t.name) + '</a>';
     }
+    // The license note in the sidebar: "No rights reserved" (CC0) unless the entry says {{public domain}}
+    function publicDomainOf(e) {
+        const re = /\{\{([^{}]+)\}\}/g;
+        let m;
+        while ((m = re.exec(e.body || ''))) { const t = findTpl(m[1]); if (t && t.name === 'public domain') return tplContext(m[1]); }
+        return null;
+    }
+    const pdBox = (c) => '<div class="side-box pd-box"><p><a class="pdbadge" href="#/e/public-domain">Public domain</a>' + findTpl('public domain').text(c) + '</p></div>';
+    const cc0Box = '<div class="side-box cc0-box"><p><a class="cc0" href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a><b>No rights reserved!</b> Copy, change, translate and use this for anything, even commercially, with no credit needed!</p></div>';
     // Which templates an entry uses (aliases count as their template)
     function templatesIn(e) {
         const out = new Set();
@@ -730,7 +743,7 @@
         const links = Array.from(backlinks.get(id) || []).map((x) => byId.get(x)).filter(Boolean);
         const side =
             info +
-            '<div class="side-box cc0-box"><p><a class="cc0" href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener noreferrer">CC0</a><b>No rights reserved!</b> Copy, change, translate and use this for anything, even commercially, with no credit needed!</p></div>' +
+            (publicDomainOf(e) ? pdBox(publicDomainOf(e)) : cc0Box) +
             '<div class="side-box"><div class="actions">' +
             (e.type === 'media' ? '<a class="gel small" href="' + esc(mediaSrc(e)) + '" download="' + esc(e.id + extOf(e)) + '">⬇ Download file</a>' : '') +
             (lite ? '<button class="gel small" id="lite-zip">⬇ Download ZIP</button><a class="gel small green" href="#/new/lite?fork=' + e.id + '" title="Make your own copy to change!">⑂ Fork</a><button class="gel small plain" id="lite-embed">&lt;/&gt; Embed</button>' : '') +
@@ -789,7 +802,7 @@
     }
 
     // Every template, like Wikipedia's template pages, with how many entries use each one
-    const TPL_GROUPS = ['Maintenance', 'Hatnotes', 'Inline tags'];
+    const TPL_GROUPS = ['Maintenance', 'Hatnotes', 'Rights', 'Inline tags'];
     const tplUsers = (t) => all().filter((e) => templatesIn(e).has(t)).sort((a, b) => a.title.localeCompare(b.title));
     const tplUsage = (t) => t.example || '{{' + t.name + '}}';
     function pageTemplates() {
@@ -809,11 +822,12 @@
         document.title = '{{' + t.name + '}} - OpenDB';
         const users = tplUsers(t);
         const demo = t.kind === 'inline' ? 'The library holds over a million books.' + tplUsage(t) : tplUsage(t);
+        const demoHtml = t.kind === 'rights' ? '<p class="hint">It puts this note in the sidebar, in place of the CC0 one:</p><div class="tpl-side-demo">' + pdBox(tplContext(tplUsage(t).replace(/^\{\{|\}\}$/g, ''))) + '</div>' : renderKd(demo, { type: 'article' });
         view.innerHTML = '<div class="card"><div class="crumbs"><a href="#/templates">Templates</a> › ' + esc(t.name) + '</div>' +
             '<h1 class="page">{{' + esc(t.name) + '}}</h1><p class="lead">' + esc(t.hint) + '</p>' +
             '<h2 class="tpl-group">How to use it</h2><pre class="tpl-code"><code>' + esc(tplUsage(t)) + '</code></pre>' +
             (t.aliases ? '<p class="hint">These names work too: ' + t.aliases.map((a) => '<code>{{' + esc(a) + '}}</code>').join(' ') + '</p>' : '') +
-            '<h2 class="tpl-group">What it looks like</h2><div class="kd-doc tpl-demo">' + renderKd(demo, { type: 'article' }) + '</div>' +
+            '<h2 class="tpl-group">What it looks like</h2><div class="kd-doc tpl-demo">' + demoHtml + '</div>' +
             '<h2 class="tpl-group">Entries with this template (' + users.length + ')</h2>' +
             (users.length ? '<div class="list">' + users.map((e) => itemRow(e)).join('') + '</div>' : '<div class="empty">No entries have it right now!</div>') + '</div>';
     }

@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '097b6debe848';
+const VERSION = '783bb3c67666';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","1116deaf53"],
@@ -295,8 +295,8 @@ const CORE = [["/","1116deaf53"],
   ["/omicron/radii-file.js?v=20261211a","35211af971"],
   ["/omicron/radii-images.js?v=20261131v","7a2dad017b"],
   ["/omicron/style.css?v=20261222u","811b69a9ed"],
-  ["/opendb/","bd43ec1166"],
-  ["/opendb/app.js?v=20261222x","fc7fe91f0c"],
+  ["/opendb/","d754d9729c"],
+  ["/opendb/app.js?v=20261223a","120ed201b9"],
   ["/opendb/data/entries/aero-bubbles.kd","4105e5a668"],
   ["/opendb/data/entries/aero-css-theme.kd","b0c990b455"],
   ["/opendb/data/entries/aero-gel-button.kd","80d5f65502"],
@@ -385,11 +385,11 @@ const CORE = [["/","1116deaf53"],
   ["/opendb/icons/question.png","8084f6ed28"],
   ["/opendb/icons/stub.png","38ce429149"],
   ["/opendb/icons/tip.png","8a14710d15"],
-  ["/opendb/index.html","bd43ec1166"],
+  ["/opendb/index.html","d754d9729c"],
   ["/opendb/lite-preview.js?v=20261211a","4badc8cccd"],
-  ["/opendb/mobile/","9d0914b47d"],
-  ["/opendb/mobile/index.html","9d0914b47d"],
-  ["/opendb/style.css?v=20261222u","78186fa058"],
+  ["/opendb/mobile/","c028ef5053"],
+  ["/opendb/mobile/index.html","c028ef5053"],
+  ["/opendb/style.css?v=20261223a","a818857344"],
   ["/peeker/","dca9cd0756"],
   ["/peeker/apple-touch-icon.png","5fa59ee1f8"],
   ["/peeker/docs-library.js?v=20261222w","f7ed337b04"],
