@@ -878,6 +878,7 @@
         b.classList.toggle('os-office', l !== 'classic');
         b.classList.toggle('os-classic', l === 'classic');
         b.classList.toggle('os-pool', l === 'pool');
+        if (l === 'pool' && !document.getElementById('os-bubbles')) { const bub = document.createElement('div'); bub.id = 'os-bubbles'; bub.setAttribute('aria-hidden', 'true'); bub.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i>'; document.body.insertBefore(bub, document.body.firstChild); }
         b.classList.toggle('os-dark', !!prefs.dark);
         b.classList.toggle('os-no-anim', !prefs.anim);
         b.classList.toggle('os-ribbon-min', !!prefs.ribbonMin);

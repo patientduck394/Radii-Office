@@ -21,8 +21,36 @@
         } catch (e) { return false; }
     }
     function write(v) { try { localStorage.setItem(key, v ? '1' : '0'); } catch (e) {} }
+    const DARK_APPS = { inkpath: 1, peeker: 1, phosphor: 1, antimony: 1, zonerider: 1, trigger: 1 };
+    const SKIP = 'svg, svg *, canvas, img, video, script, style, option, #pool-bar, #pool-bar *, #pool-fab, #pool-bubbles, #pool-bubbles *, .aero-sidebar, .aero-sidebar *, .pool-keep';
+    function parse(c) { const m = /rgba?\(([^)]+)\)/.exec(c); if (!m) return null; const p = m[1].split(/[ ,\/]+/).filter(Boolean).map(Number); return { r: p[0], g: p[1], b: p[2], a: p.length > 3 ? p[3] : 1 }; }
+    const lum = function (c) { return (0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b) / 255; };
+    // The dark apps were drawn for a dark page. In Poolside every dark panel turns into bright glass (and its text into ink) so the water shows through
+    function lighten() {
+        if (!on || !DARK_APPS[app]) return;
+        const all = document.body.querySelectorAll('*');
+        for (let i = 0; i < all.length; i++) {
+            const el = all[i];
+            if (el.matches(SKIP)) { el.classList.remove('pool-lit'); continue; }
+            const cs = getComputedStyle(el);
+            let dark = false;
+            const bg = parse(cs.backgroundColor);
+            if (bg && bg.a >= 0.3 && lum(bg) < 0.4) dark = true;
+            else if (cs.backgroundImage && cs.backgroundImage.indexOf('gradient') > -1) {
+                const cols = (cs.backgroundImage.match(/rgba?\([^)]+\)/g) || []).map(parse).filter(function (c) { return c && c.a >= 0.3; });
+                if (cols.length && cols.reduce(function (s, c) { return s + lum(c); }, 0) / cols.length < 0.4) dark = true;
+            }
+            el.classList.toggle('pool-lit', dark);
+        }
+        if (obs) obs.takeRecords();   // (those class changes were ours, so they must not start another pass)
+    }
+    let lt = 0, obs = null;
+    function later() { clearTimeout(lt); lt = setTimeout(lighten, 250); }
     function apply() {
         document.body.classList.toggle('pool-ui', on);
+        if (on && !document.getElementById('pool-bubbles')) { const b = document.createElement('div'); b.id = 'pool-bubbles'; b.setAttribute('aria-hidden', 'true'); b.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i>'; document.body.insertBefore(b, document.body.firstChild); }
+        if (!on) document.querySelectorAll('.pool-lit').forEach(function (e) { e.classList.remove('pool-lit'); });
+        else { lighten(); }
         document.body.dataset.poolApp = app;
         const fab = document.getElementById('pool-fab');
         if (fab) fab.hidden = on;
@@ -45,6 +73,7 @@
         document.body.appendChild(fab);
         on = read();
         apply();
+        try { obs = new MutationObserver(function () { if (on) later(); }); obs.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['class', 'style', 'hidden'] }); } catch (e) {}
     }
     if (document.readyState !== 'loading') build(); else document.addEventListener('DOMContentLoaded', build);
 })();

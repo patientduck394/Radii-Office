@@ -1,76 +1,102 @@
 /* =====================================================================
-   POOLSIDE UI (body.pool-ui)! See poolside-ui.js. Cyan, blue and orange only; orange stays crisp (stripes, edges, rings).
+   POOLSIDE UI (body.pool-ui)! See poolside-ui.js. The real Poolside look (bright sky-to-cyan water, glass cards, orange rope lines,
+   drifting bubbles), built as its own UI: a floating glass waterline on top and the tools on a floating glass deck at the right.
    (Identical copy in each app folder!)
    ===================================================================== */
-#pool-bar, #pool-fab { display: none; font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif; }
+#pool-bar, #pool-fab, #pool-bubbles { display: none; }
+#pool-bar, #pool-fab { font-family: "Space Grotesk", "Segoe UI", system-ui, sans-serif; }
 #pool-fab {
     display: flex; align-items: center; gap: 6px; position: fixed; left: 12px; bottom: 12px; z-index: 2147483000; padding: 5px 12px 5px 6px; border-radius: 999px;
-    border: 2px solid #22d3ee; background: #fff; color: #075985; font-weight: 700; font-size: 12.5px; cursor: pointer; box-shadow: 0 3px 10px rgba(7, 89, 133, 0.25);
+    border: 2px solid #36cdee; background: rgba(255, 255, 255, 0.92); color: #0b2a44; font-weight: 700; font-size: 12.5px; cursor: pointer; box-shadow: 0 6px 18px rgba(8, 70, 130, 0.25);
 }
 #pool-fab[hidden] { display: none; }
 #pool-fab:hover { border-color: #ff8a1b; }
 body.pool-ui {
-    --pp-foam: #e6f8ff; --pp-cyan-l: #d4f6ff; --pp-cyan: #22d3ee; --pp-cyan-s: #67e8f9; --pp-blue: #1b7fe0; --pp-blue-d: #0a68c4; --pp-deep: #075985;
-    --pp-orange: #ff8a1b; --pp-orange-l: #ffe3c2; --pp-orange-d: #8a3d00;
-    box-sizing: border-box !important; padding-top: 48px !important; background-color: var(--pp-deep) !important; color-scheme: dark;
-    background-image: linear-gradient(rgba(255, 255, 255, 0.1) 2px, transparent 2px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 2px, transparent 2px), linear-gradient(180deg, var(--pp-blue-d), var(--pp-deep)) !important;
-    background-size: 44px 44px, 44px 44px, 100% 100% !important; background-attachment: fixed !important;
+    --pp-sky1: #d9f9ff; --pp-sky2: #8fe2fa; --pp-sky3: #36cdee; --pp-ink: #0b2a44; --pp-mute: #4d6e89; --pp-line: rgba(14, 90, 150, 0.22);
+    --pp-aqua1: #6fe0ff; --pp-aqua2: #36cdee; --pp-aqua3: #0a93b2; --pp-soft: #d2f7fc; --pp-orange: #ff8a1b; --pp-orange-soft: #ffe9d1; --pp-orange-ink: #b85500;
+    --pp-glass: rgba(255, 255, 255, 0.62); --pp-glass2: rgba(255, 255, 255, 0.86); --pp-shadow: 0 10px 30px rgba(8, 70, 130, 0.22);
+    box-sizing: border-box !important; padding-top: 68px !important; color: var(--pp-ink);
+    background: linear-gradient(180deg, var(--pp-sky1) 0%, var(--pp-sky2) 45%, var(--pp-sky3) 90%) fixed !important;
 }
-/* the light apps keep a bright pool floor instead of the deep end */
-body.pool-ui[data-pool-app="imbuer"] {
-    background-color: var(--pp-foam) !important; color-scheme: light;
-    background-image: linear-gradient(#fff 2px, transparent 2px), linear-gradient(90deg, #fff 2px, transparent 2px) !important; background-size: 44px 44px !important;
-}
-body.pool-ui #pool-bar {
-    display: flex; align-items: center; gap: 10px; position: fixed; top: 0; left: 0; right: 0; height: 44px; z-index: 2147482000; padding: 0 14px;
-    background: var(--pp-deep); border-bottom: 4px solid var(--pp-cyan); color: #fff;
-}
-body.pool-ui #pool-bar img { width: 24px; height: 24px; }
-body.pool-ui #pool-bar b { font-size: 16px; letter-spacing: 0.02em; }
-body.pool-ui .pool-tag { background: var(--pp-orange); color: #fff; font-weight: 800; font-size: 11px; padding: 2px 10px; border-radius: 999px; }
-body.pool-ui .pool-grow { flex: 1; }
-body.pool-ui #pool-off { border: 2px solid var(--pp-cyan-s); background: #fff; color: var(--pp-deep); border-radius: 999px; padding: 3px 14px; font: inherit; font-weight: 700; font-size: 12.5px; cursor: pointer; }
-body.pool-ui #pool-off:hover { border-color: var(--pp-orange); }
+body.pool-ui[data-pool-app="opendb"] { background: none !important; }   /* OpenDB already has its own sky */
 body.pool-ui #pool-fab { display: none; }
+body.pool-ui #pool-bubbles { display: block; position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+#pool-bubbles i { position: absolute; bottom: -80px; width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.8);
+    background: radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.95) 0 10%, rgba(255, 255, 255, 0.15) 40%, rgba(255, 255, 255, 0.05) 70%); animation: ppRise 24s linear infinite; }
+#pool-bubbles i:nth-child(1) { left: 6%; width: 30px; height: 30px; animation-duration: 19s; }
+#pool-bubbles i:nth-child(2) { left: 22%; width: 64px; height: 64px; animation-duration: 28s; animation-delay: -6s; }
+#pool-bubbles i:nth-child(3) { left: 41%; width: 22px; height: 22px; animation-duration: 17s; animation-delay: -3s; }
+#pool-bubbles i:nth-child(4) { left: 58%; width: 50px; height: 50px; animation-duration: 25s; animation-delay: -12s; }
+#pool-bubbles i:nth-child(5) { left: 72%; width: 36px; height: 36px; animation-duration: 21s; animation-delay: -9s; }
+#pool-bubbles i:nth-child(6) { left: 86%; width: 70px; height: 70px; animation-duration: 31s; animation-delay: -15s; }
+@keyframes ppRise { to { transform: translateY(-115vh) translateX(40px); } }
+@media (prefers-reduced-motion: reduce) { #pool-bubbles i { animation: none; } }
 
-/* ---- the sidebar apps (Inkpath, Peeker, Phosphor, Antimony): the sidebar becomes a pool deck at the right edge ---- */
+/* the waterline: floating glass with a rope line along the bottom */
+body.pool-ui #pool-bar {
+    display: flex; align-items: center; gap: 10px; position: fixed; top: 10px; left: 10px; right: 10px; height: 48px; z-index: 2147482000; padding: 0 16px; border-radius: 18px;
+    background: var(--pp-glass2); border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: var(--pp-shadow); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); color: var(--pp-ink);
+}
+body.pool-ui #pool-bar::after { content: ""; position: absolute; left: 20px; right: 20px; bottom: 5px; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--pp-orange) 0 10px, #fff 10px 20px); }
+body.pool-ui #pool-bar img { width: 26px; height: 26px; }
+body.pool-ui #pool-bar b { font-size: 16px; letter-spacing: 0.02em; color: var(--pp-ink); }
+body.pool-ui .pool-tag { background: var(--pp-orange-soft); border: 1px solid var(--pp-orange); color: var(--pp-orange-ink); font-weight: 800; font-size: 11px; padding: 1px 10px; border-radius: 999px; }
+body.pool-ui .pool-grow { flex: 1; }
+body.pool-ui #pool-off { border: 2px solid var(--pp-aqua2); background: var(--pp-soft); color: var(--pp-aqua3); border-radius: 999px; padding: 3px 14px; font: inherit; font-weight: 700; font-size: 12.5px; cursor: pointer; }
+body.pool-ui #pool-off:hover { border-color: var(--pp-orange); background: var(--pp-orange-soft); color: var(--pp-orange-ink); }
+
+/* the dark apps: every dark panel becomes bright glass and its text becomes ink (poolside-ui.js tags them with .pool-lit) */
+body.pool-ui .pool-lit { background: var(--pp-glass2) !important; background-image: none !important; border-color: rgba(255, 255, 255, 0.9) !important; box-shadow: 0 4px 14px rgba(8, 70, 130, 0.12) !important; backdrop-filter: none !important; }
+body.pool-ui[data-pool-app="inkpath"] *:not(svg):not(svg *):not(canvas):not(.aero-sidebar *):not(#pool-bar *):not(#pool-fab *):not(.pool-keep),
+body.pool-ui[data-pool-app="peeker"] *:not(svg):not(svg *):not(canvas):not(.aero-sidebar *):not(#pool-bar *):not(#pool-fab *):not(.pool-keep),
+body.pool-ui[data-pool-app="phosphor"] *:not(svg):not(svg *):not(canvas):not(.aero-sidebar *):not(#pool-bar *):not(#pool-fab *):not(.pool-keep),
+body.pool-ui[data-pool-app="antimony"] *:not(svg):not(svg *):not(canvas):not(.aero-sidebar *):not(#pool-bar *):not(#pool-fab *):not(.pool-keep),
+body.pool-ui[data-pool-app="zonerider"] *:not(svg):not(svg *):not(canvas):not(#pool-bar *):not(#pool-fab *):not(.pool-keep),
+body.pool-ui[data-pool-app="trigger"] *:not(svg):not(svg *):not(canvas):not(#pool-bar *):not(#pool-fab *):not(.pool-keep) { color: var(--pp-ink) !important; text-shadow: none !important; }
+body.pool-ui .pool-lit input, body.pool-ui .pool-lit textarea, body.pool-ui .pool-lit select, body.pool-ui input, body.pool-ui textarea, body.pool-ui select { background-color: #fff; color: var(--pp-ink) !important; border-color: var(--pp-line); }
+body.pool-ui .pool-lit button { border: 2px solid var(--pp-sky2) !important; border-radius: 12px; }
+body.pool-ui .pool-lit button:hover { border-color: var(--pp-aqua2) !important; background: var(--pp-soft) !important; }
+body.pool-ui .pool-lit button.active, body.pool-ui .pool-lit .active, body.pool-ui .pool-lit [aria-pressed="true"], body.pool-ui .pool-lit .on { background: var(--pp-orange-soft) !important; border-color: var(--pp-orange) !important; }
+
+/* ---- the sidebar apps (Inkpath, Peeker, Phosphor, Antimony): the sidebar becomes a floating glass pool deck at the right ---- */
 body.pool-ui .aero-sidebar {
-    order: 99; height: 100% !important; max-height: none !important; background: var(--pp-foam) !important; color: var(--pp-deep) !important; backdrop-filter: none !important;
-    border: 0 !important; border-left: 10px solid !important; border-image: repeating-linear-gradient(180deg, var(--pp-orange) 0 14px, #fff 14px 28px) 1 !important;
-    box-shadow: -4px 0 14px rgba(27, 127, 224, 0.18) !important;
+    order: 99; height: calc(100% - 10px) !important; max-height: none !important; margin: 0 10px 10px 0; border-radius: 22px; overflow-y: auto;
+    background: var(--pp-glass) !important; color: var(--pp-ink) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.9) !important; box-shadow: var(--pp-shadow) !important;
 }
-body.pool-ui .aero-sidebar *:not(svg):not(path):not(.pool-keep) { color: var(--pp-deep) !important; text-shadow: none !important; }
-body.pool-ui .aero-sidebar h2, body.pool-ui .aero-sidebar .section-label { color: var(--pp-blue) !important; }
+body.pool-ui .aero-sidebar *:not(svg):not(path) { color: var(--pp-ink) !important; text-shadow: none !important; }
+body.pool-ui .aero-sidebar h2, body.pool-ui .aero-sidebar .section-label { color: var(--pp-aqua3) !important; }
+body.pool-ui .aero-sidebar .sidebar-brand { position: relative; padding-bottom: 8px; }
+body.pool-ui .aero-sidebar .sidebar-brand::after { content: ""; position: absolute; left: 5px; right: 5px; bottom: 0; height: 4px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--pp-orange) 0 8px, #fff 8px 16px); }
 body.pool-ui .aero-sidebar button, body.pool-ui .aero-sidebar .action-btn, body.pool-ui .aero-sidebar .pad-toggle-btn, body.pool-ui .aero-sidebar .mini-btn {
-    background: #fff !important; border: 2px solid var(--pp-cyan-s) !important; border-radius: 14px !important; box-shadow: none !important; color: var(--pp-deep) !important;
+    background: #fff !important; border: 2px solid var(--pp-sky2) !important; border-radius: 14px !important; box-shadow: none !important;
 }
-body.pool-ui .aero-sidebar button:hover { background: var(--pp-cyan-l) !important; border-color: var(--pp-blue) !important; }
-body.pool-ui .aero-sidebar button.active, body.pool-ui .aero-sidebar .active, body.pool-ui .aero-sidebar button[aria-pressed="true"] { background: var(--pp-blue) !important; border-color: var(--pp-blue-d) !important; }
-body.pool-ui .aero-sidebar button.active *, body.pool-ui .aero-sidebar .active * { color: #fff !important; }
+body.pool-ui .aero-sidebar button:hover { background: var(--pp-soft) !important; border-color: var(--pp-aqua2) !important; }
+body.pool-ui .aero-sidebar button.active, body.pool-ui .aero-sidebar .active, body.pool-ui .aero-sidebar button[aria-pressed="true"] { background: var(--pp-orange-soft) !important; border-color: var(--pp-orange) !important; }
+body.pool-ui .aero-sidebar button.active *, body.pool-ui .aero-sidebar .active * { color: var(--pp-orange-ink) !important; }
 body.pool-ui .aero-sidebar svg { stroke: currentColor; }
 body[data-pool-app="inkpath"].pool-ui, body[data-pool-app="peeker"].pool-ui, body[data-pool-app="phosphor"].pool-ui, body[data-pool-app="antimony"].pool-ui { height: 100vh !important; }
 body.pool-ui #app-view { height: 100% !important; width: 100% !important; }
 body.pool-ui .workspace-viewport-wrapper { background: transparent !important; }
 
-/* ---- Zonerider: the editor panels turn pool blue, the lime becomes cyan, and the outliner gets a lane-rope edge ---- */
+/* ---- Zonerider: light panels, orange accents (the 3D view stays a dark stage) ---- */
 body.pool-ui[data-pool-app="zonerider"] {
-    --zr-lime: #22d3ee; --zr-lime-deep: #1b7fe0; --zr-lime-ink: #075985; --zr-bg: #075985; --zr-panel: #0a68c4; --zr-panel-2: #1b7fe0; --zr-line: #67e8f9;
-    --zr-text: #fff; --zr-dim: #d4f6ff;
+    --zr-lime: #ff8a1b; --zr-lime-deep: #ff8a1b; --zr-lime-ink: #5a2c00; --zr-bg: transparent; --zr-panel: rgba(255, 255, 255, 0.86); --zr-panel-2: #fff; --zr-line: rgba(14, 90, 150, 0.22);
+    --zr-text: #0b2a44; --zr-dim: #4d6e89;
 }
-body.pool-ui[data-pool-app="zonerider"] .zr-app { height: calc(100vh - 48px) !important; }
-body.pool-ui[data-pool-app="zonerider"] .zr-left { border-right: 10px solid !important; border-image: repeating-linear-gradient(180deg, var(--pp-orange) 0 14px, #fff 14px 28px) 1 !important; }
-body.pool-ui[data-pool-app="zonerider"] .zr-top { border-bottom: 3px solid var(--pp-orange); }
-/* ---- Imbuer: the green ribbon turns pool blue with an orange File button ---- */
+body.pool-ui[data-pool-app="zonerider"] .zr-app { height: calc(100vh - 68px) !important; padding: 0 10px 10px; gap: 10px; background: transparent !important; }
+body.pool-ui[data-pool-app="zonerider"] .zr-top, body.pool-ui[data-pool-app="zonerider"] .zr-left, body.pool-ui[data-pool-app="zonerider"] .zr-right, body.pool-ui[data-pool-app="zonerider"] .zr-bottom { border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.9); box-shadow: var(--pp-shadow); }
+/* ---- Imbuer: the ribbon turns Poolside aqua with orange selections ---- */
 body.pool-ui[data-pool-app="imbuer"] {
-    --accent: #1b7fe0; --accent-d: #0a68c4; --accent-l: #d4f6ff; --accent-ring: rgba(27, 127, 224, 0.35); --title-bg: #075985; --gel-a: #67e8f9; --gel-b: #1b7fe0; --gel-border: #d4f6ff;
-    --gel-glow: rgba(34, 211, 238, 0.4); --on: #d4f6ff; --hdr-on-bg: #d4f6ff; --hdr-on-text: #075985; --hdr-full-bg: #67e8f9; --sel-fill: rgba(27, 127, 224, 0.12); --sel-line: rgba(10, 104, 196, 0.7);
+    --accent: #0a93b2; --accent-d: #0a93b2; --accent-l: #d2f7fc; --accent-ring: rgba(54, 205, 238, 0.4); --title-bg: #8fe2fa; --gel-a: #6fe0ff; --gel-b: #36cdee; --gel-border: #d2f7fc;
+    --gel-glow: rgba(54, 205, 238, 0.4); --title-text: #0b2a44; --on: #ffe9d1; --hdr-on-bg: #d2f7fc; --hdr-on-text: #0a93b2; --hdr-full-bg: #8fe2fa; --sel-fill: rgba(54, 205, 238, 0.14); --sel-line: rgba(10, 147, 178, 0.75);
 }
-body.pool-ui[data-pool-app="imbuer"] #app { height: calc(100vh - 48px) !important; min-height: 0; }
-/* ---- OpenDB and Trigger: just the pool floor, the page keeps its own shape ---- */
-body.pool-ui[data-pool-app="opendb"] .top { margin-top: 0; }
-/* ---- Phosphor and Antimony sign-in and buttons: the green becomes orange ---- */
-body.pool-ui[data-pool-app="phosphor"] .auth-card button, body.pool-ui[data-pool-app="antimony"] .auth-card button,
-body.pool-ui[data-pool-app="phosphor"] #app-view button.primary, body.pool-ui[data-pool-app="antimony"] #app-view button.primary {
-    background: var(--pp-orange) !important; border-color: var(--pp-orange-d) !important; color: #fff !important; box-shadow: none !important;
+body.pool-ui[data-pool-app="imbuer"] #app { height: calc(100vh - 68px) !important; min-height: 0; margin: 0 10px 10px; border-radius: 18px; overflow: hidden; box-shadow: var(--pp-shadow); }
+/* ---- Trigger: its own page, in glass ---- */
+body.pool-ui[data-pool-app="trigger"] { --bg: transparent; --panel: rgba(255, 255, 255, 0.86); --line: rgba(14, 90, 150, 0.22); --ink: #0b2a44; --mute: #4d6e89; }
+body.pool-ui[data-pool-app="trigger"] .tg-top { margin: 0 10px; border-radius: 18px; }
+/* ---- Phosphor and Antimony sign-in: orange buttons ---- */
+body.pool-ui[data-pool-app="phosphor"] .auth-card button, body.pool-ui[data-pool-app="antimony"] .auth-card button {
+    background: var(--pp-orange-soft) !important; border: 2px solid var(--pp-orange) !important; color: var(--pp-orange-ink) !important; box-shadow: none !important; border-radius: 999px !important;
 }
-body.pool-ui[data-pool-app="phosphor"] .auth-card, body.pool-ui[data-pool-app="antimony"] .auth-card { border-color: var(--pp-cyan-s) !important; box-shadow: 0 0 0 4px rgba(103, 232, 249, 0.25) !important; }
+body.pool-ui[data-pool-app="phosphor"] .auth-card, body.pool-ui[data-pool-app="antimony"] .auth-card { border-color: rgba(255, 255, 255, 0.9) !important; }
