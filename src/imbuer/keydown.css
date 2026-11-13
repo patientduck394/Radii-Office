@@ -4942,3 +4942,150 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 }
 .gel-gloss-chip.gel-aero-white, .gel-glosstube-chip.gel-aero-white, .gel-glossdew-chip.gel-aero-white { --ae-l: #ffffff; --ae-c: #d6d6d6; --ae-e1: #8e8e8e; --ae-e2: #b5b5b5; color: #4a4a4a; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.7); }
 .gel-gloss-chip.gel-aero-fog, .gel-glosstube-chip.gel-aero-fog, .gel-glossdew-chip.gel-aero-fog { color: #2e2e2e; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45); }
+
+/* ========================================================
+   TWELVE NEW CHIP FAMILIES (cx): Wax ~~C~text~~, Pixel ~~C=text~~, Candy Cane ~~C.text~~, Neon Tube ==C=text==,
+   Marquee ==C~text==, Crystal ==C.text==, Washi Tape //C/text//, Sticker //C~text//, Holo Foil //C.text//,
+   Blueprint ((C(text)), Pebble ((C=text)), Ticket Stub ((C.text)). Each in the same 16 colors.
+   ======================================================== */
+.gel-wax-chip, .gel-pixel-chip, .gel-candy-chip, .gel-tube-chip, .gel-marquee-chip, .gel-crystal-chip,
+.gel-washi-chip, .gel-sticker-chip, .gel-foil-chip, .gel-blueprint-chip, .gel-pebble-chip, .gel-stub-chip {
+  --cx-c: #3b82f6; --cx-e: #2563eb; --cx-i: #172554; --cx-t: #fff;
+  --cx-l: color-mix(in srgb, var(--cx-c) 42%, #fff); --cx-d: color-mix(in srgb, var(--cx-c) 70%, #000);
+  --cx-gl: var(--cx-g, color-mix(in srgb, var(--cx-c) 78%, #fff));
+  position: relative; isolation: isolate; box-sizing: border-box;
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 3px 15px; border: 0; font-family: inherit; font-weight: 800; white-space: nowrap;
+  margin: 0 3px 4px; vertical-align: middle; -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+
+.cx-red { --cx-c: #ef4444; --cx-e: #dc2626; --cx-i: #450a0a; --cx-t: #ffffff; }
+.cx-orange { --cx-c: #f97316; --cx-e: #ea580c; --cx-i: #431407; --cx-t: #ffffff; }
+.cx-gold { --cx-c: #ea9f08; --cx-e: #ca8a04; --cx-i: #451a03; --cx-t: #2b1700; }
+.cx-yellow { --cx-c: #ead708; --cx-e: #caa604; --cx-i: #452b03; --cx-t: #2b2200; }
+.cx-lime { --cx-c: #84cc16; --cx-e: #65a30d; --cx-i: #1a2e05; --cx-t: #142300; }
+.cx-green { --cx-c: #10b981; --cx-e: #059669; --cx-i: #022c22; --cx-t: #ffffff; }
+.cx-turquoise { --cx-c: #30e5cd; --cx-e: #26b1a5; --cx-i: #044439; --cx-t: #05302a; }
+.cx-teal { --cx-c: #06b6d4; --cx-e: #0891b2; --cx-i: #083344; --cx-t: #ffffff; }
+.cx-cyan { --cx-c: #30d3e5; --cx-e: #26a3b1; --cx-i: #043e44; --cx-t: #06323a; }
+.cx-blue { --cx-c: #3b82f6; --cx-e: #2563eb; --cx-i: #172554; --cx-t: #ffffff; }
+.cx-purple { --cx-c: #a855f7; --cx-e: #9333ea; --cx-i: #2e1065; --cx-t: #ffffff; }
+.cx-pink { --cx-c: #ec4899; --cx-e: #db2777; --cx-i: #4c0519; --cx-t: #ffffff; }
+.cx-slate { --cx-c: #94a3b8; --cx-e: #64748b; --cx-i: #1e293b; --cx-t: #0f172a; --cx-g: #cbd5e1; }
+.cx-white { --cx-c: #f6f6f6; --cx-e: #b8b8b8; --cx-i: #4a4a4a; --cx-t: #2a2a2a; --cx-g: #ffffff; }
+.cx-fog { --cx-c: #d4d9de; --cx-e: #8b95a1; --cx-i: #3b434d; --cx-t: #1f262e; --cx-g: #eef2f7; }
+.cx-black { --cx-c: #2b2b30; --cx-e: #111114; --cx-i: #000000; --cx-t: #ffffff; --cx-g: #e5e7eb; }
+/* Wax seal ~~C~text~~ */
+.gel-wax-chip {
+  padding: 4px 19px; color: var(--cx-i); text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35), 0 -1px 0 rgba(0, 0, 0, 0.12);
+  border-radius: 46% 54% 48% 52% / 56% 48% 52% 44%;
+  background: radial-gradient(circle at 32% 26%, color-mix(in srgb, var(--cx-c) 55%, #fff) 0%, var(--cx-c) 42%, var(--cx-e) 100%);
+  box-shadow: inset 0 -0.2em 0.35em rgba(0, 0, 0, 0.22), inset 0 0.18em 0.28em rgba(255, 255, 255, 0.45), 0 0.25em 0.45em -0.1em color-mix(in srgb, var(--cx-e) 70%, transparent), 0 0.08em 0 color-mix(in srgb, var(--cx-d) 60%, transparent);
+}
+.gel-wax-chip::before { content: ""; position: absolute; z-index: -1; inset: 0.2em 0.45em; border-radius: inherit; border: 0.09em solid color-mix(in srgb, var(--cx-e) 55%, transparent); box-shadow: 0 0.06em 0 rgba(255, 255, 255, 0.4), inset 0 0.06em 0.08em rgba(0, 0, 0, 0.18); }
+.gel-wax-chip::after { content: ""; position: absolute; z-index: -1; left: 22%; top: 10%; width: 22%; height: 0.2em; border-radius: 999px; background: rgba(255, 255, 255, 0.55); transform: rotate(-8deg); }
+/* Pixel ~~C=text~~ */
+.gel-pixel-chip {
+  padding: 4px 16px; color: var(--cx-t); font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace; letter-spacing: 0.04em; text-transform: uppercase; font-size: 0.92em; border-radius: 0;
+  background: var(--cx-c);
+  box-shadow: inset 0 0 0 2px var(--cx-d), inset 4px 4px 0 2px var(--cx-l), inset -4px -4px 0 2px var(--cx-e);
+  clip-path: polygon(0 4px, 4px 4px, 4px 0, calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px, 100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%, 4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px));
+  text-shadow: 2px 2px 0 color-mix(in srgb, var(--cx-d) 80%, transparent);
+}
+/* Candy cane ~~C.text~~ */
+.gel-candy-chip {
+  padding: 3px 17px; color: var(--cx-i); border-radius: 999px; text-shadow: 0 0 0.22em #fff, 0 0 0.08em #fff, 0 0 0.4em #fff;
+  background: repeating-linear-gradient(-45deg, var(--cx-c) 0 0.5em, #fff 0.5em 1em);
+  box-shadow: inset 0 0 0 0.12em var(--cx-e), inset 0 -0.25em 0.3em -0.05em color-mix(in srgb, var(--cx-e) 45%, transparent), 0 0.22em 0.4em -0.1em color-mix(in srgb, var(--cx-e) 60%, transparent);
+}
+.gel-candy-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; right: 0.5em; top: 0.1em; height: 42%; border-radius: 999px 999px 60% 60% / 100% 100% 40% 40%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0)); }
+/* Neon tube ==C=text== */
+.gel-tube-chip {
+  padding: 3px 17px; color: var(--cx-gl); border-radius: 999px; background: #0a0c14; text-shadow: 0 0 0.3em var(--cx-gl), 0 0 0.8em var(--cx-c);
+  box-shadow: 0 0 0 0.12em var(--cx-gl), 0 0 0.5em 0.06em var(--cx-c), 0 0 1.3em 0.1em color-mix(in srgb, var(--cx-c) 55%, transparent), inset 0 0 0.5em color-mix(in srgb, var(--cx-c) 45%, transparent);
+}
+.gel-tube-chip::before { content: ""; position: absolute; z-index: -1; inset: 0.2em; border-radius: 999px; border: 0.06em solid color-mix(in srgb, var(--cx-gl) 40%, transparent); }
+/* Marquee ==C~text== */
+.gel-marquee-chip {
+  padding: 0.62em 1.15em; color: var(--cx-gl); border-radius: 0.4em; text-shadow: 0 0 0.35em var(--cx-c); line-height: 1.1;
+  background:
+    radial-gradient(circle at 50% 50%, #fffbe0 0 0.08em, #ffd75e 0.1em 0.17em, transparent 0.2em) 0 0 / 0.95em 0.45em repeat-x,
+    radial-gradient(circle at 50% 50%, #fffbe0 0 0.08em, #ffd75e 0.1em 0.17em, transparent 0.2em) 0 100% / 0.95em 0.45em repeat-x,
+    linear-gradient(180deg, color-mix(in srgb, var(--cx-d) 60%, #000), color-mix(in srgb, var(--cx-c) 28%, #0d0905));
+  box-shadow: inset 0 0 0 0.1em color-mix(in srgb, var(--cx-gl) 55%, #000), 0 0 0.7em color-mix(in srgb, #ffd75e 45%, transparent), 0 0.2em 0.4em rgba(0, 0, 0, 0.35);
+}
+/* Crystal ==C.text== */
+.gel-crystal-chip {
+  padding: 3px 1.45em; color: var(--cx-i); border-radius: 0; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.7) 0 14%, rgba(255, 255, 255, 0) 14% 38%, rgba(255, 255, 255, 0.3) 38% 50%, rgba(255, 255, 255, 0) 50% 100%),
+    linear-gradient(180deg, color-mix(in srgb, var(--cx-c) 40%, #fff) 0 50%, var(--cx-c) 50% 100%);
+  clip-path: polygon(0.7em 0, calc(100% - 0.7em) 0, 100% 50%, calc(100% - 0.7em) 100%, 0.7em 100%, 0 50%);
+  box-shadow: inset 0 0 0 0.1em var(--cx-e);
+}
+.gel-crystal-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 18%; width: 0.22em; height: 0.22em; background: #fff; transform: rotate(45deg); box-shadow: 0 0 0.25em 0.05em rgba(255, 255, 255, 0.9); }
+.gel-crystal-chip::after { content: ""; position: absolute; z-index: -1; right: 0.9em; bottom: 20%; width: 0.16em; height: 0.16em; background: #fff; transform: rotate(45deg); opacity: 0.85; }
+/* Washi tape //C/text// */
+.gel-washi-chip {
+  padding: 4px 1.1em; color: var(--cx-i); transform: rotate(-1.5deg); border-radius: 0;
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.42) 0 0.3em, rgba(255, 255, 255, 0) 0.3em 0.6em),
+    color-mix(in srgb, var(--cx-c) 72%, transparent);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.3em) 25%, 100% 50%, calc(100% - 0.3em) 75%, 100% 100%, 0 100%, 0.3em 75%, 0 50%, 0.3em 25%);
+  text-shadow: 0 0 0.3em rgba(255, 255, 255, 0.7);
+}
+/* Sticker //C~text// */
+.gel-sticker-chip {
+  padding: 2px 0.75em; color: var(--cx-t); border: 0.2em solid #fff; border-radius: 0.85em; transform: rotate(-2deg);
+  background: var(--cx-c); text-shadow: 0 1px 0 color-mix(in srgb, var(--cx-d) 55%, transparent);
+  box-shadow: 0 0.06em 0.28em rgba(0, 0, 0, 0.4), 0 0 0 0.05em rgba(0, 0, 0, 0.09);
+}
+.gel-sticker-chip::before { content: ""; position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: linear-gradient(115deg, rgba(255, 255, 255, 0.55) 0 22%, rgba(255, 255, 255, 0) 22% 44%, rgba(255, 255, 255, 0.18) 44% 52%, rgba(255, 255, 255, 0) 52%); }
+.gel-sticker-chip::after { content: ""; position: absolute; z-index: -1; right: -0.2em; bottom: -0.2em; width: 0.7em; height: 0.7em; background: linear-gradient(135deg, transparent 50%, #e8e8ec 50%, #fff 100%); border-radius: 0 0 0.8em 0; box-shadow: -0.05em -0.05em 0.1em rgba(0, 0, 0, 0.18); }
+/* Holo foil //C.text// */
+.gel-foil-chip {
+  padding: 3px 17px; color: var(--cx-i); border-radius: 0.5em; text-shadow: 0 0 0.25em rgba(255, 255, 255, 0.85);
+  background: linear-gradient(115deg, var(--cx-l), #fff 30%, var(--cx-c) 55%, var(--cx-l));
+  background: linear-gradient(115deg, hsl(from var(--cx-c) calc(h - 40) s 78%), hsl(from var(--cx-c) calc(h + 10) s 88%) 22%, hsl(from var(--cx-c) calc(h + 60) s 72%) 45%, hsl(from var(--cx-c) calc(h + 120) s 84%) 68%, hsl(from var(--cx-c) calc(h - 40) s 78%));
+  box-shadow: inset 0 0 0 0.09em rgba(255, 255, 255, 0.75), inset 0 -0.2em 0.3em -0.1em color-mix(in srgb, var(--cx-e) 40%, transparent), 0 0.18em 0.4em -0.1em color-mix(in srgb, var(--cx-c) 55%, transparent);
+}
+.gel-foil-chip::before { content: ""; position: absolute; z-index: -1; inset: 0; border-radius: inherit; background: repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.35) 0 0.08em, rgba(255, 255, 255, 0) 0.08em 0.5em), radial-gradient(circle at 80% 25%, rgba(255, 255, 255, 0.9) 0 0.08em, rgba(255, 255, 255, 0) 0.3em); }
+/* Blueprint ((C(text)) */
+.gel-blueprint-chip {
+  padding: 4px 16px; color: #fff; font-family: ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace; font-size: 0.94em; letter-spacing: 0.03em; border-radius: 0.2em;
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.2) 1px, transparent 1px) 0 0 / 0.7em 0.7em,
+    linear-gradient(90deg, rgba(255, 255, 255, 0.2) 1px, transparent 1px) 0 0 / 0.7em 0.7em,
+    color-mix(in srgb, var(--cx-c) 38%, #0c2a6e);
+  box-shadow: inset 0 0 0 0.1em color-mix(in srgb, var(--cx-gl) 70%, transparent), 0 0.18em 0.35em rgba(0, 20, 80, 0.3);
+  text-shadow: 0 0 0.3em color-mix(in srgb, var(--cx-gl) 60%, transparent);
+}
+.gel-blueprint-chip::before { content: ""; position: absolute; z-index: -1; inset: 0.22em; background:
+  linear-gradient(var(--cx-gl), var(--cx-gl)) 0 0 / 0.4em 1.5px no-repeat, linear-gradient(var(--cx-gl), var(--cx-gl)) 0 0 / 1.5px 0.4em no-repeat,
+  linear-gradient(var(--cx-gl), var(--cx-gl)) 100% 0 / 0.4em 1.5px no-repeat, linear-gradient(var(--cx-gl), var(--cx-gl)) 100% 0 / 1.5px 0.4em no-repeat,
+  linear-gradient(var(--cx-gl), var(--cx-gl)) 0 100% / 0.4em 1.5px no-repeat, linear-gradient(var(--cx-gl), var(--cx-gl)) 0 100% / 1.5px 0.4em no-repeat,
+  linear-gradient(var(--cx-gl), var(--cx-gl)) 100% 100% / 0.4em 1.5px no-repeat, linear-gradient(var(--cx-gl), var(--cx-gl)) 100% 100% / 1.5px 0.4em no-repeat; }
+/* Pebble ((C=text)) */
+.gel-pebble-chip {
+  padding: 4px 18px; color: var(--cx-i); border-radius: 999px; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.4);
+  background:
+    radial-gradient(circle at 18% 34%, rgba(0, 0, 0, 0.09) 0 0.05em, transparent 0.07em),
+    radial-gradient(circle at 46% 70%, rgba(0, 0, 0, 0.08) 0 0.05em, transparent 0.07em),
+    radial-gradient(circle at 74% 30%, rgba(0, 0, 0, 0.09) 0 0.05em, transparent 0.07em),
+    radial-gradient(circle at 88% 66%, rgba(255, 255, 255, 0.28) 0 0.05em, transparent 0.07em),
+    radial-gradient(ellipse at 30% 22%, color-mix(in srgb, var(--cx-c) 40%, #f2eee8), color-mix(in srgb, var(--cx-c) 60%, #bdb6ab) 70%);
+  box-shadow: inset 0 0.16em 0.26em rgba(255, 255, 255, 0.55), inset 0 -0.22em 0.32em rgba(0, 0, 0, 0.2), 0 0.18em 0.3em -0.05em rgba(0, 0, 0, 0.28);
+}
+/* Ticket stub ((C.text)) */
+.gel-stub-chip {
+  padding: 4px 16px 4px 2.5em; color: var(--cx-i); border-radius: 0.25em; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.3) 0 0.12em, rgba(0, 0, 0, 0) 0.12em) 0 0 / 0.5em 0.3em repeat-y,
+    linear-gradient(90deg, var(--cx-c) 0 1.7em, transparent 1.7em),
+    linear-gradient(180deg, color-mix(in srgb, var(--cx-c) 22%, #fff), color-mix(in srgb, var(--cx-c) 12%, #fff));
+  background-position: 1.7em 0, 0 0, 0 0; background-size: 0.14em 0.36em, auto, auto; background-repeat: repeat-y, no-repeat, no-repeat;
+  -webkit-mask: radial-gradient(circle 0.3em at 0 50%, transparent 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.3em at 100% 50%, transparent 97%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 0.3em at 0 50%, transparent 97%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.3em at 100% 50%, transparent 97%, #000) right / 51% 100% no-repeat;
+}
+.gel-stub-chip::before { content: "\2605"; position: absolute; z-index: 1; left: 0.5em; top: 50%; transform: translateY(-52%); font-size: 0.85em; color: var(--cx-t); text-shadow: 0 1px 0 color-mix(in srgb, var(--cx-d) 60%, transparent); }
+
