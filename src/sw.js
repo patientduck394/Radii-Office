@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '9676d67ee8a7';
+const VERSION = '49cd489b2b79';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","1116deaf53"],
@@ -295,7 +295,7 @@ const CORE = [["/","1116deaf53"],
   ["/omicron/radii-file.js?v=20261211a","35211af971"],
   ["/omicron/radii-images.js?v=20261131v","7a2dad017b"],
   ["/omicron/style.css?v=20261222u","811b69a9ed"],
-  ["/opendb/","9290fc3188"],
+  ["/opendb/","547eda7416"],
   ["/opendb/app.js?v=20261223b","2f664cf294"],
   ["/opendb/data/entries/aero-bubbles.kd","4105e5a668"],
   ["/opendb/data/entries/aero-css-theme.kd","b0c990b455"],
@@ -350,6 +350,7 @@ const CORE = [["/","1116deaf53"],
   ["/opendb/data/entries/solar-system-diagram.kd","19a301863d"],
   ["/opendb/data/entries/solar-system.kd","2f79aefd73"],
   ["/opendb/data/entries/solenoid.kd","9c69ac675f"],
+  ["/opendb/data/entries/star-spangled-banner-instrumental.kd","237cb31e51"],
   ["/opendb/data/entries/svelte-gel-counter.kd","647562c2f9"],
   ["/opendb/data/entries/venn-diagram.kd","8e30244cf5"],
   ["/opendb/data/entries/water-cycle-diagram.kd","55e153eb4b"],
@@ -385,10 +386,14 @@ const CORE = [["/","1116deaf53"],
   ["/opendb/icons/question.png","8084f6ed28"],
   ["/opendb/icons/stub.png","38ce429149"],
   ["/opendb/icons/tip.png","8a14710d15"],
-  ["/opendb/index.html","9290fc3188"],
+  ["/opendb/index.html","547eda7416"],
   ["/opendb/lite-preview.js?v=20261211a","4badc8cccd"],
-  ["/opendb/mobile/","db4f57fe56"],
-  ["/opendb/mobile/index.html","db4f57fe56"],
+  ["/opendb/mobile/","59a07e94d1"],
+  ["/opendb/mobile/index.html","59a07e94d1"],
+  ["/opendb/office-shell.css?v=20261223a","b9609d834d"],
+  ["/opendb/office-shell.js?v=20261223a","3b1c7bc9d5"],
+  ["/opendb/office.js?v=20261223a","6a025b97b3"],
+  ["/opendb/opendb-office.css?v=20261223a","3c5f1d049c"],
   ["/opendb/style.css?v=20261223a","a818857344"],
   ["/peeker/","dca9cd0756"],
   ["/peeker/apple-touch-icon.png","5fa59ee1f8"],

@@ -1,0 +1,25 @@
+/* OpenDB's Office layout! (body.os-office) A white page under a sky-blue ribbon, the app's own pages in
+   the middle. OpenDB Classic (the Aero sky) stays untouched! */
+body.os-office {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    height: 100vh;
+    height: 100dvh;
+    background: #eef3fa !important;
+    color: #1e293b;
+}
+body.os-office.os-dark { background: #0f1b2d !important; color: #e2e8f0; }
+body.os-office #os-top { grid-column: 1; grid-row: 1; }
+body.os-office #os-status { grid-column: 1; grid-row: 3; }
+body.os-office .top, body.os-office .foot { display: none !important; }
+body.os-office .view {
+    grid-column: 1; grid-row: 2; min-height: 0; overflow: auto; margin: 0 auto; width: 100%;
+    animation: osFade 0.3s;
+}
+body.os-office.odb-embed .view { padding: 8px; }
+.bb-bs-doc { display: flex; align-items: center; gap: 14px; padding: 12px 14px; border: 1px solid var(--os-menu-line); border-radius: 10px; max-width: 560px; }
+.bb-bs-doc img { width: 36px; height: 36px; flex: none; }
+.bb-bs-doc div { display: flex; flex-direction: column; gap: 3px; }
+.bb-bs-doc span { color: var(--os-dim); font-size: 12.5px; }
+.os-dlg.odb-layout-dlg { width: 560px; }
