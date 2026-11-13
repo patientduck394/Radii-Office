@@ -1033,7 +1033,7 @@
                     { big: true, icon: 'image', label: 'Picture', run: function () { insertKind('image'); } },
                     { stack: [
                         { sm: true, cls: 'os-dim', icon: 'search', label: 'OpenDB Images', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
-                        { sm: true, cls: 'os-dim', icon: 'shapes', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
+                        { sm: true, cls: 'os-dim', icon: 'drawio', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
                         { sm: true, cls: 'os-dim', icon: 'pen', label: 'Inkpath', title: 'Add an Inkpath drawing (.kv file)!', run: function () { if (window.insertInkpathDrawing) window.insertInkpathDrawing(); } }
                     ] },
                     { stack: [
@@ -1276,6 +1276,7 @@
         theme: { accent: '#0284c7', 'accent-d': '#0369a1', 'accent-l': '#e0f2fe', title: '#0284c7', gel1: '#38bdf8', gel2: '#0284c7', 'gel-border': '#7dd3fc', 'gel-glow': 'rgba(2, 132, 199, 0.35)', glow: 'rgba(125, 211, 252, 0.9)', 'thumb-bg': '#0f172a' },
         editor: function () { return ed; },
         keepSelection: true,
+        nova: true,
         title: function () { const t = kdActiveTab(); return t ? t.name : 'Main'; },
         rename: function (name) { const t = kdActiveTab(); if (t) { t.name = name.substring(0, 60); kdSaveTabs(); kdRenderTabs(); } },
         qat: [

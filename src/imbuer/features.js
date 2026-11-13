@@ -1581,7 +1581,7 @@ function openOnlinePictures() {
 
 registerCommands({
     onlinePicture: { label: 'OpenDB Images', icon: 'search', run: () => openOnlinePictures() },
-    drawioDiagram: { label: 'draw.io', icon: 'diagram', run: () => openDrawioDiagram() },
+    drawioDiagram: { label: 'draw.io', icon: 'drawio', run: () => openDrawioDiagram() },
     chartColumn: { label: 'Insert Column Chart', icon: 'chartColumn', run: () => insertChart('column') },
     chartBar: { label: 'Insert Bar Chart', icon: 'chartBar', run: () => insertChart('bar') },
     chartLine: { label: 'Insert Line Chart', icon: 'chartLine', run: () => insertChart('line') },

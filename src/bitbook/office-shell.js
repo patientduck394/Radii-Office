@@ -94,6 +94,7 @@
         playFrom: '<rect x="2.5" y="4.5" width="13" height="10" rx="1.5"/><path d="M14 13v8l7-4z" fill="currentColor"/>',
         stop: '<rect x="6" y="6" width="12" height="12" rx="1.5"/>',
         textbox: '<rect x="3" y="5" width="18" height="14" rx="1.5" stroke-dasharray="2.5 2"/><path d="M8 9h8M12 9v7"/>',
+        drawio: '<path transform="scale(1.5)" fill="currentColor" stroke="none" fill-rule="evenodd" clip-rule="evenodd" d="M11 12.5h2a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5m2 1.5a2 2 0 0 0 2-2v-2a2 2 0 0 0-2-2h-1.85l-.847-1.482A2 2 0 0 0 11 5V3a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v2c0 .607.27 1.151.697 1.518L4.85 8H3a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2v-2c0-.607-.27-1.151-.697-1.518L7.15 7h1.7l.848 1.482C9.27 8.85 9 9.392 9 10v2a2 2 0 0 0 2 2zM3 12.5h2a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 0-.5-.5H3a.5.5 0 0 0-.5.5v2a.5.5 0 0 0 .5.5m6-7H7a.5.5 0 0 1-.5-.5V3a.5.5 0 0 1 .5-.5h2a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5.5"/>',
         shapes: '<circle cx="8" cy="8" r="4.5"/><rect x="11" y="11" width="10" height="10" rx="1.5"/><path d="M3 21l4-7 4 7z"/>',
         cube: '<path d="M12 2.8l8 4.4v9.6l-8 4.4-8-4.4V7.2z"/><path d="M4 7.2l8 4.4 8-4.4M12 11.6v9.6"/>',
         bringFront: '<rect x="3" y="3" width="11" height="11" rx="1.5" opacity=".5"/><rect x="10" y="10" width="11" height="11" rx="1.5" fill="currentColor" fill-opacity=".25"/>',

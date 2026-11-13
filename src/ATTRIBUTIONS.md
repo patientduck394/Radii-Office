@@ -6,8 +6,9 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 
 ### 1. Lucide Icons
 * **License:** ISC License
-* **Copyright:** Copyright (c) 2013-present Cole Bemis and Lucide Contributors
+* **Copyright:** Copyright (c) 2013-present Cole Bemis and Lucide Contributors; portions Copyright (c) 2013-2023 Cole Bemis (Feather, MIT License)
 * **Source:** https://lucide.dev/
+* **Used for:** fallback icons in the Nova layout (Writeout), after Vadivam and Gravity UI
 
 ---
 
@@ -15,6 +16,7 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 * **License:** MIT License
 * **Copyright:** Copyright (c) 2022 YANDEX LLC
 * **Source:** https://github.com/gravity-ui/icons
+* **Used for:** the draw.io (nodes) icon in every app with the draw.io feature, and fallback icons in the Nova layout (Writeout)
 
 ---
 
@@ -46,7 +48,15 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 
 ---
 
-### 7. Mage Icons & Vadivam Icons / Other Bundled Sets
+### 6b. Vadivam Icons (Nova layout)
+* **License:** MIT License
+* **Copyright:** Copyright (c) Praveen Juge
+* **Source:** https://github.com/praveenjuge/vadivam
+* **Used for:** the primary icons of the Nova layout in Writeout (writeout/nova-icons.js)
+
+---
+
+### 7. Mage Icons & Other Bundled Sets
 * **Licenses:** Maintained under their respective open-source terms as distributed by their original upstream authors. 
 * **Note:** All intellectual property rights, original filenames, and vector structures for these specialized icon sets remain the property of their respective creators.
 

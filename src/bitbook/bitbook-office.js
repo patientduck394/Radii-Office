@@ -920,7 +920,7 @@
                     { big: true, icon: 'attach', label: 'File\nAttachment', run: function () { insertKind('file'); } },
                     { big: true, icon: 'image', label: 'Pictures', run: function () { insertKind('image'); } },
                     { big: true, icon: 'search', label: 'OpenDB\nImages', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
-                    { big: true, icon: 'shapes', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
+                    { big: true, icon: 'drawio', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
                     { big: true, icon: 'pen', label: 'Inkpath', title: 'Add an Inkpath drawing (.kv file)!', run: function () { if (window.insertInkpathDrawing) window.insertInkpathDrawing(); } },
                     { big: true, icon: 'cube', label: '3D\nScene', title: 'Build a 3D scene in Zonerider and put it here! (Double-click it later to keep editing)', run: function () { if (window.insertZoneriderScene) window.insertZoneriderScene(); } },
                     { big: true, icon: 'bringFront', label: 'Image\non Top', title: 'Add image on top of document (from your computer or OpenDB)', menu: function () { return [{ label: 'Picture from your computer...', icon: 'image', run: function () { if (window.DocOverlay) window.DocOverlay.pickFile(); } }, { label: 'OpenDB image...', icon: 'search', run: function () { if (window.DocOverlay) window.DocOverlay.pickOpenDB(); } }]; } }
