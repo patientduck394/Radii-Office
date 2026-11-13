@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '0df5757b1295';
+const VERSION = 'e774a5e8e8d5';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","1116deaf53"],
@@ -230,10 +230,10 @@ const CORE = [["/","1116deaf53"],
   ["/imbuer/ribbon.js?v=20261213a","fca42b0710"],
   ["/imbuer/style.css?v=20261222u","db50b9dde9"],
   ["/index.html","1116deaf53"],
-  ["/inkpath/","62dc613fab"],
+  ["/inkpath/","17665b73d4"],
   ["/inkpath/animation.js?v=20261212d","c1b41975a3"],
-  ["/inkpath/app.js?v=20261222u","6265bb3082"],
-  ["/inkpath/app.js?v=20261223b","6265bb3082"],
+  ["/inkpath/app.js?v=20261222u","33c14bae9c"],
+  ["/inkpath/app.js?v=20261223c","33c14bae9c"],
   ["/inkpath/apple-touch-icon.png","be49b899f3"],
   ["/inkpath/bezmath.js","344ed5f815"],
   ["/inkpath/blur-behind.js?v=20261212d","e4becb7783"],
@@ -241,9 +241,9 @@ const CORE = [["/","1116deaf53"],
   ["/inkpath/css2svg.js?v=20261204d","198ba068a1"],
   ["/inkpath/docs-library.js?v=20261222w","f7ed337b04"],
   ["/inkpath/favicon-96.png","4af36efa9d"],
-  ["/inkpath/index.html","62dc613fab"],
-  ["/inkpath/mobile/","c619095602"],
-  ["/inkpath/mobile/index.html","c619095602"],
+  ["/inkpath/index.html","17665b73d4"],
+  ["/inkpath/mobile/","91a66264ce"],
+  ["/inkpath/mobile/index.html","91a66264ce"],
   ["/inkpath/radii-collab.css?v=20261042","8b8ee6cb67"],
   ["/inkpath/radii-collab.js?v=20261222u","6657cdd8aa"],
   ["/inkpath/radii-file.js?v=20261211a","35211af971"],
@@ -251,6 +251,7 @@ const CORE = [["/","1116deaf53"],
   ["/inkpath/style.css?v=20261223a","a5f71748f0"],
   ["/inkpath/svg-extras.js?v=20261103a","4cc8d98b71"],
   ["/inkpath/svg-import.js?v=20261223a","8c5c857658"],
+  ["/inkpath/text-to-path.js?v=20261223a","a6311bdd9c"],
   ["/logo.png","d33ad92068"],
   ["/mainkey/","3b8d50e14b"],
   ["/mainkey/app.js?v=20261222u","9953c85ff2"],

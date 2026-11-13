@@ -3359,10 +3359,20 @@ function releaseOp() {
 }
 
 function convertToPathMenu() {
-    if (selectedIndices.length === 0) { playUISound('delete'); closeOpsPopup(); return; }
+    if (selectedIndices.length === 0) { playUISound('delete'); closeOpsPopup(); closeEditPopup(); return; }
+    const hasText = selectedIndices.some(i => objects[i] && objects[i].type === 'text');
     const before = JSON.stringify(objects);
     convertSelectedToPath();
     closeOpsPopup();
+    closeEditPopup();
+    if (hasText && window.convertTextsToPaths) {
+        // text is traced from the real letters, which takes a moment (the fonts have to be ready first)
+        const shapesChanged = JSON.stringify(objects) !== before;
+        window.convertTextsToPaths().then((changed) => {
+            if (changed || shapesChanged) { playUISound('snap'); render(); } else playUISound('delete');
+        });
+        return;
+    }
     if (JSON.stringify(objects) === before) { playUISound('delete'); return; }
     render();
 }

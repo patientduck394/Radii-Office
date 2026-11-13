@@ -107,6 +107,7 @@
                         <button class="action-btn ops-item" onclick="redo(); closeEditPopup();" data-tooltip="Redo last change">Redo <span class="ops-kbd">⇧⌘Z</span></button>
                         <button class="action-btn ops-item" onclick="duplicateSelected(); closeEditPopup();" data-tooltip="Duplicate selection in place">Duplicate <span class="ops-kbd">⌘D</span></button>
                         <button class="action-btn ops-item" onclick="deleteSelectedObject(); closeEditPopup();" data-tooltip="Delete selection">Delete <span class="ops-kbd">⌫</span></button>
+                        <button class="action-btn ops-item" onclick="convertToPathMenu()" data-tooltip="Turn text and shapes into editable paths">Convert to Path <span class="ops-kbd">⇧⌘P</span></button>
                     </div>
                 </div>
                 <div class="ops-wrap">
@@ -519,7 +520,8 @@
 
     <div id="aero-tooltip" class="aero-glass-tooltip" role="tooltip"></div>
     <script src="bezmath.js"></script>
-    <script src="app.js?v=20261223b"></script>
+    <script src="app.js?v=20261223c"></script>
+    <script src="text-to-path.js?v=20261223a"></script>
     <script src="radii-collab.js?v=20261222u"></script>
     <script src="collab-inkpath.js?v=20261042"></script>
     <script src="css2svg.js?v=20261204d"></script>
