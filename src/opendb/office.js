@@ -1,4 +1,4 @@
-// OpenDB's Office layout! A sky-blue ribbon (Home, Tools, Help), a File screen and a status bar with the
+// OpenDB's Office layout! A glossy cyan ribbon (Home, Tools, Help), a File screen and a status bar with the
 // entry counts, on top of OpenDB's own pages. OpenDB Classic (the Aero look) stays one click away!
 // (The ribbon itself is the shared office-shell.js!)
 (function () {
@@ -85,11 +85,11 @@
         kind: 'word',
         key: 'opendb',
         icon: 'favicon.svg',
-        officeHint: 'A sky-blue ribbon with tabs, a File screen and a status bar, like Word!',
+        officeHint: 'A glossy cyan ribbon with tabs, a File screen and a status bar, like Word!',
         classicHint: 'The original OpenDB: frosted glass, gel buttons and a sunny sky!',
         classicToast: 'OpenDB Classic: frosted glass and gel!',
-        theme: { accent: '#2b7bd6', 'accent-d': '#1d5fb0', 'accent-l': '#dbeafe', title: '#2b6cb8', gel1: '#93c5fd', gel2: '#2b7bd6',
-            'gel-border': '#bfdbfe', 'gel-glow': 'rgba(43, 123, 214, 0.45)', glow: 'rgba(219, 234, 254, 0.9)', 'thumb-bg': '#0f2a4a' },
+        theme: { accent: '#12b5ea', 'accent-d': '#0a8fbd', 'accent-l': '#d6f6ff', title: '#0b9fd0', gel1: '#9ce9ff', gel2: '#15cbfe',
+            'gel-border': '#b5f0ff', 'gel-glow': 'rgba(21, 203, 254, 0.5)', glow: 'rgba(214, 246, 255, 0.9)', 'thumb-bg': '#06384a' },
         editor: () => null,
         title: () => 'OpenDB',
         qat: [

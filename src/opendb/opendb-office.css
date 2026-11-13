@@ -1,4 +1,4 @@
-/* OpenDB's Office layout! (body.os-office) A white page under a sky-blue ribbon, the app's own pages in
+/* OpenDB's Office layout! (body.os-office) A white page under a cyan ribbon, the app's own pages in
    the middle. OpenDB Classic (the Aero sky) stays untouched! */
 body.os-office {
     display: grid !important;
@@ -6,10 +6,10 @@ body.os-office {
     grid-template-rows: auto minmax(0, 1fr) auto;
     height: 100vh;
     height: 100dvh;
-    background: #eef3fa !important;
+    background: #eefbff !important;
     color: #1e293b;
 }
-body.os-office.os-dark { background: #0f1b2d !important; color: #e2e8f0; }
+body.os-office.os-dark { background: #0a1f28 !important; color: #e2e8f0; }
 body.os-office #os-top { grid-column: 1; grid-row: 1; }
 body.os-office #os-status { grid-column: 1; grid-row: 3; }
 body.os-office .top, body.os-office .foot { display: none !important; }
