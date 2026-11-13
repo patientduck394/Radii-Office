@@ -3654,6 +3654,18 @@ Three tags that need no `@style` line:
 * `{dots}text{/dots}` emphasis dots, a dot over every letter: {dots}remember this{/dots}
 * `{dim}text{/dim}` dimmed to half strength, like a terminal's dim: {dim}a quiet aside{/dim}
 
+Nine more text effects, each closed with `{/name}`:
+
+* `{caps}text{/caps}` ALL CAPS: {caps}shout it{/caps}
+* `{wide}text{/wide}` wide letter spacing: {wide}spread out{/wide}
+* `{glow}text{/glow}` a soft glow: {glow}shine{/glow}
+* `{shadow}text{/shadow}` a drop shadow: {shadow}lifted{/shadow}
+* `{outline}text{/outline}` hollow letters with an outline: {outline}outlined{/outline}
+* `{rainbow}text{/rainbow}` rainbow colors: {rainbow}over the rainbow{/rainbow}
+* `{redact}text{/redact}` a black bar that shows the words when you point at it: {redact}secret words{/redact}
+* `{blink}text{/blink}` blinking (it holds still for people who ask their device for less motion): {blink}look here{/blink}
+* `{flip}text{/flip}` mirrored: {flip}mirror{/flip}
+
 A margin change bar goes at the start of a line: `{bar red}`, `{bar blue dashed}`, `{bar pink dotted right}`. Colors are the Annotate colors (red, orange, gold, yellow, lime, green, turquoise, teal, cyan, blue, purple, pink, slate) plus black; styles are solid, dashed, dotted, rounded and rounddash; add `right` for the right margin.
 
 In Writeout they are also buttons in the Font group, and Margin Marks (Home, More) puts bars and badges in the page margin beside the selected paragraphs!
@@ -3749,6 +3761,19 @@ A line from `::name` to `::end` becomes something you can use, right in the text
 * `::quiz Question` then `* option` lines, with `* [x] option` marking the right answer.
 * `::scene` holds a Zonerider scene (or a link to a `.zr`, `.glb` or `.gltf` file) and shows it in 3D.
 * `::timer 5:00 Label` and `::map 38.72, -9.14 13 Lisbon` are one line each, no `::end` needed.
+
+Seven more blocks:
+
+* `::progress 70% Label` or `::progress 3/5 Chapters` is a progress bar (one line).
+* `::countdown 2027-01-01 18:30 New year` counts down live to a date, and an optional time (one line).
+* `::rating 4/5 Great food` shows stars, halves allowed (one line).
+* `::steps Title` then `* [x] done step` and `* next step` lines, then `::end`, draws a numbered path with the next step lit up.
+* `::stats Title` then `| Label | Value | +change |` rows, then `::end`, makes big number tiles. A change starting with + is green and one starting with - is red.
+* `::fold Title` then the hidden lines, then `::end`, is a foldout you click open (write `::fold open Title` to start open).
+* `::timeline Title` then `* 2019 - Started` lines, then `::end`, draws a vertical timeline.
+
+::progress 70% Launch readiness
+::rating 4/5 Great food
 
 ## Tables
 

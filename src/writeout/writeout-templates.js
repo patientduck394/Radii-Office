@@ -66,7 +66,7 @@
         const s = window.getSelection();
         if (s && s.rangeCount && ed.contains(s.getRangeAt(0).commonAncestorContainer)) saved = s.getRangeAt(0).cloneRange();
     }
-    async function insertSource(text) {
+    async function insertSource(text, opts) {
         text = String(text || '');
         if (!text.trim()) return false;
         const mode = window.KdModes && window.KdModes.get ? window.KdModes.get() : 'visual';
@@ -94,7 +94,7 @@
             let box = r.startContainer.nodeType === 3 ? r.startContainer.parentElement : r.startContainer;
             while (box && box !== ed && !(box.parentNode === ed || (box.getAttribute && box.getAttribute('contenteditable') === 'true' && /^(DIV|P|H[1-6]|LI|BLOCKQUOTE|PRE)$/.test(box.tagName)))) box = box.parentNode;
             if (box === ed) box = null;
-            const oneLine = blocksIn.length === 1 && blocksIn[0].nodeType === 1 && /^(DIV|P)$/.test(blocksIn[0].tagName) && !blocksIn[0].querySelector('table,pre,ul,ol,h1,h2,h3,h4,h5,h6,blockquote,hr');
+            const oneLine = !(opts && opts.block) && blocksIn.length === 1 && blocksIn[0].nodeType === 1 && /^(DIV|P)$/.test(blocksIn[0].tagName) && !blocksIn[0].querySelector('table,pre,ul,ol,h1,h2,h3,h4,h5,h6,blockquote,hr');
             const inList = box && box.parentNode && /^(UL|OL)$/.test(box.parentNode.tagName);
             if (box && oneLine) {
                 // one line of Keydown goes into the words right where the caret is

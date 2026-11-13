@@ -14,6 +14,9 @@
         ::chart bar|line|pie|donut Title   (a | table | of | rows |)       ::poll Question (* options)
         ::quiz Question (* [x] right answer, * wrong ones)                   ::scene (a .zr/.glb/.gltf link, or .zr text)
         ::timer 5:00 Label   and   ::map 38.72, -9.14 13 Label   (one line each)
+        ::progress 70% Label   ::countdown 2026-12-25 Label   ::rating 4/5 Label   (one line each)
+        ::steps (* [x] done step, * next step)   ::stats (| Label | 1,204 | +12% |)   ::fold Title (hidden text)   ::timeline (* 2020 - Started)
+      And built-in text effects: {caps} {wide} {glow} {shadow} {outline} {rainbow} {redact} {blink} {flip} (each closes with {/name}).
 
    Everything it makes keeps its Keydown text in data-kd-src, so Un-format and saving give the text back:
    KeydownNext.restore(root). KeydownNext.recalc(root) recomputes the live values.
@@ -105,6 +108,20 @@
             '.kdx-hasmk[data-kdx-mk-look="aero"]::after{background:linear-gradient(180deg,rgba(255,255,255,.7) 0 46%,rgba(255,255,255,.05) 52%),linear-gradient(180deg,var(--kdx-mk-c),var(--ml));box-shadow:0 0 0 1px var(--me),0 0 8px color-mix(in srgb,var(--kdx-mk-c) 55%,transparent)}',
             '.kdx-hasmk[data-kdx-mk-look="outline"]::after{background:#fff;color:var(--kdx-mk-c);box-shadow:inset 0 0 0 2px var(--kdx-mk-c)}',
             '.kdx-hasmk[data-kdx-mk-look="plain"]::after{background:none;color:var(--kdx-mk-c);font-size:calc(var(--md,20px) * .95)}',
+            // progress, countdown, rating, steps, stats, fold and timeline blocks
+            '.kdx-prog-head{display:flex;justify-content:space-between;gap:10px;font-weight:700;margin-bottom:6px}.kdx-prog-head b{font-variant-numeric:tabular-nums;color:#075985}',
+            '.kdx-prog{height:12px;border-radius:999px;background:#e0f2fe;overflow:hidden;box-shadow:inset 0 1px 2px rgba(3,105,161,.25)}.kdx-prog i{display:block;height:100%;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0) 55%),linear-gradient(90deg,#38bdf8,#0284c7)}',
+            '.kdx-cd{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch}.kdx-cd-cell{min-width:64px;text-align:center;padding:8px 10px;border-radius:12px;background:#fff;border:1px solid rgba(2,132,199,.3)}.kdx-cd-cell b{display:block;font:800 26px ui-monospace,Menlo,monospace;color:#075985;font-variant-numeric:tabular-nums}.kdx-cd-cell span{font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:#4b7a94}',
+            '.kdx-cd-done{font-weight:800;font-size:18px;color:#16a34a}',
+            '.kdx-rate{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.kdx-stars{position:relative;display:inline-block;font-size:24px;line-height:1;letter-spacing:3px;color:#cbd5e1;white-space:nowrap}.kdx-stars i{position:absolute;left:0;top:0;overflow:hidden;color:#f59e0b;font-style:normal}',
+            '.kdx-steplist{list-style:none;margin:0;padding:0}.kdx-steplist li{position:relative;display:flex;gap:12px;align-items:flex-start;padding:0 0 14px}.kdx-steplist li:last-child{padding-bottom:0}',
+            '.kdx-steplist li::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:#bae6fd}.kdx-steplist li:last-child::before{display:none}.kdx-steplist li.kdx-done::before{background:#22c55e}',
+            '.kdx-step-dot{flex:none;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 13px system-ui;background:#fff;border:2px solid #7dd3fc;color:#0369a1}',
+            '.kdx-steplist li.kdx-done .kdx-step-dot{background:#22c55e;border-color:#16a34a;color:#fff}.kdx-steplist li.kdx-now .kdx-step-dot{background:#0284c7;border-color:#0369a1;color:#fff;box-shadow:0 0 0 4px rgba(14,165,233,.25)}',
+            '.kdx-steplist li span.kdx-step-t{padding-top:3px}.kdx-steplist li.kdx-done .kdx-step-t{color:#4b7a94;text-decoration:line-through}.kdx-steplist li.kdx-now .kdx-step-t{font-weight:700}',
+            '.kdx-statgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}.kdx-stat{padding:10px 12px;border-radius:12px;background:#fff;border:1px solid rgba(2,132,199,.3)}.kdx-stat b{display:block;font-size:26px;line-height:1.15;color:#075985;font-variant-numeric:tabular-nums}.kdx-stat span{font-size:12.5px;color:#4b7a94}.kdx-stat em{font-style:normal;font-weight:700;font-size:12.5px;margin-left:6px}.kdx-up{color:#16a34a}.kdx-down{color:#dc2626}',
+            '.kdx-foldbox summary{cursor:pointer;font-weight:800;color:#075985;list-style:none;display:flex;align-items:center;gap:8px}.kdx-foldbox summary::-webkit-details-marker{display:none}.kdx-foldbox summary::before{content:"\\25B8";transition:transform .15s;display:inline-block}.kdx-foldbox[open] summary::before{transform:rotate(90deg)}.kdx-fold-body{margin-top:8px}',
+            '.kdx-tl{list-style:none;margin:0;padding:0 0 0 18px;border-left:2px solid #7dd3fc}.kdx-tl li{position:relative;padding:0 0 14px 6px}.kdx-tl li:last-child{padding-bottom:0}.kdx-tl li::before{content:"";position:absolute;left:-26px;top:3px;width:12px;height:12px;border-radius:50%;background:#0284c7;border:2px solid #fff;box-shadow:0 0 0 2px #7dd3fc}.kdx-tl b{display:block;color:#075985;font-size:13px}',
             '@media (prefers-reduced-motion:reduce){.kdx-opt .kdx-fill,.kdx-bar i{transition:none}.kdx-timer.kdx-done .kdx-clock{animation:none}}'
         ].join('\n');
         (doc.head || doc.documentElement).appendChild(st);
@@ -219,7 +236,16 @@
     const BUILTINS = [
         { open: '{sc}', close: '{/sc}', cls: 'kdx-t-sc', css: '.kdx-t-sc{font-variant-caps:small-caps;font-variant:small-caps;letter-spacing:.04em}' },
         { open: '{dots}', close: '{/dots}', cls: 'kdx-t-dots', css: '.kdx-t-dots{-webkit-text-emphasis:filled dot;text-emphasis:filled dot;-webkit-text-emphasis-position:over right;text-emphasis-position:over right}' },
-        { open: '{dim}', close: '{/dim}', cls: 'kdx-t-dim', css: '.kdx-t-dim{opacity:.5}' }
+        { open: '{dim}', close: '{/dim}', cls: 'kdx-t-dim', css: '.kdx-t-dim{opacity:.5}' },
+        { open: '{caps}', close: '{/caps}', cls: 'kdx-t-caps', css: '.kdx-t-caps{text-transform:uppercase;letter-spacing:.03em}' },
+        { open: '{wide}', close: '{/wide}', cls: 'kdx-t-wide', css: '.kdx-t-wide{letter-spacing:.18em}' },
+        { open: '{glow}', close: '{/glow}', cls: 'kdx-t-glow', css: '.kdx-t-glow{text-shadow:0 0 .3em #7dd3fc,0 0 .75em #38bdf8,0 0 1.2em #0ea5e9}' },
+        { open: '{shadow}', close: '{/shadow}', cls: 'kdx-t-shadow', css: '.kdx-t-shadow{text-shadow:.06em .08em 0 rgba(0,0,0,.35)}' },
+        { open: '{outline}', close: '{/outline}', cls: 'kdx-t-outline', css: '.kdx-t-outline{-webkit-text-stroke:.035em currentColor;-webkit-text-fill-color:transparent;paint-order:stroke fill}' },
+        { open: '{rainbow}', close: '{/rainbow}', cls: 'kdx-t-rainbow', css: '.kdx-t-rainbow{background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#0ea5e9,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-print-color-adjust:exact;print-color-adjust:exact}' },
+        { open: '{redact}', close: '{/redact}', cls: 'kdx-t-redact', css: '.kdx-t-redact{background:#111;color:#111;border-radius:.2em;padding:0 .25em;cursor:pointer;transition:color .15s;-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-t-redact:hover{color:#fff}@media print{.kdx-t-redact:hover{color:#111}}' },
+        { open: '{blink}', close: '{/blink}', cls: 'kdx-t-blink', css: '.kdx-t-blink{animation:kdx-blinkt 1.2s steps(2,start) infinite}@keyframes kdx-blinkt{to{visibility:hidden}}@media (prefers-reduced-motion:reduce){.kdx-t-blink{animation:none}}' },
+        { open: '{flip}', close: '{/flip}', cls: 'kdx-t-flip', css: '.kdx-t-flip{display:inline-block;transform:scaleX(-1)}' }
     ];
     function useDef(d) {
         if (!tagRules.has(d.cls)) { tagRules.set(d.cls, d.css); tagCssEl().textContent = Array.from(tagRules.values()).join('\n'); }
@@ -964,9 +990,77 @@
         else if (kind === 'timer') buildTimer(el, arg);
         else if (kind === 'map') buildMap(el, arg);
         else if (kind === 'scene') buildScene(el, arg.trim(), bodyLines.join('\n'));
+        else if (kind === 'progress') buildProgress(el, arg);
+        else if (kind === 'countdown') buildCountdown(el, arg);
+        else if (kind === 'rating') buildRating(el, arg);
+        else if (kind === 'steps') buildSteps(el, arg.trim(), bodyLines);
+        else if (kind === 'stats') buildStats(el, arg.trim(), bodyLines);
+        else if (kind === 'fold') buildFold(el, arg.trim(), bodyLines);
+        else if (kind === 'timeline') buildTimeline(el, arg.trim(), bodyLines);
         return el;
     }
-    const MULTI = /^::(chart|poll|quiz|scene)\b/i, SINGLE = /^::(timer|map)\b/i;
+    /* ---------- progress, countdown, rating, steps, stats, fold, timeline ---------- */
+    function buildProgress(el, arg) {
+        const m = /^(-?\d+(?:\.\d+)?)\s*(%|\/\s*(\d+(?:\.\d+)?))?\s*(.*)$/.exec(String(arg || '').trim());
+        if (!m) { el.innerHTML = '<div class="kdx-note">Write ::progress with a number, like <code>::progress 70% Launch</code> or <code>::progress 3/5 Chapters</code>!</div>'; return; }
+        const v = parseFloat(m[1]), total = m[3] ? parseFloat(m[3]) : 100;
+        const pct = Math.max(0, Math.min(100, total ? (v / total) * 100 : 0));
+        const label = m[4] || '';
+        el.innerHTML = '<div class="kdx-prog-head"><span>' + esc(label) + '</span><b>' + (m[3] ? esc(m[1] + ' / ' + m[3]) : Math.round(pct) + '%') + '</b></div><div class="kdx-prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(pct) + '"' + (label ? ' aria-label="' + esc(label) + '"' : '') + '><i style="width:' + pct.toFixed(1) + '%"></i></div>';
+    }
+    function buildCountdown(el, arg) {
+        const m = /^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{1,2}):(\d{2}))?\s*(.*)$/.exec(String(arg || '').trim());
+        if (!m) { el.innerHTML = '<div class="kdx-note">Write ::countdown with a date, like <code>::countdown 2026-12-25 Christmas</code> (add a time like 18:00 if you want)!</div>'; return; }
+        const at = new Date(+m[1], +m[2] - 1, +m[3], m[4] ? +m[4] : 0, m[5] ? +m[5] : 0, 0).getTime(), label = m[6] || '';
+        el.innerHTML = (label ? '<div class="kdx-title">' + esc(label) + '</div>' : '') + '<div class="kdx-cd" role="timer" aria-live="off"></div>';
+        const box = el.querySelector('.kdx-cd');
+        let t = 0;
+        const paint = (first) => {
+            if (first !== true && !el.isConnected) { clearInterval(t); return; }
+            let s = Math.floor((at - Date.now()) / 1000);
+            if (s <= 0) { box.innerHTML = '<span class="kdx-cd-done">' + esc(label ? label + ' is here!' : 'It is time!') + '</span>'; clearInterval(t); return; }
+            const d = Math.floor(s / 86400); s -= d * 86400; const h = Math.floor(s / 3600); s -= h * 3600; const mi = Math.floor(s / 60); s -= mi * 60;
+            box.innerHTML = [[d, 'days'], [h, 'hours'], [mi, 'minutes'], [s, 'seconds']].map((c) => '<div class="kdx-cd-cell"><b>' + String(c[0]).padStart(2, '0') + '</b><span>' + c[1] + '</span></div>').join('');
+        };
+        paint(true);
+        t = setInterval(paint, 1000);
+    }
+    function buildRating(el, arg) {
+        const m = /^(\d+(?:\.\d+)?)\s*(?:\/\s*(\d+))?\s*(.*)$/.exec(String(arg || '').trim());
+        if (!m) { el.innerHTML = '<div class="kdx-note">Write ::rating with a number, like <code>::rating 4/5 Great food</code>!</div>'; return; }
+        const max = Math.max(1, Math.min(10, m[2] ? parseInt(m[2], 10) : 5)), v = Math.max(0, Math.min(max, parseFloat(m[1])));
+        const row = '\u2605'.repeat(max);
+        el.innerHTML = '<div class="kdx-rate"><span class="kdx-stars" role="img" aria-label="' + v + ' out of ' + max + ' stars">' + row + '<i style="width:' + ((v / max) * 100).toFixed(1) + '%">' + row + '</i></span>' + (m[3] ? '<span>' + esc(m[3]) + '</span>' : '') + '</div>';
+    }
+    function buildSteps(el, arg, bodyLines) {
+        const items = bodyLines.map((t) => t.trim()).filter((t) => /^[*-]\s+/.test(t)).map((t) => {
+            let s = t.replace(/^[*-]\s+/, ''), done = false, m;
+            if ((m = /^\[(x|X| )\]\s*/.exec(s))) { done = m[1] !== ' '; s = s.slice(m[0].length); }
+            return { text: s, done };
+        });
+        let now = items.findIndex((i) => !i.done);
+        el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + '<ol class="kdx-steplist">' + items.map((i, k) => '<li class="' + (i.done ? 'kdx-done' : k === now ? 'kdx-now' : '') + '"><span class="kdx-step-dot">' + (i.done ? '\u2713' : k + 1) + '</span><span class="kdx-step-t">' + esc(i.text) + '</span></li>').join('') + '</ol>';
+    }
+    function buildStats(el, arg, bodyLines) {
+        const rows = rowsOf(bodyLines.map((t) => ({ text: t, li: false })));
+        el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + '<div class="kdx-statgrid">' + rows.filter((r) => r.length >= 2).map((r) => {
+            const d = r[2] || '';
+            return '<div class="kdx-stat"><b>' + esc(r[1]) + '</b><span>' + esc(r[0]) + '</span>' + (d ? '<em class="' + (/^\s*[-\u2212\u2193]/.test(d) ? 'kdx-down' : /^\s*[+\u2191]/.test(d) ? 'kdx-up' : '') + '">' + esc(d) + '</em>' : '') + '</div>';
+        }).join('') + '</div>';
+    }
+    function buildFold(el, arg, bodyLines) {
+        const open = /^open\s+/i.test(arg);
+        const title = open ? arg.replace(/^open\s+/i, '') : arg;
+        el.innerHTML = '<details class="kdx-foldbox"' + (open ? ' open' : '') + '><summary>' + esc(title || 'More') + '</summary><div class="kdx-fold-body">' + bodyLines.map((t) => esc(t)).join('<br>') + '</div></details>';
+    }
+    function buildTimeline(el, arg, bodyLines) {
+        const items = bodyLines.map((t) => t.trim()).filter((t) => /^[*-]\s+/.test(t)).map((t) => {
+            const s = t.replace(/^[*-]\s+/, ''), m = /^(.{1,24}?)\s+[\u2014\u2013-]\s+(.*)$/.exec(s) || /^([^:]{1,24}):\s+(.*)$/.exec(s);
+            return m ? { when: m[1], text: m[2] } : { when: '', text: s };
+        });
+        el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + '<ul class="kdx-tl">' + items.map((i) => '<li>' + (i.when ? '<b>' + esc(i.when) + '</b>' : '') + esc(i.text) + '</li>').join('') + '</ul>';
+    }
+    const MULTI = /^::(chart|poll|quiz|scene|steps|stats|fold|timeline)\b/i, SINGLE = /^::(timer|map|progress|countdown|rating)\b/i;
     function makeBlocks(rootEl, editing) {
         let n = 0;
         // blocks made before (a saved page, or a second pass): drawn again from their text, so they work

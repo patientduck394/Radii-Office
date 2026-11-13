@@ -963,6 +963,11 @@
                         { icon: 'subscript', title: 'Subscript', run: function () { if (MORE().script) MORE().script('subscript'); }, checked: function () { return inTag('sub'); } },
                         { icon: 'emphasisDots', title: 'Emphasis Dots (Keydown {dots}text{/dots})', run: function () { if (MORE().emphasis) MORE().emphasis('dots'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('dots') : false; } },
                         { icon: 'dim', title: 'Dim: half strength, like a terminal (Keydown {dim}text{/dim})', run: function () { if (MORE().emphasis) MORE().emphasis('dim'); }, checked: function () { return MORE().emphasisActive ? MORE().emphasisActive('dim') : false; } },
+                        { icon: 'sparkle', title: 'Text Effects: caps, wide, glow, shadow, outline, rainbow, redact, blink, flip (Keydown {rainbow}text{/rainbow})', menu: function () {
+                            return [['caps', 'ALL CAPS'], ['wide', 'Wide spacing'], ['glow', 'Glow'], ['shadow', 'Drop shadow'], ['outline', 'Outline'], ['rainbow', 'Rainbow'], ['redact', 'Redacted (point to reveal)'], ['blink', 'Blink'], ['flip', 'Mirror']].map(function (e) {
+                                return { label: e[1], checked: MORE().emphasisActive ? MORE().emphasisActive(e[0]) : false, run: function () { if (MORE().emphasis) MORE().emphasis(e[0]); } };
+                            });
+                        }, checked: function () { return inTag('[class*="kdx-t-caps"], .kdx-t-wide, .kdx-t-glow, .kdx-t-shadow, .kdx-t-outline, .kdx-t-rainbow, .kdx-t-redact, .kdx-t-blink, .kdx-t-flip'); } },
                         { icon: 'tooltipUnderline', title: 'Tooltip Underline: a colored underline that shows a note when you point at the words (Keydown {tip red dashed|note}words{/tip})', run: function () { if (MORE().tooltipDialog) MORE().tooltipDialog(); }, checked: function () { return inTag('.kdx-tipu'); } },
                         { sep: true },
                         { icon: 'fontColor', title: 'Font Color', bar: function () { return lastColor; }, run: function () { applyColor(lastColor); }, menu: colorMenu },
@@ -1052,6 +1057,29 @@
                     { stack: [
                         { sm: true, cls: 'os-dim', icon: 'lines', label: 'Table of Figures', title: 'A clickable list of every caption!', menu: function () { return MORE().tofMenu ? MORE().tofMenu() : []; } }
                     ] }
+                ] },
+                { label: 'Blocks', items: [
+                    { big: true, icon: 'cube', label: 'Cards &\nBlocks', title: 'Progress bars, countdowns, ratings, steps, stat tiles, foldouts, timelines, charts, polls, quizzes and more, all written as Keydown text!', menu: function () {
+                        const B = [
+                            ['Progress bar', '::progress 70% Launch readiness'],
+                            ['Countdown', '::countdown 2027-01-01 New year'],
+                            ['Star rating', '::rating 4/5 Great food'],
+                            ['Steps', '::steps Setup\n* [x] Install it\n* Set it up\n* Try it out\n::end'],
+                            ['Stat tiles', '::stats This month\n| Visitors | 12,040 | +12% |\n| Sales | $4.2k | -3% |\n::end'],
+                            ['Foldout', '::fold Click to open\nThe hidden words go here.\n::end'],
+                            ['Timeline', '::timeline Our story\n* 2019 - Started\n* 2022 - First hire\n::end'],
+                            null,
+                            ['Chart', '::chart bar Sales\n| Q1 | 12 |\n| Q2 | 18 |\n| Q3 | 9 |\n::end'],
+                            ['Poll', '::poll Favorite color?\n* Blue\n* Green\n* Orange\n::end'],
+                            ['Quiz question', '::quiz 2 + 2 = ?\n* 3\n* [x] 4\n* 5\n::end'],
+                            ['Timer', '::timer 5:00 Break'],
+                            ['Map', '::map 38.72, -9.14 13 Lisbon']
+                        ];
+                        return B.map(function (b) {
+                            if (!b) return { sep: true };
+                            return { label: b[0], icon: 'cube', run: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.insertSource(b[1], { block: true }); } };
+                        });
+                    } }
                 ] },
                 { label: 'Templates', items: [
                     { big: true, icon: 'templates', label: 'Templates', title: 'Snippets of Keydown you can save and paste: meeting notes, planners, letters and your own!', run: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.manager(); }, menu: function () { return window.WriteoutTemplates ? window.WriteoutTemplates.menu() : []; } }
