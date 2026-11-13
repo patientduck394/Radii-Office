@@ -10556,3 +10556,37 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 }
 .gel-stub-chip::before { content: "\2605"; position: absolute; z-index: 1; left: 0.5em; top: 50%; transform: translateY(-52%); font-size: 0.85em; color: var(--cx-t); text-shadow: 0 1px 0 color-mix(in srgb, var(--cx-d) 60%, transparent); }
 
+/* ========================================================
+   TAPE CHIP (==C^text==): clear glossy packing tape in the 16 cx colors: tinted see-through film, a bright sheen band,
+   a shiny top edge, trapped bubbles, a fold crease near one end and saw-cut ends.
+   ======================================================== */
+:where(.gel-tape-chip) { --cx-c: #3b82f6; --cx-e: #2563eb; --cx-i: #172554; --cx-t: #fff; }
+.gel-tape-chip {
+  --cx-l: color-mix(in srgb, var(--cx-c) 42%, #fff);
+  position: relative; isolation: isolate; box-sizing: border-box;
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 3px 1.15em 3px 1.35em; border: 0; border-radius: 0; margin: 0 3px 4px; vertical-align: middle;
+  font-family: inherit; font-weight: 800; white-space: nowrap; color: var(--cx-i); transform: rotate(-1deg);
+  text-shadow: 0 0 0.32em rgba(255, 255, 255, 0.9), 0 0 0.1em rgba(255, 255, 255, 0.8);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0, rgba(255, 255, 255, 0.35) 0.22em, rgba(255, 255, 255, 0) 0.5em),
+    linear-gradient(180deg, transparent 52%, color-mix(in srgb, var(--cx-e) 38%, transparent) 100%),
+    color-mix(in srgb, var(--cx-c) 52%, transparent);
+  clip-path: polygon(0 0, 100% 0, calc(100% - 0.22em) 12%, 100% 25%, calc(100% - 0.22em) 37%, 100% 50%, calc(100% - 0.22em) 62%, 100% 75%, calc(100% - 0.22em) 87%, 100% 100%, 0 100%, 0.22em 87%, 0 75%, 0.22em 62%, 0 50%, 0.22em 37%, 0 25%, 0.22em 12%);
+  box-shadow: inset 0 0.08em 0 rgba(255, 255, 255, 0.9), inset 0 -0.08em 0 color-mix(in srgb, var(--cx-e) 55%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--cx-l) 70%, transparent);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-tape-chip::before {
+  content: ""; position: absolute; z-index: -1; inset: 0;
+  background:
+    linear-gradient(104deg, transparent 0 18%, rgba(255, 255, 255, 0.85) 24% 29%, rgba(255, 255, 255, 0.15) 34% 38%, transparent 44% 100%),
+    linear-gradient(90deg, transparent 0 calc(100% - 3.2em), rgba(255, 255, 255, 0.5) calc(100% - 3em) calc(100% - 2.9em), transparent calc(100% - 2.7em));
+}
+.gel-tape-chip::after {
+  content: ""; position: absolute; z-index: -1; inset: 0;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.16) 0 1px, rgba(255, 255, 255, 0.55) 1px 2px, transparent 2px) 0.62em 0 / 3px 100% no-repeat,
+    radial-gradient(circle at 70% 64%, rgba(255, 255, 255, 0.95) 0 0.06em, rgba(255, 255, 255, 0.25) 0.08em, transparent 0.14em),
+    radial-gradient(circle at 36% 30%, rgba(255, 255, 255, 0.9) 0 0.045em, rgba(255, 255, 255, 0.2) 0.07em, transparent 0.12em),
+    radial-gradient(circle at 88% 36%, rgba(255, 255, 255, 0.8) 0 0.04em, transparent 0.1em);
+}
