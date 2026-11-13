@@ -32,7 +32,7 @@ var BITBOOK_SHELL = [
   'manifest.json',
   'latex.js?v=20261130',
   'keydown-doc.js?v=20261219b',
-  '../writeout/keydown-next.js?v=20261223a',
+  '../writeout/keydown-next.js?v=20261223b',
   'annotate-ink.js?v=20261202e',
   'radii-table.js?v=20261202d',
   'css-presets.js?v=20261201p',

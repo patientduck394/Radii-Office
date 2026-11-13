@@ -34,7 +34,7 @@ var WRITEOUT_SHELL = [
   'manifest.json',
   'latex.js?v=20261130',
   'keydown-doc.js?v=20261219b',
-  'keydown-next.js?v=20261223a',
+  'keydown-next.js?v=20261223b',
   'radii-table.js?v=20261202d',
   'favicon.svg',
   'favicon-96.png',

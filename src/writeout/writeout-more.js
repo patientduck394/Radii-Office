@@ -386,6 +386,23 @@
         save(); toast('Tooltip underline added!');
     }
 
+    /* ---------- chips: {chip red tag}words{/chip} (the look and color live in keydown-next.js) ---------- */
+    let lastChip = { color: 'blue', look: 'pill' };
+    function chip(opts) {
+        const KN = window.KeydownNext;
+        if (!KN || !KN.chipSpan) { toast('Chips need Keydown Next, and it did not load!'); return; }
+        opts = opts || {};
+        const s = window.getSelection();
+        const here = s.rangeCount && ed.contains(s.anchorNode) ? inMark('.kdx-chip', s.getRangeAt(0).startContainer) : null;
+        if (here && (opts.color || opts.look)) {            // change the chip you are in
+            lastChip = KN.retagChip(here, opts); save(); return;
+        }
+        if (opts.color) lastChip.color = opts.color;
+        if (opts.look) lastChip.look = opts.look;
+        toggleMark('.kdx-chip', function () { return KN.chipSpan(lastChip); });
+    }
+    function chipInfo() { return lastChip; }
+    function chipActive() { const s = window.getSelection(); return !!(s.rangeCount && ed.contains(s.anchorNode) && inMark('.kdx-chip', s.anchorNode)); }
     function emphasisActive(kind) {
         const s = window.getSelection();
         if (!s.rangeCount || !ed.contains(s.anchorNode)) return false;
@@ -470,7 +487,7 @@
 
     window.WriteoutMore = {
         marksDialog: marksDialog, applyMarks: applyMarks, setBar: setBar,
-        emphasis: emphasis, emphasisActive: emphasisActive, code: code, codeActive: codeActive, decorate: decorate, decorateActive: decorateActive, tooltipDialog: tooltipDialog,
+        emphasis: emphasis, emphasisActive: emphasisActive, chip: chip, chipInfo: chipInfo, chipActive: chipActive, code: code, codeActive: codeActive, decorate: decorate, decorateActive: decorateActive, tooltipDialog: tooltipDialog,
         symbols: symbols, quickPartsMenu: quickPartsMenu, saveQuickPart: saveQuickPart, loremMenu: loremMenu, lorem: lorem,
         captionMenu: captionMenu, tofMenu: tofMenu, sortLines: sortLines, script: script,
         autoCorrect: function () { return acOn; }, setAutoCorrect: setAutoCorrect, remember: remember

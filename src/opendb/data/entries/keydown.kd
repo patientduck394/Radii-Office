@@ -3646,6 +3646,28 @@ Smaller packs that each add one style:
 
 The newest step for Keydown: three things at once, working everywhere Keydown works (Writeout, Bitbook, Amber, OpenDB, Keydown.js and the Svelte components).
 
+### Chip tags
+
+`{chip COLOR LOOK}words{/chip}` puts words in a chip, with fourteen looks and any color name (red, orange, gold, yellow, lime, green, turquoise, teal, cyan, blue, purple, pink, slate, black) or a `#hex` color. Leave the look out for a plain pill, and the color out for blue.
+
+* `{chip blue}pill{/chip}` {chip blue}pill{/chip}
+* `{chip green soft}soft{/chip}` {chip green soft}soft{/chip}
+* `{chip red outline}outline{/chip}` {chip red outline}outline{/chip}
+* `{chip orange dot}in progress{/chip}` {chip orange dot}in progress{/chip}
+* `{chip purple tag}$19.99{/chip}` {chip purple tag}$19.99{/chip}
+* `{chip teal ticket}ADMIT ONE{/chip}` {chip teal ticket}ADMIT ONE{/chip}
+* `{chip pink arrow}next step{/chip}` {chip pink arrow}next step{/chip}
+* `{chip gold ribbon}new{/chip}` {chip gold ribbon}new{/chip}
+* `{chip red stamp}approved{/chip}` {chip red stamp}approved{/chip}
+* `{chip lime sticker}hello!{/chip}` {chip lime sticker}hello!{/chip}
+* `{chip yellow marker}highlighted{/chip}` {chip yellow marker}highlighted{/chip}
+* `{chip cyan neon}OPEN{/chip}` {chip cyan neon}OPEN{/chip}
+* `{chip green led}42.7 C{/chip}` {chip green led}42.7 C{/chip}
+* `{chip slate chamfer}v2.0{/chip}` {chip slate chamfer}v2.0{/chip}
+* `{chip #7c3aed tag}violet{/chip}` {chip #7c3aed tag}violet{/chip}
+
+A chip can sit inside other formatting, like **bold {chip red}words{/chip}**. In Writeout, Home > Font > Chips has color swatches and every look, and it changes the chip you are standing in. In Beta and Mintcode the Format menu has them too!
+
 ### Built-in emphasis tags
 
 Three tags that need no `@style` line:

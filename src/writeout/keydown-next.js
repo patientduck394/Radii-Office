@@ -16,6 +16,7 @@
         ::timer 5:00 Label   and   ::map 38.72, -9.14 13 Label   (one line each)
         ::progress 70% Label   ::countdown 2026-12-25 Label   ::rating 4/5 Label   (one line each)
         ::steps (* [x] done step, * next step)   ::stats (| Label | 1,204 | +12% |)   ::fold Title (hidden text)   ::timeline (* 2020 - Started)
+      CHIPS: {chip red tag}Sale{/chip}   (14 looks: pill soft outline dot tag ticket arrow ribbon stamp sticker marker neon led chamfer; any color name or #hex)
       And built-in text effects: {caps} {wide} {glow} {shadow} {outline} {rainbow} {redact} {blink} {flip} (each closes with {/name}).
 
    Everything it makes keeps its Keydown text in data-kd-src, so Un-format and saving give the text back:
@@ -108,6 +109,21 @@
             '.kdx-hasmk[data-kdx-mk-look="aero"]::after{background:linear-gradient(180deg,rgba(255,255,255,.7) 0 46%,rgba(255,255,255,.05) 52%),linear-gradient(180deg,var(--kdx-mk-c),var(--ml));box-shadow:0 0 0 1px var(--me),0 0 8px color-mix(in srgb,var(--kdx-mk-c) 55%,transparent)}',
             '.kdx-hasmk[data-kdx-mk-look="outline"]::after{background:#fff;color:var(--kdx-mk-c);box-shadow:inset 0 0 0 2px var(--kdx-mk-c)}',
             '.kdx-hasmk[data-kdx-mk-look="plain"]::after{background:none;color:var(--kdx-mk-c);font-size:calc(var(--md,20px) * .95)}',
+            // chips: {chip red tag}words{/chip}
+            '.kdx-chip{--cc:#3b82f6;--ct:#fff;--ci:color-mix(in srgb,var(--cc) 62%,#000);position:relative;display:inline-block;padding:.04em .7em;line-height:1.4;border-radius:999px;font-weight:700;font-size:.92em;background:var(--cc);color:var(--ct);white-space:nowrap;vertical-align:baseline;-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-chip[data-chip-look="soft"]{background:color-mix(in srgb,var(--cc) 18%,#fff);color:var(--ci);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 38%,#fff)}',
+            '.kdx-chip[data-chip-look="outline"]{background:transparent;color:color-mix(in srgb,var(--cc) 72%,currentColor);box-shadow:inset 0 0 0 1.5px var(--cc)}',
+            '.kdx-chip[data-chip-look="dot"]{background:color-mix(in srgb,var(--cc) 14%,#fff);color:var(--ci);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--cc) 30%,#fff);padding-left:1.45em}.kdx-chip[data-chip-look="dot"]::before{content:"";position:absolute;left:.65em;top:50%;width:.56em;height:.56em;margin-top:-.28em;border-radius:50%;background:var(--cc);box-shadow:0 0 0 .14em color-mix(in srgb,var(--cc) 25%,transparent)}',
+            '.kdx-chip[data-chip-look="tag"]{border-radius:0;padding:.04em .8em .04em 1.6em;clip-path:polygon(.85em 0,100% 0,100% 100%,.85em 100%,0 50%)}.kdx-chip[data-chip-look="tag"]::before{content:"";position:absolute;left:.62em;top:50%;width:.4em;height:.4em;margin-top:-.2em;border-radius:50%;background:#fff;box-shadow:inset 0 1px 1px rgba(0,0,0,.35)}',
+            '.kdx-chip[data-chip-look="ticket"]{border-radius:.25em;padding:.04em 1em;-webkit-mask:radial-gradient(circle .34em at left center,transparent 97%,#000) left/51% 100% no-repeat,radial-gradient(circle .34em at right center,transparent 97%,#000) right/51% 100% no-repeat;mask:radial-gradient(circle .34em at left center,transparent 97%,#000) left/51% 100% no-repeat,radial-gradient(circle .34em at right center,transparent 97%,#000) right/51% 100% no-repeat}',
+            '.kdx-chip[data-chip-look="arrow"]{border-radius:0;padding:.04em 1.25em .04em .8em;clip-path:polygon(0 0,calc(100% - .7em) 0,100% 50%,calc(100% - .7em) 100%,0 100%)}',
+            '.kdx-chip[data-chip-look="ribbon"]{border-radius:.2em 0 0 .2em;padding:.04em 1.2em .04em .8em;clip-path:polygon(0 0,100% 0,calc(100% - .6em) 50%,100% 100%,0 100%)}',
+            '.kdx-chip[data-chip-look="stamp"]{display:inline-block;background:transparent;color:color-mix(in srgb,var(--cc) 72%,currentColor);border-radius:.3em;text-transform:uppercase;letter-spacing:.1em;font-weight:800;font-size:.85em;transform:rotate(-3deg);box-shadow:inset 0 0 0 2px var(--cc),inset 0 0 0 4px transparent,0 0 0 .13em transparent;outline:1.5px solid var(--cc);outline-offset:2px;opacity:.92}',
+            '.kdx-chip[data-chip-look="sticker"]{border:.2em solid #fff;border-radius:.8em;padding:0 .55em;transform:rotate(-2deg);box-shadow:0 1px 3px rgba(0,0,0,.4),0 0 0 1px rgba(0,0,0,.07)}',
+            '.kdx-chip[data-chip-look="marker"]{background:linear-gradient(104deg,transparent .9%,color-mix(in srgb,var(--cc) 60%,transparent) 2.4%,color-mix(in srgb,var(--cc) 42%,transparent) 96%,transparent 98%);color:inherit;border-radius:.15em .55em .2em .5em;padding:.04em .5em;font-weight:inherit}',
+            '.kdx-chip[data-chip-look="neon"]{background:#0b0f1a;color:var(--cc);text-shadow:0 0 .35em var(--cc);box-shadow:0 0 0 1.5px var(--cc),0 0 .55em var(--cc),inset 0 0 .45em color-mix(in srgb,var(--cc) 35%,transparent)}',
+            '.kdx-chip[data-chip-look="led"]{background:#10151c;color:var(--cc);font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.08em;border-radius:.3em;box-shadow:inset 0 0 0 1px #2a3340,inset 0 1px 3px #000;text-shadow:0 0 .4em color-mix(in srgb,var(--cc) 70%,transparent)}',
+            '.kdx-chip[data-chip-look="chamfer"]{border-radius:0;padding:.04em .95em;clip-path:polygon(.45em 0,calc(100% - .45em) 0,100% .45em,100% calc(100% - .45em),calc(100% - .45em) 100%,.45em 100%,0 calc(100% - .45em),0 .45em)}',
             // progress, countdown, rating, steps, stats, fold and timeline blocks
             '.kdx-prog-head{display:flex;justify-content:space-between;gap:10px;font-weight:700;margin-bottom:6px}.kdx-prog-head b{font-variant-numeric:tabular-nums;color:#075985}',
             '.kdx-prog{height:12px;border-radius:999px;background:#e0f2fe;overflow:hidden;box-shadow:inset 0 1px 2px rgba(3,105,161,.25)}.kdx-prog i{display:block;height:100%;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0) 55%),linear-gradient(90deg,#38bdf8,#0284c7)}',
@@ -386,6 +402,52 @@
         span.style.setProperty('--tc', hex); span.style.setProperty('--tt', lum > 0.62 ? '#1a1a1a' : '#ffffff');
         span.setAttribute('data-tipu-style', o.style); span.setAttribute('data-tip', text);
         span.setAttribute('tabindex', '0');
+    }
+    /* ---------- chips: {chip COLOR LOOK}words{/chip} ---------- */
+    const CHIP_LOOKS = ['pill', 'soft', 'outline', 'dot', 'tag', 'ticket', 'arrow', 'ribbon', 'stamp', 'sticker', 'marker', 'neon', 'led', 'chamfer'];
+    const CHIP_RE = /\{chip((?:\s+[#\w-]+)*)\}/g;
+    function parseChip(args) {
+        const o = { color: 'blue', look: 'pill' };
+        String(args || '').trim().split(/\s+/).filter(Boolean).forEach((w) => {
+            w = w.toLowerCase();
+            if (CHIP_LOOKS.indexOf(w) >= 0) o.look = w; else if (BAR_COLORS[w] || /^#[0-9a-f]{3,8}$/.test(w)) o.color = w;
+        });
+        return o;
+    }
+    const chipOpen = (o) => '{chip ' + o.color + (o.look !== 'pill' ? ' ' + o.look : '') + '}';
+    function styleChip(span, o) {
+        const hex = BAR_COLORS[o.color] || o.color;
+        const m = /^#([0-9a-f]{6})$/i.exec(hex);
+        const lum = m ? (parseInt(m[1].slice(0, 2), 16) * 0.299 + parseInt(m[1].slice(2, 4), 16) * 0.587 + parseInt(m[1].slice(4, 6), 16) * 0.114) / 255 : 0.3;
+        span.classList.add('kdx-chip');
+        span.style.setProperty('--cc', hex); span.style.setProperty('--ct', lum > 0.62 ? '#1a1a1a' : '#ffffff');
+        span.setAttribute('data-chip-look', o.look);
+    }
+    function chipDefs(rootEl) {
+        const seen = new Map();
+        lines(rootEl).forEach((L) => {
+            if (L.widget) return;
+            let m; CHIP_RE.lastIndex = 0;
+            while ((m = CHIP_RE.exec(L.text))) if (!seen.has(m[0])) { const o = parseChip(m[1]); seen.set(m[0], { open: m[0], close: '{/chip}', cls: 'kdx-chipwrap', css: '', after: (span) => styleChip(span, o) }); }
+        });
+        return Array.from(seen.values());
+    }
+    // a span for the ribbon: KeydownNext.chipSpan({ color, look })
+    function chipSpan(o) {
+        o = Object.assign({ color: 'blue', look: 'pill' }, o || {});
+        const span = doc.createElement('span');
+        span.className = 'kdx-tag';
+        span.setAttribute('data-kd-open', chipOpen(o)); span.setAttribute('data-kd-close', '{/chip}');
+        styleChip(span, o);
+        return span;
+    }
+    // change the color or look of a chip that is already there
+    function retagChip(span, o) {
+        const cur = parseChip((span.getAttribute('data-kd-open') || '').replace(/^\{chip|\}$/g, ''));
+        o = Object.assign(cur, o || {});
+        span.setAttribute('data-kd-open', chipOpen(o));
+        styleChip(span, o);
+        return o;
     }
     // one definition per distinct opener on the page, so the ordinary tag pass wraps them
     function tipDefs(rootEl) {
@@ -1122,7 +1184,7 @@
         const blocks = makeBlocks(rootEl, editing) + makePkInline(rootEl);
         BUILTINS.forEach(useDef);
         makeBars(rootEl);
-        const defs = BUILTINS.concat(tipDefs(rootEl), collectDefs(rootEl, editing));
+        const defs = BUILTINS.concat(tipDefs(rootEl), chipDefs(rootEl), collectDefs(rootEl, editing));
         const tags = applyTags(rootEl, defs);
         const values = makeLive(rootEl, editing);
         wireInputs(rootEl, editing);
@@ -1161,7 +1223,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, chipSpan, retagChip, parseChip, CHIP_LOOKS, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back
