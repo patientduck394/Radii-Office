@@ -27,8 +27,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&amp;family=Space+Grotesk:wght@300..700&amp;family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&amp;display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js" integrity="sha384-+pxiN6T7yvpryuJmE1gM9PX7yQit15auDb+ZwwvJOd/4be2Cie5/IuVXgQb/S9du" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css?v=20261222u">
+    <link rel="stylesheet" href="style.css?v=20261223a">
     <link rel="stylesheet" href="radii-collab.css?v=20261042">
     <link rel="icon" type="image/png" sizes="96x96" href="/inkpath/favicon-96.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -211,6 +212,33 @@
                     <div class="control-group" id="grp-font-size">
                         <label>Font Size (px)</label>
                         <input type="number" id="insp-font-size" value="28" min="8" max="200" onchange="updateSelectedObject()">
+                    </div>
+                    <div class="control-group" id="grp-font-family">
+                        <label for="insp-font-family">Font</label>
+                        <select id="insp-font-family" onchange="setFontFamily(this.value)"></select>
+                        <input type="text" id="insp-font-custom" placeholder="Any font name, like Arial Black" hidden onchange="fontCustomOpen = false; setTextProp('fontFamily', this.value.trim() || 'sans-serif')">
+                    </div>
+                    <div class="control-group" id="grp-font-weight">
+                        <label for="insp-font-weight">Weight</label>
+                        <select id="insp-font-weight" onchange="setTextProp('fontWeight', this.value)"></select>
+                    </div>
+                    <div class="control-group" id="grp-font-style">
+                        <label>Style and alignment</label>
+                        <div class="font-btns">
+                            <button type="button" class="action-btn" id="fs-italic" onclick="toggleTextFlag('italic')" title="Italic" aria-label="Italic"><i>I</i></button>
+                            <button type="button" class="action-btn" id="fs-underline" onclick="toggleTextFlag('underline')" title="Underline" aria-label="Underline"><u>U</u></button>
+                            <button type="button" class="action-btn" id="fs-strike" onclick="toggleTextFlag('strike')" title="Strikethrough" aria-label="Strikethrough"><s>S</s></button>
+                            <button type="button" class="action-btn" id="fa-start" onclick="setTextProp('textAlign', 'start')" title="Text grows to the right from its point">Left</button>
+                            <button type="button" class="action-btn" id="fa-middle" onclick="setTextProp('textAlign', 'middle')" title="Text is centered on its point">Center</button>
+                            <button type="button" class="action-btn" id="fa-end" onclick="setTextProp('textAlign', 'end')" title="Text grows to the left from its point">Right</button>
+                        </div>
+                    </div>
+                    <div class="control-group" id="grp-letter-spacing">
+                        <label for="insp-letter-spacing">Letter spacing (px)</label>
+                        <input type="number" id="insp-letter-spacing" value="0" min="-5" max="60" step="0.5" onchange="setTextProp('letterSpacing', parseFloat(this.value) || 0)">
+                    </div>
+                    <div class="control-group" id="grp-font-preview">
+                        <div class="font-preview" id="font-preview" aria-hidden="true">Aa Bb Cc 123</div>
                     </div>
 
                     <span class="section-label">Shape</span>
@@ -508,11 +536,11 @@
 
     <div id="aero-tooltip" class="aero-glass-tooltip" role="tooltip"></div>
     <script src="bezmath.js"></script>
-    <script src="app.js?v=20261222u"></script>
+    <script src="app.js?v=20261223b"></script>
     <script src="radii-collab.js?v=20261222u"></script>
     <script src="collab-inkpath.js?v=20261042"></script>
     <script src="css2svg.js?v=20261204d"></script>
-    <script src="svg-import.js?v=20261202q"></script>
+    <script src="svg-import.js?v=20261223a"></script>
     <script src="svg-extras.js?v=20261103a"></script>
     <script src="blur-behind.js?v=20261212d"></script>
     <script src="animation.js?v=20261212d"></script>

@@ -689,3 +689,14 @@ svg#viewport { width: 100%; height: 100%; cursor: crosshair; }
 .pgrad-btn { flex: none; width: 36px; height: 30px; padding: 0; border-radius: 6px; border: 1px solid rgba(255, 96, 197, 0.6); background: rgba(0, 0, 0, 0.4); color: #ffd2ef; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .pgrad-btn:hover { background: rgba(255, 96, 197, 0.22); }
 .pgrad-btn.on { border-color: #FF60C5; box-shadow: 0 0 6px rgba(255, 96, 197, 0.55); }
+
+/* ---------- font settings ---------- */
+@font-face { font-family: 'Fairfax HD'; src: url('/fonts/FairfaxHD.ttf') format('truetype'); }
+@font-face { font-family: 'Unifont'; src: url('/fonts/unifont-17.0.05.otf') format('opentype'); }
+@font-face { font-family: 'Iosevka'; src: url('/fonts/Iosevka-Term-Medium-01.ttf') format('truetype'); }
+@font-face { font-family: 'OpenDyslexic'; src: url('/fonts/OpenDyslexic-Regular.otf') format('opentype'); }
+.font-btns { display: flex; flex-wrap: wrap; gap: 4px; }
+.font-btns .action-btn { flex: 1 1 auto; min-width: 34px; padding: 4px 8px; }
+.font-btns .action-btn.on { box-shadow: inset 0 0 0 2px #1d83d8, 0 0 8px rgba(29, 131, 216, 0.5); filter: brightness(1.08); }
+#insp-font-custom { margin-top: 6px; }
+.font-preview { padding: 8px 10px; border-radius: 8px; background: rgba(255, 255, 255, 0.55); color: #1b2a3b; border: 1px solid rgba(255, 255, 255, 0.8); font-size: 20px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }

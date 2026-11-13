@@ -730,11 +730,11 @@ function handleCanvasMouseDown(evt) {
             render();
         }
     } else if (currentTool === 'text') {
-        const newText = {
+        const newText = Object.assign({
             type: 'text', text: 'Inkpath', fontSize: 28, fontFamily: 'JetBrains Mono',
             fontWeight: 'bold', textAlign: 'start', x: pt.x, y: pt.y,
             fill: activePrimaryColor, fillType: 'color', stroke: '#ffffff', strokeWidth: 1, opacity: 1, blur: 0, rotation: 0
-        };
+        }, loadTextDefaults());
         pushHistory(true);
         objects.push(newText);
         selectedIndices = [objects.length - 1];
@@ -1490,10 +1490,7 @@ function leafPaintFor(obj, idp, mode) {
     } else if (obj.type === 'text') {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         el.setAttribute('x', obj.x); el.setAttribute('y', obj.y);
-        el.setAttribute('font-size', obj.fontSize || 28);
-        el.setAttribute('font-family', obj.fontFamily || 'JetBrains Mono, sans-serif');
-        el.setAttribute('font-weight', obj.fontWeight || 'normal');
-        el.setAttribute('text-anchor', obj.textAlign || 'start');
+        applyTextAttrs(el, obj);
         el.textContent = obj.text || 'Inkpath';
     } else if (obj.type === 'path') {
         el = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -1845,10 +1842,7 @@ function renderOne(obj, idx) {
         } else if (obj.type === 'text') {
             el = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             el.setAttribute('x', obj.x); el.setAttribute('y', obj.y);
-            el.setAttribute('font-size', obj.fontSize || 28);
-            el.setAttribute('font-family', obj.fontFamily || 'JetBrains Mono, sans-serif');
-            el.setAttribute('font-weight', obj.fontWeight || 'normal');
-            el.setAttribute('text-anchor', obj.textAlign || 'start');
+            applyTextAttrs(el, obj);
             el.textContent = obj.text || 'Inkpath';
 
             el.ondblclick = (e) => {
@@ -1922,7 +1916,9 @@ function shapeBBox(obj) {
     if (obj.type === 'polygon' || obj.type === 'star') { const r = obj.r || 0; return { x: (obj.cx || 0) - r, y: (obj.cy || 0) - r, w: r * 2, h: r * 2 }; }
     if (obj.type === 'text') {
         const fs = obj.fontSize || 28, t = String(obj.text || 'Inkpath');
-        return { x: obj.x || 0, y: (obj.y || 0) - fs, w: Math.max(t.length * fs * 0.6, 10), h: fs * 1.2 };
+        const tw = Math.max(measureText(obj), 10);
+        const ax = obj.textAlign === 'middle' ? tw / 2 : obj.textAlign === 'end' ? tw : 0;
+        return { x: (obj.x || 0) - ax, y: (obj.y || 0) - fs, w: tw, h: fs * 1.2 };
     }
     if (obj.type === 'path' && Array.isArray(obj.nodes) && obj.nodes.length > 0) {
         let x1 = Infinity, y1 = Infinity, x2 = -Infinity, y2 = -Infinity;
@@ -2185,6 +2181,130 @@ function createLine(x1, y1, x2, y2, className) {
 }
 
 // MIXED Property Collision Resolution
+/* ---------- Font settings for text ---------- */
+const FONT_GROUPS = [
+    ['Bundled with Radii Office', ['JetBrains Mono', 'Roboto', 'Space Grotesk', 'Comic Neue', 'Fairfax HD', 'Iosevka', 'Unifont', 'OpenDyslexic']],
+    ['On most computers', ['Arial', 'Helvetica', 'Verdana', 'Trebuchet MS', 'Tahoma', 'Georgia', 'Times New Roman', 'Palatino', 'Garamond', 'Courier New', 'Impact', 'Brush Script MT']],
+    ['Generic', ['sans-serif', 'serif', 'monospace', 'cursive', 'system-ui']],
+];
+const FONT_NAMES = FONT_GROUPS.reduce((a, g) => a.concat(g[1]), []);
+const MONO_FONTS = new Set(['JetBrains Mono', 'Fairfax HD', 'Iosevka', 'Unifont', 'Courier New', 'monospace']);
+const SERIF_FONTS = new Set(['Georgia', 'Times New Roman', 'Palatino', 'Garamond', 'serif']);
+const WEIGHTS = [['100', 'Thin'], ['200', 'Extra light'], ['300', 'Light'], ['normal', 'Regular'], ['500', 'Medium'], ['600', 'Semi-bold'], ['bold', 'Bold'], ['800', 'Extra bold'], ['900', 'Black']];
+function primaryFamily(name) { return String(name || 'JetBrains Mono').split(',')[0].replace(/['"]/g, '').trim() || 'JetBrains Mono'; }
+function fontStack(name) {
+    const n = String(name || 'JetBrains Mono').trim();
+    if (n.indexOf(',') !== -1) return n;
+    if (/^(sans-serif|serif|monospace|cursive|fantasy|system-ui)$/i.test(n)) return n;
+    const fb = MONO_FONTS.has(n) ? 'monospace' : SERIF_FONTS.has(n) ? 'serif' : 'sans-serif';
+    return "'" + n.replace(/['"\\]/g, '') + "', " + fb;
+}
+function applyTextAttrs(el, obj) {
+    el.setAttribute('font-size', obj.fontSize || 28);
+    el.setAttribute('font-family', fontStack(obj.fontFamily));
+    el.setAttribute('font-weight', obj.fontWeight || 'normal');
+    if (obj.fontStyle === 'italic') el.setAttribute('font-style', 'italic'); else el.removeAttribute('font-style');
+    const deco = [obj.underline ? 'underline' : '', obj.strike ? 'line-through' : ''].filter(Boolean).join(' ');
+    if (deco) el.setAttribute('text-decoration', deco); else el.removeAttribute('text-decoration');
+    if (obj.letterSpacing) el.setAttribute('letter-spacing', obj.letterSpacing); else el.removeAttribute('letter-spacing');
+    el.setAttribute('text-anchor', obj.textAlign || 'start');
+}
+let measureCtx = null;
+function measureText(obj) {
+    const fs = obj.fontSize || 28, t = String(obj.text || 'Inkpath');
+    try {
+        measureCtx = measureCtx || document.createElement('canvas').getContext('2d');
+        measureCtx.font = (obj.fontStyle === 'italic' ? 'italic ' : '') + (obj.fontWeight || 'normal') + ' ' + fs + 'px ' + fontStack(obj.fontFamily);
+        return measureCtx.measureText(t).width + (obj.letterSpacing || 0) * t.length;
+    } catch (e) { return t.length * fs * 0.6; }
+}
+const TEXT_DEFAULTS_KEY = 'inkpath_text_defaults';
+function loadTextDefaults() { try { return JSON.parse(localStorage.getItem(TEXT_DEFAULTS_KEY) || '{}') || {}; } catch (e) { return {}; } }
+function rememberTextDefault(prop, value) {
+    if (['fontFamily', 'fontWeight', 'fontStyle', 'textAlign', 'letterSpacing', 'underline', 'strike'].indexOf(prop) === -1) return;
+    try { const d = loadTextDefaults(); if (value === undefined || value === false || value === '') delete d[prop]; else d[prop] = value; localStorage.setItem(TEXT_DEFAULTS_KEY, JSON.stringify(d)); } catch (e) {}
+}
+function textTargets() { return selectedIndices.filter((i) => objects[i] && objects[i].type === 'text'); }
+function setTextProp(prop, value) {
+    const targets = textTargets();
+    if (!targets.length) return;
+    pushHistory(true);
+    targets.forEach((i) => { if (value === undefined || value === false || value === '') delete objects[i][prop]; else objects[i][prop] = value; });
+    rememberTextDefault(prop, value);
+    render();
+}
+let fontCustomOpen = false;
+function setFontFamily(value) {
+    const custom = document.getElementById('insp-font-custom');
+    if (value === '__custom') {
+        fontCustomOpen = true;
+        if (custom) { custom.hidden = false; custom.focus(); }
+        return;
+    }
+    fontCustomOpen = false;
+    if (custom) custom.hidden = true;
+    setTextProp('fontFamily', value);
+}
+function toggleTextFlag(kind) {
+    const targets = textTargets();
+    if (!targets.length) return;
+    const key = kind === 'italic' ? 'fontStyle' : kind;
+    const on = targets.every((i) => kind === 'italic' ? objects[i].fontStyle === 'italic' : !!objects[i][kind]);
+    setTextProp(key, kind === 'italic' ? (on ? 'normal' : 'italic') : !on);
+}
+function buildFontControls() {
+    const sel = document.getElementById('insp-font-family');
+    if (sel && !sel.options.length) {
+        FONT_GROUPS.forEach((g) => {
+            const og = document.createElement('optgroup'); og.label = g[0];
+            g[1].forEach((n) => { const o = document.createElement('option'); o.value = n; o.textContent = n; o.style.fontFamily = fontStack(n); og.appendChild(o); });
+            sel.appendChild(og);
+        });
+        const oc = document.createElement('option'); oc.value = '__custom'; oc.textContent = 'Other (type a name)...'; sel.appendChild(oc);
+    }
+    const w = document.getElementById('insp-font-weight');
+    if (w && !w.options.length) WEIGHTS.forEach((p) => { const o = document.createElement('option'); o.value = p[0]; o.textContent = p[1]; w.appendChild(o); });
+}
+function syncFontControls() {
+    buildFontControls();
+    const sel = document.getElementById('insp-font-family'), custom = document.getElementById('insp-font-custom');
+    const fam = getMixedProperty('fontFamily');
+    if (sel && fontCustomOpen && document.activeElement !== custom) {
+        sel.value = '__custom'; if (custom) custom.hidden = false;
+    } else if (sel && document.activeElement !== sel && document.activeElement !== custom) {
+        if (fam === 'MIXED') { sel.selectedIndex = -1; if (custom) custom.hidden = true; }
+        else {
+            const name = primaryFamily(fam);
+            const known = FONT_NAMES.indexOf(name) !== -1 && String(fam || '').indexOf(',') === -1;
+            const knownLoose = FONT_NAMES.indexOf(name) !== -1 && (!fam || String(fam).split(',').length <= 2);
+            if (known || knownLoose) { sel.value = name; if (custom) custom.hidden = true; }
+            else { sel.value = '__custom'; if (custom) { custom.hidden = false; custom.value = fam || ''; } }
+        }
+    }
+    const w = document.getElementById('insp-font-weight');
+    const wt = getMixedProperty('fontWeight');
+    if (w && document.activeElement !== w) {
+        if (wt === 'MIXED') w.selectedIndex = -1;
+        else { const v = (wt === undefined || wt === '' || wt === 'normal' || wt === '400') ? 'normal' : (wt === '700' ? 'bold' : String(wt)); w.value = v; if (w.value !== v) w.selectedIndex = -1; }
+    }
+    const targets = textTargets();
+    const flag = (id, on) => { const b = document.getElementById(id); if (b) b.classList.toggle('on', !!on); };
+    flag('fs-italic', targets.length && targets.every((i) => objects[i].fontStyle === 'italic'));
+    flag('fs-underline', targets.length && targets.every((i) => objects[i].underline));
+    flag('fs-strike', targets.length && targets.every((i) => objects[i].strike));
+    const al = getMixedProperty('textAlign');
+    ['start', 'middle', 'end'].forEach((a) => flag('fa-' + a, al === a || (a === 'start' && (al === undefined || al === ''))));
+    const ls = document.getElementById('insp-letter-spacing'), lsv = getMixedProperty('letterSpacing');
+    if (ls && document.activeElement !== ls) { ls.value = lsv === 'MIXED' || lsv === undefined ? (lsv === 'MIXED' ? '' : 0) : lsv; ls.placeholder = lsv === 'MIXED' ? 'MIXED' : ''; }
+    const pv = document.getElementById('font-preview');
+    if (pv && targets.length) {
+        const o = objects[targets[0]];
+        pv.style.fontFamily = fontStack(o.fontFamily); pv.style.fontWeight = o.fontWeight || 'normal'; pv.style.fontStyle = o.fontStyle === 'italic' ? 'italic' : 'normal';
+        pv.style.textDecoration = [o.underline ? 'underline' : '', o.strike ? 'line-through' : ''].filter(Boolean).join(' ') || 'none';
+        pv.style.letterSpacing = (o.letterSpacing || 0) + 'px'; pv.style.textAlign = o.textAlign === 'middle' ? 'center' : o.textAlign === 'end' ? 'right' : 'left';
+    }
+}
+
 function getMixedProperty(propName) {
     if (selectedIndices.length === 0) return '';
     const firstVal = objects[selectedIndices[0]][propName];
@@ -3060,6 +3180,8 @@ function syncInspector() {
         if (lblText) lblText.style.display = isTextSelection ? '' : 'none';
         if (grpText) grpText.style.display = isTextSelection ? '' : 'none';
         if (grpFont) grpFont.style.display = isTextSelection ? '' : 'none';
+        ['grp-font-family', 'grp-font-weight', 'grp-font-style', 'grp-letter-spacing', 'grp-font-preview'].forEach((id) => { const g = document.getElementById(id); if (g) g.style.display = isTextSelection ? '' : 'none'; });
+        if (isTextSelection) syncFontControls();
 
         if (isTextSelection) {
             const textVal = getMixedProperty('text');

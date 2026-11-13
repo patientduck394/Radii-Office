@@ -276,7 +276,7 @@
             const y = parseFloat(el.getAttribute('y')) || (first ? parseFloat(first.getAttribute('y')) : 0) || 0;
             const p = apply(m, x, y);
             const anchor = cs.textAnchor === 'middle' ? 'middle' : cs.textAnchor === 'end' ? 'end' : 'start';
-            return [Object.assign({}, st, { type: 'text', text: text, x: p.x, y: p.y, fontSize: Math.max(1, Math.round((parseFloat(cs.fontSize) || 16) * scaleOf(m))), fontFamily: cs.fontFamily || 'JetBrains Mono', fontWeight: cs.fontWeight || 'normal', textAlign: anchor, strokeType: st.strokeType === 'none' ? 'none' : st.strokeType })];
+            return [Object.assign({}, st, { type: 'text', text: text, x: p.x, y: p.y, fontSize: Math.max(1, Math.round((parseFloat(cs.fontSize) || 16) * scaleOf(m))), fontFamily: cs.fontFamily || 'JetBrains Mono', fontWeight: cs.fontWeight || 'normal', fontStyle: cs.fontStyle === 'italic' ? 'italic' : 'normal', underline: /underline/.test(cs.textDecoration || cs.textDecorationLine || '') || undefined, strike: /line-through/.test(cs.textDecoration || cs.textDecorationLine || '') || undefined, letterSpacing: parseFloat(cs.letterSpacing) || undefined, textAlign: anchor, strokeType: st.strokeType === 'none' ? 'none' : st.strokeType })];
         }
         return [];
     }
