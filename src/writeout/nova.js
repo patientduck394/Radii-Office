@@ -113,12 +113,17 @@
     }
 
     /* ---------- controls: the same commands the ribbon has, drawn the Nova way ---------- */
+    // B / I / U / ab are drawn as icons in Nova
+    const GLYPH_ICON = { B: 'bold', I: 'italic', U: 'underline', ab: 'strike' };
+    ICONS.underlineWavy = ['v', '<path d="M5 2v8.616C5 14.448 8.004 18 12 18s7-3.553 7-7.385V2M3 21.5c1.5-1.8 3-1.8 4.5 0s3 1.8 4.5 0 3-1.8 4.5 0 3 1.8 4.5 0"/>'];
+
     function buildButton(it, into) {
         const size = it.big ? 'big' : it.sm ? 'sm' : 'ic';
         const b = el('button', 'nv-t nv-' + size + (it.cls ? ' ' + it.cls : ''));
         b.type = 'button';
         b.title = (it.title || itemLabel(it)) + (it.kbd ? ' (' + it.kbd + ')' : '');
-        const glyph = it.glyph ? '<b class="nv-glyph ' + (it.glyphCls || '') + '">' + it.glyph + '</b>' : ic(it.icon);
+        const gi = it.glyph ? (it.glyphCls === 'uw' ? 'underlineWavy' : GLYPH_ICON[it.glyph]) : null;
+        const glyph = gi ? ic(gi) : it.glyph ? '<b class="nv-glyph ' + (it.glyphCls || '') + '">' + it.glyph + '</b>' : ic(it.icon);
         const lab = (it.big || it.sm) ? '<span class="nv-lab">' + esc(itemLabel(it)).replace(/\n/g, '<br>') + '</span>' : '';
         const car = it.menu && !it.run && (it.big || it.sm) ? '<i class="nv-car">' + ic('chevDown') + '</i>' : '';
         b.innerHTML = glyph + lab + car + (it.bar ? '<i class="nv-cbar"></i>' : '');

@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '30fbc15017be';
+const VERSION = '4c4ea093b95c';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","1116deaf53"],
@@ -476,7 +476,7 @@ const CORE = [["/","1116deaf53"],
   ["/waterflow/manifest.json","52bf1b8ddf"],
   ["/waterflow/poolside-keydown.css?v=20261214b","a4737e2b91"],
   ["/waterflow/style.css?v=20261222u","0b16827380"],
-  ["/writeout/","884e551e16"],
+  ["/writeout/","d16081bfdc"],
   ["/writeout/annotate-hl.css?v=20261222u","2535374651"],
   ["/writeout/annotate-ink.js?v=20261210c","97cad31386"],
   ["/writeout/app.js?v=20261223d","53c7d02954"],
@@ -490,7 +490,7 @@ const CORE = [["/","1116deaf53"],
   ["/writeout/favicon-96.png","7d15a8f030"],
   ["/writeout/image-resize.js?v=20261040","c29db2cc80"],
   ["/writeout/images-glue.js?v=20261131v","c81dd8ef3b"],
-  ["/writeout/index.html","884e551e16"],
+  ["/writeout/index.html","d16081bfdc"],
   ["/writeout/inkpath-kv-plugin.js?v=20261202a","f496d784f0"],
   ["/writeout/kd-modes.js?v=20261223d","d0b65fb23a"],
   ["/writeout/keydown-doc.js?v=20261223d","bb39a94789"],
@@ -507,12 +507,12 @@ const CORE = [["/","1116deaf53"],
   ["/writeout/mobile/keydown.css?v=20261223d","6e25689463"],
   ["/writeout/mobile/marketplace.css?v=20260928","9cf841dd2d"],
   ["/writeout/mobile/marketplace.js?v=20261210c","0db1b25ccd"],
-  ["/writeout/mobile/new/","f0402684ef"],
-  ["/writeout/mobile/new/index.html","f0402684ef"],
+  ["/writeout/mobile/new/","029e4755d3"],
+  ["/writeout/mobile/new/index.html","029e4755d3"],
   ["/writeout/mobile/style.css?v=20261222u","0176f3ac83"],
   ["/writeout/nova-icons.js?v=20261223a","c1c42371e9"],
   ["/writeout/nova.css?v=20261223d","6a4b0852de"],
-  ["/writeout/nova.js?v=20261223e","1073e2b5e1"],
+  ["/writeout/nova.js?v=20261223f","a945ad8c88"],
   ["/writeout/office-shell.css?v=20261222zz","e16b030ae5"],
   ["/writeout/office-shell.js?v=20261223b","a52e06bde7"],
   ["/writeout/overlay-image.js?v=20261202c","488f66a554"],
