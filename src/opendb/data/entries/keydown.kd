@@ -2948,6 +2948,321 @@ A glossy pill with fine vertical ribs under the shine! Written `++COLOR[]text++`
 * `++SL[]text++` ++SL[]slate++
 * `++BK[]text++` ++BK[]black++
 
+## Split Gel Bar chips
+
+A gel bar split across the middle, a lighter top half over a deeper bottom half! Written `++COLOR=)text++`, in the same 16 colors as the Aero chips:
+
+* `++R=)text++` ++R=)red++
+* `++O=)text++` ++O=)orange++
+* `++GL=)text++` ++GL=)gold++
+* `++Y=)text++` ++Y=)yellow++
+* `++L=)text++` ++L=)lime++
+* `++G=)text++` ++G=)green++
+* `++TU=)text++` ++TU=)turquoise++
+* `++T=)text++` ++T=)teal++
+* `++C=)text++` ++C=)cyan++
+* `++B=)text++` ++B=)blue++
+* `++PR=)text++` ++PR=)purple++
+* `++PK=)text++` ++PK=)pink++
+* `++W=)text++` ++W=)white++
+* `++FG=)text++` ++FG=)fog++
+* `++SL=)text++` ++SL=)slate++
+* `++BK=)text++` ++BK=)black++
+
+## Dome Shine chips
+
+A pale pill with a round dome of light rising from its top edge! Written `++COLOR~)text++`, in the same 16 colors as the Aero chips:
+
+* `++R~)text++` ++R~)red++
+* `++O~)text++` ++O~)orange++
+* `++GL~)text++` ++GL~)gold++
+* `++Y~)text++` ++Y~)yellow++
+* `++L~)text++` ++L~)lime++
+* `++G~)text++` ++G~)green++
+* `++TU~)text++` ++TU~)turquoise++
+* `++T~)text++` ++T~)teal++
+* `++C~)text++` ++C~)cyan++
+* `++B~)text++` ++B~)blue++
+* `++PR~)text++` ++PR~)purple++
+* `++PK~)text++` ++PK~)pink++
+* `++W~)text++` ++W~)white++
+* `++FG~)text++` ++FG~)fog++
+* `++SL~)text++` ++SL~)slate++
+* `++BK~)text++` ++BK~)black++
+
+## Inner Ring chips
+
+A pale pill with a second thin pill ring inset inside it, like a gel button! Written `++COLOR^)text++`, in the same 16 colors as the Aero chips:
+
+* `++R^)text++` ++R^)red++
+* `++O^)text++` ++O^)orange++
+* `++GL^)text++` ++GL^)gold++
+* `++Y^)text++` ++Y^)yellow++
+* `++L^)text++` ++L^)lime++
+* `++G^)text++` ++G^)green++
+* `++TU^)text++` ++TU^)turquoise++
+* `++T^)text++` ++T^)teal++
+* `++C^)text++` ++C^)cyan++
+* `++B^)text++` ++B^)blue++
+* `++PR^)text++` ++PR^)purple++
+* `++PK^)text++` ++PK^)pink++
+* `++W^)text++` ++W^)white++
+* `++FG^)text++` ++FG^)fog++
+* `++SL^)text++` ++SL^)slate++
+* `++BK^)text++` ++BK^)black++
+
+## Corner Glints chips
+
+A pale pill with a bright glint in two opposite corners! Written `++COLOR!)text++`, in the same 16 colors as the Aero chips:
+
+* `++R!)text++` ++R!)red++
+* `++O!)text++` ++O!)orange++
+* `++GL!)text++` ++GL!)gold++
+* `++Y!)text++` ++Y!)yellow++
+* `++L!)text++` ++L!)lime++
+* `++G!)text++` ++G!)green++
+* `++TU!)text++` ++TU!)turquoise++
+* `++T!)text++` ++T!)teal++
+* `++C!)text++` ++C!)cyan++
+* `++B!)text++` ++B!)blue++
+* `++PR!)text++` ++PR!)purple++
+* `++PK!)text++` ++PK!)pink++
+* `++W!)text++` ++W!)white++
+* `++FG!)text++` ++FG!)fog++
+* `++SL!)text++` ++SL!)slate++
+* `++BK!)text++` ++BK!)black++
+
+## Bevel Button chips
+
+A soft beveled button, lit along the top edge and shaded along the bottom! Written `++COLOR%)text++`, in the same 16 colors as the Aero chips:
+
+* `++R%)text++` ++R%)red++
+* `++O%)text++` ++O%)orange++
+* `++GL%)text++` ++GL%)gold++
+* `++Y%)text++` ++Y%)yellow++
+* `++L%)text++` ++L%)lime++
+* `++G%)text++` ++G%)green++
+* `++TU%)text++` ++TU%)turquoise++
+* `++T%)text++` ++T%)teal++
+* `++C%)text++` ++C%)cyan++
+* `++B%)text++` ++B%)blue++
+* `++PR%)text++` ++PR%)purple++
+* `++PK%)text++` ++PK%)pink++
+* `++W%)text++` ++W%)white++
+* `++FG%)text++` ++FG%)fog++
+* `++SL%)text++` ++SL%)slate++
+* `++BK%)text++` ++BK%)black++
+
+## Glossy Underline chips
+
+A glossy marker band across the lower half of the words, with a shine line on its top edge! Written `++COLOR?)text++`, in the same 16 colors as the Aero chips:
+
+* `++R?)text++` ++R?)red++
+* `++O?)text++` ++O?)orange++
+* `++GL?)text++` ++GL?)gold++
+* `++Y?)text++` ++Y?)yellow++
+* `++L?)text++` ++L?)lime++
+* `++G?)text++` ++G?)green++
+* `++TU?)text++` ++TU?)turquoise++
+* `++T?)text++` ++T?)teal++
+* `++C?)text++` ++C?)cyan++
+* `++B?)text++` ++B?)blue++
+* `++PR?)text++` ++PR?)purple++
+* `++PK?)text++` ++PK?)pink++
+* `++W?)text++` ++W?)white++
+* `++FG?)text++` ++FG?)fog++
+* `++SL?)text++` ++SL?)slate++
+* `++BK?)text++` ++BK?)black++
+
+## Halo chips
+
+A pale pill wrapped in a soft glowing halo of its color! Written `++COLOR*)text++`, in the same 16 colors as the Aero chips:
+
+* `++R*)text++` ++R*)red++
+* `++O*)text++` ++O*)orange++
+* `++GL*)text++` ++GL*)gold++
+* `++Y*)text++` ++Y*)yellow++
+* `++L*)text++` ++L*)lime++
+* `++G*)text++` ++G*)green++
+* `++TU*)text++` ++TU*)turquoise++
+* `++T*)text++` ++T*)teal++
+* `++C*)text++` ++C*)cyan++
+* `++B*)text++` ++B*)blue++
+* `++PR*)text++` ++PR*)purple++
+* `++PK*)text++` ++PK*)pink++
+* `++W*)text++` ++W*)white++
+* `++FG*)text++` ++FG*)fog++
+* `++SL*)text++` ++SL*)slate++
+* `++BK*)text++` ++BK*)black++
+
+## Speech Pill chips
+
+A pale glossy pill with a little speech tail at its bottom left! Written `++COLOR#)text++`, in the same 16 colors as the Aero chips:
+
+* `++R#)text++` ++R#)red++
+* `++O#)text++` ++O#)orange++
+* `++GL#)text++` ++GL#)gold++
+* `++Y#)text++` ++Y#)yellow++
+* `++L#)text++` ++L#)lime++
+* `++G#)text++` ++G#)green++
+* `++TU#)text++` ++TU#)turquoise++
+* `++T#)text++` ++T#)teal++
+* `++C#)text++` ++C#)cyan++
+* `++B#)text++` ++B#)blue++
+* `++PR#)text++` ++PR#)purple++
+* `++PK#)text++` ++PK#)pink++
+* `++W#)text++` ++W#)white++
+* `++FG#)text++` ++FG#)fog++
+* `++SL#)text++` ++SL#)slate++
+* `++BK#)text++` ++BK#)black++
+
+## Swallowtail Flag chips
+
+A glossy flag with a swallowtail notch cut into its right end! Written `++COLOR-)text++`, in the same 16 colors as the Aero chips:
+
+* `++R-)text++` ++R-)red++
+* `++O-)text++` ++O-)orange++
+* `++GL-)text++` ++GL-)gold++
+* `++Y-)text++` ++Y-)yellow++
+* `++L-)text++` ++L-)lime++
+* `++G-)text++` ++G-)green++
+* `++TU-)text++` ++TU-)turquoise++
+* `++T-)text++` ++T-)teal++
+* `++C-)text++` ++C-)cyan++
+* `++B-)text++` ++B-)blue++
+* `++PR-)text++` ++PR-)purple++
+* `++PK-)text++` ++PK-)pink++
+* `++W-)text++` ++W-)white++
+* `++FG-)text++` ++FG-)fog++
+* `++SL-)text++` ++SL-)slate++
+* `++BK-)text++` ++BK-)black++
+
+## Gloss Card chips
+
+A small card with a glossy colored strip along its top and a pale body! Written `++COLOR/)text++`, in the same 16 colors as the Aero chips:
+
+* `++R/)text++` ++R/)red++
+* `++O/)text++` ++O/)orange++
+* `++GL/)text++` ++GL/)gold++
+* `++Y/)text++` ++Y/)yellow++
+* `++L/)text++` ++L/)lime++
+* `++G/)text++` ++G/)green++
+* `++TU/)text++` ++TU/)turquoise++
+* `++T/)text++` ++T/)teal++
+* `++C/)text++` ++C/)cyan++
+* `++B/)text++` ++B/)blue++
+* `++PR/)text++` ++PR/)purple++
+* `++PK/)text++` ++PK/)pink++
+* `++W/)text++` ++W/)white++
+* `++FG/)text++` ++FG/)fog++
+* `++SL/)text++` ++SL/)slate++
+* `++BK/)text++` ++BK/)black++
+
+## Dotted Gloss chips
+
+A pale pill sprinkled with a grid of tiny dots, shine across the top! Written `++COLOR:)text++`, in the same 16 colors as the Aero chips:
+
+* `++R:)text++` ++R:)red++
+* `++O:)text++` ++O:)orange++
+* `++GL:)text++` ++GL:)gold++
+* `++Y:)text++` ++Y:)yellow++
+* `++L:)text++` ++L:)lime++
+* `++G:)text++` ++G:)green++
+* `++TU:)text++` ++TU:)turquoise++
+* `++T:)text++` ++T:)teal++
+* `++C:)text++` ++C:)cyan++
+* `++B:)text++` ++B:)blue++
+* `++PR:)text++` ++PR:)purple++
+* `++PK:)text++` ++PK:)pink++
+* `++W:)text++` ++W:)white++
+* `++FG:)text++` ++FG:)fog++
+* `++SL:)text++` ++SL:)slate++
+* `++BK:)text++` ++BK:)black++
+
+## Fading Gloss chips
+
+A glossy pill that fades from the deep tint at the left to clear at the right! Written `++COLOR.)text++`, in the same 16 colors as the Aero chips:
+
+* `++R.)text++` ++R.)red++
+* `++O.)text++` ++O.)orange++
+* `++GL.)text++` ++GL.)gold++
+* `++Y.)text++` ++Y.)yellow++
+* `++L.)text++` ++L.)lime++
+* `++G.)text++` ++G.)green++
+* `++TU.)text++` ++TU.)turquoise++
+* `++T.)text++` ++T.)teal++
+* `++C.)text++` ++C.)cyan++
+* `++B.)text++` ++B.)blue++
+* `++PR.)text++` ++PR.)purple++
+* `++PK.)text++` ++PK.)pink++
+* `++W.)text++` ++W.)white++
+* `++FG.)text++` ++FG.)fog++
+* `++SL.)text++` ++SL.)slate++
+* `++BK.)text++` ++BK.)black++
+
+## Sparkle Pill chips
+
+A pale pill with a four-point sparkle glinting off its top right! Written `++COLOR,)text++`, in the same 16 colors as the Aero chips:
+
+* `++R,)text++` ++R,)red++
+* `++O,)text++` ++O,)orange++
+* `++GL,)text++` ++GL,)gold++
+* `++Y,)text++` ++Y,)yellow++
+* `++L,)text++` ++L,)lime++
+* `++G,)text++` ++G,)green++
+* `++TU,)text++` ++TU,)turquoise++
+* `++T,)text++` ++T,)teal++
+* `++C,)text++` ++C,)cyan++
+* `++B,)text++` ++B,)blue++
+* `++PR,)text++` ++PR,)purple++
+* `++PK,)text++` ++PK,)pink++
+* `++W,)text++` ++W,)white++
+* `++FG,)text++` ++FG,)fog++
+* `++SL,)text++` ++SL,)slate++
+* `++BK,)text++` ++BK,)black++
+
+## Lens chips
+
+A curved lens, pointed at both ends, with a crescent of light! Written `++COLOR;)text++`, in the same 16 colors as the Aero chips:
+
+* `++R;)text++` ++R;)red++
+* `++O;)text++` ++O;)orange++
+* `++GL;)text++` ++GL;)gold++
+* `++Y;)text++` ++Y;)yellow++
+* `++L;)text++` ++L;)lime++
+* `++G;)text++` ++G;)green++
+* `++TU;)text++` ++TU;)turquoise++
+* `++T;)text++` ++T;)teal++
+* `++C;)text++` ++C;)cyan++
+* `++B;)text++` ++B;)blue++
+* `++PR;)text++` ++PR;)purple++
+* `++PK;)text++` ++PK;)pink++
+* `++W;)text++` ++W;)white++
+* `++FG;)text++` ++FG;)fog++
+* `++SL;)text++` ++SL;)slate++
+* `++BK;)text++` ++BK;)black++
+
+## Cut Gem chips
+
+A pale pill with angled cut corners, like a faceted gem! Written `++COLOR&)text++`, in the same 16 colors as the Aero chips:
+
+* `++R&)text++` ++R&)red++
+* `++O&)text++` ++O&)orange++
+* `++GL&)text++` ++GL&)gold++
+* `++Y&)text++` ++Y&)yellow++
+* `++L&)text++` ++L&)lime++
+* `++G&)text++` ++G&)green++
+* `++TU&)text++` ++TU&)turquoise++
+* `++T&)text++` ++T&)teal++
+* `++C&)text++` ++C&)cyan++
+* `++B&)text++` ++B&)blue++
+* `++PR&)text++` ++PR&)purple++
+* `++PK&)text++` ++PK&)pink++
+* `++W&)text++` ++W&)white++
+* `++FG&)text++` ++FG&)fog++
+* `++SL&)text++` ++SL&)slate++
+* `++BK&)text++` ++BK&)black++
+
 ## Aero swipe chips
 
 A mark chip cousin cut like a real highlighter swipe: a slanted bright stroke of the color with a darker ink edge along the bottom! Written `++color/text++`, in the same 16 colors as the Aero chips:

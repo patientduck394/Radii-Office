@@ -6549,3 +6549,82 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 /* Ribbed Gloss ++R[]text++ */
 .gel-hwrib-chip { padding: 1px 12px; border-radius: 999px; border: 1.5px solid var(--hx-c60); background: repeating-linear-gradient(90deg, var(--hx-w3) 0 2px, var(--hx-w1) 2px 4px); }
 .gel-hwrib-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.45em; right: 0.45em; top: 0.08em; height: 0.46em; border-radius: 0.7em / 0.23em; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45)); }
+
+/* ========================================================
+   FIFTEEN MORE HIGHLIGHT AERO CHIP COUSINS (hv), cousins of the plain Aero chip ++R+text++: Split Gel Bar ++R=)text++, Dome Shine ++R~)text++, Inner Ring ++R^)text++, Corner Glints ++R!)text++, Bevel Button ++R%)text++, Glossy Underline ++R?)text++, Halo ++R*)text++, Speech Pill ++R#)text++, Swallowtail Flag ++R-)text++, Gloss Card ++R/)text++, Dotted Gloss ++R:)text++, Fading Gloss ++R.)text++, Sparkle Pill ++R,)text++, Lens ++R;)text++, Cut Gem ++R&)text++.
+   Each in the Aero chips' 16 colors (the .gel-aero-<color> classes), all of them ways to HIGHLIGHT words: they keep the Aero gloss and shine, with light fills and deep-colored words.
+   ======================================================== */
+.gel-hvbar-chip, .gel-hvdome-chip, .gel-hvring-chip, .gel-hvglint-chip, .gel-hvbevel-chip, .gel-hvunder-chip, .gel-hvhalo-chip, .gel-hvbubble-chip, .gel-hvflag-chip, .gel-hvcard-chip, .gel-hvdots-chip, .gel-hvfade-chip, .gel-hvspark-chip, .gel-hvlens-chip, .gel-hvgem-chip {
+  --mk-ink: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  --hx-w1: color-mix(in srgb, var(--ae-l) 22%, #fff); --hx-w2: color-mix(in srgb, var(--ae-l) 48%, #fff); --hx-w3: color-mix(in srgb, var(--ae-l) 66%, #fff);
+  --hx-c28: color-mix(in srgb, var(--ae-c) 28%, transparent); --hx-c36: color-mix(in srgb, var(--ae-c) 36%, transparent); --hx-c40: color-mix(in srgb, var(--ae-c) 40%, transparent);
+  --hx-c45: color-mix(in srgb, var(--ae-c) 45%, transparent); --hx-c50: color-mix(in srgb, var(--ae-c) 50%, transparent); --hx-c60: color-mix(in srgb, var(--ae-c) 60%, transparent);
+  position: relative; isolation: isolate; box-sizing: border-box; display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 3px; border: 0; color: var(--mk-ink); font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-hvbar-chip.gel-aero-white, .gel-hvdome-chip.gel-aero-white, .gel-hvring-chip.gel-aero-white, .gel-hvglint-chip.gel-aero-white, .gel-hvbevel-chip.gel-aero-white, .gel-hvunder-chip.gel-aero-white, .gel-hvhalo-chip.gel-aero-white, .gel-hvbubble-chip.gel-aero-white, .gel-hvflag-chip.gel-aero-white, .gel-hvcard-chip.gel-aero-white, .gel-hvdots-chip.gel-aero-white, .gel-hvfade-chip.gel-aero-white, .gel-hvspark-chip.gel-aero-white, .gel-hvlens-chip.gel-aero-white, .gel-hvgem-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-hvbar-chip.gel-aero-fog, .gel-hvdome-chip.gel-aero-fog, .gel-hvring-chip.gel-aero-fog, .gel-hvglint-chip.gel-aero-fog, .gel-hvbevel-chip.gel-aero-fog, .gel-hvunder-chip.gel-aero-fog, .gel-hvhalo-chip.gel-aero-fog, .gel-hvbubble-chip.gel-aero-fog, .gel-hvflag-chip.gel-aero-fog, .gel-hvcard-chip.gel-aero-fog, .gel-hvdots-chip.gel-aero-fog, .gel-hvfade-chip.gel-aero-fog, .gel-hvspark-chip.gel-aero-fog, .gel-hvlens-chip.gel-aero-fog, .gel-hvgem-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-hvbar-chip.gel-aero-black, .gel-hvdome-chip.gel-aero-black, .gel-hvring-chip.gel-aero-black, .gel-hvglint-chip.gel-aero-black, .gel-hvbevel-chip.gel-aero-black, .gel-hvunder-chip.gel-aero-black, .gel-hvhalo-chip.gel-aero-black, .gel-hvbubble-chip.gel-aero-black, .gel-hvflag-chip.gel-aero-black, .gel-hvcard-chip.gel-aero-black, .gel-hvdots-chip.gel-aero-black, .gel-hvfade-chip.gel-aero-black, .gel-hvspark-chip.gel-aero-black, .gel-hvlens-chip.gel-aero-black, .gel-hvgem-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; --mk-ink: #111111; }
+/* Split Gel Bar ++R=)text++ */
+.gel-hvbar-chip { padding: 1px 12px; border-radius: 0.7em; border: 1.5px solid var(--hx-c60); background: linear-gradient(180deg, var(--hx-w2) 0 50%, var(--hx-w3) 50% 100%); box-shadow: 0 2px 0 rgba(170, 170, 170, 0.35); }
+.gel-hvbar-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.3em; right: 0.3em; top: 0.07em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); }
+
+/* Dome Shine ++R~)text++ */
+.gel-hvdome-chip { padding: 1px 13px; border-radius: 999px; border: 1.5px solid var(--hx-c60); background: linear-gradient(180deg, var(--hx-w2), var(--hx-w1)); }
+.gel-hvdome-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 18%; right: 18%; top: -1px; height: 0.55em; border-radius: 0 0 50% 50% / 0 0 100% 100%; background: radial-gradient(ellipse at 50% 0, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.25) 90%); }
+
+/* Inner Ring ++R^)text++ */
+.gel-hvring-chip { padding: 2px 14px; border-radius: 999px; border: 1.5px solid var(--hx-c60); background: linear-gradient(180deg, var(--hx-w2), var(--hx-w1)); box-shadow: 0 2px 0 rgba(170, 170, 170, 0.3); }
+.gel-hvring-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; inset: 2px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, 0.95); box-shadow: inset 0 0 0 1px var(--hx-c28); }
+
+/* Corner Glints ++R!)text++ */
+.gel-hvglint-chip { padding: 1px 13px; border-radius: 999px; border: 1.5px solid var(--hx-c60); background: linear-gradient(180deg, var(--hx-w2), var(--hx-w1)); }
+.gel-hvglint-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.34em; top: 0.1em; width: 0.7em; height: 0.34em; border-radius: 50%; background: radial-gradient(ellipse, #fff 0 30%, rgba(255, 255, 255, 0) 72%); }
+.gel-hvglint-chip::after { content: ''; position: absolute; z-index: -1; pointer-events: none; right: 0.34em; bottom: 0.1em; width: 0.7em; height: 0.34em; border-radius: 50%; background: radial-gradient(ellipse, #fff 0 30%, rgba(255, 255, 255, 0) 72%); }
+
+/* Bevel Button ++R%)text++ */
+.gel-hvbevel-chip { padding: 1px 12px; border-radius: 6px; background: linear-gradient(180deg, var(--hx-w2), var(--hx-w1)); box-shadow: inset 0 1.5px 0 #fff, inset 0 -2px 0 var(--hx-c45), inset 1.5px 0 0 rgba(255, 255, 255, 0.8), inset -1.5px 0 0 var(--hx-c28), 0 1px 2px var(--hx-c36); }
+
+/* Glossy Underline ++R?)text++ */
+.gel-hvunder-chip { padding: 0 11px; border-radius: 0.2em; background: linear-gradient(180deg, transparent 0 40%, var(--hx-w3) 40% 100%); }
+.gel-hvunder-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0; right: 0; top: 40%; height: 0.14em; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0)); }
+.gel-hvunder-chip::after { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0; right: 0; bottom: 0; height: 2px; background: var(--hx-c60); }
+
+/* Halo ++R*)text++ */
+.gel-hvhalo-chip { padding: 1px 13px; border-radius: 999px; border: 1.5px solid #ffffff; background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 14%, #fff), var(--hx-w2)); box-shadow: 0 0 0 1px var(--hx-c36), 0 0 8px 2px var(--hx-c45), 0 0 16px 4px var(--hx-c28); }
+.gel-hvhalo-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.5em; right: 0.5em; top: 0.08em; height: 0.4em; border-radius: 0.7em / 0.2em; background: rgba(255, 255, 255, 0.85); }
+
+/* Speech Pill ++R#)text++ */
+.gel-hvbubble-chip { margin-bottom: 0.3em; padding: 1px 12px; border-radius: 999px; border: 1.5px solid var(--hx-c60); background: linear-gradient(180deg, var(--hx-w2), var(--hx-w1)); }
+.gel-hvbubble-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.5em; right: 0.5em; top: 0.08em; height: 0.42em; border-radius: 0.7em / 0.21em; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.4)); }
+.gel-hvbubble-chip::after { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.7em; top: calc(100% - 2px); width: 0.45em; height: 0.4em; background: var(--hx-w1); clip-path: polygon(0 0, 100% 0, 0 100%); box-shadow: -1.5px 0 0 var(--hx-c60); }
+
+/* Swallowtail Flag ++R-)text++ */
+.gel-hvflag-chip { padding: 2px 20px 2px 12px; border-radius: 4px 0 0 4px; background: linear-gradient(180deg, var(--hx-w2), var(--hx-w3)); clip-path: polygon(0 0, 100% 0, calc(100% - 0.5em) 50%, 100% 100%, 0 100%); box-shadow: inset 0 0 0 1px var(--hx-c45); }
+.gel-hvflag-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.3em; right: 1em; top: 0.08em; height: 0.4em; border-radius: 0.5em / 0.2em; background: rgba(255, 255, 255, 0.8); }
+
+/* Gloss Card ++R/)text++ */
+.gel-hvcard-chip { padding: 5px 12px 1px; border-radius: 4px; border: 1px solid var(--hx-c50); background: linear-gradient(180deg, var(--ae-c) 0 3px, var(--hx-w1) 3px 100%); box-shadow: 0 2px 0 rgba(170, 170, 170, 0.3); }
+.gel-hvcard-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0; right: 0; top: 0; height: 3px; background: linear-gradient(180deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0)); }
+
+/* Dotted Gloss ++R:)text++ */
+.gel-hvdots-chip { padding: 1px 13px; border-radius: 999px; border: 1.5px solid var(--hx-c60); background: radial-gradient(circle, var(--hx-c36) 0 0.9px, transparent 1.3px) 0 0 / 5px 5px, linear-gradient(180deg, var(--hx-w2), var(--hx-w1)); }
+.gel-hvdots-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.45em; right: 0.45em; top: 0.08em; height: 0.42em; border-radius: 0.7em / 0.21em; background: linear-gradient(180deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.3)); }
+
+/* Fading Gloss ++R.)text++ */
+.gel-hvfade-chip { padding: 1px 13px; border-radius: 999px; background: linear-gradient(90deg, var(--hx-w3), rgba(255, 255, 255, 0)); box-shadow: inset 0 1.5px 0 var(--hx-c36), inset 0 -1.5px 0 var(--hx-c36); }
+.gel-hvfade-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.45em; right: 25%; top: 0.08em; height: 0.4em; border-radius: 0.7em / 0.2em; background: linear-gradient(90deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0)); }
+
+/* Sparkle Pill ++R,)text++ */
+.gel-hvspark-chip { margin-right: 0.6em; padding: 1px 13px; border-radius: 999px; border: 1.5px solid var(--hx-c60); background: linear-gradient(180deg, var(--hx-w2), var(--hx-w1)); }
+.gel-hvspark-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.45em; right: 0.45em; top: 0.08em; height: 0.4em; border-radius: 0.7em / 0.2em; background: rgba(255, 255, 255, 0.7); }
+.gel-hvspark-chip::after { content: '\2726'; position: absolute; z-index: 1; pointer-events: none; right: -0.45em; top: -0.5em; font-size: 0.8em; line-height: 1; color: var(--ae-c); text-shadow: 0 0 3px #fff, 0 0 6px var(--hx-c60); }
+
+/* Lens ++R;)text++ */
+.gel-hvlens-chip { padding: 1px 18px; border-radius: 50% / 100%; border: 1.5px solid var(--hx-c60); background: radial-gradient(ellipse at 50% 120%, var(--hx-w3), var(--hx-w1) 70%); }
+.gel-hvlens-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 22%; right: 22%; top: 0.08em; height: 0.34em; border-radius: 50%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.2)); }
+
+/* Cut Gem ++R&)text++ */
+.gel-hvgem-chip { padding: 2px 15px; background: linear-gradient(180deg, var(--hx-w2) 0 50%, var(--hx-w3) 50% 100%); clip-path: polygon(0.45em 0, calc(100% - 0.45em) 0, 100% 50%, calc(100% - 0.45em) 100%, 0.45em 100%, 0 50%); box-shadow: inset 0 0 0 1px var(--hx-c50); }
+.gel-hvgem-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.5em; right: 0.5em; top: 0.1em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); }
