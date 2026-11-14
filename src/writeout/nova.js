@@ -24,15 +24,15 @@
 
     /* ---------- the sections of the dock: one color each ---------- */
     const SECT = {
-        home: { name: 'Write', icon: 'pen', c: '#2563eb' },
-        insert: { name: 'Insert', icon: 'plus', c: '#0d9488' },
-        layout: { name: 'Page', icon: 'layout', c: '#d97706' },
-        references: { name: 'Cite', icon: 'book', c: '#7c3aed' },
-        review: { name: 'Review', icon: 'review', c: '#db2777' },
-        view: { name: 'View', icon: 'eye', c: '#16a34a' },
-        help: { name: 'Help', icon: 'help', c: '#64748b' }
+        home: { name: 'Write', icon: 'pen', c: 'var(--nv-primary)' },
+        insert: { name: 'Insert', icon: 'plus', c: 'var(--nv-primary)' },
+        layout: { name: 'Page', icon: 'layout', c: 'var(--nv-primary)' },
+        references: { name: 'Cite', icon: 'book', c: 'var(--nv-primary)' },
+        review: { name: 'Review', icon: 'review', c: 'var(--nv-primary)' },
+        view: { name: 'View', icon: 'eye', c: 'var(--nv-primary)' },
+        help: { name: 'Help', icon: 'help', c: 'var(--nv-primary)' }
     };
-    const meta = function (tab) { return SECT[tab.id] || { name: tab.label, icon: 'sparkle', c: '#0891b2' }; };
+    const meta = function (tab) { return SECT[tab.id] || { name: tab.label, icon: 'sparkle', c: 'var(--nv-primary)' }; };
 
     let on = false, cfg = null;
     let controls = [];          // every live control (capsule and the open panel), for syncing
@@ -71,7 +71,7 @@
         if (!items) return;
         const m = el('div', 'nv nv-pop' + (opts.cls ? ' ' + opts.cls : ''));
         m.setAttribute('role', 'menu');
-        m.style.setProperty('--nv-c', (anchor && anchor.closest('[data-nvc]') ? anchor.closest('[data-nvc]').dataset.nvc : '') || opts.color || '#2563eb');
+        m.style.setProperty('--nv-c', (anchor && anchor.closest('[data-nvc]') ? anchor.closest('[data-nvc]').dataset.nvc : '') || opts.color || 'var(--nv-primary)');
         items.forEach(function (mi) {
             if (!mi) return;
             if (mi.sep) { m.appendChild(el('hr', 'nv-pop-sep')); return; }
@@ -353,7 +353,7 @@
             });
         });
         [['office', 'Switch to the ' + (cfg.officeName || 'Office') + ' layout'], ['pool', 'Switch to the Poolside layout'], ['classic', 'Switch to Writeout Classic']].forEach(function (l) {
-            out.push({ label: l[1], icon: 'layout', where: 'Layout', it: { run: function () { OS.setLayout(l[0]); } }, c: '#64748b' });
+            out.push({ label: l[1], icon: 'layout', where: 'Layout', it: { run: function () { OS.setLayout(l[0]); } }, c: 'var(--nv-primary)' });
         });
         return out;
     }
@@ -374,7 +374,7 @@
             res.innerHTML = '';
             if (!hits.length) { res.appendChild(el('div', 'nv-pal-empty', 'Nothing matches that. Try another word!')); return; }
             hits.forEach(function (h, i) {
-                const b = el('button', 'nv-pal-item' + (i === idx ? ' kb' : ''), '<span class="nv-pal-ic" style="--nv-c:' + (h.c || '#2563eb') + '">' + ic(h.icon || 'sparkle') + '</span><span class="nv-pal-l">' + esc(h.label) + '</span><em>' + esc(h.where || '') + '</em>');
+                const b = el('button', 'nv-pal-item' + (i === idx ? ' kb' : ''), '<span class="nv-pal-ic" style="--nv-c:' + (h.c || 'var(--nv-primary)') + '">' + ic(h.icon || 'sparkle') + '</span><span class="nv-pal-l">' + esc(h.label) + '</span><em>' + esc(h.where || '') + '</em>');
                 b.type = 'button'; b.dataset.i = i;
                 res.appendChild(b);
             });
@@ -474,8 +474,8 @@
         });
         dock.appendChild(main);
         const end = el('div', 'nv-dock-end');
-        const file = dockButton('', 'doc', 'File', 'File: new, open, save, print and export'); file.style.setProperty('--nv-c', '#0284c7'); file.addEventListener('click', function () { OS.openBackstage(); });
-        const lay = dockButton('', 'layout', 'Layout', 'Switch layout'); lay.style.setProperty('--nv-c', '#64748b');
+        const file = dockButton('', 'doc', 'File', 'File: new, open, save, print and export'); file.style.setProperty('--nv-c', 'var(--nv-primary)'); file.addEventListener('click', function () { OS.openBackstage(); });
+        const lay = dockButton('', 'layout', 'Layout', 'Switch layout'); lay.style.setProperty('--nv-c', 'var(--nv-primary)');
         lay.addEventListener('click', function (e) {
             const cur = OS.layout();
             openPop(lay, [
@@ -487,7 +487,7 @@
             ], { side: 'right' });
             e.stopPropagation();
         });
-        const theme = dockButton('', document.body.classList.contains('nv-dark') ? 'sun' : 'moon', 'Theme', 'Light or dark Nova'); theme.style.setProperty('--nv-c', '#7c3aed');
+        const theme = dockButton('', document.body.classList.contains('nv-dark') ? 'sun' : 'moon', 'Theme', 'Light or dark Nova'); theme.style.setProperty('--nv-c', 'var(--nv-primary)');
         theme.addEventListener('click', function () { setDark(!document.body.classList.contains('nv-dark')); theme.querySelector('svg').outerHTML = ic(document.body.classList.contains('nv-dark') ? 'sun' : 'moon'); });
         const set = dockButton('', 'gear', 'More', 'Settings'); set.style.setProperty('--nv-c', '#64748b'); set.addEventListener('click', function () { OS.openBackstage('settings'); });
         [file, lay, theme, set].forEach(function (b) { end.appendChild(b); });
@@ -505,7 +505,7 @@
         search.addEventListener('click', openPalette);
         const right = el('div', 'nv-bar-r');
         const mkBar = function (iconName, title, fn, label) { const b = el('button', 'nv-t nv-barbtn' + (label ? ' nv-withlab' : ''), ic(iconName) + (label ? '<span>' + esc(label) + '</span>' : '')); b.type = 'button'; b.title = title; b.addEventListener('click', fn); return b; };
-        (cfg.qat || []).forEach(function (q) { const b = mkBar(q.icon, q.title || q.label, function (e) { run(q, e); }); b.dataset.nvc = '#2563eb'; controls.push({ it: q, el: b }); right.appendChild(b); });
+        (cfg.qat || []).forEach(function (q) { const b = mkBar(q.icon, q.title || q.label, function (e) { run(q, e); }); b.dataset.nvc = 'var(--nv-primary)'; controls.push({ it: q, el: b }); right.appendChild(b); });
         const share = mkBar('share', 'Share and chat live', function () { if (window.RadiiCollab && window.RadiiCollab.open) window.RadiiCollab.open('people'); else OS.toast('Sharing is not ready yet!'); }, 'Share'); share.classList.add('nv-primary');
         right.appendChild(share);
         const paneItem = allItems().find(function (i) { return /Format Pane/i.test(i.title || itemLabel(i) || '') && !!i.run; });
@@ -556,6 +556,10 @@
         cfg = OS.config();
         if (!cfg) return;
         on = true;
+        const th = cfg.theme || {};
+        document.body.style.setProperty('--nv-primary', th.accent || '#0284c7');
+        document.body.style.setProperty('--nv-primary-d', th['accent-d'] || '#0369a1');
+        document.body.style.setProperty('--nv-primary-l', th['accent-l'] || '#e0f2fe');
         controls = []; panelControls = []; panelTab = null;
         let dark = null; try { dark = localStorage.getItem('writeout_nova_dark'); } catch (e) {}
         document.body.classList.toggle('nv-dark', dark === '1' || (dark === null && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));

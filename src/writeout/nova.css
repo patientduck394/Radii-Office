@@ -12,14 +12,15 @@ body.os-nova {
     --nv-shadow: 0 10px 30px rgba(27, 33, 51, 0.14), 0 2px 6px rgba(27, 33, 51, 0.08);
     --nv-ease: cubic-bezier(0.22, 1, 0.36, 1);
     /* the shell's own variables, so dialogs and menus it opens look at home */
-    --os-accent: #2563eb; --os-accent-d: #1d4ed8; --os-accent-l: #dbeafe; --os-title: #2563eb; --os-gel1: #93c5fd; --os-gel2: #2563eb;
-    --os-ui: var(--nv-card); --os-text: var(--nv-ink); --os-dim: var(--nv-dim); --os-ribbon-line: var(--nv-line); --os-hover: color-mix(in srgb, #2563eb 9%, var(--nv-card));
+    --nv-primary: #0284c7; --nv-primary-d: #0369a1; --nv-primary-l: #e0f2fe;
+    --os-accent: var(--nv-primary); --os-accent-d: var(--nv-primary-d); --os-accent-l: var(--nv-primary-l); --os-title: var(--nv-primary); --os-gel1: color-mix(in srgb, var(--nv-primary) 55%, #fff); --os-gel2: var(--nv-primary);
+    --os-ui: var(--nv-card); --os-text: var(--nv-ink); --os-dim: var(--nv-dim); --os-ribbon-line: var(--nv-line); --os-hover: color-mix(in srgb, var(--nv-primary) 9%, var(--nv-card));
     --os-font: var(--nv-font); --os-brand-font: var(--nv-font);
 }
 body.os-nova.nv-dark {
     --nv-desk: #12141b; --nv-card: #1a1e2b; --nv-ink: #e8ecf7; --nv-dim: #97a1ba; --nv-line: #2a3044;
     --nv-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35);
-    --os-accent: #60a5fa; --os-accent-d: #3b82f6; --os-accent-l: #1e3a8a;
+    --os-accent: color-mix(in srgb, var(--nv-primary) 60%, #fff); --os-accent-d: var(--nv-primary); --os-accent-l: color-mix(in srgb, var(--nv-primary) 35%, #000);
 }
 
 /* ---------- the frame: dock | bar + capsule + page | drawers ---------- */
@@ -47,9 +48,9 @@ body.os-office.os-nova #sidebar::before { content: "Pages & outline"; font: 700 
 body.os-office.os-nova #format-sidebar { grid-column: 4; grid-row: 2 / 5; margin: 0 0 12px 0; border-radius: 16px 0 0 16px; }
 body.os-nova.wo-nav-off #sidebar, body.os-nova.wo-focus #sidebar { display: none; }
 body.os-nova .outline-item { border-radius: 9px; font-family: var(--nv-font); }
-body.os-nova .outline-item:hover { background: color-mix(in srgb, #2563eb 9%, var(--nv-card)); }
-body.os-nova .outline-item.active { color: #1d4ed8; background: color-mix(in srgb, #2563eb 14%, var(--nv-card)); border-color: #2563eb; box-shadow: none; text-shadow: none; }
-body.os-nova.nv-dark .outline-item.active { color: #bfdbfe; }
+body.os-nova .outline-item:hover { background: color-mix(in srgb, var(--nv-primary) 9%, var(--nv-card)); }
+body.os-nova .outline-item.active { color: var(--nv-primary-d); background: color-mix(in srgb, var(--nv-primary) 14%, var(--nv-card)); border-color: var(--nv-primary); box-shadow: none; text-shadow: none; }
+body.os-nova.nv-dark .outline-item.active { color: color-mix(in srgb, var(--nv-primary) 40%, #fff); }
 @keyframes nvSlideR { from { opacity: 0; transform: translateX(16px); } }
 body.os-nova .ambient-droplet { display: none; }
 body.os-nova.wo-focus #nv-dock, body.os-nova.wo-focus #nv-bar, body.os-nova.wo-focus #nv-capsule { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
@@ -59,7 +60,7 @@ body.os-nova.wo-focus #nv-status:hover { opacity: 1; }
 
 /* ---------- the flat soft button: main color border, lighter tint fill ---------- */
 .nv-t {
-    --c: var(--nv-c, #2563eb);
+    --c: var(--nv-c, var(--nv-primary));
     font: 600 12px var(--nv-font); cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; position: relative; padding: 0;
     color: color-mix(in srgb, var(--c) 82%, #000);
     background: color-mix(in srgb, var(--c) 12%, var(--nv-card));
@@ -71,7 +72,7 @@ body.nv-dark .nv-t { color: color-mix(in srgb, var(--c) 55%, #fff); background: 
 .nv-t:active { transform: scale(0.96); }
 .nv-t.on, .nv-t.nv-open { background: color-mix(in srgb, var(--c) 34%, var(--nv-card)); box-shadow: inset 0 0 0 1px var(--c); }
 .nv-t:disabled { opacity: 0.4; border-style: dashed; cursor: default; transform: none; }
-.nv-t:focus-visible, .nv-d:focus-visible { outline: 2px solid var(--c, #2563eb); outline-offset: 2px; }
+.nv-t:focus-visible, .nv-d:focus-visible { outline: 2px solid var(--c, var(--nv-primary)); outline-offset: 2px; }
 .nv-t.nv-big { width: 78px; min-height: 70px; padding: 8px 4px 7px; text-align: center; line-height: 1.15; }
 .nv-t.nv-sm { flex-direction: row; justify-content: flex-start; gap: 8px; height: 36px; padding: 0 12px 0 10px; border-radius: 11px; font-size: 12.5px; }
 .nv-t.nv-ic { width: 36px; height: 36px; border-radius: 11px; }
@@ -105,7 +106,7 @@ body.nv-dark .nv-t { color: color-mix(in srgb, var(--c) 55%, #fff); background: 
 .nv-dock-main { display: flex; flex-direction: column; gap: 7px; flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 0; scrollbar-width: none; }
 .nv-dock-end { display: flex; flex-direction: column; gap: 7px; padding-top: 8px; border-top: 1.5px dashed var(--nv-line); }
 .nv-d {
-    --c: var(--nv-c, #2563eb);
+    --c: var(--nv-c, var(--nv-primary));
     width: 54px; height: 54px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; padding: 0;
     color: color-mix(in srgb, var(--c) 82%, #000); background: color-mix(in srgb, var(--c) 10%, var(--nv-card)); border: 1.5px solid var(--c); border-radius: 15px;
     font: 700 9.5px var(--nv-font); letter-spacing: 0.02em; transition: background 0.15s, transform 0.18s var(--nv-ease), border-radius 0.2s;
@@ -124,7 +125,7 @@ body.nv-dark .nv-d { color: color-mix(in srgb, var(--c) 55%, #fff); background: 
     font: 700 17px var(--nv-font); color: var(--nv-ink); background: transparent; border: 1.5px solid transparent; border-radius: 10px; padding: 5px 9px; min-width: 6ch; max-width: 34ch; outline: none; transition: border-color 0.15s, background 0.15s;
 }
 .nv-docname:hover { border-color: var(--nv-line); }
-.nv-docname:focus { border-color: #2563eb; background: color-mix(in srgb, #2563eb 8%, var(--nv-card)); }
+.nv-docname:focus { border-color: var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 8%, var(--nv-card)); }
 .nv-saved { display: inline-flex; align-items: center; gap: 5px; font: 600 11.5px var(--nv-font); color: #15803d; background: color-mix(in srgb, #16a34a 12%, var(--nv-card)); border: 1.5px solid #16a34a; border-radius: 99px; padding: 2px 10px 2px 7px; white-space: nowrap; }
 body.nv-dark .nv-saved { color: #86efac; }
 .nv-saved .nv-ic { width: 14px; height: 14px; }
@@ -134,13 +135,13 @@ body.nv-dark .nv-saved { color: #86efac; }
     flex: 1 1 240px; max-width: 440px; margin: 0 auto; display: flex; align-items: center; gap: 9px; height: 38px; padding: 0 12px; cursor: pointer; text-align: left;
     font: 500 13px var(--nv-font); color: var(--nv-dim); background: var(--nv-card); border: 1.5px solid var(--nv-line); border-radius: 12px; transition: border-color 0.15s, box-shadow 0.15s;
 }
-.nv-search:hover { border-color: #2563eb; box-shadow: 0 0 0 3px color-mix(in srgb, #2563eb 15%, transparent); }
+.nv-search:hover { border-color: var(--nv-primary); box-shadow: 0 0 0 3px color-mix(in srgb, var(--nv-primary) 15%, transparent); }
 .nv-search span { flex: 1; }
 .nv-search kbd, .nv-pal kbd, .nv-pi kbd { font: 600 11px var(--nv-font); color: var(--nv-dim); background: var(--nv-desk); border: 1px solid var(--nv-line); border-radius: 6px; padding: 1px 6px; }
 .nv-bar-r { display: flex; align-items: center; gap: 7px; margin-left: auto; }
 .nv-barbtn { width: 38px; height: 38px; border-radius: 12px; }
 .nv-barbtn.nv-withlab { width: auto; flex-direction: row; gap: 7px; padding: 0 14px 0 11px; font-size: 13px; }
-.nv-primary { --nv-c: #2563eb; }
+.nv-primary { --nv-c: var(--nv-primary); }
 
 /* ---------- the format capsule: a pill that hovers over the page ---------- */
 .nv-capsule { z-index: 15; display: flex; justify-content: center; align-items: center; padding: 0 12px; pointer-events: none; font-family: var(--nv-font); }
@@ -153,7 +154,7 @@ body.nv-dark .nv-saved { color: #86efac; }
 @keyframes nvDrop { from { opacity: 0; transform: translateY(-10px) scale(0.98); } }
 .nv-csep { display: inline-block; width: 1.5px; height: 22px; background: var(--nv-line); border-radius: 2px; margin: 0 3px; flex: none; }
 .nv-capsule .nv-t.nv-ic { width: 34px; height: 34px; }
-.nv-field { --c: var(--nv-c, #2563eb); display: inline-flex; align-items: center; gap: 4px; }
+.nv-field { --c: var(--nv-c, var(--nv-primary)); display: inline-flex; align-items: center; gap: 4px; }
 .nv-sel {
     height: 34px; max-width: 160px; font: 600 12.5px var(--nv-font); color: color-mix(in srgb, var(--c) 82%, #000); background: color-mix(in srgb, var(--c) 10%, var(--nv-card)); border: 1.5px solid var(--c); border-radius: 11px; padding: 0 8px; cursor: pointer; outline: none;
 }
@@ -167,16 +168,16 @@ body.nv-dark .nv-number .nv-step { color: color-mix(in srgb, var(--c) 55%, #fff)
 .nv-flab { font: 600 11.5px var(--nv-font); color: var(--nv-dim); padding: 0 6px; }
 .nv-check { display: inline-flex; align-items: center; gap: 8px; font: 600 12.5px var(--nv-font); cursor: pointer; color: var(--nv-ink); }
 .nv-check input { position: absolute; opacity: 0; pointer-events: none; }
-.nv-switch { width: 34px; height: 20px; border-radius: 99px; border: 1.5px solid #2563eb; background: color-mix(in srgb, #2563eb 10%, var(--nv-card)); position: relative; transition: background 0.15s; flex: none; }
-.nv-switch::after { content: ""; position: absolute; left: 2px; top: 2px; width: 13px; height: 13px; border-radius: 50%; background: #2563eb; transition: transform 0.18s var(--nv-ease); }
-.nv-check input:checked + .nv-switch { background: color-mix(in srgb, #2563eb 34%, var(--nv-card)); }
+.nv-switch { width: 34px; height: 20px; border-radius: 99px; border: 1.5px solid var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 10%, var(--nv-card)); position: relative; transition: background 0.15s; flex: none; }
+.nv-switch::after { content: ""; position: absolute; left: 2px; top: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--nv-primary); transition: transform 0.18s var(--nv-ease); }
+.nv-check input:checked + .nv-switch { background: color-mix(in srgb, var(--nv-primary) 34%, var(--nv-card)); }
 .nv-check input:checked + .nv-switch::after { transform: translateX(14px); }
 
 /* ---------- the tool panel ---------- */
 .nv-panel {
     position: fixed; left: 80px; top: 62px; bottom: 54px; width: 364px; z-index: 40; display: flex; flex-direction: column; font-family: var(--nv-font); color: var(--nv-ink);
     background: var(--nv-card); border: 1.5px solid var(--c, var(--nv-c)); border-radius: 20px; box-shadow: var(--nv-shadow); overflow: hidden;
-    --c: var(--nv-c, #2563eb);
+    --c: var(--nv-c, var(--nv-primary));
 }
 .nv-panel[hidden] { display: none; }
 .nv-panel.nv-in { animation: nvPanel 0.28s var(--nv-ease); }
@@ -193,7 +194,7 @@ body.nv-dark .nv-panel-title { color: color-mix(in srgb, var(--c) 55%, #fff); }
 .nv-grid { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
 .nv-gallery { width: 100%; display: flex; gap: 6px; align-items: flex-start; }
 .nv-gal-list { display: flex; flex-wrap: wrap; gap: 6px; flex: 1; max-height: 140px; overflow-y: auto; }
-.nv-gi { --c: var(--nv-c, #2563eb); display: inline-flex; flex-direction: column; align-items: center; gap: 3px; min-width: 62px; padding: 6px 7px; font: 600 11px var(--nv-font); cursor: pointer;
+.nv-gi { --c: var(--nv-c, var(--nv-primary)); display: inline-flex; flex-direction: column; align-items: center; gap: 3px; min-width: 62px; padding: 6px 7px; font: 600 11px var(--nv-font); cursor: pointer;
     color: color-mix(in srgb, var(--c) 80%, #000); background: color-mix(in srgb, var(--c) 10%, var(--nv-card)); border: 1.5px solid var(--c); border-radius: 11px; }
 body.nv-dark .nv-gi { color: color-mix(in srgb, var(--c) 55%, #fff); }
 .nv-gi:hover { background: color-mix(in srgb, var(--c) 22%, var(--nv-card)); }
@@ -203,13 +204,13 @@ body.nv-dark .nv-gi { color: color-mix(in srgb, var(--c) 55%, #fff); }
 /* ---------- popovers (menus, color grids) ---------- */
 .nv-pop {
     position: fixed; z-index: 90; min-width: 200px; max-width: 320px; max-height: 70vh; overflow-y: auto; padding: 6px; font-family: var(--nv-font);
-    background: var(--nv-card); border: 1.5px solid var(--nv-c, #2563eb); border-radius: 14px; box-shadow: var(--nv-shadow); animation: nvPop 0.16s var(--nv-ease);
+    background: var(--nv-card); border: 1.5px solid var(--nv-c, var(--nv-primary)); border-radius: 14px; box-shadow: var(--nv-shadow); animation: nvPop 0.16s var(--nv-ease);
 }
 .nv-pop.nv-out { opacity: 0; transform: scale(0.97); transition: 0.1s; }
 @keyframes nvPop { from { opacity: 0; transform: translateY(-4px) scale(0.98); } }
 .nv-pop-h { font: 800 10.5px var(--nv-font); letter-spacing: 0.08em; text-transform: uppercase; color: var(--nv-dim); padding: 6px 9px 4px; }
 .nv-pop-sep { border: 0; border-top: 1.5px dashed var(--nv-line); margin: 5px 4px; }
-.nv-pi { --c: var(--nv-c, #2563eb); display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 9px; font: 600 13px var(--nv-font); color: var(--nv-ink); background: transparent; border: 1.5px solid transparent; border-radius: 10px; cursor: pointer; text-align: left; }
+.nv-pi { --c: var(--nv-c, var(--nv-primary)); display: flex; align-items: center; gap: 9px; width: 100%; padding: 7px 9px; font: 600 13px var(--nv-font); color: var(--nv-ink); background: transparent; border: 1.5px solid transparent; border-radius: 10px; cursor: pointer; text-align: left; }
 .nv-pi:hover { background: color-mix(in srgb, var(--c) 14%, var(--nv-card)); border-color: var(--c); }
 .nv-pi.on { background: color-mix(in srgb, var(--c) 22%, var(--nv-card)); border-color: var(--c); }
 .nv-pi:disabled { opacity: 0.4; }
@@ -228,7 +229,7 @@ body.nv-dark .nv-pi-i { color: color-mix(in srgb, var(--c) 55%, #fff); }
 .nv-pill { pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; padding: 4px 8px 4px 12px; background: var(--nv-card); border: 1.5px solid var(--nv-line); border-radius: 99px; box-shadow: var(--nv-shadow); font-size: 12px; color: var(--nv-dim); }
 .nv-status-l { display: flex; gap: 10px; align-items: center; white-space: nowrap; }
 .nv-st b { color: var(--nv-ink); }
-.nv-st.first b { color: #2563eb; }
+.nv-st.first b { color: var(--nv-primary); }
 .nv-views, .nv-zoom { display: inline-flex; align-items: center; gap: 4px; }
 .nv-vb, .nv-zb { width: 28px; height: 28px; border-radius: 9px; }
 .nv-vb .nv-ic, .nv-zb .nv-ic { width: 15px; height: 15px; }
@@ -237,13 +238,13 @@ body.nv-dark .nv-pi-i { color: color-mix(in srgb, var(--c) 55%, #fff); }
 /* ---------- the palette ---------- */
 .nv-pal-back { position: fixed; inset: 0; z-index: 120; background: rgba(18, 22, 36, 0.38); display: flex; justify-content: center; align-items: flex-start; padding-top: 12vh; animation: nvFade 0.15s; backdrop-filter: blur(2px); }
 @keyframes nvFade { from { opacity: 0; } }
-.nv-pal { width: min(620px, 92vw); background: var(--nv-card); border: 1.5px solid #2563eb; border-radius: 18px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35); overflow: hidden; font-family: var(--nv-font); animation: nvPop 0.2s var(--nv-ease); }
+.nv-pal { width: min(620px, 92vw); background: var(--nv-card); border: 1.5px solid var(--nv-primary); border-radius: 18px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35); overflow: hidden; font-family: var(--nv-font); animation: nvPop 0.2s var(--nv-ease); }
 .nv-pal-in { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1.5px solid var(--nv-line); color: var(--nv-dim); }
 .nv-pal-in input { flex: 1; border: 0; background: transparent; font: 600 16px var(--nv-font); color: var(--nv-ink); outline: none; }
 .nv-pal-res { max-height: 52vh; overflow-y: auto; padding: 6px; }
 .nv-pal-item { display: flex; align-items: center; gap: 11px; width: 100%; padding: 8px 10px; background: transparent; border: 1.5px solid transparent; border-radius: 12px; cursor: pointer; font: 600 14px var(--nv-font); color: var(--nv-ink); text-align: left; }
-.nv-pal-item.kb, .nv-pal-item:hover { background: color-mix(in srgb, #2563eb 12%, var(--nv-card)); border-color: #2563eb; }
-.nv-pal-ic { --c: var(--nv-c, #2563eb); width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: color-mix(in srgb, var(--c) 80%, #000); background: color-mix(in srgb, var(--c) 14%, var(--nv-card)); border: 1.5px solid var(--c); flex: none; }
+.nv-pal-item.kb, .nv-pal-item:hover { background: color-mix(in srgb, var(--nv-primary) 12%, var(--nv-card)); border-color: var(--nv-primary); }
+.nv-pal-ic { --c: var(--nv-c, var(--nv-primary)); width: 30px; height: 30px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; color: color-mix(in srgb, var(--c) 80%, #000); background: color-mix(in srgb, var(--c) 14%, var(--nv-card)); border: 1.5px solid var(--c); flex: none; }
 body.nv-dark .nv-pal-ic { color: color-mix(in srgb, var(--c) 55%, #fff); }
 .nv-pal-ic .nv-ic { width: 17px; height: 17px; }
 .nv-pal-l { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -251,22 +252,22 @@ body.nv-dark .nv-pal-ic { color: color-mix(in srgb, var(--c) 55%, #fff); }
 .nv-pal-empty { padding: 22px; text-align: center; color: var(--nv-dim); font: 600 13px var(--nv-font); }
 
 /* ---------- dialogs, menus and the File screen that the commands open: flat soft too ---------- */
-body.os-nova .os-menu, body.os-nova .os-dlg { border-radius: 16px; border: 1.5px solid #2563eb; box-shadow: var(--nv-shadow); background: var(--nv-card); color: var(--nv-ink); }
-body.os-nova .os-dlg-head { background: color-mix(in srgb, #2563eb 12%, var(--nv-card)); color: color-mix(in srgb, #2563eb 80%, #000); border-bottom: 1.5px solid color-mix(in srgb, #2563eb 30%, var(--nv-line)); }
-body.os-nova.nv-dark .os-dlg-head { color: #bfdbfe; }
-body.os-nova .os-dlg-btn { border-radius: 11px; border: 1.5px solid #2563eb; background: color-mix(in srgb, #2563eb 12%, var(--nv-card)); color: color-mix(in srgb, #2563eb 80%, #000); box-shadow: none; text-shadow: none; }
-body.os-nova .os-dlg-btn.primary { background: color-mix(in srgb, #2563eb 30%, var(--nv-card)); }
+body.os-nova .os-menu, body.os-nova .os-dlg { border-radius: 16px; border: 1.5px solid var(--nv-primary); box-shadow: var(--nv-shadow); background: var(--nv-card); color: var(--nv-ink); }
+body.os-nova .os-dlg-head { background: color-mix(in srgb, var(--nv-primary) 12%, var(--nv-card)); color: color-mix(in srgb, var(--nv-primary) 80%, #000); border-bottom: 1.5px solid color-mix(in srgb, var(--nv-primary) 30%, var(--nv-line)); }
+body.os-nova.nv-dark .os-dlg-head { color: color-mix(in srgb, var(--nv-primary) 40%, #fff); }
+body.os-nova .os-dlg-btn { border-radius: 11px; border: 1.5px solid var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 12%, var(--nv-card)); color: color-mix(in srgb, var(--nv-primary) 80%, #000); box-shadow: none; text-shadow: none; }
+body.os-nova .os-dlg-btn.primary { background: color-mix(in srgb, var(--nv-primary) 30%, var(--nv-card)); }
 body.os-nova .os-dlg-btn.danger { border-color: #dc2626; color: #b91c1c; background: color-mix(in srgb, #dc2626 12%, var(--nv-card)); }
-body.os-nova .os-mitem:hover { background: color-mix(in srgb, #2563eb 14%, var(--nv-card)); }
+body.os-nova .os-mitem:hover { background: color-mix(in srgb, var(--nv-primary) 14%, var(--nv-card)); }
 
 /* ---------- the layout card in Settings ---------- */
 .os-lt-nova { background: #eceef4; }
 .os-lt-nova .lt-orb, .os-lt-nova .lt-list, .os-lt-nova .lt-strip, .os-lt-nova .lt-note, .os-lt-nova .lt-slide { display: none; }
 .os-lt-nova .lt-side { left: 0; top: 0; bottom: 0; width: 20px; background: #fff; border-right: 1.5px solid #dfe3ec; }
-.os-lt-nova .lt-side::before { content: ""; position: absolute; left: 4px; right: 4px; top: 8px; height: 10px; border-radius: 4px; border: 1.5px solid #2563eb; background: #dbeafe; box-shadow: 0 16px 0 -1px #ccfbf1, 0 32px 0 -1px #fef3c7, 0 48px 0 -1px #ede9fe, 0 16px 0 0 #0d9488; }
+.os-lt-nova .lt-side::before { content: ""; position: absolute; left: 4px; right: 4px; top: 8px; height: 10px; border-radius: 4px; border: 1.5px solid var(--nv-primary); background: #dbeafe; box-shadow: 0 16px 0 -1px #ccfbf1, 0 32px 0 -1px #fef3c7, 0 48px 0 -1px #ede9fe, 0 16px 0 0 #0d9488; }
 .os-lt-nova .lt-bar { left: 26px; right: 6px; top: 6px; height: 12px; border-radius: 7px; background: #fff; border: 1.5px solid #dfe3ec; }
 .os-lt-nova .lt-page { left: 50%; top: 34px; width: 70px; margin-left: -26px; bottom: -6px; background: #fff; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16); background-image: repeating-linear-gradient(transparent 0 7px, #dfe3ec 7px 8px); }
-.os-lt-nova .lt-page::before { content: ""; position: absolute; left: 6px; right: 6px; top: -12px; height: 10px; border-radius: 6px; border: 1.5px solid #2563eb; background: #dbeafe; }
+.os-lt-nova .lt-page::before { content: ""; position: absolute; left: 6px; right: 6px; top: -12px; height: 10px; border-radius: 6px; border: 1.5px solid var(--nv-primary); background: #dbeafe; }
 
 @media (max-width: 900px) {
     body.os-office.os-nova { grid-template-columns: 60px minmax(0, 1fr) auto auto; }
@@ -276,3 +277,20 @@ body.os-nova .os-mitem:hover { background: color-mix(in srgb, #2563eb 14%, var(-
     .nv-barbtn.nv-withlab span { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { .nv-t, .nv-d, .nv-panel, .nv-capsule-in, .nv-pop, .nv-pal { animation: none !important; transition: none !important; } }
+
+/* ---------- the View / Visual / Source switcher, in Nova's flat soft style ---------- */
+body.os-nova .kd-modes {
+    right: 18px; bottom: 14px; gap: 4px; padding: 4px; border-radius: 16px; font: 700 12.5px var(--nv-font);
+    background: var(--nv-card); border: 1.5px solid var(--nv-primary); box-shadow: var(--nv-shadow);
+}
+body.os-nova .kd-modes button {
+    padding: 6px 13px; border-radius: 11px; border: 1.5px solid transparent; color: color-mix(in srgb, var(--nv-primary) 82%, #000);
+    background: transparent; transition: background 0.15s, border-color 0.15s;
+}
+body.os-nova .kd-modes button:hover { background: color-mix(in srgb, var(--nv-primary) 14%, var(--nv-card)); }
+body.os-nova .kd-modes button[aria-pressed="true"] {
+    background: color-mix(in srgb, var(--nv-primary) 22%, var(--nv-card)); border-color: var(--nv-primary); color: color-mix(in srgb, var(--nv-primary) 82%, #000); box-shadow: none;
+}
+body.os-nova.nv-dark .kd-modes button { color: color-mix(in srgb, var(--nv-primary) 55%, #fff); }
+body.os-nova.nv-dark .kd-modes button[aria-pressed="true"] { background: color-mix(in srgb, var(--nv-primary) 32%, var(--nv-card)); }
+body.os-nova .kd-modes button:focus-visible { outline: 2px solid var(--nv-primary); outline-offset: 2px; }
