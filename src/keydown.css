@@ -5361,13 +5361,11 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 
 /* Circled Mark ++R2text++ */
 .gel-amcircle-chip {
-  margin: 0 5px; padding: 3px 14px; transform: rotate(-1.5deg); border: 0.13em solid var(--mk-bk); border-radius: 56% 44% 53% 47% / 64% 58% 42% 36%;
-  background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--ae-l) 40%, transparent), color-mix(in srgb, var(--ae-l) 16%, transparent) 75%), linear-gradient(#fff, #fff);
+  margin: 0 4px; padding: 3px 16px; border: 0.12em solid var(--mk-bk); border-radius: 999px;
+  background: radial-gradient(ellipse at 50% 38%, color-mix(in srgb, var(--ae-l) 34%, #fff), color-mix(in srgb, var(--ae-l) 14%, #fff) 80%);
+  box-shadow: inset 0 0 0 0.13em #fff, inset 0 0 0 0.19em color-mix(in srgb, var(--mk-bk) 55%, transparent), 0 0.14em 0.3em color-mix(in srgb, var(--mk-bk) 28%, transparent);
 }
-.gel-amcircle-chip::before {
-  content: ''; position: absolute; z-index: -1; inset: -0.2em -0.28em; border: 0.09em solid var(--mk-bk); border-bottom-color: transparent; border-left-color: transparent;
-  border-radius: 46% 54% 48% 52% / 40% 52% 60% 58%; transform: rotate(3deg); opacity: 0.75;
-}
+.gel-amcircle-chip::before { content: none; }
 
 /* Ticket Punch Mark ++R3text++ */
 .gel-ampunch-chip {
@@ -5433,3 +5431,135 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   box-shadow: inset 0 0 0 0.05em color-mix(in srgb, var(--jx-l) 80%, transparent), inset 0 0.1em 0.2em rgba(255, 255, 255, 0.55), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-c) 50%, transparent);
 }
 .gel-jbead-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.12em; width: 32%; height: 0.15em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); transform: rotate(-3deg); }
+
+/* ========================================================
+   TWELVE HIGHLIGHT AERO MARK CHIP COUSINS (hl), written ++COLOR<mark>text++: Marker Band ++R4text++, Double Rule ++R5text++, Brush Wash ++R6text++,
+   Neon Marker ++R7text++, Pencil Shade ++R8text++, Torn Strip ++R9text++, Spotlight ++R0text++, Selection Bar ++R==text++, Strike Marker ++R~~text++,
+   Halftone Dots ++R^^text++, Fade Swipe ++R!!text++, Chalk Smudge ++R%%text++. Each in the Aero chips' 16 colors (the .gel-aero-<color> classes),
+   all of them ways to HIGHLIGHT words, in the spirit of the Aero Mark chip: light, readable fills with deep-colored words.
+   ======================================================== */
+.gel-hlband-chip, .gel-hlrule-chip, .gel-hlbrush-chip, .gel-hlneon-chip, .gel-hlpencil-chip, .gel-hltorn-chip, .gel-hlspot-chip, .gel-hlsel-chip, .gel-hlstrike-chip, .gel-hldots-chip, .gel-hlfade-chip, .gel-hlchalk-chip {
+  --mk-ink: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  position: relative; isolation: isolate; box-sizing: border-box; display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 3px; border: 0; color: var(--mk-ink); font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-hlband-chip.gel-aero-white, .gel-hlrule-chip.gel-aero-white, .gel-hlbrush-chip.gel-aero-white, .gel-hlneon-chip.gel-aero-white, .gel-hlpencil-chip.gel-aero-white, .gel-hltorn-chip.gel-aero-white, .gel-hlspot-chip.gel-aero-white, .gel-hlsel-chip.gel-aero-white, .gel-hlstrike-chip.gel-aero-white, .gel-hldots-chip.gel-aero-white, .gel-hlfade-chip.gel-aero-white, .gel-hlchalk-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-hlband-chip.gel-aero-fog, .gel-hlrule-chip.gel-aero-fog, .gel-hlbrush-chip.gel-aero-fog, .gel-hlneon-chip.gel-aero-fog, .gel-hlpencil-chip.gel-aero-fog, .gel-hltorn-chip.gel-aero-fog, .gel-hlspot-chip.gel-aero-fog, .gel-hlsel-chip.gel-aero-fog, .gel-hlstrike-chip.gel-aero-fog, .gel-hldots-chip.gel-aero-fog, .gel-hlfade-chip.gel-aero-fog, .gel-hlchalk-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-hlband-chip.gel-aero-black, .gel-hlrule-chip.gel-aero-black, .gel-hlbrush-chip.gel-aero-black, .gel-hlneon-chip.gel-aero-black, .gel-hlpencil-chip.gel-aero-black, .gel-hltorn-chip.gel-aero-black, .gel-hlspot-chip.gel-aero-black, .gel-hlsel-chip.gel-aero-black, .gel-hlstrike-chip.gel-aero-black, .gel-hldots-chip.gel-aero-black, .gel-hlfade-chip.gel-aero-black, .gel-hlchalk-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; --mk-ink: #111111; }
+/* Marker Band ++R4text++ */
+.gel-hlband-chip {
+  padding: 1px 8px 2px; border-radius: 3px 3px 5px 5px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 20%, #fff) 0 40%, color-mix(in srgb, var(--ae-l) 62%, #fff) 40%, var(--ae-l) 70%, color-mix(in srgb, var(--ae-c) 60%, var(--ae-l)) 100%);
+  box-shadow: inset 0 -2px 0 color-mix(in srgb, var(--ae-c) 70%, transparent), 0 2px 0 color-mix(in srgb, var(--ae-c) 32%, transparent);
+}
+.gel-hlband-chip::before { content: ''; position: absolute; z-index: -1; left: 5px; right: 5px; top: calc(40% + 2px); height: 1.5px; border-radius: 1px; background: rgba(255, 255, 255, 0.85); }
+
+/* Double Rule ++R5text++ */
+.gel-hlrule-chip {
+  padding: 1px 8px 6px; border-radius: 3px;
+  background:
+    linear-gradient(var(--ae-c), var(--ae-c)) 0 100% / 100% 2px no-repeat,
+    linear-gradient(var(--ae-c), var(--ae-c)) 0 calc(100% - 4px) / 100% 2px no-repeat,
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 22%, #fff), color-mix(in srgb, var(--ae-l) 50%, #fff) 80%, color-mix(in srgb, var(--ae-l) 66%, #fff));
+}
+
+/* Brush Wash ++R6text++ */
+.gel-hlbrush-chip {
+  padding: 3px 15px; margin: 0 4px;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0 1px, transparent 1px 4px),
+    linear-gradient(98deg, color-mix(in srgb, var(--ae-l) 68%, #fff) 0%, var(--ae-l) 40%, color-mix(in srgb, var(--ae-c) 45%, var(--ae-l)) 100%);
+  clip-path: polygon(2% 22%, 4% 7%, 18% 12%, 37% 3%, 60% 10%, 82% 2%, 97% 11%, 99% 28%, 97% 46%, 100% 64%, 97% 82%, 99% 96%, 84% 91%, 63% 99%, 41% 92%, 20% 100%, 6% 93%, 1% 90%, 3% 74%, 0 56%, 2% 40%);
+}
+
+/* Neon Marker ++R7text++ */
+.gel-hlneon-chip {
+  padding: 1px 10px; border-radius: 0.4em; border: 1px solid color-mix(in srgb, var(--ae-c) 70%, #fff);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 55%, #fff) 0%, var(--ae-l) 55%, color-mix(in srgb, var(--ae-c) 65%, var(--ae-l)) 100%);
+  box-shadow: 0 0 0.3em 0.02em color-mix(in srgb, var(--ae-c) 90%, transparent), 0 0 0.9em 0.12em color-mix(in srgb, var(--ae-c) 48%, transparent), inset 0 0 0.35em rgba(255, 255, 255, 0.9);
+}
+
+/* Pencil Shade ++R8text++ */
+.gel-hlpencil-chip {
+  margin: 0 4px; padding: 2px 10px; transform: rotate(-0.6deg); border-radius: 2px 7px 3px 6px / 5px 2px 6px 3px;
+  background:
+    repeating-linear-gradient(118deg, color-mix(in srgb, var(--ae-c) 58%, transparent) 0 1.2px, transparent 1.2px 3.6px),
+    repeating-linear-gradient(62deg, color-mix(in srgb, var(--ae-c) 30%, transparent) 0 1px, transparent 1px 4.2px),
+    linear-gradient(color-mix(in srgb, var(--ae-l) 22%, #fff), color-mix(in srgb, var(--ae-l) 22%, #fff));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ae-c) 32%, transparent);
+}
+
+/* Torn Strip ++R9text++ */
+.gel-hltorn-chip {
+  padding: 5px 15px; margin: 0 3px;
+  background:
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.5 -0.58'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 62%, #fff), var(--ae-l));
+  clip-path: polygon(0 6%, 3% 0, 7% 10%, 11% 3%, 17% 12%, 21% 4%, 29% 9%, 34% 0, 40% 11%, 46% 4%, 52% 10%, 58% 1%, 65% 12%, 71% 3%, 78% 9%, 84% 0, 90% 11%, 95% 4%, 100% 9%, 100% 94%, 96% 100%, 91% 90%, 86% 98%, 80% 91%, 73% 100%, 68% 89%, 61% 97%, 54% 90%, 49% 100%, 43% 91%, 37% 98%, 31% 89%, 24% 99%, 19% 91%, 13% 100%, 8% 90%, 3% 97%, 0 92%);
+}
+
+/* Spotlight ++R0text++ */
+.gel-hlspot-chip {
+  padding: 4px 26px; margin: 0 2px;
+  background: radial-gradient(ellipse 50% 62% at 50% 50%, color-mix(in srgb, var(--ae-l) 28%, #fff) 0 60%, color-mix(in srgb, var(--ae-l) 62%, transparent) 80%, transparent 100%);
+}
+.gel-hlspot-chip::before { content: ''; position: absolute; z-index: -1; left: 26%; top: 16%; width: 20%; height: 0.13em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); }
+
+/* Selection Bar ++R==text++ */
+.gel-hlsel-chip {
+  margin: 0 7px; padding: 1px 8px; border-radius: 2px;
+  background: color-mix(in srgb, var(--ae-c) 34%, #fff); border: 1px solid color-mix(in srgb, var(--ae-c) 62%, transparent);
+}
+.gel-hlsel-chip::before {
+  content: ''; position: absolute; z-index: -1; left: -1px; top: -0.42em; width: 0.42em; height: calc(100% + 0.42em); transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 50% 0.21em, var(--ae-e2) 0 0.2em, transparent 0.21em) 0 0 / 100% 0.42em no-repeat,
+    linear-gradient(var(--ae-e2), var(--ae-e2)) 50% 0.3em / 2px calc(100% - 0.3em) no-repeat;
+}
+.gel-hlsel-chip::after {
+  content: ''; position: absolute; z-index: -1; right: -1px; top: 0; height: calc(100% + 0.42em); width: 0.42em; transform: translateX(50%);
+  background:
+    radial-gradient(circle at 50% calc(100% - 0.21em), var(--ae-e2) 0 0.2em, transparent 0.21em) 0 100% / 100% 0.42em no-repeat,
+    linear-gradient(var(--ae-e2), var(--ae-e2)) 50% 0 / 2px calc(100% - 0.3em) no-repeat;
+}
+
+/* Strike Marker ++R~~text++ */
+.gel-hlstrike-chip {
+  padding: 1px 9px; border-radius: 4px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 22%, #fff), color-mix(in srgb, var(--ae-l) 48%, #fff));
+}
+.gel-hlstrike-chip::before {
+  content: ''; position: absolute; z-index: -1; left: -2px; right: -2px; top: 50%; height: 0.26em; margin-top: -0.13em; border-radius: 0.13em; transform: rotate(-1.2deg);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 70%, #fff), var(--ae-c)); box-shadow: 0 1px 0 color-mix(in srgb, var(--ae-e1) 28%, transparent);
+}
+
+/* Halftone Dots ++R^^text++ */
+.gel-hldots-chip {
+  padding: 1px 9px; border-radius: 6px; border: 1px dashed color-mix(in srgb, var(--ae-c) 70%, transparent);
+  background:
+    radial-gradient(circle at 25% 25%, color-mix(in srgb, var(--ae-c) 70%, transparent) 0 0.075em, transparent 0.085em) 0 0 / 0.34em 0.34em,
+    radial-gradient(circle at 75% 75%, color-mix(in srgb, var(--ae-c) 70%, transparent) 0 0.075em, transparent 0.085em) 0 0 / 0.34em 0.34em,
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 26%, #fff), color-mix(in srgb, var(--ae-l) 54%, #fff));
+}
+
+/* Fade Swipe ++R!!text++ */
+.gel-hlfade-chip {
+  padding: 1px 10px 1px 0.95em; border-radius: 4px 0 0 4px;
+  background:
+    linear-gradient(var(--ae-c), var(--ae-c)) 0 0 / 0.3em 100% no-repeat,
+    linear-gradient(90deg, color-mix(in srgb, var(--ae-l) 52%, #fff) 0.3em, color-mix(in srgb, var(--ae-l) 45%, transparent) 62%, transparent 100%),
+    linear-gradient(90deg, #ffffff, rgba(255, 255, 255, 0.86));
+}
+.gel-hlfade-chip::before { content: ''; position: absolute; z-index: -1; left: 2px; top: 3px; bottom: 3px; width: 1.5px; border-radius: 1px; background: rgba(255, 255, 255, 0.65); }
+
+/* Chalk Smudge ++R%%text++ */
+.gel-hlchalk-chip {
+  margin: 0 4px; padding: 2px 13px; border-radius: 0.8em 0.45em 0.9em 0.5em / 0.55em 0.8em 0.45em 0.9em;
+  background:
+    url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1.7 -0.66'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23n)'/%3E%3C/svg%3E"),
+    radial-gradient(ellipse at 28% 35%, color-mix(in srgb, var(--ae-c) 26%, transparent), transparent 60%),
+    radial-gradient(ellipse at 74% 70%, color-mix(in srgb, var(--ae-c) 22%, transparent), transparent 62%),
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 54%, #fff), color-mix(in srgb, var(--ae-l) 68%, #fff));
+  box-shadow: 0 0 0.25em 0 color-mix(in srgb, var(--ae-c) 30%, transparent);
+}

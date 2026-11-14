@@ -1436,6 +1436,258 @@ A ticket with punched notches and dotted perforations! Written `++COLOR3text++`,
 * `++SL3text++` ++SL3slate++
 * `++BK3text++` ++BK3black++
 
+## Marker Band chips
+
+A glossy highlighter band laid along the lower half of the words, like a marker run under a line! Written `++COLOR4text++`, in the same 16 colors as the Aero chips:
+
+* `++R4text++` ++R4red++
+* `++O4text++` ++O4orange++
+* `++GL4text++` ++GL4gold++
+* `++Y4text++` ++Y4yellow++
+* `++L4text++` ++L4lime++
+* `++G4text++` ++G4green++
+* `++TU4text++` ++TU4turquoise++
+* `++T4text++` ++T4teal++
+* `++C4text++` ++C4cyan++
+* `++B4text++` ++B4blue++
+* `++PR4text++` ++PR4purple++
+* `++PK4text++` ++PK4pink++
+* `++W4text++` ++W4white++
+* `++FG4text++` ++FG4fog++
+* `++SL4text++` ++SL4slate++
+* `++BK4text++` ++BK4black++
+
+## Double Rule chips
+
+A pale wash with two crisp colored rules underneath, like a double underline! Written `++COLOR5text++`, in the same 16 colors as the Aero chips:
+
+* `++R5text++` ++R5red++
+* `++O5text++` ++O5orange++
+* `++GL5text++` ++GL5gold++
+* `++Y5text++` ++Y5yellow++
+* `++L5text++` ++L5lime++
+* `++G5text++` ++G5green++
+* `++TU5text++` ++TU5turquoise++
+* `++T5text++` ++T5teal++
+* `++C5text++` ++C5cyan++
+* `++B5text++` ++B5blue++
+* `++PR5text++` ++PR5purple++
+* `++PK5text++` ++PK5pink++
+* `++W5text++` ++W5white++
+* `++FG5text++` ++FG5fog++
+* `++SL5text++` ++SL5slate++
+* `++BK5text++` ++BK5black++
+
+## Brush Wash chips
+
+A wet brush stroke with ragged bristle ends and faint streaks of paint! Written `++COLOR6text++`, in the same 16 colors as the Aero chips:
+
+* `++R6text++` ++R6red++
+* `++O6text++` ++O6orange++
+* `++GL6text++` ++GL6gold++
+* `++Y6text++` ++Y6yellow++
+* `++L6text++` ++L6lime++
+* `++G6text++` ++G6green++
+* `++TU6text++` ++TU6turquoise++
+* `++T6text++` ++T6teal++
+* `++C6text++` ++C6cyan++
+* `++B6text++` ++B6blue++
+* `++PR6text++` ++PR6purple++
+* `++PK6text++` ++PK6pink++
+* `++W6text++` ++W6white++
+* `++FG6text++` ++FG6fog++
+* `++SL6text++` ++SL6slate++
+* `++BK6text++` ++BK6black++
+
+## Neon Marker chips
+
+A bright neon highlighter that glows around its edge! Written `++COLOR7text++`, in the same 16 colors as the Aero chips:
+
+* `++R7text++` ++R7red++
+* `++O7text++` ++O7orange++
+* `++GL7text++` ++GL7gold++
+* `++Y7text++` ++Y7yellow++
+* `++L7text++` ++L7lime++
+* `++G7text++` ++G7green++
+* `++TU7text++` ++TU7turquoise++
+* `++T7text++` ++T7teal++
+* `++C7text++` ++C7cyan++
+* `++B7text++` ++B7blue++
+* `++PR7text++` ++PR7purple++
+* `++PK7text++` ++PK7pink++
+* `++W7text++` ++W7white++
+* `++FG7text++` ++FG7fog++
+* `++SL7text++` ++SL7slate++
+* `++BK7text++` ++BK7black++
+
+## Pencil Shade chips
+
+Shaded in by pencil, with crossing hatch strokes and a rough edge! Written `++COLOR8text++`, in the same 16 colors as the Aero chips:
+
+* `++R8text++` ++R8red++
+* `++O8text++` ++O8orange++
+* `++GL8text++` ++GL8gold++
+* `++Y8text++` ++Y8yellow++
+* `++L8text++` ++L8lime++
+* `++G8text++` ++G8green++
+* `++TU8text++` ++TU8turquoise++
+* `++T8text++` ++T8teal++
+* `++C8text++` ++C8cyan++
+* `++B8text++` ++B8blue++
+* `++PR8text++` ++PR8purple++
+* `++PK8text++` ++PK8pink++
+* `++W8text++` ++W8white++
+* `++FG8text++` ++FG8fog++
+* `++SL8text++` ++SL8slate++
+* `++BK8text++` ++BK8black++
+
+## Torn Strip chips
+
+A strip of tinted paper with torn top and bottom edges! Written `++COLOR9text++`, in the same 16 colors as the Aero chips:
+
+* `++R9text++` ++R9red++
+* `++O9text++` ++O9orange++
+* `++GL9text++` ++GL9gold++
+* `++Y9text++` ++Y9yellow++
+* `++L9text++` ++L9lime++
+* `++G9text++` ++G9green++
+* `++TU9text++` ++TU9turquoise++
+* `++T9text++` ++T9teal++
+* `++C9text++` ++C9cyan++
+* `++B9text++` ++B9blue++
+* `++PR9text++` ++PR9purple++
+* `++PK9text++` ++PK9pink++
+* `++W9text++` ++W9white++
+* `++FG9text++` ++FG9fog++
+* `++SL9text++` ++SL9slate++
+* `++BK9text++` ++BK9black++
+
+## Spotlight chips
+
+A soft pool of light behind the words that fades into the page! Written `++COLOR0text++`, in the same 16 colors as the Aero chips:
+
+* `++R0text++` ++R0red++
+* `++O0text++` ++O0orange++
+* `++GL0text++` ++GL0gold++
+* `++Y0text++` ++Y0yellow++
+* `++L0text++` ++L0lime++
+* `++G0text++` ++G0green++
+* `++TU0text++` ++TU0turquoise++
+* `++T0text++` ++T0teal++
+* `++C0text++` ++C0cyan++
+* `++B0text++` ++B0blue++
+* `++PR0text++` ++PR0purple++
+* `++PK0text++` ++PK0pink++
+* `++W0text++` ++W0white++
+* `++FG0text++` ++FG0fog++
+* `++SL0text++` ++SL0slate++
+* `++BK0text++` ++BK0black++
+
+## Selection Bar chips
+
+A selected-text bar with a handle at each end, like picking words on a phone! Written `++COLOR==text++`, in the same 16 colors as the Aero chips:
+
+* `++R==text++` ++R==red++
+* `++O==text++` ++O==orange++
+* `++GL==text++` ++GL==gold++
+* `++Y==text++` ++Y==yellow++
+* `++L==text++` ++L==lime++
+* `++G==text++` ++G==green++
+* `++TU==text++` ++TU==turquoise++
+* `++T==text++` ++T==teal++
+* `++C==text++` ++C==cyan++
+* `++B==text++` ++B==blue++
+* `++PR==text++` ++PR==purple++
+* `++PK==text++` ++PK==pink++
+* `++W==text++` ++W==white++
+* `++FG==text++` ++FG==fog++
+* `++SL==text++` ++SL==slate++
+* `++BK==text++` ++BK==black++
+
+## Strike Marker chips
+
+A wash with a fat marker line drawn right through the middle of the words! Written `++COLOR~~text++`, in the same 16 colors as the Aero chips:
+
+* `++R~~text++` ++R~~red++
+* `++O~~text++` ++O~~orange++
+* `++GL~~text++` ++GL~~gold++
+* `++Y~~text++` ++Y~~yellow++
+* `++L~~text++` ++L~~lime++
+* `++G~~text++` ++G~~green++
+* `++TU~~text++` ++TU~~turquoise++
+* `++T~~text++` ++T~~teal++
+* `++C~~text++` ++C~~cyan++
+* `++B~~text++` ++B~~blue++
+* `++PR~~text++` ++PR~~purple++
+* `++PK~~text++` ++PK~~pink++
+* `++W~~text++` ++W~~white++
+* `++FG~~text++` ++FG~~fog++
+* `++SL~~text++` ++SL~~slate++
+* `++BK~~text++` ++BK~~black++
+
+## Halftone Dots chips
+
+A highlight printed in a dot screen, like a comic page! Written `++COLOR^^text++`, in the same 16 colors as the Aero chips:
+
+* `++R^^text++` ++R^^red++
+* `++O^^text++` ++O^^orange++
+* `++GL^^text++` ++GL^^gold++
+* `++Y^^text++` ++Y^^yellow++
+* `++L^^text++` ++L^^lime++
+* `++G^^text++` ++G^^green++
+* `++TU^^text++` ++TU^^turquoise++
+* `++T^^text++` ++T^^teal++
+* `++C^^text++` ++C^^cyan++
+* `++B^^text++` ++B^^blue++
+* `++PR^^text++` ++PR^^purple++
+* `++PK^^text++` ++PK^^pink++
+* `++W^^text++` ++W^^white++
+* `++FG^^text++` ++FG^^fog++
+* `++SL^^text++` ++SL^^slate++
+* `++BK^^text++` ++BK^^black++
+
+## Fade Swipe chips
+
+A bar of ink at the start that thins into a long fading swipe! Written `++COLOR!!text++`, in the same 16 colors as the Aero chips:
+
+* `++R!!text++` ++R!!red++
+* `++O!!text++` ++O!!orange++
+* `++GL!!text++` ++GL!!gold++
+* `++Y!!text++` ++Y!!yellow++
+* `++L!!text++` ++L!!lime++
+* `++G!!text++` ++G!!green++
+* `++TU!!text++` ++TU!!turquoise++
+* `++T!!text++` ++T!!teal++
+* `++C!!text++` ++C!!cyan++
+* `++B!!text++` ++B!!blue++
+* `++PR!!text++` ++PR!!purple++
+* `++PK!!text++` ++PK!!pink++
+* `++W!!text++` ++W!!white++
+* `++FG!!text++` ++FG!!fog++
+* `++SL!!text++` ++SL!!slate++
+* `++BK!!text++` ++BK!!black++
+
+## Chalk Smudge chips
+
+A chalky smudge with specks of dust and a soft rough edge! Written `++COLOR%%text++`, in the same 16 colors as the Aero chips:
+
+* `++R%%text++` ++R%%red++
+* `++O%%text++` ++O%%orange++
+* `++GL%%text++` ++GL%%gold++
+* `++Y%%text++` ++Y%%yellow++
+* `++L%%text++` ++L%%lime++
+* `++G%%text++` ++G%%green++
+* `++TU%%text++` ++TU%%turquoise++
+* `++T%%text++` ++T%%teal++
+* `++C%%text++` ++C%%cyan++
+* `++B%%text++` ++B%%blue++
+* `++PR%%text++` ++PR%%purple++
+* `++PK%%text++` ++PK%%pink++
+* `++W%%text++` ++W%%white++
+* `++FG%%text++` ++FG%%fog++
+* `++SL%%text++` ++SL%%slate++
+* `++BK%%text++` ++BK%%black++
+
 ## Aero swipe chips
 
 A mark chip cousin cut like a real highlighter swipe: a slanted bright stroke of the color with a darker ink edge along the bottom! Written `++color/text++`, in the same 16 colors as the Aero chips:
