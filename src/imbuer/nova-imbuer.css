@@ -1,0 +1,195 @@
+/* ========================================================
+   IMBUER NOVA: flat, soft tiles. A border in the theme color, a lighter tint of it as the fill.
+   Everything is scoped to body.nvi-on, so the ribbon layout is untouched when Nova is off.
+   ======================================================== */
+.nvi { display: none; }
+body.nvi-on .nvi { display: flex; }
+body.nvi-on {
+    --nvi: var(--accent);
+    --nvi-d: var(--accent-d);
+    --nvi-card: var(--menu-bg);
+    --nvi-desk: var(--ui-bg);
+    --nvi-ink: var(--ui-text);
+    --nvi-dim: var(--ui-dim);
+    --nvi-line: var(--menu-line);
+    --nvi-shadow: 0 10px 30px rgba(20, 30, 10, 0.14), 0 2px 6px rgba(20, 30, 10, 0.08);
+    --nvi-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --nvi-left: 76px;
+    --nvi-top: 112px;
+    background: var(--nvi-desk);
+}
+body.nvi-on.dark { --nvi-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 2px 6px rgba(0, 0, 0, 0.35); }
+body.nvi-on.nvi-pinned.nvi-panel-open { --nvi-left: 456px; }
+
+/* ---------- the old chrome steps aside ---------- */
+body.nvi-on #titlebar, body.nvi-on #ribbon-tabs, body.nvi-on #ribbon, body.nvi-on #classic-side, body.nvi-on #orbs { display: none !important; }
+body.nvi-on #app {
+    margin-left: var(--nvi-left); box-sizing: border-box; padding: var(--nvi-top) 12px 10px 12px;
+    height: 100vh; height: 100dvh; background: transparent; transition: margin-left 0.25s var(--nvi-ease);
+}
+body.nvi-on #formula-row { border: 1.5px solid var(--nvi-line); border-radius: 14px; background: var(--nvi-card); margin-bottom: 8px; overflow: hidden; }
+body.nvi-on #grid-scroll { border: 1.5px solid var(--nvi-line); border-radius: 14px; }
+body.nvi-on #footer { margin-top: 8px; background: var(--nvi-card); border: 1.5px solid var(--nvi-line); border-radius: 16px; overflow: hidden; box-shadow: var(--nvi-shadow); }
+body.nvi-on #status-bar { border-top: 1.5px dashed var(--nvi-line); }
+body.nvi-on .zoom-ctl button {
+    width: 24px; height: 24px; border: 1.5px solid var(--nvi); border-radius: 8px; color: var(--nvi-d);
+    background: color-mix(in srgb, var(--nvi) 12%, var(--nvi-card));
+}
+body.nvi-on .zoom-ctl button:hover { background: color-mix(in srgb, var(--nvi) 26%, var(--nvi-card)); color: var(--nvi-d); }
+body.nvi-on #zoom-label { width: auto; padding: 0 8px; }
+body.nvi-on .stab.on { color: var(--nvi-d); }
+body.nvi-on .menu { border: 1.5px solid var(--nvi); border-radius: 14px; box-shadow: var(--nvi-shadow); }
+body.nvi-on .m-item:hover, body.nvi-on .m-item.kb { background: color-mix(in srgb, var(--nvi) 16%, var(--nvi-card)); }
+body.nvi-on .dlg { border: 1.5px solid var(--nvi); border-radius: 18px; box-shadow: var(--nvi-shadow); }
+
+/* ---------- the flat soft tile ---------- */
+.nvi-t {
+    --c: var(--nvi);
+    font: 600 12px var(--font-ui); cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; position: relative; padding: 0;
+    color: var(--nvi-d); background: color-mix(in srgb, var(--c) 12%, var(--nvi-card));
+    border: 1.5px solid var(--c); border-radius: 12px; box-shadow: none; text-shadow: none;
+    transition: background 0.15s, transform 0.15s var(--nvi-ease), box-shadow 0.15s;
+}
+.nvi-t:hover { background: color-mix(in srgb, var(--c) 24%, var(--nvi-card)); transform: translateY(-1px); }
+.nvi-t:active { transform: scale(0.96); }
+.nvi-t.on, .nvi-t.nvi-open { background: color-mix(in srgb, var(--c) 36%, var(--nvi-card)); box-shadow: inset 0 0 0 1px var(--c); }
+.nvi-t:disabled { opacity: 0.4; border-style: dashed; cursor: default; transform: none; }
+.nvi-t:focus-visible, .nvi-d:focus-visible { outline: 2px solid var(--c); outline-offset: 2px; }
+.nvi-t.nvi-big { width: 78px; min-height: 70px; padding: 8px 4px 7px; text-align: center; line-height: 1.15; }
+.nvi-t.nvi-sm { flex-direction: row; justify-content: flex-start; gap: 8px; height: 36px; padding: 0 12px 0 10px; font-size: 12.5px; white-space: nowrap; }
+.nvi-t.nvi-ic { width: 36px; height: 36px; border-radius: 11px; }
+.nvi-ic svg, svg.nvi-ic { width: 20px; height: 20px; flex: none; }
+.nvi-t.nvi-ic > svg.nvi-ic, .nvi-t.nvi-sm > svg.nvi-ic { width: 20px; height: 20px; }
+.nvi-big > svg.nvi-ic { width: 24px; height: 24px; }
+.nvi-g { width: 20px; height: 20px; }
+.nvi-lab { display: block; font-size: 11.5px; line-height: 1.15; }
+.nvi-glyph { font: 800 15px/1 var(--font-ui); min-width: 18px; text-align: center; }
+.nvi-car { position: absolute; right: 4px; top: 4px; opacity: 0.7; line-height: 0; }
+.nvi-car svg { width: 11px; height: 11px; }
+.nvi-cbar { position: absolute; left: 22%; right: 22%; bottom: 3px; height: 3px; border-radius: 2px; background: transparent; }
+.nvi-kd { --c: var(--nvi); }
+.nvi-split { display: inline-flex; }
+.nvi-split > .nvi-t:first-child { border-radius: 11px 0 0 11px; }
+.nvi-split > .nvi-arrow { width: 20px; border-radius: 0 11px 11px 0; border-left-width: 0; flex-direction: row; }
+.nvi-split > .nvi-arrow svg { width: 12px; height: 12px; }
+.nvi-split.nvi-sp-big > .nvi-t:first-child { width: 78px; }
+.nvi-split.nvi-sp-big > .nvi-arrow { align-self: stretch; height: auto; }
+.nvi-sep { display: inline-block; width: 1.5px; height: 22px; background: var(--nvi-line); border-radius: 2px; margin: 0 3px; flex: none; }
+
+/* text fields */
+.nvi-combo { display: inline-flex; align-items: stretch; height: 36px; border: 1.5px solid var(--nvi); border-radius: 11px; background: color-mix(in srgb, var(--nvi) 10%, var(--nvi-card)); overflow: hidden; flex: none; }
+.nvi-in { width: 128px; border: 0; background: transparent; color: var(--nvi-ink); font: 600 12.5px var(--font-ui); padding: 0 8px; outline: none; min-width: 0; }
+.nvi-narrow .nvi-in { width: 42px; text-align: center; }
+.nvi-wide .nvi-in { width: 128px; }
+.nvi-combo > .nvi-arrow { width: 22px; height: auto; border: 0; border-left: 1.5px solid var(--nvi); border-radius: 0; background: transparent; }
+.nvi-combo > .nvi-arrow:hover { background: color-mix(in srgb, var(--nvi) 24%, var(--nvi-card)); transform: none; }
+.nvi-combo > .nvi-arrow svg { width: 12px; height: 12px; }
+.nvi-check { display: inline-flex; align-items: center; gap: 9px; font: 600 12.5px var(--font-ui); cursor: pointer; color: var(--nvi-ink); padding: 4px 2px; }
+.nvi-check input { position: absolute; opacity: 0; pointer-events: none; }
+.nvi-sw { width: 34px; height: 20px; border-radius: 99px; border: 1.5px solid var(--nvi); background: color-mix(in srgb, var(--nvi) 10%, var(--nvi-card)); position: relative; flex: none; transition: background 0.15s; }
+.nvi-sw::after { content: ""; position: absolute; left: 2px; top: 2px; width: 13px; height: 13px; border-radius: 50%; background: var(--nvi); transition: transform 0.2s var(--nvi-ease); }
+.nvi-check input:checked + .nvi-sw { background: color-mix(in srgb, var(--nvi) 40%, var(--nvi-card)); }
+.nvi-check input:checked + .nvi-sw::after { transform: translateX(14px); }
+.nvi-check input:focus-visible + .nvi-sw { outline: 2px solid var(--nvi); outline-offset: 2px; }
+
+/* ---------- the dock ---------- */
+.nvi-dock {
+    position: fixed; z-index: 60; left: 0; top: 0; bottom: 0; width: 76px; flex-direction: column; align-items: center; gap: 8px; padding: 10px 0 12px;
+    background: var(--nvi-card); border-right: 1.5px solid var(--nvi-line); font-family: var(--font-ui);
+}
+.nvi-logo { width: 44px; height: 44px; border-radius: 14px; border: 1.5px solid var(--nvi-line); background: var(--nvi-desk); cursor: pointer; padding: 6px; transition: transform 0.2s var(--nvi-ease); }
+.nvi-logo:hover { transform: rotate(-6deg) scale(1.06); }
+.nvi-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.nvi-dock-main { display: flex; flex-direction: column; gap: 7px; flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 0; scrollbar-width: none; }
+.nvi-dock-end { display: flex; flex-direction: column; gap: 7px; padding-top: 8px; border-top: 1.5px dashed var(--nvi-line); }
+.nvi-d {
+    --c: var(--nvi);
+    width: 54px; height: 54px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; cursor: pointer; padding: 0;
+    color: var(--nvi-d); background: color-mix(in srgb, var(--c) 10%, var(--nvi-card)); border: 1.5px solid var(--c); border-radius: 15px;
+    font: 700 9.5px var(--font-ui); letter-spacing: 0.02em; transition: background 0.15s, transform 0.18s var(--nvi-ease), border-radius 0.2s;
+}
+.nvi-d svg { width: 21px; height: 21px; }
+.nvi-d:hover { background: color-mix(in srgb, var(--c) 22%, var(--nvi-card)); transform: translateX(2px); }
+.nvi-d.on { background: color-mix(in srgb, var(--c) 36%, var(--nvi-card)); border-radius: 15px 22px 22px 15px; box-shadow: 3px 0 0 var(--c); transform: translateX(3px); }
+.nvi-d.nvi-slate { --c: #64748b; color: #475569; }
+body.dark .nvi-d.nvi-slate { color: #cbd5e1; }
+
+/* ---------- the top bar ---------- */
+.nvi-bar {
+    position: fixed; z-index: 50; top: 0; left: var(--nvi-left); right: 0; height: 56px; align-items: center; gap: 14px; padding: 0 16px 0 18px;
+    font-family: var(--font-ui); background: transparent; transition: left 0.25s var(--nvi-ease);
+}
+.nvi-bar-l { display: flex; align-items: center; gap: 8px; min-width: 0; flex: 0 1 auto; }
+.nvi-bar-m { flex: 1 1 240px; display: flex; justify-content: center; min-width: 0; }
+.nvi-bar-r { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.nvi-qat { width: 34px; height: 34px; }
+.nvi-bar .tb-title { display: flex; align-items: center; gap: 8px; text-shadow: none; }
+.nvi-bar #book-name {
+    color: var(--nvi-ink); text-align: left; font: 700 16px var(--font-ui); border: 1.5px solid transparent; background: transparent; border-radius: 10px; padding: 5px 9px; max-width: 34ch;
+}
+.nvi-bar #book-name:hover { border-color: var(--nvi-line); }
+.nvi-bar #book-name:focus { border-color: var(--nvi); background: color-mix(in srgb, var(--nvi) 8%, var(--nvi-card)); color: var(--nvi-ink); }
+.nvi-bar .tb-saved {
+    opacity: 1; margin: 0; font: 600 11.5px var(--font-ui); color: #15803d; background: color-mix(in srgb, #16a34a 12%, var(--nvi-card)); border: 1.5px solid #16a34a; border-radius: 99px; padding: 2px 10px;
+}
+body.dark .nvi-bar .tb-saved { color: #86efac; }
+.nvi-bar .cmd-search { width: min(440px, 100%); }
+.nvi-bar .cmd-search > .ico { color: var(--nvi-dim); left: 12px; }
+.nvi-bar #cmd-search {
+    height: 38px; border-radius: 12px; border: 1.5px solid var(--nvi-line); background: var(--nvi-card); color: var(--nvi-ink); padding: 0 12px 0 36px; font: 500 13px var(--font-ui); box-shadow: none;
+}
+.nvi-bar #cmd-search::placeholder { color: var(--nvi-dim); }
+.nvi-bar #cmd-search:hover { border-color: var(--nvi); }
+.nvi-bar #cmd-search:focus { border-color: var(--nvi); background: var(--nvi-card); color: var(--nvi-ink); box-shadow: 0 0 0 3px color-mix(in srgb, var(--nvi) 18%, transparent); }
+.nvi-bar .rc-share, .nvi-bar .rc-btn, .nvi-bar .tb-right > button, .nvi-bar-r > button:not(.nvi-t) {
+    height: 38px; border-radius: 12px; border: 1.5px solid var(--nvi); background: color-mix(in srgb, var(--nvi) 12%, var(--nvi-card)); color: var(--nvi-d); text-shadow: none; font: 700 13px var(--font-ui); padding: 0 14px; cursor: pointer;
+}
+.nvi-bar .rc-share:hover, .nvi-bar .rc-btn:hover { background: color-mix(in srgb, var(--nvi) 26%, var(--nvi-card)); }
+
+/* ---------- the floating format capsule ---------- */
+.nvi-capsule {
+    position: fixed; z-index: 45; top: 56px; left: var(--nvi-left); right: 0; height: 50px; justify-content: center; align-items: center; padding: 0 12px; pointer-events: none; font-family: var(--font-ui);
+    transition: left 0.25s var(--nvi-ease);
+}
+.nvi-capsule-in {
+    pointer-events: auto; display: inline-flex; align-items: center; gap: 6px; max-width: 100%; overflow-x: auto; scrollbar-width: none; padding: 6px 10px;
+    background: var(--nvi-card); border: 1.5px solid var(--nvi-line); border-radius: 18px; box-shadow: var(--nvi-shadow); animation: nviDrop 0.4s var(--nvi-ease);
+}
+.nvi-capsule-in > * { flex: none; }
+.nvi-capsule .nvi-t.nvi-ic { width: 34px; height: 34px; }
+.nvi-capsule .nvi-combo { height: 34px; }
+.nvi-capsule .nvi-in { width: 112px; }
+.nvi-capsule .nvi-narrow .nvi-in { width: 38px; }
+@keyframes nviDrop { from { opacity: 0; transform: translateY(-10px) scale(0.98); } }
+
+/* ---------- the flyout panel ---------- */
+.nvi-panel {
+    position: fixed; z-index: 55; left: 84px; top: 62px; bottom: 14px; width: 372px; flex-direction: column; background: var(--nvi-card);
+    border: 1.5px solid var(--nvi); border-radius: 20px; box-shadow: var(--nvi-shadow); overflow: hidden; font-family: var(--font-ui); animation: nviPanel 0.28s var(--nvi-ease);
+}
+body.nvi-on .nvi-panel[hidden] { display: none; }
+.nvi-pinned .nvi-panel { left: 80px; top: 10px; bottom: 10px; border-radius: 18px; }
+@keyframes nviPanel { from { opacity: 0; transform: translateX(-14px); } }
+.nvi-panel-h { display: flex; align-items: center; gap: 8px; padding: 12px 14px; background: color-mix(in srgb, var(--nvi) 14%, var(--nvi-card)); border-bottom: 1.5px solid var(--nvi); }
+.nvi-panel-t { font: 800 16px var(--font-ui); color: var(--nvi-d); }
+.nvi-grow { flex: 1; }
+.nvi-panel-h .nvi-t.nvi-ic { width: 32px; height: 32px; }
+.nvi-panel-b { padding: 12px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; }
+.nvi-card { border: 1.5px solid var(--nvi-line); border-radius: 16px; padding: 10px 12px 12px; background: var(--nvi-card); }
+.nvi-card-h { margin: 0 0 9px; font: 800 10.5px var(--font-ui); letter-spacing: 0.09em; text-transform: uppercase; color: var(--nvi-dim); }
+.nvi-card-b { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; }
+.nvi-body { display: flex; flex-wrap: wrap; gap: 6px; align-items: flex-start; }
+.nvi-cols { display: flex; flex-direction: column; gap: 6px; }
+.nvi-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.nvi-stack { display: flex; flex-direction: column; gap: 6px; }
+
+/* ---------- Layout card thumbnail in Settings ---------- */
+.lay-thumb.lay-nova { position: relative; background: var(--nvi-desk, #eef2e8); overflow: hidden; }
+.lay-nova i { position: absolute; display: block; }
+.lay-nova .nt-dock { left: 0; top: 0; bottom: 0; width: 14%; background: #fff; border-right: 1.5px solid #cfe0b8; }
+.lay-nova .nt-dock::before { content: ""; position: absolute; left: 22%; right: 22%; top: 12%; height: 14%; border-radius: 4px; border: 1.5px solid var(--accent, #6bc702); background: color-mix(in srgb, var(--accent, #6bc702) 20%, #fff); box-shadow: 0 7px 0 -1.5px color-mix(in srgb, var(--accent, #6bc702) 20%, #fff), 0 8px 0 0 var(--accent, #6bc702); }
+.lay-nova .nt-bar { left: 20%; right: 6%; top: 7%; height: 11%; border-radius: 6px; background: #fff; border: 1.5px solid #cfe0b8; }
+.lay-nova .nt-cap { left: 34%; right: 18%; top: 24%; height: 12%; border-radius: 8px; background: #fff; border: 1.5px solid var(--accent, #6bc702); }
+.lay-nova .nt-grid { left: 20%; right: 6%; top: 42%; bottom: 8%; border-radius: 6px; background: repeating-linear-gradient(90deg, transparent 0 16px, #dfe8d2 16px 17px), repeating-linear-gradient(0deg, #fff 0 8px, #dfe8d2 8px 9px); border: 1.5px solid #cfe0b8; }
+
+@media (prefers-reduced-motion: reduce) { .nvi-t, .nvi-d, .nvi-panel, .nvi-capsule-in { animation: none !important; transition: none !important; } }

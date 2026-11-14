@@ -1,0 +1,186 @@
+/* =====================================================================
+   Inkpath Nova: the Nova layout for the vector editor (body.ik-nova).
+   "Flat soft": every button has a border in the main color and a fill that is a lighter tint of it.
+   The main color is Inkpath's own pink. A slim dock, a command bar, a floating capsule for the selected shape,
+   flyout panels and a status pill; the drawing page stays in the middle, the inspector is a drawer on the right.
+   ===================================================================== */
+body.ik-nova {
+    --ik-font: "Space Grotesk", "Inter", "Segoe UI Variable Text", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    --ik-c: #FF60C5;
+    --ik-desk: #f4eef3; --ik-card: #ffffff; --ik-ink: #2a1626; --ik-dim: #7d6677; --ik-line: #ead9e6;
+    --ik-shadow: 0 10px 30px rgba(60, 20, 50, 0.16), 0 2px 6px rgba(60, 20, 50, 0.08);
+    --ik-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    --ik-tx: color-mix(in srgb, var(--ik-c) 55%, #3a0a2c);
+    display: block !important;
+    background: var(--ik-desk) !important;
+    color: var(--ik-ink);
+    font-family: var(--ik-font);
+}
+body.ik-nova.ik-dark {
+    --ik-desk: #150e14; --ik-card: #20161f; --ik-ink: #f6e8f2; --ik-dim: #b79ab0; --ik-line: #3b2a38;
+    --ik-shadow: 0 10px 30px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.4);
+    --ik-tx: color-mix(in srgb, var(--ik-c) 55%, #fff);
+}
+
+/* ---------- the frame ---------- */
+body.ik-nova .aero-sidebar, body.ik-nova .sheets-toolbar { display: none !important; }
+body.ik-nova .workspace-viewport-wrapper {
+    position: fixed; left: 76px; top: 58px; right: 0; bottom: 0; height: auto; padding: 8px 12px 12px 8px; gap: 12px; background: transparent;
+}
+body.ik-nova:not(.ik-insp) .aero-inspector { display: none; }
+body.ik-nova .canvas-frame {
+    background: #ffffff; border: 1.5px solid var(--ik-line); border-radius: 18px; box-shadow: none; backdrop-filter: none;
+}
+body.ik-nova .tool-settings-bar {
+    position: fixed; top: 132px; left: 92px; z-index: 12; width: auto; max-width: calc(100vw - 440px);
+    background: var(--ik-card); border: 1.5px solid var(--ik-c); border-radius: 14px; box-shadow: var(--ik-shadow); backdrop-filter: none; color: var(--ik-ink);
+}
+body.ik-nova .tool-settings-bar .toolbar-label { color: var(--ik-tx); }
+body.ik-nova .tool-opt { color: var(--ik-ink); }
+body.ik-nova .tool-opt input[type="number"] { background: var(--ik-card); color: var(--ik-ink); border: 1.5px solid var(--ik-c); border-radius: 8px; }
+body.ik-nova .tool-settings-bar .seg-btn { color: var(--ik-tx); }
+
+/* ---------- the flat soft button: main color border, lighter tint fill ---------- */
+.ik .ik-t, .ik .ik-d {
+    font: 600 12px var(--ik-font); cursor: pointer; display: inline-flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; position: relative; padding: 0;
+    color: var(--ik-tx); background: color-mix(in srgb, var(--ik-c) 12%, var(--ik-card)); border: 1.5px solid var(--ik-c); border-radius: 12px; box-shadow: none; text-shadow: none;
+    transition: background 0.15s, transform 0.15s var(--ik-ease);
+}
+.ik .ik-t:hover { background: color-mix(in srgb, var(--ik-c) 22%, var(--ik-card)); transform: translateY(-1px); }
+.ik .ik-t:active { transform: scale(0.96); }
+.ik .ik-t.on, .ik .ik-t.ik-open { background: color-mix(in srgb, var(--ik-c) 34%, var(--ik-card)); box-shadow: inset 0 0 0 1px var(--ik-c); }
+.ik .ik-t:disabled { opacity: 0.4; border-style: dashed; cursor: default; transform: none; }
+.ik .ik-t:focus-visible, .ik .ik-d:focus-visible, .ik button:focus-visible { outline: 2px solid var(--ik-c); outline-offset: 2px; }
+.ik-ic { width: 20px; height: 20px; flex: none; display: block; }
+.ik-g { width: 20px; height: 20px; }
+.ik-sq { width: 34px; height: 34px; border-radius: 11px; }
+.ik-tile { width: 100%; min-height: 66px; padding: 8px 4px 7px; text-align: center; line-height: 1.15; font-size: 11.5px; }
+.ik-tile .ik-ic { width: 24px; height: 24px; }
+
+/* ---------- the dock ---------- */
+.ik-dock {
+    position: fixed; left: 0; top: 0; bottom: 0; width: 72px; z-index: 30; display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px 0 12px;
+    background: var(--ik-card); border-right: 1.5px solid var(--ik-line); font-family: var(--ik-font);
+}
+.ik-logo { width: 44px; height: 44px; border-radius: 14px; border: 1.5px solid var(--ik-line); background: var(--ik-desk); cursor: pointer; padding: 6px; transition: transform 0.2s var(--ik-ease); }
+.ik-logo:hover { transform: rotate(-6deg) scale(1.06); }
+.ik-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.ik-dock-main { display: flex; flex-direction: column; gap: 7px; flex: 1; overflow-y: auto; overflow-x: hidden; padding: 6px 0; scrollbar-width: none; }
+.ik-dock-end { display: flex; flex-direction: column; gap: 7px; padding-top: 8px; border-top: 1.5px dashed var(--ik-line); }
+.ik .ik-d { width: 54px; height: 54px; gap: 3px; border-radius: 15px; font: 700 9.5px var(--ik-font); letter-spacing: 0.02em; background: color-mix(in srgb, var(--ik-c) 10%, var(--ik-card)); }
+.ik .ik-d .ik-ic { width: 21px; height: 21px; }
+.ik .ik-d:hover { background: color-mix(in srgb, var(--ik-c) 22%, var(--ik-card)); transform: translateX(2px); }
+.ik .ik-d.on, .ik .ik-d.ik-open { background: color-mix(in srgb, var(--ik-c) 36%, var(--ik-card)); border-radius: 15px 22px 22px 15px; box-shadow: 3px 0 0 var(--ik-c); transform: translateX(3px); }
+.ik .ik-d.ik-gray { --ik-c: #64748b; color: color-mix(in srgb, #64748b 82%, var(--ik-ink)); }
+.ik .ik-d.ik-gray.on { box-shadow: none; }
+
+/* ---------- the top bar ---------- */
+.ik-bar { position: fixed; left: 72px; right: 0; top: 0; height: 58px; z-index: 20; display: flex; align-items: center; gap: 14px; padding: 0 14px 0 18px; font-family: var(--ik-font); min-width: 0; }
+.ik-bar-l { display: flex; align-items: center; gap: 10px; min-width: 0; flex: 0 1 auto; }
+.ik-docname { font: 700 17px var(--ik-font); color: var(--ik-ink); background: transparent; border: 1.5px solid transparent; border-radius: 10px; padding: 5px 9px; cursor: pointer; }
+.ik-docname:hover { border-color: var(--ik-line); }
+.ik-saved { display: inline-flex; align-items: center; gap: 5px; font: 600 11.5px var(--ik-font); color: #15803d; background: color-mix(in srgb, #16a34a 12%, var(--ik-card)); border: 1.5px solid #16a34a; border-radius: 99px; padding: 2px 10px 2px 7px; white-space: nowrap; }
+.ik-dark .ik-saved { color: #86efac; }
+.ik-saved .ik-ic { width: 14px; height: 14px; }
+.ik-saved.blip { animation: ikBlip 0.5s var(--ik-ease); }
+@keyframes ikBlip { 40% { transform: scale(1.12); } }
+.ik-search {
+    flex: 1 1 240px; max-width: 440px; margin: 0 auto; display: flex; align-items: center; gap: 9px; height: 38px; padding: 0 12px; cursor: pointer; text-align: left;
+    font: 500 13px var(--ik-font); color: var(--ik-dim); background: var(--ik-card); border: 1.5px solid var(--ik-line); border-radius: 12px; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.ik-search:hover { border-color: var(--ik-c); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ik-c) 18%, transparent); }
+.ik-search span { flex: 1; }
+.ik-search kbd, .ik-pal kbd { font: 600 11px var(--ik-font); color: var(--ik-dim); background: var(--ik-desk); border: 1px solid var(--ik-line); border-radius: 6px; padding: 1px 6px; }
+.ik-bar-r { display: flex; align-items: center; gap: 7px; margin-left: auto; }
+.ik-barbtn { width: 38px; height: 38px; border-radius: 12px; }
+.ik-barbtn.ik-withlab { width: auto; flex-direction: row; gap: 7px; padding: 0 14px 0 11px; font-size: 13px; }
+.ik .ik-share.rc-share { height: 38px; border-radius: 12px; flex-direction: row; gap: 7px; padding: 0 12px; color: var(--ik-tx); }
+
+/* ---------- the capsule over the page ---------- */
+.ik-capsule { position: fixed; z-index: 15; top: 66px; left: 76px; right: 0; display: none; justify-content: center; pointer-events: none; font-family: var(--ik-font); }
+body.ik-nova.ik-insp .ik-capsule { right: 308px; }
+.ik-capsule.show { display: flex; }
+.ik-capsule-in {
+    pointer-events: auto; display: inline-flex; align-items: center; gap: 8px; max-width: 100%; overflow-x: auto; scrollbar-width: none; padding: 6px 10px;
+    background: var(--ik-card); border: 1.5px solid var(--ik-line); border-radius: 18px; box-shadow: var(--ik-shadow); animation: ikDrop 0.35s var(--ik-ease);
+}
+@keyframes ikDrop { from { opacity: 0; transform: translateY(-10px) scale(0.98); } }
+.ik-capsule-in > * { flex: none; }
+.ik-csep { display: inline-block; width: 1.5px; height: 22px; background: var(--ik-line); border-radius: 2px; margin: 0 2px; }
+.ik-sw { position: relative; display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 10px 0 9px; cursor: pointer; font: 600 12px var(--ik-font); color: var(--ik-tx); background: color-mix(in srgb, var(--ik-c) 12%, var(--ik-card)); border: 1.5px solid var(--ik-c); border-radius: 11px; }
+.ik-sw:hover { background: color-mix(in srgb, var(--ik-c) 22%, var(--ik-card)); }
+.ik-sw input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.ik-chip { width: 18px; height: 18px; border-radius: 6px; border: 1.5px solid color-mix(in srgb, var(--ik-ink) 40%, transparent); background: var(--ik-c); }
+.ik-chip.none { background: repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--ik-ink) 40%, transparent) 3px 4px) !important; }
+.ik-num { display: inline-flex; align-items: center; gap: 7px; height: 34px; padding: 0 10px; font: 600 12px var(--ik-font); color: var(--ik-tx); background: color-mix(in srgb, var(--ik-c) 12%, var(--ik-card)); border: 1.5px solid var(--ik-c); border-radius: 11px; }
+.ik-num input[type=number] { width: 48px; border: 0; background: transparent; text-align: center; font: 700 13px var(--ik-font); color: var(--ik-ink); outline: none; }
+.ik-num input[type=range] { width: 86px; accent-color: var(--ik-c); }
+.ik-num b { min-width: 28px; text-align: right; font-weight: 700; color: var(--ik-ink); }
+
+/* ---------- flyout panel ---------- */
+.ik-fly { position: fixed; z-index: 40; width: 318px; max-height: calc(100vh - 16px); overflow-y: auto; padding: 10px; background: var(--ik-card); border: 1.5px solid var(--ik-c); border-radius: 18px; box-shadow: var(--ik-shadow); font-family: var(--ik-font); animation: ikFly 0.25s var(--ik-ease); color: var(--ik-ink); }
+@keyframes ikFly { from { opacity: 0; transform: translateX(-8px); } }
+.ik-fly-h { display: flex; align-items: center; gap: 9px; padding: 2px 2px 10px; }
+.ik-fly-h b { flex: 1; font-size: 15px; }
+.ik-fly-ic { display: inline-flex; width: 30px; height: 30px; align-items: center; justify-content: center; color: var(--ik-tx); background: color-mix(in srgb, var(--ik-c) 18%, var(--ik-card)); border: 1.5px solid var(--ik-c); border-radius: 10px; }
+.ik-card { padding: 9px; margin-bottom: 8px; border: 1.5px solid var(--ik-line); border-radius: 14px; }
+.ik-cap { font: 800 10px var(--ik-font); letter-spacing: 0.12em; text-transform: uppercase; color: var(--ik-dim); margin: 0 0 8px 2px; }
+.ik-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+
+/* ---------- status pill ---------- */
+.ik-status { position: fixed; z-index: 14; bottom: 14px; left: 50%; transform: translateX(-50%); margin-left: 32px; display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; background: var(--ik-card); border: 1.5px solid var(--ik-line); border-radius: 16px; box-shadow: var(--ik-shadow); font: 600 12px var(--ik-font); color: var(--ik-dim); }
+.ik-status .ik-sq { width: 28px; height: 28px; border-radius: 9px; }
+.ik-status .ik-ic { width: 15px; height: 15px; }
+.ik-tool { color: var(--ik-tx); letter-spacing: 0.06em; font-size: 11px; }
+.ik-ssep { width: 1.5px; height: 18px; background: var(--ik-line); }
+.ik-zoomv { min-width: 52px; font: 700 12px var(--ik-font); color: var(--ik-ink); background: transparent; border: 0; cursor: pointer; }
+.ik-zoomv:hover { color: var(--ik-tx); }
+.ik-xy { min-width: 86px; font-variant-numeric: tabular-nums; }
+
+/* ---------- command palette ---------- */
+.ik-pal-wrap { position: fixed; inset: 0; z-index: 90; background: rgba(40, 10, 30, 0.35); display: flex; justify-content: center; align-items: flex-start; padding-top: 14vh; }
+.ik-pal { width: min(560px, 92vw); background: var(--ik-card); border: 1.5px solid var(--ik-c); border-radius: 18px; box-shadow: var(--ik-shadow); overflow: hidden; font-family: var(--ik-font); color: var(--ik-ink); animation: ikDrop 0.25s var(--ik-ease); }
+.ik-pal-in { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border-bottom: 1.5px solid var(--ik-line); color: var(--ik-dim); }
+.ik-pal-in input { flex: 1; border: 0; outline: none; background: transparent; font: 500 15px var(--ik-font); color: var(--ik-ink); }
+.ik-pal-list { max-height: 50vh; overflow-y: auto; padding: 6px; }
+.ik-pal-item { width: 100%; display: flex; align-items: center; gap: 10px; padding: 8px 10px; border: 1.5px solid transparent; border-radius: 12px; background: transparent; color: var(--ik-ink); font: 600 13px var(--ik-font); cursor: pointer; text-align: left; }
+.ik-pal-item.kb { background: color-mix(in srgb, var(--ik-c) 14%, var(--ik-card)); border-color: var(--ik-c); }
+.ik-pal-item em { margin-left: auto; font-style: normal; font-weight: 500; font-size: 11.5px; color: var(--ik-dim); }
+.ik-pal-ic { display: inline-flex; width: 28px; height: 28px; align-items: center; justify-content: center; color: var(--ik-tx); background: color-mix(in srgb, var(--ik-c) 14%, var(--ik-card)); border: 1.5px solid var(--ik-c); border-radius: 9px; }
+.ik-pal-ic .ik-ic { width: 16px; height: 16px; }
+.ik-pal-none { padding: 18px; text-align: center; color: var(--ik-dim); }
+
+/* ---------- the inspector as a Nova drawer ---------- */
+body.ik-nova .aero-inspector { width: 296px; background: var(--ik-card); border: 1.5px solid var(--ik-line); border-radius: 18px; box-shadow: none; backdrop-filter: none; color: var(--ik-ink); }
+body.ik-nova .inspector-title { color: var(--ik-tx); border-bottom: 1.5px dashed var(--ik-line); }
+body.ik-nova .aero-inspector .section-label { color: var(--ik-dim); }
+body.ik-nova .aero-inspector .control-group label, body.ik-nova .aero-inspector label { color: var(--ik-dim); }
+body.ik-nova .aero-inspector .control-group input, body.ik-nova .aero-inspector .control-group select { background: var(--ik-card); color: var(--ik-ink); border: 1.5px solid var(--ik-line); border-radius: 8px; }
+body.ik-nova .aero-inspector .control-group input:focus, body.ik-nova .aero-inspector .control-group select:focus { border-color: var(--ik-c); }
+body.ik-nova .aero-inspector .action-btn, body.ik-nova .aero-inspector .mini-icon-btn, body.ik-nova .aero-inspector .popup-pick-btn, body.ik-nova .aero-inspector .fill-seg-btn, body.ik-nova .aero-inspector .stroke-seg-btn {
+    color: var(--ik-tx); background: color-mix(in srgb, var(--ik-c) 12%, var(--ik-card)); border: 1.5px solid var(--ik-c); border-radius: 10px; text-shadow: none; box-shadow: none;
+}
+body.ik-nova .aero-inspector .action-btn:hover { background: color-mix(in srgb, var(--ik-c) 24%, var(--ik-card)); }
+body.ik-nova .aero-inspector .segmented-control, body.ik-nova .aero-inspector .insp-tabs { background: var(--ik-desk); border: 1.5px solid var(--ik-line); }
+body.ik-nova .aero-inspector .seg-btn, body.ik-nova .aero-inspector .insp-tab-btn { color: var(--ik-tx); border-radius: 8px; }
+body.ik-nova .aero-inspector .seg-btn.active, body.ik-nova .aero-inspector .insp-tab-btn.active { background: color-mix(in srgb, var(--ik-c) 30%, var(--ik-card)); color: var(--ik-tx); box-shadow: inset 0 0 0 1.5px var(--ik-c); }
+body.ik-nova .aero-inspector .layer-row { color: var(--ik-ink); }
+body.ik-nova .aero-inspector .layer-row:hover { background: color-mix(in srgb, var(--ik-c) 12%, var(--ik-card)); }
+body.ik-nova .aero-inspector .layer-row.selected { background: color-mix(in srgb, var(--ik-c) 26%, var(--ik-card)); border-color: var(--ik-c); }
+body.ik-nova .aero-inspector .layer-mini { color: var(--ik-tx); }
+body.ik-nova .aero-inspector .inspector-empty-text { color: var(--ik-dim); }
+body.ik-nova .aero-inspector .color-swatch { border: 1.5px solid var(--ik-c); border-radius: 10px; }
+
+/* ---------- the Animate window sits between the dock and the drawer ---------- */
+body.ik-nova #anim-dock { left: 92px; right: 16px; bottom: 62px; background: var(--ik-card) !important; border: 1.5px solid var(--ik-c) !important; border-radius: 18px !important; color: var(--ik-ink); box-shadow: var(--ik-shadow) !important; }
+body.ik-nova.ik-insp #anim-dock { right: 324px; }
+body.ik-nova #anim-dock b { color: var(--ik-tx); }
+body.ik-nova #anim-dock button, body.ik-nova #anim-dock select, body.ik-nova #anim-dock input[type=number], body.ik-nova #anim-dock input[type=text] { color: var(--ik-tx) !important; background: color-mix(in srgb, var(--ik-c) 12%, var(--ik-card)) !important; border: 1.5px solid var(--ik-c) !important; border-radius: 10px !important; }
+body.ik-nova #anim-dock button:hover { background: color-mix(in srgb, var(--ik-c) 24%, var(--ik-card)) !important; }
+body.ik-nova #anim-dock .ad-on { background: color-mix(in srgb, var(--ik-c) 36%, var(--ik-card)) !important; }
+body.ik-nova #anim-dock :not(button):not(select):not(input):not(b):not(option) { color: var(--ik-dim) !important; }
+
+/* ---------- the way into Nova from the classic layout ---------- */
+#ik-to-nova { margin-top: 6px; }
+
+@media (prefers-reduced-motion: reduce) { .ik .ik-t, .ik .ik-d, .ik-fly, .ik-capsule-in, .ik-pal { animation: none !important; transition: none !important; } }
