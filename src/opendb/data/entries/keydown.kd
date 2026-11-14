@@ -3075,6 +3075,426 @@ The Rim Chip as a hailstone: the same pill, thick rim, deep colored words and to
 * `!!@BK#text#` !!@BK#black#
 
 
+## Rim Marker Wash chips
+
+The Rim Chip as a highlighter: a fat marker streak laid inside the rim, slanted at both ends! Written `!!&COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!&R#text#` !!&R#red#
+* `!!&O#text#` !!&O#orange#
+* `!!&GL#text#` !!&GL#gold#
+* `!!&Y#text#` !!&Y#yellow#
+* `!!&L#text#` !!&L#lime#
+* `!!&G#text#` !!&G#green#
+* `!!&TU#text#` !!&TU#turquoise#
+* `!!&T#text#` !!&T#teal#
+* `!!&C#text#` !!&C#cyan#
+* `!!&B#text#` !!&B#blue#
+* `!!&PR#text#` !!&PR#purple#
+* `!!&PK#text#` !!&PK#pink#
+* `!!&W#text#` !!&W#white#
+* `!!&FG#text#` !!&FG#fog#
+* `!!&SL#text#` !!&SL#slate#
+* `!!&BK#text#` !!&BK#black#
+
+## Rim Neon Tube chips
+
+The Rim Chip as a highlighter: a glowing neon tube under the words and a halo around the rim! Written `!!<COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!<R#text#` !!<R#red#
+* `!!<O#text#` !!<O#orange#
+* `!!<GL#text#` !!<GL#gold#
+* `!!<Y#text#` !!<Y#yellow#
+* `!!<L#text#` !!<L#lime#
+* `!!<G#text#` !!<G#green#
+* `!!<TU#text#` !!<TU#turquoise#
+* `!!<T#text#` !!<T#teal#
+* `!!<C#text#` !!<C#cyan#
+* `!!<B#text#` !!<B#blue#
+* `!!<PR#text#` !!<PR#purple#
+* `!!<PK#text#` !!<PK#pink#
+* `!!<W#text#` !!<W#white#
+* `!!<FG#text#` !!<FG#fog#
+* `!!<SL#text#` !!<SL#slate#
+* `!!<BK#text#` !!<BK#black#
+
+## Rim Pencil Shade chips
+
+The Rim Chip as a highlighter: pencil hatching shaded inside the rim! Written `!!>COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!>R#text#` !!>R#red#
+* `!!>O#text#` !!>O#orange#
+* `!!>GL#text#` !!>GL#gold#
+* `!!>Y#text#` !!>Y#yellow#
+* `!!>L#text#` !!>L#lime#
+* `!!>G#text#` !!>G#green#
+* `!!>TU#text#` !!>TU#turquoise#
+* `!!>T#text#` !!>T#teal#
+* `!!>C#text#` !!>C#cyan#
+* `!!>B#text#` !!>B#blue#
+* `!!>PR#text#` !!>PR#purple#
+* `!!>PK#text#` !!>PK#pink#
+* `!!>W#text#` !!>W#white#
+* `!!>FG#text#` !!>FG#fog#
+* `!!>SL#text#` !!>SL#slate#
+* `!!>BK#text#` !!>BK#black#
+
+## Rim Brush Stroke chips
+
+The Rim Chip as a highlighter: a wet brush stroke with bristle streaks and faded ends! Written `!!(COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!(R#text#` !!(R#red#
+* `!!(O#text#` !!(O#orange#
+* `!!(GL#text#` !!(GL#gold#
+* `!!(Y#text#` !!(Y#yellow#
+* `!!(L#text#` !!(L#lime#
+* `!!(G#text#` !!(G#green#
+* `!!(TU#text#` !!(TU#turquoise#
+* `!!(T#text#` !!(T#teal#
+* `!!(C#text#` !!(C#cyan#
+* `!!(B#text#` !!(B#blue#
+* `!!(PR#text#` !!(PR#purple#
+* `!!(PK#text#` !!(PK#pink#
+* `!!(W#text#` !!(W#white#
+* `!!(FG#text#` !!(FG#fog#
+* `!!(SL#text#` !!(SL#slate#
+* `!!(BK#text#` !!(BK#black#
+
+## Rim Torn Tape chips
+
+The Rim Chip as a highlighter: a strip of tape inside the rim with torn zigzag ends! Written `!!)COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!)R#text#` !!)R#red#
+* `!!)O#text#` !!)O#orange#
+* `!!)GL#text#` !!)GL#gold#
+* `!!)Y#text#` !!)Y#yellow#
+* `!!)L#text#` !!)L#lime#
+* `!!)G#text#` !!)G#green#
+* `!!)TU#text#` !!)TU#turquoise#
+* `!!)T#text#` !!)T#teal#
+* `!!)C#text#` !!)C#cyan#
+* `!!)B#text#` !!)B#blue#
+* `!!)PR#text#` !!)PR#purple#
+* `!!)PK#text#` !!)PK#pink#
+* `!!)W#text#` !!)W#white#
+* `!!)FG#text#` !!)FG#fog#
+* `!!)SL#text#` !!)SL#slate#
+* `!!)BK#text#` !!)BK#black#
+
+## Rim Double Bars chips
+
+The Rim Chip as a highlighter: two marker bars, one above the other! Written `!![COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!![R#text#` !![R#red#
+* `!![O#text#` !![O#orange#
+* `!![GL#text#` !![GL#gold#
+* `!![Y#text#` !![Y#yellow#
+* `!![L#text#` !![L#lime#
+* `!![G#text#` !![G#green#
+* `!![TU#text#` !![TU#turquoise#
+* `!![T#text#` !![T#teal#
+* `!![C#text#` !![C#cyan#
+* `!![B#text#` !![B#blue#
+* `!![PR#text#` !![PR#purple#
+* `!![PK#text#` !![PK#pink#
+* `!![W#text#` !![W#white#
+* `!![FG#text#` !![FG#fog#
+* `!![SL#text#` !![SL#slate#
+* `!![BK#text#` !![BK#black#
+
+## Rim Dotted Pen chips
+
+The Rim Chip as a highlighter: a pale wash with a felt-pen dotted line underneath! Written `!!]COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!]R#text#` !!]R#red#
+* `!!]O#text#` !!]O#orange#
+* `!!]GL#text#` !!]GL#gold#
+* `!!]Y#text#` !!]Y#yellow#
+* `!!]L#text#` !!]L#lime#
+* `!!]G#text#` !!]G#green#
+* `!!]TU#text#` !!]TU#turquoise#
+* `!!]T#text#` !!]T#teal#
+* `!!]C#text#` !!]C#cyan#
+* `!!]B#text#` !!]B#blue#
+* `!!]PR#text#` !!]PR#purple#
+* `!!]PK#text#` !!]PK#pink#
+* `!!]W#text#` !!]W#white#
+* `!!]FG#text#` !!]FG#fog#
+* `!!]SL#text#` !!]SL#slate#
+* `!!]BK#text#` !!]BK#black#
+
+## Rim Selection chips
+
+The Rim Chip as a highlighter: a selected-text tint with a drag handle at each end! Written `!!{COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!{R#text#` !!{R#red#
+* `!!{O#text#` !!{O#orange#
+* `!!{GL#text#` !!{GL#gold#
+* `!!{Y#text#` !!{Y#yellow#
+* `!!{L#text#` !!{L#lime#
+* `!!{G#text#` !!{G#green#
+* `!!{TU#text#` !!{TU#turquoise#
+* `!!{T#text#` !!{T#teal#
+* `!!{C#text#` !!{C#cyan#
+* `!!{B#text#` !!{B#blue#
+* `!!{PR#text#` !!{PR#purple#
+* `!!{PK#text#` !!{PK#pink#
+* `!!{W#text#` !!{W#white#
+* `!!{FG#text#` !!{FG#fog#
+* `!!{SL#text#` !!{SL#slate#
+* `!!{BK#text#` !!{BK#black#
+
+## Rim Spotlight chips
+
+The Rim Chip as a highlighter: a pool of light in the middle, darker toward the rim! Written `!!}COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!}R#text#` !!}R#red#
+* `!!}O#text#` !!}O#orange#
+* `!!}GL#text#` !!}GL#gold#
+* `!!}Y#text#` !!}Y#yellow#
+* `!!}L#text#` !!}L#lime#
+* `!!}G#text#` !!}G#green#
+* `!!}TU#text#` !!}TU#turquoise#
+* `!!}T#text#` !!}T#teal#
+* `!!}C#text#` !!}C#cyan#
+* `!!}B#text#` !!}B#blue#
+* `!!}PR#text#` !!}PR#purple#
+* `!!}PK#text#` !!}PK#pink#
+* `!!}W#text#` !!}W#white#
+* `!!}FG#text#` !!}FG#fog#
+* `!!}SL#text#` !!}SL#slate#
+* `!!}BK#text#` !!}BK#black#
+
+## Rim Chalk chips
+
+The Rim Chip as a highlighter: a matte, grainy chalk smudge with dusty edges! Written `!!|COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!|R#text#` !!|R#red#
+* `!!|O#text#` !!|O#orange#
+* `!!|GL#text#` !!|GL#gold#
+* `!!|Y#text#` !!|Y#yellow#
+* `!!|L#text#` !!|L#lime#
+* `!!|G#text#` !!|G#green#
+* `!!|TU#text#` !!|TU#turquoise#
+* `!!|T#text#` !!|T#teal#
+* `!!|C#text#` !!|C#cyan#
+* `!!|B#text#` !!|B#blue#
+* `!!|PR#text#` !!|PR#purple#
+* `!!|PK#text#` !!|PK#pink#
+* `!!|W#text#` !!|W#white#
+* `!!|FG#text#` !!|FG#fog#
+* `!!|SL#text#` !!|SL#slate#
+* `!!|BK#text#` !!|BK#black#
+
+## Rim Crayon chips
+
+The Rim Chip as a highlighter: waxy crayon streaks with paper speckles! Written `!!_COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!_R#text#` !!_R#red#
+* `!!_O#text#` !!_O#orange#
+* `!!_GL#text#` !!_GL#gold#
+* `!!_Y#text#` !!_Y#yellow#
+* `!!_L#text#` !!_L#lime#
+* `!!_G#text#` !!_G#green#
+* `!!_TU#text#` !!_TU#turquoise#
+* `!!_T#text#` !!_T#teal#
+* `!!_C#text#` !!_C#cyan#
+* `!!_B#text#` !!_B#blue#
+* `!!_PR#text#` !!_PR#purple#
+* `!!_PK#text#` !!_PK#pink#
+* `!!_W#text#` !!_W#white#
+* `!!_FG#text#` !!_FG#fog#
+* `!!_SL#text#` !!_SL#slate#
+* `!!_BK#text#` !!_BK#black#
+
+## Rim Glitter Marker chips
+
+The Rim Chip as a highlighter: a pale wash sprinkled with glitter and a diagonal sheen! Written `!!,COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!,R#text#` !!,R#red#
+* `!!,O#text#` !!,O#orange#
+* `!!,GL#text#` !!,GL#gold#
+* `!!,Y#text#` !!,Y#yellow#
+* `!!,L#text#` !!,L#lime#
+* `!!,G#text#` !!,G#green#
+* `!!,TU#text#` !!,TU#turquoise#
+* `!!,T#text#` !!,T#teal#
+* `!!,C#text#` !!,C#cyan#
+* `!!,B#text#` !!,B#blue#
+* `!!,PR#text#` !!,PR#purple#
+* `!!,PK#text#` !!,PK#pink#
+* `!!,W#text#` !!,W#white#
+* `!!,FG#text#` !!,FG#fog#
+* `!!,SL#text#` !!,SL#slate#
+* `!!,BK#text#` !!,BK#black#
+
+## Rim Watercolor chips
+
+The Rim Chip as a highlighter: overlapping watercolor blooms, pigment pooled at the wet edge! Written `!!.COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!.R#text#` !!.R#red#
+* `!!.O#text#` !!.O#orange#
+* `!!.GL#text#` !!.GL#gold#
+* `!!.Y#text#` !!.Y#yellow#
+* `!!.L#text#` !!.L#lime#
+* `!!.G#text#` !!.G#green#
+* `!!.TU#text#` !!.TU#turquoise#
+* `!!.T#text#` !!.T#teal#
+* `!!.C#text#` !!.C#cyan#
+* `!!.B#text#` !!.B#blue#
+* `!!.PR#text#` !!.PR#purple#
+* `!!.PK#text#` !!.PK#pink#
+* `!!.W#text#` !!.W#white#
+* `!!.FG#text#` !!.FG#fog#
+* `!!.SL#text#` !!.SL#slate#
+* `!!.BK#text#` !!.BK#black#
+
+## Rim Scribble chips
+
+The Rim Chip as a highlighter: a crisscross scribble of pen lines! Written `!!"COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!"R#text#` !!"R#red#
+* `!!"O#text#` !!"O#orange#
+* `!!"GL#text#` !!"GL#gold#
+* `!!"Y#text#` !!"Y#yellow#
+* `!!"L#text#` !!"L#lime#
+* `!!"G#text#` !!"G#green#
+* `!!"TU#text#` !!"TU#turquoise#
+* `!!"T#text#` !!"T#teal#
+* `!!"C#text#` !!"C#cyan#
+* `!!"B#text#` !!"B#blue#
+* `!!"PR#text#` !!"PR#purple#
+* `!!"PK#text#` !!"PK#pink#
+* `!!"W#text#` !!"W#white#
+* `!!"FG#text#` !!"FG#fog#
+* `!!"SL#text#` !!"SL#slate#
+* `!!"BK#text#` !!"BK#black#
+
+## Rim Sticky Tint chips
+
+The Rim Chip as a highlighter: a sticky-note tint with a darker top strip and a curled corner! Written `!!'COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!'R#text#` !!'R#red#
+* `!!'O#text#` !!'O#orange#
+* `!!'GL#text#` !!'GL#gold#
+* `!!'Y#text#` !!'Y#yellow#
+* `!!'L#text#` !!'L#lime#
+* `!!'G#text#` !!'G#green#
+* `!!'TU#text#` !!'TU#turquoise#
+* `!!'T#text#` !!'T#teal#
+* `!!'C#text#` !!'C#cyan#
+* `!!'B#text#` !!'B#blue#
+* `!!'PR#text#` !!'PR#purple#
+* `!!'PK#text#` !!'PK#pink#
+* `!!'W#text#` !!'W#white#
+* `!!'FG#text#` !!'FG#fog#
+* `!!'SL#text#` !!'SL#slate#
+* `!!'BK#text#` !!'BK#black#
+
+## Rim Fluorescent chips
+
+The Rim Chip as a highlighter: a fluorescent highlighter that glows past the rim! Written `!!1COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!1R#text#` !!1R#red#
+* `!!1O#text#` !!1O#orange#
+* `!!1GL#text#` !!1GL#gold#
+* `!!1Y#text#` !!1Y#yellow#
+* `!!1L#text#` !!1L#lime#
+* `!!1G#text#` !!1G#green#
+* `!!1TU#text#` !!1TU#turquoise#
+* `!!1T#text#` !!1T#teal#
+* `!!1C#text#` !!1C#cyan#
+* `!!1B#text#` !!1B#blue#
+* `!!1PR#text#` !!1PR#purple#
+* `!!1PK#text#` !!1PK#pink#
+* `!!1W#text#` !!1W#white#
+* `!!1FG#text#` !!1FG#fog#
+* `!!1SL#text#` !!1SL#slate#
+* `!!1BK#text#` !!1BK#black#
+
+## Rim Sunrise chips
+
+The Rim Chip as a highlighter: a wash that brightens toward a glowing horizon line! Written `!!2COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!2R#text#` !!2R#red#
+* `!!2O#text#` !!2O#orange#
+* `!!2GL#text#` !!2GL#gold#
+* `!!2Y#text#` !!2Y#yellow#
+* `!!2L#text#` !!2L#lime#
+* `!!2G#text#` !!2G#green#
+* `!!2TU#text#` !!2TU#turquoise#
+* `!!2T#text#` !!2T#teal#
+* `!!2C#text#` !!2C#cyan#
+* `!!2B#text#` !!2B#blue#
+* `!!2PR#text#` !!2PR#purple#
+* `!!2PK#text#` !!2PK#pink#
+* `!!2W#text#` !!2W#white#
+* `!!2FG#text#` !!2FG#fog#
+* `!!2SL#text#` !!2SL#slate#
+* `!!2BK#text#` !!2BK#black#
+
+## Rim Ink Bleed chips
+
+The Rim Chip as a highlighter: ink soaked into the edges, lighter in the middle! Written `!!3COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!3R#text#` !!3R#red#
+* `!!3O#text#` !!3O#orange#
+* `!!3GL#text#` !!3GL#gold#
+* `!!3Y#text#` !!3Y#yellow#
+* `!!3L#text#` !!3L#lime#
+* `!!3G#text#` !!3G#green#
+* `!!3TU#text#` !!3TU#turquoise#
+* `!!3T#text#` !!3T#teal#
+* `!!3C#text#` !!3C#cyan#
+* `!!3B#text#` !!3B#blue#
+* `!!3PR#text#` !!3PR#purple#
+* `!!3PK#text#` !!3PK#pink#
+* `!!3W#text#` !!3W#white#
+* `!!3FG#text#` !!3FG#fog#
+* `!!3SL#text#` !!3SL#slate#
+* `!!3BK#text#` !!3BK#black#
+
+## Rim Paper Cut-out chips
+
+The Rim Chip as a highlighter: a flat paper cut-out with a white edge and a hard shadow! Written `!!4COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!4R#text#` !!4R#red#
+* `!!4O#text#` !!4O#orange#
+* `!!4GL#text#` !!4GL#gold#
+* `!!4Y#text#` !!4Y#yellow#
+* `!!4L#text#` !!4L#lime#
+* `!!4G#text#` !!4G#green#
+* `!!4TU#text#` !!4TU#turquoise#
+* `!!4T#text#` !!4T#teal#
+* `!!4C#text#` !!4C#cyan#
+* `!!4B#text#` !!4B#blue#
+* `!!4PR#text#` !!4PR#purple#
+* `!!4PK#text#` !!4PK#pink#
+* `!!4W#text#` !!4W#white#
+* `!!4FG#text#` !!4FG#fog#
+* `!!4SL#text#` !!4SL#slate#
+* `!!4BK#text#` !!4BK#black#
+
+## Rim Scanner Beam chips
+
+The Rim Chip as a highlighter: a bright scanner beam, the part it already passed tinted! Written `!!5COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!5R#text#` !!5R#red#
+* `!!5O#text#` !!5O#orange#
+* `!!5GL#text#` !!5GL#gold#
+* `!!5Y#text#` !!5Y#yellow#
+* `!!5L#text#` !!5L#lime#
+* `!!5G#text#` !!5G#green#
+* `!!5TU#text#` !!5TU#turquoise#
+* `!!5T#text#` !!5T#teal#
+* `!!5C#text#` !!5C#cyan#
+* `!!5B#text#` !!5B#blue#
+* `!!5PR#text#` !!5PR#purple#
+* `!!5PK#text#` !!5PK#pink#
+* `!!5W#text#` !!5W#white#
+* `!!5FG#text#` !!5FG#fog#
+* `!!5SL#text#` !!5SL#slate#
+* `!!5BK#text#` !!5BK#black#
+
 ## Rim badge chips
 
 A status badge in the Rim family (no dot): a compact pill with a soft tinted fill, a crisp colored rim and deep colored words, wearing a glowing halo ring around it like the Rim Hail chip's outer ring! Written `!!!color#text#`, in the same 16 colors:

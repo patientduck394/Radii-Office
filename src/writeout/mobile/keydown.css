@@ -11594,3 +11594,160 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   content: ''; position: absolute; z-index: -1; pointer-events: none; top: -0.18em; bottom: -0.18em; left: calc(100% - 9px); width: 2px; background: #ffffff;
   box-shadow: 0 0 5px 2px var(--ae-c), 0 0 11px 4px var(--hx-c36);
 }
+
+/* ========================================================
+   TWENTY HIGHLIGHTER RIM CHIP COUSINS (rh): !!<symbol>COLOR#text#. Each keeps the Rim Chip's size, thick rim and deep words but is a different
+   highlighter: Marker Wash &, Neon Tube <, Pencil Shade >, Brush Stroke (, Torn Tape ), Double Bars [, Dotted Pen ], Selection {, Spotlight },
+   Chalk |, Crayon _, Glitter Marker ",", Watercolor ., Scribble ", Sticky Tint ', Fluorescent 1, Sunrise 2, Ink Bleed 3, Paper Cut-out 4, Scanner Beam 5.
+   The 16 colors are the .gel-rim-<color> classes (they only set --rc-fill / --rc-rim / --rc-ink, so these rules use fallbacks and no defaults).
+   ======================================================== */
+
+.gel-rhwash-chip, .gel-rhneon-chip, .gel-rhpencil-chip, .gel-rhbrush-chip, .gel-rhtape-chip, .gel-rhbars-chip, .gel-rhdots-chip, .gel-rhsel-chip, .gel-rhspot-chip, .gel-rhchalk-chip, .gel-rhcrayon-chip, .gel-rhglit-chip, .gel-rhwater-chip, .gel-rhscrib-chip, .gel-rhsticky-chip, .gel-rhglow-chip, .gel-rhsun-chip, .gel-rhbleed-chip, .gel-rhcut-chip, .gel-rhscan-chip {
+  --rh-a: color-mix(in srgb, var(--rc-fill, #02fff1) 17%, #fff);
+  --rh-b: color-mix(in srgb, var(--rc-fill, #02fff1) 34%, #fff);
+  --rh-c: color-mix(in srgb, var(--rc-fill, #02fff1) 50%, #fff);
+  --rh-d: color-mix(in srgb, var(--rc-fill, #02fff1) 68%, #fff);
+  --rh-g: color-mix(in srgb, var(--rc-fill, #02fff1) 62%, transparent);
+  display: inline-flex !important; align-items: center; justify-content: center; position: relative; isolation: isolate;
+  padding: 0.034em 0.4em 0; margin: 0 calc(2px + 0.12em); border-radius: 0.667em;
+  border: 0.133em solid var(--rc-rim, #04c3ca);
+  line-height: 1.216; min-height: 1.216em; letter-spacing: 0.019em; font-weight: 700; white-space: nowrap; vertical-align: middle;
+  color: var(--rc-ink, #219a9e); text-shadow: none; background-color: var(--rh-a);
+}
+.gel-rhwash-chip.gel-rim-white, .gel-rhneon-chip.gel-rim-white, .gel-rhpencil-chip.gel-rim-white, .gel-rhbrush-chip.gel-rim-white, .gel-rhtape-chip.gel-rim-white, .gel-rhbars-chip.gel-rim-white, .gel-rhdots-chip.gel-rim-white, .gel-rhsel-chip.gel-rim-white, .gel-rhspot-chip.gel-rim-white, .gel-rhchalk-chip.gel-rim-white, .gel-rhcrayon-chip.gel-rim-white, .gel-rhglit-chip.gel-rim-white, .gel-rhwater-chip.gel-rim-white, .gel-rhscrib-chip.gel-rim-white, .gel-rhsticky-chip.gel-rim-white, .gel-rhglow-chip.gel-rim-white, .gel-rhsun-chip.gel-rim-white, .gel-rhbleed-chip.gel-rim-white, .gel-rhcut-chip.gel-rim-white, .gel-rhscan-chip.gel-rim-white { --rc-fill: #cfd8e1; }
+
+/* Rim Marker Wash !!&R#text# */
+.gel-rhwash-chip { background: #ffffff; }
+.gel-rhwash-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.16em; right: 0.16em; top: 0.2em; bottom: 0.1em;
+  background: linear-gradient(180deg, var(--rh-d), var(--rh-c) 60%, var(--rh-b)); border-radius: 0.1em 0.32em 0.14em 0.36em; transform: skewX(-9deg);
+  box-shadow: 0 0.05em 0 color-mix(in srgb, var(--rc-fill, #02fff1) 55%, transparent);
+}
+
+/* Rim Neon Tube !!<R#text# */
+.gel-rhneon-chip {
+  background: linear-gradient(180deg, #ffffff, var(--rh-a));
+  box-shadow: 0 0 0.3em 0.05em var(--rh-g), 0 0 0.8em 0.12em color-mix(in srgb, var(--rc-fill, #02fff1) 30%, transparent), inset 0 0 0.25em color-mix(in srgb, var(--rc-fill, #02fff1) 35%, transparent);
+}
+.gel-rhneon-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.36em; right: 0.36em; bottom: 0.1em; height: 0.09em; border-radius: 999px;
+  background: #ffffff; box-shadow: 0 0 0.12em 0.04em var(--rc-fill, #02fff1), 0 0 0.3em 0.08em var(--rh-g);
+}
+
+/* Rim Pencil Shade !!>R#text# */
+.gel-rhpencil-chip {
+  background: repeating-linear-gradient(118deg, color-mix(in srgb, var(--rc-fill, #02fff1) 42%, transparent) 0 0.055em, transparent 0.055em 0.16em), linear-gradient(180deg, var(--rh-a), var(--rh-b));
+  box-shadow: inset 0 0 0.12em color-mix(in srgb, var(--rc-rim, #04c3ca) 35%, transparent);
+}
+
+/* Rim Brush Stroke !!(R#text# */
+.gel-rhbrush-chip {
+  background: linear-gradient(90deg, #ffffff 0, rgba(255, 255, 255, 0) 0.5em calc(100% - 0.5em), #ffffff 100%),
+    repeating-linear-gradient(180deg, var(--rh-d) 0 0.09em, var(--rh-b) 0.09em 0.15em, var(--rh-c) 0.15em 0.26em, #ffffff 0.26em 0.29em);
+}
+
+/* Rim Torn Tape !!)R#text# */
+.gel-rhtape-chip { background: linear-gradient(105deg, transparent 38%, rgba(255, 255, 255, 0.55) 46% 54%, transparent 62%), linear-gradient(180deg, var(--rh-c), var(--rh-d)); }
+.gel-rhtape-chip::before, .gel-rhtape-chip::after { content: ''; position: absolute; z-index: -1; pointer-events: none; top: 0; bottom: 0; width: 0.34em; }
+.gel-rhtape-chip::before {
+  left: 0; background: linear-gradient(135deg, #ffffff 25%, transparent 25%) 0 0 / 0.34em 0.34em, linear-gradient(225deg, #ffffff 25%, transparent 25%) 0 0 / 0.34em 0.34em;
+}
+.gel-rhtape-chip::after {
+  right: 0; background: linear-gradient(45deg, #ffffff 25%, transparent 25%) 0 0 / 0.34em 0.34em, linear-gradient(315deg, #ffffff 25%, transparent 25%) 0 0 / 0.34em 0.34em;
+}
+
+/* Rim Double Bars !![R#text# */
+.gel-rhbars-chip {
+  background: linear-gradient(180deg, #ffffff 0 7%, var(--rh-d) 7% 46%, #ffffff 46% 54%, var(--rh-c) 54% 93%, #ffffff 93%);
+}
+
+/* Rim Dotted Pen !!]R#text# */
+.gel-rhdots-chip {
+  background: radial-gradient(circle, var(--rc-rim, #04c3ca) 0 0.045em, transparent 0.052em) 0.04em calc(100% - 0.06em) / 0.17em 0.17em repeat-x, linear-gradient(180deg, var(--rh-a), var(--rh-b));
+}
+
+/* Rim Selection !!{R#text# */
+.gel-rhsel-chip { background: var(--rh-c); }
+.gel-rhsel-chip::before, .gel-rhsel-chip::after { content: ''; position: absolute; z-index: -1; pointer-events: none; width: 0.28em; height: 0.72em; filter: drop-shadow(0 0 0.025em #ffffff) drop-shadow(0 0 0.02em #ffffff); }
+.gel-rhsel-chip::before {
+  left: -0.23em; top: -0.45em;
+  background: radial-gradient(circle at 50% 0.13em, var(--rc-rim, #04c3ca) 0 0.125em, transparent 0.13em), linear-gradient(var(--rc-rim, #04c3ca), var(--rc-rim, #04c3ca)) 50% 0.13em / 0.05em 100% no-repeat;
+}
+.gel-rhsel-chip::after {
+  right: -0.23em; bottom: -0.45em;
+  background: radial-gradient(circle at 50% calc(100% - 0.13em), var(--rc-rim, #04c3ca) 0 0.125em, transparent 0.13em), linear-gradient(var(--rc-rim, #04c3ca), var(--rc-rim, #04c3ca)) 50% 0 / 0.05em calc(100% - 0.13em) no-repeat;
+}
+
+/* Rim Spotlight !!}R#text# */
+.gel-rhspot-chip { background: radial-gradient(ellipse 62% 120% at 50% 50%, #ffffff 0 30%, var(--rh-b) 70%, var(--rh-d) 100%); }
+
+/* Rim Chalk !!|R#text# */
+.gel-rhchalk-chip {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.75) 0 0.012em, transparent 0.022em) 0 0 / 0.09em 0.11em,
+    radial-gradient(circle, color-mix(in srgb, var(--rc-rim, #04c3ca) 40%, transparent) 0 0.011em, transparent 0.02em) 0.04em 0.05em / 0.07em 0.09em,
+    linear-gradient(180deg, var(--rh-b), var(--rh-a));
+  box-shadow: 0 0 0.14em 0.05em color-mix(in srgb, var(--rc-rim, #04c3ca) 32%, transparent);
+}
+
+/* Rim Crayon !!_R#text# */
+.gel-rhcrayon-chip {
+  border-radius: 0.6em 0.72em 0.64em 0.7em / 0.72em 0.6em 0.74em 0.62em;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0 0.014em, transparent 0.026em) 0 0 / 0.12em 0.1em,
+    repeating-linear-gradient(174deg, var(--rh-c) 0 0.07em, var(--rh-b) 0.07em 0.11em, var(--rh-c) 0.11em 0.2em, var(--rh-a) 0.2em 0.23em);
+}
+
+/* Rim Glitter Marker !!,R#text# */
+.gel-rhglit-chip {
+  background: radial-gradient(circle at 13% 32%, #ffffff 0 0.025em, transparent 0.05em), radial-gradient(circle at 34% 72%, var(--rc-fill, #02fff1) 0 0.02em, transparent 0.04em),
+    radial-gradient(circle at 57% 24%, #ffffff 0 0.03em, transparent 0.06em), radial-gradient(circle at 78% 66%, #ffffff 0 0.022em, transparent 0.045em),
+    radial-gradient(circle at 91% 30%, var(--rc-fill, #02fff1) 0 0.02em, transparent 0.04em),
+    linear-gradient(112deg, transparent 32%, rgba(255, 255, 255, 0.75) 46% 54%, transparent 68%), linear-gradient(180deg, var(--rh-a), var(--rh-b));
+}
+
+/* Rim Watercolor !!.R#text# */
+.gel-rhwater-chip {
+  border-radius: 0.7em 0.62em 0.72em 0.6em / 0.62em 0.72em 0.6em 0.7em;
+  background: radial-gradient(ellipse at 26% 64%, var(--rh-d), transparent 58%), radial-gradient(ellipse at 76% 36%, var(--rh-c), transparent 62%), var(--rh-a);
+  box-shadow: inset 0 0 0.3em 0.02em color-mix(in srgb, var(--rc-fill, #02fff1) 48%, transparent);
+}
+
+/* Rim Scribble !!"R#text# */
+.gel-rhscrib-chip {
+  background: repeating-linear-gradient(58deg, color-mix(in srgb, var(--rc-fill, #02fff1) 44%, transparent) 0 0.045em, transparent 0.045em 0.15em),
+    repeating-linear-gradient(-58deg, color-mix(in srgb, var(--rc-fill, #02fff1) 34%, transparent) 0 0.04em, transparent 0.04em 0.17em), var(--rh-a);
+}
+
+/* Rim Sticky Tint !!'R#text# */
+.gel-rhsticky-chip { border-radius: 0.5em 0.5em 0.2em 0.5em; background: linear-gradient(180deg, var(--rh-d) 0 0.2em, var(--rh-a) 0.2em); }
+.gel-rhsticky-chip::after {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; right: 0; bottom: 0; width: 0.5em; height: 0.5em; border-bottom-right-radius: 0.2em;
+  background: linear-gradient(135deg, #ffffff 50%, color-mix(in srgb, var(--rc-rim, #04c3ca) 45%, #ffffff) 50%); box-shadow: -0.03em -0.03em 0.05em rgba(0, 0, 0, 0.16);
+}
+
+/* Rim Fluorescent !!1R#text# */
+.gel-rhglow-chip {
+  background: radial-gradient(ellipse at 50% 50%, var(--rh-b), var(--rh-c));
+  box-shadow: 0 0 0.45em 0.1em var(--rh-g), 0 0 1em 0.2em color-mix(in srgb, var(--rc-fill, #02fff1) 28%, transparent), inset 0 0 0.25em rgba(255, 255, 255, 0.7);
+}
+
+/* Rim Sunrise !!2R#text# */
+.gel-rhsun-chip { background: linear-gradient(180deg, #ffffff 0%, var(--rh-b) 46%, var(--rh-d) 69%, #ffffff 70% 74%, var(--rh-c) 75%, var(--rh-a) 100%); }
+
+/* Rim Ink Bleed !!3R#text# */
+.gel-rhbleed-chip {
+  background: radial-gradient(ellipse at 22% 80%, color-mix(in srgb, var(--rc-fill, #02fff1) 30%, transparent), transparent 55%), #ffffff;
+  box-shadow: inset 0 0 0.2em 0.08em color-mix(in srgb, var(--rc-fill, #02fff1) 78%, transparent), inset 0 0 0.55em 0.16em color-mix(in srgb, var(--rc-fill, #02fff1) 40%, transparent);
+}
+
+/* Rim Paper Cut-out !!4R#text# */
+.gel-rhcut-chip { background: var(--rh-b); box-shadow: inset 0 0 0 0.07em #ffffff, 0.09em 0.12em 0 var(--rc-rim, #04c3ca); }
+
+/* Rim Scanner Beam !!5R#text# */
+.gel-rhscan-chip { background: linear-gradient(90deg, var(--rh-b) 0, var(--rh-c) 62%, #ffffff 64%, #ffffff 100%); }
+.gel-rhscan-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 64%; top: -0.1em; bottom: -0.1em; width: 0.08em;
+  background: var(--rc-fill, #02fff1); box-shadow: 0 0 0.2em 0.07em var(--rc-fill, #02fff1);
+}
+
+/* a solid light backing under the gradient-only ones, so the words read the same on light and dark pages */
+.gel-rhneon-chip, .gel-rhpencil-chip, .gel-rhbrush-chip, .gel-rhtape-chip, .gel-rhdots-chip, .gel-rhspot-chip, .gel-rhchalk-chip, .gel-rhcrayon-chip, .gel-rhglit-chip, .gel-rhsun-chip, .gel-rhglow-chip, .gel-rhsticky-chip, .gel-rhscan-chip { background-color: #ffffff; }
