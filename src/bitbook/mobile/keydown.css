@@ -6401,12 +6401,12 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   transition: background-color 0.35s ease, box-shadow 0.35s ease;
 }
 .jelly-chip::before {
-  content: ""; position: absolute; z-index: -1; top: 0.14em; left: 15%; width: min(44%, 6.5em); height: 0.3em; border-radius: 999px;
+  content: ""; position: absolute; z-index: -1; top: 0.22em; left: 15%; width: min(44%, 6.5em); height: 0.28em; border-radius: 999px;
   background: linear-gradient(90deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.85) 22%, rgba(255, 255, 255, 0.85) 78%, rgba(255, 255, 255, 0) 100%);
   transform: rotate(-2deg); pointer-events: none;
 }
 .jelly-chip::after {
-  content: ""; position: absolute; z-index: -1; top: 0.2em; left: calc(15% + min(44%, 6.5em) + 0.35em); width: 0.24em; height: 0.24em; border-radius: 50%;
+  content: ""; position: absolute; z-index: -1; top: 0.26em; left: calc(15% + min(44%, 6.5em) + 0.35em); width: 0.24em; height: 0.24em; border-radius: 50%;
   background: rgba(255, 255, 255, 0.8); pointer-events: none;
 }
 .gel-label-chip {
@@ -6795,7 +6795,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   background: linear-gradient(180deg, var(--jx-l) 0%, var(--jx-c) 42%, var(--jx-e) 100%);
   box-shadow: inset 0 -0.28em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 55%, transparent), inset 0 0.08em 0.1em rgba(255, 255, 255, 0.55), 0 0.3em 0.4em -0.12em color-mix(in srgb, var(--jx-e) 70%, transparent);
 }
-.gel-jbean-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.1em; width: 52%; height: 0.36em; border-radius: 999px 999px 70% 70%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.15)); transform: rotate(-1deg); }
+.gel-jbean-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.17em; width: 52%; height: 0.36em; border-radius: 999px 999px 70% 70%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.15)); transform: rotate(-1deg); }
 .gel-jbean-chip::after { content: ""; position: absolute; z-index: -1; left: 0.7em; right: 0.7em; bottom: 0.1em; height: 0.2em; border-radius: 999px; background: radial-gradient(circle at 10% 50%, rgba(255, 255, 255, 0.7) 0 0.03em, transparent 0.05em) 0 0 / 0.42em 100% repeat-x; opacity: 0.8; }
 /* Gummy #/R~text~ */
 .gel-gummy-chip {
@@ -6809,14 +6809,14 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(160deg, color-mix(in srgb, var(--jx-c) 80%, transparent), color-mix(in srgb, var(--jx-e) 72%, transparent));
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-l) 80%, transparent), inset 0 0.18em 0.28em rgba(255, 255, 255, 0.4), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 40%, transparent), 0 0.25em 0.4em -0.1em color-mix(in srgb, var(--jx-c) 60%, transparent);
 }
-.gel-gummy-chip::before { content: ""; position: absolute; z-index: -1; left: 12%; top: 0.12em; width: 0.9em; height: 0.2em; border-radius: 999px; background: rgba(255, 255, 255, 0.7); transform: rotate(-4deg); }
+.gel-gummy-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.22em; width: 0.9em; height: 0.2em; border-radius: 999px; background: rgba(255, 255, 255, 0.7); transform: rotate(-4deg); }
 /* Layered jelly #/R+text+ */
 .gel-jlayer-chip {
   padding: 3px 16px; border-radius: 0.55em 0.55em 0.75em 0.75em;
   background: linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 80%, transparent) 0 30%, rgba(255, 255, 255, 0.6) 30% 34%, color-mix(in srgb, var(--jx-c) 66%, transparent) 34% 64%, rgba(255, 255, 255, 0.5) 64% 68%, color-mix(in srgb, var(--jx-e) 74%, transparent) 68% 100%);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.1em 0.12em rgba(255, 255, 255, 0.6), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent);
 }
-.gel-jlayer-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 40%; height: 0.14em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+.gel-jlayer-chip::before { content: ""; position: absolute; z-index: -1; left: 0.65em; top: 0.18em; width: 40%; height: 0.14em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
 /* Jelly cube #/R^text^ */
 .gel-jcube-chip {
   padding: 4px 16px; border-radius: 0.3em; transform: rotate(-1deg);
@@ -6839,7 +6839,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     color-mix(in srgb, var(--jx-c) 52%, transparent);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 75%, #fff), inset 0 -0.25em 0.35em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent), 0 0.28em 0.45em -0.1em color-mix(in srgb, var(--jx-c) 55%, transparent);
 }
-.gel-jfruit-chip::before { content: ""; position: absolute; z-index: -1; left: 26%; top: 0.12em; width: 40%; height: 0.24em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 25%, rgba(255, 255, 255, 0.8) 75%, rgba(255, 255, 255, 0)); }
+.gel-jfruit-chip::before { content: ""; position: absolute; z-index: -1; left: 26%; top: 0.2em; width: 40%; height: 0.24em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 25%, rgba(255, 255, 255, 0.8) 75%, rgba(255, 255, 255, 0)); }
 /* Jelly drop #/R!text! */
 .gel-jdrop-chip {
   padding: 3px 16px 3px 15px; border-radius: 1.2em 1.2em 1.2em 0.18em;
@@ -6848,7 +6848,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(200deg, color-mix(in srgb, var(--jx-l) 45%, transparent), color-mix(in srgb, var(--jx-c) 80%, transparent) 40%, color-mix(in srgb, var(--jx-e) 80%, transparent));
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.22em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 45%, transparent), 0 0.3em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 65%, transparent);
 }
-.gel-jdrop-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.12em; width: 0.95em; height: 0.34em; border-radius: 50%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.15)); transform: rotate(-12deg); }
+.gel-jdrop-chip::before { content: ""; position: absolute; z-index: -1; left: 0.65em; top: 0.2em; width: 0.95em; height: 0.34em; border-radius: 50%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.15)); transform: rotate(-12deg); }
 .gel-jdrop-chip::after { content: ""; position: absolute; z-index: -1; right: 0.45em; bottom: 0.18em; width: 0.2em; height: 0.2em; border-radius: 50%; background: rgba(255, 255, 255, 0.55); }
 /* Swirl jelly #/R?text? */
 .gel-jswirl-chip {
@@ -6858,7 +6858,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     color-mix(in srgb, var(--jx-c) 55%, transparent);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.16em 0.3em rgba(255, 255, 255, 0.45), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 40%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 60%, transparent);
 }
-.gel-jswirl-chip::before { content: ""; position: absolute; z-index: -1; inset: 0.14em 0.5em auto 0.5em; height: 0.3em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 25%, rgba(255, 255, 255, 0.8) 75%, rgba(255, 255, 255, 0)); }
+.gel-jswirl-chip::before { content: ""; position: absolute; z-index: -1; inset: 0.22em 0.65em auto 0.65em; height: 0.3em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 25%, rgba(255, 255, 255, 0.8) 75%, rgba(255, 255, 255, 0)); }
 .gel-jswirl-chip::after { content: ""; position: absolute; z-index: -1; left: calc(18% - 0.3em); top: calc(50% - 0.3em); width: 0.6em; height: 0.6em; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 25%, rgba(255, 255, 255, 0) 70%); }
 /* Jelly tart #/R#text# */
 .gel-jtart-chip {
@@ -6869,7 +6869,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(180deg, #f3cf94, #d6a25c 60%, #bd8443) border-box;
   box-shadow: inset 0 0 0 0.05em rgba(255, 255, 255, 0.4), 0 0 0 0.05em #a8712f, 0 0.28em 0.4em -0.1em rgba(120, 70, 20, 0.45);
 }
-.gel-jtart-chip::before { content: ""; position: absolute; z-index: -1; left: 0.35em; top: 0.1em; width: 45%; height: 0.24em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.1)); }
+.gel-jtart-chip::before { content: ""; position: absolute; z-index: -1; left: 0.4em; top: 0.16em; width: 45%; height: 0.24em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.1)); }
 .gel-jtart-chip::after { content: ""; position: absolute; z-index: -1; inset: -0.2em; border-radius: 0.8em; background: repeating-linear-gradient(90deg, rgba(120, 70, 20, 0.28) 0 0.07em, transparent 0.07em 0.34em); -webkit-mask: linear-gradient(#000 0 0) top / 100% 0.2em no-repeat, linear-gradient(#000 0 0) bottom / 100% 0.2em no-repeat; mask: linear-gradient(#000 0 0) top / 100% 0.2em no-repeat, linear-gradient(#000 0 0) bottom / 100% 0.2em no-repeat; }
 /* Wobble ring #/R-text- */
 .gel-jwobble-chip {
@@ -6928,7 +6928,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-l) 85%, #fff), inset 0 -0.18em 0.3em -0.05em color-mix(in srgb, var(--jx-c) 30%, transparent), 0 0.26em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 45%, transparent);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
 }
-.gel-jegg-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.95); transform: rotate(-3deg); }
+.gel-jegg-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.95); transform: rotate(-3deg); }
 
 .gel-jworm-chip {
   padding: 3px 18px; border-radius: 999px;
@@ -6937,7 +6937,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 60%, transparent) 0%, color-mix(in srgb, var(--jx-c) 80%, transparent) 40%, color-mix(in srgb, var(--jx-e) 86%, transparent) 100%);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.24em 0.3em -0.06em color-mix(in srgb, var(--jx-d) 45%, transparent), 0 0.3em 0.4em -0.1em color-mix(in srgb, var(--jx-e) 65%, transparent);
 }
-.gel-jworm-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.08em; right: 1.4em; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.2)); }
+.gel-jworm-chip::before { content: ""; position: absolute; z-index: -1; left: 0.85em; top: 0.2em; right: 1.5em; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.2)); }
 
 .gel-jcitrus-chip {
   padding: 4px 18px; border: 0.16em solid color-mix(in srgb, var(--jx-l) 78%, #fff); border-radius: 999px;
@@ -6947,7 +6947,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   background-size: 100% 420%; background-position: center;
   box-shadow: inset 0 0 0 0.08em color-mix(in srgb, var(--jx-e) 55%, transparent), inset 0 0.12em 0.2em rgba(255, 255, 255, 0.45), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent);
 }
-.gel-jcitrus-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-4deg); }
+.gel-jcitrus-chip::before { content: ""; position: absolute; z-index: -1; left: 0.85em; top: 0.28em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-4deg); }
 
 .gel-jstripe-chip {
   padding: 3px 17px; border-radius: 0.6em;
@@ -6955,7 +6955,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     repeating-linear-gradient(90deg, color-mix(in srgb, var(--jx-l) 55%, transparent) 0 0.45em, color-mix(in srgb, var(--jx-e) 72%, transparent) 0.45em 0.9em);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 75%, #fff), inset 0 0.14em 0.22em rgba(255, 255, 255, 0.5), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 38%, transparent), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-e) 58%, transparent);
 }
-.gel-jstripe-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; right: 0.5em; top: 0.08em; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.85) 20%, rgba(255, 255, 255, 0.85) 80%, rgba(255, 255, 255, 0.1)); }
+.gel-jstripe-chip::before { content: ""; position: absolute; z-index: -1; left: 0.75em; right: 0.75em; top: 0.3em; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.85) 20%, rgba(255, 255, 255, 0.85) 80%, rgba(255, 255, 255, 0.1)); }
 
 .gel-jheart-chip {
   padding: 3px 14px 3px 24px; border-radius: 0.95em;
@@ -6974,7 +6974,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(90deg, color-mix(in srgb, var(--jx-l) 70%, transparent) 50%, color-mix(in srgb, var(--jx-e) 78%, transparent) 50%);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.24em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 42%, transparent), 0 0.3em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 62%, transparent);
 }
-.gel-jpill-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 38%; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.2)); }
+.gel-jpill-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.3em; width: 38%; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.2)); }
 .gel-jpill-chip::after { content: ""; position: absolute; z-index: -1; right: 0.55em; top: 0.13em; width: 0.8em; height: 0.15em; border-radius: 999px; background: rgba(255, 255, 255, 0.5); }
 
 .gel-jboba-chip {
@@ -6988,7 +6988,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 50%, transparent), color-mix(in srgb, var(--jx-c) 64%, transparent) 70%, color-mix(in srgb, var(--jx-e) 78%, transparent));
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.14em 0.22em rgba(255, 255, 255, 0.45), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 55%, transparent);
 }
-.gel-jboba-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+.gel-jboba-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
 .gel-jboba-chip::after { content: ""; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: 0.1em; height: 0.12em; background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 0 0.025em, transparent 0.035em) 0 0 / 18% 100% repeat-x; }
 
 .gel-jmold-chip {
@@ -6998,7 +6998,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 65%, transparent) 0 22%, color-mix(in srgb, var(--jx-c) 74%, transparent) 22% 100%);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.2em 0 -0.02em rgba(255, 255, 255, 0.45), inset 0 -0.22em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 42%, transparent), 0 0.3em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 62%, transparent);
 }
-.gel-jmold-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.8); }
+.gel-jmold-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.3em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.8); }
 
 .gel-jsplat-chip {
   padding: 3px 18px; margin-left: 8px; margin-right: 8px;
@@ -7008,7 +7008,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(170deg, color-mix(in srgb, var(--jx-c) 76%, transparent), color-mix(in srgb, var(--jx-e) 82%, transparent));
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 42%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent);
 }
-.gel-jsplat-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-4deg); }
+.gel-jsplat-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-4deg); }
 .gel-jsplat-chip::after { content: ""; position: absolute; z-index: -1; left: -0.42em; top: -0.12em; right: -0.42em; bottom: -0.1em; background:
     radial-gradient(circle at 4% 22%, color-mix(in srgb, var(--jx-c) 80%, transparent) 0 0.14em, transparent 0.15em),
     radial-gradient(circle at 98% 74%, color-mix(in srgb, var(--jx-c) 80%, transparent) 0 0.12em, transparent 0.13em),
@@ -7027,7 +7027,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     color-mix(in srgb, var(--jx-c) 56%, rgba(255, 255, 255, 0.5));
   box-shadow: inset 0 0 0 0.08em rgba(255, 255, 255, 0.7), inset 0 -0.22em 0.32em -0.05em color-mix(in srgb, var(--jx-e) 50%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 52%, transparent);
 }
-.gel-jfrost-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); }
+.gel-jfrost-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); }
 
 .gel-jice-chip {
   padding: 3px 17px; border-radius: 0.3em 0.8em 0.3em 0.8em;
@@ -7036,7 +7036,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(160deg, color-mix(in srgb, var(--jx-c) 38%, #e8f6ff), color-mix(in srgb, var(--jx-c) 66%, #bfe6ff) 60%, color-mix(in srgb, var(--jx-e) 70%, #8ccdf2));
   box-shadow: inset 0 0 0 0.07em rgba(255, 255, 255, 0.85), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-e) 45%, transparent), 0 0.28em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 55%, #4da8e0);
 }
-.gel-jice-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.92); transform: rotate(-3deg); }
+.gel-jice-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.92); transform: rotate(-3deg); }
 
 .gel-jglow-chip {
   padding: 3px 17px; border-radius: 0.95em;
@@ -7045,7 +7045,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 80%, #fff), 0 0 0.4em 0.1em color-mix(in srgb, var(--jx-c) 65%, transparent), 0 0 1em 0.15em color-mix(in srgb, var(--jx-c) 35%, transparent), 0 0.3em 0.5em -0.1em color-mix(in srgb, var(--jx-e) 50%, transparent);
   text-shadow: 0 0 0.4em rgba(255, 255, 255, 0.8);
 }
-.gel-jglow-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.95); }
+.gel-jglow-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.95); }
 
 .gel-jmarble-chip {
   padding: 3px 17px; border-radius: 0.95em;
@@ -7058,7 +7058,7 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(100deg, color-mix(in srgb, var(--jx-c) 70%, transparent), color-mix(in srgb, var(--jx-e) 78%, transparent));
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.14em 0.22em rgba(255, 255, 255, 0.4), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 40%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 58%, transparent);
 }
-.gel-jmarble-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.75em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+.gel-jmarble-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.75em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
 
 .gel-jdusk-chip {
   padding: 3px 17px; border-radius: 0.95em;
@@ -7066,5 +7066,229 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 80%, #fff) 0%, color-mix(in srgb, var(--jx-c) 80%, transparent) 38%, color-mix(in srgb, var(--jx-e) 90%, #4a2a7a 25%) 100%);
   box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.26em 0.34em -0.05em color-mix(in srgb, #3b1d6b 45%, transparent), 0 0.3em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 62%, transparent);
 }
-.gel-jdusk-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+.gel-jdusk-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.2em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
 .gel-jdusk-chip::after { content: ""; position: absolute; z-index: -1; right: 0.55em; bottom: 0.2em; width: 0.2em; height: 0.2em; background: #fff; clip-path: polygon(50% 0, 61% 36%, 98% 38%, 68% 60%, 79% 96%, 50% 74%, 21% 96%, 32% 60%, 2% 38%, 39% 36%); opacity: 0.9; }
+
+/* ========================================================
+   FIFTEEN AERO MARK CHIP COUSINS (am), written ++COLOR<mark>text++: Check ++R$text++, Pushpin ++R'text++, Ruler ++R|text++, Price Tag ++R<text++,
+   Arrow ++R>text++, Bookmark ++R(text++, Dog-ear ++R)text++, Bracket ++R[text++, Crop ++R]text++, Stamp ++R{text++, Squiggle ++R}text++,
+   Quote ++R"text++, Star ++R1text++, Circled ++R2text++, Ticket Punch ++R3text++. Each in the Aero chips' 16 colors (the .gel-aero-<color> classes),
+   all marks and stamps in the spirit of the Aero Mark chip: light, readable fills with deep-colored words.
+   ======================================================== */
+.gel-amcheck-chip, .gel-ampin-chip, .gel-amruler-chip, .gel-amtag-chip, .gel-amarrow-chip, .gel-ambook-chip, .gel-amdog-chip, .gel-ambrack-chip, .gel-amcrop-chip, .gel-amstamp-chip, .gel-amsquig-chip, .gel-amquote-chip, .gel-amstar-chip, .gel-amcircle-chip, .gel-ampunch-chip {
+  --mk-ink: color-mix(in srgb, var(--ae-e1) 75%, #000); --mk-edge: color-mix(in srgb, var(--ae-c) 70%, var(--ae-e1)); --mk-bk: color-mix(in srgb, var(--ae-c) 82%, var(--ae-e1));
+  --mk-soft2: color-mix(in srgb, var(--ae-l) 76%, #fff);
+  position: relative; isolation: isolate; box-sizing: border-box; display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 3px; border: 0; color: var(--mk-ink); font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-amcheck-chip.gel-aero-white, .gel-ampin-chip.gel-aero-white, .gel-amruler-chip.gel-aero-white, .gel-amtag-chip.gel-aero-white, .gel-amarrow-chip.gel-aero-white, .gel-ambook-chip.gel-aero-white, .gel-amdog-chip.gel-aero-white, .gel-ambrack-chip.gel-aero-white, .gel-amcrop-chip.gel-aero-white, .gel-amstamp-chip.gel-aero-white, .gel-amsquig-chip.gel-aero-white, .gel-amquote-chip.gel-aero-white, .gel-amstar-chip.gel-aero-white, .gel-amcircle-chip.gel-aero-white, .gel-ampunch-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-amcheck-chip.gel-aero-fog, .gel-ampin-chip.gel-aero-fog, .gel-amruler-chip.gel-aero-fog, .gel-amtag-chip.gel-aero-fog, .gel-amarrow-chip.gel-aero-fog, .gel-ambook-chip.gel-aero-fog, .gel-amdog-chip.gel-aero-fog, .gel-ambrack-chip.gel-aero-fog, .gel-amcrop-chip.gel-aero-fog, .gel-amstamp-chip.gel-aero-fog, .gel-amsquig-chip.gel-aero-fog, .gel-amquote-chip.gel-aero-fog, .gel-amstar-chip.gel-aero-fog, .gel-amcircle-chip.gel-aero-fog, .gel-ampunch-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-amcheck-chip.gel-aero-black, .gel-ampin-chip.gel-aero-black, .gel-amruler-chip.gel-aero-black, .gel-amtag-chip.gel-aero-black, .gel-amarrow-chip.gel-aero-black, .gel-ambook-chip.gel-aero-black, .gel-amdog-chip.gel-aero-black, .gel-ambrack-chip.gel-aero-black, .gel-amcrop-chip.gel-aero-black, .gel-amstamp-chip.gel-aero-black, .gel-amsquig-chip.gel-aero-black, .gel-amquote-chip.gel-aero-black, .gel-amstar-chip.gel-aero-black, .gel-amcircle-chip.gel-aero-black, .gel-ampunch-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; --mk-ink: #111111; }
+/* Check Mark ++R$text++ */
+.gel-amcheck-chip {
+  padding: 1px 10px 1px 1.85em; border-radius: 999px; border: 2px solid var(--mk-edge);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 40%, #fff), var(--mk-soft2));
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--ae-c) 45%, transparent), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+.gel-amcheck-chip::before {
+  content: '\2713'; position: absolute; left: 0.16em; top: 50%; width: 1.3em; height: 1.3em; margin-top: -0.65em; border-radius: 50%;
+  display: grid; place-items: center; font: 800 0.78em/1 system-ui, sans-serif; color: #fff; text-shadow: 0 0 2px var(--ae-e1), 0 1px 1px var(--ae-e1);
+  background: radial-gradient(circle at 34% 28%, color-mix(in srgb, var(--ae-l) 55%, #fff) 0 14%, var(--ae-c) 58%, var(--ae-e2) 100%);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ae-e1) 45%, transparent), 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+
+/* Pushpin Mark ++R'text++ */
+.gel-ampin-chip {
+  margin-top: 0.34em; padding: 2px 10px 2px 1.4em; border-radius: 3px; transform: rotate(-1.4deg);
+  border: 1px solid color-mix(in srgb, var(--ae-c) 55%, var(--ae-e1));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 34%, #fff), color-mix(in srgb, var(--ae-l) 60%, #fff));
+  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.22), inset 0 -0.3em 0.4em -0.2em color-mix(in srgb, var(--ae-c) 30%, transparent);
+}
+.gel-ampin-chip::before {
+  content: ''; position: absolute; z-index: 1; left: 0.3em; top: -0.4em; width: 0.74em; height: 0.74em; border-radius: 50%;
+  background: radial-gradient(circle at 34% 30%, #fff 0 9%, color-mix(in srgb, var(--ae-l) 60%, #fff) 10% 24%, var(--ae-c) 58%, var(--ae-e1) 100%);
+  box-shadow: 0 0.16em 0.16em rgba(0, 0, 0, 0.34), inset 0 -0.08em 0.1em color-mix(in srgb, var(--ae-e1) 55%, transparent);
+}
+
+/* Ruler Mark ++R|text++ */
+.gel-amruler-chip {
+  padding: 1px 9px 0.5em; border-radius: 3px 3px 1px 1px; border: 1px solid var(--mk-edge);
+  background:
+    repeating-linear-gradient(90deg, var(--mk-bk) 0 1.5px, transparent 1.5px 1.2em) 0.42em 100% / calc(100% - 0.84em) 0.52em no-repeat,
+    repeating-linear-gradient(90deg, var(--mk-bk) 0 1px, transparent 1px 0.24em) 0.42em 100% / calc(100% - 0.84em) 0.3em no-repeat,
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 36%, #fff), var(--mk-soft2));
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--ae-c) 40%, transparent);
+}
+
+/* the sign family: the chip itself is the edge color, an inset copy of its shape on top is the fill */
+.gel-amtag-chip, .gel-amarrow-chip, .gel-ambook-chip, .gel-amdog-chip { background: var(--mk-edge); border-radius: 0; }
+.gel-amtag-chip::before, .gel-amarrow-chip::before, .gel-ambook-chip::before, .gel-amdog-chip::before {
+  content: ''; position: absolute; z-index: -1; inset: 1.5px; background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 38%, #fff), var(--mk-soft2));
+}
+
+/* Price Tag Mark ++R<text++ */
+.gel-amtag-chip { padding: 2px 10px 2px 1.6em; clip-path: polygon(0.85em 0, 100% 0, 100% 100%, 0.85em 100%, 0 50%); }
+.gel-amtag-chip::before { clip-path: polygon(calc(0.85em - 1px) 0, 100% 0, 100% 100%, calc(0.85em - 1px) 100%, 0 50%); }
+.gel-amtag-chip::after {
+  content: ''; position: absolute; z-index: -1; left: 0.62em; top: 50%; width: 0.42em; height: 0.42em; margin-top: -0.21em; border-radius: 50%;
+  background: #fff; box-shadow: inset 0 1px 1.5px rgba(0, 0, 0, 0.4), 0 0 0 1.5px var(--mk-edge);
+}
+
+/* Arrow Mark ++R>text++ */
+.gel-amarrow-chip { padding: 2px 1.35em 2px 10px; clip-path: polygon(0 0, calc(100% - 0.8em) 0, 100% 50%, calc(100% - 0.8em) 100%, 0 100%); }
+.gel-amarrow-chip::before {
+  clip-path: polygon(0 0, calc(100% - 0.8em + 1px) 0, 100% 50%, calc(100% - 0.8em + 1px) 100%, 0 100%);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ae-l) 34%, #fff) 0%, var(--mk-soft2) 55%, color-mix(in srgb, var(--ae-c) 55%, #fff) 100%);
+}
+
+/* Bookmark Mark ++R(text++ */
+.gel-ambook-chip { padding: 2px 1.1em 2px 1.05em; clip-path: polygon(0 0, 100% 0, calc(100% - 0.6em) 50%, 100% 100%, 0 100%); }
+.gel-ambook-chip::before { clip-path: polygon(0 0, 100% 0, calc(100% - 0.6em - 1px) 50%, 100% 100%, 0 100%); }
+.gel-ambook-chip::after {
+  content: ''; position: absolute; z-index: -1; left: 1.5px; top: 1.5px; bottom: 1.5px; width: 0.5em;
+  background: linear-gradient(180deg, var(--ae-l), var(--ae-c) 55%, var(--ae-e2)); box-shadow: inset -1px 0 0 color-mix(in srgb, var(--ae-e1) 35%, transparent);
+}
+
+/* Dog-ear Mark ++R)text++ */
+.gel-amdog-chip { padding: 2px 1.15em 2px 10px; clip-path: polygon(0 0, calc(100% - 0.75em) 0, 100% 0.75em, 100% 100%, 0 100%); }
+.gel-amdog-chip::before { clip-path: polygon(0 0, calc(100% - 0.75em + 1px) 0, 100% calc(0.75em - 1px), 100% 100%, 0 100%); }
+.gel-amdog-chip::after {
+  content: ''; position: absolute; z-index: -1; right: 0; top: 0; width: 0.75em; height: 0.75em;
+  background: linear-gradient(45deg, color-mix(in srgb, var(--ae-c) 55%, var(--ae-l)) 50%, transparent 50%);
+  box-shadow: none; filter: drop-shadow(-1px 1px 0 color-mix(in srgb, var(--ae-e1) 35%, transparent));
+}
+
+/* Bracket Mark ++R[text++ */
+.gel-ambrack-chip {
+  padding: 1px 1em; border-radius: 2px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 28%, #fff), color-mix(in srgb, var(--ae-l) 52%, #fff));
+}
+.gel-ambrack-chip::before, .gel-ambrack-chip::after {
+  content: ''; position: absolute; z-index: -1; top: 0; bottom: 0; width: 0.5em; box-sizing: border-box; border: 0.17em solid var(--mk-bk);
+}
+.gel-ambrack-chip::before { left: 0; border-right: 0; border-radius: 2px 0 0 2px; }
+.gel-ambrack-chip::after { right: 0; border-left: 0; border-radius: 0 2px 2px 0; }
+
+/* Crop Mark ++R]text++ */
+.gel-amcrop-chip {
+  padding: 3px 14px;
+  background:
+    linear-gradient(var(--mk-bk), var(--mk-bk)) left top / 0.62em 0.15em no-repeat, linear-gradient(var(--mk-bk), var(--mk-bk)) left top / 0.15em 0.62em no-repeat,
+    linear-gradient(var(--mk-bk), var(--mk-bk)) right top / 0.62em 0.15em no-repeat, linear-gradient(var(--mk-bk), var(--mk-bk)) right top / 0.15em 0.62em no-repeat,
+    linear-gradient(var(--mk-bk), var(--mk-bk)) left bottom / 0.62em 0.15em no-repeat, linear-gradient(var(--mk-bk), var(--mk-bk)) left bottom / 0.15em 0.62em no-repeat,
+    linear-gradient(var(--mk-bk), var(--mk-bk)) right bottom / 0.62em 0.15em no-repeat, linear-gradient(var(--mk-bk), var(--mk-bk)) right bottom / 0.15em 0.62em no-repeat,
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 30%, #fff), var(--mk-soft2));
+}
+
+/* Stamp Mark ++R{text++ */
+.gel-amstamp-chip {
+  padding: 2px 11px; border-radius: 0.3em; transform: rotate(-2deg); letter-spacing: 0.03em; font-weight: 800;
+  border: 2px solid var(--mk-bk);
+  background: color-mix(in srgb, var(--ae-l) 20%, #fff);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.9), inset 0 0 0 4.5px var(--mk-bk);
+}
+
+/* Squiggle Mark ++R}text++ */
+.gel-amsquig-chip {
+  padding: 1px 6px 3px; border-radius: 3px;
+  background: linear-gradient(180deg, transparent 48%, color-mix(in srgb, var(--ae-l) 60%, #fff) 48%), linear-gradient(#fff, #fff);
+  text-decoration: underline wavy var(--mk-bk); text-decoration-thickness: 0.11em; text-underline-offset: 0.2em; text-decoration-skip-ink: none;
+}
+
+/* Quote Mark ++R"text++ */
+.gel-amquote-chip {
+  padding: 1px 10px 1px 1.8em; border-radius: 0.2em 0.65em 0.65em 0.2em; border-left: 0.3em solid var(--mk-bk);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 34%, #fff), var(--mk-soft2));
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--ae-c) 38%, transparent);
+}
+.gel-amquote-chip::before {
+  content: '\201C'; position: absolute; left: 0.28em; top: 0.1em; font: 800 2.1em/0.9 Georgia, 'Times New Roman', serif; color: var(--ae-c);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Star Mark ++R1text++ */
+.gel-amstar-chip {
+  padding: 1px 11px 1px 1.9em; border-radius: 999px; border: 2px solid var(--mk-edge);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 40%, #fff), var(--mk-soft2));
+  box-shadow: 0 2px 0 color-mix(in srgb, var(--ae-c) 45%, transparent), inset 0 1px 1px rgba(255, 255, 255, 0.7);
+}
+.gel-amstar-chip::before {
+  content: ''; position: absolute; left: 0.5em; top: 50%; width: 1.02em; height: 1.02em; margin-top: -0.53em; clip-path: polygon(50% 0, 61% 36%, 98% 38%, 68% 60%, 79% 96%, 50% 74%, 21% 96%, 32% 60%, 2% 38%, 39% 36%);
+  background: linear-gradient(140deg, color-mix(in srgb, var(--ae-l) 40%, #fff) 0%, var(--ae-c) 52%, var(--ae-e2) 100%);
+}
+
+/* Circled Mark ++R2text++ */
+.gel-amcircle-chip {
+  margin: 0 5px; padding: 3px 14px; transform: rotate(-1.5deg); border: 0.13em solid var(--mk-bk); border-radius: 56% 44% 53% 47% / 64% 58% 42% 36%;
+  background: radial-gradient(ellipse at 50% 50%, color-mix(in srgb, var(--ae-l) 40%, transparent), color-mix(in srgb, var(--ae-l) 16%, transparent) 75%), linear-gradient(#fff, #fff);
+}
+.gel-amcircle-chip::before {
+  content: ''; position: absolute; z-index: -1; inset: -0.2em -0.28em; border: 0.09em solid var(--mk-bk); border-bottom-color: transparent; border-left-color: transparent;
+  border-radius: 46% 54% 48% 52% / 40% 52% 60% 58%; transform: rotate(3deg); opacity: 0.75;
+}
+
+/* Ticket Punch Mark ++R3text++ */
+.gel-ampunch-chip {
+  padding: 1px 1.5em; border-radius: 0.2em; border: 1px solid var(--mk-edge);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 36%, #fff), var(--mk-soft2));
+  -webkit-mask: radial-gradient(circle 0.36em at 0 50%, #0000 96%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.36em at 100% 50%, #0000 96%, #000) right / 51% 100% no-repeat;
+  mask: radial-gradient(circle 0.36em at 0 50%, #0000 96%, #000) left / 51% 100% no-repeat, radial-gradient(circle 0.36em at 100% 50%, #0000 96%, #000) right / 51% 100% no-repeat;
+}
+.gel-ampunch-chip::before, .gel-ampunch-chip::after { content: ''; position: absolute; z-index: -1; top: 3px; bottom: 3px; border-left: 2px dotted var(--mk-bk); opacity: 0.8; }
+.gel-ampunch-chip::before { left: 0.95em; }
+.gel-ampunch-chip::after { right: 0.95em; }
+
+/* ========================================================
+   FOUR WOBBLE RING COUSINS (jw), written #/COLOR<digit>text<digit>: Double Wobble #/R1text1, Dashed Wobble #/R2text2,
+   Drippy Wobble #/R3text3, Beaded Wobble #/R4text4. Same 16 colors, size and feel as the Wobble Ring #/R-text-.
+   ======================================================== */
+.gel-jdring-chip, .gel-jdash-chip, .gel-jdrip-chip, .gel-jbead-chip {
+  --jx-l: color-mix(in srgb, var(--jx-c) 35%, #fff); --jx-d: color-mix(in srgb, var(--jx-e) 75%, #000);
+  position: relative; isolation: isolate; box-sizing: border-box;
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 3px 15px; border: 0; color: var(--jx-i); font-family: inherit; font-weight: 800; white-space: nowrap;
+  margin: 0 3px 4px; vertical-align: middle; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-jdring-chip {
+  padding: 4px 19px; border: 0.16em solid color-mix(in srgb, var(--jx-c) 62%, transparent);
+  border-radius: 1.2em 0.85em 1.3em 0.8em / 0.85em 1.25em 0.85em 1.2em; transform: rotate(1deg);
+  background: radial-gradient(ellipse 80% 90% at 50% 50%, color-mix(in srgb, var(--jx-c) 8%, transparent), color-mix(in srgb, var(--jx-c) 22%, transparent)), rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 0 0 0.1em rgba(255, 255, 255, 0.85), inset 0 0 0 0.17em color-mix(in srgb, var(--jx-c) 60%, transparent), inset 0 0.3em 0.3em -0.1em rgba(255, 255, 255, 0.5), 0 0 0 0.05em color-mix(in srgb, var(--jx-e) 40%, transparent), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-c) 55%, transparent);
+}
+.gel-jdring-chip::before { content: ""; position: absolute; z-index: -1; left: 0.75em; top: 0.3em; width: 30%; height: 0.15em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); transform: rotate(-3deg); }
+
+.gel-jdash-chip {
+  padding: 4px 18px; border: 0.2em dashed color-mix(in srgb, var(--jx-c) 80%, transparent);
+  border-radius: 1.15em 0.9em 1.25em 0.85em / 0.9em 1.2em 0.85em 1.15em; transform: rotate(-1deg);
+  background: radial-gradient(ellipse 80% 90% at 50% 50%, color-mix(in srgb, var(--jx-c) 8%, transparent), color-mix(in srgb, var(--jx-c) 22%, transparent)), rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 0 0 0.05em color-mix(in srgb, var(--jx-l) 80%, transparent), inset 0 0.1em 0.2em rgba(255, 255, 255, 0.55), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-c) 50%, transparent);
+}
+.gel-jdash-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.14em; width: 32%; height: 0.15em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); transform: rotate(-3deg); }
+
+.gel-jdrip-chip {
+  padding: 3px 17px; border: 0.2em solid color-mix(in srgb, var(--jx-c) 62%, transparent);
+  border-radius: 1.2em 0.85em 1.25em 0.8em / 0.85em 1.25em 0.8em 1.2em; margin-bottom: 0.7em;
+  background: radial-gradient(ellipse 80% 90% at 50% 50%, color-mix(in srgb, var(--jx-c) 8%, transparent), color-mix(in srgb, var(--jx-c) 22%, transparent)), rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 0 0 0.05em color-mix(in srgb, var(--jx-l) 85%, transparent), inset 0 0.1em 0.2em rgba(255, 255, 255, 0.55), 0 0 0 0.05em color-mix(in srgb, var(--jx-e) 40%, transparent);
+}
+.gel-jdrip-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.12em; width: 34%; height: 0.17em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-3deg); }
+.gel-jdrip-chip::after {
+  content: ""; position: absolute; z-index: -1; left: 0.5em; right: 0.5em; bottom: -0.58em; height: 0.5em;
+  background:
+    radial-gradient(ellipse 0.15em 0.2em at 17.25% 0.22em, color-mix(in srgb, var(--jx-c) 78%, #fff) 0 72%, transparent 100%),
+    linear-gradient(90deg, transparent 15%, color-mix(in srgb, var(--jx-c) 78%, #fff) 15% 19.5%, transparent 19.5% 100%) 0 0 / 100% 0.22em no-repeat,
+    radial-gradient(ellipse 0.17em 0.23em at 50.75% 0.3em, color-mix(in srgb, var(--jx-c) 78%, #fff) 0 72%, transparent 100%),
+    linear-gradient(90deg, transparent 48%, color-mix(in srgb, var(--jx-c) 78%, #fff) 48% 53.5%, transparent 53.5% 100%) 0 0 / 100% 0.3em no-repeat,
+    radial-gradient(ellipse 0.13em 0.17em at 82.0% 0.18em, color-mix(in srgb, var(--jx-c) 78%, #fff) 0 72%, transparent 100%),
+    linear-gradient(90deg, transparent 80%, color-mix(in srgb, var(--jx-c) 78%, #fff) 80% 84%, transparent 84% 100%) 0 0 / 100% 0.18em no-repeat;
+}
+
+.gel-jbead-chip {
+  padding: 4px 19px; border: 0.24em dotted color-mix(in srgb, var(--jx-c) 85%, transparent);
+  border-radius: 1.2em 0.9em 1.3em 0.85em / 0.9em 1.25em 0.85em 1.2em; transform: rotate(1deg);
+  background: radial-gradient(ellipse 80% 90% at 50% 50%, color-mix(in srgb, var(--jx-c) 8%, transparent), color-mix(in srgb, var(--jx-c) 22%, transparent)), rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 0 0 0.05em color-mix(in srgb, var(--jx-l) 80%, transparent), inset 0 0.1em 0.2em rgba(255, 255, 255, 0.55), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-c) 50%, transparent);
+}
+.gel-jbead-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.12em; width: 32%; height: 0.15em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); transform: rotate(-3deg); }
