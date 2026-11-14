@@ -21428,17 +21428,19 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   color: var(--ae-ink, #ffffff); text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 .gel-gloss-chip {
-  padding: 2px 14px; border-radius: 8px;
-  background: linear-gradient(180deg, var(--ae-l) 0%, var(--ae-c) 52%, color-mix(in srgb, var(--ae-c) 72%, var(--ae-e1)) 100%);
-  box-shadow: inset 0 -3px 4px color-mix(in srgb, var(--ae-e1) 50%, transparent), inset 0 0 0 1px color-mix(in srgb, var(--ae-e2) 55%, transparent), 0 3px 5px rgba(0, 0, 0, 0.18);
+  padding: 2px 14px; border-radius: 0.5em; overflow: hidden;
+  background: linear-gradient(165deg, var(--ae-l) 0%, var(--ae-c) 46%, color-mix(in srgb, var(--ae-c) 68%, var(--ae-e1)) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75), inset 0 0 0 1px color-mix(in srgb, var(--ae-e2) 60%, transparent),
+    inset 0 -0.45em 0.5em -0.3em color-mix(in srgb, var(--ae-l) 85%, transparent),
+    0 0.16em 0 color-mix(in srgb, var(--ae-e1) 75%, transparent), 0 0.34em 0.5em rgba(0, 0, 0, 0.22);
 }
 .gel-gloss-chip::before {
-  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.4em; top: 2px; width: 46%; height: 0.36em; border-radius: 0.14em;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.3));
+  content: ''; position: absolute; z-index: -1; pointer-events: none; top: -25%; bottom: -25%; left: 17%; width: 27%; transform: skewX(-24deg);
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.6) 55%, rgba(255, 255, 255, 0.18));
 }
 .gel-gloss-chip::after {
-  content: ''; position: absolute; z-index: -1; pointer-events: none; left: calc(0.4em + 46% + 4px); top: 2px; width: 3px; height: 0.36em; border-radius: 2px;
-  background: rgba(255, 255, 255, 0.55);
+  content: ''; position: absolute; z-index: -1; pointer-events: none; top: -25%; bottom: -25%; left: 50%; width: 7%; transform: skewX(-24deg);
+  background: rgba(255, 255, 255, 0.42);
 }
 .gel-glosstube-chip {
   padding: 2px 15px; border-radius: 999px;
@@ -21853,3 +21855,174 @@ mark.an-hl.an-s-wv { background: repeating-linear-gradient(45deg, color-mix(in s
 .gel-jglit-chip::before { content: ""; position: absolute; z-index: -1; right: 0.5em; top: 0.1em; width: 0.42em; height: 0.42em; background: radial-gradient(circle, #fff 0 14%, transparent 18%), linear-gradient(#fff, #fff) 50% 50% / 100% 0.06em no-repeat, linear-gradient(#fff, #fff) 50% 50% / 0.06em 100% no-repeat; filter: drop-shadow(0 0 0.1em #fff); }
 .gel-jglit-chip::after { content: ""; position: absolute; z-index: -1; left: 0.55em; bottom: 0.1em; width: 0.3em; height: 0.3em; background: radial-gradient(circle, #fff 0 14%, transparent 18%), linear-gradient(#fff, #fff) 50% 50% / 100% 0.05em no-repeat, linear-gradient(#fff, #fff) 50% 50% / 0.05em 100% no-repeat; opacity: 0.9; }
 
+/* ========================================================
+   FIFTEEN MORE JELLY CHIP COUSINS (jx2), written #/COLOR<mark>text<mark>: Star #/R*text*, Egg #/R@text@, Worm #/R&text&,
+   Citrus #/R$text$, Stripe #/R|text|, Heart #/R<text<, Capsule #/R>text>, Boba #/R_text_, Molded #/R[text[, Splat #/R]text],
+   Frosted #/R{text{, Ice #/R}text}, Glow #/R(text(, Marbled #/R)text), Dusk #/R"text". Same 16 colors, size and feel as the Jelly Chip.
+   ======================================================== */
+.gel-jstar-chip, .gel-jegg-chip, .gel-jworm-chip, .gel-jcitrus-chip, .gel-jstripe-chip, .gel-jheart-chip, .gel-jpill-chip, .gel-jboba-chip, .gel-jmold-chip, .gel-jsplat-chip, .gel-jfrost-chip, .gel-jice-chip, .gel-jglow-chip, .gel-jmarble-chip, .gel-jdusk-chip {
+  --jx-l: color-mix(in srgb, var(--jx-c) 35%, #fff); --jx-d: color-mix(in srgb, var(--jx-e) 75%, #000);
+  position: relative; isolation: isolate; box-sizing: border-box;
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 3px 15px; border: 0; color: var(--jx-i); font-family: inherit; font-weight: 800; white-space: nowrap;
+  margin: 0 3px 4px; vertical-align: middle; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-jstar-chip {
+  padding: 3px 17px; border-radius: 0.95em;
+  background:
+    radial-gradient(ellipse 60% 75% at 50% 55%, color-mix(in srgb, var(--jx-l) 60%, transparent), transparent 75%),
+    linear-gradient(180deg, color-mix(in srgb, var(--jx-c) 62%, transparent), color-mix(in srgb, var(--jx-e) 78%, transparent));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.22em 0.32em -0.05em color-mix(in srgb, var(--jx-d) 45%, transparent), 0 0.28em 0.45em -0.1em color-mix(in srgb, var(--jx-c) 58%, transparent);
+}
+.gel-jstar-chip::before { content: ""; position: absolute; z-index: -1; left: 0.42em; top: 0.1em; width: 0.5em; height: 0.5em; background: #fff; clip-path: polygon(50% 0, 61% 36%, 98% 38%, 68% 60%, 79% 96%, 50% 74%, 21% 96%, 32% 60%, 2% 38%, 39% 36%); filter: drop-shadow(0 0 0.1em rgba(255, 255, 255, 0.9)); opacity: 0.95; }
+.gel-jstar-chip::after { content: ""; position: absolute; z-index: -1; right: 0.6em; bottom: 0.2em; width: 0.26em; height: 0.26em; background: #fff; clip-path: polygon(50% 0, 61% 36%, 98% 38%, 68% 60%, 79% 96%, 50% 74%, 21% 96%, 32% 60%, 2% 38%, 39% 36%); opacity: 0.8; }
+
+.gel-jegg-chip {
+  padding: 3px 17px; border-radius: 0.95em 0.85em 0.95em 0.9em / 0.85em 0.95em 0.8em 0.95em;
+  background:
+    radial-gradient(ellipse 26% 50% at 50% 54%, color-mix(in srgb, var(--jx-c) 92%, #fff) 0 70%, color-mix(in srgb, var(--jx-e) 55%, transparent) 88%, transparent 100%),
+    radial-gradient(ellipse 90% 90% at 50% 50%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-l) 85%, #fff), inset 0 -0.18em 0.3em -0.05em color-mix(in srgb, var(--jx-c) 30%, transparent), 0 0.26em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 45%, transparent);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.gel-jegg-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.95); transform: rotate(-3deg); }
+
+.gel-jworm-chip {
+  padding: 3px 18px; border-radius: 999px;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 0.5em, color-mix(in srgb, var(--jx-d) 48%, transparent) 0.5em 0.62em, rgba(255, 255, 255, 0.5) 0.62em 0.7em, transparent 0.7em 1.15em),
+    linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 60%, transparent) 0%, color-mix(in srgb, var(--jx-c) 80%, transparent) 40%, color-mix(in srgb, var(--jx-e) 86%, transparent) 100%);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.24em 0.3em -0.06em color-mix(in srgb, var(--jx-d) 45%, transparent), 0 0.3em 0.4em -0.1em color-mix(in srgb, var(--jx-e) 65%, transparent);
+}
+.gel-jworm-chip::before { content: ""; position: absolute; z-index: -1; left: 0.7em; top: 0.08em; right: 1.4em; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.2)); }
+
+.gel-jcitrus-chip {
+  padding: 4px 18px; border: 0.16em solid color-mix(in srgb, var(--jx-l) 78%, #fff); border-radius: 999px;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 50%, color-mix(in srgb, var(--jx-c) 55%, transparent) 0 11deg, rgba(255, 255, 255, 0.55) 11deg 15deg),
+    color-mix(in srgb, var(--jx-c) 45%, transparent);
+  background-size: 100% 420%; background-position: center;
+  box-shadow: inset 0 0 0 0.08em color-mix(in srgb, var(--jx-e) 55%, transparent), inset 0 0.12em 0.2em rgba(255, 255, 255, 0.45), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent);
+}
+.gel-jcitrus-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-4deg); }
+
+.gel-jstripe-chip {
+  padding: 3px 17px; border-radius: 0.6em;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--jx-l) 55%, transparent) 0 0.45em, color-mix(in srgb, var(--jx-e) 72%, transparent) 0.45em 0.9em);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 75%, #fff), inset 0 0.14em 0.22em rgba(255, 255, 255, 0.5), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 38%, transparent), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-e) 58%, transparent);
+}
+.gel-jstripe-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; right: 0.5em; top: 0.08em; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.85) 20%, rgba(255, 255, 255, 0.85) 80%, rgba(255, 255, 255, 0.1)); }
+
+.gel-jheart-chip {
+  padding: 3px 14px 3px 24px; border-radius: 0.95em;
+  background:
+    radial-gradient(ellipse 80% 80% at 30% 20%, color-mix(in srgb, var(--jx-l) 70%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb, var(--jx-c) 66%, transparent), color-mix(in srgb, var(--jx-e) 80%, transparent));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.22em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 42%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 60%, transparent);
+}
+.gel-jheart-chip::before { content: ""; position: absolute; z-index: -1; left: 0.45em; top: 50%; width: 0.66em; height: 0.6em; margin-top: -0.32em; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 18'%3E%3Cpath d='M10 17C-4 8 3 -2 10 4c7-6 14 4 0 13z' fill='white' fill-opacity='.92'/%3E%3C/svg%3E") center / contain no-repeat; filter: drop-shadow(0 0 0.06em rgba(255, 255, 255, 0.8)); }
+.gel-jheart-chip::after { content: ""; position: absolute; z-index: -1; right: 0.5em; top: 0.14em; width: 0.7em; height: 0.15em; border-radius: 999px; background: rgba(255, 255, 255, 0.75); transform: rotate(-3deg); }
+
+.gel-jpill-chip {
+  padding: 3px 17px; border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent calc(50% - 0.03em), rgba(255, 255, 255, 0.7) calc(50% - 0.03em) calc(50% + 0.03em), transparent calc(50% + 0.03em)),
+    linear-gradient(90deg, color-mix(in srgb, var(--jx-l) 70%, transparent) 50%, color-mix(in srgb, var(--jx-e) 78%, transparent) 50%);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.24em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 42%, transparent), 0 0.3em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 62%, transparent);
+}
+.gel-jpill-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 38%; height: 0.12em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.2)); }
+.gel-jpill-chip::after { content: ""; position: absolute; z-index: -1; right: 0.55em; top: 0.13em; width: 0.8em; height: 0.15em; border-radius: 999px; background: rgba(255, 255, 255, 0.5); }
+
+.gel-jboba-chip {
+  padding: 3px 17px 6px; border-radius: 0.95em;
+  background:
+    radial-gradient(circle at 12% 88%, #2a1c1c 0 0.115em, transparent 0.13em),
+    radial-gradient(circle at 30% 91%, #2a1c1c 0 0.115em, transparent 0.13em),
+    radial-gradient(circle at 48% 88%, #2a1c1c 0 0.115em, transparent 0.13em),
+    radial-gradient(circle at 66% 91%, #2a1c1c 0 0.115em, transparent 0.13em),
+    radial-gradient(circle at 84% 88%, #2a1c1c 0 0.115em, transparent 0.13em),
+    linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 50%, transparent), color-mix(in srgb, var(--jx-c) 64%, transparent) 70%, color-mix(in srgb, var(--jx-e) 78%, transparent));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.14em 0.22em rgba(255, 255, 255, 0.45), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 55%, transparent);
+}
+.gel-jboba-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+.gel-jboba-chip::after { content: ""; position: absolute; z-index: -1; left: 12%; right: 12%; bottom: 0.1em; height: 0.12em; background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.5) 0 0.025em, transparent 0.035em) 0 0 / 18% 100% repeat-x; }
+
+.gel-jmold-chip {
+  padding: 4px 18px 3px; border-radius: 0.4em 0.4em 0.9em 0.9em / 0.5em 0.5em 0.8em 0.8em;
+  background:
+    repeating-linear-gradient(90deg, color-mix(in srgb, var(--jx-d) 24%, transparent) 0 0.08em, rgba(255, 255, 255, 0.14) 0.08em 0.3em, color-mix(in srgb, var(--jx-d) 16%, transparent) 0.3em 0.4em),
+    linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 65%, transparent) 0 22%, color-mix(in srgb, var(--jx-c) 74%, transparent) 22% 100%);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.2em 0 -0.02em rgba(255, 255, 255, 0.45), inset 0 -0.22em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 42%, transparent), 0 0.3em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 62%, transparent);
+}
+.gel-jmold-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.8); }
+
+.gel-jsplat-chip {
+  padding: 3px 18px; margin-left: 8px; margin-right: 8px;
+  border-radius: 1.1em 0.7em 1.2em 0.75em / 0.75em 1.1em 0.7em 1.15em; transform: rotate(-1.5deg);
+  background:
+    radial-gradient(ellipse 70% 70% at 40% 30%, color-mix(in srgb, var(--jx-l) 55%, transparent), transparent 70%),
+    linear-gradient(170deg, color-mix(in srgb, var(--jx-c) 76%, transparent), color-mix(in srgb, var(--jx-e) 82%, transparent));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 42%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent);
+}
+.gel-jsplat-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-4deg); }
+.gel-jsplat-chip::after { content: ""; position: absolute; z-index: -1; left: -0.42em; top: -0.12em; right: -0.42em; bottom: -0.1em; background:
+    radial-gradient(circle at 4% 22%, color-mix(in srgb, var(--jx-c) 80%, transparent) 0 0.14em, transparent 0.15em),
+    radial-gradient(circle at 98% 74%, color-mix(in srgb, var(--jx-c) 80%, transparent) 0 0.12em, transparent 0.13em),
+    radial-gradient(circle at 92% 8%, color-mix(in srgb, var(--jx-e) 70%, transparent) 0 0.07em, transparent 0.08em),
+    radial-gradient(circle at 9% 92%, color-mix(in srgb, var(--jx-e) 70%, transparent) 0 0.06em, transparent 0.07em); }
+
+.gel-jfrost-chip {
+  padding: 3px 17px; border-radius: 0.9em;
+  background:
+    radial-gradient(circle at 8% 28%, #fff 0 0.02em, transparent 0.035em), radial-gradient(circle at 19% 70%, #fff 0 0.025em, transparent 0.04em),
+    radial-gradient(circle at 29% 24%, #fff 0 0.02em, transparent 0.035em), radial-gradient(circle at 38% 78%, #fff 0 0.02em, transparent 0.035em),
+    radial-gradient(circle at 49% 36%, #fff 0 0.025em, transparent 0.04em), radial-gradient(circle at 58% 72%, #fff 0 0.02em, transparent 0.035em),
+    radial-gradient(circle at 68% 22%, #fff 0 0.02em, transparent 0.035em), radial-gradient(circle at 77% 66%, #fff 0 0.025em, transparent 0.04em),
+    radial-gradient(circle at 87% 30%, #fff 0 0.02em, transparent 0.035em), radial-gradient(circle at 94% 74%, #fff 0 0.02em, transparent 0.035em),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.05) 60%),
+    color-mix(in srgb, var(--jx-c) 56%, rgba(255, 255, 255, 0.5));
+  box-shadow: inset 0 0 0 0.08em rgba(255, 255, 255, 0.7), inset 0 -0.22em 0.32em -0.05em color-mix(in srgb, var(--jx-e) 50%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 52%, transparent);
+}
+.gel-jfrost-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); }
+
+.gel-jice-chip {
+  padding: 3px 17px; border-radius: 0.3em 0.8em 0.3em 0.8em;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.5) 0 12%, transparent 12% 34%, rgba(255, 255, 255, 0.28) 34% 40%, transparent 40% 70%, rgba(255, 255, 255, 0.3) 70% 76%, transparent 76%),
+    linear-gradient(160deg, color-mix(in srgb, var(--jx-c) 38%, #e8f6ff), color-mix(in srgb, var(--jx-c) 66%, #bfe6ff) 60%, color-mix(in srgb, var(--jx-e) 70%, #8ccdf2));
+  box-shadow: inset 0 0 0 0.07em rgba(255, 255, 255, 0.85), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-e) 45%, transparent), 0 0.28em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 55%, #4da8e0);
+}
+.gel-jice-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.7em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.92); transform: rotate(-3deg); }
+
+.gel-jglow-chip {
+  padding: 3px 17px; border-radius: 0.95em;
+  background:
+    radial-gradient(ellipse 70% 90% at 50% 50%, #fff, color-mix(in srgb, var(--jx-l) 70%, #fff) 38%, color-mix(in srgb, var(--jx-c) 80%, transparent) 100%);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 80%, #fff), 0 0 0.4em 0.1em color-mix(in srgb, var(--jx-c) 65%, transparent), 0 0 1em 0.15em color-mix(in srgb, var(--jx-c) 35%, transparent), 0 0.3em 0.5em -0.1em color-mix(in srgb, var(--jx-e) 50%, transparent);
+  text-shadow: 0 0 0.4em rgba(255, 255, 255, 0.8);
+}
+.gel-jglow-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.95); }
+
+.gel-jmarble-chip {
+  padding: 3px 17px; border-radius: 0.95em;
+  background:
+    linear-gradient(168deg, transparent 38%, rgba(255, 255, 255, 0.6) 39% 41%, transparent 42%),
+    linear-gradient(8deg, transparent 58%, color-mix(in srgb, var(--jx-d) 40%, transparent) 59% 61%, transparent 62%),
+    radial-gradient(ellipse 40% 110% at 20% 30%, rgba(255, 255, 255, 0.5), transparent 70%),
+    radial-gradient(ellipse 38% 100% at 80% 80%, color-mix(in srgb, var(--jx-d) 40%, transparent), transparent 70%),
+    radial-gradient(ellipse 30% 80% at 52% 45%, color-mix(in srgb, var(--jx-l) 85%, transparent), transparent 75%),
+    linear-gradient(100deg, color-mix(in srgb, var(--jx-c) 70%, transparent), color-mix(in srgb, var(--jx-e) 78%, transparent));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.14em 0.22em rgba(255, 255, 255, 0.4), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 40%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 58%, transparent);
+}
+.gel-jmarble-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.75em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+
+.gel-jdusk-chip {
+  padding: 3px 17px; border-radius: 0.95em;
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 80%, #fff) 0%, color-mix(in srgb, var(--jx-c) 80%, transparent) 38%, color-mix(in srgb, var(--jx-e) 90%, #4a2a7a 25%) 100%);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.26em 0.34em -0.05em color-mix(in srgb, #3b1d6b 45%, transparent), 0 0.3em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 62%, transparent);
+}
+.gel-jdusk-chip::before { content: ""; position: absolute; z-index: -1; left: 0.55em; top: 0.08em; width: 0.8em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+.gel-jdusk-chip::after { content: ""; position: absolute; z-index: -1; right: 0.55em; bottom: 0.2em; width: 0.2em; height: 0.2em; background: #fff; clip-path: polygon(50% 0, 61% 36%, 98% 38%, 68% 60%, 79% 96%, 50% 74%, 21% 96%, 32% 60%, 2% 38%, 39% 36%); opacity: 0.9; }

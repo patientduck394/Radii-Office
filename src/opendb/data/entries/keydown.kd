@@ -448,6 +448,321 @@ Jelly full of glitter, with a couple of sparkles! Written `#/COLOR.text.`, in th
 * `#/SL.text.` #/SL.slate.
 * `#/BK.text.` #/BK.black.
 
+## Star Jelly chips
+
+A glowing jelly with a bright star trapped inside it! Written `#/COLOR*text*`, in the same 16 colors:
+
+* `#/R*text*` #/R*red*
+* `#/O*text*` #/O*orange*
+* `#/GL*text*` #/GL*gold*
+* `#/Y*text*` #/Y*yellow*
+* `#/L*text*` #/L*lime*
+* `#/G*text*` #/G*green*
+* `#/TU*text*` #/TU*turquoise*
+* `#/T*text*` #/T*teal*
+* `#/C*text*` #/C*cyan*
+* `#/B*text*` #/B*blue*
+* `#/PR*text*` #/PR*purple*
+* `#/PK*text*` #/PK*pink*
+* `#/W*text*` #/W*white*
+* `#/FG*text*` #/FG*fog*
+* `#/SL*text*` #/SL*slate*
+* `#/BK*text*` #/BK*black*
+
+## Jelly Egg chips
+
+A clear jelly egg white with a round yolk of color in the middle! Written `#/COLOR@text@`, in the same 16 colors:
+
+* `#/R@text@` #/R@red@
+* `#/O@text@` #/O@orange@
+* `#/GL@text@` #/GL@gold@
+* `#/Y@text@` #/Y@yellow@
+* `#/L@text@` #/L@lime@
+* `#/G@text@` #/G@green@
+* `#/TU@text@` #/TU@turquoise@
+* `#/T@text@` #/T@teal@
+* `#/C@text@` #/C@cyan@
+* `#/B@text@` #/B@blue@
+* `#/PR@text@` #/PR@purple@
+* `#/PK@text@` #/PK@pink@
+* `#/W@text@` #/W@white@
+* `#/FG@text@` #/FG@fog@
+* `#/SL@text@` #/SL@slate@
+* `#/BK@text@` #/BK@black@
+
+## Jelly Worm chips
+
+A stretchy gummy worm with ridged rings along its body! Written `#/COLOR&text&`, in the same 16 colors:
+
+* `#/R&text&` #/R&red&
+* `#/O&text&` #/O&orange&
+* `#/GL&text&` #/GL&gold&
+* `#/Y&text&` #/Y&yellow&
+* `#/L&text&` #/L&lime&
+* `#/G&text&` #/G&green&
+* `#/TU&text&` #/TU&turquoise&
+* `#/T&text&` #/T&teal&
+* `#/C&text&` #/C&cyan&
+* `#/B&text&` #/B&blue&
+* `#/PR&text&` #/PR&purple&
+* `#/PK&text&` #/PK&pink&
+* `#/W&text&` #/W&white&
+* `#/FG&text&` #/FG&fog&
+* `#/SL&text&` #/SL&slate&
+* `#/BK&text&` #/BK&black&
+
+## Citrus Jelly chips
+
+A jelly citrus slice with a pith ring and juicy segments! Written `#/COLOR$text$`, in the same 16 colors:
+
+* `#/R$text$` #/R$red$
+* `#/O$text$` #/O$orange$
+* `#/GL$text$` #/GL$gold$
+* `#/Y$text$` #/Y$yellow$
+* `#/L$text$` #/L$lime$
+* `#/G$text$` #/G$green$
+* `#/TU$text$` #/TU$turquoise$
+* `#/T$text$` #/T$teal$
+* `#/C$text$` #/C$cyan$
+* `#/B$text$` #/B$blue$
+* `#/PR$text$` #/PR$purple$
+* `#/PK$text$` #/PK$pink$
+* `#/W$text$` #/W$white$
+* `#/FG$text$` #/FG$fog$
+* `#/SL$text$` #/SL$slate$
+* `#/BK$text$` #/BK$black$
+
+## Stripe Jelly chips
+
+Candy-striped jelly, clear stripes alternating with deep ones! Written `#/COLOR|text|`, in the same 16 colors:
+
+* `#/R|text|` #/R|red|
+* `#/O|text|` #/O|orange|
+* `#/GL|text|` #/GL|gold|
+* `#/Y|text|` #/Y|yellow|
+* `#/L|text|` #/L|lime|
+* `#/G|text|` #/G|green|
+* `#/TU|text|` #/TU|turquoise|
+* `#/T|text|` #/T|teal|
+* `#/C|text|` #/C|cyan|
+* `#/B|text|` #/B|blue|
+* `#/PR|text|` #/PR|purple|
+* `#/PK|text|` #/PK|pink|
+* `#/W|text|` #/W|white|
+* `#/FG|text|` #/FG|fog|
+* `#/SL|text|` #/SL|slate|
+* `#/BK|text|` #/BK|black|
+
+## Heart Jelly chips
+
+A sweet jelly with a little glossy heart on the end! Written `#/COLOR<text<`, in the same 16 colors:
+
+* `#/R<text<` #/R<red<
+* `#/O<text<` #/O<orange<
+* `#/GL<text<` #/GL<gold<
+* `#/Y<text<` #/Y<yellow<
+* `#/L<text<` #/L<lime<
+* `#/G<text<` #/G<green<
+* `#/TU<text<` #/TU<turquoise<
+* `#/T<text<` #/T<teal<
+* `#/C<text<` #/C<cyan<
+* `#/B<text<` #/B<blue<
+* `#/PR<text<` #/PR<purple<
+* `#/PK<text<` #/PK<pink<
+* `#/W<text<` #/W<white<
+* `#/FG<text<` #/FG<fog<
+* `#/SL<text<` #/SL<slate<
+* `#/BK<text<` #/BK<black<
+
+## Jelly Capsule chips
+
+A two-tone jelly capsule with a seam down the middle! Written `#/COLOR>text>`, in the same 16 colors:
+
+* `#/R>text>` #/R>red>
+* `#/O>text>` #/O>orange>
+* `#/GL>text>` #/GL>gold>
+* `#/Y>text>` #/Y>yellow>
+* `#/L>text>` #/L>lime>
+* `#/G>text>` #/G>green>
+* `#/TU>text>` #/TU>turquoise>
+* `#/T>text>` #/T>teal>
+* `#/C>text>` #/C>cyan>
+* `#/B>text>` #/B>blue>
+* `#/PR>text>` #/PR>purple>
+* `#/PK>text>` #/PK>pink>
+* `#/W>text>` #/W>white>
+* `#/FG>text>` #/FG>fog>
+* `#/SL>text>` #/SL>slate>
+* `#/BK>text>` #/BK>black>
+
+## Boba Jelly chips
+
+Jelly with a row of dark tapioca pearls resting at the bottom! Written `#/COLOR_text_`, in the same 16 colors:
+
+* `#/R_text_` #/R_red_
+* `#/O_text_` #/O_orange_
+* `#/GL_text_` #/GL_gold_
+* `#/Y_text_` #/Y_yellow_
+* `#/L_text_` #/L_lime_
+* `#/G_text_` #/G_green_
+* `#/TU_text_` #/TU_turquoise_
+* `#/T_text_` #/T_teal_
+* `#/C_text_` #/C_cyan_
+* `#/B_text_` #/B_blue_
+* `#/PR_text_` #/PR_purple_
+* `#/PK_text_` #/PK_pink_
+* `#/W_text_` #/W_white_
+* `#/FG_text_` #/FG_fog_
+* `#/SL_text_` #/SL_slate_
+* `#/BK_text_` #/BK_black_
+
+## Molded Jelly chips
+
+Jelly turned out of a fluted mold, with ridged sides and a flat crown! Written `#/COLOR[text[`, in the same 16 colors:
+
+* `#/R[text[` #/R[red[
+* `#/O[text[` #/O[orange[
+* `#/GL[text[` #/GL[gold[
+* `#/Y[text[` #/Y[yellow[
+* `#/L[text[` #/L[lime[
+* `#/G[text[` #/G[green[
+* `#/TU[text[` #/TU[turquoise[
+* `#/T[text[` #/T[teal[
+* `#/C[text[` #/C[cyan[
+* `#/B[text[` #/B[blue[
+* `#/PR[text[` #/PR[purple[
+* `#/PK[text[` #/PK[pink[
+* `#/W[text[` #/W[white[
+* `#/FG[text[` #/FG[fog[
+* `#/SL[text[` #/SL[slate[
+* `#/BK[text[` #/BK[black[
+
+## Jelly Splat chips
+
+A splat of jelly with flying droplets! Written `#/COLOR]text]`, in the same 16 colors:
+
+* `#/R]text]` #/R]red]
+* `#/O]text]` #/O]orange]
+* `#/GL]text]` #/GL]gold]
+* `#/Y]text]` #/Y]yellow]
+* `#/L]text]` #/L]lime]
+* `#/G]text]` #/G]green]
+* `#/TU]text]` #/TU]turquoise]
+* `#/T]text]` #/T]teal]
+* `#/C]text]` #/C]cyan]
+* `#/B]text]` #/B]blue]
+* `#/PR]text]` #/PR]purple]
+* `#/PK]text]` #/PK]pink]
+* `#/W]text]` #/W]white]
+* `#/FG]text]` #/FG]fog]
+* `#/SL]text]` #/SL]slate]
+* `#/BK]text]` #/BK]black]
+
+## Frosted Jelly chips
+
+Jelly rolled in sugar, with a frosty sparkle all over! Written `#/COLOR{text{`, in the same 16 colors:
+
+* `#/R{text{` #/R{red{
+* `#/O{text{` #/O{orange{
+* `#/GL{text{` #/GL{gold{
+* `#/Y{text{` #/Y{yellow{
+* `#/L{text{` #/L{lime{
+* `#/G{text{` #/G{green{
+* `#/TU{text{` #/TU{turquoise{
+* `#/T{text{` #/T{teal{
+* `#/C{text{` #/C{cyan{
+* `#/B{text{` #/B{blue{
+* `#/PR{text{` #/PR{purple{
+* `#/PK{text{` #/PK{pink{
+* `#/W{text{` #/W{white{
+* `#/FG{text{` #/FG{fog{
+* `#/SL{text{` #/SL{slate{
+* `#/BK{text{` #/BK{black{
+
+## Ice Jelly chips
+
+Cold jelly, like a block of ice with crisp facets and cool light! Written `#/COLOR}text}`, in the same 16 colors:
+
+* `#/R}text}` #/R}red}
+* `#/O}text}` #/O}orange}
+* `#/GL}text}` #/GL}gold}
+* `#/Y}text}` #/Y}yellow}
+* `#/L}text}` #/L}lime}
+* `#/G}text}` #/G}green}
+* `#/TU}text}` #/TU}turquoise}
+* `#/T}text}` #/T}teal}
+* `#/C}text}` #/C}cyan}
+* `#/B}text}` #/B}blue}
+* `#/PR}text}` #/PR}purple}
+* `#/PK}text}` #/PK}pink}
+* `#/W}text}` #/W}white}
+* `#/FG}text}` #/FG}fog}
+* `#/SL}text}` #/SL}slate}
+* `#/BK}text}` #/BK}black}
+
+## Glow Jelly chips
+
+Jelly that glows from the inside with a soft halo around it! Written `#/COLOR(text(`, in the same 16 colors:
+
+* `#/R(text(` #/R(red(
+* `#/O(text(` #/O(orange(
+* `#/GL(text(` #/GL(gold(
+* `#/Y(text(` #/Y(yellow(
+* `#/L(text(` #/L(lime(
+* `#/G(text(` #/G(green(
+* `#/TU(text(` #/TU(turquoise(
+* `#/T(text(` #/T(teal(
+* `#/C(text(` #/C(cyan(
+* `#/B(text(` #/B(blue(
+* `#/PR(text(` #/PR(purple(
+* `#/PK(text(` #/PK(pink(
+* `#/W(text(` #/W(white(
+* `#/FG(text(` #/FG(fog(
+* `#/SL(text(` #/SL(slate(
+* `#/BK(text(` #/BK(black(
+
+## Marbled Jelly chips
+
+Two flavors folded together into soft marble veins! Written `#/COLOR)text)`, in the same 16 colors:
+
+* `#/R)text)` #/R)red)
+* `#/O)text)` #/O)orange)
+* `#/GL)text)` #/GL)gold)
+* `#/Y)text)` #/Y)yellow)
+* `#/L)text)` #/L)lime)
+* `#/G)text)` #/G)green)
+* `#/TU)text)` #/TU)turquoise)
+* `#/T)text)` #/T)teal)
+* `#/C)text)` #/C)cyan)
+* `#/B)text)` #/B)blue)
+* `#/PR)text)` #/PR)purple)
+* `#/PK)text)` #/PK)pink)
+* `#/W)text)` #/W)white)
+* `#/FG)text)` #/FG)fog)
+* `#/SL)text)` #/SL)slate)
+* `#/BK)text)` #/BK)black)
+
+## Dusk Jelly chips
+
+Jelly that melts from a bright sky into a deep dusk, with a tiny first star! Written `#/COLOR"text"`, in the same 16 colors:
+
+* `#/R"text"` #/R"red"
+* `#/O"text"` #/O"orange"
+* `#/GL"text"` #/GL"gold"
+* `#/Y"text"` #/Y"yellow"
+* `#/L"text"` #/L"lime"
+* `#/G"text"` #/G"green"
+* `#/TU"text"` #/TU"turquoise"
+* `#/T"text"` #/T"teal"
+* `#/C"text"` #/C"cyan"
+* `#/B"text"` #/B"blue"
+* `#/PR"text"` #/PR"purple"
+* `#/PK"text"` #/PK"pink"
+* `#/W"text"` #/W"white"
+* `#/FG"text"` #/FG"fog"
+* `#/SL"text"` #/SL"slate"
+* `#/BK"text"` #/BK"black"
+
 ## Gel label chips
 
 A pale Gel label with a dashed stitched line inside its edge, like a stamped tag! Written `#&color&text&`, in the same 16 colors:
@@ -926,7 +1241,7 @@ A mark chip cousin with cut corners, like a glossy bevelled button! Written `++c
 
 ## Gloss chips
 
-A glossy lacquered tile with a studio-light reflection: a bright soft rectangle of light at the top left, a thin streak beside it and a dark shade along the bottom! Written `%%color%text%%`, in the same 16 colors as the Aero chips:
+A thick lacquered glass tile, in the Aero chips' colors but built differently: a rounded square slab with a solid base, bounce light along the bottom and two slanted glare strips of studio light sliding across the face! Written `%%color%text%%`, in the same 16 colors as the Aero chips:
 
 * `%%R%text%%` %%R%red%%
 * `%%O%text%%` %%O%orange%%
