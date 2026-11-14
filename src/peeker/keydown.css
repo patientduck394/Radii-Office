@@ -7797,3 +7797,153 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 30%, #fff) 0%, color-mix(in srgb, var(--ae-l) 70%, #fff) 46%, color-mix(in srgb, var(--ae-l) 55%, var(--ae-c) 14%) 52%, color-mix(in srgb, var(--ae-l) 60%, #fff) 100%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(0, 0, 0, 0.2);
 }
+
+/* ========================================================
+   FIFTEEN MORE HIGHLIGHT AERO MARK CHIP COUSINS (hy), written ++COLOR<mark>text++: Neon Tube Underline ++R@@text++, Watercolor ++R=]text++,
+   Pointer Marker ++R~]text++, Fluorescent Tape ++R^]text++, Lasso Loop ++R!]text++, Glitter ++R%]text++, Stained Glass ++R?]text++,
+   Frosted Label ++R*]text++, Ruled Line ++R#]text++, Ink Splatter ++R-]text++, Rubber Stamp ++R/]text++, Gradient Marker ++R:]text++,
+   Paper Cut-out ++R.]text++, Letterpress ++R,]text++, Scanner Beam ++R;]text++.
+   Each in the Aero chips' 16 colors (the .gel-aero-<color> classes), all of them ways to HIGHLIGHT words, with light fills and deep-colored words.
+   ======================================================== */
+.gel-hyneon-chip, .gel-hycolor-chip, .gel-hyarrow-chip, .gel-hytape-chip, .gel-hylasso-chip, .gel-hyglit-chip, .gel-hyglass-chip, .gel-hyfrost-chip, .gel-hyruled-chip, .gel-hysplat-chip, .gel-hystamp-chip, .gel-hyrain-chip, .gel-hycut-chip, .gel-hyemboss-chip, .gel-hyscan-chip {
+  --mk-ink: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  --hx-w1: color-mix(in srgb, var(--ae-l) 22%, #fff); --hx-w2: color-mix(in srgb, var(--ae-l) 48%, #fff); --hx-w3: color-mix(in srgb, var(--ae-l) 66%, #fff);
+  --hx-c28: color-mix(in srgb, var(--ae-c) 28%, transparent); --hx-c36: color-mix(in srgb, var(--ae-c) 36%, transparent); --hx-c40: color-mix(in srgb, var(--ae-c) 40%, transparent);
+  --hx-c45: color-mix(in srgb, var(--ae-c) 45%, transparent); --hx-c50: color-mix(in srgb, var(--ae-c) 50%, transparent); --hx-c60: color-mix(in srgb, var(--ae-c) 60%, transparent);
+  position: relative; isolation: isolate; box-sizing: border-box; display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 3px; border: 0; color: var(--mk-ink); font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-hyneon-chip.gel-aero-white, .gel-hycolor-chip.gel-aero-white, .gel-hyarrow-chip.gel-aero-white, .gel-hytape-chip.gel-aero-white, .gel-hylasso-chip.gel-aero-white, .gel-hyglit-chip.gel-aero-white, .gel-hyglass-chip.gel-aero-white, .gel-hyfrost-chip.gel-aero-white, .gel-hyruled-chip.gel-aero-white, .gel-hysplat-chip.gel-aero-white, .gel-hystamp-chip.gel-aero-white, .gel-hyrain-chip.gel-aero-white, .gel-hycut-chip.gel-aero-white, .gel-hyemboss-chip.gel-aero-white, .gel-hyscan-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-hyneon-chip.gel-aero-fog, .gel-hycolor-chip.gel-aero-fog, .gel-hyarrow-chip.gel-aero-fog, .gel-hytape-chip.gel-aero-fog, .gel-hylasso-chip.gel-aero-fog, .gel-hyglit-chip.gel-aero-fog, .gel-hyglass-chip.gel-aero-fog, .gel-hyfrost-chip.gel-aero-fog, .gel-hyruled-chip.gel-aero-fog, .gel-hysplat-chip.gel-aero-fog, .gel-hystamp-chip.gel-aero-fog, .gel-hyrain-chip.gel-aero-fog, .gel-hycut-chip.gel-aero-fog, .gel-hyemboss-chip.gel-aero-fog, .gel-hyscan-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-hyneon-chip.gel-aero-black, .gel-hycolor-chip.gel-aero-black, .gel-hyarrow-chip.gel-aero-black, .gel-hytape-chip.gel-aero-black, .gel-hylasso-chip.gel-aero-black, .gel-hyglit-chip.gel-aero-black, .gel-hyglass-chip.gel-aero-black, .gel-hyfrost-chip.gel-aero-black, .gel-hyruled-chip.gel-aero-black, .gel-hysplat-chip.gel-aero-black, .gel-hystamp-chip.gel-aero-black, .gel-hyrain-chip.gel-aero-black, .gel-hycut-chip.gel-aero-black, .gel-hyemboss-chip.gel-aero-black, .gel-hyscan-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; --mk-ink: #111111; }
+/* Neon Tube Underline ++R@@text++ */
+.gel-hyneon-chip { padding: 1px 9px 7px; border-radius: 4px; background: linear-gradient(180deg, var(--hx-w1), var(--hx-w2)); }
+.gel-hyneon-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; left: 3px; right: 3px; bottom: 2px; height: 4px; border-radius: 999px;
+  background: linear-gradient(180deg, #ffffff 0 30%, var(--ae-c) 34% 100%); box-shadow: 0 0 4px 1px var(--ae-c), 0 0 9px 2px var(--hx-c45);
+}
+
+/* Watercolor ++R=]text++ */
+.gel-hycolor-chip {
+  margin: 0 4px; padding: 2px 14px; border-radius: 46% 54% 50% 50% / 62% 46% 54% 38%;
+  background:
+    radial-gradient(ellipse at 66% 58%, var(--hx-c28), transparent 66%),
+    radial-gradient(ellipse at 36% 40%, color-mix(in srgb, var(--ae-c) 14%, transparent) 0, color-mix(in srgb, var(--ae-c) 30%, transparent) 78%),
+    linear-gradient(180deg, var(--hx-w1), var(--hx-w2));
+  box-shadow: inset 0 0 0.35em 0.02em color-mix(in srgb, var(--ae-c) 58%, transparent), inset 0 0 0 1px var(--hx-c36);
+}
+
+/* Pointer Marker ++R~]text++ */
+.gel-hyarrow-chip {
+  padding: 2px 21px 2px 13px;
+  background: linear-gradient(var(--ae-c), var(--ae-c)) 0 0 / 5px 100% no-repeat, linear-gradient(180deg, var(--hx-w2), var(--hx-w3));
+  clip-path: polygon(0 0, calc(100% - 0.8em) 0, 100% 50%, calc(100% - 0.8em) 100%, 0 100%);
+}
+.gel-hyarrow-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; right: 0.42em; top: 50%; width: 0.34em; height: 0.34em;
+  border-top: 2px solid var(--ae-c); border-right: 2px solid var(--ae-c); transform: translateY(-50%) rotate(45deg);
+}
+
+/* Fluorescent Tape ++R^]text++ */
+.gel-hytape-chip {
+  padding: 2px 16px;
+  background:
+    repeating-linear-gradient(115deg, rgba(255, 255, 255, 0.5) 0 3px, rgba(255, 255, 255, 0) 3px 9px),
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 62%, #fff) 0%, color-mix(in srgb, var(--ae-c) 50%, #fff) 100%);
+  clip-path: polygon(0.5em 0, 100% 0, calc(100% - 0.5em) 100%, 0 100%);
+}
+.gel-hytape-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 1em; right: 1em; top: 3px; height: 0.09em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+
+/* Lasso Loop ++R!]text++ */
+.gel-hylasso-chip {
+  margin: 0 0.9em 0 5px; padding: 3px 15px; border-radius: 999px; border: 2px dashed var(--ae-c); transform: rotate(-1.2deg);
+  background: linear-gradient(180deg, var(--hx-w1), var(--hx-w2));
+}
+.gel-hylasso-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; right: -0.62em; bottom: -0.22em; width: 0.9em; height: 0.5em;
+  border-bottom: 2px dashed var(--ae-c); border-left: 2px dashed var(--ae-c); border-radius: 0 0 0 0.9em; transform: rotate(8deg);
+}
+
+/* Glitter ++R%]text++ */
+.gel-hyglit-chip {
+  padding: 2px 12px; border-radius: 5px; border: 1px solid var(--hx-c40);
+  background:
+    radial-gradient(circle at 9% 30%, #fff 0 1px, transparent 1.7px), radial-gradient(circle at 21% 74%, var(--ae-c) 0 1px, transparent 1.6px),
+    radial-gradient(circle at 33% 22%, #fff 0 1.3px, transparent 2px), radial-gradient(circle at 47% 70%, #fff 0 1px, transparent 1.7px),
+    radial-gradient(circle at 58% 28%, var(--ae-c) 0 1px, transparent 1.6px), radial-gradient(circle at 71% 78%, #fff 0 1.3px, transparent 2px),
+    radial-gradient(circle at 84% 26%, #fff 0 1px, transparent 1.7px), radial-gradient(circle at 93% 66%, var(--ae-c) 0 1px, transparent 1.6px),
+    linear-gradient(115deg, var(--hx-w2), color-mix(in srgb, var(--ae-c) 34%, #fff) 48%, var(--hx-w2));
+}
+
+/* Stained Glass ++R?]text++ */
+.gel-hyglass-chip {
+  padding: 2px 19px; border-radius: 0.8em 0.8em 3px 3px; border: 2px solid color-mix(in srgb, var(--ae-e1) 68%, #1a1a1a);
+  background: linear-gradient(90deg,
+    color-mix(in srgb, var(--ae-l) 62%, #fff) 0 9px, color-mix(in srgb, var(--ae-e1) 68%, #1a1a1a) 9px 11px,
+    color-mix(in srgb, var(--ae-c) 34%, #fff) 11px calc(100% - 11px), color-mix(in srgb, var(--ae-e1) 68%, #1a1a1a) calc(100% - 11px) calc(100% - 9px),
+    color-mix(in srgb, var(--ae-l) 46%, #fff) calc(100% - 9px) 100%);
+}
+
+/* Frosted Label ++R*]text++ */
+.gel-hyfrost-chip {
+  padding: 2px 12px 2px 14px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.95); border-left: 5px solid var(--ae-c);
+  background: repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.35) 0 1px, rgba(255, 255, 255, 0) 1px 3px), linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 12%, #fff), color-mix(in srgb, var(--ae-l) 34%, #fff));
+  box-shadow: inset 0 1px 0 #fff, 0 1px 3px var(--hx-c36);
+}
+
+/* Ruled Line ++R#]text++ */
+.gel-hyruled-chip {
+  padding: 1px 10px 3px 15px; border-radius: 2px;
+  background:
+    linear-gradient(90deg, transparent 0 9px, rgba(232, 84, 96, 0.75) 9px 10px, transparent 10px),
+    linear-gradient(180deg, transparent calc(100% - 3px), color-mix(in srgb, var(--ae-c) 80%, transparent) calc(100% - 3px) calc(100% - 1px), transparent calc(100% - 1px)),
+    linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 10%, #fffdf3), color-mix(in srgb, var(--ae-l) 22%, #fffdf3));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+/* Ink Splatter ++R-]text++ */
+.gel-hysplat-chip { margin: 0 7px; padding: 2px 13px; border-radius: 5px 9px 6px 10px / 9px 5px 10px 6px; background: linear-gradient(180deg, var(--hx-w1), var(--hx-w2)); box-shadow: inset 0 0 0 1px var(--hx-c28); }
+.gel-hysplat-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; inset: -0.35em -0.55em;
+  background:
+    radial-gradient(circle at 3% 18%, var(--ae-c) 0 0.13em, transparent 0.145em), radial-gradient(circle at 97% 80%, var(--ae-c) 0 0.17em, transparent 0.185em),
+    radial-gradient(circle at 12% 94%, var(--ae-c) 0 0.08em, transparent 0.095em), radial-gradient(circle at 90% 8%, var(--ae-c) 0 0.1em, transparent 0.115em),
+    radial-gradient(circle at 99% 38%, var(--ae-c) 0 0.06em, transparent 0.075em), radial-gradient(circle at 0.5% 62%, var(--ae-c) 0 0.07em, transparent 0.085em),
+    radial-gradient(circle at 24% 3%, var(--ae-c) 0 0.06em, transparent 0.075em), radial-gradient(circle at 76% 98%, var(--ae-c) 0 0.09em, transparent 0.105em);
+  opacity: 0.85;
+}
+
+/* Rubber Stamp ++R/]text++ */
+.gel-hystamp-chip {
+  margin: 0 5px; padding: 1px 11px; border: 0.2em double color-mix(in srgb, var(--ae-c) 78%, var(--ae-e1)); border-radius: 4px; transform: rotate(-1.4deg); letter-spacing: 0.04em;
+  background: radial-gradient(circle, var(--hx-c28) 0 0.6px, transparent 0.85px) 0 0 / 4px 4px, linear-gradient(var(--hx-w1), var(--hx-w1));
+}
+
+/* Gradient Marker ++R:]text++ */
+.gel-hyrain-chip {
+  padding: 2px 13px; border-radius: 3px 9px 3px 9px / 7px 3px 7px 3px;
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ae-l) 64%, #fff) 0%, color-mix(in srgb, var(--ae-c) 46%, #fff) 50%, color-mix(in srgb, var(--ae-e2) 52%, #fff) 100%);
+  box-shadow: inset 0 -2px 0 var(--hx-c36);
+}
+.gel-hyrain-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.7em; top: 0.22em; width: 28%; height: 0.1em; border-radius: 999px; background: rgba(255, 255, 255, 0.7); }
+
+/* Paper Cut-out ++R.]text++ */
+.gel-hycut-chip {
+  margin: 0 6px 3px 3px; padding: 2px 12px; border: 2px solid #ffffff; border-radius: 2px; transform: rotate(-1deg);
+  background: linear-gradient(180deg, var(--hx-w1), var(--hx-w2)); box-shadow: 0 0 0 1px var(--hx-c36), 3px 3px 0 var(--ae-c);
+}
+
+/* Letterpress ++R,]text++ */
+.gel-hyemboss-chip {
+  padding: 2px 12px; border-radius: 5px; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.85);
+  background: linear-gradient(180deg, color-mix(in srgb, var(--ae-l) 40%, #fff), color-mix(in srgb, var(--ae-l) 62%, #fff));
+  box-shadow: inset 0 2px 3px color-mix(in srgb, var(--ae-e1) 42%, transparent), inset 0 -1px 0 rgba(255, 255, 255, 0.9), inset 2px 0 2px var(--hx-c28), 0 1px 0 #fff;
+}
+
+/* Scanner Beam ++R;]text++ */
+.gel-hyscan-chip { padding: 2px 19px 2px 13px; border-radius: 4px; background: linear-gradient(90deg, var(--hx-w3) 0 calc(100% - 9px), var(--hx-w1) calc(100% - 9px) 100%); box-shadow: inset 0 0 0 1px var(--hx-c28); }
+.gel-hyscan-chip::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none; top: -0.18em; bottom: -0.18em; left: calc(100% - 9px); width: 2px; background: #ffffff;
+  box-shadow: 0 0 5px 2px var(--ae-c), 0 0 11px 4px var(--hx-c36);
+}
