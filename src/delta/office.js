@@ -205,6 +205,7 @@
         officeHint: 'A pink ribbon with Graph, LaTeX and Calculator tabs, a File screen and a status bar!',
         classicHint: 'The original Delta: pink glass sidebar and gel buttons!',
         classicToast: 'Delta Classic: pink glass and gel!',
+        nova: true,
         theme: { accent: '#ee0058', 'accent-d': '#bf0047', 'accent-l': '#ffe0ea', title: '#e00054', gel1: '#ff6f9f', gel2: '#ee0058',
             'gel-border': '#ff9fbf', 'gel-glow': 'rgba(238, 0, 88, 0.45)', glow: 'rgba(255, 224, 234, 0.9)', 'thumb-bg': '#3a0016' },
         editor: () => null,

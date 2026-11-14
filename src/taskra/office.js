@@ -89,6 +89,7 @@
         officeHint: 'An indigo ribbon with filters, a File screen and a status bar, like To Do!',
         classicHint: 'The original Taskra: indigo glass sidebar and gel buttons!',
         classicToast: 'Taskra Classic: indigo glass and gel!',
+        nova: true,
         theme: { accent: '#6366f1', 'accent-d': '#4f46e5', 'accent-l': '#e0e7ff', title: '#5558e3', gel1: '#a5b4fc', gel2: '#6366f1',
             'gel-border': '#c7d2fe', 'gel-glow': 'rgba(99, 102, 241, 0.45)', glow: 'rgba(224, 231, 255, 0.9)', 'thumb-bg': '#1e1b4b' },
         editor: () => null,

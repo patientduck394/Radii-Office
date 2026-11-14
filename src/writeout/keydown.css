@@ -5324,9 +5324,9 @@
 }
 
 /* ========================================================
-   MARKETPLACE KEYDOWN MEGA PACK — 15 STYLES (PORTED!)
-   Source: radii-office deployment/writeout/marketplace.js (id: keydown-mega-pack)!
-   Triggers work via marketplace engine or Keydown parser!
+   KEYDOWN MEGA PACK — 15 STYLES (PORTED!)
+   (the keydown-mega-pack)
+   Triggers work through keydown-packs.js or the Keydown parser!
    ======================================================== */
 /* Sunset Gel (~SUN~) — .mkt-kp-sunset */
 .mkt-kp-sunset {
@@ -5575,8 +5575,8 @@
 }
 
 /* ========================================================
-   ALL OTHER MARKETPLACE PACKS — PORTED TO KEYDOWN.CSS!
-   Source: radii-office deployment/writeout/marketplace.js!
+   ALL OTHER STYLE PACKS!
+   (every other pack)
    Includes 25 packs (keydown-mega-pack already ported separately)!
    ======================================================== */
 /* ---------- Neon Ribbon Pack (id: neon-ribbon) ---------- */

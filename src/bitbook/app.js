@@ -15,10 +15,7 @@
         ['writeout_format_group', 'bitbook_format_group'],
         ['writeout_page_size', 'bitbook_note_size'],
         ['writeout_page_orientation', 'bitbook_note_orientation'],
-        ['writeout_doc_password', 'bitbook_note_password'],
-        ['writeout_marketplace_installed_v1', 'bitbook_marketplace_installed_v1'],
-        ['writeout_marketplace_active_theme', 'bitbook_marketplace_active_theme'],
-        ['writeout_marketplace_hide_installed', 'bitbook_marketplace_hide_installed']
+        ['writeout_doc_password', 'bitbook_note_password']
     ];
     try {
         if (localStorage.getItem('bitbook_storage_migrated_v1') === '1') return;
@@ -5294,7 +5291,7 @@ function emptyStyleSel() {
     if (window.KdChips && window.KdChips.handlesChips) return EMPTY_STYLE_TAGS;
     let s = CHIP_STYLE_SEL + ', ' + EMPTY_STYLE_TAGS;
     try { if (typeof FMT_STYLE_SPAN_SEL === 'string') s += ', ' + FMT_STYLE_SPAN_SEL; } catch (e) {}
-    try { if (typeof fmtMarketplaceSuffix === 'function') s += fmtMarketplaceSuffix(); } catch (e) {}
+    try { if (typeof fmtPackSuffix === 'function') s += fmtPackSuffix(); } catch (e) {}
     return s;
 }
 function emptyStyleHost(node, cv) {
@@ -9671,11 +9668,11 @@ var FMT_DEFAULT_STYLES = [
     { label: 'Folder Tab', cls: 'jr-folder-tab' }
 ];
 
-// Every extension style that EXISTS, live from the Marketplace (nothing hardcoded)!
+// Every extension style that EXISTS, live from the Keydown style packs!
 function fmtExtensionVariants() {
     const out = [];
     try {
-        const M = window.WriteoutMarketplace;
+        const M = window.KeydownPacks;
         if (!M || !M.catalog || typeof M.installed !== 'function') return out;
         const installed = M.installed();
         M.catalog.forEach(function (ext) {
@@ -9696,7 +9693,7 @@ function fmtExtensionVariants() {
     return out;
 }
 
-// One shared apply path (Marketplace owns it; local fallback if missing)!
+// One shared apply path (the style packs own it; local fallback if missing)!
 // Set when a collapsed insert parks the caret on purpose: rescue must NOT
 // yank it back to the old offset (that lands AFTER the fresh style)!
 var fmtParkedCaret = false;
@@ -9725,7 +9722,7 @@ function fmtApplyPickerClass(cls) {
                 return true;
             } catch (e) { return false; }
         }
-        const M = window.WriteoutMarketplace;
+        const M = window.KeydownPacks;
         if (M && typeof M.apply === 'function') { M.apply(cls); return true; }
     } catch (e) {}
     try {
@@ -10236,7 +10233,7 @@ function fmtWireStylePicker() {
             playAeroClickSound(600, 0.08);
             const extId = btn.getAttribute('data-picker-ext');
             try {
-                const M = window.WriteoutMarketplace;
+                const M = window.KeydownPacks;
                 if (extId && M && typeof M.installed === 'function' && typeof M.install === 'function') {
                     if (M.installed().indexOf(extId) === -1) {
                         M.install(extId);
@@ -11512,11 +11509,11 @@ function fmtTagLabel(tag) {
     }
 }
 
-// Extra selector covering INSTALLED Marketplace styles (future packs included)!
-function fmtMarketplaceSuffix() {
+// Extra selector covering every Keydown style pack!
+function fmtPackSuffix() {
     const sels = [];
     try {
-        const M = window.WriteoutMarketplace;
+        const M = window.KeydownPacks;
         if (!M || !M.catalog || typeof M.installed !== 'function') return '';
         const installed = M.installed();
         M.catalog.forEach(function (ext) {
@@ -11557,7 +11554,7 @@ function fmtDetectStyles() {
         } else if (tag === 'SPAN') {
             if (el.className && typeof el.matches === 'function') {
                 try {
-                    if (el.matches(FMT_STYLE_SPAN_SEL + fmtMarketplaceSuffix())) {
+                    if (el.matches(FMT_STYLE_SPAN_SEL + fmtPackSuffix())) {
                         const isUni = el.classList.contains('uni-chip');
                         const isCc = el.classList.contains('cc-chip');
                         const isUs = el.classList.contains('us-chip');
@@ -12677,7 +12674,7 @@ var CSF_SOURCES = [
     ['fav', '★ Favorites'],
     ['gallery', 'Gallery'],
     ['keydown', 'Keydown'],
-    ['market', 'Keydown Styles (Marketplace)'],
+    ['market', 'Keydown Style Packs'],
     ['highlight', 'Keydown (top bar)'],
     ['toolbar', 'Selection toolbar'],
     ['annotate', 'Highlight'],
@@ -12703,12 +12700,12 @@ function csfPrettyClass(cls) {
     const last = String(cls).trim().split(/\s+/).pop() || '';
     return last.replace(/^(gel-chip|effect|gel|megachip|aero)-/, '').split('-').map(function (w) { return w.charAt(0).toUpperCase() + w.slice(1); }).join(' ');
 }
-// Each Marketplace pack's CSS, parsed (installed or not) so it can be read and previewed!
+// Each style pack's CSS, parsed (installed or not) so it can be read and previewed!
 function csfPackSheets() {
     if (cscFindPackSheets) return cscFindPackSheets;
     cscFindPackSheets = [];
     let catalog = [];
-    try { catalog = (window.WriteoutMarketplace && window.WriteoutMarketplace.catalog) || []; } catch (e) {}
+    try { catalog = (window.KeydownPacks && window.KeydownPacks.catalog) || []; } catch (e) {}
     let doc = null;
     try { doc = document.implementation.createHTMLDocument(''); } catch (e) {}
     catalog.forEach(function (ext) {
@@ -12814,10 +12811,10 @@ function csfEntries() {
     } catch (e) {}
     try {
         csfPackSheets();
-        const catalog = (window.WriteoutMarketplace && window.WriteoutMarketplace.catalog) || [];
+        const catalog = (window.KeydownPacks && window.KeydownPacks.catalog) || [];
         catalog.forEach(function (ext) {
             if (!ext || ext.category !== 'styles') return;
-            const where = 'Marketplace · ' + ext.name;
+            const where = 'Style Packs · ' + ext.name;
             const trig = function (t) { return t && t.open ? t.open + 'text' + t.close : ''; };
             if (Array.isArray(ext.styles)) ext.styles.forEach(function (s) {
                 if (s && s.className) add({ name: s.name, cls: s.className, src: 'market', where: where, trigger: trig(s.trigger) });
@@ -12981,7 +12978,7 @@ function csfRules() {
     };
     Array.prototype.forEach.call(document.styleSheets, function (sh) {
         const node = sh.ownerNode;
-        // Pack CSS is read from the Marketplace itself (so uninstalled packs work too)!
+        // Pack CSS is read from the style pack list!
         if (node && node.id && (node.id === 'cs-find-pack-css' || node.id.indexOf('mkt-style-') === 0)) return;
         let list = null;
         try { list = sh.cssRules; } catch (e) { list = null; }
@@ -12991,7 +12988,7 @@ function csfRules() {
         walk(list, [], from, sh.href || '');
     });
     csfPackSheets().forEach(function (p) {
-        try { walk(p.sheet.cssRules, [], 'Marketplace: ' + p.ext.name, ''); } catch (e) {}
+        try { walk(p.sheet.cssRules, [], 'Style Packs: ' + p.ext.name, ''); } catch (e) {}
     });
     cscRuleCache = { rules: rules, keyframes: keyframes };
     return cscRuleCache;

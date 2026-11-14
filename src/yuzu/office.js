@@ -97,6 +97,7 @@
         officeHint: 'A blue ribbon with Home, View and Help tabs, a File screen and search, like Outlook!',
         classicHint: 'The original Yuzu: a blue glass sidebar, gel buttons and a simple inbox!',
         classicToast: 'Yuzu Classic: blue glass and gel!',
+        nova: true,
         theme: { accent: '#0065ff', 'accent-d': '#0048bf', 'accent-l': '#dbe9ff', title: '#0052cc', gel1: '#4d94ff', gel2: '#0065ff',
             'gel-border': '#a3c7ff', 'gel-glow': 'rgba(0, 101, 255, 0.45)', glow: 'rgba(219, 233, 255, 0.9)', 'thumb-bg': '#001a4d' },
         editor: () => null,

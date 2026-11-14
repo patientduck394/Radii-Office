@@ -34,11 +34,10 @@
     <link rel="stylesheet" href="style.css?v=20261222u">
     <link rel="stylesheet" href="keydown.css?v=20261223d">
     <link rel="stylesheet" href="poolside-embed.css?v=20261214b">
-    <link rel="stylesheet" href="marketplace.css?v=20260928">
     <link rel="stylesheet" href="settings.css?v=20260928">
     <link rel="stylesheet" href="office-shell.css?v=20261222zz">
     <link rel="stylesheet" href="writeout-office.css?v=20261220a">
-    <link rel="stylesheet" href="nova.css?v=20261223d">
+    <link rel="stylesheet" href="nova.css?v=20261224b">
     <link rel="stylesheet" href="radii-collab.css?v=20261042">
     <link rel="icon" type="image/png" sizes="96x96" href="/writeout/favicon-96.png">
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -94,13 +93,6 @@
                     <path fill="currentColor" fill-rule="evenodd" d="M10.75 2.5h-5.5a.75.75 0 0 0-.75.75V4h7v-.75a.75.75 0 0 0-.75-.75M13 4v-.75A2.25 2.25 0 0 0 10.75 1h-5.5A2.25 2.25 0 0 0 3 3.25V4a3 3 0 0 0-3 3v2a3 3 0 0 0 3 3h1v1a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-1h1a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3m-9 6v.5H3A1.5 1.5 0 0 1 1.5 9V7A1.5 1.5 0 0 1 3 5.5h10A1.5 1.5 0 0 1 14.5 7v2a1.5 1.5 0 0 1-1.5 1.5h-1V10a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2m6-.5H6a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h4a.5.5 0 0 0 .5-.5v-3a.5.5 0 0 0-.5-.5m2.5-1a1 1 0 1 0 0-2a1 1 0 0 0 0 2" clip-rule="evenodd" />
                 </svg>
                 Print as Page
-            </button>
-            <button id="marketplace-trigger-btn" class="pad-toggle-btn">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22V11.93M2 7.036C5.643 5.944 8.843 4.07 12 2c0 0 3.555 1.7 5 2.447l5 2.59c0 3.062-.06 9.467-.06 9.467C18.886 18.807 15.625 20.726 12 22l-9.94-5.497S2 10.1 2 7.036m10 4.894L7 9.483m5 2.447c3.62-1.047 6.91-2.764 10-4.894M7 9.484c3.625-1.101 6.914-2.865 10-5.037M2 7.037l5 2.447m0 0v2.446" />
-                </svg>
-                Marketplace
             </button>
         </div>
 
@@ -281,15 +273,6 @@
                 </div>
             </div>
 
-            <!-- Dropdown 5: Marketplace Downloads Inbox (only visible with installed extensions) -->
-            <div class="aero-dropdown" id="mkt-inbox-dropdown" style="display: none;">
-                <button class="style-bar-btn dropdown-toggle" title="Marketplace downloads">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.278 13h4.089c2.203 0 2.353 3.445 4.6 3.444h2.066c2.255 0 2.378-3.444 4.6-3.444h4.09m-17-9.767l-2.403 8.72a9 9 0 0 0-.32 2.36v5.465A2.244 2.244 0 0 0 4.222 22h15.556A2.244 2.244 0 0 0 22 19.778v-5.465a9 9 0 0 0-.32-2.36l-2.402-8.72A2.26 2.26 0 0 0 17.288 2A25.7 25.7 0 0 1 6.711 2a2.26 2.26 0 0 0-1.989 1.233" /></svg>
-                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 8.5a18 18 0 0 0-7 7a18 18 0 0 0-7-7"/></svg>
-                    </button>
-                <div id="mkt-styles-tray" class="dropdown-menu highlight-grid-menu effect-grid-menu">
-                </div>
-            </div>
         </div>
 
        <!-- 2. New Line Block Toolbar (Appears on an empty new line) -->
@@ -550,32 +533,6 @@
         </div>
     </dialog>
 
-    <!-- Marketplace Dialog Box -->
-    <dialog id="marketplace-dialog" class="aero-dialog-box marketplace-dialog">
-        <div class="mkt-header">
-            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none" /><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" /><path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" /></g></svg> Marketplace <span id="mkt-installed-count" class="mkt-installed-pill">0 installed</span></h3>
-            <button id="marketplace-close-btn" class="mkt-close-btn" title="Close">✕</button>
-        </div>
-        <div class="mkt-toolbar-row">
-            <input id="marketplace-search" class="mkt-search" type="text" placeholder="Search extensions..." />
-            <label class="mkt-toggle" title="Show only extensions you haven't installed yet">
-                <input type="checkbox" id="marketplace-hide-installed" />
-                <span>New only</span>
-            </label>
-        </div>
-        <div class="mkt-tabs">
-            <button class="mkt-tab active" data-cat="all">All</button>
-            <button class="mkt-tab" data-cat="styles">Keydown Styles</button>
-            <button class="mkt-tab" data-cat="utilities">Utilities</button>
-            <button class="mkt-tab" data-cat="themes">Themes</button>
-        </div>
-        <div id="marketplace-grid" class="mkt-grid"></div>
-        <div class="mkt-footer">
-            <p class="mkt-footer-note">Extensions persist in localStorage across sessions.</p>
-            <button id="marketplace-reset-btn" class="mkt-reset-btn">Remove all</button>
-        </div>
-    </dialog>
-
     <!-- Settings Modal Overlay -->
     <div id="settings-modal-overlay" class="modal-blur-gate">
         <div class="embossed-dialogue-chassis">
@@ -584,8 +541,6 @@
                 <button id="settings-close-btn">✕</button>
             </div>
             <div class="dialog-body-scroll">
-                <h4>Appearance — Canvas Theme</h4>
-                <div id="settings-theme-list"></div>
                 <h4>Effects</h4>
                 <label class="settings-toggle-row">
                     <input type="checkbox" id="settings-hide-ambient">
@@ -649,7 +604,7 @@
     <script src="app.js?v=20261223d"></script>
     <script src="chip-guard.js?v=20261202b"></script>
     <script src="overlay-image.js?v=20261202c"></script>
-    <script src="marketplace.js?v=20261210c"></script>
+    <script src="keydown-packs.js?v=20261224a"></script>
     <script src="settings.js?v=20260928"></script>
     <script src="block-editor.js?v=20261219a"></script>
     <script src="image-resize.js?v=20261040"></script>
@@ -659,14 +614,14 @@
     <script src="psl-data.js?v=20261219b"></script>
     <script src="poolside.js?v=20261216a"></script>
     <script src="keydown-next.js?v=20261223b"></script>
-    <script src="office-shell.js?v=20261223b"></script>
-    <script src="nova-icons.js?v=20261223a"></script>
-    <script src="nova.js?v=20261223f"></script>
+    <script src="office-shell.js?v=20261224a"></script>
+    <script src="nova-icons.js?v=20261224b"></script>
+    <script src="nova.js?v=20261224b"></script>
     <script src="annotate-ink.js?v=20261210c"></script>
     <script src="emoji-skill.js?v=20261210k"></script>
     <script src="docs-library.js?v=20261222w"></script>
     <script src="print-raster.js?v=20261213e"></script>
-    <script src="writeout-office.js?v=20261223c"></script>
+    <script src="writeout-office.js?v=20261224a"></script>
     <script src="writeout-pro.js?v=20261121"></script>
     <script src="writeout-plus.js?v=20261202a"></script>
     <script src="writeout-more.js?v=20261223b"></script>

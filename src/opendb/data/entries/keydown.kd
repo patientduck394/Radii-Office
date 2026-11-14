@@ -783,7 +783,7 @@ In Writeout (Insert > Custom Emoji) and Bitbook (Skills > Custom Emoji / Symbol)
 
 ## Dark Gel chips
 
-Sixteen midnight neon pills sharing one dark design, built into Keydown (they used to be a Marketplace pack, so nothing needs installing)! Write `~CPR~text~CPR~` with a color letter after CP (R O A Y L G E T C S B I V F P, and Q for slate)!
+Sixteen midnight neon pills sharing one dark design, built into Keydown (nothing needs installing)! Write `~CPR~text~CPR~` with a color letter after CP (R O A Y L G E T C S B I V F P, and Q for slate)!
 
 * `~CPR~text~CPR~` Chip Red: ~CPR~Chip Red~CPR~
 * `~CPO~text~CPO~` Chip Orange: ~CPO~Chip Orange~CPO~
@@ -3423,9 +3423,9 @@ All 4,950 styles from Bitbook's Unique Styles Gallery are Keydown tags too: 990 
 * `@qcweathervanearrow-N@text@` Weather Vane Arrow: @qcweathervanearrow-1@Riviera@ @qcweathervanearrow-2@Mango Float@ @qcweathervanearrow-3@Swim Meet@ @qcweathervanearrow-4@Splash Pad@ @qcweathervanearrow-5@Orangeade@
 * `@qcbarndoorbrace-N@text@` Barn Door Brace: @qcbarndoorbrace-1@High Dive@ @qcbarndoorbrace-2@Orangeade@ @qcbarndoorbrace-3@Lido@ @qcbarndoorbrace-4@Deep Lane@ @qcbarndoorbrace-5@Chlorine Blue@
 
-## Marketplace packs
+## Style packs
 
-The Marketplace in Writeout and Bitbook adds packs of extra styles. Once a pack is installed, its tags work just like the ones above. OpenDB shows every pack, so here they all are:
+Writeout and Bitbook come with packs of extra styles, all built in (there is nothing to install). Their tags work just like the ones above, and you can pick them from the Styles menu. Here they all are:
 
 ### Outline Glow Pack
 

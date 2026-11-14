@@ -868,7 +868,7 @@
         // a New-style phone page always opens in the New style (its Classic is a separate page)
         if (document.documentElement.hasAttribute('data-os-classic-url')) return 'office';
         const saved = lsGet(layoutKey(), 'office');
-        if (saved === 'nova') return cfg.nova && !document.body.classList.contains('os-phone') ? 'nova' : 'office';
+        if (saved === 'nova') return cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone') ? 'nova' : 'office';
         return saved === 'classic' || saved === 'pool' ? saved : 'office';
     }
 
@@ -888,7 +888,7 @@
     }
 
     function setLayout(l) {
-        l = l === 'classic' || l === 'pool' || (l === 'nova' && cfg.nova && !document.body.classList.contains('os-phone')) ? l : 'office';
+        l = l === 'classic' || l === 'pool' || (l === 'nova' && cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone')) ? l : 'office';
         // a phone page whose Classic style is a separate mobile app (Writeout and Bitbook): Classic goes there
         const classicUrl = document.documentElement.getAttribute('data-os-classic-url');
         if (l === 'classic' && classicUrl) {
@@ -939,7 +939,7 @@
             { id: 'office', name: cfg.officeName, hint: cfg.officeHint || ('A ribbon, tabs and a status bar, like ' + cfg.officeName + '!') },
             { id: 'pool', name: 'Poolside', hint: 'A waterline across the top, and every tool on a pool deck at the right, with numbered lanes for tabs!' },
             { id: 'classic', name: cfg.app + ' Classic', hint: cfg.classicHint || ('The original ' + cfg.app + ': glass sidebars, gel buttons and floating orbs!') }
-        ].concat(cfg.nova && !document.body.classList.contains('os-phone') ? [{ id: 'nova', name: 'Nova', hint: 'A slim tool dock, flat soft buttons, floating panels and a format capsule over the page. Made for writing!' }] : []).forEach(function (c) {
+        ].concat(cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone') ? [{ id: 'nova', name: 'Nova', hint: 'A slim tool dock, flat soft buttons, floating panels and a format capsule over the page. Made for writing!' }] : []).forEach(function (c) {
             const b = el('button', 'os-lay-card', thumbHTML(c.id) + '<b>' + esc(c.name) + '</b><span>' + esc(c.hint) + '</span>');
             b.type = 'button';
             b.dataset.layout = c.id;
@@ -1175,7 +1175,7 @@
                     { label: cfg.officeName, icon: 'layout', checked: currentLayout() === 'office', run: function () { setLayout('office'); } },
                     { label: 'Poolside', icon: 'layout', checked: currentLayout() === 'pool', run: function () { setLayout('pool'); } },
                     { label: cfg.app + ' Classic', icon: 'sparkle', checked: currentLayout() === 'classic', run: function () { setLayout('classic'); } },
-                    cfg.nova && !document.body.classList.contains('os-phone') ? { label: 'Nova', icon: 'layout', checked: currentLayout() === 'nova', run: function () { setLayout('nova'); } } : null,
+                    cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone') ? { label: 'Nova', icon: 'layout', checked: currentLayout() === 'nova', run: function () { setLayout('nova'); } } : null,
                     { sep: true },
                     { label: 'Settings…', icon: 'gear', run: function () { openBackstage('settings'); } }
                 ]);

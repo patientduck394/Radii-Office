@@ -123,6 +123,7 @@
         officeHint: 'A violet ribbon with fields, preview, a Keydown Guide, a File screen and a status bar, like Forms!',
         classicHint: 'The original Formly: violet glass sidebar and gel buttons!',
         classicToast: 'Formly Classic: violet glass and gel!',
+        nova: true,
         theme: { accent: '#8b5cf6', 'accent-d': '#6d3fe0', 'accent-l': '#ede9fe', title: '#7c4ff0', gel1: '#c4b5fd', gel2: '#8b5cf6',
             'gel-border': '#ddd6fe', 'gel-glow': 'rgba(139, 92, 246, 0.45)', glow: 'rgba(237, 233, 254, 0.9)', 'thumb-bg': '#2e1065' },
         editor: () => null,

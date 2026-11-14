@@ -1,6 +1,6 @@
 // ==========================================
 // KEYDOWN FULL ENGINE (ported from Writeout!)!
-// 172 core triggers + 412 marketplace triggers + 22 ::blocks!
+// 172 core triggers + 412 style-pack triggers + 22 ::blocks!
 // Static renderer: escape HTML, swap tokens for spans, restore!
 // Interactive applets wire up via click delegation + sounds!
 // ==========================================
@@ -579,5 +579,5 @@ function kdBuildGuideHTML() {
         + kdGuideSection("Effects + Megachips", eff)
         + kdGuideSection("Dev / Avionics / Journal", dev)
         + '<div class="kd-guide-group"><div class="kd-guide-title">Blocks — whole cell is ::name (22)</div>' + blocks.map((b) => '<div class="kd-guide-row"><code>::' + b.o.slice(2) + "</code><span>" + kdRenderBlock(b.o.slice(2)) + "</span></div>").join("") + "</div>"
-        + kdGuideSection("Marketplace Packs", KD_MKT);
+        + kdGuideSection("Style Packs", KD_MKT);
 }

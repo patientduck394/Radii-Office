@@ -626,7 +626,9 @@ function applyKeydownFormatting(text) {
     }).join("\n");
 
     keydownDefinitions.forEach(def => {
-        const regex = new RegExp(escapeRegExp(def.open) + '(.*?)' + escapeRegExp(def.close), 'g');
+        if (html.indexOf(def.open) === -1) return;   // nothing to do (there are ~2,000 styles now)
+        const regex = def._re || (def._re = new RegExp(escapeRegExp(def.open) + '(.*?)' + escapeRegExp(def.close), 'g'));
+        regex.lastIndex = 0;
         if (def.className) {
             html = html.replace(regex, `<span class="${def.className}">$1</span>`);
         } else if (def.tagName) {

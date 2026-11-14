@@ -2,7 +2,7 @@
    Writeout's Word layout! A ribbon, a File screen, a Navigation pane and
    real Pages (Word's Print Layout) on top of Writeout's own editor code.
    Writeout Classic (the original glass layout) stays one click away in
-   Settings! Loaded after app.js, marketplace.js, settings.js and
+   Settings! Loaded after app.js, settings.js and
    office-shell.js!
    ===================================================================== */
 (function () {
@@ -519,7 +519,7 @@
         document.head.appendChild(ruleStyle);
     }
 
-    // The page color follows the canvas theme (Dark Canvas, Sepia...)!
+    // The page color follows the page setup
     function captureSheetBg() {
         const had = document.body.classList.contains('wo-pages');
         if (had) document.body.classList.remove('wo-pages');
@@ -773,25 +773,6 @@
             return { label: z + '%', checked: Math.round(prefs.zoom * 100) === z, run: function () { setZoom(z / 100); } };
         }).concat([{ sep: true }, { label: 'Page Width', icon: 'web', run: fitWidth }]);
     }
-    function themeMenu() {
-        const M = window.WriteoutMarketplace;
-        let themes = [];
-        let active = '';
-        try { themes = M ? M.themes() : []; active = M ? M.activeTheme() : ''; } catch (e) {}
-        const rows = [{ id: '', name: 'Default Paper', installed: true }].concat(themes);
-        return [{ header: 'Canvas Theme' }].concat(rows.map(function (t) {
-            return {
-                label: t.name + (t.id === '' || t.installed ? '' : ' (Get)'),
-                checked: active === t.id,
-                icon: 'pageColor',
-                run: function () {
-                    if (M && typeof M.applyTheme === 'function') M.applyTheme(t.id);
-                    setTimeout(applyView, 60);
-                }
-            };
-        }));
-    }
-
     /* ---------- Panes ---------- */
     function togglePane(group) {
         // the formatting part of the sidebar is gone; only Protect ('doc') and Note Info ('main') still open the panel
@@ -914,7 +895,7 @@
             o2.appendChild(OS.optRow('Restore documents on start', 'Reopen your pages when Writeout starts!', function () { return WS.restoreDocs(); }, function (v) { WS.setRestoreDocs(v); }));
         }
         b.appendChild(o2);
-        b.appendChild(OS.bsCards([{ label: 'Canvas themes & more', hint: 'Themes, history wipe and the rest of Writeout Classic settings!', icon: 'palette', run: openClassicSettings }]));
+        b.appendChild(OS.bsCards([{ label: 'More settings', hint: 'History wipe and the rest of Writeout Classic settings!', icon: 'palette', run: openClassicSettings }]));
     }
 
     /* ---------- Ribbon ---------- */
@@ -1226,7 +1207,6 @@
                     { big: true, icon: 'web', label: 'Page\nWidth', run: fitWidth }
                 ] },
                 { label: 'Appearance', items: [
-                    { big: true, icon: 'pageColor', label: 'Canvas\nTheme', menu: themeMenu },
                     { big: true, icon: 'layout', label: 'Layout', title: 'Word or Writeout Classic', menu: function () { return [{ label: 'Word', checked: true, icon: 'layout', run: function () { OS.setLayout('office'); } }, { label: 'Writeout Classic', icon: 'sparkle', run: function () { OS.setLayout('classic'); } }]; } }
                 ] }
             ]
@@ -1236,8 +1216,7 @@
                 { label: 'Help', items: [
                     { big: true, icon: 'help', label: 'Help\nDeck', run: function () { if (typeof openHelpDeck === 'function') openHelpDeck(); } },
                     { big: true, icon: 'keyboard', label: 'Shortcuts', run: shortcuts }
-                ] },
-                { label: 'Extensions', items: [{ big: true, icon: 'store', label: 'Marketplace', run: function () { const b = document.getElementById('marketplace-trigger-btn'); if (b) b.click(); } }] }
+                ] }
             ]
         }
     ];

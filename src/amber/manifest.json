@@ -1,7 +1,7 @@
 {
   "name": "Amber \u2014 Radii Office Slides",
   "short_name": "Amber",
-  "description": "Glassy slide deck studio: shapes, themes, marketplace packs and .ka files.",
+  "description": "Glassy slide deck studio: shapes, themes and .ka files.",
   "start_url": ".",
   "scope": ".",
   "display": "standalone",

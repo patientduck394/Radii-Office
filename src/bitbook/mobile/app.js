@@ -15,10 +15,7 @@
         ['writeout_format_group', 'bitbook_format_group'],
         ['writeout_page_size', 'bitbook_note_size'],
         ['writeout_page_orientation', 'bitbook_note_orientation'],
-        ['writeout_doc_password', 'bitbook_note_password'],
-        ['writeout_marketplace_installed_v1', 'bitbook_marketplace_installed_v1'],
-        ['writeout_marketplace_active_theme', 'bitbook_marketplace_active_theme'],
-        ['writeout_marketplace_hide_installed', 'bitbook_marketplace_hide_installed']
+        ['writeout_doc_password', 'bitbook_note_password']
     ];
     try {
         if (localStorage.getItem('bitbook_storage_migrated_v1') === '1') return;
@@ -4286,11 +4283,11 @@ var FMT_DEFAULT_STYLES = [
     { label: 'Folder Tab', cls: 'jr-folder-tab' }
 ];
 
-// Every extension style that EXISTS, live from the Marketplace (nothing hardcoded)!
+// Every extension style that EXISTS, live from the Keydown style packs!
 function fmtExtensionVariants() {
     const out = [];
     try {
-        const M = window.WriteoutMarketplace;
+        const M = window.KeydownPacks;
         if (!M || !M.catalog || typeof M.installed !== 'function') return out;
         const installed = M.installed();
         M.catalog.forEach(function (ext) {
@@ -4311,7 +4308,7 @@ function fmtExtensionVariants() {
     return out;
 }
 
-// One shared apply path (Marketplace owns it; local fallback if missing)!
+// One shared apply path (the style packs own it; local fallback if missing)!
 // Set when a collapsed insert parks the caret on purpose: rescue must NOT
 // yank it back to the old offset (that lands AFTER the fresh style)!
 var fmtParkedCaret = false;
@@ -4340,7 +4337,7 @@ function fmtApplyPickerClass(cls) {
                 return true;
             } catch (e) { return false; }
         }
-        const M = window.WriteoutMarketplace;
+        const M = window.KeydownPacks;
         if (M && typeof M.apply === 'function') { M.apply(cls); return true; }
     } catch (e) {}
     try {
@@ -4479,7 +4476,7 @@ function fmtWireStylePicker() {
             const cls = btn.getAttribute('data-picker-class');
             const extId = btn.getAttribute('data-picker-ext');
             try {
-                const M = window.WriteoutMarketplace;
+                const M = window.KeydownPacks;
                 if (extId && M && typeof M.installed === 'function' && typeof M.install === 'function') {
                     if (M.installed().indexOf(extId) === -1) {
                         M.install(extId);
@@ -4911,11 +4908,11 @@ function fmtTagLabel(tag) {
     }
 }
 
-// Extra selector covering INSTALLED Marketplace styles (future packs included)!
-function fmtMarketplaceSuffix() {
+// Extra selector covering every Keydown style pack!
+function fmtPackSuffix() {
     const sels = [];
     try {
-        const M = window.WriteoutMarketplace;
+        const M = window.KeydownPacks;
         if (!M || !M.catalog || typeof M.installed !== 'function') return '';
         const installed = M.installed();
         M.catalog.forEach(function (ext) {
@@ -4956,7 +4953,7 @@ function fmtDetectStyles() {
         } else if (tag === 'SPAN') {
             if (el.className && typeof el.matches === 'function') {
                 try {
-                    if (el.matches(FMT_STYLE_SPAN_SEL + fmtMarketplaceSuffix())) {
+                    if (el.matches(FMT_STYLE_SPAN_SEL + fmtPackSuffix())) {
                         consider('cls:' + el.className, { kind: 'cls', cls: el.className, label: el.className, el: el });
                     }
                 } catch (e) {}

@@ -155,6 +155,7 @@
         classicHint: 'The original Cabinet: coral glass sidebar and gel buttons!',
         classicToast: 'Cabinet Classic: coral glass and gel!',
         // (the same reds as Cabinet Classic: its gel gradient runs #FF6B5E to #FF0000, and #FF8A7D to #FF3333 under the mouse)
+        nova: true,
         theme: { accent: '#FF3333', 'accent-d': '#FF0000', 'accent-l': '#ffe4e1', title: '#FF0000', gel1: '#FF6B5E', gel2: '#FF0000', 'gel-border': '#FF8A7D', 'gel-glow': 'rgba(255, 0, 0, 0.45)', glow: 'rgba(255, 228, 225, 0.9)', 'thumb-bg': '#3b1210' },
         editor: function () { return null; },
         title: function () { return C.name(); },

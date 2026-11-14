@@ -1,7 +1,7 @@
 /* =====================================================================
    Omicron's Sway layout! A teal ribbon (Home, Insert, Design, View, Help),
    a File screen with a ZIP export (index.html + Style.css), Bitbook note
-   import (Tags + Skills included!), the Marketplace Keydown packs, and
+   import (Tags + Skills included!), the Keydown style packs, and
    Omicron Classic one click away in Settings!
    Loaded after app.js and office-shell.js!
    ===================================================================== */
@@ -20,7 +20,7 @@
     function office() { return document.body.classList.contains('os-office'); }
     function docTitle() { try { return localStorage.getItem(TITLE_KEY) || 'My Omicron Page'; } catch (e) { return 'My Omicron Page'; } }
 
-    /* ---------- Style.css (Keydown + Marketplace + Skills + Tags) ---------- */
+    /* ---------- Style.css (Keydown + style packs + Skills + Tags) ---------- */
     let styleCss = null;
     function loadStyleCss() {
         if (styleCss) return Promise.resolve(styleCss);
@@ -35,9 +35,9 @@
         document.head.appendChild(st);
     }).catch(function () {});
 
-    // Marketplace Keydown: every pack's trigger works while you type!
+    // Style packs: every pack's trigger works while you type!
     let MKT = [];
-    fetch('marketplace-styles.json').then(function (r) { return r.json(); }).then(function (packs) {
+    fetch('keydown-packs.json').then(function (r) { return r.json(); }).then(function (packs) {
         MKT = Array.isArray(packs) ? packs : [];
         const defs = [];
         MKT.forEach(function (p) { (p.styles || []).forEach(function (s) { if (s.trigger && s.trigger.open && s.className) defs.push({ open: s.trigger.open, close: s.trigger.close || s.trigger.open, className: s.className }); }); });
@@ -265,8 +265,8 @@
         return [{ header: title }, { cols: cols || 4, cls: 'om-sw-grid', swatches: list.map(function (s) { return { cls: 'om-sw', html: '<span class="' + s.cls + '">Aa</span>', title: s.label, run: function () { wrap(s.cls); } }; }) }];
     }
     function marketMenu() {
-        if (!MKT.length) return [{ header: 'Marketplace' }, { label: 'Loading the Marketplace packs…', disabled: true }];
-        const out = [{ header: 'Marketplace Keydown (' + MKT.length + ' packs)' }];
+        if (!MKT.length) return [{ header: 'Style Packs' }, { label: 'Loading the style packs…', disabled: true }];
+        const out = [{ header: 'Style Packs (' + MKT.length + ' packs)' }];
         MKT.forEach(function (p) {
             out.push({ label: p.name, hint: (p.styles || []).length + ' style' + ((p.styles || []).length === 1 ? '' : 's'), icon: 'store', run: function () { marketPack(p); } });
         });
@@ -621,7 +621,7 @@
         { id: 'save', label: 'Save a Copy', icon: 'save', render: function (b) { b.innerHTML = '<h1>Save a Copy</h1>'; b.appendChild(OS.bsCards([EXPORTS[3]])); } },
         { id: 'export', label: 'Export', icon: 'export', render: function (b) { b.innerHTML = '<h1>Export</h1>'; b.appendChild(OS.bsCards(EXPORTS)); } },
         { id: 'code', label: 'HTML Code', icon: 'code', render: codeView },
-        { id: 'info', label: 'Info', icon: 'info', render: function (b) { const s = stats(); b.innerHTML = '<h1>Info</h1><table class="bb-wc"><tr><td>Cards</td><td><b>' + s.blocks + '</b></td></tr><tr><td>Words</td><td><b>' + s.words + '</b></td></tr><tr><td>Width</td><td><b>' + OS.esc(document.getElementById('canvas-width-select').value) + '</b></td></tr><tr><td>Accent</td><td><b style="color:' + OS.esc(accentColor) + '">' + OS.esc(accentColor) + '</b></td></tr><tr><td>Marketplace packs</td><td><b>' + MKT.length + '</b></td></tr></table>'; } }
+        { id: 'info', label: 'Info', icon: 'info', render: function (b) { const s = stats(); b.innerHTML = '<h1>Info</h1><table class="bb-wc"><tr><td>Cards</td><td><b>' + s.blocks + '</b></td></tr><tr><td>Words</td><td><b>' + s.words + '</b></td></tr><tr><td>Width</td><td><b>' + OS.esc(document.getElementById('canvas-width-select').value) + '</b></td></tr><tr><td>Accent</td><td><b style="color:' + OS.esc(accentColor) + '">' + OS.esc(accentColor) + '</b></td></tr><tr><td>Style packs</td><td><b>' + MKT.length + '</b></td></tr></table>'; } }
     ];
     function settingsExtra(b) {
         b.insertAdjacentHTML('beforeend', '<h2>Omicron</h2>');
@@ -1196,7 +1196,7 @@
                 ] }] },
                 { label: 'Card Styles', items: [{ gallery: true, cls: 'om-card-gal', items: cardsGallery, menu: function () { return [{ header: 'Card Styles' }].concat(cardsGallery.map(function (g) { return { label: g.label, checked: g.active(), run: g.run }; })); } }] },
                 { label: 'Keydown', items: [
-                    { big: true, icon: 'store', label: 'Marketplace\nStyles', title: 'Every Marketplace Keydown pack!', menu: marketMenu },
+                    { big: true, icon: 'store', label: 'Style\nPacks', title: 'Every Keydown style pack!', menu: marketMenu },
                     { big: true, icon: 'palette', label: 'Skills', title: 'Uni-Chip, Custom Chip and 4050 Unique Styles!', run: function () { skill('us'); }, menu: function () { return [{ label: 'Uni-Chip', icon: 'palette', run: function () { skill('uni'); } }, { label: 'Custom Chip', icon: 'bubble', run: function () { skill('cc'); } }, { label: 'Unique Styles', icon: 'sparkle', run: function () { skill('us'); } }]; } }
                 ] },
                 { label: 'Arrange', items: [{ stack: [
@@ -1339,7 +1339,7 @@
     }
     function cheatSheet() {
         const rows = [['=Y=text=Y=', 'Yellow gel orb (R, G, C, B, V, P, O, MG, LM, AQ, SL too)'], ['#C#text#', 'Cyan gel bubble'], ['!#A#text#', 'Aqua tag chip'], ['**text**', 'Bold'], ['*text*', 'Italic'], ['`code`', 'Inline code'], ['~W~text~W~', 'Kinetic wave'], ['~M~text~M~', 'Mirrored text'], ['::aqua', 'Aqua box (then Space)'], ['::console', 'Debug console'], ['::foldout', 'Foldout panel']];
-        (window.OMICRON_EXTRA_DEFS || []).slice(0, 400).forEach(function (d) { rows.push([d.open + 'text' + d.close, 'Marketplace: ' + d.className.replace(/^mkt-/, '')]); });
+        (window.OMICRON_EXTRA_DEFS || []).slice(0, 400).forEach(function (d) { rows.push([d.open + 'text' + d.close, 'Style pack: ' + d.className.replace(/^mkt-/, '')]); });
         const box = document.createElement('div');
         box.className = 'om-cheat';
         box.innerHTML = '<p class="os-dlg-text">Type a trigger in any card, then press Space!</p><table>' + rows.map(function (r) { return '<tr><td><code>' + OS.esc(r[0]) + '</code></td><td>' + OS.esc(r[1]) + '</td></tr>'; }).join('') + '</table>';
@@ -1356,6 +1356,7 @@
         officeHint: 'A teal ribbon with cards, styles, tags and skills, and a File screen with a website ZIP export, like Sway!',
         classicHint: 'The original Omicron: a dark glass sidebar and gel dropdowns!',
         classicToast: 'Omicron Classic: dark glass and gel!',
+        nova: true,
         theme: { accent: '#00D6B6', 'accent-d': '#00a88f', 'accent-l': '#ccfbf1', title: '#00a88f', gel1: '#00D6B6', gel2: '#00a88f', 'gel-border': '#7effeb', 'gel-glow': 'rgba(0, 214, 182, 0.5)', glow: 'rgba(204, 251, 241, 0.9)', 'thumb-bg': '#0f172a' },
         editor: function () { return page; },
         keepSelection: true,
@@ -1378,7 +1379,7 @@
         zoom: { get: function () { return prefs.zoom; }, set: setZoom, min: 50, max: 200 },
         searchExtra: function (q) {
             const out = [];
-            MKT.forEach(function (p) { if (p.name.toLowerCase().indexOf(q) !== -1) out.push({ label: 'Marketplace: ' + p.name, icon: 'store', where: 'Keydown', it: { run: function () { marketPack(p); } } }); });
+            MKT.forEach(function (p) { if (p.name.toLowerCase().indexOf(q) !== -1) out.push({ label: 'Style pack: ' + p.name, icon: 'store', where: 'Keydown', it: { run: function () { marketPack(p); } } }); });
             return out.slice(0, 6);
         },
         onLayout: function () { applyView(); }

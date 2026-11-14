@@ -1,5 +1,5 @@
 /* =====================================================================
-   Nova: Writeout's fourth layout! A slim tool dock on the left, floating tool panels, a format capsule that hovers
+   Nova: a layout for every Radii Office app (made in Writeout first)! A slim tool dock on the left, floating tool panels, a format capsule that hovers
    over the page, a jump-to-anything palette and a status pill. It is its own interface (nothing here reuses the Office
    ribbon, menus or tiles) and it shares only the commands, so every tool works the same in every layout.
 
@@ -23,23 +23,21 @@
     }
 
     /* ---------- the sections of the dock: one color each ---------- */
-    const SECT = {
-        home: { name: 'Write', icon: 'pen', c: 'var(--nv-primary)' },
-        insert: { name: 'Insert', icon: 'plus', c: 'var(--nv-primary)' },
-        layout: { name: 'Page', icon: 'layout', c: 'var(--nv-primary)' },
-        references: { name: 'Cite', icon: 'book', c: 'var(--nv-primary)' },
-        review: { name: 'Review', icon: 'review', c: 'var(--nv-primary)' },
-        view: { name: 'View', icon: 'eye', c: 'var(--nv-primary)' },
-        help: { name: 'Help', icon: 'help', c: 'var(--nv-primary)' }
+    // Writeout and Bitbook name their sections by what you do; every other app uses its own tab names
+    const SECT_ICON = { home: 'pen', insert: 'plus', layout: 'layout', references: 'book', review: 'review', view: 'eye', help: 'help', share: 'share', skills: 'sparkle', keydown: 'sparkle', design: 'palette', transitions: 'wand', animations: 'wand', show: 'play', graph: 'lines', latex: 'sigma', calc: 'grid', boards: 'grid', data: 'table', code: 'code', tools: 'gear' };
+    const SECT_NAME = { home: 'Write', layout: 'Page', references: 'Cite' };
+    const meta = function (tab) {
+        const doc = cfg && (cfg.key === 'writeout' || cfg.key === 'bitbook');
+        const nm = doc && SECT_NAME[tab.id] ? SECT_NAME[tab.id] : (tab.id === 'home' && !doc ? 'Home' : tab.label);
+        return { name: nm, icon: (!doc && tab.id === 'home') ? 'home' : (SECT_ICON[tab.id] || 'sparkle'), c: 'var(--nv-primary)' };
     };
-    const meta = function (tab) { return SECT[tab.id] || { name: tab.label, icon: 'sparkle', c: 'var(--nv-primary)' }; };
 
     let on = false, cfg = null;
     let controls = [];          // every live control (capsule and the open panel), for syncing
     let panelControls = [];
     let panelTab = null, pinned = false, popEl = null, popAnchor = null, palEl = null, syncQueued = false, timer = 0;
     const nodes = {};           // the pieces of Nova on the page
-    try { pinned = localStorage.getItem('writeout_nova_pin') === '1'; } catch (e) {}
+    const keyOf = function (k) { return ((cfg && cfg.key) || 'writeout') + '_nova_' + k; };
 
     const itemLabel = function (it) { return typeof it.label === 'function' ? it.label() : (it.label || ''); };
     const flat = function (items, out) {
@@ -294,7 +292,7 @@
         (cfg.views || []).forEach(function (v, i) { const b = nodes.views && nodes.views[i]; if (b && v.active) b.classList.toggle('on', !!v.active()); });
         if (cfg.zoom && nodes.zoomLab) nodes.zoomLab.textContent = Math.round(cfg.zoom.get() * 100) + '%';
         const pb = nodes.paneBtn; if (pb && pb._it && pb._it.checked) pb.classList.toggle('on', !!pb._it.checked());
-        const nb = nodes.navBtn; if (nb && cfg.views && cfg.views[0] && cfg.views[0].active) nb.classList.toggle('on', !!cfg.views[0].active());
+        const nb = nodes.navBtn, nv0 = (cfg.views || []).find(function (v) { return v.icon === 'navPane'; }); if (nb && nv0 && nv0.active) nb.classList.toggle('on', !!nv0.active());
     }
 
     /* ---------- the tool panel (opens from the dock) ---------- */
@@ -341,7 +339,7 @@
     }
     function setPinned(v) {
         pinned = !!v;
-        try { localStorage.setItem('writeout_nova_pin', pinned ? '1' : '0'); } catch (e) {}
+        try { localStorage.setItem(keyOf('pin'), pinned ? '1' : '0'); } catch (e) {}
         document.body.classList.toggle('nv-pinned', pinned);
         if (nodes.pinBtn) nodes.pinBtn.classList.toggle('on', pinned);
     }
@@ -357,8 +355,8 @@
                 if (it.gallery && !it.noIndex) (typeof it.items === 'function' ? it.items() : it.items).forEach(function (gi) { if (gi.run) out.push({ label: gi.title || gi.label, icon: it.icon || 'sparkle', where: sec.name, it: gi, c: sec.c }); });
             });
         });
-        [['office', 'Switch to the ' + (cfg.officeName || 'Office') + ' layout'], ['pool', 'Switch to the Poolside layout'], ['classic', 'Switch to Writeout Classic']].forEach(function (l) {
-            out.push({ label: l[1], icon: 'layout', where: 'Layout', it: { run: function () { OS.setLayout(l[0]); } }, c: 'var(--nv-primary)' });
+        layoutChoices().forEach(function (l) {
+            if (l.id !== 'nova') out.push({ label: l.label, icon: 'layout', where: 'Layout', it: { run: function () { OS.setLayout(l.id); } }, c: 'var(--nv-primary)' });
         });
         return out;
     }
@@ -441,7 +439,7 @@
         const inner = el('div', 'nv-capsule-in');
         const into = { list: controls };
         picks.forEach(function (it) {
-            if (it === null) { inner.appendChild(el('i', 'nv-csep')); return; }
+            if (it === null) { if (inner.lastChild && inner.lastChild.className !== 'nv-csep') inner.appendChild(el('i', 'nv-csep')); return; }
             if (!it) return;
             const copy = Object.assign({}, it, { big: false, sm: false });
             const n = buildItem(copy, into);
@@ -450,13 +448,17 @@
         const more = el('button', 'nv-t nv-ic nv-more', ic('sparkle'));
         more.type = 'button'; more.title = 'All the writing tools';
         more.addEventListener('click', function () { openPanel('home'); });
-        inner.appendChild(el('i', 'nv-csep')); inner.appendChild(more);
+        const found = picks.filter(Boolean).length;
+        document.body.classList.toggle('nv-hascap', found > 0);
+        if (!found) { cap.innerHTML = ''; return; }
+        if (inner.lastChild && inner.lastChild.className !== 'nv-csep') inner.appendChild(el('i', 'nv-csep'));
+        inner.appendChild(more);
         cap.appendChild(inner);
     }
 
     /* ---------- building and removing Nova ---------- */
     function dockButton(cls, iconName, label, title) {
-        const b = el('button', 'nv-d ' + cls, ic(iconName) + '<span>' + esc(label) + '</span>');
+        const b = el('button', 'nv-d ' + cls + (String(label).length > 8 && String(label).indexOf(' ') < 0 ? ' nv-long' : ''), ic(iconName) + '<span>' + esc(label) + '</span>');
         b.type = 'button'; b.title = title || label;
         return b;
     }
@@ -485,10 +487,7 @@
             const cur = OS.layout();
             openPop(lay, [
                 { header: 'Layout' },
-                { label: cfg.officeName || 'Office', icon: 'layout', checked: cur === 'office', run: function () { OS.setLayout('office'); } },
-                { label: 'Poolside', icon: 'layout', checked: cur === 'pool', run: function () { OS.setLayout('pool'); } },
-                { label: 'Nova', icon: 'sparkle', checked: cur === 'nova', run: function () { OS.setLayout('nova'); } },
-                { label: cfg.app + ' Classic', icon: 'pen', checked: cur === 'classic', run: function () { OS.setLayout('classic'); } }
+                ...layoutChoices().map(function (l) { return { label: l.name, icon: l.id === 'nova' ? 'sparkle' : l.id === 'classic' ? 'pen' : 'layout', checked: cur === l.id, run: function () { OS.setLayout(l.id); } }; })
             ], { side: 'right' });
             e.stopPropagation();
         });
@@ -515,7 +514,8 @@
         right.appendChild(share);
         const paneItem = allItems().find(function (i) { return /Format Pane/i.test(i.title || itemLabel(i) || '') && !!i.run; });
         if (paneItem) { const pb = mkBar('brush', 'Format pane', function (e) { run(paneItem, e); }); pb._it = paneItem; nodes.paneBtn = pb; right.appendChild(pb); }
-        if (cfg.views && cfg.views[0]) { const nb = mkBar('panelRight', 'Pages and outline', function (e) { run(cfg.views[0], e); }); nodes.navBtn = nb; right.appendChild(nb); }
+        const navView = (cfg.views || []).find(function (v) { return v.icon === 'navPane'; });
+        if (navView) { const nb = mkBar('panelRight', navView.title || 'Navigation', function (e) { run(navView, e); }); nodes.navBtn = nb; right.appendChild(nb); }
         bar.appendChild(left); bar.appendChild(search); bar.appendChild(right);
         nodes.bar = bar;
         // capsule
@@ -528,7 +528,7 @@
         panel.querySelector('.nv-x').addEventListener('click', function () { closePanel(true); });
         // status pill
         const st = el('footer', 'nv nv-status'); st.id = 'nv-status';
-        st.innerHTML = '<div class="nv-pill"><div class="nv-status-l"></div><i class="nv-csep"></i><div class="nv-views"></div><i class="nv-csep"></i><div class="nv-zoom"></div></div>';
+        st.innerHTML = '<div class="nv-pill"><div class="nv-status-l"></div>' + ((cfg.views || []).length ? '<i class="nv-csep"></i><div class="nv-views"></div>' : '<div class="nv-views" hidden></div>') + (cfg.zoom ? '<i class="nv-csep"></i><div class="nv-zoom"></div>' : '<div class="nv-zoom" hidden></div>') + '</div>';
         nodes.status = st; nodes.statusL = st.querySelector('.nv-status-l');
         nodes.views = [];
         const vbox = st.querySelector('.nv-views');
@@ -554,7 +554,7 @@
     }
     function setDark(v) {
         document.body.classList.toggle('nv-dark', !!v);
-        try { localStorage.setItem('writeout_nova_dark', v ? '1' : '0'); } catch (e) {}
+        try { localStorage.setItem(keyOf('dark'), v ? '1' : '0'); } catch (e) {}
     }
     // View / Visual / Source: icons instead of emoji, while Nova is on
     const MODE_ICON = { view: ['eye', 'View'], visual: ['pen', 'Visual'], source: ['code', 'Source'] };
@@ -566,6 +566,14 @@
             b.innerHTML = ic(m[0], 'nv-mic') + '<span>' + m[1] + '</span>';
         });
     }
+    // the layouts this app has: Poolside only where the shell carries it (Writeout and Bitbook)
+    function layoutChoices() {
+        const out = [{ id: 'office', name: cfg.officeName || 'Office', label: 'Switch to the ' + (cfg.officeName || 'Office') + ' layout' }];
+        if (cfg.key === 'writeout' || cfg.key === 'bitbook') out.push({ id: 'pool', name: 'Poolside', label: 'Switch to the Poolside layout' });
+        out.push({ id: 'nova', name: 'Nova', label: 'Switch to the Nova layout' });
+        out.push({ id: 'classic', name: cfg.app + ' Classic', label: 'Switch to ' + cfg.app + ' Classic' });
+        return out;
+    }
     function enter() {
         if (on) return;
         cfg = OS.config();
@@ -573,11 +581,14 @@
         on = true;
         const th = cfg.theme || {};
         document.body.style.setProperty('--nv-primary', th.accent || '#0284c7');
-        document.body.style.setProperty('--nv-primary-d', th['accent-d'] || '#0369a1');
-        document.body.style.setProperty('--nv-primary-l', th['accent-l'] || '#e0f2fe');
+        document.body.style.setProperty('--nv-primary-d', th['accent-d'] || 'color-mix(in srgb, ' + (th.accent || '#0284c7') + ' 78%, #000)');
+        document.body.style.setProperty('--nv-primary-l', th['accent-l'] || 'color-mix(in srgb, ' + (th.accent || '#0284c7') + ' 14%, #fff)');
+        // Writeout draws Nova on its own page grid; every other app keeps its grid and Nova floats around it
+        document.body.classList.toggle('nv-flow', cfg.key !== 'writeout');
+        try { pinned = localStorage.getItem(keyOf('pin')) === '1'; } catch (e) { pinned = false; }
         controls = []; panelControls = []; panelTab = null;
         paintModes(); setTimeout(paintModes, 500); setTimeout(paintModes, 1500);
-        let dark = null; try { dark = localStorage.getItem('writeout_nova_dark'); } catch (e) {}
+        let dark = null; try { dark = localStorage.getItem(keyOf('dark')); } catch (e) {}
         document.body.classList.toggle('nv-dark', dark === '1' || (dark === null && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
         document.body.classList.add('nv-on');
         build();
@@ -590,7 +601,8 @@
         clearInterval(timer);
         closePop(); closePalette(); paintModes(true);
         document.querySelectorAll('.nv').forEach(function (n) { n.remove(); });
-        document.body.classList.remove('nv-on', 'nv-panel-open', 'nv-pinned', 'nv-dark');
+        document.body.classList.remove('nv-on', 'nv-panel-open', 'nv-pinned', 'nv-dark', 'nv-flow', 'nv-hascap');
+        ['--nv-primary', '--nv-primary-d', '--nv-primary-l'].forEach(function (v) { document.body.style.removeProperty(v); });
         controls = []; panelControls = []; panelTab = null;
         Object.keys(nodes).forEach(function (k) { delete nodes[k]; });
     }

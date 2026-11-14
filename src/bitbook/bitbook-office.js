@@ -3,7 +3,7 @@
    Insert, Skills, View), a page list, a OneNote-style page header with
    the note's title and date, page colors and rule lines, on top of
    Bitbook's own editor. Bitbook Classic stays one click away in Settings!
-   Loaded after app.js, marketplace.js, settings.js and office-shell.js!
+   Loaded after app.js, settings.js and office-shell.js!
    ===================================================================== */
 (function () {
     'use strict';
@@ -468,16 +468,6 @@
         applyPagesView();
         OS.sync();
     }
-    function themeMenu() {
-        const M = window.WriteoutMarketplace;
-        let themes = [], active = '';
-        try { themes = M ? M.themes() : []; active = M ? M.activeTheme() : ''; } catch (e) {}
-        const rows = [{ id: '', name: 'Default Paper', installed: true }].concat(themes);
-        return [{ header: 'Canvas Theme' }].concat(rows.map(function (t) {
-            return { label: t.name + (t.id === '' || t.installed ? '' : ' (Get)'), checked: active === t.id, icon: 'pageColor', run: function () { if (M && M.applyTheme) M.applyTheme(t.id); setTimeout(applyPage, 60); } };
-        }));
-    }
-
     /* ---------- Pages (the same real pages and Print Layout as Writeout!) ----------
        A page is a page break (::pagebreak, Ctrl/Cmd+Enter); View > Pages shows the note as separate sheets, like Word's Print Layout. */
     const MARGINS = {
@@ -522,7 +512,7 @@
         ruleStyle.id = 'bb-page-rules';
         document.head.appendChild(ruleStyle);
     }
-    // the sheets take the page color of the note (or the canvas theme)
+    // the sheets take the page color of the note 
     function captureSheetBg() {
         const had = document.body.classList.contains('bb-pages');
         if (had) document.body.classList.remove('bb-pages');
@@ -820,7 +810,7 @@
             o.appendChild(OS.optRow('Restore notes on start', 'Reopen your pages when Bitbook starts!', function () { return WS.restoreDocs(); }, function (v) { WS.setRestoreDocs(v); }));
         }
         b.appendChild(o);
-        b.appendChild(OS.bsCards([{ label: 'Canvas themes & more', hint: 'Themes, favorites, note info and the rest of Bitbook Classic settings!', icon: 'palette', run: openClassicSettings }]));
+        b.appendChild(OS.bsCards([{ label: 'More settings', hint: 'Favorites, note info and the rest of Bitbook Classic settings!', icon: 'palette', run: openClassicSettings }]));
     }
 
     /* ---------- Ribbon ---------- */
@@ -972,7 +962,6 @@
                 { label: 'Page Setup', items: [
                     { big: true, icon: 'pageColor', label: 'Page\nColor', menu: pageColorMenu },
                     { big: true, icon: 'lines', label: 'Rule\nLines', menu: linesMenu },
-                    { big: true, icon: 'palette', label: 'Canvas\nTheme', menu: themeMenu }
                 ] },
                 { label: 'Show', items: [{ stack: [
                     { check: true, label: 'Page List', get: function () { return prefs.nav; }, set: function (v) { prefs.nav = v; savePrefs(); applyView(); } },
@@ -989,8 +978,7 @@
         {
             id: 'help', label: 'Help', groups: [
                 { label: 'Help', items: [{ big: true, icon: 'help', label: 'Help\nDeck', run: function () { if (typeof openHelpDeck === 'function') openHelpDeck(); } }] },
-                { label: 'BitLang', items: [{ big: true, icon: 'code', label: 'BitLang\nGuide', title: 'How to write programs and games in Bitbook!', run: function () { if (window.BitLang) window.BitLang.openDocs(); } }] },
-                { label: 'Extensions', items: [{ big: true, icon: 'store', label: 'Marketplace', run: function () { const b = document.getElementById('marketplace-trigger-btn'); if (b) b.click(); } }] }
+                { label: 'BitLang', items: [{ big: true, icon: 'code', label: 'BitLang\nGuide', title: 'How to write programs and games in Bitbook!', run: function () { if (window.BitLang) window.BitLang.openDocs(); } }] }
             ]
         }
     ];
@@ -1023,6 +1011,7 @@
         officeHint: 'A purple ribbon, a page list, page titles with dates, tags and rule lines, like OneNote!',
         classicHint: 'The original Bitbook: purple glass sidebars, gel buttons and floating spheres!',
         classicToast: 'Bitbook Classic: purple glass and gel!',
+        nova: true,
         theme: { accent: '#9333ea', 'accent-d': '#7e22ce', 'accent-l': '#f3e8ff', title: '#9333ea', gel1: '#d946ef', gel2: '#9333ea', 'gel-border': '#e9d5ff', 'gel-glow': 'rgba(147, 51, 234, 0.45)', glow: 'rgba(233, 213, 255, 0.9)', 'thumb-bg': '#1a0b2e' },
         editor: function () { return ed; },
         keepSelection: true,

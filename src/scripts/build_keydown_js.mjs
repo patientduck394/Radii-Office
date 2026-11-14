@@ -2,12 +2,12 @@
 // It is stitched together from the site's own Keydown sources, so it always matches Writeout, Bitbook and OpenDB:
 //   writeout/keydown-doc.js   documents: lines, headings, lists, tables, math, footnotes, links, pictures, files,
 //                             colors/fonts/alignment, Skills (@@dice, @@timer...), live formatting, Keydown <-> HTML
-//   phosphor/keydown.js       the applets' working insides (clocks, gauges, switches...), ::blocks, marketplace tags
+//   phosphor/keydown.js       the applets' working insides (clocks, gauges, switches...), ::blocks, style-pack tags
 //   writeout/latex.js         $math$ and $$equations$$ (KaTeX, loaded from a CDN the first time math shows up)
 //   bitbook/annotate-ink.js   @@ink drawings
 //   bitbook/mobile/skills-lite.js + bitbook/bb-lite.js + bitbook/bitlang.js   the Skills that do things when clicked
 //   bitbook/radii-table.js    tables (and their floating toolbar while editing)
-//   + every Keydown style: keydown.css, the marketplace tags, gel highlights, the 4,950 Unique Styles and the Skills
+//   + every Keydown style: keydown.css, the style-pack tags, gel highlights, the 4,950 Unique Styles and the Skills
 // Run: node scripts/build_keydown_js.mjs [output file]   (default: ../Keydown.js, next to this project)
 import fs from 'node:fs';
 import path from 'node:path';
@@ -81,7 +81,7 @@ const EXTRA_CSS = `
 
 export const KEYDOWN_CSS = [
     absUrls(read('writeout/keydown.css'), 'writeout/'),
-    absUrls(read('phosphor/keydown-marketplace.css'), 'phosphor/'),
+    absUrls(read('phosphor/keydown-packs.css'), 'phosphor/'),
     absUrls(read('writeout/annotate-hl.css'), 'writeout/'),
     absUrls(read('writeout/unique-styles.css'), 'writeout/'),
     read('writeout/poolside-embed.css'),
@@ -92,9 +92,9 @@ export const KEYDOWN_CSS = [
 const css = KEYDOWN_CSS;
 
 /* ---------- the engine's pieces ---------- */
-// the portable renderer (applets, ::blocks, marketplace): its styles ride in this file, so it never fetches a sheet
+// the portable renderer (applets, ::blocks, style packs): its styles ride in this file, so it never fetches a sheet
 let portable = must(read('phosphor/keydown.js'), 'function kdEnsureUniqueStyles() {', 'function kdEnsureUniqueStyles() { return;');
-// the document engine: OpenDB lives at the site, and the marketplace tags join its tag list (so they save back as Keydown too)
+// the document engine: OpenDB lives at the site, and the style-pack tags join its tag list (so they save back as Keydown too)
 let docEngine = read('writeout/keydown-doc.js');
 // Keydown Next (keydown-next.js) is its own IIFE that finds window.kdDoc itself: just append its source
 const nextJs = read('writeout/keydown-next.js'); // a self-contained IIFE, safe to splice in as-is
@@ -166,7 +166,7 @@ if (typeof window.playAeroClickSound !== 'function') {
 }
 window.BB_SYNTH_URL = window.BB_SYNTH_URL || '${SITE}bitbook/abyssbox_synth.min.js';
 
-/* ===== The portable renderer: applets, ::blocks, marketplace tags (from phosphor/keydown.js) ===== */
+/* ===== The portable renderer: applets, ::blocks, style-pack tags (from phosphor/keydown.js) ===== */
 const Portable = (function () {
 ${portable}
 return { kdRender, kdRenderBlock, kdAppletInner, kdKindFor, kdBuildGuideHTML, KD_ALL, KD_MKT, kdHandleAppletClick };

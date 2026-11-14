@@ -2128,3 +2128,9 @@ body.no-anim *, body.no-anim *::before, body.no-anim *::after {
 .chart-obj[data-kind="image"] .chart-tools [data-ct],
 .chart-obj[data-kind="image"] .chart-tools [data-ca="data"],
 .chart-obj[data-kind="image"] .chart-tools .ct-sep { display: none; }
+
+/* ---- the "more styles" menu in the Keydown bar ---- */
+.kd-more-menu { display: none; flex-direction: column; gap: 8px; width: 280px; }
+.aero-dropdown.active .kd-more-menu { display: flex !important; }
+.kd-more-pick { font: 600 12px var(--font, system-ui); padding: 6px 8px; border-radius: 8px; border: 1px solid #b6c2d1; background: #fff; color: #1e293b; }
+.kd-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }

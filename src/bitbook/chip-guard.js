@@ -1,7 +1,7 @@
 /* =====================================================================
    Chip guard! One shared rule for EVERY formatting chip in the note (Gel Orbs, Gel Bubbles and all their
    cousins, Aero and Logo chips, Unique Chips, Custom Chips, Custom CSS chips, tag chips, Annotate highlights,
-   effect text, Marketplace styles...):
+   effect text, style packs...):
    1. A chip is never empty. An empty inline chip would collapse to a thin line (it has no text to give it a
       height), so it always holds a zero-width placeholder and keeps its full chip shape and size!
    2. Deleting the last letter of a chip (Backspace, Delete, word delete or deleting a selection inside it) leaves
@@ -24,11 +24,11 @@
         '.glossy-border-badge', '.cyber-glow-spark', '.liquid-text-glow', '.aqua-bubble-text', '.reflected-text-block',
         '.embossed-glass-text', '.kinetic-wave-text'
     ].join(', ');
-    // plus whatever styles the app itself knows about (and the Marketplace's)
+    // plus whatever styles the app itself knows about (and the style packs')
     function selector() {
         let s = BASE;
         try { if (typeof FMT_STYLE_SPAN_SEL === 'string') s += ', ' + FMT_STYLE_SPAN_SEL; } catch (e) {}
-        try { if (typeof fmtMarketplaceSuffix === 'function') s += fmtMarketplaceSuffix(); } catch (e) {}
+        try { if (typeof fmtPackSuffix === 'function') s += fmtPackSuffix(); } catch (e) {}
         return s;
     }
     function lockedPieces(c) { return c.querySelector('input, textarea, button, select, [contenteditable="false"]'); }

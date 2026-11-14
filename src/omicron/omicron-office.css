@@ -77,7 +77,7 @@ body.os-dark .om-gp-p, body.os-dark .om-gp-h2, body.os-dark .om-gp-lead { color:
 .om-accents button { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.18), inset 0 1px 2px rgba(255, 255, 255, 0.6); cursor: pointer; padding: 0; transition: transform 0.15s var(--os-spring); }
 .om-accents button:hover { transform: scale(1.25); }
 
-/* Dialogs: Skills, Marketplace packs, cheat sheet, Bitbook pages */
+/* Dialogs: Skills, style packs, cheat sheet, Bitbook pages */
 .os-dlg.om-skill-dlg { width: 640px; }
 .om-skill-tabs, .om-skill-cols { margin: 4px 0 10px; }
 .om-skill-cols button { padding: 4px 9px; font-size: 12px; }

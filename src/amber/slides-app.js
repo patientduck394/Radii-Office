@@ -596,7 +596,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.addEventListener("click", (e) => {
         const isElement = e.target.closest('.slide-element');
-        const isToolbar = e.target.closest('.slides-toolbar') || e.target.closest('.aero-sidebar') || e.target.closest('.aero-palette-menu') || e.target.closest('.marketplace-dialog') ||
+        const isToolbar = e.target.closest('.slides-toolbar') || e.target.closest('.aero-sidebar') || e.target.closest('.aero-palette-menu') ||
             e.target.closest('#os-top, #os-status, #os-backstage, .os-menu, .os-dlg-back, .am-pane, #amber-notes');
         
         if (!isElement && !isToolbar && (activeElementId !== null || editingElementId !== null)) {
@@ -616,7 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
 function initTooltips() {
     const tooltip = document.getElementById("aero-tooltip");
     if (!tooltip) return;
-    // Delegated hovering: dynamically added buttons (Marketplace shapes!) included!
+    // Delegated hovering: dynamically added buttons included!
     let hoveredEl = null;
     const showFor = (el) => {
         if (el === hoveredEl) return;
@@ -1166,8 +1166,6 @@ function toggleShapesPopup(e) {
     playAeroClickSound(750, 0.1);
     document.getElementById("shapes-popup").classList.toggle("show");
     document.getElementById("snap-popup").classList.remove("show");
-    const mktThemesPopup = document.getElementById("mkt-themes-popup");
-    if (mktThemesPopup) mktThemesPopup.classList.remove("show");
     closeRgbaPicker();
     closeFillPopup();
 }
@@ -1177,8 +1175,6 @@ function toggleSnapPopup(e) {
     playAeroClickSound(750, 0.1);
     document.getElementById("snap-popup").classList.toggle("show");
     document.getElementById("shapes-popup").classList.remove("show");
-    const mktThemesPopup = document.getElementById("mkt-themes-popup");
-    if (mktThemesPopup) mktThemesPopup.classList.remove("show");
     closeRgbaPicker();
     closeFillPopup();
 }
@@ -1617,7 +1613,7 @@ function toggleRgbaPicker(e, target) {
     playAeroClickSound(750, 0.1);
     const popup = document.getElementById("rgba-picker-popup");
     if (!popup) return;
-    ["shapes-popup", "snap-popup", "mkt-themes-popup", "fill-popup"].forEach(id => {
+    ["shapes-popup", "snap-popup", "fill-popup"].forEach(id => {
         const p = document.getElementById(id);
         if (p) p.classList.remove("show");
     });
@@ -1801,7 +1797,7 @@ function toggleFillPopup(e) {
     playAeroClickSound(750, 0.1);
     const popup = document.getElementById("fill-popup");
     if (!popup) return;
-    ["shapes-popup", "snap-popup", "mkt-themes-popup"].forEach(id => {
+    ["shapes-popup", "snap-popup"].forEach(id => {
         const p = document.getElementById(id);
         if (p) p.classList.remove("show");
     });
@@ -2097,7 +2093,7 @@ function prevSlide() {
     }
 }
 
-// Marketplace hooks — shared with amber marketplace engine!
+// Hooks for add-ons
 window.Amber = window.Amber || {};
 window.Amber.getSlides = () => slides;
 window.Amber.getActiveSlideIndex = () => activeSlideIndex;

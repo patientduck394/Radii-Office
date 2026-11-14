@@ -196,7 +196,7 @@
     }
 
     function inShell(node) {
-        return !!(node && node.closest && node.closest('#os-top, .os-menu, #os-backstage, .os-dlg-back'));
+        return !!(node && node.closest && node.closest('#os-top, .os-menu, #os-backstage, .os-dlg-back, .nv'));
     }
 
     function trackSelection() {
@@ -868,6 +868,7 @@
         // a New-style phone page always opens in the New style (its Classic is a separate page)
         if (document.documentElement.hasAttribute('data-os-classic-url')) return 'office';
         const saved = lsGet(layoutKey(), 'office');
+        if (saved === 'nova') return cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone') ? 'nova' : 'office';
         return saved === 'classic' || saved === 'pool' ? saved : 'office';
     }
 
@@ -877,6 +878,8 @@
         b.classList.toggle('os-office', l !== 'classic');
         b.classList.toggle('os-classic', l === 'classic');
         b.classList.toggle('os-pool', l === 'pool');
+        b.classList.toggle('os-nova', l === 'nova');   // Nova is an Office-style layout too: the page and panes stay, and Nova draws its own chrome (nova.js)
+        try { window.dispatchEvent(new CustomEvent('os-layout', { detail: l })); } catch (e) {}
         if (l === 'pool' && !document.getElementById('os-bubbles')) { const bub = document.createElement('div'); bub.id = 'os-bubbles'; bub.setAttribute('aria-hidden', 'true'); bub.innerHTML = '<i></i><i></i><i></i><i></i><i></i><i></i>'; document.body.insertBefore(bub, document.body.firstChild); }
         b.classList.toggle('os-dark', !!prefs.dark);
         b.classList.toggle('os-no-anim', !prefs.anim);
@@ -885,7 +888,7 @@
     }
 
     function setLayout(l) {
-        l = l === 'classic' || l === 'pool' ? l : 'office';
+        l = l === 'classic' || l === 'pool' || (l === 'nova' && cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone')) ? l : 'office';
         // a phone page whose Classic style is a separate mobile app (Writeout and Bitbook): Classic goes there
         const classicUrl = document.documentElement.getAttribute('data-os-classic-url');
         if (l === 'classic' && classicUrl) {
@@ -893,8 +896,8 @@
             location.href = classicUrl;
             return;
         }
-        if (currentLayout() === l && document.body.classList.contains(l === 'classic' ? 'os-classic' : 'os-office') && document.body.classList.contains('os-pool') === (l === 'pool')) {
-            toast(l === 'office' ? 'Already in the ' + cfg.officeName + ' layout!' : l === 'pool' ? 'Already in the Poolside layout!' : 'Already in ' + cfg.app + ' Classic!');
+        if (currentLayout() === l && document.body.classList.contains(l === 'classic' ? 'os-classic' : 'os-office') && document.body.classList.contains('os-pool') === (l === 'pool') && document.body.classList.contains('os-nova') === (l === 'nova')) {
+            toast(l === 'nova' ? 'Already in the Nova layout!' : l === 'office' ? 'Already in the ' + cfg.officeName + ' layout!' : l === 'pool' ? 'Already in the Poolside layout!' : 'Already in ' + cfg.app + ' Classic!');
             syncLayoutCards();
             return;
         }
@@ -907,7 +910,7 @@
             syncLayoutCards();
             try { if (cfg.onLayout) cfg.onLayout(l); } catch (e) { console.error(e); }
             window.dispatchEvent(new Event('resize'));
-            toast(l === 'pool' ? 'Poolside layout: a waterline on top and the tools on the pool deck!' : l === 'office' ? cfg.officeName + ' layout: ribbon, tabs and a status bar!' : (cfg.classicToast || cfg.app + ' Classic: the original glassy layout!'));
+            toast(l === 'nova' ? 'Nova layout: a tool dock, floating panels and a format capsule over the page!' : l === 'pool' ? 'Poolside layout: a waterline on top and the tools on the pool deck!' : l === 'office' ? cfg.officeName + ' layout: ribbon, tabs and a status bar!' : (cfg.classicToast || cfg.app + ' Classic: the original glassy layout!'));
         };
         if (!animOn()) { swap(); return; }
         const cur = el('div', 'os-curtain', '<img src="' + esc(cfg.icon) + '" alt="">');
@@ -936,7 +939,7 @@
             { id: 'office', name: cfg.officeName, hint: cfg.officeHint || ('A ribbon, tabs and a status bar, like ' + cfg.officeName + '!') },
             { id: 'pool', name: 'Poolside', hint: 'A waterline across the top, and every tool on a pool deck at the right, with numbered lanes for tabs!' },
             { id: 'classic', name: cfg.app + ' Classic', hint: cfg.classicHint || ('The original ' + cfg.app + ': glass sidebars, gel buttons and floating orbs!') }
-        ].forEach(function (c) {
+        ].concat(cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone') ? [{ id: 'nova', name: 'Nova', hint: 'A slim tool dock, flat soft buttons, floating panels and a format capsule over the page!' }] : []).forEach(function (c) {
             const b = el('button', 'os-lay-card', thumbHTML(c.id) + '<b>' + esc(c.name) + '</b><span>' + esc(c.hint) + '</span>');
             b.type = 'button';
             b.dataset.layout = c.id;
@@ -991,6 +994,7 @@
     /* ---------- the ⌘K palette: a box in the middle of the page with the results below it, like Waterflow's quick switcher ---------- */
     let palEl = null;
     function openPalette() {
+        if (document.body.classList.contains('os-nova') && window.WriteoutNova && window.WriteoutNova.openPalette) { window.WriteoutNova.openPalette(); return; }
         if (palEl) { palEl.querySelector('input').focus(); return; }
         if (!document.getElementById('os-pal-css')) {
             const st = el('style');
@@ -1171,6 +1175,7 @@
                     { label: cfg.officeName, icon: 'layout', checked: currentLayout() === 'office', run: function () { setLayout('office'); } },
                     { label: 'Poolside', icon: 'layout', checked: currentLayout() === 'pool', run: function () { setLayout('pool'); } },
                     { label: cfg.app + ' Classic', icon: 'sparkle', checked: currentLayout() === 'classic', run: function () { setLayout('classic'); } },
+                    cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone') ? { label: 'Nova', icon: 'layout', checked: currentLayout() === 'nova', run: function () { setLayout('nova'); } } : null,
                     { sep: true },
                     { label: 'Settings…', icon: 'gear', run: function () { openBackstage('settings'); } }
                 ]);
@@ -1258,6 +1263,10 @@
         syncLayoutCards: syncLayoutCards,
         setLayout: setLayout,
         layout: currentLayout,
+        isNova: function () { return document.body.classList.contains('os-nova'); },
+        config: function () { return cfg; },
+        run: run,
+        title: function () { try { return cfg.title(); } catch (e) { return ''; } },
         isOffice: isOffice,
         isPool: function () { return document.body.classList.contains('os-pool'); },
         isPhone: function () { return document.body.classList.contains('os-phone'); },

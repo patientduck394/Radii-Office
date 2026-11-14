@@ -88,6 +88,7 @@
         officeHint: 'A glossy cyan ribbon with tabs, a File screen and a status bar, like Word!',
         classicHint: 'The original OpenDB: frosted glass, gel buttons and a sunny sky!',
         classicToast: 'OpenDB Classic: frosted glass and gel!',
+        nova: true,
         theme: { accent: '#12b5ea', 'accent-d': '#0a8fbd', 'accent-l': '#d6f6ff', title: '#0b9fd0', gel1: '#9ce9ff', gel2: '#15cbfe',
             'gel-border': '#b5f0ff', 'gel-glow': 'rgba(21, 203, 254, 0.5)', glow: 'rgba(214, 246, 255, 0.9)', 'thumb-bg': '#06384a' },
         editor: () => null,

@@ -3133,7 +3133,7 @@ function isKeydownDetected(text) {
             if (/<(span|code|strong|em|div)[\s>]/i.test(html)) return true;
         }
     } catch (e) {}
-    // Fallback: quick trigger scan (covers core + marketplace + ::blocks)!
+    // Fallback: quick trigger scan (covers core + style packs + ::blocks)!
     if (/::(glass|bubble|alert|media|aqua|code|emerald|amber|crimson|amethyst|gsky|gemerald|gamber|gcrimson|foldout|divider|console|diff|horizon|waypoint|entry|draw)\s*$/i.test(s.trim())) return true;
     return /(\*\*.+?\*\*|\*.+?\*|`[^`]+`|&&.+?&&|~[A-Z0-9]+~.+?~[A-Z0-9]+~|=[A-Z]+=.+?=[A-Z]+=|!#[A-Z]+#.+?#)/s.test(s);
 }

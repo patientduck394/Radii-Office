@@ -3,7 +3,7 @@
    Animations, Slide Show, View), a big zoomed slide, a Notes pane, an
    Animation Pane, a Slide Sorter and drag-to-reorder thumbnails, all on
    top of Amber's own slide engine. Amber Classic stays one click away!
-   Loaded after slides-app.js, marketplace.js, office-shell.js and
+   Loaded after slides-app.js, office-shell.js and
    amber-show.js!
    ===================================================================== */
 (function () {
@@ -255,20 +255,9 @@
         ['Paper', 'linear-gradient(180deg, #fffbeb 0%, #fde68a 100%)'],
         ['Graphite', 'linear-gradient(180deg, #52525b 0%, #18181b 100%)']
     ];
-    function marketThemes() {
-        const M = window.AmberMarketplace;
-        if (!M) return [];
-        let ids = [];
-        try { ids = M.installed(); } catch (e) {}
-        const out = [];
-        (M.catalog || []).forEach(function (ext) {
-            if (ext.kind === 'theme-pack' && ids.indexOf(ext.id) !== -1) (ext.backgrounds || []).forEach(function (b) { out.push([b.name, b.css]); });
-        });
-        return out;
-    }
     let themeSig = '';
     function themeGalleryItems() {
-        return THEMES.concat(marketThemes()).map(function (t) {
+        return THEMES.map(function (t) {
             return { label: t[0], title: t[0], preview: '<i class="am-theme-prev" style="background:' + t[1] + '"><b>Aa</b></i>', run: function () { changeBackground(t[1]); OS.sync(); }, active: function () { return slide().background === t[1]; } };
         });
     }
@@ -724,7 +713,6 @@
                 b.appendChild(OS.bsCards([
                     { label: 'Blank Presentation', hint: 'Start a fresh deck!', preview: '<div class="os-card-prev" style="background:' + BG_DEFAULT + '"></div>', run: newDeck },
                     { label: 'Open a .ka file', hint: 'Import an Amber deck!', icon: 'folder', run: openKa },
-                    { label: 'Marketplace', hint: 'Themes, templates and shape packs!', icon: 'store', run: function () { if (window.AmberMarketplace) window.AmberMarketplace.open(); } }
                 ]));
                 b.insertAdjacentHTML('beforeend', '<h2>This presentation</h2><div class="am-bs-doc"><img src="favicon-96.png" alt=""><div><b>' + OS.esc(slides[0].title || 'Presentation') + '</b><span>' + slides.length + ' slide' + (slides.length === 1 ? '' : 's') + ' · ' + slides.reduce(function (n, s) { return n + SHOW.entries(s).length; }, 0) + ' animations · saves automatically in this browser!</span></div></div>');
             }
@@ -862,8 +850,7 @@
                         { sm: true, icon: 'x', label: 'Clear Slide Drawing', run: function () { if (window.AmberAnnotate) window.AmberAnnotate.clearSlide(); } },
                         { sm: true, icon: 'trash', label: 'Clear All Drawings', run: function () { if (window.AmberAnnotate) window.AmberAnnotate.clearAll(); } }
                     ] }
-                ] },
-                { label: 'Extensions', items: [{ big: true, icon: 'store', label: 'Marketplace', run: function () { if (window.AmberMarketplace) window.AmberMarketplace.open(); } }] }
+                ] }
             ]
         },
         {
@@ -968,8 +955,7 @@
         },
         {
             id: 'help', label: 'Help', groups: [
-                { label: 'Help', items: [{ big: true, icon: 'help', label: 'Help\nDeck', run: helpDeck }] },
-                { label: 'Extensions', items: [{ big: true, icon: 'store', label: 'Marketplace', run: function () { if (window.AmberMarketplace) window.AmberMarketplace.open(); } }] }
+                { label: 'Help', items: [{ big: true, icon: 'help', label: 'Help\nDeck', run: helpDeck }] }
             ]
         }
     ];
@@ -984,6 +970,7 @@
         icon: 'favicon-96.png',
         officeHint: 'A ribbon with Transitions and Animations, a Notes pane and a Slide Sorter, like PowerPoint!',
         classicHint: 'The original Amber: a glass sidebar, gel tool buttons and a golden toolbar!',
+        nova: true,
         theme: { accent: '#d97706', 'accent-d': '#b45309', 'accent-l': '#fef3c7', title: '#d97706', gel1: '#fbbf24', gel2: '#d97706', 'gel-border': '#fde68a', 'gel-glow': 'rgba(217, 119, 6, 0.35)', glow: 'rgba(253, 230, 138, 0.9)', 'thumb-bg': '#0f172a' },
         editor: function () { return editingSpan(); },
         keepSelection: true,

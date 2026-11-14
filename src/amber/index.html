@@ -10,12 +10,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="slides-style.css?v=20261210p">
-    <link rel="stylesheet" href="marketplace.css?v=20261002-3">
     <link rel="stylesheet" href="../writeout/keydown.css?v=20261223d">
     <link rel="stylesheet" href="../writeout/annotate-hl.css?v=20261222u">
     <link rel="stylesheet" href="../writeout/unique-styles.css?v=20261219b">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css" integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+" crossorigin="anonymous">
     <link rel="stylesheet" href="office-shell.css?v=20261223a">
+    <link rel="stylesheet" href="nova.css?v=20261224b">
     <link rel="stylesheet" href="amber-office.css?v=20261132r">
     <link rel="stylesheet" href="radii-collab.css?v=20261042">
     <link rel="icon" type="image/png" sizes="96x96" href="/amber/favicon-96.png">
@@ -58,16 +58,6 @@
                     <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5.937h4.923m0 0h6.154m-6.154 0c0-5.25 6.154-5.25 6.154 0m0 0H20M5.6 6s-.252 8.925.445 11.933C6.73 20.89 7.8 22 10.741 22h2.518c2.941 0 4.012-1.11 4.697-4.067C18.653 14.926 18.4 6 18.4 6" />
                 </svg>
                 Delete Slide
-            </button>
-            <button id="marketplace-trigger-btn" class="pad-toggle-btn" data-tooltip="Browse themes, templates & shape packs">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                    <path d="M0 0h24v24H0z" fill="none" />
-                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                        <path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" />
-                        <path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" />
-                    </g>
-                </svg>
-                Marketplace
             </button>
             <button class="pad-toggle-btn" onclick="exportKaFile()" data-tooltip="Save this deck as a .ka file (Ctrl+S)">
                 <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
@@ -415,22 +405,6 @@
                     <button class="theme-swatch-btn" onclick="changeBackground('linear-gradient(180deg, #ffffff 0%, #f1f5f9 100%)')" title="Classic Glass" data-tooltip="Apply Classic Glass background">
                         <span class="theme-swatch" style="background: #ffffff; border-color: #cbd5e1;"></span>
                     </button>
-                    <!-- Marketplace Themes Dropdown -->
-                    <div class="popup-tool-container">
-                        <button id="mkt-themes-btn" class="theme-swatch-btn mkt-themes-btn" onclick="toggleMktThemesPopup(event)" title="Marketplace Themes" data-tooltip="Open Marketplace theme collection">
-                            <span class="theme-swatch mkt-themes-swatch"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                                <path d="M0 0h24v24H0z" fill="none" />
-                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                                    <path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" />
-                                    <path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" />
-                                </g>
-                            </svg></span>
-                        </button>
-                        <div id="mkt-themes-popup" class="aero-palette-menu mkt-themes-popup">
-                            <div class="palette-header">MARKETPLACE THEMES</div>
-                            <div id="mkt-themes-list" class="mkt-themes-list"></div>
-                        </div>
-                    </div>
                 </div>
             </div>
 
@@ -508,44 +482,13 @@
         </div>
     </div>
 
-    <!-- Marketplace Dialog Box -->
-    <dialog id="marketplace-dialog" class="marketplace-dialog">
-        <div class="mkt-header">
-            <h3><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
-                <path d="M0 0h24v24H0z" fill="none" />
-                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
-                    <path d="M8.5 8.5V4.222C8.5 2.994 9.545 2 10.833 2h2.334c1.288 0 2.333.994 2.333 2.222V8.5" />
-                    <path d="M17.657 6c1.354 0 2.433 1.539 2.337 2.824l-.596 9.422C19.264 20.356 17.465 22 15.29 22H8.71c-2.174 0-3.973-1.645-4.106-3.754l-.597-9.422C3.91 7.54 4.973 6 6.327 6z" />
-                </g>
-            </svg> Marketplace <span id="mkt-installed-count" class="mkt-installed-pill">0 installed</span></h3>
-            <button id="marketplace-close-btn" class="mkt-close-btn" title="Close">✕</button>
-        </div>
-        <div class="mkt-toolbar-row">
-            <input id="marketplace-search" class="mkt-search" type="text" placeholder="Search themes, templates, shapes..." />
-            <label class="mkt-toggle" title="Show only extensions you haven't installed yet">
-                <input type="checkbox" id="marketplace-hide-installed" />
-                <span>New only</span>
-            </label>
-        </div>
-        <div class="mkt-tabs">
-            <button class="mkt-tab active" data-cat="all">All</button>
-            <button class="mkt-tab" data-cat="themes">Themes</button>
-            <button class="mkt-tab" data-cat="templates">Templates</button>
-            <button class="mkt-tab" data-cat="shapes">Shapes</button>
-        </div>
-        <div id="marketplace-grid" class="mkt-grid"></div>
-        <div class="mkt-footer">
-            <p class="mkt-footer-note">Double-click text to edit! Extensions persist in localStorage.</p>
-            <button id="marketplace-reset-btn" class="mkt-reset-btn">Remove all</button>
-        </div>
-    </dialog>
-
     <script src="slides-app.js?v=20261213a"></script>
-    <script src="marketplace.js?v=20261210c-3"></script>
-    <script src="office-shell.js?v=20261223b"></script>
+    <script src="office-shell.js?v=20261224a"></script>
+    <script src="nova-icons.js?v=20261224b"></script>
+    <script src="nova.js?v=20261224b"></script>
     <script src="docs-library.js?v=20261222w"></script>
     <script src="amber-show.js?v=20261204a"></script>
-    <script src="amber-office.js?v=20261223a"></script>
+    <script src="amber-office.js?v=20261224a"></script>
     <script src="amber-plus.js?v=20261202a"></script>
     <script src="radii-images.js?v=20261131v"></script>
     <script src="images-glue.js?v=20261131v"></script>

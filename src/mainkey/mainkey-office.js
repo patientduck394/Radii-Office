@@ -92,6 +92,7 @@
         officeHint: 'A purple ribbon with records, fields, views, sorting, a File screen and a status bar, like Access!',
         classicHint: 'The original Mainkey: a purple glass sidebar and gel buttons!',
         classicToast: 'Mainkey Classic: purple glass and gel!',
+        nova: true,
         theme: { accent: '#a305ff', 'accent-d': '#7e00cc', 'accent-l': '#f3e3ff', title: '#9b10f0', gel1: '#df9eff', gel2: '#a305ff',
             'gel-border': '#ecccff', 'gel-glow': 'rgba(163, 5, 255, 0.45)', glow: 'rgba(243, 227, 255, 0.9)', 'thumb-bg': '#1a022b' },
         editor: () => null,

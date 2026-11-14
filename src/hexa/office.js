@@ -137,6 +137,7 @@
         officeHint: 'A teal ribbon with Home, Boards and Share tabs, a File screen and a status bar, like Outlook!',
         classicHint: 'The original Hexa: teal glass sidebar and gel buttons!',
         classicToast: 'Hexa Classic: teal glass and gel!',
+        nova: true,
         theme: { accent: '#14b8a6', 'accent-d': '#0f8f82', 'accent-l': '#ccfbf1', title: '#0f9b8c', gel1: '#5eead4', gel2: '#14b8a6',
             'gel-border': '#99f6e4', 'gel-glow': 'rgba(20, 184, 166, 0.45)', glow: 'rgba(204, 251, 241, 0.9)', 'thumb-bg': '#042f2e' },
         editor: () => null,

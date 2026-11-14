@@ -1,5 +1,5 @@
 /* =====================================================================
-   Nova: Writeout's fourth layout. "Flat soft": every button has a border in its main color and a fill that is a
+   Nova: a layout for every Radii Office app. "Flat soft": every button has a border in its main color and a fill that is a
    lighter tint of that color. A slim dock, floating panels, a capsule over the page. (body.os-nova)
    ===================================================================== */
 body.os-nova {
@@ -25,27 +25,29 @@ body.os-nova.nv-dark {
 
 /* ---------- the frame: dock | bar + capsule + page | drawers ---------- */
 body.os-office.os-nova {
-    grid-template-columns: 72px minmax(0, 1fr) auto auto;
-    grid-template-rows: 58px 54px minmax(0, 1fr) 46px;
-    background: var(--nv-desk);
+    background: var(--nv-desk) !important;
     color: var(--nv-ink);
     font-family: var(--nv-font);
 }
+body.os-office.os-nova:not(.nv-flow) {
+    grid-template-columns: 72px minmax(0, 1fr) auto auto;
+    grid-template-rows: 58px 54px minmax(0, 1fr) 46px;
+}
 body.os-nova #os-top, body.os-nova #os-status { display: none !important; }
-body.os-nova #nv-dock { grid-column: 1; grid-row: 1 / -1; }
-body.os-nova #nv-bar { grid-column: 2 / -1; grid-row: 1; }
-body.os-nova #nv-capsule { grid-column: 2; grid-row: 2; }
-body.os-nova .workspace-viewport-wrapper { grid-column: 2; grid-row: 3; transition: margin-left 0.25s var(--nv-ease); }
-body.os-nova #nv-status { grid-column: 2; grid-row: 4; }
-body.os-nova.nv-pinned.nv-panel-open .workspace-viewport-wrapper { margin-left: 384px; }
+body.os-nova:not(.nv-flow) #nv-dock { grid-column: 1; grid-row: 1 / -1; }
+body.os-nova:not(.nv-flow) #nv-bar { grid-column: 2 / -1; grid-row: 1; }
+body.os-nova:not(.nv-flow) #nv-capsule { grid-column: 2; grid-row: 2; }
+body.os-nova:not(.nv-flow) .workspace-viewport-wrapper { grid-column: 2; grid-row: 3; transition: margin-left 0.25s var(--nv-ease); }
+body.os-nova:not(.nv-flow) #nv-status { grid-column: 2; grid-row: 4; }
+body.os-nova:not(.nv-flow).nv-pinned.nv-panel-open .workspace-viewport-wrapper { margin-left: 384px; }
 /* the old panes become drawers on the right */
-body.os-office.os-nova #sidebar {
+body.os-office.os-nova:not(.nv-flow) #sidebar {
     grid-column: 3; grid-row: 2 / 5; width: 262px; margin: 0 0 12px 0; padding: 12px 12px 12px;
     background: var(--nv-card); border: 1.5px solid var(--nv-line); border-radius: 16px 0 0 16px; border-right: 0; box-shadow: none; z-index: 5;
     animation: nvSlideR 0.3s var(--nv-ease);
 }
-body.os-office.os-nova #sidebar::before { content: "Pages & outline"; font: 700 14px var(--nv-font); color: var(--nv-ink); padding: 2px 4px 10px; }
-body.os-office.os-nova #format-sidebar { grid-column: 4; grid-row: 2 / 5; margin: 0 0 12px 0; border-radius: 16px 0 0 16px; }
+body.os-office.os-nova:not(.nv-flow) #sidebar::before { content: "Pages & outline"; font: 700 14px var(--nv-font); color: var(--nv-ink); padding: 2px 4px 10px; }
+body.os-office.os-nova:not(.nv-flow) #format-sidebar { grid-column: 4; grid-row: 2 / 5; margin: 0 0 12px 0; border-radius: 16px 0 0 16px; }
 body.os-nova.wo-nav-off #sidebar, body.os-nova.wo-focus #sidebar { display: none; }
 body.os-nova .outline-item { border-radius: 9px; font-family: var(--nv-font); }
 body.os-nova .outline-item:hover { background: color-mix(in srgb, var(--nv-primary) 9%, var(--nv-card)); }
@@ -270,7 +272,8 @@ body.os-nova .os-mitem:hover { background: color-mix(in srgb, var(--nv-primary) 
 .os-lt-nova .lt-page::before { content: ""; position: absolute; left: 6px; right: 6px; top: -12px; height: 10px; border-radius: 6px; border: 1.5px solid var(--nv-primary); background: #dbeafe; }
 
 @media (max-width: 900px) {
-    body.os-office.os-nova { grid-template-columns: 60px minmax(0, 1fr) auto auto; }
+    body.os-office.os-nova:not(.nv-flow) { grid-template-columns: 60px minmax(0, 1fr) auto auto; }
+    body.os-nova.nv-flow { --nv-dockw: 60px; }
     .nv-panel { left: 68px; width: min(364px, calc(100vw - 80px)); }
     .nv-search span, .nv-search kbd { display: none; }
     .nv-search { flex: 0 0 38px; padding: 0 10px; }
@@ -296,3 +299,24 @@ body.os-nova.nv-dark .kd-modes button[aria-pressed="true"] { background: color-m
 body.os-nova .kd-modes button:focus-visible { outline: 2px solid var(--nv-primary); outline-offset: 2px; }
 body.os-nova .kd-modes button { display: inline-flex; align-items: center; gap: 7px; }
 body.os-nova .kd-modes .nv-mic { width: 18px; height: 18px; flex: none; }
+
+/* ---------- every other app ("flow"): the app keeps its own grid and panes; Nova's chrome floats around them ---------- */
+body.os-nova.nv-flow { --nv-dockw: 72px; --nv-top: 58px; --nv-cap: 0px; --nv-bot: 46px; }
+body.os-nova.nv-flow.nv-hascap { --nv-cap: 54px; }
+body.os-office.os-nova.nv-flow {
+    box-sizing: border-box; padding: calc(var(--nv-top) + var(--nv-cap)) 0 var(--nv-bot) var(--nv-dockw);
+    --bb-top: calc(var(--nv-top) + var(--nv-cap)); --os-top-h: 0px;
+}
+body.os-nova.nv-flow #nv-dock { position: fixed; left: 0; top: 0; bottom: 0; width: var(--nv-dockw); }
+body.os-nova.nv-flow #nv-bar { position: fixed; left: var(--nv-dockw); right: 0; top: 0; height: var(--nv-top); }
+body.os-nova.nv-flow #nv-capsule { position: fixed; left: var(--nv-dockw); right: 0; top: var(--nv-top); height: var(--nv-cap); display: none; }
+body.os-nova.nv-flow.nv-hascap #nv-capsule { display: flex; }
+body.os-nova.nv-flow #nv-status { position: fixed; left: var(--nv-dockw); right: 0; bottom: 0; height: var(--nv-bot); }
+body.os-nova.nv-flow .kd-modes { bottom: calc(var(--nv-bot) + 10px); }
+body.os-nova.nv-flow .ambient-droplet { display: none; }
+body.os-nova.nv-flow .nv-panel { left: calc(var(--nv-dockw) + 8px); }
+body.os-nova.nv-flow.nv-pinned.nv-panel-open { padding-left: calc(var(--nv-dockw) + 384px); }
+body.os-nova.nv-flow.nv-pinned.nv-panel-open #nv-bar, body.os-nova.nv-flow.nv-pinned.nv-panel-open #nv-capsule, body.os-nova.nv-flow.nv-pinned.nv-panel-open #nv-status { left: calc(var(--nv-dockw) + 384px); }
+body.os-nova.nv-flow #os-top, body.os-nova.nv-flow #os-status { display: none !important; }
+.nv-d span { max-width: 100%; overflow: hidden; white-space: normal; text-align: center; line-height: 1.05; padding: 0 2px; box-sizing: border-box; }
+.nv-d.nv-long span { font-size: 8.5px; letter-spacing: 0; }

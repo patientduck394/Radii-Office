@@ -263,7 +263,7 @@ const IMBUER_EXTRA = [
     cls("~BQ~", "~BQ~", "blockquote-list"),
     cls("~MH~", "~MH~", "mega-header"),
 ];
-// Marketplace packs (same order as imbuer/app.js: pack file order)!
+// Style packs (same order as imbuer/app.js: pack file order)!
 const MARKET_EXTRA = [
     cls("~OL~", "~OL~", "mkt-outline-glow"),
     cls("~OLM~", "~OLM~", "mkt-ol-magenta"),
