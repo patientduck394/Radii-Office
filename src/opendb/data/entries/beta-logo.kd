@@ -1,0 +1,17 @@
+---
+format: keydown-text
+id: beta-logo
+type: media
+title: Beta logo
+summary: The logo of the Radii social media Beta
+tags: [beta, radii]
+created: 2026-11-13
+updated: 2026-11-13
+authors: [patientduck394]
+license: CC0-1.0
+file: media/beta-logo.svg
+mime: image/svg+xml
+width: 589
+height: 620
+---
+A lime logo that looks like the Greek letter Beta (β) that represents the Radii-created social network [Beta](https://beta.radii-office.com). It can be used in any way as Beta is not a trademark of Radii (any Radii trademarks or trade dress are waived away/not enforced) and because the license is CC0!
