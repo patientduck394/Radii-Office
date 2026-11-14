@@ -608,7 +608,7 @@ function applyKeydownFormatting(text) {
         return PH(kept.length - 1);
     };
     // Spark markers before escaping: & escaping would eat the && delimiters!
-    let html = text.toString().replace(/&&([\s\S]*?)&&/g, (m, inner) => {
+    let html = text.toString().replace(/(?<!\+\+[A-Z]{1,2})&&([\s\S]*?)(?<!\+\+[A-Z]{1,2})&&/g, (m, inner) => {
         const safe = inner.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
         return stash(`<span class="spark-text">${safe}</span>`);
     });
@@ -625,9 +625,12 @@ function applyKeydownFormatting(text) {
         return lp[1] + marker + lp[3] + marker;
     }).join("\n");
 
+    // (the text is HTML-escaped by now, so a style whose marks hold & < > must be looked for in its escaped form: ++R&& is ++R&amp;&amp; here)
+    const escMarks = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     keydownDefinitions.forEach(def => {
-        if (html.indexOf(def.open) === -1) return;   // nothing to do (there are ~2,000 styles now)
-        const regex = def._re || (def._re = new RegExp(escapeRegExp(def.open) + '(.*?)' + escapeRegExp(def.close), 'g'));
+        const o = def._o || (def._o = escMarks(def.open)), c = def._c || (def._c = escMarks(def.close));
+        if (html.indexOf(o) === -1) return;   // nothing to do (there are ~2,000 styles now)
+        const regex = def._re || (def._re = new RegExp(escapeRegExp(o) + '(.*?)' + escapeRegExp(c), 'g'));
         regex.lastIndex = 0;
         if (def.className) {
             html = html.replace(regex, `<span class="${def.className}">$1</span>`);
