@@ -2423,6 +2423,216 @@ A scanner beam sweeping across the words, the scanned part tinted! Written `++CO
 * `++SL;]text++` ++SL;]slate++
 * `++BK;]text++` ++BK;]black++
 
+## Bubble Highlight chips
+
+A pale wash floating soap bubbles, each with a bright glint! Written `++COLOR<]text++`, in the same 16 colors as the Aero chips:
+
+* `++R<]text++` ++R<]red++
+* `++O<]text++` ++O<]orange++
+* `++GL<]text++` ++GL<]gold++
+* `++Y<]text++` ++Y<]yellow++
+* `++L<]text++` ++L<]lime++
+* `++G<]text++` ++G<]green++
+* `++TU<]text++` ++TU<]turquoise++
+* `++T<]text++` ++T<]teal++
+* `++C<]text++` ++C<]cyan++
+* `++B<]text++` ++B<]blue++
+* `++PR<]text++` ++PR<]purple++
+* `++PK<]text++` ++PK<]pink++
+* `++W<]text++` ++W<]white++
+* `++FG<]text++` ++FG<]fog++
+* `++SL<]text++` ++SL<]slate++
+* `++BK<]text++` ++BK<]black++
+
+## Two-Tone Split chips
+
+A two-tone highlighter, a deeper half and a lighter half split on a slant! Written `++COLOR>]text++`, in the same 16 colors as the Aero chips:
+
+* `++R>]text++` ++R>]red++
+* `++O>]text++` ++O>]orange++
+* `++GL>]text++` ++GL>]gold++
+* `++Y>]text++` ++Y>]yellow++
+* `++L>]text++` ++L>]lime++
+* `++G>]text++` ++G>]green++
+* `++TU>]text++` ++TU>]turquoise++
+* `++T>]text++` ++T>]teal++
+* `++C>]text++` ++C>]cyan++
+* `++B>]text++` ++B>]blue++
+* `++PR>]text++` ++PR>]purple++
+* `++PK>]text++` ++PK>]pink++
+* `++W>]text++` ++W>]white++
+* `++FG>]text++` ++FG>]fog++
+* `++SL>]text++` ++SL>]slate++
+* `++BK>]text++` ++BK>]black++
+
+## Span Arrow chips
+
+A double-headed arrow drawn under the words, showing how far they reach! Written `++COLOR|]text++`, in the same 16 colors as the Aero chips:
+
+* `++R|]text++` ++R|]red++
+* `++O|]text++` ++O|]orange++
+* `++GL|]text++` ++GL|]gold++
+* `++Y|]text++` ++Y|]yellow++
+* `++L|]text++` ++L|]lime++
+* `++G|]text++` ++G|]green++
+* `++TU|]text++` ++TU|]turquoise++
+* `++T|]text++` ++T|]teal++
+* `++C|]text++` ++C|]cyan++
+* `++B|]text++` ++B|]blue++
+* `++PR|]text++` ++PR|]purple++
+* `++PK|]text++` ++PK|]pink++
+* `++W|]text++` ++W|]white++
+* `++FG|]text++` ++FG|]fog++
+* `++SL|]text++` ++SL|]slate++
+* `++BK|]text++` ++BK|]black++
+
+## Cloud chips
+
+A puffy cloud-edged highlight with scalloped top and bottom! Written `++COLOR_]text++`, in the same 16 colors as the Aero chips:
+
+* `++R_]text++` ++R_]red++
+* `++O_]text++` ++O_]orange++
+* `++GL_]text++` ++GL_]gold++
+* `++Y_]text++` ++Y_]yellow++
+* `++L_]text++` ++L_]lime++
+* `++G_]text++` ++G_]green++
+* `++TU_]text++` ++TU_]turquoise++
+* `++T_]text++` ++T_]teal++
+* `++C_]text++` ++C_]cyan++
+* `++B_]text++` ++B_]blue++
+* `++PR_]text++` ++PR_]purple++
+* `++PK_]text++` ++PK_]pink++
+* `++W_]text++` ++W_]white++
+* `++FG_]text++` ++FG_]fog++
+* `++SL_]text++` ++SL_]slate++
+* `++BK_]text++` ++BK_]black++
+
+## Caution Stripes chips
+
+Pale diagonal caution stripes between a solid top and bottom bar! Written `++COLOR+]text++`, in the same 16 colors as the Aero chips:
+
+* `++R+]text++` ++R+]red++
+* `++O+]text++` ++O+]orange++
+* `++GL+]text++` ++GL+]gold++
+* `++Y+]text++` ++Y+]yellow++
+* `++L+]text++` ++L+]lime++
+* `++G+]text++` ++G+]green++
+* `++TU+]text++` ++TU+]turquoise++
+* `++T+]text++` ++T+]teal++
+* `++C+]text++` ++C+]cyan++
+* `++B+]text++` ++B+]blue++
+* `++PR+]text++` ++PR+]purple++
+* `++PK+]text++` ++PK+]pink++
+* `++W+]text++` ++W+]white++
+* `++FG+]text++` ++FG+]fog++
+* `++SL+]text++` ++SL+]slate++
+* `++BK+]text++` ++BK+]black++
+
+## Droplets chips
+
+A pale wash with a row of glossy droplets hanging underneath! Written `++COLOR$]text++`, in the same 16 colors as the Aero chips:
+
+* `++R$]text++` ++R$]red++
+* `++O$]text++` ++O$]orange++
+* `++GL$]text++` ++GL$]gold++
+* `++Y$]text++` ++Y$]yellow++
+* `++L$]text++` ++L$]lime++
+* `++G$]text++` ++G$]green++
+* `++TU$]text++` ++TU$]turquoise++
+* `++T$]text++` ++T$]teal++
+* `++C$]text++` ++C$]cyan++
+* `++B$]text++` ++B$]blue++
+* `++PR$]text++` ++PR$]purple++
+* `++PK$]text++` ++PK$]pink++
+* `++W$]text++` ++W$]white++
+* `++FG$]text++` ++FG$]fog++
+* `++SL$]text++` ++SL$]slate++
+* `++BK$]text++` ++BK$]black++
+
+## Offset Shadow Bar chips
+
+A flat bar with a hard offset shadow, like a retro comic label! Written `++COLOR)]text++`, in the same 16 colors as the Aero chips:
+
+* `++R)]text++` ++R)]red++
+* `++O)]text++` ++O)]orange++
+* `++GL)]text++` ++GL)]gold++
+* `++Y)]text++` ++Y)]yellow++
+* `++L)]text++` ++L)]lime++
+* `++G)]text++` ++G)]green++
+* `++TU)]text++` ++TU)]turquoise++
+* `++T)]text++` ++T)]teal++
+* `++C)]text++` ++C)]cyan++
+* `++B)]text++` ++B)]blue++
+* `++PR)]text++` ++PR)]purple++
+* `++PK)]text++` ++PK)]pink++
+* `++W)]text++` ++W)]white++
+* `++FG)]text++` ++FG)]fog++
+* `++SL)]text++` ++SL)]slate++
+* `++BK)]text++` ++BK)]black++
+
+## Chevron Wipe chips
+
+A wipe of chevrons that fades out toward the end of the words! Written `++COLOR}]text++`, in the same 16 colors as the Aero chips:
+
+* `++R}]text++` ++R}]red++
+* `++O}]text++` ++O}]orange++
+* `++GL}]text++` ++GL}]gold++
+* `++Y}]text++` ++Y}]yellow++
+* `++L}]text++` ++L}]lime++
+* `++G}]text++` ++G}]green++
+* `++TU}]text++` ++TU}]turquoise++
+* `++T}]text++` ++T}]teal++
+* `++C}]text++` ++C}]cyan++
+* `++B}]text++` ++B}]blue++
+* `++PR}]text++` ++PR}]purple++
+* `++PK}]text++` ++PK}]pink++
+* `++W}]text++` ++W}]white++
+* `++FG}]text++` ++FG}]fog++
+* `++SL}]text++` ++SL}]slate++
+* `++BK}]text++` ++BK}]black++
+
+## Stitched Patch chips
+
+A fabric patch with a dashed stitch line sewn inside its edge! Written `++COLOR@]text++`, in the same 16 colors as the Aero chips:
+
+* `++R@]text++` ++R@]red++
+* `++O@]text++` ++O@]orange++
+* `++GL@]text++` ++GL@]gold++
+* `++Y@]text++` ++Y@]yellow++
+* `++L@]text++` ++L@]lime++
+* `++G@]text++` ++G@]green++
+* `++TU@]text++` ++TU@]turquoise++
+* `++T@]text++` ++T@]teal++
+* `++C@]text++` ++C@]cyan++
+* `++B@]text++` ++B@]blue++
+* `++PR@]text++` ++PR@]purple++
+* `++PK@]text++` ++PK@]pink++
+* `++W@]text++` ++W@]white++
+* `++FG@]text++` ++FG@]fog++
+* `++SL@]text++` ++SL@]slate++
+* `++BK@]text++` ++BK@]black++
+
+## Aurora Mesh chips
+
+Soft blurred blobs of shifted colors melting into each other! Written `++COLOR(]text++`, in the same 16 colors as the Aero chips:
+
+* `++R(]text++` ++R(]red++
+* `++O(]text++` ++O(]orange++
+* `++GL(]text++` ++GL(]gold++
+* `++Y(]text++` ++Y(]yellow++
+* `++L(]text++` ++L(]lime++
+* `++G(]text++` ++G(]green++
+* `++TU(]text++` ++TU(]turquoise++
+* `++T(]text++` ++T(]teal++
+* `++C(]text++` ++C(]cyan++
+* `++B(]text++` ++B(]blue++
+* `++PR(]text++` ++PR(]purple++
+* `++PK(]text++` ++PK(]pink++
+* `++W(]text++` ++W(]white++
+* `++FG(]text++` ++FG(]fog++
+* `++SL(]text++` ++SL(]slate++
+* `++BK(]text++` ++BK(]black++
+
 ## Aero swipe chips
 
 A mark chip cousin cut like a real highlighter swipe: a slanted bright stroke of the color with a darker ink edge along the bottom! Written `++color/text++`, in the same 16 colors as the Aero chips:
@@ -3494,6 +3704,216 @@ The Rim Chip as a highlighter: a bright scanner beam, the part it already passed
 * `!!5FG#text#` !!5FG#fog#
 * `!!5SL#text#` !!5SL#slate#
 * `!!5BK#text#` !!5BK#black#
+
+## Rim Arrow Tip chips
+
+Another Rim Chip highlighter: a highlighter band that ends in a pointed arrow tip! Written `!!6COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!6R#text#` !!6R#red#
+* `!!6O#text#` !!6O#orange#
+* `!!6GL#text#` !!6GL#gold#
+* `!!6Y#text#` !!6Y#yellow#
+* `!!6L#text#` !!6L#lime#
+* `!!6G#text#` !!6G#green#
+* `!!6TU#text#` !!6TU#turquoise#
+* `!!6T#text#` !!6T#teal#
+* `!!6C#text#` !!6C#cyan#
+* `!!6B#text#` !!6B#blue#
+* `!!6PR#text#` !!6PR#purple#
+* `!!6PK#text#` !!6PK#pink#
+* `!!6W#text#` !!6W#white#
+* `!!6FG#text#` !!6FG#fog#
+* `!!6SL#text#` !!6SL#slate#
+* `!!6BK#text#` !!6BK#black#
+
+## Rim Graph Paper chips
+
+Another Rim Chip highlighter: a graph-paper tint with fine grid lines! Written `!!7COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!7R#text#` !!7R#red#
+* `!!7O#text#` !!7O#orange#
+* `!!7GL#text#` !!7GL#gold#
+* `!!7Y#text#` !!7Y#yellow#
+* `!!7L#text#` !!7L#lime#
+* `!!7G#text#` !!7G#green#
+* `!!7TU#text#` !!7TU#turquoise#
+* `!!7T#text#` !!7T#teal#
+* `!!7C#text#` !!7C#cyan#
+* `!!7B#text#` !!7B#blue#
+* `!!7PR#text#` !!7PR#purple#
+* `!!7PK#text#` !!7PK#pink#
+* `!!7W#text#` !!7W#white#
+* `!!7FG#text#` !!7FG#fog#
+* `!!7SL#text#` !!7SL#slate#
+* `!!7BK#text#` !!7BK#black#
+
+## Rim Halftone chips
+
+Another Rim Chip highlighter: a halftone dot screen, dense on the left and thinning out to the right! Written `!!8COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!8R#text#` !!8R#red#
+* `!!8O#text#` !!8O#orange#
+* `!!8GL#text#` !!8GL#gold#
+* `!!8Y#text#` !!8Y#yellow#
+* `!!8L#text#` !!8L#lime#
+* `!!8G#text#` !!8G#green#
+* `!!8TU#text#` !!8TU#turquoise#
+* `!!8T#text#` !!8T#teal#
+* `!!8C#text#` !!8C#cyan#
+* `!!8B#text#` !!8B#blue#
+* `!!8PR#text#` !!8PR#purple#
+* `!!8PK#text#` !!8PK#pink#
+* `!!8W#text#` !!8W#white#
+* `!!8FG#text#` !!8FG#fog#
+* `!!8SL#text#` !!8SL#slate#
+* `!!8BK#text#` !!8BK#black#
+
+## Rim Wavy Pen chips
+
+Another Rim Chip highlighter: a pale wash with a wavy pen line along the bottom! Written `!!9COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!9R#text#` !!9R#red#
+* `!!9O#text#` !!9O#orange#
+* `!!9GL#text#` !!9GL#gold#
+* `!!9Y#text#` !!9Y#yellow#
+* `!!9L#text#` !!9L#lime#
+* `!!9G#text#` !!9G#green#
+* `!!9TU#text#` !!9TU#turquoise#
+* `!!9T#text#` !!9T#teal#
+* `!!9C#text#` !!9C#cyan#
+* `!!9B#text#` !!9B#blue#
+* `!!9PR#text#` !!9PR#purple#
+* `!!9PK#text#` !!9PK#pink#
+* `!!9W#text#` !!9W#white#
+* `!!9FG#text#` !!9FG#fog#
+* `!!9SL#text#` !!9SL#slate#
+* `!!9BK#text#` !!9BK#black#
+
+## Rim Corner Brackets chips
+
+Another Rim Chip highlighter: a light tint held by four corner brackets, like a viewfinder! Written `!!0COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!0R#text#` !!0R#red#
+* `!!0O#text#` !!0O#orange#
+* `!!0GL#text#` !!0GL#gold#
+* `!!0Y#text#` !!0Y#yellow#
+* `!!0L#text#` !!0L#lime#
+* `!!0G#text#` !!0G#green#
+* `!!0TU#text#` !!0TU#turquoise#
+* `!!0T#text#` !!0T#teal#
+* `!!0C#text#` !!0C#cyan#
+* `!!0B#text#` !!0B#blue#
+* `!!0PR#text#` !!0PR#purple#
+* `!!0PK#text#` !!0PK#pink#
+* `!!0W#text#` !!0W#white#
+* `!!0FG#text#` !!0FG#fog#
+* `!!0SL#text#` !!0SL#slate#
+* `!!0BK#text#` !!0BK#black#
+
+## Rim Ribbon chips
+
+Another Rim Chip highlighter: a ribbon banner with swallow-tail ends and a glossy top! Written `!!<]COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!<]R#text#` !!<]R#red#
+* `!!<]O#text#` !!<]O#orange#
+* `!!<]GL#text#` !!<]GL#gold#
+* `!!<]Y#text#` !!<]Y#yellow#
+* `!!<]L#text#` !!<]L#lime#
+* `!!<]G#text#` !!<]G#green#
+* `!!<]TU#text#` !!<]TU#turquoise#
+* `!!<]T#text#` !!<]T#teal#
+* `!!<]C#text#` !!<]C#cyan#
+* `!!<]B#text#` !!<]B#blue#
+* `!!<]PR#text#` !!<]PR#purple#
+* `!!<]PK#text#` !!<]PK#pink#
+* `!!<]W#text#` !!<]W#white#
+* `!!<]FG#text#` !!<]FG#fog#
+* `!!<]SL#text#` !!<]SL#slate#
+* `!!<]BK#text#` !!<]BK#black#
+
+## Rim Comic Burst chips
+
+Another Rim Chip highlighter: comic-book rays bursting out from a bright middle! Written `!!>]COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!>]R#text#` !!>]R#red#
+* `!!>]O#text#` !!>]O#orange#
+* `!!>]GL#text#` !!>]GL#gold#
+* `!!>]Y#text#` !!>]Y#yellow#
+* `!!>]L#text#` !!>]L#lime#
+* `!!>]G#text#` !!>]G#green#
+* `!!>]TU#text#` !!>]TU#turquoise#
+* `!!>]T#text#` !!>]T#teal#
+* `!!>]C#text#` !!>]C#cyan#
+* `!!>]B#text#` !!>]B#blue#
+* `!!>]PR#text#` !!>]PR#purple#
+* `!!>]PK#text#` !!>]PK#pink#
+* `!!>]W#text#` !!>]W#white#
+* `!!>]FG#text#` !!>]FG#fog#
+* `!!>]SL#text#` !!>]SL#slate#
+* `!!>]BK#text#` !!>]BK#black#
+
+## Rim Foil chips
+
+Another Rim Chip highlighter: shimmering foil with bright diagonal glints! Written `!!|]COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!|]R#text#` !!|]R#red#
+* `!!|]O#text#` !!|]O#orange#
+* `!!|]GL#text#` !!|]GL#gold#
+* `!!|]Y#text#` !!|]Y#yellow#
+* `!!|]L#text#` !!|]L#lime#
+* `!!|]G#text#` !!|]G#green#
+* `!!|]TU#text#` !!|]TU#turquoise#
+* `!!|]T#text#` !!|]T#teal#
+* `!!|]C#text#` !!|]C#cyan#
+* `!!|]B#text#` !!|]B#blue#
+* `!!|]PR#text#` !!|]PR#purple#
+* `!!|]PK#text#` !!|]PK#pink#
+* `!!|]W#text#` !!|]W#white#
+* `!!|]FG#text#` !!|]FG#fog#
+* `!!|]SL#text#` !!|]SL#slate#
+* `!!|]BK#text#` !!|]BK#black#
+
+## Rim Stamp Ink chips
+
+Another Rim Chip highlighter: a mottled ink-pad stamp with a double inner edge! Written `!!_]COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!_]R#text#` !!_]R#red#
+* `!!_]O#text#` !!_]O#orange#
+* `!!_]GL#text#` !!_]GL#gold#
+* `!!_]Y#text#` !!_]Y#yellow#
+* `!!_]L#text#` !!_]L#lime#
+* `!!_]G#text#` !!_]G#green#
+* `!!_]TU#text#` !!_]TU#turquoise#
+* `!!_]T#text#` !!_]T#teal#
+* `!!_]C#text#` !!_]C#cyan#
+* `!!_]B#text#` !!_]B#blue#
+* `!!_]PR#text#` !!_]PR#purple#
+* `!!_]PK#text#` !!_]PK#pink#
+* `!!_]W#text#` !!_]W#white#
+* `!!_]FG#text#` !!_]FG#fog#
+* `!!_]SL#text#` !!_]SL#slate#
+* `!!_]BK#text#` !!_]BK#black#
+
+## Rim Lens chips
+
+Another Rim Chip highlighter: a round glass lens sitting at the start of the words! Written `!!,]COLOR#text#`, in the same 16 colors as the Rim chips:
+
+* `!!,]R#text#` !!,]R#red#
+* `!!,]O#text#` !!,]O#orange#
+* `!!,]GL#text#` !!,]GL#gold#
+* `!!,]Y#text#` !!,]Y#yellow#
+* `!!,]L#text#` !!,]L#lime#
+* `!!,]G#text#` !!,]G#green#
+* `!!,]TU#text#` !!,]TU#turquoise#
+* `!!,]T#text#` !!,]T#teal#
+* `!!,]C#text#` !!,]C#cyan#
+* `!!,]B#text#` !!,]B#blue#
+* `!!,]PR#text#` !!,]PR#purple#
+* `!!,]PK#text#` !!,]PK#pink#
+* `!!,]W#text#` !!,]W#white#
+* `!!,]FG#text#` !!,]FG#fog#
+* `!!,]SL#text#` !!,]SL#slate#
+* `!!,]BK#text#` !!,]BK#black#
 
 ## Rim badge chips
 
