@@ -1215,6 +1215,7 @@
             id: 'help', label: 'Help', groups: [
                 { label: 'Help', items: [
                     { big: true, icon: 'help', label: 'Help\nDeck', run: function () { if (typeof openHelpDeck === 'function') openHelpDeck(); } },
+                    { big: true, icon: 'notebook', label: 'Keydown\nGuide', title: 'The Keydown article from OpenDB, with search', run: function () { if (typeof openKeydownGuide === 'function') openKeydownGuide(); } },
                     { big: true, icon: 'keyboard', label: 'Shortcuts', run: shortcuts }
                 ] }
             ]

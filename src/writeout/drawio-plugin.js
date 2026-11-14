@@ -24,7 +24,10 @@
         '.rd-frame{flex:1;border:0;width:100%;background:#f8fafc}' +
         '.rd-msg{padding:40px;text-align:center;color:#475569;font-size:14px}' +
         '.rd-foot{padding:7px 14px;font-size:11px;line-height:1.45;color:#64748b;background:#f8fafc;border-top:1px solid #e2e8f0}' +
-        '.rd-foot a{color:inherit}';
+        '.rd-foot a{color:inherit}.rd-foot{display:flex;align-items:flex-start;gap:12px}.rd-foot>span{flex:1}' +
+        '.rd-fx{flex:none;border:1px solid #cbd5e1;background:#fff;color:#334155;border-radius:6px;padding:3px 10px;font:600 11px system-ui,sans-serif;cursor:pointer}.rd-fx:hover{background:#e2e8f0}';
+    const FKEY = 'radii_drawio_foot_closed';
+    function footClosed() { try { return localStorage.getItem(FKEY) === '1'; } catch (e) { return false; } }
 
     function ensureCss() {
         if (document.getElementById('rd-css')) return;
@@ -61,17 +64,18 @@
             ' <small>· ' + (opts.png ? 'editing a diagram' : 'a new diagram') + ' · press Save &amp; Exit when you are done</small></span><button type="button" class="rd-x" title="Close without saving">✕</button></div>' +
             '<iframe class="rd-frame" title="draw.io diagram editor" src="' + URL_ + '" allow="clipboard-read; clipboard-write"></iframe>' +
             // the disclaimer: draw.io is someone else's trademark and product
-            '<div class="rd-foot">draw.io is a registered trademark of draw.io Ltd (EU trademark #018062448). Radii Office is not affiliated with, endorsed by or sponsored by draw.io. ' +
+            '<div class="rd-foot"' + (footClosed() ? ' hidden style="display:none"' : '') + '><span>draw.io is a registered trademark of draw.io Ltd (EU trademark #018062448). Radii Office is not affiliated with, endorsed by or sponsored by draw.io. ' +
             'The editor above is the official draw.io editor, loaded from embed.diagrams.net; its source code is available under the ' +
-            '<a href="https://github.com/jgraph/drawio" target="_blank" rel="noopener noreferrer">Apache License 2.0</a>. Diagrams you make are yours.</div></div>';
+            '<a href="https://github.com/jgraph/drawio" target="_blank" rel="noopener noreferrer">Apache License 2.0</a>. Diagrams you make are yours.</span><button type="button" class="rd-fx" title="Hide this notice (remembered)">Close</button></div></div>';
         document.body.appendChild(el);
         state = { el, opts, frame: el.querySelector('.rd-frame'), ready: false };
         state.onKey = (e) => { if (e.key === 'Escape' && document.activeElement !== state.frame) { e.preventDefault(); close(); } };
         document.addEventListener('keydown', state.onKey, true);
         el.querySelector('.rd-x').addEventListener('click', close);
+        el.querySelector('.rd-fx').addEventListener('click', () => { el.querySelector('.rd-foot').style.display = 'none'; try { localStorage.setItem(FKEY, '1'); } catch (e) {} });
         // no answer from draw.io in 25 seconds: probably offline
         state.timer = setTimeout(() => {
-            if (state && !state.ready) state.el.querySelector('.rd-foot').insertAdjacentHTML('beforebegin', '<p class="rd-msg">The draw.io editor did not load! It needs an internet connection (embed.diagrams.net). Close this and try again!</p>');
+            if (state && !state.ready) state.el.querySelector('.rd-frame').insertAdjacentHTML('afterend', '<p class="rd-msg">The draw.io editor did not load! It needs an internet connection (embed.diagrams.net). Close this and try again!</p>');
         }, 25000);
         state.onMsg = (e) => {
             if (!state || e.origin !== ORIGIN || e.source !== state.frame.contentWindow) return;

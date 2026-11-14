@@ -10590,3 +10590,142 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
     radial-gradient(circle at 36% 30%, rgba(255, 255, 255, 0.9) 0 0.045em, rgba(255, 255, 255, 0.2) 0.07em, transparent 0.12em),
     radial-gradient(circle at 88% 36%, rgba(255, 255, 255, 0.8) 0 0.04em, transparent 0.1em);
 }
+
+/* ========================================================
+   TEN JELLY CHIP COUSINS (jx), written #/COLOR<mark>text<mark>: Jelly Bean #/R=text=, Gummy #/R~text~, Layered #/R+text+,
+   Jelly Cube #/R^text^, Fruit Jelly #/R%text%, Jelly Drop #/R!text!, Swirl #/R?text?, Jelly Tart #/R#text#,
+   Wobble Ring #/R-text-, Glitter Jelly #/R.text.  Each in the Jelly Chip's 16 colors, same size and feel.
+   ======================================================== */
+.gel-jbean-chip, .gel-gummy-chip, .gel-jlayer-chip, .gel-jcube-chip, .gel-jfruit-chip, .gel-jdrop-chip, .gel-jswirl-chip, .gel-jtart-chip, .gel-jwobble-chip, .gel-jglit-chip {
+  --jx-c: #3b82f6; --jx-e: #2563eb; --jx-i: #172554;
+  --jx-l: color-mix(in srgb, var(--jx-c) 35%, #fff); --jx-d: color-mix(in srgb, var(--jx-e) 75%, #000);
+  position: relative; isolation: isolate; box-sizing: border-box;
+  display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 3px 15px; border: 0; color: var(--jx-i); font-family: inherit; font-weight: 800; white-space: nowrap;
+  margin: 0 3px 4px; vertical-align: middle; text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.jx-red { --jx-c: #ef4444; --jx-e: #dc2626; --jx-i: #450a0a; }
+.jx-orange { --jx-c: #f97316; --jx-e: #ea580c; --jx-i: #431407; }
+.jx-gold { --jx-c: #ea9f08; --jx-e: #ca8a04; --jx-i: #451a03; }
+.jx-yellow { --jx-c: #ead708; --jx-e: #caa604; --jx-i: #452b03; }
+.jx-lime { --jx-c: #84cc16; --jx-e: #65a30d; --jx-i: #1a2e05; }
+.jx-green { --jx-c: #10b981; --jx-e: #059669; --jx-i: #022c22; }
+.jx-turquoise { --jx-c: #30e5cd; --jx-e: #26b1a5; --jx-i: #044439; }
+.jx-teal { --jx-c: #06b6d4; --jx-e: #0891b2; --jx-i: #083344; }
+.jx-cyan { --jx-c: #30d3e5; --jx-e: #26a3b1; --jx-i: #043e44; }
+.jx-blue { --jx-c: #3b82f6; --jx-e: #2563eb; --jx-i: #172554; }
+.jx-purple { --jx-c: #a855f7; --jx-e: #9333ea; --jx-i: #2e1065; }
+.jx-pink { --jx-c: #ec4899; --jx-e: #db2777; --jx-i: #4c0519; }
+.jx-white { --jx-c: #f3f3f3; --jx-e: #b3b3b3; --jx-i: #7a7a7a; }
+.jx-fog { --jx-c: #d9d9d9; --jx-e: #808080; --jx-i: #404040; }
+.jx-slate { --jx-c: #b4b4b4; --jx-e: #6f6f6f; --jx-i: #363636; }
+.jx-black { --jx-c: #919191; --jx-e: #454545; --jx-i: #222222; }
+/* Jelly bean #/R=text= */
+.gel-jbean-chip {
+  padding: 3px 17px; border-radius: 999px; transform: rotate(-2.5deg);
+  background: linear-gradient(180deg, var(--jx-l) 0%, var(--jx-c) 42%, var(--jx-e) 100%);
+  box-shadow: inset 0 -0.28em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 55%, transparent), inset 0 0.08em 0.1em rgba(255, 255, 255, 0.55), 0 0.3em 0.4em -0.12em color-mix(in srgb, var(--jx-e) 70%, transparent);
+}
+.gel-jbean-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.1em; width: 52%; height: 0.36em; border-radius: 999px 999px 70% 70%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.15)); transform: rotate(-1deg); }
+.gel-jbean-chip::after { content: ""; position: absolute; z-index: -1; left: 0.7em; right: 0.7em; bottom: 0.1em; height: 0.2em; border-radius: 999px; background: radial-gradient(circle at 10% 50%, rgba(255, 255, 255, 0.7) 0 0.03em, transparent 0.05em) 0 0 / 0.42em 100% repeat-x; opacity: 0.8; }
+/* Gummy #/R~text~ */
+.gel-gummy-chip {
+  padding: 3px 16px; border-radius: 0.95em 0.8em 0.9em 0.85em / 0.8em 0.95em 0.8em 0.9em;
+  background:
+    radial-gradient(circle at 16% 62%, rgba(255, 255, 255, 0.55) 0 0.045em, transparent 0.06em),
+    radial-gradient(circle at 34% 30%, rgba(255, 255, 255, 0.5) 0 0.06em, transparent 0.075em),
+    radial-gradient(circle at 62% 70%, rgba(255, 255, 255, 0.5) 0 0.04em, transparent 0.055em),
+    radial-gradient(circle at 84% 38%, rgba(255, 255, 255, 0.55) 0 0.055em, transparent 0.07em),
+    radial-gradient(ellipse 70% 80% at 50% 50%, color-mix(in srgb, var(--jx-l) 55%, transparent), transparent),
+    linear-gradient(160deg, color-mix(in srgb, var(--jx-c) 80%, transparent), color-mix(in srgb, var(--jx-e) 72%, transparent));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-l) 80%, transparent), inset 0 0.18em 0.28em rgba(255, 255, 255, 0.4), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 40%, transparent), 0 0.25em 0.4em -0.1em color-mix(in srgb, var(--jx-c) 60%, transparent);
+}
+.gel-gummy-chip::before { content: ""; position: absolute; z-index: -1; left: 12%; top: 0.12em; width: 0.9em; height: 0.2em; border-radius: 999px; background: rgba(255, 255, 255, 0.7); transform: rotate(-4deg); }
+/* Layered jelly #/R+text+ */
+.gel-jlayer-chip {
+  padding: 3px 16px; border-radius: 0.55em 0.55em 0.75em 0.75em;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--jx-l) 80%, transparent) 0 30%, rgba(255, 255, 255, 0.6) 30% 34%, color-mix(in srgb, var(--jx-c) 66%, transparent) 34% 64%, rgba(255, 255, 255, 0.5) 64% 68%, color-mix(in srgb, var(--jx-e) 74%, transparent) 68% 100%);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.1em 0.12em rgba(255, 255, 255, 0.6), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent);
+}
+.gel-jlayer-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.08em; width: 40%; height: 0.14em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); }
+/* Jelly cube #/R^text^ */
+.gel-jcube-chip {
+  padding: 4px 16px; border-radius: 0.3em; transform: rotate(-1deg);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--jx-l) 60%, transparent), color-mix(in srgb, var(--jx-c) 70%, transparent) 55%, color-mix(in srgb, var(--jx-e) 70%, transparent));
+  box-shadow: inset 0 0.3em 0 -0.02em rgba(255, 255, 255, 0.5), inset -0.3em 0 0 -0.02em color-mix(in srgb, var(--jx-d) 38%, transparent), inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), 0 0.3em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 65%, transparent);
+}
+.gel-jcube-chip::before { content: ""; position: absolute; z-index: -1; left: 0.45em; top: 0.4em; width: 0.28em; height: 0.28em; border-radius: 50%; background: rgba(255, 255, 255, 0.75); }
+.gel-jcube-chip::after { content: ""; position: absolute; z-index: -1; left: 0; right: 0.3em; top: 0.3em; height: 1px; background: rgba(255, 255, 255, 0.45); }
+/* Fruit jelly #/R%text% */
+.gel-jfruit-chip {
+  padding: 3px 17px; border-radius: 0.9em;
+  background:
+    radial-gradient(circle at 12% 62%, color-mix(in srgb, var(--jx-e) 80%, transparent) 0 0.21em, transparent 0.22em),
+    radial-gradient(circle at 10% 54%, rgba(255, 255, 255, 0.75) 0 0.05em, transparent 0.06em),
+    radial-gradient(circle at 89% 40%, color-mix(in srgb, var(--jx-e) 80%, transparent) 0 0.19em, transparent 0.2em),
+    radial-gradient(circle at 87% 33%, rgba(255, 255, 255, 0.75) 0 0.05em, transparent 0.06em),
+    radial-gradient(circle at 50% 88%, color-mix(in srgb, var(--jx-d) 55%, transparent) 0 0.09em, transparent 0.1em),
+    radial-gradient(circle at 32% 12%, color-mix(in srgb, var(--jx-d) 55%, transparent) 0 0.07em, transparent 0.08em),
+    radial-gradient(ellipse 60% 70% at 50% 50%, color-mix(in srgb, var(--jx-l) 55%, transparent), transparent),
+    color-mix(in srgb, var(--jx-c) 52%, transparent);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 75%, #fff), inset 0 -0.25em 0.35em -0.1em color-mix(in srgb, var(--jx-e) 60%, transparent), 0 0.28em 0.45em -0.1em color-mix(in srgb, var(--jx-c) 55%, transparent);
+}
+.gel-jfruit-chip::before { content: ""; position: absolute; z-index: -1; left: 26%; top: 0.12em; width: 40%; height: 0.24em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 25%, rgba(255, 255, 255, 0.8) 75%, rgba(255, 255, 255, 0)); }
+/* Jelly drop #/R!text! */
+.gel-jdrop-chip {
+  padding: 3px 16px 3px 15px; border-radius: 1.2em 1.2em 1.2em 0.18em;
+  background:
+    radial-gradient(ellipse 80% 60% at 55% 105%, color-mix(in srgb, var(--jx-l) 70%, transparent), transparent 70%),
+    linear-gradient(200deg, color-mix(in srgb, var(--jx-l) 45%, transparent), color-mix(in srgb, var(--jx-c) 80%, transparent) 40%, color-mix(in srgb, var(--jx-e) 80%, transparent));
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 -0.22em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 45%, transparent), 0 0.3em 0.45em -0.1em color-mix(in srgb, var(--jx-e) 65%, transparent);
+}
+.gel-jdrop-chip::before { content: ""; position: absolute; z-index: -1; left: 0.5em; top: 0.12em; width: 0.95em; height: 0.34em; border-radius: 50%; background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.15)); transform: rotate(-12deg); }
+.gel-jdrop-chip::after { content: ""; position: absolute; z-index: -1; right: 0.45em; bottom: 0.18em; width: 0.2em; height: 0.2em; border-radius: 50%; background: rgba(255, 255, 255, 0.55); }
+/* Swirl jelly #/R?text? */
+.gel-jswirl-chip {
+  padding: 3px 17px; border-radius: 999px;
+  background:
+    repeating-conic-gradient(from 20deg at 18% 50%, color-mix(in srgb, var(--jx-l) 65%, transparent) 0 18deg, color-mix(in srgb, var(--jx-e) 65%, transparent) 18deg 36deg),
+    color-mix(in srgb, var(--jx-c) 55%, transparent);
+  box-shadow: inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), inset 0 0.16em 0.3em rgba(255, 255, 255, 0.45), inset 0 -0.2em 0.3em -0.05em color-mix(in srgb, var(--jx-d) 40%, transparent), 0 0.28em 0.42em -0.1em color-mix(in srgb, var(--jx-c) 60%, transparent);
+}
+.gel-jswirl-chip::before { content: ""; position: absolute; z-index: -1; inset: 0.14em 0.5em auto 0.5em; height: 0.3em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8) 25%, rgba(255, 255, 255, 0.8) 75%, rgba(255, 255, 255, 0)); }
+.gel-jswirl-chip::after { content: ""; position: absolute; z-index: -1; left: calc(18% - 0.3em); top: calc(50% - 0.3em); width: 0.6em; height: 0.6em; border-radius: 50%; background: radial-gradient(circle, rgba(255, 255, 255, 0.85) 0 25%, rgba(255, 255, 255, 0) 70%); }
+/* Jelly tart #/R#text# */
+.gel-jtart-chip {
+  padding: 3px 17px; border: 0.2em solid transparent; border-radius: 0.8em;
+  background:
+    radial-gradient(ellipse 70% 80% at 50% 45%, color-mix(in srgb, var(--jx-l) 60%, #fff) 0%, transparent 100%) padding-box,
+    linear-gradient(180deg, color-mix(in srgb, var(--jx-c) 80%, #fff 6%), var(--jx-e)) padding-box,
+    linear-gradient(180deg, #f3cf94, #d6a25c 60%, #bd8443) border-box;
+  box-shadow: inset 0 0 0 0.05em rgba(255, 255, 255, 0.4), 0 0 0 0.05em #a8712f, 0 0.28em 0.4em -0.1em rgba(120, 70, 20, 0.45);
+}
+.gel-jtart-chip::before { content: ""; position: absolute; z-index: -1; left: 0.35em; top: 0.1em; width: 45%; height: 0.24em; border-radius: 999px; background: linear-gradient(90deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.1)); }
+.gel-jtart-chip::after { content: ""; position: absolute; z-index: -1; inset: -0.2em; border-radius: 0.8em; background: repeating-linear-gradient(90deg, rgba(120, 70, 20, 0.28) 0 0.07em, transparent 0.07em 0.34em); -webkit-mask: linear-gradient(#000 0 0) top / 100% 0.2em no-repeat, linear-gradient(#000 0 0) bottom / 100% 0.2em no-repeat; mask: linear-gradient(#000 0 0) top / 100% 0.2em no-repeat, linear-gradient(#000 0 0) bottom / 100% 0.2em no-repeat; }
+/* Wobble ring #/R-text- */
+.gel-jwobble-chip {
+  padding: 3px 17px; border: 0.2em solid color-mix(in srgb, var(--jx-c) 62%, transparent);
+  border-radius: 1.25em 0.8em 1.3em 0.85em / 0.85em 1.3em 0.8em 1.25em; transform: rotate(-1deg);
+  background: radial-gradient(ellipse 80% 90% at 50% 50%, color-mix(in srgb, var(--jx-c) 8%, transparent), color-mix(in srgb, var(--jx-c) 22%, transparent)), rgba(255, 255, 255, 0.82);
+  box-shadow: inset 0 0 0 0.05em color-mix(in srgb, var(--jx-l) 85%, transparent), inset 0 0.1em 0.2em rgba(255, 255, 255, 0.55), 0 0 0 0.05em color-mix(in srgb, var(--jx-e) 40%, transparent), 0 0.28em 0.4em -0.1em color-mix(in srgb, var(--jx-c) 55%, transparent);
+}
+.gel-jwobble-chip::before { content: ""; position: absolute; z-index: -1; left: 0.3em; top: -0.12em; width: 40%; height: 0.2em; border-radius: 999px; background: rgba(255, 255, 255, 0.85); transform: rotate(-3deg); }
+/* Glitter jelly #/R.text. */
+.gel-jglit-chip {
+  padding: 3px 16px; border-radius: 0.95em;
+  background:
+    radial-gradient(circle at 10% 32%, #fff 0 0.035em, transparent 0.05em),
+    radial-gradient(circle at 24% 74%, #fff 0 0.03em, transparent 0.045em),
+    radial-gradient(circle at 41% 22%, #fff 0 0.03em, transparent 0.045em),
+    radial-gradient(circle at 57% 80%, #fff 0 0.035em, transparent 0.05em),
+    radial-gradient(circle at 73% 28%, #fff 0 0.03em, transparent 0.045em),
+    radial-gradient(circle at 90% 66%, #fff 0 0.035em, transparent 0.05em),
+    linear-gradient(115deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0) 60%),
+    radial-gradient(ellipse 60% 70% at 50% 55%, color-mix(in srgb, var(--jx-l) 50%, transparent), transparent),
+    color-mix(in srgb, var(--jx-c) 62%, transparent);
+  box-shadow: inset 0 -0.3em 0.4em -0.1em color-mix(in srgb, var(--jx-e) 65%, transparent), inset 0 0 0 0.07em color-mix(in srgb, var(--jx-c) 70%, #fff), 0 0.3em 0.5em -0.1em color-mix(in srgb, var(--jx-c) 55%, transparent);
+}
+.gel-jglit-chip::before { content: ""; position: absolute; z-index: -1; right: 0.5em; top: 0.1em; width: 0.42em; height: 0.42em; background: radial-gradient(circle, #fff 0 14%, transparent 18%), linear-gradient(#fff, #fff) 50% 50% / 100% 0.06em no-repeat, linear-gradient(#fff, #fff) 50% 50% / 0.06em 100% no-repeat; filter: drop-shadow(0 0 0.1em #fff); }
+.gel-jglit-chip::after { content: ""; position: absolute; z-index: -1; left: 0.55em; bottom: 0.1em; width: 0.3em; height: 0.3em; background: radial-gradient(circle, #fff 0 14%, transparent 18%), linear-gradient(#fff, #fff) 50% 50% / 100% 0.05em no-repeat, linear-gradient(#fff, #fff) 50% 50% / 0.05em 100% no-repeat; opacity: 0.9; }
+

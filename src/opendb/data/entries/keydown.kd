@@ -238,6 +238,216 @@ A wobbly, see-through jelly: a tinted body glowing in the middle, a darker pool 
 * `#/SL/text/` #/SL/slate/
 * `#/BK/text/` #/BK/black/
 
+## Jelly Bean chips
+
+A glossy jelly bean, tilted, with a curved shine and a sugar-dusted bottom! Written `#/COLOR=text=`, in the same 16 colors:
+
+* `#/R=text=` #/R=red=
+* `#/O=text=` #/O=orange=
+* `#/GL=text=` #/GL=gold=
+* `#/Y=text=` #/Y=yellow=
+* `#/L=text=` #/L=lime=
+* `#/G=text=` #/G=green=
+* `#/TU=text=` #/TU=turquoise=
+* `#/T=text=` #/T=teal=
+* `#/C=text=` #/C=cyan=
+* `#/B=text=` #/B=blue=
+* `#/PR=text=` #/PR=purple=
+* `#/PK=text=` #/PK=pink=
+* `#/W=text=` #/W=white=
+* `#/FG=text=` #/FG=fog=
+* `#/SL=text=` #/SL=slate=
+* `#/BK=text=` #/BK=black=
+
+## Gummy chips
+
+A chewy gummy with little air bubbles trapped inside! Written `#/COLOR~text~`, in the same 16 colors:
+
+* `#/R~text~` #/R~red~
+* `#/O~text~` #/O~orange~
+* `#/GL~text~` #/GL~gold~
+* `#/Y~text~` #/Y~yellow~
+* `#/L~text~` #/L~lime~
+* `#/G~text~` #/G~green~
+* `#/TU~text~` #/TU~turquoise~
+* `#/T~text~` #/T~teal~
+* `#/C~text~` #/C~cyan~
+* `#/B~text~` #/B~blue~
+* `#/PR~text~` #/PR~purple~
+* `#/PK~text~` #/PK~pink~
+* `#/W~text~` #/W~white~
+* `#/FG~text~` #/FG~fog~
+* `#/SL~text~` #/SL~slate~
+* `#/BK~text~` #/BK~black~
+
+## Layered Jelly chips
+
+A dessert jelly set in three layers, light on top and deep at the bottom! Written `#/COLOR+text+`, in the same 16 colors:
+
+* `#/R+text+` #/R+red+
+* `#/O+text+` #/O+orange+
+* `#/GL+text+` #/GL+gold+
+* `#/Y+text+` #/Y+yellow+
+* `#/L+text+` #/L+lime+
+* `#/G+text+` #/G+green+
+* `#/TU+text+` #/TU+turquoise+
+* `#/T+text+` #/T+teal+
+* `#/C+text+` #/C+cyan+
+* `#/B+text+` #/B+blue+
+* `#/PR+text+` #/PR+purple+
+* `#/PK+text+` #/PK+pink+
+* `#/W+text+` #/W+white+
+* `#/FG+text+` #/FG+fog+
+* `#/SL+text+` #/SL+slate+
+* `#/BK+text+` #/BK+black+
+
+## Jelly Cube chips
+
+A wobbly jelly cube with a lit top face and a shaded side! Written `#/COLOR^text^`, in the same 16 colors:
+
+* `#/R^text^` #/R^red^
+* `#/O^text^` #/O^orange^
+* `#/GL^text^` #/GL^gold^
+* `#/Y^text^` #/Y^yellow^
+* `#/L^text^` #/L^lime^
+* `#/G^text^` #/G^green^
+* `#/TU^text^` #/TU^turquoise^
+* `#/T^text^` #/T^teal^
+* `#/C^text^` #/C^cyan^
+* `#/B^text^` #/B^blue^
+* `#/PR^text^` #/PR^purple^
+* `#/PK^text^` #/PK^pink^
+* `#/W^text^` #/W^white^
+* `#/FG^text^` #/FG^fog^
+* `#/SL^text^` #/SL^slate^
+* `#/BK^text^` #/BK^black^
+
+## Fruit Jelly chips
+
+Jelly with chunks of fruit set inside it! Written `#/COLOR%text%`, in the same 16 colors:
+
+* `#/R%text%` #/R%red%
+* `#/O%text%` #/O%orange%
+* `#/GL%text%` #/GL%gold%
+* `#/Y%text%` #/Y%yellow%
+* `#/L%text%` #/L%lime%
+* `#/G%text%` #/G%green%
+* `#/TU%text%` #/TU%turquoise%
+* `#/T%text%` #/T%teal%
+* `#/C%text%` #/C%cyan%
+* `#/B%text%` #/B%blue%
+* `#/PR%text%` #/PR%purple%
+* `#/PK%text%` #/PK%pink%
+* `#/W%text%` #/W%white%
+* `#/FG%text%` #/FG%fog%
+* `#/SL%text%` #/SL%slate%
+* `#/BK%text%` #/BK%black%
+
+## Jelly Drop chips
+
+A drop of jelly with a pointed corner and a big shine! Written `#/COLOR!text!`, in the same 16 colors:
+
+* `#/R!text!` #/R!red!
+* `#/O!text!` #/O!orange!
+* `#/GL!text!` #/GL!gold!
+* `#/Y!text!` #/Y!yellow!
+* `#/L!text!` #/L!lime!
+* `#/G!text!` #/G!green!
+* `#/TU!text!` #/TU!turquoise!
+* `#/T!text!` #/T!teal!
+* `#/C!text!` #/C!cyan!
+* `#/B!text!` #/B!blue!
+* `#/PR!text!` #/PR!purple!
+* `#/PK!text!` #/PK!pink!
+* `#/W!text!` #/W!white!
+* `#/FG!text!` #/FG!fog!
+* `#/SL!text!` #/SL!slate!
+* `#/BK!text!` #/BK!black!
+
+## Swirl Jelly chips
+
+A swirled jelly, like a pinwheel of two flavors! Written `#/COLOR?text?`, in the same 16 colors:
+
+* `#/R?text?` #/R?red?
+* `#/O?text?` #/O?orange?
+* `#/GL?text?` #/GL?gold?
+* `#/Y?text?` #/Y?yellow?
+* `#/L?text?` #/L?lime?
+* `#/G?text?` #/G?green?
+* `#/TU?text?` #/TU?turquoise?
+* `#/T?text?` #/T?teal?
+* `#/C?text?` #/C?cyan?
+* `#/B?text?` #/B?blue?
+* `#/PR?text?` #/PR?purple?
+* `#/PK?text?` #/PK?pink?
+* `#/W?text?` #/W?white?
+* `#/FG?text?` #/FG?fog?
+* `#/SL?text?` #/SL?slate?
+* `#/BK?text?` #/BK?black?
+
+## Jelly Tart chips
+
+A little tart with a golden crust and a glossy jelly glaze! Written `#/COLOR#text#`, in the same 16 colors:
+
+* `#/R#text#` #/R#red#
+* `#/O#text#` #/O#orange#
+* `#/GL#text#` #/GL#gold#
+* `#/Y#text#` #/Y#yellow#
+* `#/L#text#` #/L#lime#
+* `#/G#text#` #/G#green#
+* `#/TU#text#` #/TU#turquoise#
+* `#/T#text#` #/T#teal#
+* `#/C#text#` #/C#cyan#
+* `#/B#text#` #/B#blue#
+* `#/PR#text#` #/PR#purple#
+* `#/PK#text#` #/PK#pink#
+* `#/W#text#` #/W#white#
+* `#/FG#text#` #/FG#fog#
+* `#/SL#text#` #/SL#slate#
+* `#/BK#text#` #/BK#black#
+
+## Wobble Ring chips
+
+A wobbly ring of jelly with a clear middle! Written `#/COLOR-text-`, in the same 16 colors:
+
+* `#/R-text-` #/R-red-
+* `#/O-text-` #/O-orange-
+* `#/GL-text-` #/GL-gold-
+* `#/Y-text-` #/Y-yellow-
+* `#/L-text-` #/L-lime-
+* `#/G-text-` #/G-green-
+* `#/TU-text-` #/TU-turquoise-
+* `#/T-text-` #/T-teal-
+* `#/C-text-` #/C-cyan-
+* `#/B-text-` #/B-blue-
+* `#/PR-text-` #/PR-purple-
+* `#/PK-text-` #/PK-pink-
+* `#/W-text-` #/W-white-
+* `#/FG-text-` #/FG-fog-
+* `#/SL-text-` #/SL-slate-
+* `#/BK-text-` #/BK-black-
+
+## Glitter Jelly chips
+
+Jelly full of glitter, with a couple of sparkles! Written `#/COLOR.text.`, in the same 16 colors:
+
+* `#/R.text.` #/R.red.
+* `#/O.text.` #/O.orange.
+* `#/GL.text.` #/GL.gold.
+* `#/Y.text.` #/Y.yellow.
+* `#/L.text.` #/L.lime.
+* `#/G.text.` #/G.green.
+* `#/TU.text.` #/TU.turquoise.
+* `#/T.text.` #/T.teal.
+* `#/C.text.` #/C.cyan.
+* `#/B.text.` #/B.blue.
+* `#/PR.text.` #/PR.purple.
+* `#/PK.text.` #/PK.pink.
+* `#/W.text.` #/W.white.
+* `#/FG.text.` #/FG.fog.
+* `#/SL.text.` #/SL.slate.
+* `#/BK.text.` #/BK.black.
+
 ## Gel label chips
 
 A pale Gel label with a dashed stitched line inside its edge, like a stamped tag! Written `#&color&text&`, in the same 16 colors:
