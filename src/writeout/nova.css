@@ -294,3 +294,5 @@ body.os-nova .kd-modes button[aria-pressed="true"] {
 body.os-nova.nv-dark .kd-modes button { color: color-mix(in srgb, var(--nv-primary) 55%, #fff); }
 body.os-nova.nv-dark .kd-modes button[aria-pressed="true"] { background: color-mix(in srgb, var(--nv-primary) 32%, var(--nv-card)); }
 body.os-nova .kd-modes button:focus-visible { outline: 2px solid var(--nv-primary); outline-offset: 2px; }
+body.os-nova .kd-modes button { display: inline-flex; align-items: center; gap: 7px; }
+body.os-nova .kd-modes .nv-mic { width: 18px; height: 18px; flex: none; }

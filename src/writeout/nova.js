@@ -551,6 +551,16 @@
         document.body.classList.toggle('nv-dark', !!v);
         try { localStorage.setItem('writeout_nova_dark', v ? '1' : '0'); } catch (e) {}
     }
+    // View / Visual / Source: icons instead of emoji, while Nova is on
+    const MODE_ICON = { view: ['eye', 'View'], visual: ['pen', 'Visual'], source: ['code', 'Source'] };
+    function paintModes(restore) {
+        document.querySelectorAll('.kd-modes [data-m]').forEach(function (b) {
+            if (restore) { if (b.dataset.orig) { b.innerHTML = b.dataset.orig; delete b.dataset.orig; } return; }
+            const m = MODE_ICON[b.dataset.m]; if (!m || b.dataset.orig) return;
+            b.dataset.orig = b.innerHTML;
+            b.innerHTML = ic(m[0], 'nv-mic') + '<span>' + m[1] + '</span>';
+        });
+    }
     function enter() {
         if (on) return;
         cfg = OS.config();
@@ -561,6 +571,7 @@
         document.body.style.setProperty('--nv-primary-d', th['accent-d'] || '#0369a1');
         document.body.style.setProperty('--nv-primary-l', th['accent-l'] || '#e0f2fe');
         controls = []; panelControls = []; panelTab = null;
+        paintModes(); setTimeout(paintModes, 500); setTimeout(paintModes, 1500);
         let dark = null; try { dark = localStorage.getItem('writeout_nova_dark'); } catch (e) {}
         document.body.classList.toggle('nv-dark', dark === '1' || (dark === null && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches));
         document.body.classList.add('nv-on');
@@ -572,7 +583,7 @@
         if (!on) return;
         on = false;
         clearInterval(timer);
-        closePop(); closePalette();
+        closePop(); closePalette(); paintModes(true);
         document.querySelectorAll('.nv').forEach(function (n) { n.remove(); });
         document.body.classList.remove('nv-on', 'nv-panel-open', 'nv-pinned', 'nv-dark');
         controls = []; panelControls = []; panelTab = null;
