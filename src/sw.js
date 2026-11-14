@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'b1ea48277baf';
+const VERSION = 'b4655099de95';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","1116deaf53"],
@@ -518,7 +518,7 @@ const CORE = [["/","1116deaf53"],
   ["/waterflow/manifest.json","52bf1b8ddf"],
   ["/waterflow/poolside-keydown.css?v=20261214b","a4737e2b91"],
   ["/waterflow/style.css?v=20261222u","0b16827380"],
-  ["/writeout/","bb1c1b6318"],
+  ["/writeout/","fcf783abf5"],
   ["/writeout/annotate-hl.css?v=20261222u","2535374651"],
   ["/writeout/annotate-ink.js?v=20261210c","97cad31386"],
   ["/writeout/app.js?v=20261223d","c4c4330799"],
@@ -532,11 +532,11 @@ const CORE = [["/","1116deaf53"],
   ["/writeout/favicon-96.png","7d15a8f030"],
   ["/writeout/image-resize.js?v=20261040","c29db2cc80"],
   ["/writeout/images-glue.js?v=20261131v","c81dd8ef3b"],
-  ["/writeout/index.html","bb1c1b6318"],
+  ["/writeout/index.html","fcf783abf5"],
   ["/writeout/inkpath-kv-plugin.js?v=20261202a","f496d784f0"],
   ["/writeout/kd-modes.js?v=20261223d","6b00b24851"],
   ["/writeout/keydown-doc.js?v=20261223d","b372fd5911"],
-  ["/writeout/keydown-guide.js?v=20261226a","3a1348c163"],
+  ["/writeout/keydown-guide.js?v=20261226b","391f993db6"],
   ["/writeout/keydown-next.js?v=20261223b","46f02fd93e"],
   ["/writeout/keydown-packs.js?v=20261224a","503036f6ab"],
   ["/writeout/keydown.css?v=20261223d","32291dd9be"],
@@ -548,8 +548,8 @@ const CORE = [["/","1116deaf53"],
   ["/writeout/mobile/index.html","257cc4056e"],
   ["/writeout/mobile/keydown-packs.js?v=20261224a","503036f6ab"],
   ["/writeout/mobile/keydown.css?v=20261223d","c4d0d11847"],
-  ["/writeout/mobile/new/","1f0f8bfbe7"],
-  ["/writeout/mobile/new/index.html","1f0f8bfbe7"],
+  ["/writeout/mobile/new/","6c8b591503"],
+  ["/writeout/mobile/new/index.html","6c8b591503"],
   ["/writeout/mobile/style.css?v=20261222u","0176f3ac83"],
   ["/writeout/nova-icons.js?v=20261224b","c1c42371e9"],
   ["/writeout/nova.css?v=20261224b","8c37e94a86"],
