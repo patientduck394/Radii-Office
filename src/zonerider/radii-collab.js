@@ -1266,7 +1266,7 @@
         const TI = window.__TAURI_INTERNALS__;
         const hasFS = !!(window.showSaveFilePicker && window.showOpenFilePicker);
         const kind = TI ? 'tauri' : hasFS ? 'web' : 'none';
-        let h = null, fname = '', lastText = '', lastMod = 0, timer = null, poller = null, busy = false, needPerm = false, status = '', applyingDisk = false;
+        let h = null, fname = '', lastText = '', lastMod = 0, timer = null, poller = null, busy = false, needPerm = false, status = '', applyingDisk = false, remote = false;
         // each app can describe its own file format with window.radiiFileFormat = { ext, make(), load(text), mime }:
         // a linked file is then saved as that (a .kd, .tk, .ka, .kv...) and the app opens it again the way it opens its own files
         const FMT = function () { return window.radiiFileFormat && typeof window.radiiFileFormat.make === 'function' && typeof window.radiiFileFormat.load === 'function' ? window.radiiFileFormat : null; };
@@ -1296,16 +1296,16 @@
         function ui_() { try { ui.renderPeople(); } catch (e) {} }
         function stamp() { const d = new Date(); return d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', second: '2-digit' }); }
         async function readFile() {
-            if (kind === 'tauri') { const r = await inv('radii_read', { path: h }); return { text: r.text, mod: r.mtime }; }
+            if (kind === 'tauri' && !remote) { const r = await inv('radii_read', { path: h }); return { text: r.text, mod: r.mtime }; }
             const f = await h.getFile();
             return { text: await f.text(), mod: f.lastModified };
         }
         async function modOf() {
-            if (kind === 'tauri') return await inv('radii_stat', { path: h });
+            if (kind === 'tauri' && !remote) return await inv('radii_stat', { path: h });
             return (await h.getFile()).lastModified;
         }
         async function writeFile(text) {
-            if (kind === 'tauri') { return await inv('radii_write', { path: h, text: text }); }
+            if (kind === 'tauri' && !remote) { return await inv('radii_write', { path: h, text: text }); }
             const w = await h.createWritable();
             await w.write(text);
             await w.close();
@@ -1393,6 +1393,19 @@
             run();
             ui_();
         }
+        // A file shared through Overshare (overshare.radii-office.com): `handle` looks like a file on this computer (getFile/createWritable),
+        // but reads and writes go to the shared copy, so everyone who has it open sees changes live (see overshare-link.js)
+        async function useRemote(handle, name) {
+            clearInterval(poller); clearTimeout(timer);
+            h = handle; fname = name; needPerm = false; remote = true;
+            const r = await readFile();
+            try { cfg.adapter.begin && cfg.adapter.begin('guest'); } catch (e) { console.error(e); }
+            if (nativeFile()) { await loadNative(r.text); lastText = r.text; lastMod = r.mod; }
+            else { const o = fromText(r.text); lastText = r.text; lastMod = r.mod; applyUnits(o.units); }
+            status = 'Live with Overshare';
+            run();
+            ui_();
+        }
         async function newFile() {
             const base = String(cfg.docName || cfg.app).replace(/[^\w\- ]+/g, '').trim() || cfg.app;
             try {
@@ -1425,7 +1438,7 @@
         function off() {
             clearInterval(poller); clearTimeout(timer);
             h = null; fname = ''; needPerm = false; status = '';
-            if (kind === 'tauri') rawLS('s', key() + '_path', ''); else idbSet(key(), null);
+            if (remote) remote = false; else if (kind === 'tauri') rawLS('s', key() + '_path', ''); else idbSet(key(), null);
             ui_();
         }
         async function reconnect() {
@@ -1502,14 +1515,15 @@
             on('.rc-disk-perm', reconnect); on('.rc-disk-now', function () { save(true); }); on('.rc-disk-dl', download);
         }
         window.addEventListener('beforeunload', function () { if (h && timer) { try { save(false); } catch (e) {} } });
-        return { kind: kind, touched: touched, boot: boot, card: card, wire: wire, linked: function () { return !!h; }, name: function () { return fname; }, saveNow: function () { return save(true); } };
+        return { kind: kind, touched: touched, boot: boot, card: card, wire: wire, linked: function () { return !!h; }, name: function () { return fname; }, saveNow: function () { return save(true); }, useRemote: useRemote, off: off, status: function () { return status; } };
     })();
 
     window.RadiiCollab = {
         init: init,
+        ready: function () { return !!cfg; },
         changed: localChanged,
         cursorMoved: cursorMoved,
-        disk: { linked: disk.linked, name: disk.name, saveNow: disk.saveNow, kind: disk.kind },
+        disk: { linked: disk.linked, name: disk.name, saveNow: disk.saveNow, kind: disk.kind, useRemote: disk.useRemote, off: disk.off, status: disk.status },
         shareButton: shareButton,
         open: function (tab) { ui.open(tab); },
         toggle: function (tab) { ui.toggle(tab); },
