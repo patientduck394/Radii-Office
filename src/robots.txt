@@ -46,3 +46,5 @@ Allow: /
 #User-agent: Webzio-Extended
 #User-agent: YouBot
 #Disallow: /
+
+Sitemap: https://radii-office.com/sitemap.xml
