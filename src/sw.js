@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'ca5112d22f71';
+const VERSION = 'd6833b5b70f5';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","a88096c054"],
@@ -431,7 +431,7 @@ const CORE = [["/","a88096c054"],
   ["/opendb/office.js?v=20261224a","51d36a4c3d"],
   ["/opendb/opendb-office.css?v=20261226d","10d58579b8"],
   ["/opendb/style.css?v=20261223a","a818857344"],
-  ["/overshare-link.js?v=20261229a","a690c0366d"],
+  ["/overshare-link.js?v=20261229a","a1332c7f78"],
   ["/peeker/","14f3b9775b"],
   ["/peeker/apple-touch-icon.png","5fa59ee1f8"],
   ["/peeker/docs-library.js?v=20261222w","f7ed337b04"],

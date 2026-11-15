@@ -23,21 +23,23 @@
     var norm = function (s) { return String(s).replace(/\r\n?/g, '\n'); };
 
     var state = { name: '', role: 'view', here: [], status: 'Connecting...', ok: false };
-    var pill = null;
+    var pill = null, closed = false;
     function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function draw() {
+        if (closed) return;
         if (!pill) {
             pill = document.createElement('div');
             pill.setAttribute('role', 'status');
-            pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147482000;max-width:min(92vw,420px);font:600 12.5px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;color:#2b0f3a;background:#fbf0ff;border:1.5px solid #d663ff;border-radius:14px;padding:8px 12px;box-shadow:0 6px 22px rgba(120,30,160,.28)';
+            pill.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:2147482000;max-width:min(92vw,420px);font:600 12.5px/1.35 system-ui,-apple-system,"Segoe UI",sans-serif;color:#2b0f3a;background:#fbf0ff;border:1.5px solid #d663ff;border-radius:14px;padding:8px 30px 8px 12px;box-shadow:0 6px 22px rgba(120,30,160,.28)';
             document.body.appendChild(pill);
         }
         var people = state.here.map(function (p) { return '<span style="display:inline-flex;align-items:center;gap:4px;margin-right:8px"><i style="width:9px;height:9px;border-radius:50%;background:' + esc(p.color) + ';display:inline-block"></i>' + esc(p.name) + '</span>'; }).join('');
         var ask = !name && !state.noNameNeeded;
-        pill.innerHTML = '<div><b style="color:#a93ad4">Overshare</b> · ' + esc(state.name || 'a shared file') + ' · ' + esc(state.status) + (state.role === 'view' ? ' · <b>view only</b> (your changes stay on this page)' : '') + '</div>' +
+        pill.innerHTML = '<button id="os-x" type="button" title="Hide this box (the file keeps syncing)" aria-label="Hide the Overshare box" style="position:absolute;top:5px;right:6px;width:22px;height:22px;border:0;border-radius:50%;background:#f0d2fb;color:#7b1fa2;font:700 13px/1 system-ui,sans-serif;cursor:pointer;padding:0">&#x2715;</button><div><b style="color:#a93ad4">Overshare</b> · ' + esc(state.name || 'a shared file') + ' · ' + esc(state.status) + (state.role === 'view' ? ' · <b>view only</b> (your changes stay on this page)' : '') + '</div>' +
             (people ? '<div style="margin-top:3px">' + people + '</div>' : '') +
             (ask ? '<div style="margin-top:6px"><input id="os-name" maxlength="24" placeholder="Your name" aria-label="Your name" style="font:inherit;padding:3px 8px;border:1.5px solid #d663ff;border-radius:8px;width:130px"> <button id="os-go" type="button" style="font:inherit;font-weight:700;border:0;border-radius:999px;padding:3px 12px;color:#fff;background:#a93ad4;cursor:pointer">Join in!</button></div>' : '') +
             '<div style="margin-top:3px"><a href="' + esc(API) + '/f/' + esc(slug) + '#k=' + esc(key) + '" target="_blank" rel="noopener" style="color:#7b1fa2">Open in Overshare</a></div>';
+        pill.querySelector('#os-x').addEventListener('click', function () { closed = true; if (pill) { pill.remove(); pill = null; } });
         var go = pill.querySelector('#os-go');
         if (go) go.addEventListener('click', function () { var v = (pill.querySelector('#os-name').value || '').trim().replace(/[^\w .'-]/g, '').slice(0, 24) || 'Guest'; name = v; try { localStorage.setItem(NAME_KEY, v); } catch (e) {} draw(); });
     }
