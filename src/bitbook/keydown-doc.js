@@ -60,7 +60,7 @@
         ['~PH-O~','~','span','gel-chip-pill-variant pill-orange'], ['~PH-PR~','~','span','gel-chip-pill-variant pill-amethyst'], ['~PC-Y~','~','span','gel-chip-pastel pastel-yellow'], ['~PC-B~','~','span','gel-chip-pastel pastel-blue'], ['~PC-G~','~','span','gel-chip-pastel pastel-green'], ['~PC-PK~','~','span','gel-chip-pastel pastel-pink'],
         ['~PC-PR~','~','span','gel-chip-pastel pastel-purple'], ['~PC-O~','~','span','gel-chip-pastel pastel-orange'], ['~DR-O~','~','span','gel-chip-droplet-ribbon droplet-ribbon-tangerine'], ['~DR-Y~','~','span','gel-chip-droplet-ribbon droplet-ribbon-citrus'], ['~DR-G~','~','span','gel-chip-droplet-ribbon droplet-ribbon-emerald'], ['~DR-B~','~','span','gel-chip-droplet-ribbon droplet-ribbon-sapphire'],
         ['~DR-PR~','~','span','gel-chip-droplet-ribbon droplet-ribbon-amethyst'], ['~DR-PK~','~','span','gel-chip-droplet-ribbon droplet-ribbon-fuchsia'], ['~DR-R~','~','span','gel-chip-droplet-ribbon droplet-ribbon-crimson'], ['~DR-SL~','~','span','gel-chip-droplet-ribbon droplet-ribbon-slate'], ['~H1~','~H1~','span','header-1'], ['~H2~','~H2~','span','header-2'],
-        ['~H3~','~H3~','span','header-3'], ['~BQ~','~BQ~','span','blockquote-list'], ['~BUL~','~BUL~','span','bulleted-list'], ['~MH~','~MH~','span','mega-header'],
+        ['~H3~','~H3~','span','header-3'], ['~H4~','~H4~','span','header-4'], ['~H5~','~H5~','span','header-5'], ['~H6~','~H6~','span','header-6'], ['~BQ~','~BQ~','span','blockquote-list'], ['~BUL~','~BUL~','span','bulleted-list'], ['~MH~','~MH~','span','mega-header'],
         // Dark Gel Chips ~CPR~text~CPR~ (16 midnight neon pills, once a style pack)
         ['~CPR~','~CPR~','span','mkt-cp-red'], ['~CPO~','~CPO~','span','mkt-cp-orange'], ['~CPA~','~CPA~','span','mkt-cp-amber'], ['~CPY~','~CPY~','span','mkt-cp-yellow'], ['~CPL~','~CPL~','span','mkt-cp-lime'], ['~CPG~','~CPG~','span','mkt-cp-green'], ['~CPE~','~CPE~','span','mkt-cp-emerald'], ['~CPT~','~CPT~','span','mkt-cp-teal'], ['~CPC~','~CPC~','span','mkt-cp-cyan'], ['~CPS~','~CPS~','span','mkt-cp-sky'], ['~CPB~','~CPB~','span','mkt-cp-blue'], ['~CPI~','~CPI~','span','mkt-cp-indigo'], ['~CPV~','~CPV~','span','mkt-cp-violet'], ['~CPF~','~CPF~','span','mkt-cp-fuchsia'], ['~CPP~','~CPP~','span','mkt-cp-pink'], ['~CPQ~','~CPQ~','span','mkt-cp-slate'],
         // Aero Chips ++R+text++ and Logo Chips ;;B;text;; (16 colors each, the 13 Annotate colors plus White, Fog and Black)
@@ -489,9 +489,9 @@
             endList();
             if (!t) { out.push('<div><br></div>'); continue; }
             if ((m = /^\{\{([^{}]+)\}\}$/.exec(t)) && !INLINE_TAGS[tplName(m[1])]) { out.push(tplHtml(m[1], true)); continue; }
-            if ((m = /^(#{1,4})\s+(\S.*)$/.exec(t))) {
+            if ((m = /^(#{1,6}|#=)\s+(\S.*)$/.exec(t))) {
                 const n = m[1].length;
-                out.push(ind(n === 4 ? '<h1 class="mega-header">' + inline(m[2], opts) + '</h1>' : '<h' + n + ' class="header-' + n + '">' + inline(m[2], opts) + '</h' + n + '>'));
+                out.push(ind(m[1] === '#=' ? '<h1 class="mega-header">' + inline(m[2], opts) + '</h1>' : '<h' + n + ' class="header-' + n + '">' + inline(m[2], opts) + '</h' + n + '>'));
                 continue;
             }
             // !> ?> >> %> *> +> -> => ~> $> #> ^> @> &> start a styled quote (a warning, a question, a pull quote...)
@@ -620,7 +620,7 @@
         }
         // the editor's own line styles (a bullet's or heading's inner span): a whole line saves as "# ..." (see htmlToText),
         // one in the middle of a line keeps its tag (~MH~Sample~MH~)
-        if (/^(header-[123]|mega-header|bulleted-list|blockquote-list)$/.test(String(el.className).trim())) {
+        if (/^(header-[1-6]|mega-header|bulleted-list|blockquote-list)$/.test(String(el.className).trim())) {
             const lt = tag === 'SPAN' ? BY_CLASS.get(classKey(el.className)) : null;
             return lt ? lt[0] + kids().trim() + lt[1] : kids();
         }
@@ -655,14 +655,14 @@
     // {align=center} for a line the toolbar centered (or aligned right, or justified)
     const alignOf = (el) => { const a = (el.style && el.style.textAlign) || el.getAttribute('align') || ''; return /^(center|right|justify)$/.test(a) ? '{align=' + a + '} ' : ''; };
     // a line the editor styled as a whole (~H1~ makes <div><span class="header-1">...</span></div>)
-    const LINE_SPANS = { 'header-1': '# ', 'header-2': '## ', 'header-3': '### ', 'mega-header': '#### ', 'blockquote-list': '> ', 'bulleted-list': '* ', 'bulleted-list kd-bl-dash': '- ', 'bulleted-list kd-bl-plus': '+ ', 'bulleted-list kd-bl-ring': '. ', 'bulleted-list kd-bl-diamond': '~ ', 'bulleted-list kd-bl-arrow': '= ' };
+    const LINE_SPANS = { 'header-1': '# ', 'header-2': '## ', 'header-3': '### ', 'header-4': '#### ', 'header-5': '##### ', 'header-6': '###### ', 'mega-header': '#= ', 'blockquote-list': '> ', 'bulleted-list': '* ', 'bulleted-list kd-bl-dash': '- ', 'bulleted-list kd-bl-plus': '+ ', 'bulleted-list kd-bl-ring': '. ', 'bulleted-list kd-bl-diamond': '~ ', 'bulleted-list kd-bl-arrow': '= ' };
     function lineSpanOf(el) {
         const parts = Array.from(el.childNodes).filter((n) => !(n.nodeType === 3 && !n.nodeValue.replace(/\u200B/g, '').trim()) && !(n.nodeType === 1 && n.tagName === 'BR'));
         const only = parts.length === 1 && parts[0].nodeType === 1 ? parts[0] : null;
         return only && LINE_SPANS[String(only.className).trim()] ? only : null;
     }
     // a plain line that starts like a heading, bullet, quote, block, table, fence or footnote keeps that start as itself
-    const LINE_MARK = /^(\||#{1,4}\s|[*+\-.~=]\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
+    const LINE_MARK = /^(\||(?:#{1,6}|#=)\s|[*+\-.~=]\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
     const plainLine = (l) => (LINE_MARK.test(l) ? '\\' + l : l);
     const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && (el.style.textIndent || el.style.marginLeft)) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
     function htmlToText(html) {
@@ -696,8 +696,8 @@
                 return;
             }
             if (/^H[1-6]$/.test(tag)) {
-                const n = el.classList.contains('mega-header') ? 4 : Math.min(3, +tag[1]);
-                push('|'.repeat(indentOf(el)) + alignOf(el) + '#'.repeat(n) + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
+                const n = el.classList.contains('mega-header') ? '#=' : '#'.repeat(+tag[1]);
+                push('|'.repeat(indentOf(el)) + alignOf(el) + n + ' ' + kidsText(el).replace(/\n+/g, ' ').trim());
                 return;
             }
             if (tag === 'UL' || tag === 'OL') {
@@ -1182,7 +1182,7 @@
         // the line itself first: "# Title", "* item", "> quote", ::block{...}, $math$... becomes what it says
         let lineEl2 = null;
         const runText = nodes.map((n) => n.textContent).join('').replace(/\u200B/g, '');
-        if (/^\s*(#{1,4}\s+\S|[*+\-.~=]\s+\S|>\s+\S|(?:!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
+        if (/^\s*((?:#{1,6}|#=)\s+\S|[*+\-.~=]\s+\S|>\s+\S|(?:!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
             if (block === canvas) {
                 // text sitting right in the canvas gets a line of its own first
                 const d = document.createElement('div');
@@ -1415,8 +1415,8 @@
         // whole lines first: headings, bullets, quotes, footnote texts, centered math, notices and media
         root.querySelectorAll('h1, h2, h3, h4, h5, h6').forEach((h) => {
             if (!root.contains(h) || h.closest('pre') || isProtected(h, root)) return;
-            const level = h.classList.contains('mega-header') ? 4 : Math.min(3, +h.tagName[1]);
-            h.replaceWith(lineEl('#'.repeat(level) + ' ' + kidsText(h).replace(/\n+/g, ' ').trim(), h)); n++;
+            const level = h.classList.contains('mega-header') ? '#=' : '#'.repeat(+h.tagName[1]);
+            h.replaceWith(lineEl(level + ' ' + kidsText(h).replace(/\n+/g, ' ').trim(), h)); n++;
         });
         // (a bullet typed inside a list makes a list inside the item: every item becomes its own "* " line)
         const listLines = (ul) => {
@@ -1553,9 +1553,9 @@
             return el;
         };
         const lead = text.length - text.replace(/^\s+/, '').length;
-        if ((m = /^\s*(#{1,4})\s+\S/.exec(text))) {
-            const lvl = m[1].length;
-            const h = takeRest(make(lvl === 4 ? 'h1' : 'h' + lvl, lvl === 4 ? 'mega-header' : 'header-' + lvl), lead + lvl + 1);
+        if ((m = /^\s*(#{1,6}|#=)\s+\S/.exec(text))) {
+            const lvl = m[1].length, mega = m[1] === '#=';
+            const h = takeRest(make(mega ? 'h1' : 'h' + lvl, mega ? 'mega-header' : 'header-' + lvl), lead + lvl + 1);
             b.replaceWith(h);
             return h;
         }

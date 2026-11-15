@@ -395,10 +395,10 @@ function kdRender(raw) {
     if (qm) return qm[1] + '<span class="blockquote-list kd-bq kd-bq-' + { '!>': 'neon', '?>': 'glass', '>>': 'pull', '%>': 'gradient', '*>': 'marker', '+>': 'green', '->': 'red', '=>': 'dashed', '~>': 'whisper', '$>': 'paper', '#>': 'terminal', '^>': 'ribbon', '@>': 'bubble', '&>': 'card' }[qm[2]] + '">' + kdRender(qm[3]) + "</span>";
     const bm = /^::([a-z]+)(?:\{([^}]*)\})?$/.exec(trimmed);
     if (bm && KD_BLOCKS.includes(bm[1])) return kdRenderBlock(bm[1], bm[2]);
-    // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
-    const lp = /^(\s*)(#{1,4}|[*+\-.~=])\s+(\S[\s\S]*)$/.exec(text);
+    // Line shortcuts: "# " "## " "### " headings, "#### " to "###### " more headings, "#= " the mega header, "* " a bullet!
+    const lp = /^(\s*)(#{1,6}|#=|[*+\-.~=])\s+(\S[\s\S]*)$/.exec(text);
     if (lp) {
-        const cls = lp[2].length === 1 && lp[2] !== "#" ? "bulleted-list" + ({ "-": " kd-bl-dash", "+": " kd-bl-plus", ".": " kd-bl-ring", "~": " kd-bl-diamond", "=": " kd-bl-arrow" }[lp[2]] || "") : ["header-1", "header-2", "header-3", "mega-header"][lp[2].length - 1];
+        const cls = lp[2].length === 1 && lp[2] !== "#" ? "bulleted-list" + ({ "-": " kd-bl-dash", "+": " kd-bl-plus", ".": " kd-bl-ring", "~": " kd-bl-diamond", "=": " kd-bl-arrow" }[lp[2]] || "") : (lp[2] === "#=" ? "mega-header" : "header-" + lp[2].length);
         return lp[1] + '<span class="' + cls + '">' + kdRender(lp[3]) + "</span>";
     }
     const store = [];
@@ -490,7 +490,7 @@ function kdBuildGuideHTML() {
     const eff = KD_CORE.filter((d) => (d.cls || "").startsWith("effect-") || (d.cls || "").startsWith("mega") || (d.cls || "").startsWith("aero-glass-badge") || (d.cls || "").startsWith("aero-duplex") || (d.cls || "").startsWith("gel-chip-") || (d.cls || "").startsWith("droplet"));
     const dev = KD_CORE.filter((d) => (d.cls || "").startsWith("dev-") || (d.cls || "").startsWith("av-") || (d.cls || "").startsWith("jr-"));
     const blocks = KD_BLOCKS.map((b) => ({ o: "::" + b, c: "", cls: "" }));
-    const lineRows = [["# ", "Heading 1"], ["## ", "Heading 2"], ["### ", "Heading 3"], ["#### ", "Mega header"], ["* ", "Bullet point"]];
+    const lineRows = [["# ", "Heading 1"], ["## ", "Heading 2"], ["### ", "Heading 3"], ["#### ", "Heading 4"], ["##### ", "Heading 5"], ["###### ", "Heading 6"], ["#= ", "Mega header"], ["* ", "Bullet point"]];
     return '<div class="kd-guide-note">Type any trigger around your text — it renders live in every view! Click applets to play with them!</div>'
         + '<div class="kd-guide-group"><div class="kd-guide-title">Lines — start a line with these (5)</div>' + lineRows.map((r) => '<div class="kd-guide-row"><code>' + kdEscapeHtml(r[0] + r[1]) + "</code><span>" + kdRender(r[0] + r[1]) + "</span></div>").join("") + "</div>"
         + kdGuideSection("Gel Highlights (#color#text##)", KD_HL.filter((d) => d.c === "##"))

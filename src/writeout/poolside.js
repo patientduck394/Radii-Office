@@ -161,7 +161,7 @@
     }
     function blockToPK(l) {
         let m;
-        if ((m = /^(\s*)(#{1,4})\s+(.*)$/.exec(l))) return m[1] + '/'.repeat(m[2].length) + ' ' + m[3];
+        if ((m = /^(\s*)(#{1,6})\s+(.*)$/.exec(l))) return m[1] + '/'.repeat(m[2].length) + ' ' + m[3];
         if ((m = /^(\s*)>>\s(.*)$/.exec(l))) return m[1] + '<> ' + m[2];
         if ((m = /^(\s*)>\s(.*)$/.exec(l))) return m[1] + '<< ' + m[2];
         if ((m = /^(\s*)%>\s(.*)$/.exec(l))) return m[1] + '<: ' + m[2];

@@ -155,6 +155,9 @@ const keydownDefinitions = [
     { open: '~H1~',  close: '~H1~',  className: 'header-1' },
     { open: '~H2~',  close: '~H2~',  className: 'header-2' },
     { open: '~H3~',  close: '~H3~',  className: 'header-3' },
+    { open: '~H4~',  close: '~H4~',  className: 'header-4' },
+    { open: '~H5~',  close: '~H5~',  className: 'header-5' },
+    { open: '~H6~',  close: '~H6~',  className: 'header-6' },
     { open: '~BQ~',  close: '~BQ~',  className: 'blockquote-list' },
     { open: '~MH~',  close: '~MH~',  className: 'mega-header' },
     { open: '`',    close: '`',    tagName: 'code' },
@@ -616,12 +619,12 @@ function applyKeydownFormatting(text) {
 
     html = html.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 
-    // Line shortcuts: "# " "## " "### " headings, "#### " the mega header, "* " a bullet!
+    // Line shortcuts: "# " "## " "### " headings, "#### " to "###### " more headings, "#= " the mega header, "* " a bullet!
     html = html.split("\n").map((line) => {
-        const lp = /^(\s*)(#{1,4}|\*)\s+(\S.*)$/.exec(line);
+        const lp = /^(\s*)(#{1,6}|#=|\*)\s+(\S.*)$/.exec(line);
         if (!lp) return line;
         if (lp[2] === "*") return lp[1] + '<span class="bulleted-list">' + lp[3] + "</span>";
-        const marker = ["~H1~", "~H2~", "~H3~", "~MH~"][lp[2].length - 1];
+        const marker = lp[2] === "#=" ? "~MH~" : "~H" + lp[2].length + "~";
         return lp[1] + marker + lp[3] + marker;
     }).join("\n");
 
@@ -645,8 +648,8 @@ function applyKeydownFormatting(text) {
 
 // Markers for a toolbar class, so styles stay as typeable Keydown text!
 function keydownMarkersFor(className) {
-    // Headings are line shortcuts now: "# " to "### ", and "#### " for the mega header!
-    const line = { 'header-1': '# ', 'header-2': '## ', 'header-3': '### ', 'mega-header': '#### ' }[className];
+    // Headings are line shortcuts now: "# " to "###### ", and "#= " for the mega header!
+    const line = { 'header-1': '# ', 'header-2': '## ', 'header-3': '### ', 'header-4': '#### ', 'header-5': '##### ', 'header-6': '###### ', 'mega-header': '#= ' }[className];
     if (line) return { open: line, close: '' };
     const def = keydownDefinitions.find(d => d.className === className);
     return def ? { open: def.open, close: def.close } : null;

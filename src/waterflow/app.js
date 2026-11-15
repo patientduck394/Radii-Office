@@ -206,7 +206,7 @@
             if (fence) return hlCode(line);
             if ((m = /^(\|+)(.*)$/.exec(line)) && !/^\|.*\|(\{[a-z]+\})?\s*$/.test(line)) return sp('m-d', m[1]) + highlight(m[2]);
             if (/^\s*([-*_=])\1{2,}\s*$/.test(line)) return sp('m-d', line);
-            if ((m = /^(\s*)(#{1,4})(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-h', m[2] + m[3]) + '<span class="m-h">' + hlInline(m[4]) + '</span>';
+            if ((m = /^(\s*)(#{1,6}|#=)(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-h', m[2] + m[3]) + '<span class="m-h">' + hlInline(m[4]) + '</span>';
             if ((m = /^(\s*)(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>|>)(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
             if ((m = /^(\s*)([*+\-.~=])(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
             if ((m = /^(::[a-z]+)(\{[^}]*\})?(.*)$/.exec(line))) return sp('m-k', m[1]) + (m[2] ? sp('m-p', m[2]) : '') + hlInline(m[3]);
@@ -270,7 +270,7 @@
     const plain = (t) => String(t || '').replace(/^\s*(\/{1,4}|<[<>:!?%*+\-=~$#^@&]|\([+.~=*]?\)|\/~)\s/gm, ' ').replace(/<[a-z]+\s/g, ' ').replace(/^::[a-z]+.*$/gm, ' ').replace(/```[^\n]*/g, ' ').replace(/[#*~=`>|_^%&+;!@$\[\]{}\\]/g, ' ').replace(/\s+/g, ' ').trim();
     const titleOf = (n) => (n.title || '').trim() || (plain(n.text).slice(0, 48)) || 'Untitled note';
     const words = (t) => { const p = plain(t); return p ? p.split(' ').length : 0; };
-    const preview = (n) => { const lines = String(n.text || '').replace(/@@program[^\n]*```[\s\S]*?```/g, '').split('\n').filter((l) => l.trim() && !/^\s*(#{1,4}|\/{1,4})\s/.test(l)); return plain(lines.join(' ')).slice(0, 170); };
+    const preview = (n) => { const lines = String(n.text || '').replace(/@@program[^\n]*```[\s\S]*?```/g, '').split('\n').filter((l) => l.trim() && !/^\s*(#{1,6}|\/{1,4})\s/.test(l)); return plain(lines.join(' ')).slice(0, 170); };
     const nbName = (id) => { const b = nbs.find((x) => x.id === id); return b ? b.name : ''; };
 
     /* ---------- the rail ---------- */
@@ -373,7 +373,7 @@
         const c = document.querySelector('.wf-cardn.on'); if (c && save) { clearTimeout(afterTextChange.t); afterTextChange.t = setTimeout(renderList, 600); }
     }
     function outline() {
-        const hs = []; String(cur.text || '').split('\n').forEach((l) => { const m = (isPK(cur) ? /^(\/{1,4})\s+(.+)$/ : /^(#{1,4})\s+(.+)$/).exec(l); if (m) hs.push([m[1].length, plain(m[2]) || m[2], hs.length]); });
+        const hs = []; String(cur.text || '').split('\n').forEach((l) => { const m = (isPK(cur) ? /^(\/{1,4})\s+(.+)$/ : /^(#{1,6})\s+(.+)$/).exec(l); if (m) hs.push([m[1].length, plain(m[2]) || m[2], hs.length]); });
         $('wf-outline').innerHTML = hs.length ? hs.map((h) => '<button type="button" class="l' + h[0] + '" data-i="' + h[2] + '">' + esc(h[1]) + '</button>').join('') : '<p>Headings (start a line with #) show up here!</p>';
     }
     $('wf-outline').addEventListener('click', (e) => {
@@ -381,7 +381,7 @@
         const i = Number(b.dataset.i);
         if (mode === 'source') {
             const ta = $('wf-source'); let pos = 0, k = -1; const lines = ta.value.split('\n');
-            for (let j = 0; j < lines.length; j++) { if ((isPK(cur) ? /^\/{1,4}\s+/ : /^#{1,4}\s+/).test(lines[j])) { k++; if (k === i) break; } pos += lines[j].length + 1; }
+            for (let j = 0; j < lines.length; j++) { if ((isPK(cur) ? /^\/{1,4}\s+/ : /^#{1,6}\s+/).test(lines[j])) { k++; if (k === i) break; } pos += lines[j].length + 1; }
             ta.focus(); ta.setSelectionRange(pos, pos);
             const ratio = pos / Math.max(1, ta.value.length); ta.scrollTop = Math.max(0, ratio * ta.scrollHeight - 80); $('wf-hl').scrollTop = ta.scrollTop;
         } else {

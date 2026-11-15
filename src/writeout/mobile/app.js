@@ -208,8 +208,8 @@ if (canvas) {
         if (e.key === ' ') return;
         if (e.key === ' ') {
             // --- Double Colon Visual Component Injections ---
-            // --- LINE SHORTCUTS: "# " "## " "### " are headings, "#### " the mega header, "* " a list! ---
-            if (/^(#{1,4}|\*)$/.test(currentLineText) && !(textNode.parentNode && textNode.parentNode.closest && textNode.parentNode.closest('h1,h2,h3,li,pre,code,blockquote'))) {
+            // --- LINE SHORTCUTS: "# " "## " "### " are headings, "#### " to "###### " more headings, "#= " the mega header, "* " a list! ---
+            if (/^(#{1,6}|#=|\*)$/.test(currentLineText) && !(textNode.parentNode && textNode.parentNode.closest && textNode.parentNode.closest('h1,h2,h3,h4,h5,h6,li,pre,code,blockquote'))) {
                 e.preventDefault(); playAeroClickSound(750, 0.12);
                 const lvl = currentLineText.length;
                 let blockEl, holder;
@@ -217,8 +217,9 @@ if (canvas) {
                     blockEl = document.createElement('ul'); blockEl.className = 'bulleted-list';
                     holder = document.createElement('li'); blockEl.appendChild(holder);
                 } else {
-                    blockEl = document.createElement(lvl === 4 ? 'h1' : 'h' + lvl);
-                    blockEl.className = lvl === 4 ? 'mega-header' : 'header-' + lvl;
+                    const mega = currentLineText === '#=';
+                    blockEl = document.createElement(mega ? 'h1' : 'h' + lvl);
+                    blockEl.className = mega ? 'mega-header' : 'header-' + lvl;
                     holder = blockEl;
                 }
                 const hzw = document.createTextNode('​');
@@ -2380,8 +2381,11 @@ function parseMarkdownInlineTokens(textStr) {
     let html = textStr.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     
     // Convert new structural text block pairs into standard browser tags dynamically
-    // Line shortcuts first: # ## ### headings, #### the mega header, * list items!
-    html = html.replace(/^#### (.+)$/gm, '<h1 class="mega-header">$1</h1>');
+    // Line shortcuts first: # ## ### headings, #### to ###### more headings, #= the mega header, * list items!
+    html = html.replace(/^#= (.+)$/gm, '<h1 class="mega-header">$1</h1>');
+    html = html.replace(/^###### (.+)$/gm, '<h6 class="header-6">$1</h6>');
+    html = html.replace(/^##### (.+)$/gm, '<h5 class="header-5">$1</h5>');
+    html = html.replace(/^#### (.+)$/gm, '<h4 class="header-4">$1</h4>');
     html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
     html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
     html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');

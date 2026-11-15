@@ -28,8 +28,8 @@ Keydown text is saved in `.kd` files (Writeout documents and OpenDB entries) and
 
 Start a line with one of these and a space:
 
-* `# Heading` makes a big heading, `## Heading` a smaller one and `### Heading` a third level.
-* `#### Heading` makes the extra large **mega header**.
+* `# Heading` makes a big heading, `## Heading` a smaller one and `### Heading` a third level. `#### Heading`, `##### Heading` and `###### Heading` make levels four, five and six.
+* `#= Heading` makes the extra large **mega header**.
 * `* item` makes a bullet point, and `> text` a quote.
 
 ## Basics
