@@ -1,6 +1,6 @@
 # POOLSIDE
 
-**The complete guide to Poolside: what it is, how every Poolside style is built, and how to write a new one that is indistinguishable from the 360 hand-made designs of Poolside 2, 3, 4 and 2A.**
+**The complete guide to Poolside: what it is, how every Poolside style is built, and how to write a new one that is indistinguishable from the hand-made designs of Poolside 2, 3, 4, 2A and the big Poolside L.**
 
 This guide is for two kinds of readers. **AI agents** (like Claude) get exact rules, the exact numbers the existing designs use, working code to copy, and a checklist. **People** get the idea behind the look, a tour of the designs, and the steps to add their own. Everything here was read from the real stylesheet (`writeout/unique-styles.css`) and the real data (`writeout/psl-data.js`), not remembered, and every code block that is marked as an example is the exact code of an existing design.
 
@@ -31,7 +31,7 @@ The word is used in three connected ways in Radii Office:
 
 - **The Poolside style**, the look itself. It is used by **PoolsideUI** (26 Svelte components), the **Waterflow** notebook app, and the Poolside layout (the Poolside layout is only for Writeout and Bitbook).
 - **Poolside Keydown** (PK), a dialect of Keydown with its own marks: `/ Title` for headings, `()` rings for lists, and angle chips such as `<ring words>`.
-- **Poolside styles** (this guide), the collections of hand-drawn chip designs. They are called Poolside, Poolside 2, 3, 4, 5, 6, 7, 8, 9, 10, 2A, 3A and 4A. Each collection has **90 designs with 5 colorways each = 450 styles**; together that is 1,170 designs and **5,850 styles**. They are found with **Poolside Style Lookup (PSL)** in Waterflow and Bitbook, and written `@id-N@words@` in Keydown or `<id-N words>` in Poolside Keydown.
+- **Poolside styles** (this guide), the collections of hand-drawn chip designs. They are called Poolside, Poolside 2, 3, 4, 5, 6, 7, 8, 9, 10, 2A, 3A, 4A and **Poolside L**. Each regular collection has **90 designs with 5 colorways each = 450 styles**; Poolside L is the big one with **540 designs = 2,700 styles** (six times as many); together that is 1,710 designs and **8,550 styles**. They are found with **Poolside Style Lookup (PSL)** in Waterflow and Bitbook, and written `@id-N@words@` in Keydown or `<id-N words>` in Poolside Keydown.
 
 ### The look in six sentences
 
@@ -71,8 +71,9 @@ PoolsideUI and Waterflow use these design tokens. The chip styles in this guide 
 | **Poolside 3** | `pt` | `--o --ol --c --b --w --dk` | Pool party and retro summer: glitter, party props, drinks, passes, 1950s Googie and boomerang signs, team jerseys, photo booth, mixtape, pop art, chrome type. |
 | **Poolside 4** | `pf` | `--o --ol --c --b --w --dk` | Summer-day gear, architecture, passes and tags, snacks, postcards and diner stripes, patches; more dark-ink-on-paper designs than Poolside 3. |
 | **Poolside 2A** | `qa` | `--m --ml --mx --md --mk` | A continuation of Poolside 2 with the same colorways and feel: pool structure, toys, picnic food, prints and text lines. |
+| **Poolside L** | `ql` | `--o --ol --c --b --w --dk` | The large collection, 540 designs in twelve themes (about 45 each): water and light, tiles and patterns, pool hardware, toys, swim gear, beach kit, drinks, snacks, passes, signs, retro prints, badges and stamps. Same rules as Poolside 3 and 4. |
 
-Poolside 3A and 4A (ids `qb` and `qc`) continue Poolside 3 and 4 in the same way, and Poolside 5 to 10 are further collections. Everything in this guide applies to them too.
+Poolside 3A and 4A (ids `qb` and `qc`) continue Poolside 3 and 4 in the same way, and Poolside 5 to 10 are further collections. Everything in this guide applies to them too. **Poolside L** was written from this guide: every one of its 540 designs passes the lint script in Part 6.4, and its look sheets were checked in all five colorways before it was registered.
 
 ## Part 2. How one style is built
 
@@ -197,6 +198,8 @@ Lido, Orangeade, High Dive, Riviera, Sunset Deck, Swim Meet and Mango Float have
 | 11 | 11, 23, 35, ... | High Dive, Sunset Deck, Lido, Chlorine Blue, Splash Pad |
 | 12 | 12, 24, 36, ... | Swim Meet, Mango Float, Riviera, Splash Pad, Orangeade |
 
+**Poolside L** uses the same twelve patterns as Poolside 3 and 4, in the same order, and cycles through them over its 540 designs (design 1, 13, 25 ... use pattern 1).
+
 This is how the existing sets look; a new design in a collection that continues the pattern should follow it, so that neighbours differ and every palette is used equally. A one-off design may use any five of the ten palettes, in any order, as long as all five colorway rules exist.
 
 The data entry in `psl-data.js` stores the five palette **names** in colorway order, so the names shown in the Style Lookup match the colors.
@@ -250,6 +253,7 @@ The base padding is `1px 10px`. The most used overrides are: `1px 14px` (35 desi
 - The body is `linear-gradient(180deg, var(--c), var(--b))` in the O set, and `linear-gradient(180deg, var(--m), var(--md))` or `(var(--ml), var(--m))` in the M set. A flat body is just `var(--m)`, `var(--c)` or `var(--w)`.
 - Patterns are **tiled** with a size and `repeat-x` or the default repeat: `radial-gradient(...) 0 0 / 12px 6px repeat-x`, `repeating-linear-gradient(90deg, A 0 10px, B 10px 20px)`, `repeating-conic-gradient(...)`.
 - Make translucent parts with `color-mix(in srgb, var(--x) 40%, transparent)`. Do not write rgba values for palette colors.
+- **Busy patterns get a veil.** Put a translucent panel as the first layer, `linear-gradient(90deg, transparent 4%, rgba(255,255,255,0.6) 4% 96%, transparent)`, so the words sit on a calm surface and the pattern shows at the sides and ends. Poolside L uses this for most tile and print designs. Use a dark veil (`color-mix(in srgb, var(--dk) 45%, transparent)`) under white text.
 - A **gradient border** is two backgrounds: `background: linear-gradient(white, white) padding-box, <gradient> border-box;` plus `border: 4px solid transparent;`.
 - A **gradient inside letters**: `background: <gradient>; -webkit-background-clip: text; background-clip: text; color: transparent;`.
 
@@ -265,6 +269,7 @@ The base padding is `1px 10px`. The most used overrides are: `1px 14px` (35 desi
 
 - `clip-path: polygon(...)` for ribbons, torpedoes and gems. Set `border-radius: 0`, and do not use borders or `box-shadow`: both are clipped away.
 - `mask` (with the `-webkit-mask` twin) for perforations (the Pool Stamp).
+- **Shaped icons go in pseudo-elements.** If a shape needs `clip-path` (a star, a heart, a flag, a pizza slice), put it on `::before` and keep the chip itself a plain pill. A `clip-path` on the chip cuts the words off.
 - `border-image` for airmail borders. It ignores `border-radius`, so set it to 0.
 
 ### 4.8 Allowed colors
@@ -1821,6 +1826,270 @@ Colorways 1 to 5: 1 Tangerine, 2 Aqua, 3 Sunburn, 4 Lagoon, 5 Creamsicle.
 .us-qacornerbrackets-5 { --m: #ffa552; --ml: #ffd3a8; --mx: #fff8f0; --md: #dd7420; --mk: #5c300a; }
 ```
 
+### 5.5 Poolside L
+
+Poolside L uses the **O set**, like Poolside 3 and 4, and has 540 designs. The nine designs below were picked to show the techniques that Poolside L added or leaned on: edge fringes, icons drawn in pseudo-elements with `clip-path`, layered clock and gauge faces, masks, and text effects. Its full list is in Part 8.
+
+#### `qlfoamlace`: Foam lace: a scalloped fringe with extra bottom padding (Foam Lace, number 3)
+
+One `radial-gradient` half circle of foam (`--w`), 9px wide and 5px tall, repeated sideways along the bottom edge (`0 100% / 9px 5px repeat-x`). The bottom padding is 6px so the fringe has its own row under the words.
+
+Colorways 1 to 5: 1 High Dive, 2 Mango Float, 3 Lido, 4 Splash Pad, 5 Deep Lane.
+
+```css
+.us-qlfoamlace {
+    background: radial-gradient(circle at 50% 0, var(--w) 0 3.6px, transparent 4.2px) 0 100% / 9px 5px repeat-x, linear-gradient(180deg, var(--c), var(--b));
+    color: #ffffff;
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent);
+    border-radius: 6px 6px 2px 2px;
+    padding: 1px 12px 6px;
+}
+.us-qlfoamlace-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-qlfoamlace-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-qlfoamlace-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-qlfoamlace-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-qlfoamlace-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+```
+
+#### `qlpumpdial`: An icon in ::before: a gauge (Pump Dial, number 99)
+
+The dial is a 20px circle in the pseudo-element (a conic-gradient of tick marks) and its needle is a second small shape. The left padding grows to 32px to make room. White text with the O-set halo.
+
+Colorways 1 to 5: 1 High Dive, 2 Mango Float, 3 Lido, 4 Splash Pad, 5 Deep Lane.
+
+```css
+.us-qlpumpdial {
+    background: radial-gradient(circle at 14px 50%, var(--w) 0 7px, var(--b) 7.6px 9px, transparent 9.6px), linear-gradient(180deg, var(--c), var(--b));
+    color: #ffffff;
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent);
+    border-radius: 6px;
+    padding: 1px 13px 1px 32px;
+}
+.us-qlpumpdial::before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    left: 13px;
+    top: 50%;
+    width: 2px;
+    height: 7px;
+    margin-top: -6px;
+    background: var(--o);
+    transform: rotate(40deg);
+    transform-origin: 50% 85%;
+}
+.us-qlpumpdial-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-qlpumpdial-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-qlpumpdial-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-qlpumpdial-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-qlpumpdial-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+```
+
+#### `qlhingebar`: A hardware part drawn with repeating gradients (Hinge Bar, number 117)
+
+The hinge is a pseudo-element with `repeating-linear-gradient` bands (white and dark) and a 1px dark ring, so it reads as a knuckle hinge. The body is the usual water gradient.
+
+Colorways 1 to 5: 1 Lido, 2 Mango Float, 3 High Dive, 4 Splash Pad, 5 Deep Lane.
+
+```css
+.us-qlhingebar {
+    background: linear-gradient(180deg, var(--c), var(--b));
+    color: #ffffff;
+    text-shadow: 0 1px 2px color-mix(in srgb, var(--dk) 85%, transparent), 0 0 2px color-mix(in srgb, var(--dk) 60%, transparent);
+    border-radius: 3px;
+    padding: 1px 13px 1px 30px;
+}
+.us-qlhingebar::before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    left: 4px;
+    top: 3px;
+    bottom: 3px;
+    width: 20px;
+    border-radius: 2px;
+    background: repeating-linear-gradient(180deg, var(--w) 0 4px, var(--dk) 4px 5px);
+    box-shadow: 0 0 0 1px var(--dk);
+}
+.us-qlhingebar-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-qlhingebar-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-qlhingebar-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-qlhingebar-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-qlhingebar-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+```
+
+#### `qlstarfishtoy`: A shaped icon: clip-path on the pseudo-element, not on the chip (Starfish Toy, number 146)
+
+The chip stays a plain pill so the words are never cut. The star is a 20px `::before` with `clip-path: polygon(...)`. Use this whenever a shape would clip the text.
+
+Colorways 1 to 5: 1 Riviera, 2 Sunset Deck, 3 Swim Meet, 4 Chlorine Blue, 5 Mango Float.
+
+```css
+.us-qlstarfishtoy {
+    background: var(--w);
+    color: var(--dk);
+    font-weight: 900;
+    border: 1px solid var(--o);
+    border-radius: 999px;
+    padding: 1px 14px 1px 32px;
+}
+.us-qlstarfishtoy::before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    margin-top: -10px;
+    background: radial-gradient(circle at 50% 50%, var(--ol) 0 2px, transparent 2.6px), var(--o);
+    clip-path: polygon(50% 0, 62% 36%, 100% 38%, 70% 60%, 80% 100%, 50% 76%, 20% 100%, 30% 60%, 0 38%, 38% 36%);
+}
+.us-qlstarfishtoy-1 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-qlstarfishtoy-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-qlstarfishtoy-3 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-qlstarfishtoy-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-qlstarfishtoy-5 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+```
+
+#### `qlpaceclockface`: A clock face with several background layers (Pace Clock Face, number 192)
+
+The pseudo-element stacks two hands (small gradient bars), tick marks (`repeating-conic-gradient`) and the pale face. Details first, face last.
+
+Colorways 1 to 5: 1 Swim Meet, 2 Mango Float, 3 Riviera, 4 Splash Pad, 5 Orangeade.
+
+```css
+.us-qlpaceclockface {
+    background: var(--w);
+    color: var(--dk);
+    font-weight: 900;
+    border: 2px solid var(--dk);
+    border-radius: 999px;
+    padding: 1px 14px 1px 34px;
+}
+.us-qlpaceclockface::before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    left: 5px;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    margin-top: -11px;
+    border-radius: 50%;
+    background: linear-gradient(var(--o), var(--o)) 50% 50% / 2px 9px no-repeat, linear-gradient(var(--dk), var(--dk)) 50% 50% / 7px 2px no-repeat, repeating-conic-gradient(var(--dk) 0 3deg, transparent 3deg 30deg), var(--w);
+    box-shadow: 0 0 0 1px var(--dk);
+}
+.us-qlpaceclockface-1 { --o: #ff9a1f; --ol: #ffd08a; --c: #20c4f4; --b: #145da0; --w: #eaf8ff; --dk: #0c2d57; }
+.us-qlpaceclockface-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-qlpaceclockface-3 { --o: #ff6a3d; --ol: #ffb59a; --c: #27b4e8; --b: #0b4f9e; --w: #e7f6ff; --dk: #0a1f44; }
+.us-qlpaceclockface-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-qlpaceclockface-5 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+```
+
+#### `qlpostageperforation`: A perforated stamp edge with mask (Postage Perforation, number 511)
+
+`mask` with a radial hole pattern, the inner solid rectangle, and two inset box-shadows for the printed frame. `-webkit-mask` and `mask` are both written.
+
+Colorways 1 to 5: 1 High Dive, 2 Orangeade, 3 Lido, 4 Deep Lane, 5 Chlorine Blue.
+
+```css
+.us-qlpostageperforation {
+    background: var(--w);
+    color: var(--dk);
+    font-weight: 900;
+    border-radius: 0;
+    padding: 4px 14px;
+    -webkit-mask: radial-gradient(circle, transparent 1.6px, #000000 2px) -3px -3px / 6px 6px, linear-gradient(#000000, #000000) 50% 50% / calc(100% - 6px) calc(100% - 6px) no-repeat;
+    mask: radial-gradient(circle, transparent 1.6px, #000000 2px) -3px -3px / 6px 6px, linear-gradient(#000000, #000000) 50% 50% / calc(100% - 6px) calc(100% - 6px) no-repeat;
+    box-shadow: inset 0 0 0 5px var(--w), inset 0 0 0 6px var(--c);
+}
+.us-qlpostageperforation-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-qlpostageperforation-2 { --o: #ff5a00; --ol: #ffb27a; --c: #ff9a3c; --b: #b84300; --w: #fff3e6; --dk: #431800; }
+.us-qlpostageperforation-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-qlpostageperforation-4 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+.us-qlpostageperforation-5 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+```
+
+#### `qlwalkoffamestar`: A dark chip with a bright pseudo-element icon (Walk of Fame Star, number 531)
+
+Dark `--dk` body, pale text, a 15px `--o` star as `::before`. Dark chips use a pale `--w` text and a small glow.
+
+Colorways 1 to 5: 1 High Dive, 2 Mango Float, 3 Lido, 4 Splash Pad, 5 Deep Lane.
+
+```css
+.us-qlwalkoffamestar {
+    background: var(--dk);
+    color: var(--w);
+    border-radius: 3px;
+    padding: 1px 14px 1px 28px;
+    text-shadow: 0 0 3px var(--c);
+}
+.us-qlwalkoffamestar::before {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    left: 6px;
+    top: 50%;
+    width: 15px;
+    height: 15px;
+    margin-top: -7.5px;
+    background: var(--o);
+    clip-path: polygon(50% 0, 62% 36%, 100% 38%, 70% 60%, 80% 100%, 50% 76%, 20% 100%, 30% 60%, 0 38%, 38% 36%);
+}
+.us-qlwalkoffamestar-1 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-qlwalkoffamestar-2 { --o: #ff7a00; --ol: #ffd08a; --c: #ffb03b; --b: #c25700; --w: #fff8ec; --dk: #4a2600; }
+.us-qlwalkoffamestar-3 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-qlwalkoffamestar-4 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+.us-qlwalkoffamestar-5 { --o: #00c8ff; --ol: #9eeaff; --c: #2f80ed; --b: #0b3a8c; --w: #eaf4ff; --dk: #061a40; }
+```
+
+#### `qlhazardedge`: A hazard stripe pinned to the bottom edge (Hazard Edge, number 425)
+
+`repeating-linear-gradient(-45deg, ...)` sized `100% 5px` and placed at `0 100%`, on a pale body with dark ink. The bottom padding is 7px.
+
+Colorways 1 to 5: 1 Lido, 2 Sunset Deck, 3 High Dive, 4 Chlorine Blue, 5 Splash Pad.
+
+```css
+.us-qlhazardedge {
+    background: repeating-linear-gradient(-45deg, var(--o) 0 5px, var(--dk) 5px 10px) 0 100% / 100% 5px no-repeat, var(--w);
+    color: var(--dk);
+    font-weight: 900;
+    border-radius: 2px;
+    padding: 1px 14px 7px;
+}
+.us-qlhazardedge-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-qlhazardedge-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-qlhazardedge-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-qlhazardedge-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-qlhazardedge-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+```
+
+#### `qlmosaictext`: Text in a mosaic: a tiled gradient clipped to the letters (Mosaic Text, number 89)
+
+A 4px checker of `--c` and `--b` is clipped to the letters with `background-clip: text`, and two `drop-shadow` filters outline it so thin letters stay readable.
+
+Colorways 1 to 5: 1 Lido, 2 Sunset Deck, 3 High Dive, 4 Chlorine Blue, 5 Splash Pad.
+
+```css
+.us-qlmosaictext {
+    background: conic-gradient(var(--c) 25%, var(--b) 0 50%, var(--c) 0 75%, var(--b) 0) 0 0 / 4px 4px;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    caret-color: var(--b);
+    filter: drop-shadow(0 0 0.6px var(--dk)) drop-shadow(0 1px 0 var(--dk));
+    font-weight: 900;
+    border-radius: 0;
+    padding: 0 4px;
+}
+.us-qlmosaictext-1 { --o: #ff7f11; --ol: #ffbf80; --c: #00c2d6; --b: #00609c; --w: #e0fbfd; --dk: #06283d; }
+.us-qlmosaictext-2 { --o: #e8590c; --ol: #ffc078; --c: #ff922b; --b: #a33a06; --w: #fff4e6; --dk: #3d1502; }
+.us-qlmosaictext-3 { --o: #ff5500; --ol: #ffa36b; --c: #00b3ff; --b: #003f8f; --w: #e1f4ff; --dk: #001b44; }
+.us-qlmosaictext-4 { --o: #00e0ff; --ol: #b8f6ff; --c: #13a8d6; --b: #0b5f7d; --w: #ebfcff; --dk: #063646; }
+.us-qlmosaictext-5 { --o: #3ad7ff; --ol: #bfefff; --c: #3b82f6; --b: #1e3a8a; --w: #eef6ff; --dk: #0b1640; }
+```
+
 ## Part 6. Make a new design, step by step
 
 ### 6.1 The recipe
@@ -1919,7 +2188,7 @@ Look for: words that disappear in a pale palette (Ice, Creamsicle, Chlorine Blue
 
 ### 6.4 The lint script
 
-This checker encodes the rules above. It was run on all 360 designs of Poolside 2, 3, 4 and 2A and reports **no problems** for any of them, so a design that fails it is wrong, not unlucky. `rules` is a list of `(selector, declaration text)` pairs for the design rule and its pseudo-elements, `colorways` maps 1 to 5 to the declaration text of the five colorway rules.
+This checker encodes the rules above. It was run on all 900 designs of Poolside 2, 3, 4, 2A and L and reports **no problems** for any of them, so a design that fails it is wrong, not unlucky. `rules` is a list of `(selector, declaration text)` pairs for the design rule and its pseudo-elements, `colorways` maps 1 to 5 to the declaration text of the five colorway rules.
 
 ```python
 import json, re, sys
@@ -1972,22 +2241,25 @@ The paths are inside `radii-office deployment/`. Do these in order.
 | # | File | What to add |
 | --- | --- | --- |
 | 1 | `writeout/unique-styles.css` | The design rule, its pseudo-element rules and the five colorway rules. Append them after the last rule of the same collection (or at the end of the Poolside rules). Selectors are unique, so the position does not matter for the result. |
-| 2 | `writeout/psl-data.js` | One entry in `fams`: `["id","Design Name",["Palette 1","Palette 2","Palette 3","Palette 4","Palette 5"],"pool2"]`. The last value is the collection key from `cols` (`pool2`, `pool3`, `pool4`, `pool2a`). A new collection also needs an entry in `cols`: `"pool11":"Poolside 11"`. |
-| 3 | Counts | Update the totals where they are written: `writeout/psl.js` (the header comment and the search box text "Search N Poolside styles"), `waterflow/app.js` (the comment above `pslOpen`), and `opendb/data/entries/poolside-keydown.kd` (the sentence "1,170 designs with 5 colorways each, 5,850 styles"). Each design adds 5 styles. |
-| 4 | Cache tokens | Change the `?v=` token on every page that loads `unique-styles.css`, `psl-data.js` or `psl.js` (search for the file names in the `*/index.html` files), otherwise browsers keep the old copy. |
-| 5 | Rebuild | Run `node scripts/build_keydown_js.mjs` (it bundles the stylesheet and `psl-data.js` into `Keydown.js`), `build_keydown_svelte.mjs`, `build_mobile.mjs`, `build_offline.mjs`, `build_source.mjs` and `build_opendb.mjs`. Then copy `../Keydown.js` to `waterflow/keydown-engine.js`. |
-| 6 | Beta and Mintcode | They keep their own copy of `Keydown.js`. From the `Web Projects` folder run `python3 mintcode/tools/whiten_gradients.py Keydown.js <out>` and copy the result to both `public/Keydown.js` files, then bump the version numbers in their `kd.js` and `index.html`. |
+| 2 | `bitbook/style.css` and `omicron/export-style.css` | These two files hold their own copy of the Unique Styles rules. Append the same rules after the last Poolside rule in each (search for the last design id of the newest collection). |
+| 3 | `writeout/psl-data.js` | One entry in `fams`: `["id","Design Name",["Palette 1","Palette 2","Palette 3","Palette 4","Palette 5"],"poolL"]`. The last value is the collection key from `cols` (`pool2`, `pool3`, `pool4`, `pool2a`, `poolL`). A new collection also needs an entry in `cols`: `"pool11":"Poolside 11"`. |
+| 4 | The id lists | Every id must be in the long space-separated list of style ids that tells the Keydown engine which `@id-N@` tags are real styles. The list is one long string in `writeout/keydown-doc.js`, `bitbook/keydown-doc.js`, every app's `radii-collab.js` (amber, bitbook, cabinet, formly, hexa, imbuer, inkpath, omicron, taskra, writeout, zonerider) and the `keydown.js` of antimony, formly, peeker and phosphor. Find `qcbarndoorbrace fdglassbtn` (or the newest id followed by `fdglassbtn`) and insert the new ids before `fdglassbtn`. **If this is skipped, `@id-N@words@` is never turned into a style, even though the CSS exists.** |
+| 5 | Counts | Update the totals where they are written: `writeout/psl.js` (the header comment and the search box text "Search N Poolside styles"), `waterflow/app.js` (the comment above `pslOpen`), and `opendb/data/entries/poolside-keydown.kd` (the sentence with the number of designs and styles). Each design adds 5 styles. |
+| 6 | Cache tokens | Change the `?v=` token on every page that loads `unique-styles.css`, `psl-data.js`, `psl.js`, `keydown-doc.js`, `radii-collab.js` or a `keydown.js` (search the `*/index.html` files for those names), otherwise browsers keep the old copy. |
+| 7 | Rebuild | Run `node scripts/build_keydown_js.mjs` (it bundles the stylesheet and `psl-data.js` into `Keydown.js`), `build_keydown_svelte.mjs`, `build_mobile.mjs`, `build_offline.mjs`, `build_source.mjs` and `build_opendb.mjs`. Then copy `../Keydown.js` to `waterflow/keydown-engine.js`. |
+| 8 | Beta and Mintcode | They keep their own copy of `Keydown.js`. From the `Web Projects` folder run `python3 mintcode/tools/whiten_gradients.py Keydown.js <out>` and copy the result to both `public/Keydown.js` files, then bump the version numbers in their `kd.js` and `index.html`. |
 
 Poolside styles are **Style Lookup only**: do not add them to the Unique Chip Styles gallery in Bitbook, and do not add them to Omicron's gallery list unless asked.
 
 ### 7.1 Check that it works
 
-1. Open Writeout and run `kdDoc.textToHtml("@pwexample-1@Hi@")` in the console (use your id). The result must contain `class="us-chip us-pwexample us-pwexample-1"`.
-2. Open Waterflow, press **Styles**, search for the design name or id, and check that all five colorways appear and put the style on a word.
-3. In a Waterflow Poolside Keydown note, write `<id-3 words>` and check it matches the 3rd colorway.
-4. Open a print preview with the style on a word. Chips are drawn with backgrounds, so check that the pattern survives.
+1. Open Writeout and run `kdDoc.textToHtml("@pwexample-1@Hi@")` in the console (use your id). The result must contain `class="us-chip us-pwexample us-pwexample-1"`. If it comes back as the same plain text, the id is missing from the id lists (step 4).
+2. Count the rules: in the console, count the stylesheet rules whose selector contains your id. Each design should have its design rule, its pseudo-element rules and exactly five colorway rules. A missing rule means the CSS has a typo and the browser dropped it.
+3. Open Waterflow, press **Styles**, search for the design name or id, and check that all five colorways appear and put the style on a word.
+4. In a Waterflow Poolside Keydown note, write `<id-3 words>` and check it matches the 3rd colorway.
+5. Open a print preview with the style on a word. Chips are drawn with backgrounds, so check that the pattern survives.
 
-## Part 8. The catalogue: all 360 designs
+## Part 8. The catalogue: all 900 designs
 
 Number, id, name and kind. The kind groups follow the order of the collection (the number tells where each kind starts). The five palette names of each design are stored in `writeout/psl-data.js`.
 
@@ -2370,6 +2642,551 @@ Number, id, name and kind. The kind groups follow the order of the collection (t
 | 88 | `qadashunderglow` | Dash Under Glow | Glass, screens and text lines |
 | 89 | `qadoubleunderlinewav` | Double Underline Wave | Glass, screens and text lines |
 | 90 | `qacornerbrackets` | Corner Brackets | Glass, screens and text lines |
+
+### Poolside L (540 designs)
+
+| # | Id | Name | Kind |
+| --- | --- | --- | --- |
+| 1 | `qllagoonripples` | Lagoon Ripples | Water and light |
+| 2 | `qlrollingswell` | Rolling Swell | Water and light |
+| 3 | `qlfoamlace` | Foam Lace | Water and light |
+| 4 | `qlunderwatersunrays` | Underwater Sunrays | Water and light |
+| 5 | `qlpoolfloorglow` | Pool Floor Glow | Water and light |
+| 6 | `qlglasssurface` | Glass Surface | Water and light |
+| 7 | `qlwavecomb` | Wave Comb | Water and light |
+| 8 | `qlrisingbeads` | Rising Beads | Water and light |
+| 9 | `qlchlorinecloud` | Chlorine Cloud | Water and light |
+| 10 | `qlaquamarinefade` | Aquamarine Fade | Water and light |
+| 11 | `qltidalladder` | Tidal Ladder | Water and light |
+| 12 | `qlsplashring` | Splash Ring | Water and light |
+| 13 | `qllappingfringe` | Lapping Fringe | Water and light |
+| 14 | `qldewbeads` | Dew Beads | Water and light |
+| 15 | `qllightlattice` | Light Lattice | Water and light |
+| 16 | `qlraintaps` | Rain Taps | Water and light |
+| 17 | `qlripplestack` | Ripple Stack | Water and light |
+| 18 | `qlglimmerrow` | Glimmer Row | Water and light |
+| 19 | `qlmoondip` | Moon Dip | Water and light |
+| 20 | `qlsunglare` | Sun Glare | Water and light |
+| 21 | `qlsparklewake` | Sparkle Wake | Water and light |
+| 22 | `qlseafoamcap` | Seafoam Cap | Water and light |
+| 23 | `qlwhitewaterstreaks` | Whitewater Streaks | Water and light |
+| 24 | `qlshallowshimmer` | Shallow Shimmer | Water and light |
+| 25 | `qldeepbluecore` | Deep Blue Core | Water and light |
+| 26 | `qlbluehourline` | Blue Hour Line | Water and light |
+| 27 | `qlsunsetripple` | Sunset Ripple | Water and light |
+| 28 | `qldropletpair` | Droplet Pair | Water and light |
+| 29 | `qlpuddlegleam` | Puddle Gleam | Water and light |
+| 30 | `qlsurfcurl` | Surf Curl | Water and light |
+| 31 | `qlcrestingwave` | Cresting Wave | Water and light |
+| 32 | `qlreeflight` | Reef Light | Water and light |
+| 33 | `qltidechartlines` | Tide Chart Lines | Water and light |
+| 34 | `qlwaterlevelmark` | Water Level Mark | Water and light |
+| 35 | `qlslowcurrent` | Slow Current | Water and light |
+| 36 | `qljetstream` | Jet Stream | Water and light |
+| 37 | `qlmirrorpool` | Mirror Pool | Water and light |
+| 38 | `qlcoolmistband` | Cool Mist Band | Water and light |
+| 39 | `qlseaglass` | Sea Glass | Water and light |
+| 40 | `qlmaelstrommini` | Maelstrom Mini | Water and light |
+| 41 | `qlrippleletters` | Ripple Letters | Water and light |
+| 42 | `qldrippingletters` | Dripping Letters | Water and light |
+| 43 | `qlfrostedink` | Frosted Ink | Water and light |
+| 44 | `qlaquaoutline` | Aqua Outline | Water and light |
+| 45 | `qltidemarktext` | Tide Mark Text | Water and light |
+| 46 | `qlwaterslidetext` | Water Slide Text | Water and light |
+| 47 | `qlsparkletext` | Sparkle Text | Water and light |
+| 48 | `qlwetedgepill` | Wet Edge Pill | Water and light |
+| 49 | `qlherringbonefloor` | Herringbone Floor | Tiles, mosaics and pool patterns |
+| 50 | `qlbasketweavetile` | Basketweave Tile | Tiles, mosaics and pool patterns |
+| 51 | `qlharlequindiamonds` | Harlequin Diamonds | Tiles, mosaics and pool patterns |
+| 52 | `qloctagondottile` | Octagon Dot Tile | Tiles, mosaics and pool patterns |
+| 53 | `qlchevronmosaic` | Chevron Mosaic | Tiles, mosaics and pool patterns |
+| 54 | `qlpebblemosaic` | Pebble Mosaic | Tiles, mosaics and pool patterns |
+| 55 | `qlquatrefoiltile` | Quatrefoil Tile | Tiles, mosaics and pool patterns |
+| 56 | `qlwidegroutgrid` | Wide Grout Grid | Tiles, mosaics and pool patterns |
+| 57 | `qltrianglemosaic` | Triangle Mosaic | Tiles, mosaics and pool patterns |
+| 58 | `qlgreekkeyband` | Greek Key Band | Tiles, mosaics and pool patterns |
+| 59 | `qlplustilegrid` | Plus Tile Grid | Tiles, mosaics and pool patterns |
+| 60 | `qlrunningbondbrick` | Running Bond Brick | Tiles, mosaics and pool patterns |
+| 61 | `qlcobblestones` | Cobble Stones | Tiles, mosaics and pool patterns |
+| 62 | `qlrippletile` | Ripple Tile | Tiles, mosaics and pool patterns |
+| 63 | `qlpinwheeltile` | Pinwheel Tile | Tiles, mosaics and pool patterns |
+| 64 | `qlcornercuttiles` | Corner Cut Tiles | Tiles, mosaics and pool patterns |
+| 65 | `qlstripetileedge` | Stripe Tile Edge | Tiles, mosaics and pool patterns |
+| 66 | `qlwavetileband` | Wave Tile Band | Tiles, mosaics and pool patterns |
+| 67 | `qlarchtilerow` | Arch Tile Row | Tiles, mosaics and pool patterns |
+| 68 | `qldotgridtile` | Dot Grid Tile | Tiles, mosaics and pool patterns |
+| 69 | `qlstarbursttile` | Starburst Tile | Tiles, mosaics and pool patterns |
+| 70 | `qldoubletileborder` | Double Tile Border | Tiles, mosaics and pool patterns |
+| 71 | `qllanefloorline` | Lane Floor Line | Tiles, mosaics and pool patterns |
+| 72 | `qldepthnumbertile` | Depth Number Tile | Tiles, mosaics and pool patterns |
+| 73 | `qlantislipdots` | Anti Slip Dots | Tiles, mosaics and pool patterns |
+| 74 | `qlminicheckfill` | Mini Check Fill | Tiles, mosaics and pool patterns |
+| 75 | `qldiamondlatticetile` | Diamond Lattice Tile | Tiles, mosaics and pool patterns |
+| 76 | `qlnestedsquares` | Nested Squares | Tiles, mosaics and pool patterns |
+| 77 | `qlpatchworksquares` | Patchwork Squares | Tiles, mosaics and pool patterns |
+| 78 | `qlgraphpaperpool` | Graph Paper Pool | Tiles, mosaics and pool patterns |
+| 79 | `qlwavebrickrow` | Wave Brick Row | Tiles, mosaics and pool patterns |
+| 80 | `qlportholerow` | Porthole Row | Tiles, mosaics and pool patterns |
+| 81 | `qlstainedpoolglass` | Stained Pool Glass | Tiles, mosaics and pool patterns |
+| 82 | `qlropetwist` | Rope Twist | Tiles, mosaics and pool patterns |
+| 83 | `qlchainlinkfence` | Chain Link Fence | Tiles, mosaics and pool patterns |
+| 84 | `qlpoolmatgrip` | Pool Mat Grip | Tiles, mosaics and pool patterns |
+| 85 | `qlwaffletowel` | Waffle Towel | Tiles, mosaics and pool patterns |
+| 86 | `qlreedweave` | Reed Weave | Tiles, mosaics and pool patterns |
+| 87 | `qlglassbrick` | Glass Brick | Tiles, mosaics and pool patterns |
+| 88 | `qlterracesteps` | Terrace Steps | Tiles, mosaics and pool patterns |
+| 89 | `qlmosaictext` | Mosaic Text | Tiles, mosaics and pool patterns |
+| 90 | `qlgroutlinetext` | Grout Line Text | Tiles, mosaics and pool patterns |
+| 91 | `qlstencilcuttext` | Stencil Cut Text | Tiles, mosaics and pool patterns |
+| 92 | `qltileshadowtext` | Tile Shadow Text | Tiles, mosaics and pool patterns |
+| 93 | `qlsquarelabeltile` | Square Label Tile | Tiles, mosaics and pool patterns |
+| 94 | `qldivingboardspring` | Diving Board Spring | Pool hardware, deck and architecture |
+| 95 | `qlblocknumberplate` | Block Number Plate | Pool hardware, deck and architecture |
+| 96 | `qlfloatdiscrope` | Float Disc Rope | Pool hardware, deck and architecture |
+| 97 | `qlturnmarkerbunting` | Turn Marker Bunting | Pool hardware, deck and architecture |
+| 98 | `qlvacuumhose` | Vacuum Hose | Pool hardware, deck and architecture |
+| 99 | `qlpumpdial` | Pump Dial | Pool hardware, deck and architecture |
+| 100 | `qlheaterfins` | Heater Fins | Pool hardware, deck and architecture |
+| 101 | `qlreturnjetnozzle` | Return Jet Nozzle | Pool hardware, deck and architecture |
+| 102 | `qlladderhandrailarch` | Ladder Handrail Arch | Pool hardware, deck and architecture |
+| 103 | `qldeckdrainslots` | Deck Drain Slots | Pool hardware, deck and architecture |
+| 104 | `qlexpansionjoint` | Expansion Joint | Pool hardware, deck and architecture |
+| 105 | `qlcoverreel` | Cover Reel | Pool hardware, deck and architecture |
+| 106 | `qlsunshelfsteps` | Sun Shelf Steps | Pool hardware, deck and architecture |
+| 107 | `qltanningledge` | Tanning Ledge | Pool hardware, deck and architecture |
+| 108 | `qlretainingwallblock` | Retaining Wall Blocks | Pool hardware, deck and architecture |
+| 109 | `qlplantertrough` | Planter Trough | Pool hardware, deck and architecture |
+| 110 | `qlcabanacurtain` | Cabana Curtain | Pool hardware, deck and architecture |
+| 111 | `qlsailshade` | Sail Shade | Pool hardware, deck and architecture |
+| 112 | `qlumbrellapanels` | Umbrella Panels | Pool hardware, deck and architecture |
+| 113 | `qlcedardeckgrain` | Cedar Deck Grain | Pool hardware, deck and architecture |
+| 114 | `qlboardwalknails` | Boardwalk Nails | Pool hardware, deck and architecture |
+| 115 | `qlrailingposts` | Railing Posts | Pool hardware, deck and architecture |
+| 116 | `qlstonewallcourses` | Stone Wall Courses | Pool hardware, deck and architecture |
+| 117 | `qlhingebar` | Hinge Bar | Pool hardware, deck and architecture |
+| 118 | `qlpadlockplate` | Padlock Plate | Pool hardware, deck and architecture |
+| 119 | `qllampcage` | Lamp Cage | Pool hardware, deck and architecture |
+| 120 | `qlstringlightbulb` | String Light Bulb | Pool hardware, deck and architecture |
+| 121 | `qllanternframe` | Lantern Frame | Pool hardware, deck and architecture |
+| 122 | `qltikitorch` | Tiki Torch | Pool hardware, deck and architecture |
+| 123 | `qlfirepitring` | Fire Pit Ring | Pool hardware, deck and architecture |
+| 124 | `qlspajetsrow` | Spa Jets Row | Pool hardware, deck and architecture |
+| 125 | `qlspastephandle` | Spa Step Handle | Pool hardware, deck and architecture |
+| 126 | `qlsaunabenchslats` | Sauna Bench Slats | Pool hardware, deck and architecture |
+| 127 | `qlsteamvent` | Steam Vent | Pool hardware, deck and architecture |
+| 128 | `qlrinseshowerstalk` | Rinse Shower Stalk | Pool hardware, deck and architecture |
+| 129 | `qlfootrinsebasin` | Foot Rinse Basin | Pool hardware, deck and architecture |
+| 130 | `qlwaterspigot` | Water Spigot | Pool hardware, deck and architecture |
+| 131 | `qlhosereelcoil` | Hose Reel Coil | Pool hardware, deck and architecture |
+| 132 | `qltelescopicpole` | Telescopic Pole | Pool hardware, deck and architecture |
+| 133 | `qlchemicaldrumstripe` | Chemical Drum Stripe | Pool hardware, deck and architecture |
+| 134 | `qlnetframe` | Net Frame | Pool hardware, deck and architecture |
+| 135 | `qlbrushbristles` | Brush Bristles | Pool hardware, deck and architecture |
+| 136 | `qlstampedplatetext` | Stamped Plate Text | Pool hardware, deck and architecture |
+| 137 | `qlflamingofloatneck` | Flamingo Float Neck | Pool toys and floats |
+| 138 | `qlunicornhornfloat` | Unicorn Horn Float | Pool toys and floats |
+| 139 | `qlpizzaslicefloat` | Pizza Slice Float | Pool toys and floats |
+| 140 | `qldonutsprinklefloat` | Donut Sprinkle Float | Pool toys and floats |
+| 141 | `qlpineapplefloat` | Pineapple Float | Pool toys and floats |
+| 142 | `qlavocadohalffloat` | Avocado Half Float | Pool toys and floats |
+| 143 | `qlsharkfinfloat` | Shark Fin Float | Pool toys and floats |
+| 144 | `qldolphinwavetoy` | Dolphin Wave Toy | Pool toys and floats |
+| 145 | `qlwhalespout` | Whale Spout | Pool toys and floats |
+| 146 | `qlstarfishtoy` | Starfish Toy | Pool toys and floats |
+| 147 | `qlcrabclawpincer` | Crab Claw Pincer | Pool toys and floats |
+| 148 | `qlturtleshellfloat` | Turtle Shell Float | Pool toys and floats |
+| 149 | `qltoysailboat` | Toy Sailboat | Pool toys and floats |
+| 150 | `qlpaddlewheelboat` | Paddle Wheel Boat | Pool toys and floats |
+| 151 | `qlsubmarineporthole` | Submarine Porthole | Pool toys and floats |
+| 152 | `qlrafthandleloop` | Raft Handle Loop | Pool toys and floats |
+| 153 | `qlslidechutecurve` | Slide Chute Curve | Pool toys and floats |
+| 154 | `qlsprayringpad` | Spray Ring Pad | Pool toys and floats |
+| 155 | `qlwigglesprinkler` | Wiggle Sprinkler | Pool toys and floats |
+| 156 | `qlflyingdisc` | Flying Disc | Pool toys and floats |
+| 157 | `qlboomerangtoy` | Boomerang Toy | Pool toys and floats |
+| 158 | `qljumpropegrip` | Jump Rope Grip | Pool toys and floats |
+| 159 | `qlhulahoopstripes` | Hula Hoop Stripes | Pool toys and floats |
+| 160 | `qlhoopnet` | Hoop Net | Pool toys and floats |
+| 161 | `qlringtosspegs` | Ring Toss Pegs | Pool toys and floats |
+| 162 | `qldivegem` | Dive Gem | Pool toys and floats |
+| 163 | `qlbubblewand` | Bubble Wand | Pool toys and floats |
+| 164 | `qlbubbleblowerfoam` | Bubble Blower Foam | Pool toys and floats |
+| 165 | `qlsidewalkchalk` | Sidewalk Chalk | Pool toys and floats |
+| 166 | `qltoybuckethandle` | Toy Bucket Handle | Pool toys and floats |
+| 167 | `qlvolleyballseams` | Volleyball Seams | Pool toys and floats |
+| 168 | `qlpaddleballracket` | Paddle Ball Racket | Pool toys and floats |
+| 169 | `qlnoodleslicering` | Noodle Slice Ring | Pool toys and floats |
+| 170 | `qlinnertubering` | Inner Tube Ring | Pool toys and floats |
+| 171 | `qltireswing` | Tire Swing | Pool toys and floats |
+| 172 | `qlfloatingduckrow` | Floating Duck Row | Pool toys and floats |
+| 173 | `qltoyblockstuds` | Toy Block Studs | Pool toys and floats |
+| 174 | `qlwatertablebasin` | Water Table Basin | Pool toys and floats |
+| 175 | `qlpartyhatcone` | Party Hat Cone | Pool toys and floats |
+| 176 | `qlconfettipopper` | Confetti Popper | Pool toys and floats |
+| 177 | `qlballoonletters` | Balloon Letters | Pool toys and floats |
+| 178 | `qlfoamletters` | Foam Letters | Pool toys and floats |
+| 179 | `qltoyblockletters` | Toy Block Letters | Pool toys and floats |
+| 180 | `qlgumballspiral` | Gumball Spiral | Pool toys and floats |
+| 181 | `qlnoseclip` | Nose Clip | Swim and sport gear |
+| 182 | `qlearplugpair` | Ear Plug Pair | Swim and sport gear |
+| 183 | `qlswimparachute` | Swim Parachute | Swim and sport gear |
+| 184 | `qldragsuitmesh` | Drag Suit Mesh | Swim and sport gear |
+| 185 | `qltechsuitseams` | Tech Suit Seams | Swim and sport gear |
+| 186 | `qlracingbriefstripe` | Racing Brief Stripe | Swim and sport gear |
+| 187 | `qlcentersnorkeltube` | Center Snorkel Tube | Swim and sport gear |
+| 188 | `qlmeshswimbag` | Mesh Swim Bag | Swim and sport gear |
+| 189 | `qltowelhook` | Towel Hook | Swim and sport gear |
+| 190 | `qlcombinationdial` | Combination Dial | Swim and sport gear |
+| 191 | `qlsportsdrinksqueeze` | Sports Drink Squeeze | Swim and sport gear |
+| 192 | `qlpaceclockface` | Pace Clock Face | Swim and sport gear |
+| 193 | `qlpaceclockticks` | Pace Clock Ticks | Swim and sport gear |
+| 194 | `qlwhistlecord` | Whistle Cord | Swim and sport gear |
+| 195 | `qlstarterhorn` | Starter Horn | Swim and sport gear |
+| 196 | `qllanerulerticks` | Lane Ruler Ticks | Swim and sport gear |
+| 197 | `qlledgewedge` | Ledge Wedge | Swim and sport gear |
+| 198 | `qltouchpadplate` | Touchpad Plate | Swim and sport gear |
+| 199 | `qlmeetboarddigits` | Meet Board Digits | Swim and sport gear |
+| 200 | `qlheatsheetrows` | Heat Sheet Rows | Swim and sport gear |
+| 201 | `qlpodiumsteps` | Podium Steps | Swim and sport gear |
+| 202 | `qlrelaybatongrip` | Relay Baton Grip | Swim and sport gear |
+| 203 | `qlbuoyband` | Buoy Band | Swim and sport gear |
+| 204 | `qlresistanceband` | Resistance Band | Swim and sport gear |
+| 205 | `qltempobeeper` | Tempo Beeper | Swim and sport gear |
+| 206 | `qlheartratestrap` | Heart Rate Strap | Swim and sport gear |
+| 207 | `qltrackerscreen` | Tracker Screen | Swim and sport gear |
+| 208 | `qlfitnessring` | Fitness Ring | Swim and sport gear |
+| 209 | `qlyogamatroll` | Yoga Mat Roll | Swim and sport gear |
+| 210 | `qlaquajogbelt` | Aqua Jog Belt | Swim and sport gear |
+| 211 | `qlaquadumbbell` | Aqua Dumbbell | Swim and sport gear |
+| 212 | `qlpooltreadmillbelt` | Pool Treadmill Belt | Swim and sport gear |
+| 213 | `qlnoodlebend` | Noodle Bend | Swim and sport gear |
+| 214 | `qlzipsealstrip` | Zip Seal Strip | Swim and sport gear |
+| 215 | `qlsurfleashcoil` | Surf Leash Coil | Swim and sport gear |
+| 216 | `qlskimboardedge` | Skimboard Edge | Swim and sport gear |
+| 217 | `qlbodyboardgrip` | Bodyboard Grip | Swim and sport gear |
+| 218 | `qlwetsuitpanels` | Wetsuit Panels | Swim and sport gear |
+| 219 | `qldiveweightbelt` | Dive Weight Belt | Swim and sport gear |
+| 220 | `qldepthgaugedial` | Depth Gauge Dial | Swim and sport gear |
+| 221 | `qlracebib` | Race Bib | Swim and sport gear |
+| 222 | `qlracingnumerals` | Racing Numerals | Swim and sport gear |
+| 223 | `qlscoreboardtext` | Scoreboard Text | Swim and sport gear |
+| 224 | `qlsunscreensqueeze` | Sunscreen Squeeze | Beach and sun kit |
+| 225 | `qllipbalmstick` | Lip Balm Stick | Beach and sun kit |
+| 226 | `qlbeachtowelstripes` | Beach Towel Stripes | Beach and sun kit |
+| 227 | `qltowelfringe` | Towel Fringe | Beach and sun kit |
+| 228 | `qlbeachblanketplaid` | Beach Blanket Plaid | Beach and sun kit |
+| 229 | `qlsandduneripples` | Sand Dune Ripples | Beach and sun kit |
+| 230 | `qlseashellspiral` | Seashell Spiral | Beach and sun kit |
+| 231 | `qlscallopshellfan` | Scallop Shell Fan | Beach and sun kit |
+| 232 | `qlconchhorn` | Conch Horn | Beach and sun kit |
+| 233 | `qlstarfishdots` | Starfish Dots | Beach and sun kit |
+| 234 | `qlsandpailstripe` | Sand Pail Stripe | Beach and sun kit |
+| 235 | `qlbeachumbrellapole` | Beach Umbrella Pole | Beach and sun kit |
+| 236 | `qlsunvisorbrim` | Sun Visor Brim | Beach and sun kit |
+| 237 | `qlstrawhatweave` | Straw Hat Weave | Beach and sun kit |
+| 238 | `qlhatbandribbon` | Hat Band Ribbon | Beach and sun kit |
+| 239 | `qlsunglassesframe` | Sunglasses Frame | Beach and sun kit |
+| 240 | `qllensgradientshades` | Lens Gradient Shades | Beach and sun kit |
+| 241 | `qlflipflopstrap` | Flip Flop Strap | Beach and sun kit |
+| 242 | `qlsandalbuckle` | Sandal Buckle | Beach and sun kit |
+| 243 | `qlcoolerlatch` | Cooler Latch | Beach and sun kit |
+| 244 | `qlpicnicbasketweave` | Picnic Basket Weave | Beach and sun kit |
+| 245 | `qlcheckernapkin` | Checker Napkin | Beach and sun kit |
+| 246 | `qlbeachchairslings` | Beach Chair Slings | Beach and sun kit |
+| 247 | `qlhammockcurve` | Hammock Curve | Beach and sun kit |
+| 248 | `qlpalmfrondstrip` | Palm Frond Strip | Beach and sun kit |
+| 249 | `qlcoconuthusk` | Coconut Husk | Beach and sun kit |
+| 250 | `qlsunrayburst` | Sun Ray Burst | Beach and sun kit |
+| 251 | `qltanlinefade` | Tan Line Fade | Beach and sun kit |
+| 252 | `qlheatshimmer` | Heat Shimmer | Beach and sun kit |
+| 253 | `qllighthousebeam` | Lighthouse Beam | Beach and sun kit |
+| 254 | `qlpierposts` | Pier Posts | Beach and sun kit |
+| 255 | `qldriftwoodplank` | Driftwood Plank | Beach and sun kit |
+| 256 | `qlmessageinbottle` | Message in Bottle | Beach and sun kit |
+| 257 | `qltreasuremapedge` | Treasure Map Edge | Beach and sun kit |
+| 258 | `qlcompassrosedot` | Compass Rose Dot | Beach and sun kit |
+| 259 | `qlanchorropeknot` | Anchor Rope Knot | Beach and sun kit |
+| 260 | `qllifeguardflagpair` | Lifeguard Flag Pair | Beach and sun kit |
+| 261 | `qlsaltspray` | Salt Spray | Beach and sun kit |
+| 262 | `qlbeachhutroof` | Beach Hut Roof | Beach and sun kit |
+| 263 | `qlsunsetpostcardbeac` | Sunset Postcard Beach | Beach and sun kit |
+| 264 | `qlsunbathetext` | Sunbathe Text | Beach and sun kit |
+| 265 | `qlsandwriting` | Sand Writing | Beach and sun kit |
+| 266 | `qlsaltwaterlabel` | Salt Water Label | Beach and sun kit |
+| 267 | `qlbeachdayticket` | Beach Day Ticket | Beach and sun kit |
+| 268 | `qlmocktailumbrella` | Mocktail Umbrella | Drinks and glasses |
+| 269 | `qltropicalpunchlayer` | Tropical Punch Layers | Drinks and glasses |
+| 270 | `qlbluelagoonglass` | Blue Lagoon Glass | Drinks and glasses |
+| 271 | `qlsunrisestripes` | Sunrise Stripes | Drinks and glasses |
+| 272 | `qlfoamtoppedcup` | Foam Topped Cup | Drinks and glasses |
+| 273 | `qlcoconutwatercarton` | Coconut Water Carton | Drinks and glasses |
+| 274 | `qlsparklingbubbles` | Sparkling Bubbles | Drinks and glasses |
+| 275 | `qlseltzercan` | Seltzer Can | Drinks and glasses |
+| 276 | `qlcanpulltab` | Can Pull Tab | Drinks and glasses |
+| 277 | `qltoniclabel` | Tonic Label | Drinks and glasses |
+| 278 | `qlicedcoffeefoam` | Iced Coffee Foam | Drinks and glasses |
+| 279 | `qltapiocapearls` | Tapioca Pearls | Drinks and glasses |
+| 280 | `qlbubbleteadome` | Bubble Tea Dome | Drinks and glasses |
+| 281 | `qlmilkshakewhip` | Milkshake Whip | Drinks and glasses |
+| 282 | `qlpairedstraws` | Paired Straws | Drinks and glasses |
+| 283 | `qllemonwedgerim` | Lemon Wedge Rim | Drinks and glasses |
+| 284 | `qlsaltrim` | Salt Rim | Drinks and glasses |
+| 285 | `qlsugarrimsparkle` | Sugar Rim Sparkle | Drinks and glasses |
+| 286 | `qlcubetraygrid` | Cube Tray Grid | Drinks and glasses |
+| 287 | `qlicebucketrim` | Ice Bucket Rim | Drinks and glasses |
+| 288 | `qlthermosflask` | Thermos Flask | Drinks and glasses |
+| 289 | `qlwaterjugspout` | Water Jug Spout | Drinks and glasses |
+| 290 | `qlcoolerbubble` | Cooler Bubble | Drinks and glasses |
+| 291 | `qlpitcherhandle` | Pitcher Handle | Drinks and glasses |
+| 292 | `qlmasonjarlid` | Mason Jar Lid | Drinks and glasses |
+| 293 | `qlstrawwrappertwist` | Straw Wrapper Twist | Drinks and glasses |
+| 294 | `qlcocktailshaker` | Cocktail Shaker | Drinks and glasses |
+| 295 | `qlpapercupsleeve` | Paper Cup Sleeve | Drinks and glasses |
+| 296 | `qlbentstraw` | Bent Straw | Drinks and glasses |
+| 297 | `qlcitrussqueezer` | Citrus Squeezer | Drinks and glasses |
+| 298 | `qlfruitskewer` | Fruit Skewer | Drinks and glasses |
+| 299 | `qlicepopdrip` | Ice Pop Drip | Drinks and glasses |
+| 300 | `qlfrozenslushcup` | Frozen Slush Cup | Drinks and glasses |
+| 301 | `qlsmoothiebowltoppin` | Smoothie Bowl Toppings | Drinks and glasses |
+| 302 | `qljuicebarmenu` | Juice Bar Menu | Drinks and glasses |
+| 303 | `qltaphandle` | Tap Handle | Drinks and glasses |
+| 304 | `qlcoasterround` | Coaster Round | Drinks and glasses |
+| 305 | `qlcrownbottlecap` | Crown Bottle Cap | Drinks and glasses |
+| 306 | `qlfizzletters` | Fizz Letters | Drinks and glasses |
+| 307 | `qlstrawletters` | Straw Letters | Drinks and glasses |
+| 308 | `qlicecubetext` | Ice Cube Text | Drinks and glasses |
+| 309 | `qlsoftserveswirl` | Soft Serve Swirl | Snacks and sweets |
+| 310 | `qlwaffleconegrid` | Waffle Cone Grid | Snacks and sweets |
+| 311 | `qlsprinkledonut` | Sprinkle Donut | Snacks and sweets |
+| 312 | `qlcupcakeliner` | Cupcake Liner | Snacks and sweets |
+| 313 | `qlcookiechips` | Cookie Chips | Snacks and sweets |
+| 314 | `qlmacaronlayers` | Macaron Layers | Snacks and sweets |
+| 315 | `qlcandyflosspuff` | Candy Floss Puff | Snacks and sweets |
+| 316 | `qlcornkernelrows` | Corn Kernel Rows | Snacks and sweets |
+| 317 | `qlpopcornbucket` | Popcorn Bucket | Snacks and sweets |
+| 318 | `qlfrycarton` | Fry Carton | Snacks and sweets |
+| 319 | `qlburgerlayers` | Burger Layers | Snacks and sweets |
+| 320 | `qlmustardzigzag` | Mustard Zigzag | Snacks and sweets |
+| 321 | `qltacofold` | Taco Fold | Snacks and sweets |
+| 322 | `qltortillachip` | Tortilla Chip | Snacks and sweets |
+| 323 | `qlsandwichcut` | Sandwich Cut | Snacks and sweets |
+| 324 | `qlpizzaboxlid` | Pizza Box Lid | Snacks and sweets |
+| 325 | `qlpicklechips` | Pickle Chips | Snacks and sweets |
+| 326 | `qlorangeslicering` | Orange Slice Ring | Snacks and sweets |
+| 327 | `qlpineappleround` | Pineapple Round | Snacks and sweets |
+| 328 | `qlberrycluster` | Berry Cluster | Snacks and sweets |
+| 329 | `qlcherrypair` | Cherry Pair | Snacks and sweets |
+| 330 | `qlgrapebunch` | Grape Bunch | Snacks and sweets |
+| 331 | `qlmangoslice` | Mango Slice | Snacks and sweets |
+| 332 | `qlkiwislice` | Kiwi Slice | Snacks and sweets |
+| 333 | `qlfruitsaladcup` | Fruit Salad Cup | Snacks and sweets |
+| 334 | `qlyogurtparfait` | Yogurt Parfait | Snacks and sweets |
+| 335 | `qlgranolabar` | Granola Bar | Snacks and sweets |
+| 336 | `qlhoneycombcells` | Honeycomb Cells | Snacks and sweets |
+| 337 | `qllollywhorl` | Lolly Whorl | Snacks and sweets |
+| 338 | `qlgumdroprow` | Gumdrop Row | Snacks and sweets |
+| 339 | `qljellybeanpair` | Jelly Bean Pair | Snacks and sweets |
+| 340 | `qlchocolatesquares` | Chocolate Squares | Snacks and sweets |
+| 341 | `qlcandywrappertwist` | Candy Wrapper Twist | Snacks and sweets |
+| 342 | `qlcandystripepole` | Candy Stripe Pole | Snacks and sweets |
+| 343 | `qlicecreamsandwich` | Ice Cream Sandwich | Snacks and sweets |
+| 344 | `qlfrozenyogurtcup` | Frozen Yogurt Cup | Snacks and sweets |
+| 345 | `qlsnacktraydivider` | Snack Tray Divider | Snacks and sweets |
+| 346 | `qllunchboxlatch` | Lunchbox Latch | Snacks and sweets |
+| 347 | `qlbentocompartments` | Bento Compartments | Snacks and sweets |
+| 348 | `qlcheesewedgeholes` | Cheese Wedge Holes | Snacks and sweets |
+| 349 | `qlcrackerdots` | Cracker Dots | Snacks and sweets |
+| 350 | `qlgummyletters` | Gummy Letters | Snacks and sweets |
+| 351 | `qlsprinkletext` | Sprinkle Text | Snacks and sweets |
+| 352 | `qlfrostingdriptext` | Frosting Drip Text | Snacks and sweets |
+| 353 | `qlicingpipeedge` | Icing Pipe Edge | Snacks and sweets |
+| 354 | `qldaypassstub` | Day Pass Stub | Passes, tags, tickets and cards |
+| 355 | `qlholepunchcard` | Hole Punch Card | Passes, tags, tickets and cards |
+| 356 | `qllanyardclasp` | Lanyard Clasp | Passes, tags, tickets and cards |
+| 357 | `qlhangtagstring` | Hang Tag String | Passes, tags, tickets and cards |
+| 358 | `qlpricestickerburst` | Price Sticker Burst | Passes, tags, tickets and cards |
+| 359 | `qlsalebannercorner` | Sale Banner Corner | Passes, tags, tickets and cards |
+| 360 | `qlgiftcardstrip` | Gift Card Strip | Passes, tags, tickets and cards |
+| 361 | `qlloyaltystampsrow` | Loyalty Stamps Row | Passes, tags, tickets and cards |
+| 362 | `qlmembershipchipcard` | Membership Chip Card | Passes, tags, tickets and cards |
+| 363 | `qlmagneticstripe` | Magnetic Stripe | Passes, tags, tickets and cards |
+| 364 | `qlparkingticket` | Parking Ticket | Passes, tags, tickets and cards |
+| 365 | `qlraffletickettear` | Raffle Ticket Tear | Passes, tags, tickets and cards |
+| 366 | `qlboardingpasscut` | Boarding Pass Cut | Passes, tags, tickets and cards |
+| 367 | `qlmovieticketnotch` | Movie Ticket Notch | Passes, tags, tickets and cards |
+| 368 | `qlconcertwristband` | Concert Wristband | Passes, tags, tickets and cards |
+| 369 | `qlglowwristband` | Glow Wristband | Passes, tags, tickets and cards |
+| 370 | `qlidbadgewindow` | ID Badge Window | Passes, tags, tickets and cards |
+| 371 | `qlvisitorlabel` | Visitor Label | Passes, tags, tickets and cards |
+| 372 | `qlnamestickerhello` | Name Sticker Hello | Passes, tags, tickets and cards |
+| 373 | `qllibrarycardpocket` | Library Card Pocket | Passes, tags, tickets and cards |
+| 374 | `qlbustransfer` | Bus Transfer | Passes, tags, tickets and cards |
+| 375 | `qltollreceipt` | Toll Receipt | Passes, tags, tickets and cards |
+| 376 | `qlluggagelabel` | Luggage Label | Passes, tags, tickets and cards |
+| 377 | `qlkeytagring` | Key Tag Ring | Passes, tags, tickets and cards |
+| 378 | `qlroomkeycard` | Room Key Card | Passes, tags, tickets and cards |
+| 379 | `qldogtagchain` | Dog Tag Chain | Passes, tags, tickets and cards |
+| 380 | `qlhouserulescard` | House Rules Card | Passes, tags, tickets and cards |
+| 381 | `qlswimlessonlevel` | Swim Lesson Level | Passes, tags, tickets and cards |
+| 382 | `qlprogressstickercha` | Progress Sticker Chart | Passes, tags, tickets and cards |
+| 383 | `qlreportcardedge` | Report Card Edge | Passes, tags, tickets and cards |
+| 384 | `qlbusinesscardstack` | Business Card Stack | Passes, tags, tickets and cards |
+| 385 | `qlindexcardlines` | Index Card Lines | Passes, tags, tickets and cards |
+| 386 | `qlfoldertablabel` | Folder Tab Label | Passes, tags, tickets and cards |
+| 387 | `qlstickynotecorner` | Sticky Note Corner | Passes, tags, tickets and cards |
+| 388 | `qlpaperclipcorner` | Paper Clip Corner | Passes, tags, tickets and cards |
+| 389 | `qlbinderringholes` | Binder Ring Holes | Passes, tags, tickets and cards |
+| 390 | `qlwaxtagtie` | Wax Tag Tie | Passes, tags, tickets and cards |
+| 391 | `qlbarcodelabelbar` | Barcode Label Bar | Passes, tags, tickets and cards |
+| 392 | `qlqrcornermarks` | QR Corner Marks | Passes, tags, tickets and cards |
+| 393 | `qlserialnumbertext` | Serial Number Text | Passes, tags, tickets and cards |
+| 394 | `qlstampdatetext` | Stamp Date Text | Passes, tags, tickets and cards |
+| 395 | `qladmitwristlettext` | Admit Wristlet Text | Passes, tags, tickets and cards |
+| 396 | `qlnodivingroundel` | No Diving Roundel | Signs, flags and wayfinding |
+| 397 | `qlwalkdonotrun` | Walk Do Not Run | Signs, flags and wayfinding |
+| 398 | `qlwetfloorwedge` | Wet Floor Wedge | Signs, flags and wayfinding |
+| 399 | `qldepthmarkerpost` | Depth Marker Post | Signs, flags and wayfinding |
+| 400 | `qlshallowendplate` | Shallow End Plate | Signs, flags and wayfinding |
+| 401 | `qldeependplate` | Deep End Plate | Signs, flags and wayfinding |
+| 402 | `qlguardondutyflag` | Guard On Duty Flag | Signs, flags and wayfinding |
+| 403 | `qlbeachclosedflag` | Beach Closed Flag | Signs, flags and wayfinding |
+| 404 | `qlcheckindesk` | Check In Desk | Signs, flags and wayfinding |
+| 405 | `qllockerroomarrow` | Locker Room Arrow | Signs, flags and wayfinding |
+| 406 | `qlrestroomsquare` | Restroom Square | Signs, flags and wayfinding |
+| 407 | `qlshowerfirstsign` | Shower First Sign | Signs, flags and wayfinding |
+| 408 | `qltowelsheresign` | Towels Here Sign | Signs, flags and wayfinding |
+| 409 | `qlexitdoorsign` | Exit Door Sign | Signs, flags and wayfinding |
+| 410 | `qlemergencyphonestri` | Emergency Phone Strip | Signs, flags and wayfinding |
+| 411 | `qlrescuecrosspanel` | Rescue Cross Panel | Signs, flags and wayfinding |
+| 412 | `qlaedheartbox` | AED Heart Box | Signs, flags and wayfinding |
+| 413 | `qlcapacityplate` | Capacity Plate | Signs, flags and wayfinding |
+| 414 | `qldoorhangerhours` | Door Hanger Hours | Signs, flags and wayfinding |
+| 415 | `qltrailmarkerpost` | Trail Marker Post | Signs, flags and wayfinding |
+| 416 | `qlstreetnameblade` | Street Name Blade | Signs, flags and wayfinding |
+| 417 | `qlbusstopflag` | Bus Stop Flag | Signs, flags and wayfinding |
+| 418 | `qldirectionfingerpos` | Direction Fingerpost | Signs, flags and wayfinding |
+| 419 | `qlwelcomematstripe` | Welcome Mat Stripe | Signs, flags and wayfinding |
+| 420 | `qlchevronwayband` | Chevron Way Band | Signs, flags and wayfinding |
+| 421 | `qlparkingbaynumber` | Parking Bay Number | Signs, flags and wayfinding |
+| 422 | `qlbikerackloops` | Bike Rack Loops | Signs, flags and wayfinding |
+| 423 | `qlconestripeband` | Cone Stripe Band | Signs, flags and wayfinding |
+| 424 | `qlbarriertape` | Barrier Tape | Signs, flags and wayfinding |
+| 425 | `qlhazardedge` | Hazard Edge | Signs, flags and wayfinding |
+| 426 | `qlspeedbumphumps` | Speed Bump Humps | Signs, flags and wayfinding |
+| 427 | `qlcrosswalkzebra` | Crosswalk Zebra | Signs, flags and wayfinding |
+| 428 | `qlroadedgedash` | Road Edge Dash | Signs, flags and wayfinding |
+| 429 | `qlbuntingstring` | Bunting String | Signs, flags and wayfinding |
+| 430 | `qltwintriangleflags` | Twin Triangle Flags | Signs, flags and wayfinding |
+| 431 | `qlwindsockstripes` | Windsock Stripes | Signs, flags and wayfinding |
+| 432 | `qlhangingbannerpole` | Hanging Banner Pole | Signs, flags and wayfinding |
+| 433 | `qlsandwichboard` | Sandwich Board | Signs, flags and wayfinding |
+| 434 | `qlchalkboardmenu` | Chalkboard Menu | Signs, flags and wayfinding |
+| 435 | `qlfrostwindowdecal` | Frost Window Decal | Signs, flags and wayfinding |
+| 436 | `qlopenneonsign` | Open Neon Sign | Signs, flags and wayfinding |
+| 437 | `qllightboxpanel` | Light Box Panel | Signs, flags and wayfinding |
+| 438 | `qlbillboardframe` | Billboard Frame | Signs, flags and wayfinding |
+| 439 | `qlstreetlampglow` | Street Lamp Glow | Signs, flags and wayfinding |
+| 440 | `qlstencilsignletters` | Stencil Sign Letters | Signs, flags and wayfinding |
+| 441 | `qlmarqueeletters` | Marquee Letters | Signs, flags and wayfinding |
+| 442 | `qlmemphistriangles` | Memphis Triangles | Retro, prints and patterns |
+| 443 | `qlconfettiprint` | Confetti Print | Retro, prints and patterns |
+| 444 | `qlwavystripeprint` | Wavy Stripe Print | Retro, prints and patterns |
+| 445 | `qlscallopprint` | Scallop Print | Retro, prints and patterns |
+| 446 | `qlhoundstoothpool` | Houndstooth Pool | Retro, prints and patterns |
+| 447 | `qlpooltartan` | Pool Tartan | Retro, prints and patterns |
+| 448 | `qlpinstripesuit` | Pinstripe Suit | Retro, prints and patterns |
+| 449 | `qlcandycheck` | Candy Check | Retro, prints and patterns |
+| 450 | `qlhibiscusspot` | Hibiscus Spot | Retro, prints and patterns |
+| 451 | `qlpalmshadowstripes` | Palm Shadow Stripes | Retro, prints and patterns |
+| 452 | `qltikiband` | Tiki Band | Retro, prints and patterns |
+| 453 | `qlmidcenturystarburs` | Midcentury Starburst | Retro, prints and patterns |
+| 454 | `qlatomicorbit` | Atomic Orbit | Retro, prints and patterns |
+| 455 | `qlspaceagedots` | Space Age Dots | Retro, prints and patterns |
+| 456 | `qlmodsquares` | Mod Squares | Retro, prints and patterns |
+| 457 | `qlopringtarget` | Op Ring Target | Retro, prints and patterns |
+| 458 | `qlgroovywaves` | Groovy Waves | Retro, prints and patterns |
+| 459 | `qlrainbowarch` | Rainbow Arch | Retro, prints and patterns |
+| 460 | `qlrecordgrooves` | Record Grooves | Retro, prints and patterns |
+| 461 | `qlrecordsleeve` | Record Sleeve | Retro, prints and patterns |
+| 462 | `qlcassettelabel` | Cassette Label | Retro, prints and patterns |
+| 463 | `qlvhsstripe` | VHS Stripe | Retro, prints and patterns |
+| 464 | `qlinstantphotoframe` | Instant Photo Frame | Retro, prints and patterns |
+| 465 | `qlfilmstripborder` | Film Strip Border | Retro, prints and patterns |
+| 466 | `qldriveinmarquee` | Drive In Marquee | Retro, prints and patterns |
+| 467 | `qlneonpalm` | Neon Palm | Retro, prints and patterns |
+| 468 | `qlsynthgridhorizon` | Synth Grid Horizon | Retro, prints and patterns |
+| 469 | `qlglossyorbpill` | Glossy Orb Pill | Retro, prints and patterns |
+| 470 | `qleightbitwater` | Eight Bit Water | Retro, prints and patterns |
+| 471 | `qlcrossstitchborder` | Cross Stitch Border | Retro, prints and patterns |
+| 472 | `qlrunningstitch` | Running Stitch | Retro, prints and patterns |
+| 473 | `qlmacramefringe` | Macrame Fringe | Retro, prints and patterns |
+| 474 | `qlknitrib` | Knit Rib | Retro, prints and patterns |
+| 475 | `qlquilteddiamonds` | Quilted Diamonds | Retro, prints and patterns |
+| 476 | `qldenimstitch` | Denim Stitch | Retro, prints and patterns |
+| 477 | `qlflannelplaid` | Flannel Plaid | Retro, prints and patterns |
+| 478 | `qllinenweave` | Linen Weave | Retro, prints and patterns |
+| 479 | `qlburlapsack` | Burlap Sack | Retro, prints and patterns |
+| 480 | `qlpaperdoilylace` | Paper Doily Lace | Retro, prints and patterns |
+| 481 | `qlwallpaperdots` | Wallpaper Dots | Retro, prints and patterns |
+| 482 | `qlbandanadots` | Bandana Dots | Retro, prints and patterns |
+| 483 | `qlbatikwaves` | Batik Waves | Retro, prints and patterns |
+| 484 | `qltiedyerings` | Tie Dye Rings | Retro, prints and patterns |
+| 485 | `qldipdyeombre` | Dip Dye Ombre | Retro, prints and patterns |
+| 486 | `qlikatblurstripes` | Ikat Blur Stripes | Retro, prints and patterns |
+| 487 | `qlkilimdiamonds` | Kilim Diamonds | Retro, prints and patterns |
+| 488 | `qlmudclothmarks` | Mudcloth Marks | Retro, prints and patterns |
+| 489 | `qlretroscripttext` | Retro Script Text | Retro, prints and patterns |
+| 490 | `qlgoogieletters` | Googie Letters | Retro, prints and patterns |
+| 491 | `qlvinyldecaltext` | Vinyl Decal Text | Retro, prints and patterns |
+| 492 | `qlpennantscripttext` | Pennant Script Text | Retro, prints and patterns |
+| 493 | `qlgoldstarseal` | Gold Star Seal | Badges, patches, awards and stamps |
+| 494 | `qlrosetteribbon` | Rosette Ribbon | Badges, patches, awards and stamps |
+| 495 | `qlparticipationribbo` | Participation Ribbon | Badges, patches, awards and stamps |
+| 496 | `qlfirstplaceband` | First Place Band | Badges, patches, awards and stamps |
+| 497 | `qlmedalribbonv` | Medal Ribbon V | Badges, patches, awards and stamps |
+| 498 | `qllaurelsides` | Laurel Sides | Badges, patches, awards and stamps |
+| 499 | `qlshieldcrest` | Shield Crest | Badges, patches, awards and stamps |
+| 500 | `qlrankchevrons` | Rank Chevrons | Badges, patches, awards and stamps |
+| 501 | `qlmeritbadgestar` | Merit Badge Star | Badges, patches, awards and stamps |
+| 502 | `qlsashdiagonal` | Sash Diagonal | Badges, patches, awards and stamps |
+| 503 | `qlvarsitypatch` | Varsity Patch | Badges, patches, awards and stamps |
+| 504 | `qlembroideredoval` | Embroidered Oval | Badges, patches, awards and stamps |
+| 505 | `qlirononpatch` | Iron On Patch | Badges, patches, awards and stamps |
+| 506 | `qlscallopseal` | Scallop Seal | Badges, patches, awards and stamps |
+| 507 | `qlstarburststicker` | Starburst Sticker | Badges, patches, awards and stamps |
+| 508 | `qlnotarysealring` | Notary Seal Ring | Badges, patches, awards and stamps |
+| 509 | `qlpostmarkcircle` | Postmark Circle | Badges, patches, awards and stamps |
+| 510 | `qlairmailframe` | Airmail Frame | Badges, patches, awards and stamps |
+| 511 | `qlpostageperforation` | Postage Perforation | Badges, patches, awards and stamps |
+| 512 | `qlcustomsovalstamp` | Customs Oval Stamp | Badges, patches, awards and stamps |
+| 513 | `qlrubberstampbox` | Rubber Stamp Box | Badges, patches, awards and stamps |
+| 514 | `qlinkpadedge` | Ink Pad Edge | Badges, patches, awards and stamps |
+| 515 | `qldatestampwheel` | Date Stamp Wheel | Badges, patches, awards and stamps |
+| 516 | `qlapprovedtilt` | Approved Tilt | Badges, patches, awards and stamps |
+| 517 | `qlcertifiedtails` | Certified Tails | Badges, patches, awards and stamps |
+| 518 | `qlhonorrollbar` | Honor Roll Bar | Badges, patches, awards and stamps |
+| 519 | `qltrophycuphandles` | Trophy Cup Handles | Badges, patches, awards and stamps |
+| 520 | `qlmedalhangerloop` | Medal Hanger Loop | Badges, patches, awards and stamps |
+| 521 | `qlpinbackbutton` | Pin Back Button | Badges, patches, awards and stamps |
+| 522 | `qlenamelpinoutline` | Enamel Pin Outline | Badges, patches, awards and stamps |
+| 523 | `qllapelflagpin` | Lapel Flag Pin | Badges, patches, awards and stamps |
+| 524 | `qlnameplaque` | Name Plaque | Badges, patches, awards and stamps |
+| 525 | `qlplaquescrews` | Plaque Screws | Badges, patches, awards and stamps |
+| 526 | `qlengravedplate` | Engraved Plate | Badges, patches, awards and stamps |
+| 527 | `qlcrestbannercurl` | Crest Banner Curl | Badges, patches, awards and stamps |
+| 528 | `qlmonogramcircle` | Monogram Circle | Badges, patches, awards and stamps |
+| 529 | `qlheraldicbar` | Heraldic Bar | Badges, patches, awards and stamps |
+| 530 | `qlhalloffameframe` | Hall of Fame Frame | Badges, patches, awards and stamps |
+| 531 | `qlwalkoffamestar` | Walk of Fame Star | Badges, patches, awards and stamps |
+| 532 | `qlchampionbeltplate` | Champion Belt Plate | Badges, patches, awards and stamps |
+| 533 | `qllanewinnerflag` | Lane Winner Flag | Badges, patches, awards and stamps |
+| 534 | `qlrecordholdertag` | Record Holder Tag | Badges, patches, awards and stamps |
+| 535 | `qlperfectscorebadge` | Perfect Score Badge | Badges, patches, awards and stamps |
+| 536 | `qlstreakflametag` | Streak Flame Tag | Badges, patches, awards and stamps |
+| 537 | `qllevelupchevron` | Level Up Chevron | Badges, patches, awards and stamps |
+| 538 | `qlachievementbar` | Achievement Bar | Badges, patches, awards and stamps |
+| 539 | `qlembossedsealtext` | Embossed Seal Text | Badges, patches, awards and stamps |
+| 540 | `qlfoilstamptext` | Foil Stamp Text | Badges, patches, awards and stamps |
 
 ## Part 9. Questions and answers
 
