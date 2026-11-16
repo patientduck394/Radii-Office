@@ -20617,7 +20617,7 @@ mark.an-hl.an-s-wv { background: repeating-linear-gradient(45deg, color-mix(in s
 mark.an-hl.an-s-td, mark.an-hl.an-s-qn, mark.an-hl.an-s-id, mark.an-hl.an-s-wn, mark.an-hl.an-s-sn, mark.an-hl.an-s-dd, mark.an-hl.an-s-ip, mark.an-hl.an-s-nt,
 mark.an-hl.an-s-gn, mark.an-hl.an-s-ln, mark.an-hl.an-s-xh, mark.an-hl.an-s-fd, mark.an-hl.an-s-sx, mark.an-hl.an-s-cg, mark.an-hl.an-s-tz,
 mark.an-hl.an-s-pt, mark.an-hl.an-s-el, mark.an-hl.an-s-hp, mark.an-hl.an-s-vt, mark.an-hl.an-s-mn,
-mark.an-hl.an-s-ci, mark.an-hl.an-s-sb, mark.an-hl.an-s-du, mark.an-hl.an-s-bs, mark.an-hl.an-s-pl, mark.an-hl.an-s-sl,
+mark.an-hl.an-s-ci, mark.an-hl.an-s-sb, mark.an-hl.an-s-du, mark.an-hl.an-s-bs, mark.an-hl.an-s-pl, mark.an-hl.an-s-sv,
 mark.an-hl.an-s-ch, mark.an-hl.an-s-fm, mark.an-hl.an-s-dr, mark.an-hl.an-s-cr, mark.an-hl.an-s-wc, mark.an-hl.an-s-pc, mark.an-hl.an-s-cl, mark.an-hl.an-s-ft {
     border: 0; box-shadow: none; background: none; border-radius: 3px; padding: 0.05em 0.3em; margin: 0 -0.3em; color: inherit;
     -webkit-box-decoration-break: clone; box-decoration-break: clone;
@@ -20657,7 +20657,7 @@ mark.an-hl.an-s-sb { background: repeating-linear-gradient(172deg, color-mix(in 
 mark.an-hl.an-s-du { border-bottom: 0.1em solid var(--hl-edge); box-shadow: 0 0.2em 0 -0.1em var(--hl-edge); border-radius: 0; padding-bottom: 0.12em; margin-bottom: 0.1em; }
 mark.an-hl.an-s-bs { border-left: 0.14em solid var(--hl-edge); border-right: 0.14em solid var(--hl-edge); background: linear-gradient(var(--hl-edge), var(--hl-edge)) 0 0 / 0.5em 0.14em no-repeat, linear-gradient(var(--hl-edge), var(--hl-edge)) 0 100% / 0.5em 0.14em no-repeat, linear-gradient(var(--hl-edge), var(--hl-edge)) 100% 0 / 0.5em 0.14em no-repeat, linear-gradient(var(--hl-edge), var(--hl-edge)) 100% 100% / 0.5em 0.14em no-repeat, color-mix(in srgb, var(--hl-c) 10%, transparent); border-radius: 0.1em; }
 mark.an-hl.an-s-pl { background: color-mix(in srgb, var(--hl-c) 40%, transparent); border: 0.08em solid var(--hl-edge); border-radius: 999px; padding: 0.04em 0.6em; margin: 0 -0.5em; }
-mark.an-hl.an-s-sl { background: color-mix(in srgb, var(--hl-c) 45%, transparent); transform: skewX(-14deg); border-radius: 0.06em; display: inline-block; padding: 0.04em 0.55em; margin: 0 -0.2em; }
+mark.an-hl.an-s-sv { background: color-mix(in srgb, var(--hl-c) 45%, transparent); transform: skewX(-14deg); border-radius: 0.06em; display: inline-block; padding: 0.04em 0.55em; margin: 0 -0.2em; }
 /* ---- MARKERS ---- */
 mark.an-hl.an-s-ch { background: linear-gradient(104deg, transparent 0 0.4em, color-mix(in srgb, var(--hl-c) 68%, transparent) 0.4em) ; clip-path: polygon(0.45em 0, 100% 0, calc(100% - 0.45em) 100%, 0 100%); padding: 0.05em 0.7em; margin: 0 -0.55em; border-radius: 0; background: color-mix(in srgb, var(--hl-c) 62%, transparent); }
 mark.an-hl.an-s-fm { background: linear-gradient(180deg, transparent 18%, color-mix(in srgb, var(--hl-c) 78%, transparent) 18% 92%, transparent 92%); border-radius: 0.45em 0.2em 0.5em 0.25em / 0.6em 0.3em 0.5em 0.3em; padding: 0.05em 0.45em; margin: 0 -0.4em; box-shadow: 0 0.06em 0 color-mix(in srgb, var(--hl-edge) 55%, transparent); }
