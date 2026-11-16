@@ -7401,6 +7401,65 @@ Twelve more, written by name in any highlight color:
 * `#Y.dashline(words)` a dashed line under the words: #Y.dashline(dashline words)
 * `#Y.weave(words)` crossing diagonal lines, like fabric: #Y.weave(weave words)
 
+### Meaning highlights
+
+Each has its own color and a small mark in front, so the color you pick is ignored:
+
+* `#Y.todo(words)` an orange box mark: a to-do: #Y.todo(todo words)
+* `#Y.question(words)` a blue question mark: something to ask: #Y.question(question words)
+* `#Y.idea(words)` a yellow glowing bulb: an idea: #Y.idea(idea words)
+* `#Y.warning(words)` red hazard stripes with a triangle: be careful: #Y.warning(warning words)
+* `#Y.source(words)` a gray dashed line with [?]: needs a source: #Y.source(source words)
+* `#Y.done(words)` a green check with struck-through words: finished: #Y.done(done words)
+* `#Y.important(words)` a purple bar with bold words: this matters: #Y.important(important words)
+* `#Y.note(words)` a teal note with a corner shadow: a side note: #Y.note(note words)
+
+### Texture highlights
+
+Highlights with a surface, in any color:
+
+* `#Y.grain(words)` paper grain: #Y.grain(grain words)
+* `#Y.linen(words)` woven cloth: #Y.linen(linen words)
+* `#Y.crosshatch(words)` crossing pencil lines: #Y.crosshatch(crosshatch words)
+* `#Y.fade(words)` a color that fades out to the right: #Y.fade(fade words)
+* `#Y.speckle(words)` scattered specks: #Y.speckle(speckle words)
+* `#Y.corrugated(words)` ridged cardboard: #Y.corrugated(corrugated words)
+* `#Y.terrazzo(words)` stone chips: #Y.terrazzo(terrazzo words)
+
+### Themed sets
+
+Whole looks that follow the color you pick:
+
+* `#Y.pastel(words)` soft and rounded: #Y.pastel(pastel words)
+* `#Y.electric(words)` dark glass with a neon glow: #Y.electric(electric words)
+* `#Y.hipen(words)` a see-through highlighter pen: #Y.hipen(hipen words)
+* `#Y.vintage(words)` faded, sepia-toned: #Y.vintage(vintage words)
+* `#Y.midnight(words)` a dark-mode highlight with light words: #Y.midnight(midnight words)
+
+### Shapes behind text
+
+The words sit inside a shape:
+
+* `#Y.circle(words)` a hand-drawn loop: #Y.circle(circle words)
+* `#Y.scribble(words)` scribbled lines: #Y.scribble(scribble words)
+* `#Y.doubleunder(words)` two lines under the words: #Y.doubleunder(doubleunder words)
+* `#Y.bracketspan(words)` square brackets on both sides, even across lines: #Y.bracketspan(bracketspan words)
+* `#Y.pill(words)` a round pill: #Y.pill(pill words)
+* `#Y.slant(words)` a slanted parallelogram: #Y.slant(slant words)
+
+### Marker styles
+
+Real pens and brushes:
+
+* `#Y.chisel(words)` a chisel-tip marker with slanted ends: #Y.chisel(chisel words)
+* `#Y.fatmarker(words)` a fat, uneven marker stroke: #Y.fatmarker(fatmarker words)
+* `#Y.drybrush(words)` a dry brush with streaks: #Y.drybrush(drybrush words)
+* `#Y.crayon(words)` waxy crayon: #Y.crayon(crayon words)
+* `#Y.watercolor(words)` a soft wash with pooled edges: #Y.watercolor(watercolor words)
+* `#Y.pencil(words)` a pencil line with shading: #Y.pencil(pencil words)
+* `#Y.chalk(words)` chalk on a dark board: #Y.chalk(chalk words)
+* `#Y.felt(words)` a felt-tip pen: #Y.felt(felt words)
+
 Plain underline and strike are Keydown text too: `_underline_` and `__strike__` (the Underline and Strikethrough buttons write them in Source). They never trigger inside snake_case words.
 
 ### Tooltip Underline
