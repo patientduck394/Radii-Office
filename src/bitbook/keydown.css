@@ -9358,3 +9358,135 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 /* Cut Gem ++R&)text++ */
 .gel-hvgem-chip { padding: 2px 15px; background: linear-gradient(180deg, var(--hx-w2) 0 50%, var(--hx-w3) 50% 100%); clip-path: polygon(0.45em 0, calc(100% - 0.45em) 0, 100% 50%, calc(100% - 0.45em) 100%, 0.45em 100%, 0 50%); box-shadow: inset 0 0 0 1px var(--hx-c50); }
 .gel-hvgem-chip::before { content: ''; position: absolute; z-index: -1; pointer-events: none; left: 0.5em; right: 0.5em; top: 0.1em; height: 0.12em; border-radius: 999px; background: rgba(255, 255, 255, 0.9); }
+
+/* ========================================================
+   FIFTY MORE AERO MARK CHIP COUSINS (mk), cousins of the Aero Mark chip ++R?text++: Double Stroke ++R=}text++, Chisel Tip ++R~}text++, Brush Ends ++R^}text++, Torn Ends ++R!}text++, Pencil Underline ++R%}text++, Dashed Marker ++R?}text++, Neon Marker ++R*}text++, Soft Wash ++R#}text++, Crossed Out ++R-}text++, Dog Ear ++R/}text++, Pinned ++R.}text++, Stamp Mark ++R,}text++, Triple Underline ++R;}text++, Bracket Edges ++R&}text++, Ink Blot ++R+}text++, Sweep Out ++R$}text++, Sweep In ++R@}text++, Candy Stripe ++R_}text++, Ruled Paper ++R1}text++, Graph Paper ++R2}text++, Dot Marker ++R3}text++, Zigzag Under ++R4}text++, Wavy Under ++R5}text++, Wavy Over ++R6}text++, Measure Ticks ++R7}text++, Arrow Right ++R=:text++, Arrow Left ++R~:text++, Hexagon Ends ++R^:text++, Round Tab ++R!:text++, Folder Tab ++R%:text++, Ribbon Notch ++R?:text++, Ticket Ends ++R*:text++, Pill Outline ++R#:text++, Offset Shadow ++R-:text++, Misprint ++R/:text++, Inset Frame ++R.:text++, Glow Underline ++R,:text++, Heavy Base ++R;:text++, Top Half ++R&:text++, Spot Corner ++R+:text++, Glass Marker ++R$:text++, Pen Dot ++R@:text++, Quote Bar ++R_:text++, Star Glint ++R1:text++, Rough Hand ++R2:text++, Hatch Band ++R3:text++, Faded Ends ++R4:text++, Capsule Bar ++R5:text++, Ribbon Bar ++R6:text++, Sticker Mark ++R7:text++.
+   Each in the Aero chips' 16 colors (the .gel-aero-<color> classes); all of them ways to MARK words.
+   ======================================================== */
+.gel-mkdouble-chip, .gel-mkchisel-chip, .gel-mkbrush-chip, .gel-mktorn-chip, .gel-mkpencil-chip, .gel-mkdash-chip, .gel-mkneon-chip, .gel-mkwash-chip, .gel-mkcross-chip, .gel-mkdog-chip, .gel-mkpin-chip, .gel-mkstamp-chip, .gel-mktriple-chip, .gel-mkbracket-chip, .gel-mkblot-chip, .gel-mksweep-chip, .gel-mksweepr-chip, .gel-mkcandy-chip, .gel-mkruled-chip, .gel-mkgrid-chip, .gel-mkdots-chip, .gel-mkzig-chip, .gel-mkwave-chip, .gel-mkwaveup-chip, .gel-mktick-chip, .gel-mkarrow-chip, .gel-mkarrowl-chip, .gel-mkhex-chip, .gel-mktab-chip, .gel-mkfolder-chip, .gel-mknotch-chip, .gel-mkticket-chip, .gel-mkoutline-chip, .gel-mkoffset-chip, .gel-mkmisprint-chip, .gel-mkframe-chip, .gel-mkglowline-chip, .gel-mkblock-chip, .gel-mkhalf-chip, .gel-mkspot-chip, .gel-mkglass-chip, .gel-mkpen-chip, .gel-mkquote-chip, .gel-mkstar-chip, .gel-mkrough-chip, .gel-mkhatch-chip, .gel-mkfade-chip, .gel-mkcapsule-chip, .gel-mkribbon-chip, .gel-mksticker-chip {
+  --mk-ink: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  --hx-w1: color-mix(in srgb, var(--ae-l) 22%, #fff); --hx-w2: color-mix(in srgb, var(--ae-l) 48%, #fff); --hx-w3: color-mix(in srgb, var(--ae-l) 66%, #fff);
+  --hx-c36: color-mix(in srgb, var(--ae-c) 36%, transparent); --hx-c40: color-mix(in srgb, var(--ae-c) 40%, transparent); --hx-c45: color-mix(in srgb, var(--ae-c) 45%, transparent);
+  --hx-c50: color-mix(in srgb, var(--ae-c) 50%, transparent); --hx-c60: color-mix(in srgb, var(--ae-c) 60%, transparent);
+  position: relative; isolation: isolate; box-sizing: border-box; display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 3px; border: 0; color: var(--mk-ink); font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-mkdouble-chip.gel-aero-white, .gel-mkchisel-chip.gel-aero-white, .gel-mkbrush-chip.gel-aero-white, .gel-mktorn-chip.gel-aero-white, .gel-mkpencil-chip.gel-aero-white, .gel-mkdash-chip.gel-aero-white, .gel-mkneon-chip.gel-aero-white, .gel-mkwash-chip.gel-aero-white, .gel-mkcross-chip.gel-aero-white, .gel-mkdog-chip.gel-aero-white, .gel-mkpin-chip.gel-aero-white, .gel-mkstamp-chip.gel-aero-white, .gel-mktriple-chip.gel-aero-white, .gel-mkbracket-chip.gel-aero-white, .gel-mkblot-chip.gel-aero-white, .gel-mksweep-chip.gel-aero-white, .gel-mksweepr-chip.gel-aero-white, .gel-mkcandy-chip.gel-aero-white, .gel-mkruled-chip.gel-aero-white, .gel-mkgrid-chip.gel-aero-white, .gel-mkdots-chip.gel-aero-white, .gel-mkzig-chip.gel-aero-white, .gel-mkwave-chip.gel-aero-white, .gel-mkwaveup-chip.gel-aero-white, .gel-mktick-chip.gel-aero-white, .gel-mkarrow-chip.gel-aero-white, .gel-mkarrowl-chip.gel-aero-white, .gel-mkhex-chip.gel-aero-white, .gel-mktab-chip.gel-aero-white, .gel-mkfolder-chip.gel-aero-white, .gel-mknotch-chip.gel-aero-white, .gel-mkticket-chip.gel-aero-white, .gel-mkoutline-chip.gel-aero-white, .gel-mkoffset-chip.gel-aero-white, .gel-mkmisprint-chip.gel-aero-white, .gel-mkframe-chip.gel-aero-white, .gel-mkglowline-chip.gel-aero-white, .gel-mkblock-chip.gel-aero-white, .gel-mkhalf-chip.gel-aero-white, .gel-mkspot-chip.gel-aero-white, .gel-mkglass-chip.gel-aero-white, .gel-mkpen-chip.gel-aero-white, .gel-mkquote-chip.gel-aero-white, .gel-mkstar-chip.gel-aero-white, .gel-mkrough-chip.gel-aero-white, .gel-mkhatch-chip.gel-aero-white, .gel-mkfade-chip.gel-aero-white, .gel-mkcapsule-chip.gel-aero-white, .gel-mkribbon-chip.gel-aero-white, .gel-mksticker-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-mkdouble-chip.gel-aero-fog, .gel-mkchisel-chip.gel-aero-fog, .gel-mkbrush-chip.gel-aero-fog, .gel-mktorn-chip.gel-aero-fog, .gel-mkpencil-chip.gel-aero-fog, .gel-mkdash-chip.gel-aero-fog, .gel-mkneon-chip.gel-aero-fog, .gel-mkwash-chip.gel-aero-fog, .gel-mkcross-chip.gel-aero-fog, .gel-mkdog-chip.gel-aero-fog, .gel-mkpin-chip.gel-aero-fog, .gel-mkstamp-chip.gel-aero-fog, .gel-mktriple-chip.gel-aero-fog, .gel-mkbracket-chip.gel-aero-fog, .gel-mkblot-chip.gel-aero-fog, .gel-mksweep-chip.gel-aero-fog, .gel-mksweepr-chip.gel-aero-fog, .gel-mkcandy-chip.gel-aero-fog, .gel-mkruled-chip.gel-aero-fog, .gel-mkgrid-chip.gel-aero-fog, .gel-mkdots-chip.gel-aero-fog, .gel-mkzig-chip.gel-aero-fog, .gel-mkwave-chip.gel-aero-fog, .gel-mkwaveup-chip.gel-aero-fog, .gel-mktick-chip.gel-aero-fog, .gel-mkarrow-chip.gel-aero-fog, .gel-mkarrowl-chip.gel-aero-fog, .gel-mkhex-chip.gel-aero-fog, .gel-mktab-chip.gel-aero-fog, .gel-mkfolder-chip.gel-aero-fog, .gel-mknotch-chip.gel-aero-fog, .gel-mkticket-chip.gel-aero-fog, .gel-mkoutline-chip.gel-aero-fog, .gel-mkoffset-chip.gel-aero-fog, .gel-mkmisprint-chip.gel-aero-fog, .gel-mkframe-chip.gel-aero-fog, .gel-mkglowline-chip.gel-aero-fog, .gel-mkblock-chip.gel-aero-fog, .gel-mkhalf-chip.gel-aero-fog, .gel-mkspot-chip.gel-aero-fog, .gel-mkglass-chip.gel-aero-fog, .gel-mkpen-chip.gel-aero-fog, .gel-mkquote-chip.gel-aero-fog, .gel-mkstar-chip.gel-aero-fog, .gel-mkrough-chip.gel-aero-fog, .gel-mkhatch-chip.gel-aero-fog, .gel-mkfade-chip.gel-aero-fog, .gel-mkcapsule-chip.gel-aero-fog, .gel-mkribbon-chip.gel-aero-fog, .gel-mksticker-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-mkdouble-chip.gel-aero-black, .gel-mkchisel-chip.gel-aero-black, .gel-mkbrush-chip.gel-aero-black, .gel-mktorn-chip.gel-aero-black, .gel-mkpencil-chip.gel-aero-black, .gel-mkdash-chip.gel-aero-black, .gel-mkneon-chip.gel-aero-black, .gel-mkwash-chip.gel-aero-black, .gel-mkcross-chip.gel-aero-black, .gel-mkdog-chip.gel-aero-black, .gel-mkpin-chip.gel-aero-black, .gel-mkstamp-chip.gel-aero-black, .gel-mktriple-chip.gel-aero-black, .gel-mkbracket-chip.gel-aero-black, .gel-mkblot-chip.gel-aero-black, .gel-mksweep-chip.gel-aero-black, .gel-mksweepr-chip.gel-aero-black, .gel-mkcandy-chip.gel-aero-black, .gel-mkruled-chip.gel-aero-black, .gel-mkgrid-chip.gel-aero-black, .gel-mkdots-chip.gel-aero-black, .gel-mkzig-chip.gel-aero-black, .gel-mkwave-chip.gel-aero-black, .gel-mkwaveup-chip.gel-aero-black, .gel-mktick-chip.gel-aero-black, .gel-mkarrow-chip.gel-aero-black, .gel-mkarrowl-chip.gel-aero-black, .gel-mkhex-chip.gel-aero-black, .gel-mktab-chip.gel-aero-black, .gel-mkfolder-chip.gel-aero-black, .gel-mknotch-chip.gel-aero-black, .gel-mkticket-chip.gel-aero-black, .gel-mkoutline-chip.gel-aero-black, .gel-mkoffset-chip.gel-aero-black, .gel-mkmisprint-chip.gel-aero-black, .gel-mkframe-chip.gel-aero-black, .gel-mkglowline-chip.gel-aero-black, .gel-mkblock-chip.gel-aero-black, .gel-mkhalf-chip.gel-aero-black, .gel-mkspot-chip.gel-aero-black, .gel-mkglass-chip.gel-aero-black, .gel-mkpen-chip.gel-aero-black, .gel-mkquote-chip.gel-aero-black, .gel-mkstar-chip.gel-aero-black, .gel-mkrough-chip.gel-aero-black, .gel-mkhatch-chip.gel-aero-black, .gel-mkfade-chip.gel-aero-black, .gel-mkcapsule-chip.gel-aero-black, .gel-mkribbon-chip.gel-aero-black, .gel-mksticker-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; color: #111111; }
+/* Double Stroke ++R=}text++ */
+.gel-mkdouble-chip{background:linear-gradient(180deg,var(--ae-l) 0 40%,transparent 40% 58%,var(--hx-w3) 58% 100%);border-radius:6px 8px 6px 8px/8px 6px 8px 6px;box-shadow:inset 2px 0 0 color-mix(in srgb,var(--ae-c) 55%,transparent),0 2px 0 color-mix(in srgb,var(--ae-c) 55%,transparent)}
+/* Chisel Tip ++R~}text++ */
+.gel-mkchisel-chip{padding:1px calc(9px + .35em);background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 60%,color-mix(in srgb,var(--ae-c) 55%,var(--ae-l)));clip-path:polygon(.35em 0,100% 0,calc(100% - .35em) 100%,0 100%);box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--ae-c) 70%,transparent)}
+/* Brush Ends ++R^}text++ */
+.gel-mkbrush-chip{border-radius:999px 40% 999px 40%/60% 999px 60% 999px;background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 62%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));box-shadow:0 2px 0 color-mix(in srgb,var(--ae-c) 55%,transparent)}
+/* Torn Ends ++R!}text++ */
+.gel-mktorn-chip{padding:1px 12px;background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 60%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));clip-path:polygon(0 8%,4px 0,5px 22%,0 40%,4px 62%,0 80%,3px 100%,calc(100% - 3px) 100%,100% 78%,calc(100% - 4px) 58%,100% 38%,calc(100% - 3px) 18%,calc(100% - 1px) 0)}
+/* Pencil Underline ++R%}text++ */
+.gel-mkpencil-chip{background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:4px;box-shadow:inset 0 -3px 0 -1px color-mix(in srgb,var(--ae-c) 80%,transparent)}
+.gel-mkpencil-chip::after{content:'';position:absolute;z-index:-1;left:.2em;right:.2em;bottom:.05em;height:.12em;background:repeating-linear-gradient(90deg,color-mix(in srgb,var(--ae-e1) 55%,transparent) 0 .35em,transparent .35em .45em);transform:rotate(-.6deg)}
+/* Dashed Marker ++R?}text++ */
+.gel-mkdash-chip{background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:5px;}
+.gel-mkdash-chip::after{content:'';position:absolute;z-index:-1;left:.15em;right:.15em;bottom:.08em;height:.2em;background:repeating-linear-gradient(90deg,var(--ae-c) 0 .55em,transparent .55em .75em);border-radius:2px}
+/* Neon Marker ++R*}text++ */
+.gel-mkneon-chip{background:linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:7px;box-shadow:0 0 .5em var(--ae-c),0 0 .15em var(--ae-c),inset 0 0 0 1px color-mix(in srgb,var(--ae-c) 70%,#fff)}
+/* Soft Wash ++R#}text++ */
+.gel-mkwash-chip{background:radial-gradient(ellipse at 30% 40%,var(--ae-l),var(--hx-w2) 75%),var(--hx-w1);border-radius:.7em .35em .8em .4em/.55em .7em .45em .65em;box-shadow:inset 0 0 .4em var(--hx-c45)}
+/* Crossed Out ++R-}text++ */
+.gel-mkcross-chip{background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:5px;box-shadow:0 2px 0 var(--hx-c50)}
+.gel-mkcross-chip::after{content:'';position:absolute;z-index:-1;left:.1em;right:.1em;top:52%;height:.1em;background:color-mix(in srgb,var(--ae-e1) 70%,transparent);transform:rotate(-1deg)}
+/* Dog Ear ++R/}text++ */
+.gel-mkdog-chip{background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 70%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));clip-path:polygon(0 0,calc(100% - .55em) 0,100% .55em,100% 100%,0 100%);border-radius:5px 0 5px 5px}
+.gel-mkdog-chip::after{content:'';position:absolute;right:0;top:0;width:.55em;height:.55em;background:linear-gradient(225deg,transparent 50%,var(--ae-c) 50%);z-index:-1}
+/* Pinned ++R.}text++ */
+.gel-mkpin-chip{padding:1px 9px 1px 1.4em;background:linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:6px;box-shadow:0 2px 0 var(--hx-c50)}
+.gel-mkpin-chip::before{content:'';position:absolute;left:.45em;top:50%;width:.5em;height:.5em;margin-top:-.25em;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--ae-c) 70%);box-shadow:0 1px 1px rgba(0,0,0,.3)}
+/* Stamp Mark ++R,}text++ */
+.gel-mkstamp-chip{background:var(--hx-w1);border-radius:4px;box-shadow:inset 0 0 0 2px var(--hx-c60),inset 0 0 0 4px var(--hx-w1),inset 0 0 0 5px var(--hx-c45)}
+/* Triple Underline ++R;}text++ */
+.gel-mktriple-chip{background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:4px 4px 0 0;padding-bottom:6px}
+.gel-mktriple-chip::after{content:'';position:absolute;z-index:-1;left:.1em;right:.1em;bottom:.04em;height:.3em;background:linear-gradient(180deg,var(--ae-c) 0 .07em,transparent .07em .15em,var(--ae-c) .15em .22em,transparent .22em .3em)}
+/* Bracket Edges ++R&}text++ */
+.gel-mkbracket-chip{background:linear-gradient(90deg,var(--hx-w3),var(--hx-w1) 25% 75%,var(--hx-w3));border-radius:2px;box-shadow:inset .15em 0 0 var(--ae-c),inset -.15em 0 0 var(--ae-c)}
+/* Ink Blot ++R+}text++ */
+.gel-mkblot-chip{background:radial-gradient(circle at 0 50%,var(--ae-c),transparent 1.1em),radial-gradient(circle at 100% 50%,var(--ae-c),transparent 1.1em),linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:7px}
+/* Sweep Out ++R$}text++ */
+.gel-mksweep-chip{background:linear-gradient(90deg,var(--ae-l),var(--hx-w2) 55%,transparent);border-radius:8px 0 0 8px;box-shadow:inset 0 -2px 0 var(--hx-c45)}
+/* Sweep In ++R@}text++ */
+.gel-mksweepr-chip{background:linear-gradient(270deg,var(--ae-l),var(--hx-w2) 55%,transparent);border-radius:0 8px 8px 0;box-shadow:inset 0 -2px 0 var(--hx-c45)}
+/* Candy Stripe ++R_}text++ */
+.gel-mkcandy-chip{background:repeating-linear-gradient(135deg,var(--ae-l) 0 .35em,var(--hx-w2) .35em .7em);border-radius:6px;box-shadow:0 2px 0 var(--hx-c50)}
+/* Ruled Paper ++R1}text++ */
+.gel-mkruled-chip{background:repeating-linear-gradient(180deg,transparent 0 .3em,var(--hx-c45) .3em calc(.3em + 1px)),linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:3px;box-shadow:inset .18em 0 0 var(--hx-c40)}
+/* Graph Paper ++R2}text++ */
+.gel-mkgrid-chip{background:repeating-linear-gradient(0deg,var(--hx-c36) 0 1px,transparent 1px .4em),repeating-linear-gradient(90deg,var(--hx-c36) 0 1px,transparent 1px .4em),var(--hx-w1);border-radius:3px}
+/* Dot Marker ++R3}text++ */
+.gel-mkdots-chip{background:radial-gradient(circle,var(--hx-c50) 0 .08em,transparent .1em) 0 0/.5em .5em,linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:6px;box-shadow:0 2px 0 var(--hx-c50)}
+/* Zigzag Under ++R4}text++ */
+.gel-mkzig-chip{background:linear-gradient(135deg,var(--ae-c) 25%,transparent 25%) 0 100%/.4em .2em repeat-x,linear-gradient(225deg,var(--ae-c) 25%,transparent 25%) 0 100%/.4em .2em repeat-x,linear-gradient(180deg,var(--hx-w1),var(--hx-w2));padding-bottom:.25em;border-radius:4px 4px 0 0}
+/* Wavy Under ++R5}text++ */
+.gel-mkwave-chip{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='5'%3E%3Cpath d='M0 3Q3 0 6 3T12 3' fill='none' stroke='%23888' stroke-width='1.6'/%3E%3C/svg%3E") 0 100%/12px 5px repeat-x,linear-gradient(180deg,var(--hx-w1),var(--hx-w2));padding-bottom:.3em;border-radius:4px 4px 0 0}
+/* Wavy Over ++R6}text++ */
+.gel-mkwaveup-chip{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='5'%3E%3Cpath d='M0 2Q3 5 6 2T12 2' fill='none' stroke='%23888' stroke-width='1.6'/%3E%3C/svg%3E") 0 0/12px 5px repeat-x,linear-gradient(180deg,var(--hx-w2),var(--hx-w1));padding-top:.3em;border-radius:0 0 4px 4px}
+/* Measure Ticks ++R7}text++ */
+.gel-mktick-chip{background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:2px;box-shadow:inset .12em 0 0 var(--ae-c),inset -.12em 0 0 var(--ae-c),0 2px 0 var(--hx-c60)}
+.gel-mktick-chip::before{content:'';position:absolute;z-index:-1;left:.12em;right:.12em;top:50%;height:1px;background:var(--hx-c40)}
+/* Arrow Right ++R=:text++ */
+.gel-mkarrow-chip{padding:1px calc(9px + .6em) 1px 9px;background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 65%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));clip-path:polygon(0 0,calc(100% - .6em) 0,100% 50%,calc(100% - .6em) 100%,0 100%)}
+/* Arrow Left ++R~:text++ */
+.gel-mkarrowl-chip{padding:1px 9px 1px calc(9px + .6em);background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 65%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));clip-path:polygon(.6em 0,100% 0,100% 100%,.6em 100%,0 50%)}
+/* Hexagon Ends ++R^:text++ */
+.gel-mkhex-chip{padding:1px calc(9px + .5em);background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 65%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));clip-path:polygon(.5em 0,calc(100% - .5em) 0,100% 50%,calc(100% - .5em) 100%,.5em 100%,0 50%)}
+/* Round Tab ++R!:text++ */
+.gel-mktab-chip{background:linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:.7em .7em 0 0;box-shadow:inset 0 -3px 0 var(--ae-c)}
+/* Folder Tab ++R%:text++ */
+.gel-mkfolder-chip{background:linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:3px 8px 4px 4px;box-shadow:0 2px 0 var(--hx-c50)}
+.gel-mkfolder-chip::before{content:'';position:absolute;z-index:-1;left:0;top:-.28em;width:1.3em;height:.35em;border-radius:4px 6px 0 0;background:var(--ae-l)}
+/* Ribbon Notch ++R?:text++ */
+.gel-mknotch-chip{padding:1px calc(9px + .5em) 1px 9px;background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 65%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));clip-path:polygon(0 0,100% 0,calc(100% - .5em) 50%,100% 100%,0 100%)}
+/* Ticket Ends ++R*:text++ */
+.gel-mkticket-chip{padding:1px 14px;background:radial-gradient(circle at 0 50%,transparent .32em,var(--ae-l) .34em) left/51% 100% no-repeat,radial-gradient(circle at 100% 50%,transparent .32em,var(--ae-l) .34em) right/51% 100% no-repeat;filter:drop-shadow(0 2px 0 var(--hx-c50))}
+/* Pill Outline ++R#:text++ */
+.gel-mkoutline-chip{background:var(--hx-w1);border-radius:999px;box-shadow:inset 0 0 0 2px var(--ae-c)}
+/* Offset Shadow ++R-:text++ */
+.gel-mkoffset-chip{background:var(--hx-w2);border-radius:4px;box-shadow:.2em .2em 0 var(--ae-c)}
+/* Misprint ++R/:text++ */
+.gel-mkmisprint-chip{background:transparent;box-shadow:none;text-shadow:.07em .07em 0 var(--hx-c60)}
+.gel-mkmisprint-chip::before{content:'';position:absolute;z-index:-1;inset:0;background:var(--ae-l);opacity:.75;transform:translate(-.12em,-.06em);border-radius:3px}
+.gel-mkmisprint-chip::after{content:'';position:absolute;z-index:-1;inset:0;background:var(--hx-w3);opacity:.8;transform:translate(.1em,.08em);border-radius:3px}
+/* Inset Frame ++R.:text++ */
+.gel-mkframe-chip{background:linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:6px;box-shadow:inset 0 0 0 2px rgba(255,255,255,.75),inset 0 0 0 3px var(--hx-c50),0 2px 0 var(--hx-c45)}
+/* Glow Underline ++R,:text++ */
+.gel-mkglowline-chip{background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:4px 4px 0 0;padding-bottom:5px}
+.gel-mkglowline-chip::after{content:'';position:absolute;z-index:-1;left:0;right:0;bottom:0;height:.18em;background:var(--ae-c);border-radius:99px;box-shadow:0 0 .4em var(--ae-c)}
+/* Heavy Base ++R;:text++ */
+.gel-mkblock-chip{background:linear-gradient(180deg,var(--hx-w1) 0 55%,var(--ae-l) 55% 100%);border-radius:5px;box-shadow:inset 0 -2px 0 var(--ae-c)}
+/* Top Half ++R&:text++ */
+.gel-mkhalf-chip{background:linear-gradient(180deg,var(--ae-l) 0 55%,transparent 55% 100%);border-radius:7px 7px 0 0;box-shadow:inset 0 2px 0 var(--ae-c)}
+/* Spot Corner ++R+:text++ */
+.gel-mkspot-chip{background:radial-gradient(circle at 12% 18%,var(--ae-l),transparent 1.4em),linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:6px;box-shadow:0 2px 0 var(--hx-c50)}
+/* Glass Marker ++R$:text++ */
+.gel-mkglass-chip{background:linear-gradient(180deg,var(--hx-w3) 0 50%,var(--ae-l) 50% 100%);border-radius:6px;box-shadow:inset 0 0 0 1px var(--hx-c60),inset 0 1px 0 rgba(255,255,255,.8)}
+/* Pen Dot ++R@:text++ */
+.gel-mkpen-chip{padding:1px 9px 1px 1.35em;background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:99px;box-shadow:0 2px 0 var(--hx-c45)}
+.gel-mkpen-chip::before{content:'';position:absolute;left:.5em;top:50%;width:.4em;height:.4em;margin-top:-.2em;border-radius:50%;background:var(--ae-c)}
+/* Quote Bar ++R_:text++ */
+.gel-mkquote-chip{background:linear-gradient(90deg,var(--hx-w3),var(--hx-w1));border-radius:0 6px 6px 0;box-shadow:inset .25em 0 0 var(--ae-c)}
+/* Star Glint ++R1:text++ */
+.gel-mkstar-chip{background:linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:6px;box-shadow:0 2px 0 var(--hx-c50)}
+.gel-mkstar-chip::after{content:'';position:absolute;z-index:1;right:-.15em;top:-.3em;width:.7em;height:.7em;background:#fff;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);filter:drop-shadow(0 0 2px var(--ae-c))}
+/* Rough Hand ++R2:text++ */
+.gel-mkrough-chip{border-radius:.9em .3em 1em .35em/.35em .9em .3em 1em;background:linear-gradient(176deg,var(--hx-w2),var(--ae-l) 65%,color-mix(in srgb,var(--ae-c) 45%,var(--ae-l)));transform:rotate(-.8deg);box-shadow:0 2px 0 var(--hx-c45)}
+/* Hatch Band ++R3:text++ */
+.gel-mkhatch-chip{background:repeating-linear-gradient(135deg,var(--hx-c36) 0 1px,transparent 1px .3em) 0 100%/100% 42% no-repeat,linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:4px;box-shadow:inset 0 -2px 0 var(--hx-c50)}
+/* Faded Ends ++R4:text++ */
+.gel-mkfade-chip{background:linear-gradient(90deg,transparent,var(--ae-l) 22%,var(--ae-l) 78%,transparent);border-radius:0;box-shadow:none;padding:1px 14px}
+.gel-mkfade-chip::after{content:'';position:absolute;z-index:-1;left:12%;right:12%;bottom:0;height:2px;background:var(--ae-c)}
+/* Capsule Bar ++R5:text++ */
+.gel-mkcapsule-chip{background:linear-gradient(180deg,var(--hx-w1),var(--hx-w2));border-radius:5px;padding-bottom:6px}
+.gel-mkcapsule-chip::after{content:'';position:absolute;z-index:-1;left:.1em;right:.1em;bottom:.05em;height:.22em;border-radius:99px;background:linear-gradient(180deg,var(--hx-w3),var(--ae-c))}
+/* Ribbon Bar ++R6:text++ */
+.gel-mkribbon-chip{padding:1px calc(9px + .5em);background:linear-gradient(180deg,var(--hx-w2),var(--ae-l) 65%,color-mix(in srgb,var(--ae-c) 50%,var(--ae-l)));clip-path:polygon(0 0,100% 0,calc(100% - .5em) 50%,100% 100%,0 100%,.5em 50%)}
+/* Sticker Mark ++R7:text++ */
+.gel-mksticker-chip{background:linear-gradient(180deg,var(--hx-w2),var(--ae-l));border-radius:8px;box-shadow:0 0 0 .14em #fff,0 .2em .45em rgba(0,0,0,.28);margin:0 5px}
