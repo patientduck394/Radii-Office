@@ -8417,6 +8417,39 @@ Three more gel marks, in all 13 Annotate colors, built like the Gel Underline (g
 
 By name they are `#R.bracket(words)`, `#B.guillemets(words)` and `#PR.dbracket(words)`.
 
+### Every Annotate style by name
+
+Every pen and highlight from the Annotator can be written by name as `#COLOR.name(words)`, in any highlight color (like R, O, Y, G, B, PR). These are the older ones:
+
+* `#Y.underline(words)` Gel Underline: #Y.underline(underline words)
+* `#Y.strike(words)` Gel Strike: #Y.strike(strike words)
+* `#Y.box(words)` Gel Box: #Y.box(box words)
+* `#Y.brackets(words)` Corner Brackets: #Y.brackets(brackets words)
+* `#Y.select(words)` Gel Select: #Y.select(select words)
+* `#Y.ink(words)` Color Ink: #Y.ink(ink words)
+* `#Y.spotlight(words)` Spotlight: #Y.spotlight(spotlight words)
+* `#Y.accent(words)` Gel Accent: #Y.accent(accent words)
+* `#Y.bubble(words)` Gel Bubble: #Y.bubble(bubble words)
+* `#Y.dusk(words)` Dusk: #Y.dusk(dusk words)
+* `#Y.prism(words)` Prism: #Y.prism(prism words)
+* `#Y.complement(words)` Complement: #Y.complement(complement words)
+* `#Y.ticket(words)` Ticket: #Y.ticket(ticket words)
+* `#Y.stamp(words)` Stamp: #Y.stamp(stamp words)
+* `#Y.checker(words)` Checker: #Y.checker(checker words)
+* `#Y.halftone(words)` Halftone: #Y.halftone(halftone words)
+* `#Y.aurora(words)` Aurora: #Y.aurora(aurora words)
+* `#Y.mild(words)` Mild: #Y.mild(mild words)
+* `#Y.wrap(words)` Gel Wrap: #Y.wrap(wrap words)
+* `#Y.belt(words)` Highlight Belt: #Y.belt(belt words)
+* `#Y.bucket(words)` Gel Bucket: #Y.bucket(bucket words)
+* `#Y.torpedo(words)` Gel Torpedo: #Y.torpedo(torpedo words)
+* `#Y.bottle(words)` Gel Bottle: #Y.bottle(bottle words)
+* `#Y.packet(words)` Gel Packet: #Y.packet(packet words)
+* `#Y.capsule(words)` Gel Capsule: #Y.capsule(capsule words)
+* `#Y.frost(words)` Frost: #Y.frost(frost words)
+* `#Y.pixel(words)` Pixel: #Y.pixel(pixel words)
+* `#Y.flag(words)` Gel Flag: #Y.flag(flag words)
+
 ### More highlight styles
 
 Twelve more highlight styles, written by name in any highlight color:
