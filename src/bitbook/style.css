@@ -19896,17 +19896,16 @@ mark.an-hl.an-s-ml {
     box-shadow: none;
 }
 mark.an-hl.an-s-gw {
-    padding: 0.06em 0.5em; margin: 0 -0.5em; border: 1.5px solid color-mix(in srgb, var(--hl-edge) 70%, transparent); border-radius: 999px;
+    padding: 0.06em 0.6em; margin: 0 -0.3em; border: 1.5px solid color-mix(in srgb, var(--hl-edge) 65%, transparent); border-radius: 0.35em;
     background-repeat: no-repeat;
     background-image:
-        linear-gradient(color-mix(in srgb, var(--hl-edge) 55%, transparent), color-mix(in srgb, var(--hl-edge) 55%, transparent)),
-        linear-gradient(color-mix(in srgb, var(--hl-edge) 55%, transparent), color-mix(in srgb, var(--hl-edge) 55%, transparent)),
-        linear-gradient(90deg, rgba(255,255,255,0.5), rgba(255,255,255,0) 0.55em, rgba(255,255,255,0) calc(100% - 0.55em), rgba(255,255,255,0.5)),
-        linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.08) 48%, rgba(255,255,255,0) 52%),
-        linear-gradient(180deg, color-mix(in srgb, var(--hl-c) 38%, transparent), color-mix(in srgb, var(--hl-c) 62%, transparent));
-    background-size: 2px 70%, 2px 70%, 100% 100%, 100% 100%, 100% 100%;
-    background-position: 0.5em 50%, calc(100% - 0.5em) 50%, 0 0, 0 0, 0 0;
-    box-shadow: inset 0 -3px 5px color-mix(in srgb, var(--hl-c) 30%, transparent), 0 2px 5px color-mix(in srgb, var(--hl-c) 28%, transparent);
+        repeating-linear-gradient(115deg, color-mix(in srgb, var(--hl-edge) 55%, transparent) 0 2px, transparent 2px 5px),
+        repeating-linear-gradient(115deg, color-mix(in srgb, var(--hl-edge) 55%, transparent) 0 2px, transparent 2px 5px),
+        linear-gradient(180deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.08) 45%, rgba(255,255,255,0) 50%),
+        linear-gradient(180deg, color-mix(in srgb, var(--hl-c) 34%, transparent), color-mix(in srgb, var(--hl-c) 55%, transparent));
+    background-size: 0.4em 100%, 0.4em 100%, 100% 100%, 100% 100%;
+    background-position: 0.12em 0, calc(100% - 0.12em) 0, 0 0, 0 0;
+    box-shadow: inset 0.5em 0 0 -0.44em color-mix(in srgb, var(--hl-edge) 45%, transparent), inset -0.5em 0 0 -0.44em color-mix(in srgb, var(--hl-edge) 45%, transparent), 0 2px 4px color-mix(in srgb, var(--hl-c) 28%, transparent);
     -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
 /* Highlight Belt: a see-through color band with two glossy gray rails laid over it (above the band, under the text)! */
