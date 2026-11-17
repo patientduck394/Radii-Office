@@ -23,7 +23,6 @@ var WRITEOUT_SHELL = [
   'writeout-office.css?v=20261132r',
   'radii-images.js?v=20261131v',
   'images-glue.js?v=20261131v',
-  'drawio-plugin.js?v=20261226a',
   'keydown-guide.js?v=20261226b',
   'inkpath-kv-plugin.js?v=20261202a',
   'zonerider-scene.js?v=20261204a',

@@ -125,8 +125,8 @@
         open(scene).then((r) => { if (r) { fill(img, r); saved(); toast('3D scene updated!'); } });
     }, true);
 
-    // Classic Insert menu: "3D Scene (Zonerider)..." under the Inkpath and draw.io items
-    const after = document.querySelector('#insert-menu-popup [data-insert="inkpath"]') || document.querySelector('#insert-menu-popup [data-insert="drawio"]') || document.querySelector('#insert-menu-popup [data-insert="image"]');
+    // Classic Insert menu: "3D Scene (Zonerider)..." under the Inkpath item
+    const after = document.querySelector('#insert-menu-popup [data-insert="inkpath"]') || document.querySelector('#insert-menu-popup [data-insert="image"]');
     if (after) {
         const b = after.cloneNode(true);
         b.setAttribute('data-insert', 'zonerider');

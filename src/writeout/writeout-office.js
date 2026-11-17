@@ -1014,7 +1014,6 @@
                     { big: true, icon: 'image', label: 'Picture', run: function () { insertKind('image'); } },
                     { stack: [
                         { sm: true, cls: 'os-dim', icon: 'search', label: 'OpenDB Images', title: 'Pick a free CC0 picture from OpenDB!', run: function () { window.openOnlinePictures(); } },
-                        { sm: true, cls: 'os-dim', icon: 'drawio', label: 'draw.io', title: 'Draw a diagram in draw.io! (Double-click a diagram later to edit it)', run: function () { if (window.openDrawioDiagram) window.openDrawioDiagram(); } },
                         { sm: true, cls: 'os-dim', icon: 'pen', label: 'Inkpath', title: 'Add an Inkpath drawing (.kv file)!', run: function () { if (window.insertInkpathDrawing) window.insertInkpathDrawing(); } }
                     ] },
                     { stack: [

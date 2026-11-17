@@ -16,7 +16,7 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 * **License:** MIT License
 * **Copyright:** Copyright (c) 2022 YANDEX LLC
 * **Source:** https://github.com/gravity-ui/icons
-* **Used for:** the draw.io (nodes) icon in every app with the draw.io feature, and fallback icons in the Nova layout (Writeout)
+* **Used for:** fallback icons in the Nova layout (Writeout)
 
 ---
 
@@ -70,16 +70,7 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 
 ---
 
-### 9. draw.io (Writeout, Bitbook, Imbuer and Amber "draw.io" diagrams)
-* **License:** Apache License 2.0 (the draw.io source code); see `NOTICE` at the root of the repository
-* **Copyright:** draw.io Ltd (previously named JGraph) and draw.io AG
-* **Source:** https://github.com/jgraph/drawio
-* **How it is used:** Radii Office does not copy or modify draw.io's code. Writeout, Bitbook, Imbuer and Amber open the official draw.io editor in embed mode from https://embed.diagrams.net and keep the PNG picture it exports (with the diagram stored inside it).
-* **Trademark:** draw.io is a registered EU trademark (#018062448) of draw.io Ltd. Radii Office is not affiliated with, endorsed by or sponsored by draw.io; the name is used only to say which editor opens, and the draw.io logo is not used.
-
----
-
-### 10. Libraries bundled with Delta (`delta/vendor/`)
+### 9. Libraries bundled with Delta (`delta/vendor/`)
 * **KaTeX 0.16.8** (LaTeX typesetting and its fonts): MIT License, Copyright (c) 2013-2020 Khan Academy and other contributors, https://github.com/KaTeX/KaTeX
 * **d3 7.9.0** (graph drawing): ISC License, Copyright 2010-2023 Mike Bostock, https://github.com/d3/d3
 * **function-plot 1.25.1** (the plotting engine): MIT License, Copyright (c) Mauricio Poppe, https://github.com/mauriciopoppe/function-plot

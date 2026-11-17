@@ -119,8 +119,8 @@
         kv.forEach((f) => addFile(f, at));
     }, true);
 
-    // Classic Insert menu: "Inkpath Drawing (.kv)..." right under "Image..." (and draw.io)!
-    const after = document.querySelector('#insert-menu-popup [data-insert="drawio"]') || document.querySelector('#insert-menu-popup [data-insert="image"]');
+    // Classic Insert menu: "Inkpath Drawing (.kv)..." right under "Image..."!
+    const after = document.querySelector('#insert-menu-popup [data-insert="image"]');
     if (after) {
         const b = after.cloneNode(true);
         b.setAttribute('data-insert', 'inkpath');
