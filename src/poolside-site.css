@@ -1,0 +1,177 @@
+/* =====================================================================
+   Poolside for the website! Clear sky-to-pool water, white glass cards, drifting bubbles,
+   cyan buttons and crisp orange accents (lane ropes, tile edges, life-ring buttons).
+   Loaded LAST on every main page (index, products, about, docs, source, code of conduct,
+   not found), so it re-themes the page's own styles. Same palette as Waterflow's Poolside!
+   ===================================================================== */
+:root {
+    --ps-sky1: #d9f9ff; --ps-sky2: #8fe2fa; --ps-sky3: #36cdee;
+    --ps-ink: #0b2a44; --ps-mute: #2c5877; --ps-line: rgba(14, 90, 150, .22);
+    --ps-glass: rgba(255, 255, 255, .62); --ps-glass2: rgba(255, 255, 255, .85);
+    --ps-aqua1: #6fe0ff; --ps-aqua2: #36cdee; --ps-aqua3: #0a93b2;
+    --ps-or1: #ffb35c; --ps-or2: #ff8a1b; --ps-or3: #d96a00; --ps-orsoft: #ffe9d1; --ps-orink: #b85500;
+    --ps-soft: #d2f7fc;
+    --ps-shadow: 0 10px 30px rgba(8, 70, 130, .22);
+}
+html, body {
+    background: linear-gradient(180deg, var(--ps-sky1) 0%, var(--ps-sky2) 45%, var(--ps-sky3) 90%) fixed !important;
+    color: var(--ps-ink) !important;
+    -webkit-font-smoothing: antialiased;
+}
+::selection { background: rgba(255, 138, 27, .35); }
+
+/* bubbles drifting up behind everything (CSS only; two layers of four) */
+html::before, html::after {
+    content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 0; background-repeat: no-repeat;
+}
+html::before {
+    background-image:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%),
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%),
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%),
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%);
+    background-size: 30px 30px, 64px 64px, 22px 22px, 50px 50px;
+    background-position: 6% 110%, 18% 125%, 33% 118%, 49% 130%;
+    animation: ps-rise-a 26s linear infinite;
+}
+html::after {
+    background-image:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%),
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%),
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%),
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,.95) 0 10%, rgba(255,255,255,.18) 42%, rgba(255,255,255,.05) 70%);
+    background-size: 36px 36px, 70px 70px, 26px 26px, 44px 44px;
+    background-position: 63% 112%, 77% 128%, 88% 116%, 95% 124%;
+    animation: ps-rise-b 34s linear infinite;
+}
+@keyframes ps-rise-a { to { background-position: 6% -30%, 18% -30%, 33% -30%, 49% -30%; } }
+@keyframes ps-rise-b { to { background-position: 63% -30%, 77% -30%, 88% -30%, 95% -30%; } }
+@media (prefers-reduced-motion: reduce) { html::before, html::after { animation: none; display: none; } }
+body, .elm-page { position: relative; z-index: 1; }
+
+/* the waterline: a floating glass bar with an orange-and-white lane rope under it */
+.top-navbar {
+    background: var(--ps-glass2) !important;
+    backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border-bottom: 0 !important;
+    box-shadow: var(--ps-shadow), inset 0 1px 0 rgba(255,255,255,.9) !important;
+}
+.top-navbar::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -6px; height: 6px;
+    background: repeating-linear-gradient(90deg, var(--ps-or2) 0 14px, #fff 14px 28px);
+    box-shadow: 0 1px 2px rgba(0, 60, 120, .25);
+}
+.brand-logo { color: var(--ps-ink) !important; text-shadow: none !important; }
+.brand-logo img { background: #fff; border-radius: 12px; padding: 2px 8px; box-shadow: inset 0 0 0 2px var(--ps-aqua2); box-sizing: content-box; }
+.brand-logo span, .brand-logo div span { color: var(--ps-ink) !important; }
+.nav-links a { color: var(--ps-ink) !important; padding: 6px 12px; border-radius: 999px; border: 2px solid transparent; text-shadow: none !important; transition: background .15s, border-color .15s, color .15s; }
+.nav-links a:hover, .nav-links a.active { background: var(--ps-soft); border-color: var(--ps-aqua2); color: var(--ps-aqua3) !important; text-shadow: none !important; }
+.nav-links a.active { background: var(--ps-orsoft); border-color: var(--ps-or2); color: var(--ps-orink) !important; }
+
+/* titles and text */
+.hero-title, .page-title, .conduct-title {
+    background: linear-gradient(135deg, var(--ps-ink) 0%, var(--ps-aqua3) 65%, #1aa7c9 100%) !important;
+    -webkit-background-clip: text !important; background-clip: text !important; -webkit-text-fill-color: transparent !important; text-shadow: none !important;
+}
+.hero-subtitle, .page-subtitle, .sub { color: #1d4a6b !important; }
+h1 { color: var(--ps-ink); }
+h2, .doc-wrap h2, .doc-card h3 { color: var(--ps-ink) !important; }
+.doc-wrap h2 { padding-bottom: 8px; position: relative; }
+.doc-wrap h2::after { content: ""; position: absolute; left: 0; bottom: 0; width: 84px; height: 5px; border-radius: 4px; background: repeating-linear-gradient(90deg, var(--ps-or2) 0 12px, #fff 12px 24px); box-shadow: 0 1px 2px rgba(0,60,120,.25); }
+.doc-wrap p, .doc-wrap li, .doc-card p, .conduct-body p, .conduct-body li, .no-elm { color: var(--ps-ink) !important; }
+a, .doc-wrap a.inline, .doc-card a, .conduct-body a { color: var(--ps-aqua3); }
+.doc-wrap a.inline, .doc-card a { color: var(--ps-aqua3) !important; }
+a:hover { color: var(--ps-orink); }
+code { background: rgba(255,255,255,.7) !important; color: var(--ps-ink); box-shadow: inset 0 0 0 1px var(--ps-line); }
+.meta, .elm-made { color: var(--ps-mute) !important; }
+
+/* white glass cards with an orange tile edge on hover */
+.app-card-btn, .product-card, .doc-card, .card, .place, .archives, .note, .guess, .rt-card {
+    background: var(--ps-glass) !important;
+    backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
+    border: 1px solid rgba(255,255,255,.75) !important;
+    box-shadow: var(--ps-shadow), inset 0 1px 0 rgba(255,255,255,.9) !important;
+    color: var(--ps-ink) !important;
+}
+.app-card-btn:hover, .product-card:hover, .place:hover, .doc-card:hover, .card:hover {
+    border-color: rgba(255,255,255,.9) !important;
+    box-shadow: inset 5px 0 0 var(--ps-or2), 0 12px 28px rgba(8, 70, 130, .3), inset 0 1px 0 rgba(255,255,255,.9) !important;
+    transform: translateY(-3px);
+}
+.app-name, .product-title, .place-name, .card h2, .archives-title { color: var(--ps-ink) !important; }
+.app-desc, .place-what, .card p, .archives-note, .note { color: var(--ps-mute) !important; }
+.archives-chev, .archives-icon { color: var(--ps-or3) !important; }
+.product-desc-box { background: rgba(255,255,255,.7) !important; border: 1px solid var(--ps-line) !important; color: var(--ps-ink) !important; }
+.product-desc-box * { color: inherit; }
+.note { background: rgba(255,255,255,.55) !important; }
+.guess { background: var(--ps-orsoft) !important; border: 2px solid var(--ps-or2) !important; color: var(--ps-orink) !important; }
+.guess a { color: var(--ps-orink) !important; }
+.rt-title { color: var(--ps-orink) !important; }
+.rt-count { color: var(--ps-mute) !important; }
+.rt-btn { background: var(--ps-soft) !important; border: 2px solid var(--ps-aqua2) !important; color: var(--ps-aqua3) !important; }
+.rt-btn:hover { background: var(--ps-aqua2) !important; color: #04283d !important; }
+
+/* badges: cyan or orange only */
+.badge-frame-sky, .badge-frame-lime, .badge-frame-blue, .badge-frame-emerald, .badge-frame-amethyst, .badge-frame-rose, .badge-frame-pink {
+    border: 2px solid var(--ps-aqua2) !important; background: var(--ps-soft) !important; color: var(--ps-aqua3) !important; box-shadow: none !important;
+}
+.badge-frame-orange, .badge-frame-gold, .badge-frame-crimson {
+    border: 2px solid var(--ps-or2) !important; background: var(--ps-orsoft) !important; color: var(--ps-orink) !important; box-shadow: none !important;
+}
+.badge-btn { border-radius: 999px !important; }
+
+/* buttons: Launch is the orange life ring, the rest are cyan gel pills */
+.launch-btn, .btn.kc {
+    background: var(--ps-orsoft) !important; border: 2px solid var(--ps-or2) !important; color: var(--ps-orink) !important;
+    border-radius: 999px !important; box-shadow: 0 3px 10px rgba(255,138,27,.25) !important; text-shadow: none !important;
+}
+.launch-btn:hover, .btn.kc:hover { background: var(--ps-or2) !important; color: #fff !important; box-shadow: 0 6px 16px rgba(255,138,27,.45) !important; }
+.download-btn, .mobile-btn, .btn, .chip {
+    background: var(--ps-soft) !important; border: 2px solid var(--ps-aqua2) !important; color: var(--ps-aqua3) !important;
+    border-radius: 999px !important; box-shadow: 0 3px 10px rgba(8,70,130,.14) !important; text-shadow: none !important;
+}
+.download-btn:hover, .mobile-btn:hover, .btn:hover, .chip:hover { background: var(--ps-aqua2) !important; color: #04283d !important; box-shadow: 0 6px 16px rgba(8,70,130,.25) !important; }
+.chip-plain { background: rgba(255,255,255,.7) !important; }
+.mobile-btn:focus-visible, .download-btn:focus-visible, .archives-summary:focus-visible { outline: 3px solid rgba(255,138,27,.5); outline-offset: 2px; }
+.fold { color: var(--ps-ink); }
+.fold-arrow { color: var(--ps-or3) !important; }
+
+/* tables in the docs */
+.doc-table { background: var(--ps-glass2) !important; box-shadow: var(--ps-shadow); border-radius: 14px; }
+.doc-table th { background: var(--ps-soft) !important; color: var(--ps-ink) !important; }
+.doc-table td, .doc-table th { border-bottom: 1px solid var(--ps-line) !important; color: var(--ps-ink); }
+.doc-table td { background: transparent !important; }
+.doc-table code { background: #fff !important; color: var(--ps-aqua3); }
+
+/* footer: a glass strip */
+.site-footer {
+    background: var(--ps-glass2) !important; border-top: 0 !important; color: var(--ps-mute) !important;
+    backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); box-shadow: 0 -6px 20px rgba(8,70,130,.15); position: relative;
+}
+.site-footer::before {
+    content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 6px;
+    background: repeating-linear-gradient(90deg, var(--ps-or2) 0 14px, #fff 14px 28px);
+}
+.site-footer a { color: var(--ps-aqua3) !important; text-shadow: none !important; }
+.site-footer a:hover { color: var(--ps-orink) !important; }
+.footer-rss-link:hover img { filter: drop-shadow(0 0 5px rgba(255,138,27,.7)); }
+
+/* Products page: the Find an app bar and the Download popup (Svelte parts) */
+.rf-search { background: #fff !important; color: var(--ps-ink) !important; border: 2px solid var(--ps-aqua2) !important; box-shadow: inset 0 1px 3px rgba(0,60,120,.12) !important; }
+.rf-search::placeholder { color: var(--ps-mute) !important; }
+.rf-search:focus { border-color: var(--ps-or2) !important; box-shadow: 0 0 0 3px rgba(255,138,27,.28) !important; }
+.rf-count, .rf-empty { color: #1d4a6b !important; }
+.rf-chip { background: rgba(255,255,255,.75) !important; color: var(--ps-aqua3) !important; border: 2px solid var(--ps-aqua2) !important; }
+.rf-chip:hover { background: var(--ps-soft) !important; border-color: var(--ps-or2) !important; }
+.rf-chip[aria-pressed='true'] { background: var(--ps-orsoft) !important; border-color: var(--ps-or2) !important; color: var(--ps-orink) !important; }
+.dl-dialog { background: #f2fcff !important; color: var(--ps-ink) !important; border: 2px solid var(--ps-aqua2) !important; box-shadow: 0 20px 60px rgba(0,40,80,.4) !important; }
+.dl-dialog::backdrop { background: rgba(8, 70, 130, .35) !important; }
+.dl-head h3 { color: var(--ps-ink); }
+.dl-close { background: #fff !important; color: var(--ps-aqua3) !important; border: 2px solid var(--ps-aqua2) !important; }
+.dl-sub, .dl-status { color: var(--ps-mute) !important; }
+.os-btn { background: var(--ps-soft) !important; border: 2px solid var(--ps-aqua2) !important; color: var(--ps-aqua3) !important; box-shadow: 0 3px 10px rgba(8,70,130,.14) !important; }
+.os-btn:hover:not(:disabled) { background: var(--ps-aqua2) !important; color: #04283d !important; }
+.os-btn:disabled { background: rgba(255,255,255,.6) !important; border-color: var(--ps-line) !important; color: #7b97ad !important; box-shadow: none !important; }
+
+/* the Documentation and About titles were tucked under the bar: give them the same top room as Products */
+.doc-wrap { margin-top: 96px !important; }
