@@ -8625,6 +8625,169 @@ The styles are terminal, mac, dark, paper, blueprint, neon, ember, gel and diff.
 
 Inline code takes a style too, like `ls -la`{terminal}, `Cmd`{key} or `x`{neon}. The inline styles are terminal, dark, paper, blueprint, neon, ember, gel and key!
 
+## Page breaks and dividers
+
+### Page breaks
+
+A line that is only `::pagebreak` is a page break. In Writeout's Pages view the text after it starts on a fresh page, and printing starts a new page there too. Writeout's New Page button (or Ctrl/Cmd+Enter) puts one at the caret, and Backspace at the start of the next line takes it away.
+
+### Divider styles
+
+`::divider` draws the aqua strip. Put a style in the braces for another look, like `::divider{wavy}`, and add a title after a `|` to run the line on both sides of it, like `::divider{poolside|Lap two}`. The styles are aqua, poolside, dual, notched, wavy, dotted, dashed, zigzag, glow, ruler, stitched, bubbles, scallop, neon, arrows, fade, swallow, triple, stepped, crest, ticket, gel, glass and rim.
+
+`::divider{aqua}` the original aqua strip
+
+::divider{aqua}
+
+`::divider{poolside}` plain orange dashed lines, no special effects at all
+
+::divider{poolside}
+
+`::divider{dual}` a thick and a thin rail
+
+::divider{dual}
+
+`::divider{notched}` pointed ends and a V notch in the middle
+
+::divider{notched}
+
+`::divider{wavy}` a rolling wave
+
+::divider{wavy}
+
+`::divider{dotted}` a row of gel beads
+
+::divider{dotted}
+
+`::divider{dashed}` rounded dashes
+
+::divider{dashed}
+
+`::divider{zigzag}` a zigzag
+
+::divider{zigzag}
+
+`::divider{glow}` a neon line that fades out at both ends
+
+::divider{glow}
+
+`::divider{ruler}` ruler tick marks
+
+::divider{ruler}
+
+`::divider{stitched}` orange stitches
+
+::divider{stitched}
+
+`::divider{bubbles}` bubbles rising in the water
+
+::divider{bubbles}
+
+`::divider{scallop}` a row of little arcs
+
+`::divider{neon}` a thin glowing tube of light
+
+::divider{neon}
+
+`::divider{arrows}` a row of little chevrons pointing right
+
+::divider{arrows}
+
+`::divider{fade}` a soft line that fades out at both ends
+
+::divider{fade}
+
+`::divider{swallow}` a two-tone ribbon with a V cut at each end, a cousin of Notched
+
+::divider{swallow}
+
+`::divider{triple}` three V notches in a candy-striped bar
+
+::divider{triple}
+
+`::divider{stepped}` a square notch in a bar of little blocks
+
+::divider{stepped}
+
+`::divider{crest}` a bar that fades out at both ends with a point rising in the middle
+
+::divider{crest}
+
+`::divider{ticket}` a ticket stub with round bites at both ends and a dashed line
+
+::divider{ticket}
+
+`::divider{gel}` the Reflection Shine look: the color with a flat white shine over its top half and a soft glow along the bottom
+
+::divider{gel}
+
+`::divider{glass}` a glossy glass bar with a hard-edged gloss over a diagonal color gradient
+
+::divider{glass}
+
+`::divider{rim}` a thick rim around a fill that melts to white, like the Rim chips
+
+::divider{rim}
+
+### Divider colors
+
+Any named style can take one of 16 colors as a third part: `::divider{style|Title|color}`. Leave the title empty to color a plain line, like `::divider{wavy||red}`. A color only works together with a style (`::divider{red}` is just the original aqua strip), and the title takes the color too. The colors are `red`, `orange`, `gold`, `yellow`, `lime`, `green`, `turquoise`, `teal`, `cyan`, `blue`, `purple`, `pink`, `slate`, `white`, `fog`, `black`.
+
+`::divider{wavy||red}`
+
+::divider{wavy||red}
+
+`::divider{poolside||blue}`
+
+::divider{poolside||blue}
+
+`::divider{dual||green}`
+
+::divider{dual||green}
+
+`::divider{glow||pink}`
+
+::divider{glow||pink}
+
+`::divider{dashed||purple}`
+
+::divider{dashed||purple}
+
+`::divider{scallop|Title|orange}`
+
+::divider{scallop|Title|orange}
+
+::divider{scallop}
+
+`::divider{notched|Chapter two}`
+
+::divider{notched|Chapter two}
+
+
+`::console{warning: low battery}`
+
+::console{warning: low battery}
+
+`::diff{+ added a new line|- removed an old one}`
+
+::diff{+ added a new line|- removed an old one}
+
+`::horizon` (no text needed)
+
+::horizon
+
+`::waypoint{NAV: HOME // ALT: 0 FT}`
+
+::waypoint{NAV: HOME // ALT: 0 FT}
+
+`::entry{Today I learned about Keydown.}`
+
+::entry{Today I learned about Keydown.}
+
+`::draw` (a drawing pad in Writeout)
+
+::draw
+
 ## Blank space for practice
 `::blank{style|rows|Label}` leaves an empty box to write in, for textbooks and worksheets. The styles are box, dashed, lines, grid and dots. The rows are how tall it is (4 by default), and the label is optional. `::blank{6}` is a six-row box.
 
