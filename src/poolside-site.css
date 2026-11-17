@@ -62,7 +62,7 @@ body, .elm-page { position: relative; z-index: 1; }
     box-shadow: 0 1px 2px rgba(0, 60, 120, .25);
 }
 .brand-logo { color: var(--ps-ink) !important; text-shadow: none !important; }
-.brand-logo img { background: #fff; border-radius: 12px; padding: 2px 8px; box-shadow: inset 0 0 0 2px var(--ps-aqua2); box-sizing: content-box; }
+.brand-logo img { width: 120px; height: auto; display: block; }  /* the logo stands on its own: no pill, no border */
 .brand-logo span, .brand-logo div span { color: var(--ps-ink) !important; }
 .nav-links a { color: var(--ps-ink) !important; padding: 6px 12px; border-radius: 999px; border: 2px solid transparent; text-shadow: none !important; transition: background .15s, border-color .15s, color .15s; }
 .nav-links a:hover, .nav-links a.active { background: var(--ps-soft); border-color: var(--ps-aqua2); color: var(--ps-aqua3) !important; text-shadow: none !important; }
