@@ -17,6 +17,7 @@
         const svgs = {
             file: '<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/>', newDoc: '<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M12 11v6M9 14h6"/>',
             export: '<path d="M12 16V4m0 0l-4 4m4-4l4 4M5 14v6h14v-6"/>', copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/>',
+            clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', star: '<path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-2.9-5.4 2.9 1.1-6-4.5-4.2 6.1-.8z"/>', check: '<path d="M5 12l5 5 9-10"/>',
             trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 11v6M14 11v6"/>'
         };
         OS = {
@@ -126,6 +127,7 @@
                 + '<div class="rd-main"><input class="rd-name" readonly title="Double-click to rename" spellcheck="false" aria-label="Document name" value="' + esc(nameOf(r, id)) + '"><span class="rd-meta">' + (cur ? '<b class="rd-badge">Open now</b> ' : '') + 'Edited ' + esc(when(d.modified)) + ' · ' + esc(kb(RF.size(id))) + '</span></div>'
                 + '<div class="rd-act">'
                 + (cur ? '' : '<button type="button" class="rd-open">Open</button>')
+                + (cur && !histOff() ? '<button type="button" class="rd-hist" title="Version history">' + OS.ico('clock') + '</button>' : '')
                 + '<button type="button" class="rd-tab" title="Open in a new tab">' + OS.ico('export') + '</button>'
                 + '<button type="button" class="rd-copy" title="Make a copy">' + OS.ico('copy') + '</button>'
                 + (cur ? '' : '<button type="button" class="rd-del" title="Delete this document">' + OS.ico('trash') + '</button>')
@@ -145,12 +147,14 @@
             // clicking anywhere on a row (not its name box or buttons) switches to that document
             if (!cur) row.addEventListener('click', function (e) { if (!e.target.closest('button, input:not([readonly])')) go(id); });
             on('.rd-open', function () { go(id); });
+            on('.rd-hist', openHistory);
             on('.rd-tab', function () { window.open(RF.link(id), '_blank', 'noopener'); });
             on('.rd-copy', function () { copyDocument(load(), id); render(b); });
             on('.rd-del', function () {
                 OS.confirm('Delete document', 'Delete "' + nameOf(r, id) + '" for good? This cannot be undone!', 'Delete', true).then(function (ok) {
                     if (!ok) return;
                     RF.remove(id);
+                    purgeHistory(id);
                     const rr = load();
                     delete rr.docs[id];
                     save(rr);
@@ -244,6 +248,190 @@
         wrap.after(bar);
     }
 
+    // ---------- Version history! Snapshots of the open document are kept in this browser (IndexedDB), so any earlier version can be brought back ----------
+    const HDB = 'radii_history';
+    const histKey = function (id) { return (cfgRef ? cfgRef.key : 'app') + '|' + ((id === undefined ? RF.id : id) || 'main'); };
+    // Antimony is a chat client (its keys hold sign-in details), not a document app: no versions for it
+    const histOff = function () { return !window.indexedDB || (cfgRef ? cfgRef.key : '') === 'antimony'; };
+    let hdbP = null;
+    function hdb() {
+        if (hdbP) return hdbP;
+        hdbP = new Promise(function (ok, no) {
+            try {
+                const rq = indexedDB.open(HDB, 1);
+                rq.onupgradeneeded = function () { const s = rq.result.createObjectStore('v', { keyPath: 'id', autoIncrement: true }); s.createIndex('doc', 'doc'); };
+                rq.onsuccess = function () { ok(rq.result); };
+                rq.onerror = rq.onblocked = function () { no(rq.error || new Error('blocked')); };
+            } catch (e) { no(e); }
+        });
+        hdbP.catch(function () {});
+        return hdbP;
+    }
+    function hreq(mode, fn) {
+        return hdb().then(function (db) {
+            return new Promise(function (ok, no) {
+                const tx = db.transaction('v', mode), st = tx.objectStore('v');
+                let out;
+                const r = fn(st);
+                if (r && 'onsuccess' in r) r.onsuccess = function () { out = r.result; };
+                tx.oncomplete = function () { ok(out); };
+                tx.onerror = tx.onabort = function () { no(tx.error); };
+            });
+        });
+    }
+    // newest first
+    function hList(doc) { return hreq('readonly', function (st) { return st.index('doc').getAll(doc); }).then(function (a) { return (a || []).sort(function (x, y) { return y.t - x.t; }); }); }
+    function hSig(data) {
+        let h = 2166136261 >>> 0, n = 0;
+        Object.keys(data).sort().forEach(function (k) {
+            const s = k + '\u0001' + data[k];
+            n += s.length;
+            for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+        });
+        return h.toString(36) + '.' + n;
+    }
+    // a few readable words from the biggest piece of the document
+    function hPreview(data) {
+        let best = '', bk = '';
+        Object.keys(data).forEach(function (k) { if (String(data[k]).length > best.length) { best = String(data[k]); bk = k; } });
+        let t = best;
+        try { const j = JSON.parse(best); const parts = []; (function walk(v, d) { if (parts.join(' ').length > 400 || d > 6) return; if (typeof v === 'string') { if (v.length > 1 && v.length < 4000 && (/\s/.test(v) || v.length > 30) && !/^(data:|#[0-9a-f]{3,8}$|https?:)/i.test(v)) parts.push(v); } else if (v && typeof v === 'object') Object.keys(v).slice(0, 40).forEach(function (x) { walk(v[x], d + 1); }); })(j, 0); t = parts.join(' '); } catch (e) {}
+        t = t.replace(/<(style|script)[\s\S]*?<\/\1>/gi, ' ').replace(/<[^>]*>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/\s+/g, ' ').trim();
+        return t.slice(0, 150);
+    }
+    const dayOf = function (t) { const d = new Date(t); return d.getFullYear() * 400 + d.getMonth() * 32 + d.getDate(); };
+    // keeps named versions forever; of the rest the newest 25, then one per day for two weeks, never more than 60 or 40 MB
+    function hPrune(doc) {
+        return hList(doc).then(function (all) {
+            const keep = {}, days = {};
+            let n = 0, bytes = 0;
+            all.forEach(function (r) {
+                if (r.pin) { keep[r.id] = 1; return; }
+                n++;
+                const d = dayOf(r.t);
+                if (n <= 25 || (Date.now() - r.t < 14 * 86400000 && !days[d])) { keep[r.id] = 1; days[d] = 1; bytes += r.size || 0; }
+            });
+            let un = 0;
+            const drop = all.filter(function (r) { return !keep[r.id]; });
+            all.filter(function (r) { return keep[r.id] && !r.pin; }).forEach(function (r) { un++; if (un > 60 || bytes > 40e6) { drop.push(r); bytes -= r.size || 0; } });
+            if (!drop.length) return;
+            return hreq('readwrite', function (st) { drop.forEach(function (r) { st.delete(r.id); }); });
+        });
+    }
+    let lastSig = null, lastSnapAt = 0, dirtyAt = 0, seenTouch = 0, hBusy = false;
+    function snapNow(label, pin, id) {
+        const f = id === undefined ? RF.id : id;
+        const data = RF.snapshot(f);
+        if (!Object.keys(data).length) return Promise.resolve(null);
+        const sig = hSig(data), doc = histKey(f);
+        return hList(doc).then(function (all) {
+            const top = all[0];
+            if (top && top.sig === sig) {
+                if (pin && !top.pin) { top.pin = 1; top.label = label || top.label; return hreq('readwrite', function (st) { return st.put(top); }).then(function () { return top; }); }
+                return top;
+            }
+            const rec = { doc: doc, t: Date.now(), label: label || '', pin: pin ? 1 : 0, sig: sig, size: sig.split('.')[1] * 1, prev: hPreview(data), data: data };
+            return hreq('readwrite', function (st) { return st.add(rec); }).then(function () { lastSig = sig; lastSnapAt = rec.t; return hPrune(doc); }).then(function () { return rec; });
+        });
+    }
+    function autoSnap(why) {
+        if (hBusy || !RF.size(RF.id)) return;
+        hBusy = true;
+        snapNow(why || '').then(function () { dirtyAt = 0; }, function () {}).then(function () { hBusy = false; });
+    }
+    function startHistory() {
+        if (histOff()) return;
+        try { seenTouch = RF.touched(); } catch (e) {}
+        // the document as it was when this session started
+        setTimeout(function () { autoSnap('When opened'); }, 5000);
+        setInterval(function () {
+            const t = RF.touched();
+            if (t > seenTouch) { seenTouch = t; if (!dirtyAt) dirtyAt = t; }
+            if (!dirtyAt) return;
+            const now = Date.now();
+            // after a pause in typing, or at least every 3 minutes of editing (never faster than every 45 seconds)
+            if (now - lastSnapAt >= 45000 && (now - t >= 20000 || now - lastSnapAt >= 180000)) autoSnap('');
+        }, 10000);
+        document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden' && dirtyAt) autoSnap(''); });
+        window.addEventListener('pagehide', function () { if (dirtyAt) autoSnap(''); });
+    }
+    function purgeHistory(id) { return hList(histKey(id)).then(function (a) { return hreq('readwrite', function (st) { a.forEach(function (r) { st.delete(r.id); }); }); }).catch(function () {}); }
+
+    function restoreVersion(rec) {
+        return snapNow('Before restoring').catch(function () {}).then(function () {
+            RF.restore(rec.data);
+            OS.toast('Restored! Reloading…');
+            setTimeout(function () { location.reload(); }, 350);
+        });
+    }
+    function copyVersion(rec) {
+        const r = load(), nid = RF.newId();
+        RF.restore(rec.data, nid);
+        r.docs[nid] = { name: nameOf(sync(), RF.id) + ' (from ' + new Date(rec.t).toLocaleDateString(undefined, { month: 'short', day: 'numeric' }) + ')', auto: false, created: Date.now(), modified: Date.now() };
+        save(r);
+        OS.toast('A copy of that version is in Documents!');
+        go(nid);
+    }
+    function renderHistory(b) {
+        b.innerHTML = '<h1>Version history</h1><p class="rd-hint">Radii saves a version of your document in this browser as you work. Restore any earlier one (your current work is kept as a version first, so you can come back!), or open one as a separate copy. Name a version to keep it for good!</p>'
+            + '<div class="rd-bar rd-hbar"><input class="rd-hname" maxlength="60" placeholder="Name this version (optional)" aria-label="Version name"><button type="button" class="rd-new rd-hsave">' + OS.ico('clock') + '<span>Save a version now</span></button></div><div class="rd-list rd-hlist"><p class="rd-hint">Loading…</p></div>';
+        const list = b.querySelector('.rd-hlist');
+        const fill = function () {
+            hList(histKey()).then(function (all) {
+                list.innerHTML = '';
+                if (!all.length) { list.innerHTML = '<p class="rd-hint">No versions yet! They appear a little after you start editing, or press Save a version now.</p>'; return; }
+                let lastDay = -1;
+                all.forEach(function (rec, i) {
+                    const d = dayOf(rec.t);
+                    if (d !== lastDay) { lastDay = d; const h = document.createElement('h3'); h.className = 'rd-hday'; h.textContent = new Date(rec.t).toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }); list.appendChild(h); }
+                    const row = document.createElement('div');
+                    row.className = 'rd-row rd-vrow';
+                    const nxt = all[i + 1];
+                    const delta = nxt ? rec.size - nxt.size : 0;
+                    row.innerHTML = '<span class="rd-ico">' + OS.ico('clock') + '</span><div class="rd-main"><b class="rd-vt">' + esc(new Date(rec.t).toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })) + (rec.label ? ' · ' + esc(rec.label) : '') + (rec.pin ? ' <em class="rd-badge">kept</em>' : '') + (i === 0 ? ' <em class="rd-badge">latest</em>' : '') + '</b>'
+                        + '<span class="rd-meta">' + esc(kb(rec.size)) + (nxt && delta ? ' · ' + (delta > 0 ? '+' : '−') + esc(kb(Math.abs(delta))) : '') + (rec.prev ? ' · ' + esc(rec.prev) : '') + '</span></div>'
+                        + '<div class="rd-act"><button type="button" class="rd-vrest">Restore</button><button type="button" class="rd-vcopy" title="Open this version as a separate document">' + OS.ico('copy') + '</button>'
+                        + '<button type="button" class="rd-vpin" title="' + (rec.pin ? 'Let this version be cleaned up later' : 'Keep this version for good') + '">' + OS.ico(rec.pin ? 'star' : 'check') + '</button><button type="button" class="rd-del" title="Delete this version">' + OS.ico('trash') + '</button></div>';
+                    const on = function (sel, fn) { row.querySelector(sel).addEventListener('click', fn); };
+                    on('.rd-vrest', function () {
+                        OS.confirm('Restore this version', 'Go back to the version from ' + new Date(rec.t).toLocaleString() + '? Your current work is saved as a version first!', 'Restore', false).then(function (ok) { if (ok) restoreVersion(rec); });
+                    });
+                    on('.rd-vcopy', function () { copyVersion(rec); });
+                    on('.rd-vpin', function () { rec.pin = rec.pin ? 0 : 1; hreq('readwrite', function (st) { return st.put(rec); }).then(fill); });
+                    on('.rd-del', function () { hreq('readwrite', function (st) { return st.delete(rec.id); }).then(fill); });
+                    list.appendChild(row);
+                });
+            }, function () { list.innerHTML = '<p class="rd-hint">Version history needs browser storage (IndexedDB), which is turned off here, like in a private window.</p>'; });
+        };
+        b.querySelector('.rd-hsave').addEventListener('click', function () {
+            const nm = b.querySelector('.rd-hname');
+            snapNow(nm.value.trim().slice(0, 60) || 'Saved by you', true).then(function () { nm.value = ''; OS.toast('Version saved!'); fill(); });
+        });
+        fill();
+    }
+    function openHistory() {
+        css();
+        const back = document.createElement('div');
+        back.style.cssText = 'position:fixed;inset:0;z-index:' + (shell ? 3400 : 2147483150) + ';display:grid;place-items:center;padding:16px;background:rgba(10,20,40,.45);backdrop-filter:blur(4px)';
+        const card = document.createElement('div');
+        card.style.cssText = 'width:min(760px,100%);max-height:90vh;overflow:auto;background:#fff;color:#1f2937;border-radius:16px;padding:20px 24px;box-shadow:0 20px 60px rgba(0,0,0,.35);font-family:system-ui,sans-serif';
+        const x = document.createElement('button');
+        x.textContent = '×';
+        x.setAttribute('aria-label', 'Close');
+        x.style.cssText = 'float:right;border:0;background:none;font-size:26px;line-height:1;cursor:pointer;color:#64748b';
+        const body = document.createElement('div');
+        card.appendChild(x);
+        card.appendChild(body);
+        back.appendChild(card);
+        document.body.appendChild(back);
+        const close = function () { back.remove(); document.removeEventListener('keydown', onKey, true); };
+        const onKey = function (e) { if (e.key === 'Escape') close(); };
+        x.addEventListener('click', close);
+        back.addEventListener('mousedown', function (e) { if (e.target === back) close(); });
+        document.addEventListener('keydown', onKey, true);
+        renderHistory(body);
+    }
+
     function css() {
         if (document.getElementById('radii-docs-css')) return;
         const s = document.createElement('style');
@@ -262,6 +450,8 @@
             + '.rd-home{display:flex;flex-direction:column;gap:8px;max-width:720px}.rd-home-doc{width:100%;text-align:left;font:inherit;color:inherit;cursor:default;margin:0;background:var(--os-menu,#fff)}button.rd-home-doc{cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}'
             + 'button.rd-home-doc:hover{border-color:var(--os-accent,#2563eb);box-shadow:0 2px 10px rgba(0,0,0,.1);transform:translateY(-1px)}.rd-home-cur{border-color:var(--os-accent,#2563eb)!important;background:var(--os-accent-l,var(--os-hover,#eef))}'
             + '.rd-home-bar{margin-top:12px;display:flex;align-items:center;gap:12px}.rd-badge{font-style:normal;font-weight:700}'
+            + '.rd-hbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.rd-hname{flex:1;min-width:180px;max-width:320px;font:500 13px var(--os-font,system-ui);padding:9px 12px;border-radius:10px;border:1px solid var(--os-menu-line,#ddd);background:var(--os-field,#fff);color:var(--os-text,#222)}'
+            + '.rd-hday{margin:14px 0 2px;font:700 12px var(--os-font,system-ui);text-transform:uppercase;letter-spacing:.06em;color:var(--os-dim,#666)}.rd-vt{font:700 14px var(--os-font,system-ui)}.rd-vrow .rd-meta{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block;max-width:100%}'
             + '@media (max-width:600px){.rd-row{flex-wrap:wrap}.rd-act{width:100%;justify-content:flex-end}}';
         document.head.appendChild(s);
     }
@@ -294,9 +484,10 @@
         sync();
         setInterval(sync, 10000);
         window.addEventListener('pagehide', sync);
+        startHistory();
     }
     if (!shell) {
-        window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, archive: archive, create: function () { newDocument(load()); }, setTitle: function (fn) { cfgRef.title = fn; sync(); } };
+        window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, openHistory: openHistory, archive: archive, create: function () { newDocument(load()); }, setTitle: function (fn) { cfgRef.title = fn; sync(); } };
         if (document.readyState !== 'loading') standalone(); else document.addEventListener('DOMContentLoaded', standalone);
         return;
     }
@@ -324,20 +515,28 @@
                     return out;
                 };
             }
-            if (Array.isArray(cfg.backstage) && !cfg.backstage.some(function (p) { return p.id === 'docs'; })) {
+            if (cfg.key !== 'writeout' && Array.isArray(cfg.backstage) && !cfg.backstage.some(function (p) { return p.id === 'docs'; })) {
                 const at = cfg.backstage.findIndex(function (p) { return p.id === 'new'; });
                 cfg.backstage.splice(at < 0 ? Math.min(1, cfg.backstage.length) : at + 1, 0, { id: 'docs', label: 'Documents', icon: 'folder', render: render });
             }
             // Writeout and Bitbook: changing between tabs lives in the File menu (the side pane's Tabs list steps aside)
-            if (Array.isArray(cfg.backstage) && tabsReady() && !cfg.backstage.some(function (p) { return p.id === 'tabs'; })) {
+            if (cfg.key !== 'writeout' && Array.isArray(cfg.backstage) && tabsReady() && !cfg.backstage.some(function (p) { return p.id === 'tabs'; })) {
                 const at = cfg.backstage.findIndex(function (p) { return p.id === 'docs'; });
                 cfg.backstage.splice(at < 0 ? 1 : at + 1, 0, { id: 'tabs', label: cfg.key === 'bitbook' ? 'Notes' : 'Tabs', icon: 'folder', render: renderTabs });
+            }
+            // File > Version history, right after Documents (or Open)
+            if (Array.isArray(cfg.backstage) && !histOff() && !cfg.backstage.some(function (p) { return p.id === 'history'; })) {
+                let at = cfg.backstage.findIndex(function (p) { return p.id === 'docs'; });
+                if (at < 0) at = cfg.backstage.findIndex(function (p) { return p.id === 'open'; });
+                if (at < 0) at = cfg.backstage.findIndex(function (p) { return p.id === 'new'; });
+                cfg.backstage.splice(at < 0 ? 1 : at + 1, 0, { id: 'history', label: 'Version history', icon: 'clock', render: renderHistory });
             }
             sync();
             setInterval(sync, 10000);
             window.addEventListener('pagehide', sync);
+            startHistory();
         } catch (e) {}
         return orig.apply(this, arguments);
     };
-    window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, archive: archive, create: function () { newDocument(load()); } };
+    window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, openHistory: openHistory, archive: archive, create: function () { newDocument(load()); } };
 })();

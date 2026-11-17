@@ -27,14 +27,14 @@
         for (let i = 0; i < scopes.length; i++) if (scopes[i].test(k)) return k + '@' + id;
         return k;
     }
-    let gi = null, si = null, ri = null, touched = 0;
+    let gi = null, si = null, ri = null, touched = 0, frozen = false;
     function isScoped(k) { for (let i = 0; i < scopes.length; i++) if (scopes[i].test(String(k))) return true; return false; }
     try {
         const P = Storage.prototype;
         gi = P.getItem; si = P.setItem; ri = P.removeItem;
         P.getItem = function (k) { return gi.call(this, this === ls ? mapKey(k) : k); };
-        P.setItem = function (k, v) { if (this === ls && isScoped(k)) touched = Date.now(); return si.call(this, this === ls ? mapKey(k) : k, v); };
-        P.removeItem = function (k) { return ri.call(this, this === ls ? mapKey(k) : k); };
+        P.setItem = function (k, v) { if (this === ls && isScoped(k)) { if (frozen) return; touched = Date.now(); } return si.call(this, this === ls ? mapKey(k) : k, v); };
+        P.removeItem = function (k) { if (frozen && this === ls && isScoped(k)) return; return ri.call(this, this === ls ? mapKey(k) : k); };
     } catch (e) {}
     // Raw access (no ?file= mapping), for the Documents library: every file's own keys, how big it is, copying and deleting it
     const rawGet = function (k) { return (gi || ls.getItem).call(ls, k); };
@@ -86,6 +86,19 @@
             const off = fromId ? fromId.length + 1 : 0;
             keysOf(fromId || '').forEach(function (k) { rawSet((off ? k.slice(0, -off) : k) + '@' + toId, rawGet(k)); });
         },
-        remove: function (forId) { keysOf(forId || '').forEach(rawDel); }
+        remove: function (forId) { keysOf(forId || '').forEach(rawDel); },
+        // for Version history: everything a document holds ({ key: value }, keys without the @id), and putting it back
+        snapshot: function (forId) {
+            const f = forId === undefined ? id : forId, off = f ? f.length + 1 : 0, out = {};
+            keysOf(f).forEach(function (k) { const v = rawGet(k); if (v !== null) out[off ? k.slice(0, -off) : k] = v; });
+            return out;
+        },
+        restore: function (data, forId) {
+            const f = forId === undefined ? id : forId, sfx = f ? '@' + f : '';
+            // the open document stops saving, so the page's own save-on-close cannot undo the restore
+            if (f === id) frozen = true;
+            keysOf(f).forEach(rawDel);
+            Object.keys(data).forEach(function (k) { rawSet(k + sfx, data[k]); });
+        }
     };
 })();
