@@ -3,10 +3,10 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '067536da7e21';
+const VERSION = '71ceeb97e5c6';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
-const CORE = [["/","3dc451a799"],
+const CORE = [["/","fd160c0aca"],
   ["/404.html","01a3fdf43d"],
   ["/about.html","43f801f5c5"],
   ["/amber/","460c86a45e"],
@@ -246,7 +246,7 @@ const CORE = [["/","3dc451a799"],
   ["/imbuer/radii-images.js?v=20261131v","7a2dad017b"],
   ["/imbuer/ribbon.js?v=20261225a","99c845a579"],
   ["/imbuer/style.css?v=20261230d","c5cf130e70"],
-  ["/index.html","3dc451a799"],
+  ["/index.html","fd160c0aca"],
   ["/inkpath/","c713da8831"],
   ["/inkpath/animation.js?v=20261212d","c1b41975a3"],
   ["/inkpath/app.js?v=20261230c","33c14bae9c"],
@@ -466,7 +466,7 @@ const CORE = [["/","3dc451a799"],
   ["/phosphor/sound.js","96f77f489c"],
   ["/phosphor/styles.css","60a243a650"],
   ["/poolside-site.css?v=20261231b","3ffe3271d9"],
-  ["/products.html","fe85b71db8"],
+  ["/products.html","134dadae64"],
   ["/source.html","ae2bdd7199"],
   ["/stats.js?v=20261130","e953c1055a"],
   ["/svelte/products.js?v=20261201y","860b74f358"],
