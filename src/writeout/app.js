@@ -6699,11 +6699,11 @@ function kdTabsForFile() {
 }
 
 // A file written as Keydown text: its tabs and settings come back, formatted again!
-const KD_TEXT_FILE = /^\uFEFF?---\r?\n(?:[^\n]*\n)*?format:\s*"keydown-text"/;
+const KD_TEXT_FILE = /^\uFEFF?(?:---\r?\n(?:[^\n]*\n)*?format:\s*"keydown-text"|\{\{(?:size|orientation)=)/;
 function kdLoadKeydownFile(text) {
-    const front = (String(text).match(/^\uFEFF?---\r?\n([\s\S]*?)\r?\n---/) || [])[1] || '';
     return kdDoc.fromFileText(text, 'Main').then(function (doc) {
-        kdApplyDocSettings(front);
+        const dm = doc.meta || {};
+        kdApplyDocSettings((dm.page_size ? 'page_size: "' + dm.page_size + '"\n' : '') + (dm.page_orientation ? 'page_orientation: "' + dm.page_orientation + '"\n' : '') + (dm.doc_password ? 'doc_password: "' + dm.doc_password + '"\n' : ''));
         canvasViewport.innerHTML = kdRestoreTabs(doc.tabs);
         kdHydrateInteractions();
         kdRenderTabs();

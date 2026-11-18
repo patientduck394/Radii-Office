@@ -797,7 +797,10 @@
             });
             body = m[2];
         }
-        const keydown = meta.format === 'keydown-text' || (!!meta.id && !!meta.type && !meta.page_size) || (!m && !/<[a-z][\s\S]*>/i.test(text));
+        // the top of a file: {{size=a4}} {{orientation=landscape}} (and {{password=...}} for a locked page) instead of a YAML block
+        let hdr = false;
+        { let hm; body = body.replace(/^\n+/, ''); while ((hm = /^\{\{(size|orientation|password)=([^}\n]*)\}\}[ \t]*(?:\n|$)/.exec(body))) { hdr = true; const hv = hm[2].trim(); if (hm[1] === 'size') meta.page_size = hv; else if (hm[1] === 'orientation') meta.page_orientation = hv; else meta.doc_password = hv; body = body.slice(hm[0].length).replace(/^\n+/, ''); } }
+        const keydown = hdr || meta.format === 'keydown-text' || (!!meta.id && !!meta.type && !meta.page_size) || (!m && !/<[a-z][\s\S]*>/i.test(text));
         if (keydown) return { meta, kind: 'keydown', body: body.trim(), tabs: null };
         const t = parseTabs(body.trim());
         return { meta, kind: 'html', body: t.html.trim(), tabs: t.tabs };
@@ -901,7 +904,14 @@
     function toFileText(meta, tabs) {
         meta = Object.assign({}, meta || {});
         const list = (tabs || []).filter(Boolean).map((t, i) => (i === 0 ? Object.assign({}, t, { html: entryHead(t.html || '', meta) }) : t));
-        const head = '---\nformat: "keydown-text"\n' + metaLines(meta) + '---\n\n';
+        // no YAML block any more: only an OpenDB entry's own details (title, summary, infobox...) keep one;
+        // the page size and orientation sit at the top as {{size=...}} and {{orientation=...}}
+        const extras = {};
+        Object.keys(meta).forEach((k) => { if (!OWN_KEYS.test(k) || k === 'infobox') extras[k] = meta[k]; });
+        const extraYaml = metaLines(extras);
+        let head = extraYaml ? '---\nformat: "keydown-text"\n' + extraYaml + '---\n\n' : '';
+        if (meta.page_size || meta.page_orientation) head += '{{size=' + (meta.page_size || 'a4') + '}}\n{{orientation=' + (meta.page_orientation || 'portrait') + '}}\n' + (meta.doc_password ? '{{password=' + meta.doc_password + '}}\n' : '') + '\n';
+        else if (!extraYaml) head = '';
         if (list.length <= 1) return head + htmlToText(list[0] ? list[0].html : '') + '\n';
         return head + list.map((t) => '::tab{name=' + JSON.stringify(String(t.name || 'Tab')) + '}\n' + htmlToText(t.html || '')).join('\n\n') + '\n';
     }
