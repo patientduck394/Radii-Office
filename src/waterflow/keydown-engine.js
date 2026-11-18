@@ -8231,9 +8231,8 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
         const st = doc.createElement('style');
         st.id = 'kdx-base-css';
         st.textContent = [
+            // definitions (@style tags, footnote and abbreviation notes) never show as chips, reading or editing: they live in the text (Source view)
             '.kdx-def{display:none}',
-            '.kdx-editing .kdx-def{display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1.6 ui-monospace,Menlo,monospace;color:#075985;background:#e0f2fe;border:1px dashed #38bdf8;border-radius:8px;padding:0 7px;margin:1px 2px;vertical-align:middle;user-select:none}',
-            '.kdx-editing div.kdx-def{display:flex;width:max-content;max-width:100%}',
             '.kdx-def-sample{font:inherit}',
             // a value is just its text: no chip, no underline, no bold
             '.kdx-val,.kdx-set{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;font-variant-numeric:tabular-nums}',
@@ -9805,7 +9804,7 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
             '.kdx-keys kbd{display:inline-block;min-width:1.5em;padding:0 .45em;margin:0 .1em;text-align:center;font:600 .86em/1.5 ui-monospace,Menlo,Consolas,monospace;color:#1e293b;background:linear-gradient(#fff,#e2e8f0);border:1px solid #94a3b8;border-bottom-width:2.5px;border-radius:.35em;box-shadow:0 1px 0 rgba(15,23,42,.15);-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-keys i{font-style:normal;color:#94a3b8;font-size:.8em}',
             '.kdx-cite{color:#475569}.kdx-todo{background:#fef9c3;border:1px dashed #eab308;border-radius:6px;padding:0 6px;font-size:.92em}.kdx-todo b{color:#a16207;font-size:.78em;letter-spacing:.08em;margin-right:.3em}@media print{.kdx-todo{background:none;border:0}}',
             'abbr.kdx-abbr{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}',
-            '.kdx-fndef{display:none}.kdx-editing .kdx-fndef{display:block;width:max-content;max-width:100%;font:600 11.5px/1.6 ui-monospace,Menlo,monospace;color:#075985;background:#e0f2fe;border:1px dashed #38bdf8;border-radius:8px;padding:0 8px;margin:2px 0;user-select:none}',
+            '.kdx-fndef{display:none}',
             '@media print{.kdx-block.kdx-doc{break-inside:avoid-page}.kdx-cols-grid,.kdx-cols-flow{break-inside:auto}.kdx-spacehint{display:none!important}}'
         ].join('\n');
         (doc.head || doc.documentElement).appendChild(st);
