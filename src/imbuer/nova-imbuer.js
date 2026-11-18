@@ -24,6 +24,8 @@
     function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
     function get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
     function put(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+    // Nova is the default: only a person who picked Classic or Excel (that writes the key) keeps the ribbon
+    function wantsNova() { const v = get(KEY); return v === 'nova' || v === null; }
 
     /* ---------- icons ---------- */
     function ic(name, cls) {
@@ -412,13 +414,13 @@
 
     // phones keep the ribbon; a window that grows wide enough can use Nova again
     window.addEventListener('resize', function () {
-        const want = get(KEY) === 'nova';
+        const want = wantsNova();
         if (on && window.innerWidth < 720) leave();
         else if (!on && want && window.innerWidth >= 720) enter();
     });
 
     window.ImbuerNova = { on: function () { return on; }, set: setNova, open: openPanel, close: closePanel };
-    if (get(KEY) === 'nova') {
+    if (wantsNova()) {
         // after Imbuer's own start-up (it builds the grid on load)
         const go = function () { enter(); };
         if (document.readyState === 'complete') setTimeout(go, 0); else window.addEventListener('load', function () { setTimeout(go, 0); });

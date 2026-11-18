@@ -335,7 +335,7 @@
     }
 
     /* ---------- the layout switch ---------- */
-    function getLayout() { try { return localStorage.getItem(KEY) === 'nova' ? 'nova' : 'classic'; } catch (e) { return 'classic'; } }
+    function getLayout() { try { return localStorage.getItem(KEY) === 'classic' ? 'classic' : 'nova'; } catch (e) { return 'nova'; } }
     function setLayout(l) {
         try { localStorage.setItem(KEY, l); } catch (e) {}
         apply(l);

@@ -868,7 +868,7 @@
     function currentLayout() {
         // a New-style phone page always opens in the New style (its Classic is a separate page)
         if (document.documentElement.hasAttribute('data-os-classic-url')) return 'office';
-        const sv = lsGet(layoutKey(), 'office');
+        const sv = lsGet(layoutKey(), 'nova');
         if (sv === 'nova') return cfg.nova && window.WriteoutNova && !document.body.classList.contains('os-phone') ? 'nova' : 'office';
         return sv === 'classic' ? 'classic' : 'office';
     }

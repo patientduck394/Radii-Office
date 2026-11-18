@@ -333,7 +333,7 @@
 
     function init() {
         classicSwitch();
-        if (saved() === 'nova') enter();
+        if (saved() === null || saved() === 'nova') enter();   // Nova is the default
     }
     window.AntimonyNova = { enter: function () { setLayout('nova'); }, leave: function () { setLayout('classic'); }, isOn: function () { return on; }, openPalette: openPalette };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();

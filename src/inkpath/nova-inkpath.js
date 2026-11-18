@@ -357,7 +357,7 @@
         if (nodes.inspBtn) nodes.inspBtn.classList.toggle('on', open);
         try { window.dispatchEvent(new Event('resize')); } catch (e) {}
     }
-    function currentLayout() { try { return localStorage.getItem(LAYOUT_KEY) === 'nova' ? 'nova' : 'classic'; } catch (e) { return 'classic'; } }
+    function currentLayout() { try { return localStorage.getItem(LAYOUT_KEY) === 'classic' ? 'classic' : 'nova'; } catch (e) { return 'nova'; } }
     function setLayout(l) {
         try { localStorage.setItem(LAYOUT_KEY, l); } catch (e) {}
         apply();

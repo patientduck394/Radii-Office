@@ -39,7 +39,7 @@
     let on = false, built = false, dark = true, panelId = null, popEl = null, palEl = null, timer = 0, statusObs = null;
     const nodes = {};
     const wide = function () { return window.innerWidth > 860; };
-    function want() { try { return localStorage.getItem(LAYOUT_KEY) === 'nova'; } catch (e) { return false; } }
+    function want() { try { return localStorage.getItem(LAYOUT_KEY) !== 'classic'; } catch (e) { return true; } }
     function setLayout(v) { try { localStorage.setItem(LAYOUT_KEY, v); } catch (e) {} apply(); }
     const click = function (sel) { const b = document.querySelector(sel); if (b) b.click(); };
     const pressed = function (sel) { const b = document.querySelector(sel); return !!b && b.getAttribute('aria-pressed') === 'true'; };

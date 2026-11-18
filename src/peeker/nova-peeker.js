@@ -56,7 +56,7 @@
     /* ---------- state ---------- */
     let on = false, nodes = {}, popEl = null, palEl = null, timer = 0, mo = null, lastName = null;
     const narrow = function () { return window.matchMedia && matchMedia('(max-width: 720px)').matches; };
-    function wanted() { return store(LKEY) === 'nova' && !narrow(); }
+    function wanted() { return store(LKEY) !== 'classic' && !narrow(); }
     function setLayout(l) { store(LKEY, l); apply(); }
     function dark() { const d = store(DKEY); return d === '1' || (d === null && window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); }
     function toggleDark() { store(DKEY, dark() ? '0' : '1'); document.body.classList.toggle('pn-dark', dark()); paintTheme(); }
