@@ -8593,6 +8593,48 @@ Seven more blocks:
 ::progress 70% Launch readiness
 ::rating 4/5 Great food
 
+## Blocks for documents
+
+Reports, papers, letters, manuals and covers get their own blocks. All of them work in Writeout, Bitbook, Amber and anywhere else Keydown runs, print cleanly, and turn back into plain text when you Un-format.
+
+**One line each:**
+
+* `::toc 3 numbered Contents` builds a table of contents from your headings (the number is the deepest heading level, and `numbered` adds 1.2.3 numbers). Click an entry to jump.
+* `::cover Title | Subtitle | Author | Date` is a cover page that ends with a page break.
+* `::banner Title | Subtitle | blue` is a colored title band.
+* `::wordcount` shows words, reading time and characters; `::date` (or `::date iso`, `short`, `year`) writes today's date.
+* `::footnotes Notes` lists every footnote, `::lof` lists figures and `::lot` lists tables.
+* `::stamp DRAFT red` is a tilted rubber stamp, `::watermark CONFIDENTIAL` puts a big faint word behind the page.
+* `::sign Name, Title` and `::signatures Alice | Bob` draw signature lines.
+* `::keywords one, two, three` makes keyword pills, `::lorem 3` fills in placeholder paragraphs, `::space 4` leaves four lines of room.
+
+**From `::name` to `::end`:**
+
+* `::note`, `::tip`, `::info`, `::warning`, `::danger`, `::success` and `::important` are colored callout boxes (`::note Your own title`). `::callout warning Title` works too.
+* `::columns 3` splits the text into columns; put `|||` on its own line to choose where each column starts.
+* `::tabs` with `@tab Name` lines, and `::accordion` with `@item Title` lines, hide text until it is clicked (printing shows everything).
+* `::faq` with `Q: question` and `A: answer` lines.
+* `::cards 3 Title` with `- Heading - text` lines makes a card grid.
+* `::quote Author` and `::pullquote Author` for quotes, `::aside Title` for a side note that floats right.
+* `::figure Caption`, `::tablecap Caption` and `::listing Caption` number themselves (Figure 1, Table 2, Listing 3) and feed `::lof` and `::lot`.
+* `::theorem Name`, `::lemma`, `::corollary`, `::proposition`, `::definition`, `::remark`, `::example`, `::exercise` number themselves; `::proof` ends with a box.
+* `::abstract`, `::glossary` (`Term: meaning` lines, sorted for you), `::bibliography` (add `sorted` to alphabetize), `::agenda` (`- 09:00 Topic (10 min)`, totals the time).
+* `::checklist Title` with `- [ ] item` lines gives real checkboxes and a progress bar, and the ticks are saved in the text.
+* `::proscons Title` with `+ pro` and `- con` lines, `::contact Name` with email, phone and address lines, `::address` for a letter address.
+
+Inside the blocks you can use `**bold**`, `*italic*`, `` `code` ``, `==highlight==`, `[links](https://...)`, bullet and numbered lists, `| tables |`, quotes, fenced code and `![pictures](https://...)`.
+
+**Inside a line:**
+
+* `Text[^1]` with a line `[^1]: The note text.` anywhere makes a numbered footnote; `{fn the note}` writes one in place.
+* `{key Ctrl+Shift+P}` draws keyboard keys, `{cite Smith 2020}` a citation, `{todo fix this}` a reminder tag.
+* `*[HTML]: HyperText Markup Language` on its own line makes every `HTML` on the page show the meaning when you hover.
+* New text tags: `{sub}` `{sup}` `{mark}` `{ins}` `{del}` `{kbd}` `{mono}` `{overline}` `{dunder}` `{boxed}` `{spaced}` `{upper}` `{lower}` `{title}` and `{drop}` (a drop cap), each closed with `{/name}`.
+
+::note Try it
+Pick Insert, then Cards & Blocks to add any of these in one click!
+::end
+
 ## Tables
 
 Writeout and Bitbook have two ways to write a table.

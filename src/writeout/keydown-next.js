@@ -261,7 +261,22 @@
         { open: '{rainbow}', close: '{/rainbow}', cls: 'kdx-t-rainbow', css: '.kdx-t-rainbow{background:linear-gradient(90deg,#ef4444,#f97316,#eab308,#22c55e,#0ea5e9,#8b5cf6);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;-webkit-print-color-adjust:exact;print-color-adjust:exact}' },
         { open: '{redact}', close: '{/redact}', cls: 'kdx-t-redact', css: '.kdx-t-redact{background:#111;color:#111;border-radius:.2em;padding:0 .25em;cursor:pointer;transition:color .15s;-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-t-redact:hover{color:#fff}@media print{.kdx-t-redact:hover{color:#111}}' },
         { open: '{blink}', close: '{/blink}', cls: 'kdx-t-blink', css: '.kdx-t-blink{animation:kdx-blinkt 1.2s steps(2,start) infinite}@keyframes kdx-blinkt{to{visibility:hidden}}@media (prefers-reduced-motion:reduce){.kdx-t-blink{animation:none}}' },
-        { open: '{flip}', close: '{/flip}', cls: 'kdx-t-flip', css: '.kdx-t-flip{display:inline-block;transform:scaleX(-1)}' }
+        { open: '{flip}', close: '{/flip}', cls: 'kdx-t-flip', css: '.kdx-t-flip{display:inline-block;transform:scaleX(-1)}' },
+        { open: '{sub}', close: '{/sub}', cls: 'kdx-t-sub', css: '.kdx-t-sub{vertical-align:sub;font-size:.75em;line-height:0}' },
+        { open: '{sup}', close: '{/sup}', cls: 'kdx-t-sup', css: '.kdx-t-sup{vertical-align:super;font-size:.75em;line-height:0}' },
+        { open: '{mark}', close: '{/mark}', cls: 'kdx-t-mark', css: '.kdx-t-mark{background:#fde68a;border-radius:.2em;padding:0 .15em;-webkit-print-color-adjust:exact;print-color-adjust:exact}' },
+        { open: '{ins}', close: '{/ins}', cls: 'kdx-t-ins', css: '.kdx-t-ins{color:#15803d;text-decoration:underline;text-decoration-color:#16a34a}' },
+        { open: '{del}', close: '{/del}', cls: 'kdx-t-del', css: '.kdx-t-del{color:#b91c1c;text-decoration:line-through;text-decoration-color:#dc2626}' },
+        { open: '{kbd}', close: '{/kbd}', cls: 'kdx-t-kbd', css: '.kdx-t-kbd{display:inline-block;padding:0 .45em;font:600 .86em/1.5 ui-monospace,Menlo,Consolas,monospace;color:#1e293b;background:linear-gradient(#fff,#e2e8f0);border:1px solid #94a3b8;border-bottom-width:2.5px;border-radius:.35em}' },
+        { open: '{mono}', close: '{/mono}', cls: 'kdx-t-mono', css: '.kdx-t-mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.92em}' },
+        { open: '{overline}', close: '{/overline}', cls: 'kdx-t-overline', css: '.kdx-t-overline{text-decoration:overline}' },
+        { open: '{dunder}', close: '{/dunder}', cls: 'kdx-t-dunder', css: '.kdx-t-dunder{text-decoration:underline double}' },
+        { open: '{boxed}', close: '{/boxed}', cls: 'kdx-t-boxed', css: '.kdx-t-boxed{border:1.5px solid currentColor;border-radius:.2em;padding:0 .3em}' },
+        { open: '{spaced}', close: '{/spaced}', cls: 'kdx-t-spaced', css: '.kdx-t-spaced{letter-spacing:.3em}' },
+        { open: '{upper}', close: '{/upper}', cls: 'kdx-t-upper', css: '.kdx-t-upper{text-transform:uppercase}' },
+        { open: '{lower}', close: '{/lower}', cls: 'kdx-t-lower', css: '.kdx-t-lower{text-transform:lowercase}' },
+        { open: '{title}', close: '{/title}', cls: 'kdx-t-title', css: '.kdx-t-title{text-transform:capitalize}' },
+        { open: '{drop}', close: '{/drop}', cls: 'kdx-t-drop', css: '.kdx-t-drop{float:left;font-size:3.2em;line-height:.85;font-weight:800;padding:.05em .1em 0 0}' }
     ];
     function useDef(d) {
         if (!tagRules.has(d.cls)) { tagRules.set(d.cls, d.css); tagCssEl().textContent = Array.from(tagRules.values()).join('\n'); }
@@ -1059,6 +1074,10 @@
         else if (kind === 'stats') buildStats(el, arg.trim(), bodyLines);
         else if (kind === 'fold') buildFold(el, arg.trim(), bodyLines);
         else if (kind === 'timeline') buildTimeline(el, arg.trim(), bodyLines);
+        else if (DOC_SINGLE.indexOf(kind) >= 0 || DOC_MULTI[kind]) {
+            el.className = 'kdx kdx-block kdx-d-' + kind;
+            try { buildDocBlock(el, kind, arg, bodyLines, editing); } catch (e) { console.warn('[KeydownNext]', e); }
+        }
         return el;
     }
     /* ---------- progress, countdown, rating, steps, stats, fold, timeline ---------- */
@@ -1122,7 +1141,481 @@
         });
         el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + '<ul class="kdx-tl">' + items.map((i) => '<li>' + (i.when ? '<b>' + esc(i.when) + '</b>' : '') + esc(i.text) + '</li>').join('') + '</ul>';
     }
-    const MULTI = /^::(chart|poll|quiz|scene|steps|stats|fold|timeline)\b/i, SINGLE = /^::(timer|map|progress|countdown|rating)\b/i;
+
+    /* ==================================================================
+       KEYDOWN FOR DOCUMENTS: blocks and marks for reports, papers, letters, manuals and covers
+         single line:  ::toc  ::wordcount  ::date  ::lorem  ::space  ::stamp  ::watermark  ::footnotes  ::lof  ::lot  ::sign  ::signatures
+                       ::banner  ::cover  ::keywords
+         from ::name to ::end:  ::columns  ::note ::tip ::info ::warning ::danger ::success ::important ::callout  ::tabs  ::accordion  ::faq
+                       ::cards  ::quote  ::pullquote  ::aside  ::figure ::tablecap ::listing  ::theorem ::lemma ::corollary ::proposition
+                       ::definition ::proof ::remark ::example ::exercise  ::abstract  ::glossary  ::bibliography  ::checklist  ::agenda
+                       ::proscons  ::contact  ::address
+         inside a line:  [^1] with  [^1]: the note   {fn a note}   {key Ctrl+S}   {cite Smith 2020}   {todo fix this}   *[HTML]: HyperText Markup Language
+         text tags:  {sub} {sup} {mark} {ins} {del} {kbd} {mono} {overline} {dunder} {boxed} {spaced} {upper} {lower} {title} {drop}
+       ================================================================== */
+    // a little inline markup that works inside the new blocks: **bold** *italic* `code` ==mark== [link](https://…)
+    function miniInline(s) {
+        let t = esc(s);
+        t = t.replace(/`([^`\n]+)`/g, '<code>$1</code>')
+            .replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')
+            .replace(/(^|[^*\w])\*([^*\s][^*\n]*?)\*(?![*\w])/g, '$1<i>$2</i>')
+            .replace(/==([^=\n]+)==/g, '<mark>$1</mark>')
+            .replace(/\[([^\]\n]+)\]\(((?:https?:\/\/|mailto:|#)[^)\s]+)\)/g, (m, a, u) => '<a href="' + u + '" target="_blank" rel="noopener noreferrer">' + a + '</a>');
+        return t;
+    }
+    // lines of text -> paragraphs, lists, tables, pictures and code (what most of the new blocks hold)
+    function renderBody(ls) {
+        const out = [];
+        let para = [], list = null;
+        const flush = () => { if (para.length) { out.push('<p>' + para.map(miniInline).join('<br>') + '</p>'); para = []; } };
+        const endList = () => { if (list) { out.push('<' + list.tag + '>' + list.items.map((i) => '<li>' + miniInline(i) + '</li>').join('') + '</' + list.tag + '>'); list = null; } };
+        for (let i = 0; i < ls.length; i++) {
+            const raw = ls[i], t = raw.trim();
+            let m;
+            if (/^```/.test(t)) {
+                flush(); endList();
+                const code = [];
+                for (i++; i < ls.length && !/^```/.test(ls[i].trim()); i++) code.push(ls[i]);
+                out.push('<pre class="kdx-code"><code>' + esc(code.join('\n')) + '</code></pre>');
+                continue;
+            }
+            if (!t) { flush(); endList(); continue; }
+            if ((m = /^!\[([^\]]*)\]\(((?:https?:\/\/|data:image\/)[^)\s]+)\)(?:\{width=(\d{2,4})(px|%)?\})?$/.exec(t))) {
+                flush(); endList();
+                out.push('<img src="' + esc(m[2]) + '" alt="' + esc(m[1]) + '"' + (m[3] ? ' style="width:' + (m[3] + (m[4] || 'px')) + '"' : '') + '>');
+                continue;
+            }
+            if (/^\|.*\|$/.test(t)) {
+                flush(); endList();
+                const rows = [];
+                for (; i < ls.length && /^\|.*\|$/.test(ls[i].trim()); i++) rows.push(ls[i].trim());
+                i--;
+                const cells = (r) => r.replace(/^\||\|$/g, '').split('|').map((c) => c.trim());
+                const sep = rows.length > 1 && /^\|?\s*:?-{2,}:?\s*(\|\s*:?-{2,}:?\s*)*\|?$/.test(rows[1]);
+                const body = rows.filter((r, k) => !(sep && k === 1));
+                out.push('<table class="kdx-tbl">' + body.map((r, k) => '<tr>' + cells(r).map((c) => (sep && k === 0 ? '<th>' : '<td>') + miniInline(c) + (sep && k === 0 ? '</th>' : '</td>')).join('') + '</tr>').join('') + '</table>');
+                continue;
+            }
+            if ((m = /^(?:[*-]|\d+[.)])\s+(.*)$/.exec(t))) {
+                flush();
+                const tag = /^\d/.test(t) ? 'ol' : 'ul';
+                if (list && list.tag !== tag) endList();
+                (list || (list = { tag, items: [] })).items.push(m[1]);
+                continue;
+            }
+            if ((m = /^>\s?(.*)$/.exec(t))) { flush(); endList(); out.push('<blockquote>' + miniInline(m[1]) + '</blockquote>'); continue; }
+            endList();
+            para.push(t);
+        }
+        flush(); endList();
+        return out.join('');
+    }
+    // body lines split at separator lines (a line that starts with the marker), into [{title, lines}]
+    function splitAt(ls, marker) {
+        const parts = [];
+        let cur = null;
+        ls.forEach((t) => {
+            const m = marker.exec(t.trim());
+            if (m) { cur = { title: m[1].trim(), lines: [] }; parts.push(cur); }
+            else if (cur) cur.lines.push(t);
+            else if (t.trim()) { cur = { title: '', lines: [t] }; parts.push(cur); }
+        });
+        return parts;
+    }
+    const slugOf = (s) => String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+    const DOC_COLORS = { note: '#0284c7', tip: '#16a34a', info: '#0ea5e9', warning: '#d97706', danger: '#dc2626', success: '#16a34a', important: '#7c3aed' };
+    const CALLOUTS = { note: ['\u270e', 'Note'], tip: ['\u2726', 'Tip'], info: ['i', 'Info'], warning: ['!', 'Warning'], danger: ['\u2715', 'Danger'], success: ['\u2713', 'Success'], important: ['\u2605', 'Important'] };
+    const THEOREMS = { theorem: ['Theorem', 'thm'], lemma: ['Lemma', 'thm'], corollary: ['Corollary', 'thm'], proposition: ['Proposition', 'thm'], definition: ['Definition', 'thm'], remark: ['Remark', 'rem'], example: ['Example', 'ex'], exercise: ['Exercise', 'exe'], proof: ['Proof', ''] };
+    const LOREM = ['Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.', 'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.', 'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.', 'Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.', 'Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos.'];
+    const badUse = (el, kind, example) => { el.innerHTML = '<div class="kdx-note">Write it like <code>' + esc(example) + '</code>!</div>'; };
+    const parts3 = (arg) => String(arg || '').split('|').map((x) => x.trim());
+    function colorOf(name, dflt) { const c = String(name || '').trim().toLowerCase(); return BAR_COLORS[c] || (/^#[0-9a-f]{3,8}$/i.test(c) ? c : dflt); }
+
+    const DOC_BUILD = {
+        // ----- single line -----
+        toc(el, arg) {
+            const m = /^(?:(\d)\s*)?(numbered\s+)?(.*)$/i.exec(arg);
+            el.setAttribute('data-toc-depth', m[1] || '3'); if (m[2]) el.setAttribute('data-toc-num', '1');
+            el.innerHTML = '<div class="kdx-title">' + esc(m[3] || 'Contents') + '</div><nav class="kdx-toc-list" aria-label="Contents"></nav>';
+        },
+        wordcount(el, arg) { el.innerHTML = '<span class="kdx-wc" data-label="' + esc(arg) + '"></span>'; },
+        date(el, arg) {
+            const d = new Date(), f = (arg || 'long').toLowerCase();
+            const text = f === 'iso' ? d.toISOString().slice(0, 10) : f === 'short' ? d.toLocaleDateString() : f === 'time' ? d.toLocaleString() : f === 'year' ? String(d.getFullYear()) : d.toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
+            el.innerHTML = '<span class="kdx-date">' + esc(text) + '</span>';
+        },
+        lorem(el, arg) { const n = Math.max(1, Math.min(12, parseInt(arg, 10) || 1)); el.innerHTML = Array.from({ length: n }, (_, i) => '<p>' + LOREM[i % LOREM.length] + (i >= LOREM.length ? ' ' + LOREM[(i + 2) % LOREM.length] : '') + '</p>').join(''); },
+        space(el, arg) { const n = Math.max(1, Math.min(20, parseInt(arg, 10) || 1)); el.style.height = (n * 1.5) + 'em'; el.innerHTML = '<span class="kdx-spacehint">' + n + (n === 1 ? ' line' : ' lines') + ' of space</span>'; },
+        stamp(el, arg) {
+            const m = /^(.*?)(?:\s+(\w+|#[0-9a-f]{3,8}))?$/i.exec(arg.trim());
+            const c = colorOf(m[2], '#dc2626');
+            el.innerHTML = '<span class="kdx-stampbox" style="--kc:' + c + '">' + esc(m[1] || 'DRAFT') + '</span>';
+        },
+        watermark(el, arg) { el.setAttribute('data-wm', arg.trim() || 'DRAFT'); el.innerHTML = '<span class="kdx-spacehint">Watermark: ' + esc(arg.trim() || 'DRAFT') + '</span>'; },
+        footnotes(el, arg) { el.innerHTML = '<div class="kdx-title">' + esc(arg || 'Notes') + '</div><ol class="kdx-fnlist"></ol>'; },
+        lof(el, arg) { el.setAttribute('data-listof', 'fig'); el.innerHTML = '<div class="kdx-title">' + esc(arg || 'List of figures') + '</div><div class="kdx-lof"></div>'; },
+        lot(el, arg) { el.setAttribute('data-listof', 'tab'); el.innerHTML = '<div class="kdx-title">' + esc(arg || 'List of tables') + '</div><div class="kdx-lof"></div>'; },
+        sign(el, arg) { const p = parts3(arg.replace(/,/, '|')); el.innerHTML = '<div class="kdx-sign"><i></i><b>' + esc(p[0] || 'Name') + '</b>' + (p[1] ? '<span>' + esc(p[1]) + '</span>' : '') + '</div>'; },
+        signatures(el, arg) {
+            const names = parts3(arg).filter(Boolean);
+            el.innerHTML = '<div class="kdx-signs">' + (names.length ? names : ['Name']).map((n) => '<div class="kdx-sign"><i></i><b>' + esc(n) + '</b><span>Date: ____ / ____ / ________</span></div>').join('') + '</div>';
+        },
+        banner(el, arg) {
+            const p = parts3(arg), c = colorOf(p[2], '#0284c7');
+            el.style.setProperty('--kc', c);
+            el.innerHTML = '<div class="kdx-banner-t">' + esc(p[0] || 'Title') + '</div>' + (p[1] ? '<div class="kdx-banner-s">' + esc(p[1]) + '</div>' : '');
+        },
+        cover(el, arg) {
+            const p = parts3(arg);
+            el.innerHTML = '<div class="kdx-cover-t">' + esc(p[0] || 'Title') + '</div>' + (p[1] ? '<div class="kdx-cover-s">' + esc(p[1]) + '</div>' : '') + '<div class="kdx-cover-rule"></div>' + (p[2] ? '<div class="kdx-cover-a">' + esc(p[2]) + '</div>' : '') + (p[3] ? '<div class="kdx-cover-d">' + esc(p[3]) + '</div>' : '');
+        },
+        keywords(el, arg) { el.innerHTML = '<b class="kdx-kw-h">Keywords</b> ' + arg.split(/[,;]/).map((k) => k.trim()).filter(Boolean).map((k) => '<span class="kdx-kw">' + esc(k) + '</span>').join(''); },
+        // ----- blocks with a body -----
+        columns(el, arg, body) {
+            const m = /^(\d)?\s*(.*)$/.exec(arg), n = Math.max(1, Math.min(4, parseInt(m[1], 10) || 2));
+            const cols = [[]];
+            body.forEach((t) => { if (t.trim() === '|||') cols.push([]); else cols[cols.length - 1].push(t); });
+            el.style.setProperty('--kn', n);
+            if (cols.length > 1) { el.classList.add('kdx-cols-grid'); el.innerHTML = cols.map((c) => '<div class="kdx-col">' + renderBody(c) + '</div>').join(''); }
+            else { el.classList.add('kdx-cols-flow'); el.innerHTML = renderBody(body); }
+        },
+        callout(el, arg, body, kindName) {
+            let kind = kindName, title = arg;
+            if (kind === 'callout') { const m = /^(\w+)\s*(.*)$/.exec(arg); kind = m && CALLOUTS[m[1].toLowerCase()] ? m[1].toLowerCase() : 'note'; title = m && CALLOUTS[m[1].toLowerCase()] ? m[2] : arg; }
+            const c = CALLOUTS[kind];
+            el.classList.add('kdx-call-' + kind);
+            el.style.setProperty('--kc', DOC_COLORS[kind]);
+            el.innerHTML = '<div class="kdx-call-h"><span class="kdx-call-i" aria-hidden="true">' + c[0] + '</span>' + esc(title || c[1]) + '</div><div class="kdx-call-b">' + renderBody(body) + '</div>';
+        },
+        tabs(el, arg, body) {
+            const tabs = splitAt(body, /^@tab\s+(.*)$/i);
+            if (!tabs.length) return badUse(el, 'tabs', '::tabs\n@tab First\ntext\n@tab Second\nmore text\n::end');
+            const id = 'kt' + Math.random().toString(36).slice(2, 7);
+            el.innerHTML = '<div class="kdx-tabbar" role="tablist">' + tabs.map((t, i) => '<button type="button" role="tab" class="kdx-tabbtn' + (i ? '' : ' kdx-on') + '" data-i="' + i + '" id="' + id + 'b' + i + '" aria-selected="' + (i ? 'false' : 'true') + '">' + esc(t.title || 'Tab ' + (i + 1)) + '</button>').join('') + '</div>' + tabs.map((t, i) => '<div role="tabpanel" class="kdx-tabpanel' + (i ? '' : ' kdx-on') + '" data-i="' + i + '" aria-labelledby="' + id + 'b' + i + '"><div class="kdx-tabprint">' + esc(t.title) + '</div>' + renderBody(t.lines) + '</div>').join('');
+            el.addEventListener('click', (e) => {
+                const b = e.target.closest && e.target.closest('.kdx-tabbtn');
+                if (!b) return;
+                el.querySelectorAll('.kdx-tabbtn').forEach((x) => { x.classList.toggle('kdx-on', x === b); x.setAttribute('aria-selected', x === b ? 'true' : 'false'); });
+                el.querySelectorAll('.kdx-tabpanel').forEach((x) => x.classList.toggle('kdx-on', x.getAttribute('data-i') === b.getAttribute('data-i')));
+            });
+        },
+        accordion(el, arg, body, kind) {
+            let items;
+            if (kind === 'faq') { items = []; body.forEach((t) => { let m; if ((m = /^Q:\s*(.*)$/i.exec(t.trim()))) items.push({ title: m[1], lines: [] }); else if (items.length) items[items.length - 1].lines.push(t.replace(/^A:\s*/i, '')); }); }
+            else items = splitAt(body, /^@item\s+(.*)$/i);
+            if (!items.length) return badUse(el, kind, kind === 'faq' ? '::faq\nQ: A question?\nA: The answer.\n::end' : '::accordion\n@item Title\ntext\n::end');
+            el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + items.map((it, i) => '<details class="kdx-acc"' + (i === 0 && /open/i.test(arg) ? ' open' : '') + '><summary>' + miniInline(it.title) + '</summary><div>' + renderBody(it.lines) + '</div></details>').join('');
+            // opening one closes the others
+            el.addEventListener('toggle', (e) => { if (e.target.open) el.querySelectorAll('details.kdx-acc').forEach((d) => { if (d !== e.target) d.open = false; }); }, true);
+        },
+        cards(el, arg, body) {
+            const m = /^(\d)?\s*(.*)$/.exec(arg), n = Math.max(1, Math.min(5, parseInt(m[1], 10) || 3));
+            const items = body.map((t) => t.trim()).filter((t) => /^[*-]\s+/.test(t)).map((t) => { const s = t.replace(/^[*-]\s+/, ''), p = /^(.{1,60}?)\s+[\u2014\u2013-]\s+(.*)$/.exec(s) || /^([^:]{1,60}):\s+(.*)$/.exec(s); return p ? { h: p[1], t: p[2] } : { h: '', t: s }; });
+            el.style.setProperty('--kn', n);
+            el.innerHTML = (m[2] ? '<div class="kdx-title">' + esc(m[2]) + '</div>' : '') + '<div class="kdx-cardgrid">' + items.map((c) => '<div class="kdx-card">' + (c.h ? '<b>' + miniInline(c.h) + '</b>' : '') + '<span>' + miniInline(c.t) + '</span></div>').join('') + '</div>';
+        },
+        quote(el, arg, body, kind) {
+            el.classList.add(kind === 'pullquote' ? 'kdx-pull' : 'kdx-bq');
+            el.innerHTML = '<blockquote>' + renderBody(body) + '</blockquote>' + (arg ? '<cite>\u2014 ' + miniInline(arg) + '</cite>' : '');
+        },
+        aside(el, arg, body) { el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + renderBody(body); },
+        figure(el, arg, body, kind) {
+            const word = kind === 'tablecap' ? 'Table' : kind === 'listing' ? 'Listing' : 'Figure';
+            el.setAttribute('data-kdx-count', kind === 'tablecap' ? 'tab' : kind === 'listing' ? 'lst' : 'fig');
+            el.setAttribute('data-kdx-word', word);
+            el.innerHTML = '<div class="kdx-fig-body">' + renderBody(body) + '</div><div class="kdx-fig-cap"><b class="kdx-num"></b> ' + miniInline(arg) + '</div>';
+        },
+        theorem(el, arg, body, kind) {
+            const T = THEOREMS[kind];
+            el.classList.add('kdx-th-' + kind);
+            if (T[1]) { el.setAttribute('data-kdx-count', T[1]); el.setAttribute('data-kdx-word', T[0]); }
+            el.innerHTML = '<div class="kdx-th-h">' + (T[1] ? '<b class="kdx-num"></b>' : '<b>' + T[0] + '.</b>') + (arg ? ' <span class="kdx-th-t">(' + miniInline(arg) + ')</span>' : '') + '</div><div class="kdx-th-b">' + renderBody(body) + (kind === 'proof' ? '<span class="kdx-qed" aria-hidden="true">\u25a1</span>' : '') + '</div>';
+        },
+        abstract(el, arg, body) { el.innerHTML = '<div class="kdx-abs-h">' + esc(arg || 'Abstract') + '</div>' + renderBody(body); },
+        glossary(el, arg, body) {
+            const items = body.map((t) => t.trim()).filter(Boolean).map((t) => { const m = /^(.{1,60}?)\s*(?::|\u2014|\u2013| - )\s+(.*)$/.exec(t.replace(/^[*-]\s+/, '')); return m ? { t: m[1], d: m[2] } : null; }).filter(Boolean);
+            items.sort((a, b) => a.t.toLowerCase().localeCompare(b.t.toLowerCase()));
+            el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + '<dl class="kdx-gloss">' + items.map((i) => '<dt>' + miniInline(i.t) + '</dt><dd>' + miniInline(i.d) + '</dd>').join('') + '</dl>';
+        },
+        bibliography(el, arg, body) {
+            let items = body.map((t) => t.trim().replace(/^[*-]\s+/, '')).filter(Boolean);
+            const sorted = /^sorted\b/i.test(arg), title = arg.replace(/^sorted\s*/i, '');
+            if (sorted) items.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+            el.innerHTML = '<div class="kdx-title">' + esc(title || 'References') + '</div><ol class="kdx-bib">' + items.map((i) => '<li>' + miniInline(i) + '</li>').join('') + '</ol>';
+        },
+        checklist(el, arg, body, kind, editing, src) {
+            const items = body.map((t, i) => ({ t: t.trim(), i })).filter((o) => /^[*-]\s+\[[ xX]\]/.test(o.t) || /^\[[ xX]\]/.test(o.t)).map((o) => ({ done: /\[[xX]\]/.test(o.t), text: o.t.replace(/^[*-]?\s*\[[ xX]\]\s*/, ''), line: o.i }));
+            const paint = () => {
+                const d = items.filter((x) => x.done).length;
+                el.querySelector('.kdx-cl-n').textContent = d + ' of ' + items.length;
+                el.querySelector('.kdx-cl-bar i').style.width = (items.length ? (d / items.length) * 100 : 0) + '%';
+            };
+            el.innerHTML = '<div class="kdx-cl-h"><b>' + esc(arg || 'Checklist') + '</b><span class="kdx-cl-n"></span></div><div class="kdx-cl-bar"><i></i></div>' + items.map((x, k) => '<label class="kdx-cl-i' + (x.done ? ' kdx-done' : '') + '"><input type="checkbox" data-k="' + k + '"' + (x.done ? ' checked' : '') + '><span>' + miniInline(x.text) + '</span></label>').join('');
+            paint();
+            el.addEventListener('change', (e) => {
+                const cb = e.target; if (!cb || cb.tagName !== 'INPUT') return;
+                const it = items[+cb.getAttribute('data-k')]; it.done = cb.checked;
+                cb.parentNode.classList.toggle('kdx-done', cb.checked);
+                const lines = el.getAttribute('data-kd-src').split('\n');
+                const at = 1 + it.line;
+                lines[at] = lines[at].replace(/\[[ xX]\]/, cb.checked ? '[x]' : '[ ]');
+                el.setAttribute('data-kd-src', lines.join('\n'));
+                paint(); changed(el);
+            });
+        },
+        agenda(el, arg, body) {
+            let mins = 0;
+            const rows = body.map((t) => t.trim().replace(/^[*-]\s+/, '')).filter(Boolean).map((t) => {
+                const m = /^(\d{1,2}[:.]\d{2}(?:\s*[ap]m)?)\s+(.*?)(?:\s*\((\d+)\s*m(?:in)?\))?$/i.exec(t);
+                if (m && m[3]) mins += +m[3];
+                return m ? { when: m[1], what: m[2], len: m[3] ? m[3] + ' min' : '' } : { when: '', what: t, len: '' };
+            });
+            el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + '<table class="kdx-tbl kdx-agenda">' + rows.map((r) => '<tr><td class="kdx-ag-t">' + esc(r.when) + '</td><td>' + miniInline(r.what) + '</td><td class="kdx-ag-l">' + esc(r.len) + '</td></tr>').join('') + '</table>' + (mins ? '<div class="kdx-note">Total planned time: ' + (mins >= 60 ? Math.floor(mins / 60) + ' h ' + (mins % 60 ? mins % 60 + ' min' : '') : mins + ' min') + '</div>' : '');
+        },
+        proscons(el, arg, body) {
+            const pros = [], cons = [];
+            body.forEach((t) => { const s = t.trim(); if (/^\+\s+/.test(s)) pros.push(s.replace(/^\+\s+/, '')); else if (/^[-\u2212]\s+/.test(s)) cons.push(s.replace(/^[-\u2212]\s+/, '')); });
+            el.innerHTML = (arg ? '<div class="kdx-title">' + esc(arg) + '</div>' : '') + '<div class="kdx-pc"><div class="kdx-pro"><b>Pros</b><ul>' + pros.map((p) => '<li>' + miniInline(p) + '</li>').join('') + '</ul></div><div class="kdx-con"><b>Cons</b><ul>' + cons.map((p) => '<li>' + miniInline(p) + '</li>').join('') + '</ul></div></div>';
+        },
+        contact(el, arg, body) {
+            const ls = body.map((t) => t.trim()).filter(Boolean);
+            const name = arg || ls.shift() || 'Contact';
+            const init = name.split(/\s+/).map((w) => w[0]).join('').slice(0, 2).toUpperCase();
+            el.innerHTML = '<div class="kdx-ct"><div class="kdx-ct-av" aria-hidden="true">' + esc(init) + '</div><div><b>' + esc(name) + '</b>' + ls.map((l) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(l) ? '<a href="mailto:' + esc(l) + '">' + esc(l) + '</a>' : /^\+?[\d][\d\s().-]{5,}$/.test(l) ? '<a href="tel:' + esc(l.replace(/[^\d+]/g, '')) + '">' + esc(l) + '</a>' : /^https?:\/\/\S+$/.test(l) ? '<a href="' + esc(l) + '" target="_blank" rel="noopener noreferrer">' + esc(l.replace(/^https?:\/\//, '')) + '</a>' : '<span>' + esc(l) + '</span>').join('') + '</div></div>';
+        },
+        address(el, arg, body) { el.innerHTML = '<address>' + body.filter((t) => t.trim()).map((t) => esc(t.trim())).join('<br>') + '</address>'; }
+    };
+    // which words open which builder
+    const DOC_SINGLE = ['toc', 'wordcount', 'date', 'lorem', 'space', 'stamp', 'watermark', 'footnotes', 'lof', 'lot', 'sign', 'signatures', 'banner', 'cover', 'keywords'];
+    const DOC_MULTI = { columns: 'columns', note: 'callout', tip: 'callout', info: 'callout', warning: 'callout', danger: 'callout', success: 'callout', important: 'callout', callout: 'callout', tabs: 'tabs', accordion: 'accordion', faq: 'accordion', cards: 'cards', quote: 'quote', pullquote: 'quote', aside: 'aside', figure: 'figure', tablecap: 'figure', listing: 'figure', abstract: 'abstract', glossary: 'glossary', bibliography: 'bibliography', checklist: 'checklist', agenda: 'agenda', proscons: 'proscons', contact: 'contact', address: 'address' };
+    Object.keys(THEOREMS).forEach((k) => { DOC_MULTI[k] = 'theorem'; });
+    function buildDocBlock(el, kind, arg, bodyLines, editing) {
+        if (DOC_SINGLE.indexOf(kind) >= 0) { DOC_BUILD[kind](el, arg); }
+        else { const fn = DOC_MULTI[kind]; DOC_BUILD[fn](el, arg, bodyLines, kind, editing); }
+        el.classList.add('kdx-doc');
+    }
+
+    /* ---------- passes over the whole page: numbers, contents, footnotes, word count, watermark ---------- */
+    const FN_DEF = /^\[\^([^\]\s]+)\]:\s*(.+)$/, ABBR_DEF = /^\*\[([^\]]+)\]:\s*(.+)$/;
+    function defLine(src, kind) {
+        const d = doc.createElement('div');
+        d.className = 'kdx kdx-fndef kdx-' + kind;
+        d.setAttribute('contenteditable', 'false'); d.setAttribute('data-kd-src', src);
+        d.textContent = (kind === 'abbrdef' ? 'Abbreviation: ' : 'Footnote: ') + src;
+        return d;
+    }
+    function makeDocLines(rootEl) {
+        let n = 0;
+        lines(rootEl).forEach((L) => {
+            if (L.widget || L.table) return;
+            const t = L.text.trim();
+            let kind = null;
+            if (FN_DEF.test(t)) kind = 'fndef'; else if (ABBR_DEF.test(t)) kind = 'abbrdef';
+            if (!kind || (L.nodes[0] && L.nodes[0].nodeType === 1 && L.nodes[0].closest && L.nodes[0].closest('pre, code, .kdx-block'))) return;
+            insertBefore(L, defLine(t, kind)); removeLine(L); n++;
+        });
+        return n;
+    }
+    // text nodes outside code, blocks and other new things
+    function proseNodes(rootEl) {
+        const w = doc.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT);
+        const out = [];
+        for (let t = w.nextNode(); t; t = w.nextNode()) {
+            const p = t.parentElement;
+            if (!p || !t.nodeValue.trim() || p.closest('pre, code, textarea, script, style, .kd-math, .katex, .kdx, .kdx-block, a, [data-kdx-skip]')) continue;
+            out.push(t);
+        }
+        return out;
+    }
+    function replaceMatches(t, re, build) {
+        const s = t.nodeValue;
+        re.lastIndex = 0;
+        let m, last = 0, frag = null;
+        while ((m = re.exec(s))) {
+            const el = build(m);
+            if (!el) continue;
+            frag = frag || doc.createDocumentFragment();
+            if (m.index > last) frag.appendChild(doc.createTextNode(s.slice(last, m.index)));
+            frag.appendChild(el);
+            last = m.index + m[0].length;
+        }
+        if (!frag) return 0;
+        if (last < s.length) frag.appendChild(doc.createTextNode(s.slice(last)));
+        t.parentNode.replaceChild(frag, t);
+        return 1;
+    }
+    function inlineEl(tag, cls, src, html) {
+        const el = doc.createElement(tag);
+        el.className = 'kdx ' + cls; el.setAttribute('data-kd-src', src); el.setAttribute('contenteditable', 'false');
+        el.innerHTML = html;
+        return el;
+    }
+    function makeDocInline(rootEl) {
+        const fnDefs = new Map(), abbrs = [];
+        rootEl.querySelectorAll('.kdx-fndef').forEach((d) => {
+            const s = d.getAttribute('data-kd-src');
+            let m;
+            if ((m = FN_DEF.exec(s))) fnDefs.set(m[1], m[2]);
+            else if ((m = ABBR_DEF.exec(s))) abbrs.push([m[1], m[2]]);
+        });
+        let n = 0;
+        const RE = /\[\^([^\]\s]+)\]|\{(fn|key|cite|todo)\s+([^{}\n]+)\}/g;
+        proseNodes(rootEl).forEach((t) => {
+            n += replaceMatches(t, RE, (m) => {
+                if (m[1]) return fnDefs.has(m[1]) ? inlineEl('sup', 'kdx-fnref', m[0], '<a href="#" data-fn="' + esc(m[1]) + '"></a>') : null;
+                if (m[2] === 'fn') return inlineEl('sup', 'kdx-fnref kdx-fninline', m[0], '<a href="#" data-note="' + esc(m[3].trim()) + '"></a>');
+                if (m[2] === 'key') return inlineEl('span', 'kdx-keys', m[0], m[3].trim().split(/\s*\+\s*/).map((k) => '<kbd>' + esc(k) + '</kbd>').join('<i>+</i>'));
+                if (m[2] === 'cite') return inlineEl('span', 'kdx-cite', m[0], '(' + esc(m[3].trim()) + ')');
+                return inlineEl('span', 'kdx-todo', m[0], '<b>TODO</b> ' + esc(m[3].trim()));
+            });
+        });
+        abbrs.forEach(([ab, full]) => {
+            const re = new RegExp('\\b' + ab.replace(/[.*+?^${}()|[\]\\]/g, '\\    const MULTI = /^::(chart|poll|quiz|scene|steps|stats|fold|timeline)\b/i, SINGLE = /^::(timer|map|progress|countdown|rating)\b/i;') + '\\b', 'g');
+            proseNodes(rootEl).forEach((t) => { n += replaceMatches(t, re, (m) => { const a = inlineEl('abbr', 'kdx-abbr', m[0], esc(m[0])); a.title = full; a.removeAttribute('contenteditable'); return a; }); });
+        });
+        return n;
+    }
+    function numberThings(rootEl) {
+        const counts = {}, listed = { fig: [], tab: [] };
+        rootEl.querySelectorAll('.kdx-doc[data-kdx-count]').forEach((el) => {
+            const k = el.getAttribute('data-kdx-count');
+            counts[k] = (counts[k] || 0) + 1;
+            const label = el.getAttribute('data-kdx-word') + ' ' + counts[k] + (k === 'thm' || k === 'rem' || k === 'ex' || k === 'exe' ? '.' : ':');
+            const slot = el.querySelector('.kdx-num');
+            if (slot) slot.textContent = label;
+            if (listed[k]) { const cap = el.querySelector('.kdx-fig-cap'); listed[k].push({ label: label.replace(/:$/, ''), text: cap ? cap.textContent.replace(/^[^:]*:?\s*/, '') : '', el }); }
+        });
+        return listed;
+    }
+    function fillFootnotes(rootEl) {
+        const notes = [], seen = new Map();
+        const defs = new Map();
+        rootEl.querySelectorAll('.kdx-fndef').forEach((d) => { const m = FN_DEF.exec(d.getAttribute('data-kd-src')); if (m) defs.set(m[1], m[2]); });
+        rootEl.querySelectorAll('.kdx-fnref a').forEach((a) => {
+            let text, key = a.getAttribute('data-fn');
+            if (key) { text = defs.get(key); if (!seen.has(key)) { seen.set(key, notes.length + 1); notes.push({ n: notes.length + 1, text, id: key }); } a.textContent = seen.get(key); a.title = text || ''; }
+            else { text = a.getAttribute('data-note'); notes.push({ n: notes.length + 1, text }); a.textContent = notes.length; a.title = text; }
+        });
+        rootEl.querySelectorAll('.kdx-d-footnotes .kdx-fnlist').forEach((ol) => { ol.innerHTML = notes.map((n) => '<li value="' + n.n + '">' + miniInline(n.text || '') + '</li>').join(''); });
+    }
+    function fillToc(rootEl, listed) {
+        const heads = Array.from(rootEl.querySelectorAll('h1,h2,h3,h4,h5,h6')).filter((h) => !h.closest('.kdx-block') && h.textContent.trim());
+        heads.forEach((h, i) => { if (!h.id) h.id = 'kdx-h' + i + '-' + slugOf(h.textContent).slice(0, 24); });
+        rootEl.querySelectorAll('.kdx-d-toc').forEach((box) => {
+            const depth = +box.getAttribute('data-toc-depth') || 3, numbered = box.hasAttribute('data-toc-num');
+            const nav = box.querySelector('.kdx-toc-list');
+            const c = [0, 0, 0, 0, 0, 0];
+            nav.innerHTML = heads.filter((h) => +h.tagName[1] <= depth).map((h) => {
+                const lvl = +h.tagName[1];
+                c[lvl - 1]++; for (let j = lvl; j < 6; j++) c[j] = 0;
+                const num = numbered ? c.slice(0, lvl).filter((x) => x).join('.') + ' ' : '';
+                return '<a href="#' + esc(h.id) + '" data-t="' + esc(h.id) + '" class="kdx-toc-l' + lvl + '">' + (num ? '<i>' + num + '</i>' : '') + esc(h.textContent.trim()) + '</a>';
+            }).join('') || '<span class="kdx-note">Add headings (# Title) and they show up here!</span>';
+        });
+        rootEl.querySelectorAll('[data-listof]').forEach((box) => {
+            const items = (listed && listed[box.getAttribute('data-listof')]) || [];
+            box.querySelector('.kdx-lof').innerHTML = items.map((i) => '<a href="#" class="kdx-lof-i" data-fig="' + esc(String(items.indexOf(i))) + '"><b>' + esc(i.label) + '</b> ' + esc(i.text) + '</a>').join('') || '<span class="kdx-note">Nothing to list yet: add ::figure or ::tablecap blocks!</span>';
+            box._items = items;
+        });
+        if (!rootEl._kdxNav) {
+            rootEl._kdxNav = true;
+            rootEl.addEventListener('click', (e) => {
+                const a = e.target.closest && e.target.closest('.kdx-toc-list a, .kdx-lof-i');
+                if (!a) return;
+                e.preventDefault();
+                let target = null;
+                if (a.hasAttribute('data-t')) target = doc.getElementById(a.getAttribute('data-t'));
+                else { const box = a.closest('[data-listof]'); const it = box && box._items && box._items[+a.getAttribute('data-fig')]; target = it && it.el; }
+                if (target && target.scrollIntoView) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            });
+        }
+    }
+    function fillWordcount(rootEl) {
+        const boxes = rootEl.querySelectorAll('.kdx-wc');
+        if (!boxes.length) return;
+        const clone = rootEl.cloneNode(true);
+        clone.querySelectorAll('.kdx-wc, .kdx-fndef, .kdx-def, .kdx-set, script, style').forEach((x) => x.remove());
+        const text = clone.textContent.replace(/\u200b/g, ' '), words = (text.match(/[\p{L}\p{N}][\p{L}\p{N}'\u2019-]*/gu) || []).length;
+        const mins = Math.max(1, Math.round(words / 230));
+        boxes.forEach((b) => { const label = b.getAttribute('data-label'); b.textContent = (label ? label + ' ' : '') + words.toLocaleString() + ' words \u00b7 ' + mins + ' min read \u00b7 ' + text.replace(/\s/g, '').length.toLocaleString() + ' characters'; });
+    }
+    function watermark(rootEl) {
+        const wm = rootEl.querySelector('.kdx-d-watermark');
+        if (wm) { rootEl.style.setProperty('--kdx-wm', JSON.stringify(wm.getAttribute('data-wm'))); rootEl.classList.add('kdx-wm'); }
+        else if (rootEl.classList.contains('kdx-wm')) { rootEl.classList.remove('kdx-wm'); rootEl.style.removeProperty('--kdx-wm'); }
+    }
+    function docPasses(rootEl) {
+        makeDocLines(rootEl);
+        makeDocInline(rootEl);
+        const listed = numberThings(rootEl);
+        fillFootnotes(rootEl);
+        fillToc(rootEl, listed);
+        fillWordcount(rootEl);
+        watermark(rootEl);
+    }
+    // the sheet for everything above (print-friendly: nothing needs a screen)
+    function injectDocsCss() {
+        if (doc.getElementById('kdx-docs-css')) return;
+        const st = doc.createElement('style');
+        st.id = 'kdx-docs-css';
+        st.textContent = [
+            '.kdx-block.kdx-doc{max-width:none;background:none;border:0;box-shadow:none;border-radius:0;padding:0;margin:14px 0;color:inherit;font:inherit;line-height:1.55;break-inside:avoid-page;user-select:text}',
+            '.kdx-doc p{margin:.4em 0}.kdx-doc ul,.kdx-doc ol{margin:.4em 0;padding-left:1.4em}.kdx-doc img{max-width:100%;height:auto;border-radius:4px}',
+            '.kdx-doc .kdx-code{margin:.5em 0;padding:10px 12px;border-radius:8px;background:#f1f5f9;border:1px solid #e2e8f0;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;overflow:auto;white-space:pre}',
+            '.kdx-doc code{font:.92em ui-monospace,Menlo,Consolas,monospace;background:#f1f5f9;border-radius:4px;padding:0 .3em}.kdx-doc mark{background:#fde68a;color:inherit;padding:0 .15em;border-radius:3px}',
+            '.kdx-tbl{border-collapse:collapse;width:100%;margin:.5em 0;font-size:.95em}.kdx-tbl th,.kdx-tbl td{border:1px solid #cbd5e1;padding:5px 9px;text-align:left;vertical-align:top}.kdx-tbl th{background:#f1f5f9;font-weight:700}',
+            '.kdx-doc blockquote{margin:.5em 0;padding:.1em 0 .1em 1em;border-left:3px solid #94a3b8;color:#475569}',
+            // contents, lists of figures
+            '.kdx-d-toc{padding:10px 0}.kdx-d-toc .kdx-title,.kdx-d-footnotes .kdx-title,.kdx-doc[data-listof] .kdx-title,.kdx-d-bibliography .kdx-title{font:800 1.15em/1.3 inherit;color:inherit;border-bottom:2px solid #94a3b8;padding-bottom:4px;margin-bottom:8px}',
+            '.kdx-toc-list a,.kdx-lof a{display:block;color:inherit;text-decoration:none;padding:2px 0;cursor:pointer}.kdx-toc-list a:hover,.kdx-lof a:hover{color:#0284c7;text-decoration:underline}',
+            '.kdx-toc-l2{padding-left:1.2em!important}.kdx-toc-l3{padding-left:2.4em!important;font-size:.95em}.kdx-toc-l4,.kdx-toc-l5,.kdx-toc-l6{padding-left:3.6em!important;font-size:.9em}.kdx-toc-list i{font-style:normal;color:#64748b;margin-right:.4em;font-variant-numeric:tabular-nums}',
+            '.kdx-lof b{margin-right:.5em;color:#475569}',
+            // small things
+            '.kdx-wc{font:600 .88em/1.4 system-ui,sans-serif;color:#64748b;letter-spacing:.01em}.kdx-date{font-weight:600}',
+            '.kdx-spacehint{display:none}.kdx-editing .kdx-spacehint{display:inline-block;font:600 11px system-ui;color:#94a3b8;border:1px dashed #cbd5e1;border-radius:6px;padding:0 8px}.kdx-d-space{min-height:1em}',
+            '.kdx-stampbox{display:inline-block;transform:rotate(-8deg);border:.18em solid var(--kc);color:var(--kc);border-radius:.3em;padding:.1em .6em;font:900 1.7em/1.1 system-ui,sans-serif;letter-spacing:.12em;text-transform:uppercase;opacity:.85;mix-blend-mode:multiply;-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-wm{position:relative}.kdx-wm::before{content:var(--kdx-wm);position:absolute;left:0;right:0;top:35%;text-align:center;font:900 min(14vw,140px)/1 system-ui,sans-serif;color:rgba(100,116,139,.12);transform:rotate(-28deg);pointer-events:none;z-index:0;letter-spacing:.08em;white-space:nowrap;overflow:hidden}',
+            '.kdx-sign{display:flex;flex-direction:column;gap:2px;min-width:220px;max-width:300px;margin-top:2.2em}.kdx-sign i{display:block;border-top:1.5px solid currentColor;height:0}.kdx-sign b{font-size:.95em}.kdx-sign span{font-size:.82em;color:#64748b}.kdx-signs{display:flex;flex-wrap:wrap;gap:0 40px}',
+            '.kdx-d-banner{padding:26px 28px;border-radius:12px;color:#fff;background:linear-gradient(135deg,var(--kc),color-mix(in srgb,var(--kc) 55%,#000));-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-banner-t{font:800 1.9em/1.15 system-ui,sans-serif}.kdx-banner-s{margin-top:6px;opacity:.9;font-size:1.05em}',
+            '.kdx-d-cover{min-height:70vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:60px 20px;break-after:page;page-break-after:always}.kdx-cover-t{font:800 2.8em/1.15 system-ui,sans-serif}.kdx-cover-s{font-size:1.35em;color:#475569;margin-top:10px}.kdx-cover-rule{width:90px;height:4px;background:#0284c7;border-radius:4px;margin:26px 0;-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-cover-a{font-size:1.2em;font-weight:600}.kdx-cover-d{color:#64748b;margin-top:6px}',
+            '.kdx-kw-h{margin-right:.4em}.kdx-kw{display:inline-block;margin:2px 4px 2px 0;padding:1px 10px;border-radius:999px;background:#e0f2fe;color:#075985;font-size:.88em;font-weight:600;-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            // columns, callouts, tabs, accordions, cards, quotes
+            '.kdx-cols-grid{display:grid;grid-template-columns:repeat(var(--kn,2),minmax(0,1fr));gap:0 28px}.kdx-cols-flow{column-count:var(--kn,2);column-gap:28px}@media (max-width:640px){.kdx-cols-grid{grid-template-columns:1fr}.kdx-cols-flow{column-count:1}}',
+            '.kdx-col>:first-child{margin-top:0}',
+            '.kdx-block.kdx-doc[class*="kdx-call-"]{padding:10px 14px 10px 16px;border-left:5px solid var(--kc);border-radius:0 10px 10px 0;background:color-mix(in srgb,var(--kc) 9%,#fff);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-call-h{display:flex;align-items:center;gap:8px;font-weight:800;color:color-mix(in srgb,var(--kc) 80%,#000)}.kdx-call-i{flex:none;width:1.45em;height:1.45em;border-radius:50%;background:var(--kc);color:#fff;display:inline-flex;align-items:center;justify-content:center;font:800 .85em system-ui,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-call-b>:first-child{margin-top:.3em}.kdx-call-b>:last-child{margin-bottom:0}',
+            '.kdx-tabbar{display:flex;gap:2px;border-bottom:2px solid #cbd5e1;flex-wrap:wrap}.kdx-tabbtn{font:700 .92em system-ui,sans-serif;padding:7px 16px;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;background:none;color:#475569;cursor:pointer;border-radius:8px 8px 0 0}.kdx-tabbtn:hover{background:#f1f5f9}.kdx-tabbtn.kdx-on{color:#0369a1;border-bottom-color:#0284c7;background:#f0f9ff}',
+            '.kdx-tabpanel{display:none;padding:10px 4px}.kdx-tabpanel.kdx-on{display:block}.kdx-tabprint{display:none}@media print{.kdx-tabbar{display:none}.kdx-tabpanel{display:block!important}.kdx-tabprint{display:block;font-weight:800;border-bottom:1px solid #94a3b8;margin-top:.6em}}',
+            '.kdx-acc{border:1px solid #cbd5e1;border-radius:10px;margin:6px 0;background:#fff}.kdx-acc summary{cursor:pointer;font-weight:700;padding:9px 14px;list-style:none;display:flex;justify-content:space-between;gap:10px}.kdx-acc summary::-webkit-details-marker{display:none}.kdx-acc summary::after{content:"+";font-weight:800;color:#0284c7}.kdx-acc[open] summary::after{content:"\\2212"}.kdx-acc>div{padding:0 14px 10px}@media print{.kdx-acc>div{display:block}}',
+            '.kdx-cardgrid{display:grid;grid-template-columns:repeat(var(--kn,3),minmax(0,1fr));gap:12px}@media (max-width:700px){.kdx-cardgrid{grid-template-columns:1fr 1fr}}.kdx-card{padding:12px 14px;border:1px solid #cbd5e1;border-radius:12px;background:#fff;display:flex;flex-direction:column;gap:4px;box-shadow:0 1px 3px rgba(15,23,42,.08)}.kdx-card b{color:#0c4a6e}.kdx-card span{color:#475569;font-size:.94em}',
+            '.kdx-bq blockquote{border-left:4px solid #0284c7;padding:.2em 1em;font-size:1.08em;font-style:italic;color:#334155;background:#f8fafc}.kdx-bq cite,.kdx-pull cite{display:block;margin-top:4px;font-style:normal;font-size:.9em;color:#64748b}',
+            '.kdx-pull{text-align:center;padding:14px 8%!important;border-top:3px solid #0284c7;border-bottom:3px solid #0284c7}.kdx-pull blockquote{border:0;font:italic 600 1.55em/1.35 Georgia,serif;color:#0c4a6e;padding:0}',
+            '.kdx-block.kdx-doc.kdx-d-aside{float:right;width:38%;min-width:180px;margin:4px 0 12px 18px;padding:10px 14px;border-radius:10px;background:#f8fafc;border-left:3px solid #94a3b8;font-size:.92em;color:#475569}@media (max-width:640px){.kdx-d-aside{float:none;width:auto;margin:10px 0}}',
+            // figures, theorems, abstract, glossary, bibliography
+            '.kdx-fig-body{text-align:center}.kdx-fig-body img{max-width:100%}.kdx-fig-cap{text-align:center;font-size:.9em;color:#475569;margin-top:6px}.kdx-fig-cap b{color:#0f172a}.kdx-d-figure,.kdx-d-tablecap,.kdx-d-listing{break-inside:avoid}',
+            '.kdx-th-h{font-weight:800}.kdx-th-t{font-weight:600}.kdx-th-b{margin-top:.1em}.kdx-block.kdx-doc[class*="kdx-th-"]{padding:6px 0 6px 14px;border-left:3px solid #cbd5e1}.kdx-th-theorem,.kdx-th-lemma,.kdx-th-corollary,.kdx-th-proposition{border-left-color:#0284c7!important}.kdx-th-theorem .kdx-th-b,.kdx-th-lemma .kdx-th-b,.kdx-th-corollary .kdx-th-b,.kdx-th-proposition .kdx-th-b{font-style:italic}.kdx-th-definition{border-left-color:#16a34a!important}.kdx-th-proof .kdx-th-h{font-style:italic;font-weight:700}.kdx-qed{float:right;font-size:.9em}',
+            '.kdx-d-abstract{margin:14px 6%!important;font-size:.95em}.kdx-abs-h{text-align:center;font-weight:800;text-transform:uppercase;letter-spacing:.1em;font-size:.82em;margin-bottom:4px}.kdx-d-abstract p{text-align:justify}',
+            '.kdx-gloss dt{font-weight:800;margin-top:.5em}.kdx-gloss dd{margin:0 0 0 1.4em;color:#475569}',
+            '.kdx-bib{list-style:none;padding:0!important;counter-reset:bib}.kdx-bib li{counter-increment:bib;padding-left:2.4em;text-indent:-2.4em;margin:.35em 0}.kdx-bib li::before{content:"[" counter(bib) "]";display:inline-block;width:2.4em;text-indent:0;color:#64748b;font-variant-numeric:tabular-nums}',
+            '.kdx-fnlist{padding-left:1.8em;font-size:.92em;color:#334155}.kdx-fnlist li{margin:.25em 0}',
+            // checklist, agenda, pros and cons, contact, address
+            '.kdx-block.kdx-doc.kdx-d-checklist{border:1px solid #cbd5e1;border-radius:12px;padding:10px 14px;background:#fff}.kdx-cl-h{display:flex;justify-content:space-between;gap:10px;font-weight:800}.kdx-cl-n{font:600 .85em system-ui;color:#64748b}.kdx-cl-bar{height:6px;border-radius:999px;background:#e2e8f0;margin:6px 0 8px;overflow:hidden}.kdx-cl-bar i{display:block;height:100%;background:#16a34a;transition:width .2s}.kdx-cl-i{display:flex;gap:9px;align-items:flex-start;padding:3px 0;cursor:pointer}.kdx-cl-i input{margin-top:.3em;accent-color:#16a34a;width:16px;height:16px}.kdx-cl-i.kdx-done span{color:#64748b;text-decoration:line-through}',
+            '.kdx-agenda .kdx-ag-t{white-space:nowrap;font-weight:700;width:1%;font-variant-numeric:tabular-nums}.kdx-agenda .kdx-ag-l{white-space:nowrap;color:#64748b;width:1%;text-align:right}',
+            '.kdx-pc{display:grid;grid-template-columns:1fr 1fr;gap:14px}@media (max-width:560px){.kdx-pc{grid-template-columns:1fr}}.kdx-pro,.kdx-con{padding:10px 14px;border-radius:12px;-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-pro{background:#f0fdf4;border:1px solid #86efac}.kdx-con{background:#fef2f2;border:1px solid #fca5a5}.kdx-pro b{color:#15803d}.kdx-con b{color:#b91c1c}.kdx-pro ul,.kdx-con ul{margin:.3em 0 0;padding-left:1.2em}',
+            '.kdx-ct{display:flex;gap:14px;align-items:center;padding:10px 14px;border:1px solid #cbd5e1;border-radius:14px;background:#fff;max-width:420px}.kdx-ct-av{flex:none;width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font:800 18px system-ui;color:#fff;background:linear-gradient(135deg,#38bdf8,#0284c7);-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-ct b{display:block;font-size:1.05em}.kdx-ct a,.kdx-ct span{display:block;font-size:.92em;color:#475569}.kdx-ct a{color:#0369a1}',
+            '.kdx-doc address{font-style:normal;line-height:1.5;padding:4px 0 4px 12px;border-left:3px solid #cbd5e1}',
+            // inline marks
+            '.kdx-fnref a{color:#0369a1;text-decoration:none;font-weight:700;padding:0 1px;cursor:pointer}.kdx-fnref a:hover{text-decoration:underline}',
+            '.kdx-keys kbd{display:inline-block;min-width:1.5em;padding:0 .45em;margin:0 .1em;text-align:center;font:600 .86em/1.5 ui-monospace,Menlo,Consolas,monospace;color:#1e293b;background:linear-gradient(#fff,#e2e8f0);border:1px solid #94a3b8;border-bottom-width:2.5px;border-radius:.35em;box-shadow:0 1px 0 rgba(15,23,42,.15);-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-keys i{font-style:normal;color:#94a3b8;font-size:.8em}',
+            '.kdx-cite{color:#475569}.kdx-todo{background:#fef9c3;border:1px dashed #eab308;border-radius:6px;padding:0 6px;font-size:.92em}.kdx-todo b{color:#a16207;font-size:.78em;letter-spacing:.08em;margin-right:.3em}@media print{.kdx-todo{background:none;border:0}}',
+            'abbr.kdx-abbr{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}',
+            '.kdx-fndef{display:none}.kdx-editing .kdx-fndef{display:block;width:max-content;max-width:100%;font:600 11.5px/1.6 ui-monospace,Menlo,monospace;color:#075985;background:#e0f2fe;border:1px dashed #38bdf8;border-radius:8px;padding:0 8px;margin:2px 0;user-select:none}',
+            '@media print{.kdx-block.kdx-doc{break-inside:avoid-page}.kdx-cols-grid,.kdx-cols-flow{break-inside:auto}.kdx-spacehint{display:none!important}}'
+        ].join('\n');
+        (doc.head || doc.documentElement).appendChild(st);
+    }
+
+    const MULTI = new RegExp('^::(chart|poll|quiz|scene|steps|stats|fold|timeline|' + Object.keys(DOC_MULTI).join('|') + ')\\b', 'i'), SINGLE = new RegExp('^::(timer|map|progress|countdown|rating|' + DOC_SINGLE.join('|') + ')\\b', 'i');
     function makeBlocks(rootEl, editing) {
         let n = 0;
         // blocks made before (a saved page, or a second pass): drawn again from their text, so they work
@@ -1184,6 +1677,8 @@
         const blocks = makeBlocks(rootEl, editing) + makePkInline(rootEl);
         BUILTINS.forEach(useDef);
         makeBars(rootEl);
+        injectDocsCss();
+        try { docPasses(rootEl); } catch (e) { console.warn('[KeydownNext docs]', e); }
         const defs = BUILTINS.concat(tipDefs(rootEl), chipDefs(rootEl), collectDefs(rootEl, editing));
         const tags = applyTags(rootEl, defs);
         const values = makeLive(rootEl, editing);
@@ -1223,7 +1718,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, chipSpan, retagChip, parseChip, CHIP_LOOKS, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, version: '1.0.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, chipSpan, retagChip, parseChip, CHIP_LOOKS, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, docs: DOC_BUILD, renderBody, version: '1.1.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back

@@ -1062,7 +1062,31 @@
                             ['Poll', '::poll Favorite color?\n* Blue\n* Green\n* Orange\n::end'],
                             ['Quiz question', '::quiz 2 + 2 = ?\n* 3\n* [x] 4\n* 5\n::end'],
                             ['Timer', '::timer 5:00 Break'],
-                            ['Map', '::map 38.72, -9.14 13 Lisbon']
+                            ['Map', '::map 38.72, -9.14 13 Lisbon'],
+                            null,
+                            ['Contents (TOC)', '::toc 3 Contents'],
+                            ['Cover page', '::cover My Report | A subtitle | Your name | 2026'],
+                            ['Note box', '::note Good to know\nThe words go here.\n::end'],
+                            ['Warning box', '::warning Careful\nThe words go here.\n::end'],
+                            ['Columns', '::columns 2\nLeft side.\n|||\nRight side.\n::end'],
+                            ['Tabs', '::tabs\n@tab First\nOne.\n@tab Second\nTwo.\n::end'],
+                            ['FAQ', '::faq\nQ: A question?\nA: The answer.\n::end'],
+                            ['Cards', '::cards 3 Features\n- Fast - It is quick.\n- Small - It is light.\n- Free - It costs nothing.\n::end'],
+                            ['Pull quote', '::pullquote Someone wise\nA line worth remembering.\n::end'],
+                            ['Numbered figure', '::figure A caption\n![A picture](https://example.com/pic.png)\n::end'],
+                            ['Theorem', '::theorem Name\nThe statement.\n::end'],
+                            ['Abstract', '::abstract\nA short summary of the work.\n::end'],
+                            ['Checklist', '::checklist Packing\n- [ ] Passport\n- [x] Tickets\n::end'],
+                            ['Pros and cons', '::proscons Should we?\n+ It is cheap\n- It is slow\n::end'],
+                            ['Agenda', '::agenda Meeting\n- 09:00 Welcome (10 min)\n- 09:10 Updates (20 min)\n::end'],
+                            ['Glossary', '::glossary Terms\nKeydown: text that formats itself\n::end'],
+                            ['References', '::bibliography References\n- Smith, J. (2020). A Book.\n::end'],
+                            ['Footnotes list', '::footnotes Notes'],
+                            ['Signature lines', '::signatures Alice | Bob'],
+                            ['Contact card', '::contact Ada Lovelace\nada@example.com\n+1 555 0100\n::end'],
+                            ['Stamp', '::stamp DRAFT red'],
+                            ['Word count', '::wordcount'],
+                            ['Today\'s date', '::date']
                         ];
                         return B.map(function (b) {
                             if (!b) return { sep: true };
