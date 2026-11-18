@@ -39,12 +39,12 @@
         const st = doc.createElement('style');
         st.id = 'kdx-base-css';
         st.textContent = [
-            '.kdx-def,.kdx-set{display:none}',
-            '.kdx-editing .kdx-def,.kdx-editing .kdx-set{display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1.6 ui-monospace,Menlo,monospace;color:#075985;background:#e0f2fe;border:1px dashed #38bdf8;border-radius:8px;padding:0 7px;margin:1px 2px;vertical-align:middle;user-select:none}',
+            '.kdx-def{display:none}',
+            '.kdx-editing .kdx-def{display:inline-flex;align-items:center;gap:6px;font:600 11.5px/1.6 ui-monospace,Menlo,monospace;color:#075985;background:#e0f2fe;border:1px dashed #38bdf8;border-radius:8px;padding:0 7px;margin:1px 2px;vertical-align:middle;user-select:none}',
             '.kdx-editing div.kdx-def{display:flex;width:max-content;max-width:100%}',
             '.kdx-def-sample{font:inherit}',
-            '.kdx-val{font-weight:700;color:inherit;font-variant-numeric:tabular-nums;border-bottom:1.5px dotted #38bdf8}',
-            '.kdx-val.kdx-err{color:#b91c1c;border-bottom-color:#dc2626;font-weight:600}',
+            // a value is just its text: no chip, no underline, no bold
+            '.kdx-val,.kdx-set{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;font-variant-numeric:tabular-nums}',
             '.kdx-input{display:inline-flex;align-items:center;gap:4px;vertical-align:middle;font:600 13px system-ui,sans-serif;color:#075985}',
             '.kdx-input input[type=checkbox]{width:16px;height:16px;accent-color:#0284c7;margin:0}',
             '.kdx-input input[type=range]{width:110px;accent-color:#0284c7}',
@@ -567,7 +567,7 @@
     const dayMs = 86400000;
     const dateOf = (s) => { const m = /^(\d{4})-(\d{1,2})-(\d{1,2})$/.exec(String(s).trim()); if (!m) throw new Error('Dates look like "2026-12-25"'); return new Date(+m[1], +m[2] - 1, +m[3]); };
     const midnight = () => { const d = new Date(); return new Date(d.getFullYear(), d.getMonth(), d.getDate()); };
-    const num = (v) => { const n = typeof v === 'boolean' ? (v ? 1 : 0) : Number(v); if (isNaN(n)) throw new Error('"' + v + '" is not a number'); return n; };
+    const num = (v) => { const pc = typeof v === 'string' ? /^\s*(-?\d+(?:\.\d+)?)\s*%\s*$/.exec(v) : null; const n = pc ? parseFloat(pc[1]) / 100 : typeof v === 'boolean' ? (v ? 1 : 0) : Number(v); if (isNaN(n)) throw new Error('"' + v + '" is not a number'); return n; };
     const FUNCS = {
         round: (x, d) => { const k = Math.pow(10, d ? num(d) : 0); return Math.round(num(x) * k) / k; },
         floor: (x) => Math.floor(num(x)), ceil: (x) => Math.ceil(num(x)), abs: (x) => Math.abs(num(x)), sqrt: (x) => Math.sqrt(num(x)),
@@ -600,7 +600,11 @@
         function primary() {
             const t = take();
             if (!t) throw new Error('Something is missing at the end');
-            if (t.t === 'num') return { k: 'num', v: t.v };
+            if (t.t === 'num') {
+                // 3.01% on its own is a percentage (5 % 3 is still a remainder)
+                if (isOp('%')) { const nx = T[i + 1]; if (!nx || !(nx.t === 'num' || nx.t === 'id' || nx.t === 'str' || (nx.t === 'op' && (nx.v === '(' || nx.v === '-' || nx.v === '!')))) { i++; return { k: 'str', v: String(t.v) + '%' }; } }
+                return { k: 'num', v: t.v };
+            }
             if (t.t === 'str') return { k: 'str', v: t.v };
             if (t.t === 'op' && t.v === '(') { const e = ternary(); expect(')'); return e; }
             if (t.t === 'id') {
@@ -655,7 +659,7 @@
         if ((m = /^check\s+([A-Za-z_]\w*)(?:\s*=\s*(true|false|1|0))?(?:\s+(.+))?$/.exec(s))) return { kind: 'check', name: m[1], value: m[2] === 'true' || m[2] === '1' ? 1 : 0, label: m[3] || '' };
         if ((m = /^counter\s+([A-Za-z_]\w*)(?:\s*=\s*(-?\d+(?:\.\d+)?))?(?:\s+step\s+(\d+(?:\.\d+)?))?$/.exec(s))) return { kind: 'counter', name: m[1], value: m[2] ? parseFloat(m[2]) : 0, step: m[3] ? parseFloat(m[3]) : 1 };
         if ((m = /^slider\s+([A-Za-z_]\w*)\s*=\s*(-?\d+(?:\.\d+)?)\s+from\s+(-?\d+(?:\.\d+)?)\s+to\s+(-?\d+(?:\.\d+)?)(?:\s+step\s+(\d+(?:\.\d+)?))?$/.exec(s))) return { kind: 'slider', name: m[1], value: parseFloat(m[2]), min: parseFloat(m[3]), max: parseFloat(m[4]), step: m[5] ? parseFloat(m[5]) : 1 };
-        if ((m = /^([A-Za-z_]\w*)\s*=(?!=)\s*(.+)$/.exec(s))) { const e = parseExpr(m[2]); return { kind: 'set', name: m[1], expr: e }; }
+        if ((m = /^([A-Za-z_]\w*)\s*=(?!=)\s*(.+)$/.exec(s))) { let e; try { e = parseExpr(m[2]); } catch (er) { e = { k: 'str', v: m[2].trim() }; } return { kind: 'set', name: m[1], expr: e, src: m[2].trim() }; }
         return { kind: 'show', expr: parseExpr(s) };
     }
     // is this {{…}} a live value (and not one of OpenDB's {{templates}})?
@@ -675,7 +679,7 @@
         el.setAttribute('data-kd-src', src);
         if (!L) { el.className = 'kdx kdx-val kdx-err'; el.textContent = src; el.title = err; return el; }
         if (L.kind === 'show') { el.className = 'kdx kdx-val'; el.textContent = '…'; return el; }
-        if (L.kind === 'set') { el.className = 'kdx kdx-set'; el.textContent = L.name + ' = …'; return el; }
+        if (L.kind === 'set') { el.className = 'kdx kdx-set'; el.textContent = '…'; return el; }
         el.className = 'kdx kdx-input kdx-' + L.kind;
         el.setAttribute('data-kdx-name', L.name);
         const id = 'kdx-' + L.name + '-' + Math.random().toString(36).slice(2, 7);
@@ -738,9 +742,9 @@
         }
         sets.forEach((s) => {
             const name = s.L ? s.L.name : '?';
-            s.el.textContent = name + ' = ' + (s.done ? show(vars[name]) : '?');
+            // a setting shows its value, as plain text
+            s.el.textContent = s.done ? (s.L.expr.k === 'num' ? s.L.src : show(vars[name])) : s.el.getAttribute('data-kd-src');
             s.el.title = s.err || '';
-            s.el.classList.toggle('kdx-err', !!s.err && !s.done);
         });
         rootEl.querySelectorAll('.kdx-val[data-kd-src]').forEach((el) => {
             try { const L = readLive(el.getAttribute('data-kd-src').slice(2, -2)); el.textContent = show(evaluate(L.expr, vars)); el.classList.remove('kdx-err'); el.title = el.getAttribute('data-kd-src'); }
@@ -1534,7 +1538,7 @@
         const boxes = rootEl.querySelectorAll('.kdx-wc');
         if (!boxes.length) return;
         const clone = rootEl.cloneNode(true);
-        clone.querySelectorAll('.kdx-wc, .kdx-fndef, .kdx-def, .kdx-set, script, style').forEach((x) => x.remove());
+        clone.querySelectorAll('.kdx-wc, .kdx-fndef, .kdx-def, script, style').forEach((x) => x.remove());
         const text = clone.textContent.replace(/\u200b/g, ' '), words = (text.match(/[\p{L}\p{N}][\p{L}\p{N}'\u2019-]*/gu) || []).length;
         const mins = Math.max(1, Math.round(words / 230));
         boxes.forEach((b) => { const label = b.getAttribute('data-label'); b.textContent = (label ? label + ' ' : '') + words.toLocaleString() + ' words \u00b7 ' + mins + ' min read \u00b7 ' + text.replace(/\s/g, '').length.toLocaleString() + ' characters'; });
