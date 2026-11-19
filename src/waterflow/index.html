@@ -26,6 +26,7 @@
     <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css?v=20261230d">
     <link rel="stylesheet" href="poolside-keydown.css?v=20261230b">
+    <link rel="stylesheet" href="waterflow-more.css?v=20261118j">
     <script src="/offline.js?v=20261132g" defer></script>
     <script src="/phone-drawer.js?v=20261201k" defer></script>
 </head>
@@ -66,7 +67,7 @@
             <button type="button" class="wf-mini" id="wf-nbopts" title="Notebook options: rename, color or delete" hidden><svg viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7"/><circle cx="12" cy="12" r="1.7"/><circle cx="19" cy="12" r="1.7"/></svg></button>
             <button type="button" class="wf-mini wf-onlyphone" id="wf-railopen" title="Streams"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
         </header>
-        <div class="wf-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="wf-q" type="search" placeholder="Search notes" aria-label="Search notes" autocomplete="off"><select id="wf-sort" aria-label="Sort notes"><option value="updated">Recent</option><option value="created">Created</option><option value="title">A to Z</option></select></div>
+        <div class="wf-search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg><input id="wf-q" type="search" placeholder="Search notes" aria-label="Search notes" autocomplete="off"><select id="wf-sort" aria-label="Sort notes"><option value="updated">Recent</option><option value="created">Created</option><option value="title">A to Z</option><option value="words">Longest</option><option value="color">By color</option><option value="old">Oldest edit</option></select></div>
         <div class="wf-cards" id="wf-cards" role="list"></div>
     </section>
 
@@ -150,6 +151,8 @@
 <script src="../writeout/psl-data.js?v=20261227c"></script>
 <script src="../writeout/psl.js?v=20261227c"></script>
 <script src="../writeout/poolside.js?v=20261228a"></script>
-<script src="app.js?v=20261230c"></script>
+<script src="app.js?v=20261118j"></script>
+<script src="vadivam-icons.js?v=20261118j"></script>
+<script src="waterflow-more.js?v=20261118j"></script>
 </body>
 </html>

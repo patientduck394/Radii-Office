@@ -45,8 +45,11 @@
     const isPK = (n) => !!n && n.lang === 'pk' && !!PKX;
     const BL = () => window.BitLang;
     const playing = () => !!document.querySelector('#wf-stage .bl-view');   // a BitLang program has taken over the note: nothing of it is saved
-    const kdOf = (n) => (isPK(n) ? PKX.toKD(n.text || '') : (n.text || ''));        // the Keydown the engine draws
-    const keep = (n, kd) => (isPK(n) ? PKX.toPK(kd) : kd);                             // what a note stores, from drawn Keydown
+    const WM = () => window.WaterflowMore;
+    const wikiOut = (t) => (WM() && WM().wikiOut ? WM().wikiOut(t) : t);   // [[Note title]] becomes a link the engine draws
+    const wikiIn = (t) => (WM() && WM().wikiIn ? WM().wikiIn(t) : t);
+    const kdOf = (n) => wikiOut(isPK(n) ? PKX.toKD(n.text || '') : (n.text || ''));        // the Keydown the engine draws
+    const keep = (n, kd) => (isPK(n) ? PKX.toPK(wikiIn(kd)) : wikiIn(kd));                             // what a note stores, from drawn Keydown
     const newLang = () => (S.kd === 'classic' || !PKX ? 'kd' : 'pk');
 
     /* ---------- settings ---------- */
@@ -322,7 +325,7 @@
         let arr = stream.kind === 'scratch' ? [scratch] : notes.filter(inStream);
         if (q) arr = arr.filter((n) => (n.title + ' ' + n.text + ' ' + (n.tags || []).join(' ')).toLowerCase().includes(q));
         const by = $('wf-sort').value;
-        arr.sort((a, b) => (b.pinned - a.pinned) || (by === 'title' ? titleOf(a).localeCompare(titleOf(b)) : by === 'created' ? b.created - a.created : b.updated - a.updated));
+        arr.sort((a, b) => (b.pinned - a.pinned) || (by === 'title' ? titleOf(a).localeCompare(titleOf(b)) : by === 'created' ? b.created - a.created : by === 'words' ? words(b.text) - words(a.text) : by === 'color' ? String(a.color || '~').localeCompare(String(b.color || '~')) : by === 'old' ? a.updated - b.updated : b.updated - a.updated));
         $('wf-listcount').textContent = arr.length + (arr.length === 1 ? ' note' : ' notes');
         $('wf-cards').innerHTML = arr.map((n) => '<button type="button" class="wf-cardn' + (cur && cur.id === n.id ? ' on' : '') + '" data-id="' + esc(n.id) + '" role="listitem" style="--c:' + (n.color || (n.nb && (nbs.find((b) => b.id === n.nb) || {}).color) || 'transparent') + '"><b><span>' + esc(titleOf(n)) + '</span>' + (n.pinned ? ICON.pin : '') + '</b><p>' + esc(preview(n) || 'Empty note') + '</p><small>' + esc(when(n.updated)) + (n.nb ? '<i>' + esc(nbName(n.nb)) + '</i>' : '') + (n.tags || []).slice(0, 2).map((t) => '<i>#' + esc(t) + '</i>').join('') + '</small></button>').join('') || '<div class="wf-none">' + (q ? 'Nothing matches that search!' : stream.kind === 'trash' ? 'The trash is empty!' : 'No notes here yet. Press New note!') + '</div>';
     }
@@ -370,6 +373,7 @@
         if (save) touch(cur);
         $('wf-stats').textContent = words(cur.text).toLocaleString() + ' words, ' + Math.max(1, Math.round(words(cur.text) / 220)) + ' min read';
         outline(); info();
+        try { if (WM() && WM().changed) WM().changed(cur, save); } catch (e) {}
         const c = document.querySelector('.wf-cardn.on'); if (c && save) { clearTimeout(afterTextChange.t); afterTextChange.t = setTimeout(renderList, 600); }
     }
     function outline() {
@@ -414,6 +418,7 @@
         try { history.replaceState(null, '', n.scratch ? location.pathname : '#n=' + n.id); } catch (e) {}
         renderList();
         if (!n.text && !n.title && !n.scratch) setTimeout(() => $('wf-title').focus(), 50);
+        try { if (WM() && WM().opened) WM().opened(n); } catch (e) {}
     }
     function closeNote() {
         cur = null; skin(); $('wf-note').hidden = true; $('wf-empty').hidden = false; body.dataset.view = 'list';
@@ -788,7 +793,7 @@
             ['Theme: next look', '', () => { const o = ['day', 'night', 'sand']; S.theme = o[(o.indexOf(S.theme) + 1) % 3]; applySettings(); }],
             ['Settings', '', settingsDialog], ['Import, export and backups', '', dataDialog], ['Keydown guide', '', () => $('wf-open-guide').click()], ['BitLang guide (programs)', '', () => { try { BL().openDocs(); } catch (e) { toast('The BitLang guide did not open!'); } }],
             ['Print or save as PDF', '', () => cur && printNote()], ['Switch this note between Poolside and Classic Keydown', '', convertLang]
-        ].concat(cur ? [['Delete this note', cur.trashed ? 'forever' : 'to the trash', deleteCurrent], ['Recolor this note', '', recolorCurrent]] : []);
+        ].concat(cur ? [['Delete this note', cur.trashed ? 'forever' : 'to the trash', deleteCurrent], ['Recolor this note', '', recolorCurrent]] : []).concat(WM() && WM().commands ? WM().commands() : []);
     }
     function deleteCurrent() {
         if (!cur) return;
@@ -887,6 +892,11 @@
         }
     }
     window.addEventListener('hashchange', () => { const m = /#n=([\w-]+)/.exec(location.hash); const n = m && notes.find((x) => x.id === m[1]); if (n && n !== cur) openNote(n); });
-    window.Waterflow = { notes: () => notes, open: (id) => openNote(notes.find((n) => n.id === id)), newNote: newNote, highlight: highlight };
+    window.Waterflow = {
+        notes: () => notes, open: (id) => openNote(notes.find((n) => n.id === id)), newNote: newNote, highlight: highlight,
+        cur: () => cur, nbs: () => nbs, saveNbs: saveNbs, touch: touch, flush: flush, renderAll: renderAll, renderList: renderList, renderRail: renderRail, toast: toast, dialog: dialog, closeDialog: closeDialog, menu: menu,
+        readMode: readMode, loadMode: loadMode, mode: () => mode, insertText: insertText, blank: blank, titleOf: titleOf, plain: plain, words: words, isPK: isPK, kdOf: kdOf, PK: () => PKX, uid: uid, ymd: ymd, esc: esc, when: when,
+        openNote: (n) => openNote(n), setStream: (s) => { stream = s; renderAll(); }, settings: () => S, applySettings: applySettings, afterTextChange: afterTextChange, COLORS: COLORS, newLang: newLang, store: () => store
+    };
     boot();
 })();
