@@ -1465,6 +1465,58 @@
         el.innerHTML = html;
         return el;
     }
+
+    // Badges: little chips with an icon.  {badge Text | color | style | icon}  (everything after the text is optional and can come in any order)
+    const BADGE_COLORS = { blue: ['#2563eb', '#fff'], sky: ['#0ea5e9', '#fff'], teal: ['#0d9488', '#fff'], green: ['#16a34a', '#fff'], lime: ['#84cc16', '#1a2e05'], yellow: ['#eab308', '#3b2f00'], orange: ['#f97316', '#fff'], red: ['#dc2626', '#fff'], pink: ['#ec4899', '#fff'], purple: ['#9333ea', '#fff'], indigo: ['#4f46e5', '#fff'], gray: ['#64748b', '#fff'] };
+    const BADGE_STYLES = ['soft', 'solid', 'outline', 'dashed', 'pill', 'square', 'tag', 'glow', 'gradient', 'glass', 'dot'];
+    const BADGE_ICONS = {
+        check: '<path d="M5 12.5l4.5 4.5L19 7"/>', plus: '<path d="M12 5v14M5 12h14"/>', minus: '<path d="M5 12h14"/>', x: '<path d="M6 6l12 12M18 6L6 18"/>',
+        star: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>', bolt: '<path d="M13 3L5 14h6l-1 7 8-11h-6z"/>',
+        heart: '<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/>', flag: '<path d="M6 21V4M6 4h11l-2 4 2 4H6"/>',
+        info: '<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>', warning: '<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+        bell: '<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>', fire: '<path d="M12 3c1 4 5 5 5 10a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-3-1-5 1-9z"/>',
+        lock: '<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>', user: '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+        tag: '<path d="M3 12V4h8l10 10-8 8z"/><path d="M7.5 8h.01"/>', clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+        code: '<path d="M9 8l-5 4 5 4M15 8l5 4-5 4"/>', bug: '<path d="M9 9a3 3 0 0 1 6 0v6a3 3 0 0 1-6 0z"/><path d="M5 8l3 2M19 8l-3 2M4 14h4M16 14h4M5 20l3-3M19 20l-3-3"/>',
+        rocket: '<path d="M14 4c4 0 6 2 6 6-1 4-4 7-8 8l-6-6c1-4 4-7 8-8z"/><circle cx="15" cy="9" r="1.5"/><path d="M5 19l2-4"/>',
+        gift: '<rect x="4" y="9" width="16" height="4"/><path d="M5 13v8h14v-8M12 9v12M12 9c-3 0-4-4-1-4s2 4 1 4zM12 9c3 0 4-4 1-4s-2 4-1 4z"/>',
+        pin: '<path d="M12 21s-6-6-6-11a6 6 0 0 1 12 0c0 5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>', eye: '<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+        shield: '<path d="M12 3l8 3v6c0 5-4 8-8 9-4-1-8-4-8-9V6z"/>', sparkle: '<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>',
+        download: '<path d="M12 4v11M7 11l5 5 5-5M5 20h14"/>', link: '<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+        mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>', crown: '<path d="M3 8l4 4 5-7 5 7 4-4-2 11H5z"/>',
+        leaf: '<path d="M5 19C5 9 11 4 20 4c0 9-5 15-15 15zM5 19l8-8"/>', flask: '<path d="M9 3h6M10 3v6l-5 10a1 1 0 0 0 1 2h12a1 1 0 0 0 1-2l-5-10V3"/>',
+        cube: '<path d="M12 3l8 4.5v9L12 21l-8-4.5v-9zM12 12l8-4.5M12 12v9M12 12L4 7.5"/>', chat: '<path d="M4 5h16v11H9l-5 4z"/>',
+        book: '<path d="M4 5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2z"/>', dollar: '<path d="M12 3v18M16 7h-6a3 3 0 0 0 0 6h4a3 3 0 0 1 0 6H8"/>',
+        play: '<path d="M7 4l13 8-13 8z"/>', verified: '<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>'
+    };
+    function badgeInk(hex) {
+        const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex);
+        if (!m) return '#fff';
+        let h = m[1]; if (h.length === 3) h = h.replace(/./g, '$&$&');
+        const v = [0, 2, 4].map((i) => parseInt(h.substr(i, 2), 16));
+        return (0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2]) > 160 ? '#111827' : '#fff';
+    }
+    function parseBadge(arg) {
+        const parts = arg.split('|').map((x) => x.trim());
+        const out = { text: parts[0] || 'Badge', color: 'blue', style: 'soft', icon: '' };
+        parts.slice(1).forEach((w) => {
+            const l = w.toLowerCase();
+            if (!l) return;
+            if (BADGE_COLORS[l] || /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(l)) out.color = l;
+            else if (BADGE_STYLES.indexOf(l) >= 0) out.style = l;
+            else if (BADGE_ICONS[l]) out.icon = l;
+            else if (l === 'none' || l === 'no-icon') out.icon = '';
+            else if ([...w].length <= 2) out.icon = w;
+        });
+        return out;
+    }
+    function badgeEl(arg, src) {
+        const b = parseBadge(arg);
+        const c = BADGE_COLORS[b.color] || [b.color, badgeInk(b.color)];
+        const el = inlineEl('span', 'kdx-badge kdx-badge-' + b.style, src || '{badge ' + arg + '}', (BADGE_ICONS[b.icon] ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + BADGE_ICONS[b.icon] + '</svg>' : b.icon ? '<i class="kdx-badge-ch">' + esc(b.icon) + '</i>' : '') + '<span>' + esc(b.text) + '</span>');
+        el.style.setProperty('--b', c[0]); el.style.setProperty('--bi', c[1]);
+        return el;
+    }
     function makeDocInline(rootEl) {
         const fnDefs = new Map(), abbrs = [];
         rootEl.querySelectorAll('.kdx-fndef').forEach((d) => {
@@ -1474,18 +1526,19 @@
             else if ((m = ABBR_DEF.exec(s))) abbrs.push([m[1], m[2]]);
         });
         let n = 0;
-        const RE = /\[\^([^\]\s]+)\]|\{(fn|key|cite|todo)\s+([^{}\n]+)\}/g;
+        const RE = /\[\^([^\]\s]+)\]|\{(fn|key|cite|todo|badge)\s+([^{}\n]+)\}/g;
         proseNodes(rootEl).forEach((t) => {
             n += replaceMatches(t, RE, (m) => {
                 if (m[1]) return fnDefs.has(m[1]) ? inlineEl('sup', 'kdx-fnref', m[0], '<a href="#" data-fn="' + esc(m[1]) + '"></a>') : null;
                 if (m[2] === 'fn') return inlineEl('sup', 'kdx-fnref kdx-fninline', m[0], '<a href="#" data-note="' + esc(m[3].trim()) + '"></a>');
                 if (m[2] === 'key') return inlineEl('span', 'kdx-keys', m[0], m[3].trim().split(/\s*\+\s*/).map((k) => '<kbd>' + esc(k) + '</kbd>').join('<i>+</i>'));
                 if (m[2] === 'cite') return inlineEl('span', 'kdx-cite', m[0], '(' + esc(m[3].trim()) + ')');
+                if (m[2] === 'badge') return badgeEl(m[3], m[0]);
                 return inlineEl('span', 'kdx-todo', m[0], '<b>TODO</b> ' + esc(m[3].trim()));
             });
         });
         abbrs.forEach(([ab, full]) => {
-            const re = new RegExp('\\b' + ab.replace(/[.*+?^${}()|[\]\\]/g, '\\    const MULTI = /^::(chart|poll|quiz|scene|steps|stats|fold|timeline)\b/i, SINGLE = /^::(timer|map|progress|countdown|rating)\b/i;') + '\\b', 'g');
+            const re = new RegExp('\\b' + ab.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\b', 'g');
             proseNodes(rootEl).forEach((t) => { n += replaceMatches(t, re, (m) => { const a = inlineEl('abbr', 'kdx-abbr', m[0], esc(m[0])); a.title = full; a.removeAttribute('contenteditable'); return a; }); });
         });
         return n;
@@ -1622,6 +1675,18 @@
             // inline marks
             '.kdx-fnref a{color:#0369a1;text-decoration:none;font-weight:700;padding:0 1px;cursor:pointer}.kdx-fnref a:hover{text-decoration:underline}',
             '.kdx-keys kbd{display:inline-block;min-width:1.5em;padding:0 .45em;margin:0 .1em;text-align:center;font:600 .86em/1.5 ui-monospace,Menlo,Consolas,monospace;color:#1e293b;background:linear-gradient(#fff,#e2e8f0);border:1px solid #94a3b8;border-bottom-width:2.5px;border-radius:.35em;box-shadow:0 1px 0 rgba(15,23,42,.15);-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-keys i{font-style:normal;color:#94a3b8;font-size:.8em}',
+            '.kdx-badge{--b:#2563eb;--bi:#fff;display:inline-flex;align-items:center;gap:.32em;padding:.05em .62em;border-radius:.5em;font:600 .82em/1.55 inherit;white-space:nowrap;vertical-align:.06em;color:color-mix(in srgb,var(--b) 72%,#000);background:color-mix(in srgb,var(--b) 14%,#fff);border:1px solid color-mix(in srgb,var(--b) 38%,#fff);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-badge svg{width:1.05em;height:1.05em;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.kdx-badge-ch{font-style:normal;line-height:1}',
+            '.kdx-badge-solid{background:var(--b);color:var(--bi);border-color:var(--b)}',
+            '.kdx-badge-outline{background:transparent;border:1.5px solid var(--b);color:color-mix(in srgb,var(--b) 80%,#000)}',
+            '.kdx-badge-dashed{background:transparent;border:1.5px dashed var(--b);color:color-mix(in srgb,var(--b) 80%,#000)}',
+            '.kdx-badge-pill{border-radius:99px;padding:.05em .75em}',
+            '.kdx-badge-square{border-radius:.15em}',
+            '.kdx-badge-tag{border-radius:.2em;border-left:.3em solid var(--b)}',
+            '.kdx-badge-glow{background:var(--b);color:var(--bi);border-color:var(--b);border-radius:99px;box-shadow:0 0 .55em color-mix(in srgb,var(--b) 70%,transparent),0 0 1.1em color-mix(in srgb,var(--b) 40%,transparent)}',
+            '.kdx-badge-gradient{background:linear-gradient(135deg,color-mix(in srgb,var(--b) 62%,#fff),var(--b));color:var(--bi);border-color:var(--b);border-radius:99px}',
+            '.kdx-badge-glass{background:linear-gradient(180deg,rgba(255,255,255,.55),color-mix(in srgb,var(--b) 22%,transparent));border:1px solid color-mix(in srgb,var(--b) 55%,#fff);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 3px color-mix(in srgb,var(--b) 30%,transparent);border-radius:99px}',
+            '.kdx-badge-dot{border-radius:99px;padding-left:.5em}.kdx-badge-dot::before{content:"";width:.5em;height:.5em;border-radius:50%;background:var(--b);flex:none;box-shadow:0 0 0 .14em color-mix(in srgb,var(--b) 25%,transparent)}',
             '.kdx-cite{color:#475569}.kdx-todo{background:#fef9c3;border:1px dashed #eab308;border-radius:6px;padding:0 6px;font-size:.92em}.kdx-todo b{color:#a16207;font-size:.78em;letter-spacing:.08em;margin-right:.3em}@media print{.kdx-todo{background:none;border:0}}',
             'abbr.kdx-abbr{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}',
             '.kdx-fndef{display:none}',
@@ -1734,7 +1799,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, chipSpan, retagChip, parseChip, CHIP_LOOKS, tipSpan, parseTip, tipOpen, TIP_STYLES, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, docs: DOC_BUILD, renderBody, version: '1.1.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, chipSpan, retagChip, parseChip, CHIP_LOOKS, tipSpan, parseTip, tipOpen, TIP_STYLES, BADGE_COLORS, BADGE_STYLES, BADGE_ICONS, parseBadge, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, docs: DOC_BUILD, renderBody, version: '1.1.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back

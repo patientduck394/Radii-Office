@@ -319,6 +319,59 @@
         else { ed.appendChild(a); save(); }
     }
 
+
+    // Insert > Badge: pick the words, color, style and icon, with a live preview; it goes in as {badge Words | color | style | icon}
+    function badgePicker() {
+        const KN = window.KeydownNext;
+        if (!KN || !KN.BADGE_STYLES) { OS.toast('Badges need the newest Keydown, please reload!'); return; }
+        const cur = { text: 'New', color: 'blue', style: 'soft', icon: 'star' };
+        const wrap = document.createElement('div');
+        wrap.className = 'wo-badge-dlg';
+        const swatches = Object.keys(KN.BADGE_COLORS).map(function (c) { return '<button type="button" class="wo-bd-sw" data-c="' + c + '" title="' + c + '" style="background:' + KN.BADGE_COLORS[c][0] + '"></button>'; }).join('');
+        const styles = KN.BADGE_STYLES.map(function (s2) { return '<option value="' + s2 + '">' + s2.charAt(0).toUpperCase() + s2.slice(1) + '</option>'; }).join('');
+        const icons = ['<button type="button" class="wo-bd-ic" data-i="" title="No icon">∅</button>'].concat(Object.keys(KN.BADGE_ICONS).map(function (i) { return '<button type="button" class="wo-bd-ic" data-i="' + i + '" title="' + i + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + KN.BADGE_ICONS[i] + '</svg></button>'; })).join('');
+        wrap.innerHTML = '<div class="wo-bd-prev"></div>'
+            + '<label class="os-field"><span>Words</span><input class="os-dlg-input wo-bd-text" spellcheck="false" maxlength="40"></label>'
+            + '<div class="os-field"><span>Color</span><div class="wo-bd-row">' + swatches + '<input type="color" class="wo-bd-custom" value="#2563eb" title="Any color"></div></div>'
+            + '<label class="os-field"><span>Style</span><select class="os-dlg-input wo-bd-style">' + styles + '</select></label>'
+            + '<div class="os-field"><span>Icon</span><div class="wo-bd-row wo-bd-icons">' + icons + '</div></div>';
+        const st = document.createElement('style');
+        st.textContent = '.wo-badge-dlg{display:flex;flex-direction:column;gap:12px;min-width:320px;max-width:420px}.wo-bd-prev{display:flex;align-items:center;justify-content:center;min-height:54px;border:1.5px dashed var(--os-ribbon-line,#ddd);border-radius:12px;font-size:20px;color:#111}'
+            + '.wo-bd-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.wo-bd-sw{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);cursor:pointer;padding:0}.wo-bd-sw.on{box-shadow:0 0 0 2.5px var(--os-accent,#2563eb)}'
+            + '.wo-bd-custom{width:28px;height:28px;padding:0;border:0;background:none;cursor:pointer}.wo-bd-icons{max-height:132px;overflow:auto}.wo-bd-ic{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid var(--os-ribbon-line,#ddd);background:transparent;color:inherit;cursor:pointer;padding:0}.wo-bd-ic svg{width:18px;height:18px}.wo-bd-ic.on{border-color:var(--os-accent,#2563eb);background:var(--os-hover,#eef)}';
+        wrap.appendChild(st);
+        const source = function () {
+            const parts = [cur.text || 'Badge', cur.color, cur.style];
+            if (cur.icon) parts.push(cur.icon);
+            return '{badge ' + parts.join(' | ') + '}';
+        };
+        const draw = function () {
+            const prev = wrap.querySelector('.wo-bd-prev');
+            prev.textContent = source();
+            try { KN.apply(prev); } catch (e) {}
+            wrap.querySelectorAll('.wo-bd-sw').forEach(function (b) { b.classList.toggle('on', b.dataset.c === cur.color); });
+            wrap.querySelectorAll('.wo-bd-ic').forEach(function (b) { b.classList.toggle('on', b.dataset.i === cur.icon); });
+        };
+        wrap.querySelector('.wo-bd-text').value = cur.text;
+        wrap.querySelector('.wo-bd-style').value = cur.style;
+        wrap.addEventListener('input', function (e) {
+            if (e.target.classList.contains('wo-bd-text')) cur.text = e.target.value.replace(/[{}|\n]/g, ' ');
+            else if (e.target.classList.contains('wo-bd-style')) cur.style = e.target.value;
+            else if (e.target.classList.contains('wo-bd-custom')) cur.color = e.target.value;
+            draw();
+        });
+        wrap.addEventListener('click', function (e) {
+            const sw = e.target.closest('.wo-bd-sw'), ic = e.target.closest('.wo-bd-ic');
+            if (sw) cur.color = sw.dataset.c;
+            if (ic) cur.icon = ic.dataset.i;
+            if (sw || ic) draw();
+        });
+        draw();
+        OS.dialog('Insert a Badge', wrap, [
+            { label: 'Cancel', value: false },
+            { label: 'Insert', primary: true, value: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.insertSource(source() + ' '); return true; } }
+        ]);
+    }
     function insertKind(k) { if (typeof runInsertKind === 'function') runInsertKind(k); }
 
     // New Page adds a real page: a page break, so the text after it starts on a fresh sheet (Ctrl/Cmd+Enter does the same)
@@ -1093,6 +1146,9 @@
                             return { label: b[0], icon: 'cube', run: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.insertSource(b[1], { block: true }); } };
                         });
                     } }
+                ] },
+                { label: 'Badges', items: [
+                    { big: true, icon: 'tag', label: 'Badge', title: 'A little chip with an icon: pick its words, color, style and icon!', run: function () { badgePicker(); } }
                 ] },
                 { label: 'Templates', items: [
                     { big: true, icon: 'templates', label: 'Templates', title: 'Snippets of Keydown you can save and paste: meeting notes, planners, letters and your own!', run: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.manager(); }, menu: function () { return window.WriteoutTemplates ? window.WriteoutTemplates.menu() : []; } }

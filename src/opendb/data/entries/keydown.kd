@@ -8628,6 +8628,7 @@ Inside the blocks you can use `**bold**`, `*italic*`, `` `code` ``, `==highlight
 
 * `Text[^1]` with a line `[^1]: The note text.` anywhere makes a numbered footnote; `{fn the note}` writes one in place.
 * `{key Ctrl+Shift+P}` draws keyboard keys, `{cite Smith 2020}` a citation, `{todo fix this}` a reminder tag.
+* **Badges:** `{badge Words | color | style | icon}` makes a little chip with an icon, like {badge New | green | pill | sparkle} or {badge Beta | orange | dashed | flask}! Everything after the words is optional and can come in any order. Colors: blue, sky, teal, green, lime, yellow, orange, red, pink, purple, indigo, gray, or any `#hex`. Styles: soft (the default), solid, outline, dashed, pill, square, tag, glow, gradient, glass and dot. Icons: check, plus, minus, x, star, bolt, heart, flag, info, warning, bell, fire, lock, user, tag, clock, code, bug, rocket, gift, pin, eye, shield, sparkle, download, link, mail, crown, leaf, flask, cube, chat, book, dollar, play and verified, or one emoji or letter. Writeout has Insert > Badge, with a picker and a live preview!
 * `*[HTML]: HyperText Markup Language` on its own line makes every `HTML` on the page show the meaning when you hover.
 * New text tags: `{sub}` `{sup}` `{mark}` `{ins}` `{del}` `{kbd}` `{mono}` `{overline}` `{dunder}` `{boxed}` `{spaced}` `{upper}` `{lower}` `{title}` and `{drop}` (a drop cap), each closed with `{/name}`.
 
