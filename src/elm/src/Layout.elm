@@ -67,8 +67,6 @@ siteFooter =
         [ span [] [ text "Licensed under " ]
         , out "https://creativecommons.org/publicdomain/zero/1.0/" "CC0"
         , span [] [ text " and the " ]
-        , out "https://opensource.org/licenses/MIT" "MIT"
-        , span [] [ text "/" ]
         , out "https://unlicense.org/" "Unlicense"
         , a [ href "/feed.xml", class "footer-rss-link", title "RSS Feed", target "_blank" ]
             [ img [ src "/feed-icon.png", alt "RSS Feed" ] [] ]
