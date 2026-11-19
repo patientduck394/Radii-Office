@@ -547,7 +547,17 @@
     });
 
     /* ---------- binders: colored clear folders that hold notebooks ---------- */
-    const BINDER_COLORS = [['Red', '#e5484d'], ['Orange', '#f76b15'], ['Yellow', '#f5b800'], ['Green', '#2fb560'], ['Teal', '#14b8a6'], ['Blue', '#1b7fe0'], ['Purple', '#7c4dff'], ['Pink', '#ec4899'], ['Gray', '#64748b']];
+    const BINDER_COLORS = [['Red', '#e5484d'], ['Orange', '#f76b15'], ['Yellow', '#f5b800'], ['Green', '#2fb560'], ['Teal', '#14b8a6'], ['Blue', '#1b7fe0'], ['Purple', '#7c4dff'], ['Pink', '#ec4899'], ['Gray', '#64748b'],
+        ['Maroon', '#9f1239'], ['Coral', '#ff6b57'], ['Gold', '#d4a017'], ['Lime', '#84cc16'], ['Sky', '#0ea5e9'], ['Indigo', '#4f46e5'], ['Brown', '#92643a']];
+    const PASTEL_COLORS = [['Pastel rose', '#ffc2cf'], ['Pastel peach', '#ffd3b6'], ['Pastel apricot', '#ffe0a8'], ['Pastel butter', '#fff3a6'], ['Pastel lemon', '#eef7a0'], ['Pastel mint', '#bff0cf'], ['Pastel sage', '#cfe5c1'], ['Pastel seafoam', '#b6efe1'],
+        ['Pastel aqua', '#b4ecf2'], ['Pastel sky', '#bfe0ff'], ['Pastel periwinkle', '#c7cdff'], ['Pastel lavender', '#dcc8ff'], ['Pastel lilac', '#eac4f6'], ['Pastel blush', '#ffc8e8'], ['Pastel cloud', '#dfe6ee'], ['Pastel sand', '#f0e0c8']];
+    // light colors get dark words on the tab and a darker edge so the folder still shows up
+    function binderTone(hex) {
+        const m = /^#([0-9a-f]{6})$/i.exec(hex || ''); if (!m) return { ink: '#fff', edge: hex || '#e5484d' };
+        const v = [0, 2, 4].map((i) => parseInt(m[1].substr(i, 2), 16)), lum = (0.299 * v[0] + 0.587 * v[1] + 0.114 * v[2]) / 255;
+        const light = lum > 0.7, k = light ? 0.72 : 1;
+        return { ink: light ? '#16324a' : '#fff', edge: '#' + v.map((c) => Math.round(c * k).toString(16).padStart(2, '0')).join(''), light: light };
+    }
     const PAPER = '#9ad8ee';
     const binders = () => { try { return JSON.parse(LS('waterflow2_binders') || '[]') || []; } catch (e) { return []; } };
     const saveBinders = (a) => LS('waterflow2_binders', JSON.stringify(a));
@@ -575,7 +585,8 @@
             const i = items.slice(0, 3).length - 1 - ri;   // the first item is the front-most paper
             return '<b class="wm-paper' + (it.note ? ' note' : '') + '" style="--pc:' + it.color + ';left:' + left[i] + ';top:' + top[i] + 'px;transform:rotate(' + rot[i] + ')"><i></i><span>' + esc(it.label) + '</span></b>';
         }).join('');
-        return '<span class="wm-bind ' + (cls || '') + '" style="--bc:' + color + '"><span class="wm-bk"><em class="wm-tab"><span>' + esc(name) + '</span></em></span>'
+        const tone = binderTone(color);
+        return '<span class="wm-bind ' + (cls || '') + (tone.light ? ' light' : '') + '" style="--bc:' + color + ';--bd:' + tone.edge + ';--bi:' + tone.ink + '"><span class="wm-bk"><em class="wm-tab"><span>' + esc(name) + '</span></em></span>'
             + '<span class="wm-papers">' + papers + '</span><span class="wm-fr"></span>'
             + '<span class="wm-foot"><small>' + esc(sub) + '</small></span></span>';
     }
@@ -608,6 +619,7 @@
         const html = '<div class="wm-bprev" id="wm-bprev"></div>'
             + '<label class="wm-field"><span>Label (the name on the tab)</span><input type="text" id="wm-bname" maxlength="28"></label>'
             + '<div class="wm-field"><span>Folder color</span><div class="wm-bcols" id="wm-bcols">' + BINDER_COLORS.map((c) => '<button type="button" data-c="' + c[1] + '" title="' + c[0] + '" style="--bc:' + c[1] + '"></button>').join('') + '</div></div>'
+            + '<div class="wm-field"><span>Pastel colors</span><div class="wm-bcols" id="wm-bpastel">' + PASTEL_COLORS.map((c) => '<button type="button" data-c="' + c[1] + '" title="' + c[0] + '" style="--bc:' + c[1] + '"></button>').join('') + '</div></div>'
             + '<div class="wm-field"><span>Notebooks inside</span>' + (nbList.length ? '<div class="wm-bnbs" id="wm-bnbs">' + nbList.map((nb) => '<label class="wm-check"><input type="checkbox" value="' + esc(nb.id) + '"><i style="background:' + (nb.color || PAPER) + '"></i><span>' + esc(nb.name) + '</span>' + (nb.binder && nb.binder !== id && binderById(nb.binder) ? '<small>now in ' + esc(binderById(nb.binder).name) + '</small>' : '') + '</label>').join('') + '</div>' : '<p class="wm-note">You have no notebooks yet. Make one with the + next to Notebooks, then come back!</p>') + '</div>'
             + '<div class="wm-bbar"><button type="button" class="wf-gel" id="wm-bsave">' + vi('check') + (old ? 'Save binder' : 'Make binder') + '</button>' + (old ? '<button type="button" class="wf-gel wf-red" id="wm-bdel">' + vi('trash') + 'Delete binder</button>' : '') + '</div>';
         WF.dialog(old ? 'Binder' : 'New binder', html, function (body) {
@@ -616,10 +628,10 @@
             const draw = function () {
                 const list = nbList.filter((nb) => draft.nbs.includes(nb.id));
                 $('wm-bprev').innerHTML = folderHtml(draft.name || 'Binder', draft.color, paperItems(list), list.length ? plural(list.length, 'notebook') : 'Empty', 'big');
-                body.querySelectorAll('#wm-bcols button').forEach((b) => b.classList.toggle('on', b.dataset.c === draft.color));
+                body.querySelectorAll('#wm-bcols button, #wm-bpastel button').forEach((b) => b.classList.toggle('on', b.dataset.c === draft.color));
             };
             $('wm-bname').addEventListener('input', () => { draft.name = $('wm-bname').value.trim(); draw(); });
-            $('wm-bcols').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { draft.color = b.dataset.c; draw(); } });
+            ['wm-bcols', 'wm-bpastel'].forEach((id) => $(id).addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { draft.color = b.dataset.c; draw(); } }));
             const nbs = $('wm-bnbs'); if (nbs) nbs.addEventListener('change', () => { draft.nbs = Array.from(nbs.querySelectorAll('input:checked')).map((c) => c.value); draw(); });
             $('wm-bsave').addEventListener('click', function () {
                 const name = ($('wm-bname').value.trim() || 'Binder').slice(0, 28);
