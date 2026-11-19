@@ -324,7 +324,7 @@
     function badgePicker() {
         const KN = window.KeydownNext;
         if (!KN || !KN.BADGE_STYLES) { OS.toast('Badges need the newest Keydown, please reload!'); return; }
-        const cur = { text: 'New', color: 'blue', style: 'soft', icon: 'star' };
+        const cur = { text: 'New', color: 'blue', style: 'soft', icon: 'star', radius: '', notext: false };
         const wrap = document.createElement('div');
         wrap.className = 'wo-badge-dlg';
         const swatches = Object.keys(KN.BADGE_COLORS).map(function (c) { return '<button type="button" class="wo-bd-sw" data-c="' + c + '" title="' + c + '" style="background:' + KN.BADGE_COLORS[c][0] + '"></button>'; }).join('');
@@ -332,17 +332,20 @@
         const icons = ['<button type="button" class="wo-bd-ic" data-i="" title="No icon">∅</button>'].concat(Object.keys(KN.BADGE_ICONS).map(function (i) { return '<button type="button" class="wo-bd-ic" data-i="' + i + '" title="' + i + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' + KN.BADGE_ICONS[i] + '</svg></button>'; })).join('');
         wrap.innerHTML = '<div class="wo-bd-prev"></div>'
             + '<label class="os-field"><span>Words</span><input class="os-dlg-input wo-bd-text" spellcheck="false" maxlength="40"></label>'
+            + '<label class="os-field wo-bd-nt"><span>Text</span><span class="wo-bd-chk"><input type="checkbox" class="wo-bd-notext"> No text, just the icon</span></label>'
             + '<div class="os-field"><span>Color</span><div class="wo-bd-row">' + swatches + '<input type="color" class="wo-bd-custom" value="#2563eb" title="Any color"></div></div>'
             + '<label class="os-field"><span>Style</span><select class="os-dlg-input wo-bd-style">' + styles + '</select></label>'
+            + '<label class="os-field"><span>Corners</span><select class="os-dlg-input wo-bd-radius"><option value="">Default for the style</option><option value="sharp">Sharp</option><option value="3px">Slightly rounded</option><option value="6px">Rounded</option><option value="10px">Very rounded</option><option value="round">Pill or circle</option></select></label>'
             + '<div class="os-field"><span>Icon</span><div class="wo-bd-row wo-bd-icons">' + icons + '</div></div>';
         const st = document.createElement('style');
         st.textContent = '.wo-badge-dlg{display:flex;flex-direction:column;gap:12px;min-width:320px;max-width:420px}.wo-bd-prev{display:flex;align-items:center;justify-content:center;min-height:54px;border:1.5px dashed var(--os-ribbon-line,#ddd);border-radius:12px;font-size:20px;color:#111}'
             + '.wo-bd-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.wo-bd-sw{width:24px;height:24px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px rgba(0,0,0,.25);cursor:pointer;padding:0}.wo-bd-sw.on{box-shadow:0 0 0 2.5px var(--os-accent,#2563eb)}'
-            + '.wo-bd-custom{width:28px;height:28px;padding:0;border:0;background:none;cursor:pointer}.wo-bd-icons{max-height:132px;overflow:auto}.wo-bd-ic{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid var(--os-ribbon-line,#ddd);background:transparent;color:inherit;cursor:pointer;padding:0}.wo-bd-ic svg{width:18px;height:18px}.wo-bd-ic.on{border-color:var(--os-accent,#2563eb);background:var(--os-hover,#eef)}';
+            + '.wo-bd-custom{width:28px;height:28px;padding:0;border:0;background:none;cursor:pointer}.wo-bd-chk{display:flex;align-items:center;gap:8px;font-size:13px}.wo-bd-icons{max-height:150px;overflow:auto}.wo-bd-ic{width:32px;height:32px;display:inline-flex;align-items:center;justify-content:center;border-radius:9px;border:1.5px solid var(--os-ribbon-line,#ddd);background:transparent;color:inherit;cursor:pointer;padding:0}.wo-bd-ic svg{width:18px;height:18px}.wo-bd-ic.on{border-color:var(--os-accent,#2563eb);background:var(--os-hover,#eef)}';
         wrap.appendChild(st);
         const source = function () {
-            const parts = [cur.text || 'Badge', cur.color, cur.style];
+            const parts = [cur.notext && cur.icon ? '' : (cur.text || 'Badge'), cur.color, cur.style];
             if (cur.icon) parts.push(cur.icon);
+            if (cur.radius) parts.push(cur.radius);
             return '{badge ' + parts.join(' | ') + '}';
         };
         const draw = function () {
@@ -358,6 +361,8 @@
             if (e.target.classList.contains('wo-bd-text')) cur.text = e.target.value.replace(/[{}|\n]/g, ' ');
             else if (e.target.classList.contains('wo-bd-style')) cur.style = e.target.value;
             else if (e.target.classList.contains('wo-bd-custom')) cur.color = e.target.value;
+            else if (e.target.classList.contains('wo-bd-radius')) cur.radius = e.target.value;
+            else if (e.target.classList.contains('wo-bd-notext')) { cur.notext = e.target.checked; wrap.querySelector('.wo-bd-text').disabled = cur.notext; }
             draw();
         });
         wrap.addEventListener('click', function (e) {
@@ -1148,7 +1153,7 @@
                     } }
                 ] },
                 { label: 'Badges', items: [
-                    { big: true, icon: 'tag', label: 'Badge', title: 'A little chip with an icon: pick its words, color, style and icon!', run: function () { badgePicker(); } }
+                    { big: true, icon: 'tag', label: 'Badge', title: 'A little chip with an icon: pick its words (or none), color, style, corners and icon!', run: function () { badgePicker(); } }
                 ] },
                 { label: 'Templates', items: [
                     { big: true, icon: 'templates', label: 'Templates', title: 'Snippets of Keydown you can save and paste: meeting notes, planners, letters and your own!', run: function () { if (window.WriteoutTemplates) window.WriteoutTemplates.manager(); }, menu: function () { return window.WriteoutTemplates ? window.WriteoutTemplates.menu() : []; } }

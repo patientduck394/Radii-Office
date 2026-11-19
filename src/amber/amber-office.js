@@ -23,6 +23,7 @@
 
     /* ---------- Model helpers ---------- */
     const PLUS = function () { return window.AmberPlus || {}; };
+    const MORE = function () { return window.AmberMore || {}; };
     const KDA = function () { return window.AmberKeydown || null; };
     function slide() { return slides[activeSlideIndex]; }
     function activeEl() {
@@ -818,6 +819,18 @@
                         { sm: true, icon: 'textbox', label: 'Text Box', run: function () { addTextBox(); OS.sync(); } },
                         { sm: true, icon: 'trash', label: 'Delete Object', run: needEl(function () { deleteActiveElement(); OS.sync(); }) }
                     ] }
+                ] },
+                { label: 'Object Effects', items: [
+                    { big: true, icon: 'redo', label: 'Rotate\n& Flip', title: 'Turn the selected object by any angle, or flip it!', menu: function () { return MORE().rotateMenu ? MORE().rotateMenu() : []; } },
+                    { stack: [
+                        { sm: true, icon: 'eye', label: 'Transparency', title: 'Fade the selected object!', menu: function () { return MORE().transparencyMenu ? MORE().transparencyMenu() : []; } },
+                        { sm: true, icon: 'shapes', label: 'Shadow', title: 'Soft, hard, lifted and glowing shadows!', menu: function () { return MORE().shadowMenu ? MORE().shadowMenu() : []; } },
+                        { sm: true, icon: 'aCenter', label: 'Align to Slide', title: 'Left, center, right, top, middle, bottom!', menu: function () { return MORE().alignMenu ? MORE().alignMenu() : []; } }
+                    ] },
+                    { stack: [
+                        { sm: true, icon: 'size', label: 'Size & Position', title: 'Type the exact place, size and angle!', run: function () { if (MORE().sizeDialog) MORE().sizeDialog(); } },
+                        { sm: true, icon: 'search', label: 'Find & Replace', title: 'Find words on every slide, and swap them! (Ctrl/Cmd+F)', run: function () { if (MORE().findDialog) MORE().findDialog(); } }
+                    ] }
                 ] }
             ]
         },
@@ -828,6 +841,15 @@
                 { label: 'Charts', items: [
                     { big: true, icon: 'table', label: 'Chart', title: 'Column, bar, line, area, pie or donut chart from a little table of numbers!', run: function () { if (PLUS().chartDialog) PLUS().chartDialog(); } },
                     { stack: [{ sm: true, icon: 'pen', label: 'Edit Chart', title: 'Or just double-click the chart!', run: function () { if (PLUS().editChart) PLUS().editChart(); } }] }
+                ] },
+                { label: 'Icons & Diagrams', items: [
+                    { big: true, icon: 'star', label: 'Icons', title: 'Hundreds of icons from Vadivam, any color and size!', run: function () { if (MORE().iconDialog) MORE().iconDialog(); } },
+                    { big: true, icon: 'shapes', label: 'Diagram', title: 'Process, list, cycle, pyramid, timeline or hub from a list of words!', run: function () { if (MORE().diagramDialog) MORE().diagramDialog(); } },
+                    { stack: [
+                        { sm: true, icon: 'pen', label: 'Edit Icon', title: 'Or just double-click the icon!', run: function () { if (MORE().editIcon) MORE().editIcon(); } },
+                        { sm: true, icon: 'numbers', label: 'Agenda Slide', title: 'A contents slide made from your slide titles!', run: function () { if (MORE().agendaSlide) MORE().agendaSlide(); } },
+                        { sm: true, icon: 'lines', label: 'Deck Stats', title: 'Slides, words and how long it takes to present!', run: function () { if (MORE().statsDialog) MORE().statsDialog(); } }
+                    ] }
                 ] },
                 { label: 'Header & Footer', items: [{ big: true, icon: 'numbers', label: 'Footer &\nNumbers', title: 'Footer text, slide numbers and the date on every slide!', run: function () { if (PLUS().footerDialog) PLUS().footerDialog(); } }] },
                 { label: 'Illustrations', items: [

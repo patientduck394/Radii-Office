@@ -597,7 +597,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("click", (e) => {
         const isElement = e.target.closest('.slide-element');
         const isToolbar = e.target.closest('.slides-toolbar') || e.target.closest('.aero-sidebar') || e.target.closest('.aero-palette-menu') ||
-            e.target.closest('#os-top, #os-status, #os-backstage, .os-menu, .os-dlg-back, .am-pane, #amber-notes');
+            e.target.closest('#os-top, #os-status, #os-backstage, .os-menu, .os-dlg-back, .am-pane, #amber-notes, .nv, [id^="nv-"]');
         
         if (!isElement && !isToolbar && (activeElementId !== null || editingElementId !== null)) {
             activeElementId = null;
@@ -735,6 +735,7 @@ function renderThumbnails() {
                 if (el.textAlign) mini.style.textAlign = el.textAlign;
                 if (el.fontFamily) mini.style.fontFamily = el.fontFamily;
                 if (el.lineHeight) mini.style.lineHeight = String(el.lineHeight);
+                applyElFx(mini, el);
             }
             live.appendChild(mini);
         });
@@ -781,6 +782,22 @@ function amberRestoreDeck() {
     } catch (e) {}
 }
 window.addEventListener('beforeunload', amberSaveNow);
+
+// Rotation, flip, transparency and shadow for any object (set from Amber More)!
+const AMBER_SHADOWS = {
+    soft: 'drop-shadow(0 6px 10px rgba(0,0,0,.35))',
+    lift: 'drop-shadow(0 16px 14px rgba(0,0,0,.38))',
+    hard: 'drop-shadow(6px 6px 0 rgba(0,0,0,.45))',
+    long: 'drop-shadow(4px 4px 0 rgba(0,0,0,.28)) drop-shadow(8px 8px 0 rgba(0,0,0,.2)) drop-shadow(12px 12px 0 rgba(0,0,0,.12))',
+    glow: 'drop-shadow(0 0 8px rgba(255,255,255,.95)) drop-shadow(0 0 18px rgba(56,189,248,.85))',
+    ink: 'drop-shadow(1.5px 0 0 rgba(0,0,0,.85)) drop-shadow(-1.5px 0 0 rgba(0,0,0,.85)) drop-shadow(0 1.5px 0 rgba(0,0,0,.85)) drop-shadow(0 -1.5px 0 rgba(0,0,0,.85))'
+};
+function applyElFx(div, el) {
+    if (el.rotation) div.style.rotate = el.rotation + 'deg';
+    if (el.flipX || el.flipY) div.style.scale = (el.flipX ? '-1' : '1') + ' ' + (el.flipY ? '-1' : '1');
+    if (typeof el.opacity === 'number' && el.opacity < 1) div.style.opacity = String(el.opacity);
+    if (el.shadow && AMBER_SHADOWS[el.shadow]) div.style.filter = AMBER_SHADOWS[el.shadow];
+}
 
 function renderActiveSlide() {
     const canvas = document.getElementById("slide-canvas");
@@ -832,6 +849,7 @@ function renderActiveSlide() {
         if (el.textAlign) textSpan.style.textAlign = el.textAlign;
         if (el.fontFamily) div.style.fontFamily = el.fontFamily;
         if (el.lineHeight) div.style.lineHeight = String(el.lineHeight);
+        applyElFx(div, el);
         // Only editable when selected AND double-clicked!
         textSpan.contentEditable = isEditing ? "true" : "false";
         textSpan.innerHTML = el.content;
@@ -1363,6 +1381,11 @@ function sanitizeKaElement(raw) {
         textAlign: ['left', 'center', 'right', 'justify'].includes(raw.textAlign) ? raw.textAlign : null,
         fontFamily: typeof raw.fontFamily === 'string' ? raw.fontFamily.slice(0, 80) : null,
         lineHeight: (typeof raw.lineHeight === 'number' && raw.lineHeight >= 0.5 && raw.lineHeight <= 5) ? raw.lineHeight : null,
+        rotation: (typeof raw.rotation === 'number' && raw.rotation >= -360 && raw.rotation <= 360 && raw.rotation !== 0) ? raw.rotation : undefined,
+        flipX: raw.flipX === true ? true : undefined,
+        flipY: raw.flipY === true ? true : undefined,
+        opacity: (typeof raw.opacity === 'number' && raw.opacity >= 0.05 && raw.opacity < 1) ? raw.opacity : undefined,
+        shadow: (typeof raw.shadow === 'string' && AMBER_SHADOWS[raw.shadow]) ? raw.shadow : undefined,
         morphId: typeof raw.morphId === 'string' ? raw.morphId.slice(0, 80) : null,
         anims: sanitizeKaAnims(raw)
     };

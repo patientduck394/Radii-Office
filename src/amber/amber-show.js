@@ -94,6 +94,7 @@
             div.style.color = el.color || '#ffffff';
             if (el.fontFamily) div.style.fontFamily = el.fontFamily;
             if (el.lineHeight) div.style.lineHeight = String(el.lineHeight);
+            if (typeof applyElFx === 'function') applyElFx(div, el);
             if (el.type === 'shape' && typeof getSvgShapeMarkup === 'function') {
                 const svg = document.createElement('div');
                 svg.className = 'slide-svg-container';
