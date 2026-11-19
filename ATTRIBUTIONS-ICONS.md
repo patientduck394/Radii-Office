@@ -48,4 +48,4 @@ This project incorporates, modifies, or bundles asset files, SVGs, or code deriv
 
 ### 7. Mage Icons & Vadivam Icons / Other Bundled Sets
 * **Licenses:** Maintained under their respective open-source terms as distributed by their original upstream authors. 
-* **Note:** All intellectual property rights, original filenames, and vector structures for these specialized icon sets remain the property of their respective creators.
+* **Note:** All intellectual property rights for these specialized icon sets remain the property of their respective creators. However, it is known that Vadivam is distributed under the MIT license.
