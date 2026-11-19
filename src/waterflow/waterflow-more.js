@@ -558,6 +558,7 @@
         const light = lum > 0.7, k = light ? 0.72 : 1;
         return { ink: light ? '#16324a' : '#fff', edge: '#' + v.map((c) => Math.round(c * k).toString(16).padStart(2, '0')).join(''), light: light };
     }
+    const BINDER_STYLES = [['clear', 'Clear plastic'], ['solid', 'Solid'], ['frosted', 'Frosted'], ['glossy', 'Glossy'], ['manila', 'Manila'], ['leather', 'Leather'], ['ring', 'Ring binder'], ['neon', 'Neon']];
     const PAPER = '#9ad8ee';
     const binders = () => { try { return JSON.parse(LS('waterflow2_binders') || '[]') || []; } catch (e) { return []; } };
     const saveBinders = (a) => LS('waterflow2_binders', JSON.stringify(a));
@@ -579,15 +580,15 @@
         return items;
     }
     // one clear plastic folder: a tinted back with a label tab, papers peeking out, a see-through front over them
-    function folderHtml(name, color, items, sub, cls) {
-        const rot = ['-0.8deg', '0.7deg', '-0.9deg'], left = ['9%', '5%', '2%'], top = [33, 22, 11];
+    function folderHtml(name, color, items, sub, cls, style) {
+        const rot = ['-0.8deg', '0.7deg', '-0.9deg'], left = ['9%', '5%', '2%'], top = [35, 23, 11];
         const papers = items.slice(0, 3).reverse().map(function (it, ri) {
             const i = items.slice(0, 3).length - 1 - ri;   // the first item is the front-most paper
             return '<b class="wm-paper' + (it.note ? ' note' : '') + '" style="--pc:' + it.color + ';left:' + left[i] + ';top:' + top[i] + 'px;transform:rotate(' + rot[i] + ')"><i></i><span>' + esc(it.label) + '</span></b>';
         }).join('');
         const tone = binderTone(color);
-        return '<span class="wm-bind ' + (cls || '') + (tone.light ? ' light' : '') + '" style="--bc:' + color + ';--bd:' + tone.edge + ';--bi:' + tone.ink + '"><span class="wm-bk"><em class="wm-tab"><span>' + esc(name) + '</span></em></span>'
-            + '<span class="wm-papers">' + papers + '</span><span class="wm-fr"></span>'
+        return '<span class="wm-bind wm-st-' + (BINDER_STYLES.some((x) => x[0] === style) ? style : 'clear') + ' ' + (cls || '') + (tone.light ? ' light' : '') + '" style="--bc:' + color + ';--bd:' + tone.edge + ';--bi:' + tone.ink + '"><span class="wm-bk"><em class="wm-tab"><span>' + esc(name) + '</span></em></span>'
+            + '<span class="wm-papers">' + papers + '</span><span class="wm-fr"></span><span class="wm-rings"><i></i><i></i><i></i></span>'
             + '<span class="wm-foot"><small>' + esc(sub) + '</small></span></span>';
     }
     function subOf(b) {
@@ -597,7 +598,7 @@
     function railBinders() {
         const box = $('wm-binders'); if (!box) return;
         const st = WF.stream(), bs = binders();
-        box.innerHTML = bs.length ? bs.map((b) => '<button type="button" class="wm-bbtn' + (st.kind === 'binder' && st.id === b.id ? ' on' : '') + '" data-id="' + esc(b.id) + '" title="Open ' + esc(b.name) + ' (right click to change it)">' + folderHtml(b.name, b.color, paperItems(nbsOf(b.id)), subOf(b)) + '</button>').join('')
+        box.innerHTML = bs.length ? bs.map((b) => '<button type="button" class="wm-bbtn' + (st.kind === 'binder' && st.id === b.id ? ' on' : '') + '" data-id="' + esc(b.id) + '" title="Open ' + esc(b.name) + ' (right click to change it)">' + folderHtml(b.name, b.color, paperItems(nbsOf(b.id)), subOf(b), '', b.style) + '</button>').join('')
             : '<p class="wm-note wm-none">Binders hold notebooks together. Press + to make one!</p>';
     }
     function mountBinders() {
@@ -614,10 +615,11 @@
     function binderDialog(id) {
         const all = binders(), old = id ? all.find((b) => b.id === id) : null;
         if (id && !old) return;
-        const draft = { name: old ? old.name : 'New binder', color: old ? old.color : BINDER_COLORS[0][1], nbs: old ? nbsOf(id).map((x) => x.id) : [] };
+        const draft = { name: old ? old.name : 'New binder', color: old ? old.color : BINDER_COLORS[0][1], style: old && old.style ? old.style : 'clear', nbs: old ? nbsOf(id).map((x) => x.id) : [] };
         const nbList = WF.nbs();
         const html = '<div class="wm-bprev" id="wm-bprev"></div>'
             + '<label class="wm-field"><span>Label (the name on the tab)</span><input type="text" id="wm-bname" maxlength="28"></label>'
+            + '<div class="wm-field"><span>Style</span><div class="wm-bstyles" id="wm-bstyles">' + BINDER_STYLES.map((x) => '<button type="button" data-s="' + x[0] + '">' + x[1] + '</button>').join('') + '</div></div>'
             + '<div class="wm-field"><span>Folder color</span><div class="wm-bcols" id="wm-bcols">' + BINDER_COLORS.map((c) => '<button type="button" data-c="' + c[1] + '" title="' + c[0] + '" style="--bc:' + c[1] + '"></button>').join('') + '</div></div>'
             + '<div class="wm-field"><span>Pastel colors</span><div class="wm-bcols" id="wm-bpastel">' + PASTEL_COLORS.map((c) => '<button type="button" data-c="' + c[1] + '" title="' + c[0] + '" style="--bc:' + c[1] + '"></button>').join('') + '</div></div>'
             + '<div class="wm-field"><span>Notebooks inside</span>' + (nbList.length ? '<div class="wm-bnbs" id="wm-bnbs">' + nbList.map((nb) => '<label class="wm-check"><input type="checkbox" value="' + esc(nb.id) + '"><i style="background:' + (nb.color || PAPER) + '"></i><span>' + esc(nb.name) + '</span>' + (nb.binder && nb.binder !== id && binderById(nb.binder) ? '<small>now in ' + esc(binderById(nb.binder).name) + '</small>' : '') + '</label>').join('') + '</div>' : '<p class="wm-note">You have no notebooks yet. Make one with the + next to Notebooks, then come back!</p>') + '</div>'
@@ -627,9 +629,11 @@
             body.querySelectorAll('#wm-bnbs input').forEach((c) => { c.checked = draft.nbs.includes(c.value); });
             const draw = function () {
                 const list = nbList.filter((nb) => draft.nbs.includes(nb.id));
-                $('wm-bprev').innerHTML = folderHtml(draft.name || 'Binder', draft.color, paperItems(list), list.length ? plural(list.length, 'notebook') : 'Empty', 'big');
+                $('wm-bprev').innerHTML = folderHtml(draft.name || 'Binder', draft.color, paperItems(list), list.length ? plural(list.length, 'notebook') : 'Empty', 'big', draft.style);
+                body.querySelectorAll('#wm-bstyles button').forEach((b) => b.classList.toggle('on', b.dataset.s === draft.style));
                 body.querySelectorAll('#wm-bcols button, #wm-bpastel button').forEach((b) => b.classList.toggle('on', b.dataset.c === draft.color));
             };
+            $('wm-bstyles').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { draft.style = b.dataset.s; draw(); } });
             $('wm-bname').addEventListener('input', () => { draft.name = $('wm-bname').value.trim(); draw(); });
             ['wm-bcols', 'wm-bpastel'].forEach((id) => $(id).addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { draft.color = b.dataset.c; draw(); } }));
             const nbs = $('wm-bnbs'); if (nbs) nbs.addEventListener('change', () => { draft.nbs = Array.from(nbs.querySelectorAll('input:checked')).map((c) => c.value); draw(); });
@@ -637,7 +641,7 @@
                 const name = ($('wm-bname').value.trim() || 'Binder').slice(0, 28);
                 const list = binders(); let b = id ? list.find((x) => x.id === id) : null;
                 if (!b) { b = { id: WF.uid() }; list.push(b); }
-                b.name = name; b.color = draft.color; saveBinders(list);
+                b.name = name; b.color = draft.color; b.style = draft.style; saveBinders(list);
                 nbList.forEach((nb) => { if (draft.nbs.includes(nb.id)) nb.binder = b.id; else if (nb.binder === b.id) delete nb.binder; });
                 WF.saveNbs(); WF.closeDialog(); WF.renderAll(); WF.toast(id ? 'Binder saved!' : 'Binder made! Click it to open everything inside!');
             });
