@@ -320,3 +320,39 @@ body.os-nova.nv-flow.nv-pinned.nv-panel-open #nv-bar, body.os-nova.nv-flow.nv-pi
 body.os-nova.nv-flow #os-top, body.os-nova.nv-flow #os-status { display: none !important; }
 .nv-d span { max-width: 100%; overflow: hidden; white-space: normal; text-align: center; line-height: 1.05; padding: 0 2px; box-sizing: border-box; }
 .nv-d.nv-long span { font-size: 8.5px; letter-spacing: 0; }
+
+/* ---------- the File screen in Nova: a soft desk, a slim card for the list, flat soft buttons ---------- */
+body.os-nova #os-backstage { background: var(--nv-desk); color: var(--nv-ink); font-family: var(--nv-font); padding: 14px; gap: 14px; }
+body.os-nova .os-bs-nav {
+    width: 236px; background: var(--nv-card); color: var(--nv-ink); border: 1.5px solid var(--nv-primary); border-radius: 18px; box-shadow: var(--nv-shadow); padding: 12px 10px;
+}
+body.os-nova .os-bs-nav button {
+    color: color-mix(in srgb, var(--nv-primary) 80%, #000); background: transparent; border: 1.5px solid transparent; border-radius: 12px; padding: 10px 12px; font-family: var(--nv-font) !important; font-weight: 600;
+}
+body.os-nova.nv-dark .os-bs-nav button { color: color-mix(in srgb, var(--nv-primary) 40%, #fff); }
+body.os-nova .os-bs-nav button:hover { background: color-mix(in srgb, var(--nv-primary) 9%, var(--nv-card)); border-color: color-mix(in srgb, var(--nv-primary) 40%, var(--nv-line)); padding-left: 12px; }
+body.os-nova .os-bs-nav button.on { background: color-mix(in srgb, var(--nv-primary) 16%, var(--nv-card)); border-color: var(--nv-primary); box-shadow: none; color: color-mix(in srgb, var(--nv-primary) 80%, #000); }
+body.os-nova.nv-dark .os-bs-nav button.on { color: color-mix(in srgb, var(--nv-primary) 40%, #fff); }
+body.os-nova .os-bs-nav .os-bs-back { border-color: var(--nv-line); background: var(--nv-desk); margin-bottom: 10px; opacity: 1; }
+body.os-nova .os-bs-body { background: var(--nv-card); border: 1.5px solid var(--nv-line); border-radius: 18px; padding: 30px 40px; box-shadow: var(--nv-shadow); }
+body.os-nova .os-bs-body h1 { font-family: var(--nv-font); font-weight: 700; color: var(--nv-ink); }
+body.os-nova .os-bs-body h2 { color: var(--nv-ink); }
+body.os-nova .os-bs-card { background: color-mix(in srgb, var(--nv-primary) 6%, var(--nv-card)); border: 1.5px solid color-mix(in srgb, var(--nv-primary) 45%, var(--nv-line)); border-radius: 16px; color: var(--nv-ink); }
+body.os-nova .os-bs-card:hover { border-color: var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 12%, var(--nv-card)); box-shadow: var(--nv-shadow); }
+body.os-nova .os-bs-card .os-card-prev { background: var(--nv-card); border: 1.5px solid var(--nv-line); border-radius: 10px; }
+body.os-nova .os-bs-card > .os-ico { color: var(--nv-primary); }
+body.os-nova .os-opt { border: 1.5px solid var(--nv-line); border-radius: 12px; background: var(--nv-card); }
+body.os-nova .os-opt:hover { border-color: var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 9%, var(--nv-card)); }
+body.os-nova .os-bs-body .os-dlg-btn, body.os-nova .os-bs-body button.os-btn, body.os-nova .os-bs-body .os-bs-btn {
+    border-radius: 11px; border: 1.5px solid var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 12%, var(--nv-card)); color: color-mix(in srgb, var(--nv-primary) 80%, #000); box-shadow: none; text-shadow: none;
+}
+body.os-nova.nv-dark .os-bs-body .os-dlg-btn, body.os-nova.nv-dark .os-bs-body button.os-btn { color: color-mix(in srgb, var(--nv-primary) 40%, #fff); }
+body.os-nova .rd-new, body.os-nova .rd-act button, body.os-nova .rd-open { border-radius: 11px; border: 1.5px solid var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 12%, var(--nv-card)) !important; color: color-mix(in srgb, var(--nv-primary) 80%, #000) !important; box-shadow: none; text-shadow: none; }
+body.os-nova.nv-dark .rd-new, body.os-nova.nv-dark .rd-act button, body.os-nova.nv-dark .rd-open { color: color-mix(in srgb, var(--nv-primary) 40%, #fff) !important; }
+body.os-nova .rd-new:hover, body.os-nova .rd-act button:hover { background: color-mix(in srgb, var(--nv-primary) 22%, var(--nv-card)) !important; }
+body.os-nova .rd-del { border-color: #dc2626 !important; background: color-mix(in srgb, #dc2626 10%, var(--nv-card)) !important; color: #b91c1c !important; }
+body.os-nova .rd-row { border: 1.5px solid var(--nv-line); border-radius: 14px; background: var(--nv-card); }
+body.os-nova .rd-row:hover { border-color: var(--nv-primary); box-shadow: none; }
+body.os-nova .rd-cur { border-color: var(--nv-primary); background: color-mix(in srgb, var(--nv-primary) 10%, var(--nv-card)); }
+body.os-nova .os-bs-nav button.on { background: color-mix(in srgb, var(--nv-primary) 16%, var(--nv-card)) !important; border: 1.5px solid var(--nv-primary) !important; box-shadow: none !important; text-shadow: none; color: color-mix(in srgb, var(--nv-primary) 80%, #000) !important; }
+body.os-nova.nv-dark .os-bs-nav button.on { color: color-mix(in srgb, var(--nv-primary) 40%, #fff) !important; }
