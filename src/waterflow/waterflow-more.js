@@ -494,7 +494,7 @@
     function commands() {
         const cur = WF.cur();
         const c = [
-            ['Templates: start a note from one', '', () => templatesDialog(false)], ['Tasks from every note', '', () => tasksDialog()], ['Calendar', '', calDialog],
+            ['New binder', '', () => binderDialog()], ['Templates: start a note from one', '', () => templatesDialog(false)], ['Tasks from every note', '', () => tasksDialog()], ['Calendar', '', calDialog],
             ['Your writing stats', '', statsDialog], ['Quick capture to the Inbox', 'Ctrl+Alt+Q', captureDialog], ['Daily word goal…', '', goalDialog],
             ['Focus timer: 25 minutes', '', () => startTimer(25)], ['Typewriter mode', '', toggleType], ['Open a random note', '', randomNote], ['Open the note you have not touched longest', '', oldNote]
         ];
@@ -546,6 +546,100 @@
         if ((e.ctrlKey || e.metaKey) && e.altKey && e.key.toLowerCase() === 'q') { e.preventDefault(); captureDialog(); }
     });
 
-    window.WaterflowMore = { wikiOut: wikiOut, wikiIn: wikiIn, snap: snap, opened: opened, changed: changed, commands: commands, backlinks: backlinks, tasks: allTasks, templates: templatesDialog, calendar: calDialog, stats: statsDialog, history: historyDialog };
-    mountBack(); mountRail(); mountFoot(); mountInsertButton(); applyType();
+    /* ---------- binders: colored clear folders that hold notebooks ---------- */
+    const BINDER_COLORS = [['Red', '#e5484d'], ['Orange', '#f76b15'], ['Yellow', '#f5b800'], ['Green', '#2fb560'], ['Teal', '#14b8a6'], ['Blue', '#1b7fe0'], ['Purple', '#7c4dff'], ['Pink', '#ec4899'], ['Gray', '#64748b']];
+    const PAPER = '#9ad8ee';
+    const binders = () => { try { return JSON.parse(LS('waterflow2_binders') || '[]') || []; } catch (e) { return []; } };
+    const saveBinders = (a) => LS('waterflow2_binders', JSON.stringify(a));
+    const binderById = (id) => binders().find((b) => b.id === id) || null;
+    const inBinder = (n, id) => { const nb = WF.nbs().find((x) => x.id === n.nb); return !!nb && nb.binder === id; };
+    function nbsOf(id) { return WF.nbs().filter((x) => x.binder === id); }
+    // the three papers you see inside: the most recently used notebooks (in their own color), then the latest notes
+    function paperItems(nbList) {
+        const stamp = (nb) => notes().filter((n) => n.nb === nb.id).reduce((a, n) => Math.max(a, n.updated || 0), 0);
+        const sorted = nbList.slice().sort((a, b) => stamp(b) - stamp(a));
+        const items = sorted.slice(0, 3).map((nb) => ({ label: nb.name, color: nb.color || PAPER }));
+        if (items.length < 3) {
+            const ids = new Set(nbList.map((x) => x.id));
+            notes().filter((n) => ids.has(n.nb)).sort((a, b) => b.updated - a.updated).slice(0, 3 - items.length).forEach((n) => {
+                const nb = nbList.find((x) => x.id === n.nb);
+                items.push({ label: WF.titleOf(n), color: n.color || (nb && nb.color) || PAPER, note: true });
+            });
+        }
+        return items;
+    }
+    // one clear plastic folder: a tinted back with a label tab, papers peeking out, a see-through front over them
+    function folderHtml(name, color, items, sub, cls) {
+        const rot = ['-0.8deg', '0.7deg', '-0.9deg'], left = ['9%', '5%', '2%'], top = [33, 22, 11];
+        const papers = items.slice(0, 3).reverse().map(function (it, ri) {
+            const i = items.slice(0, 3).length - 1 - ri;   // the first item is the front-most paper
+            return '<b class="wm-paper' + (it.note ? ' note' : '') + '" style="--pc:' + it.color + ';left:' + left[i] + ';top:' + top[i] + 'px;transform:rotate(' + rot[i] + ')"><i></i><span>' + esc(it.label) + '</span></b>';
+        }).join('');
+        return '<span class="wm-bind ' + (cls || '') + '" style="--bc:' + color + '"><span class="wm-bk"><em class="wm-tab"><span>' + esc(name) + '</span></em></span>'
+            + '<span class="wm-papers">' + papers + '</span><span class="wm-fr"></span>'
+            + '<span class="wm-foot"><small>' + esc(sub) + '</small></span></span>';
+    }
+    function subOf(b) {
+        const list = nbsOf(b.id), ids = new Set(list.map((x) => x.id)), count = notes().filter((n) => ids.has(n.nb)).length;
+        return list.length ? plural(list.length, 'notebook') + ', ' + plural(count, 'note') : 'Empty: add notebooks';
+    }
+    function railBinders() {
+        const box = $('wm-binders'); if (!box) return;
+        const st = WF.stream(), bs = binders();
+        box.innerHTML = bs.length ? bs.map((b) => '<button type="button" class="wm-bbtn' + (st.kind === 'binder' && st.id === b.id ? ' on' : '') + '" data-id="' + esc(b.id) + '" title="Open ' + esc(b.name) + ' (right click to change it)">' + folderHtml(b.name, b.color, paperItems(nbsOf(b.id)), subOf(b)) + '</button>').join('')
+            : '<p class="wm-note wm-none">Binders hold notebooks together. Press + to make one!</p>';
+    }
+    function mountBinders() {
+        if ($('wm-binders')) return;
+        const nbsec = $('wf-addnb') && $('wf-addnb').closest('.wf-sect'); if (!nbsec) return;
+        nbsec.insertAdjacentHTML('beforebegin', '<div class="wf-sect"><span>Binders</span><button type="button" class="wf-mini" id="wm-addbinder" title="New binder">' + vi('plus') + '</button></div><div class="wm-binders" id="wm-binders"></div>');
+        $('wm-addbinder').addEventListener('click', () => binderDialog());
+        $('wm-binders').addEventListener('click', function (e) {
+            const b = e.target.closest('.wm-bbtn'); if (!b) return;
+            WF.readMode(); WF.setStream({ kind: 'binder', id: b.dataset.id }); document.body.dataset.rail = '';
+        });
+        $('wm-binders').addEventListener('contextmenu', function (e) { const b = e.target.closest('.wm-bbtn'); if (b) { e.preventDefault(); binderDialog(b.dataset.id); } });
+    }
+    function binderDialog(id) {
+        const all = binders(), old = id ? all.find((b) => b.id === id) : null;
+        if (id && !old) return;
+        const draft = { name: old ? old.name : 'New binder', color: old ? old.color : BINDER_COLORS[0][1], nbs: old ? nbsOf(id).map((x) => x.id) : [] };
+        const nbList = WF.nbs();
+        const html = '<div class="wm-bprev" id="wm-bprev"></div>'
+            + '<label class="wm-field"><span>Label (the name on the tab)</span><input type="text" id="wm-bname" maxlength="28"></label>'
+            + '<div class="wm-field"><span>Folder color</span><div class="wm-bcols" id="wm-bcols">' + BINDER_COLORS.map((c) => '<button type="button" data-c="' + c[1] + '" title="' + c[0] + '" style="--bc:' + c[1] + '"></button>').join('') + '</div></div>'
+            + '<div class="wm-field"><span>Notebooks inside</span>' + (nbList.length ? '<div class="wm-bnbs" id="wm-bnbs">' + nbList.map((nb) => '<label class="wm-check"><input type="checkbox" value="' + esc(nb.id) + '"><i style="background:' + (nb.color || PAPER) + '"></i><span>' + esc(nb.name) + '</span>' + (nb.binder && nb.binder !== id && binderById(nb.binder) ? '<small>now in ' + esc(binderById(nb.binder).name) + '</small>' : '') + '</label>').join('') + '</div>' : '<p class="wm-note">You have no notebooks yet. Make one with the + next to Notebooks, then come back!</p>') + '</div>'
+            + '<div class="wm-bbar"><button type="button" class="wf-gel" id="wm-bsave">' + vi('check') + (old ? 'Save binder' : 'Make binder') + '</button>' + (old ? '<button type="button" class="wf-gel wf-red" id="wm-bdel">' + vi('trash') + 'Delete binder</button>' : '') + '</div>';
+        WF.dialog(old ? 'Binder' : 'New binder', html, function (body) {
+            $('wm-bname').value = draft.name;
+            body.querySelectorAll('#wm-bnbs input').forEach((c) => { c.checked = draft.nbs.includes(c.value); });
+            const draw = function () {
+                const list = nbList.filter((nb) => draft.nbs.includes(nb.id));
+                $('wm-bprev').innerHTML = folderHtml(draft.name || 'Binder', draft.color, paperItems(list), list.length ? plural(list.length, 'notebook') : 'Empty', 'big');
+                body.querySelectorAll('#wm-bcols button').forEach((b) => b.classList.toggle('on', b.dataset.c === draft.color));
+            };
+            $('wm-bname').addEventListener('input', () => { draft.name = $('wm-bname').value.trim(); draw(); });
+            $('wm-bcols').addEventListener('click', (e) => { const b = e.target.closest('button'); if (b) { draft.color = b.dataset.c; draw(); } });
+            const nbs = $('wm-bnbs'); if (nbs) nbs.addEventListener('change', () => { draft.nbs = Array.from(nbs.querySelectorAll('input:checked')).map((c) => c.value); draw(); });
+            $('wm-bsave').addEventListener('click', function () {
+                const name = ($('wm-bname').value.trim() || 'Binder').slice(0, 28);
+                const list = binders(); let b = id ? list.find((x) => x.id === id) : null;
+                if (!b) { b = { id: WF.uid() }; list.push(b); }
+                b.name = name; b.color = draft.color; saveBinders(list);
+                nbList.forEach((nb) => { if (draft.nbs.includes(nb.id)) nb.binder = b.id; else if (nb.binder === b.id) delete nb.binder; });
+                WF.saveNbs(); WF.closeDialog(); WF.renderAll(); WF.toast(id ? 'Binder saved!' : 'Binder made! Click it to open everything inside!');
+            });
+            if ($('wm-bdel')) $('wm-bdel').addEventListener('click', function () {
+                if (!confirm('Delete the binder "' + old.name + '"? Its notebooks and notes stay, they just leave the binder.')) return;
+                saveBinders(binders().filter((x) => x.id !== id)); nbList.forEach((nb) => { if (nb.binder === id) delete nb.binder; }); WF.saveNbs();
+                const st = WF.stream(); WF.closeDialog();
+                if (st.kind === 'binder' && st.id === id) WF.setStream({ kind: 'all' }); else WF.renderAll();
+                WF.toast('Binder deleted!');
+            });
+            draw(); setTimeout(() => $('wm-bname').select(), 30);
+        });
+    }
+
+    window.WaterflowMore = { wikiOut: wikiOut, wikiIn: wikiIn, snap: snap, opened: opened, changed: changed, commands: commands, backlinks: backlinks, inBinder: inBinder, binderName: (id) => { const b = binderById(id); return b ? b.name : ''; }, binderDialog: binderDialog, rail: railBinders, tasks: allTasks, templates: templatesDialog, calendar: calDialog, stats: statsDialog, history: historyDialog };
+    mountBinders(); railBinders(); mountBack(); mountRail(); mountFoot(); mountInsertButton(); applyType();
 })();

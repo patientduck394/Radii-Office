@@ -94,3 +94,37 @@ body[data-theme="night"] .wm-tile:nth-child(even) { background: rgba(255, 138, 2
 #wm-cap { resize: vertical; min-height: 110px; margin: 6px 0 12px; }
 /* typewriter mode: room below the last line so the line you write can sit in the middle */
 body.wm-type #wf-visual, body.wm-type #wf-source { padding-bottom: 45vh; }
+
+/* ---------- binders: clear colored folders with papers peeking out ---------- */
+.wm-binders { display: flex; flex-direction: column; gap: 8px; padding: 2px 2px 6px; }
+.wm-none { margin: 0; padding: 2px 8px; font-size: 12px; }
+.wm-bbtn { display: block; width: 100%; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 12px; text-align: left; font: inherit; }
+.wm-bbtn:hover .wm-bind { transform: translateY(-2px); }
+.wm-bbtn.on .wm-bind { box-shadow: 0 0 0 2.5px color-mix(in srgb, var(--bc) 75%, #fff); border-radius: 12px; }
+.wm-bind { --bc: #e5484d; position: relative; display: block; height: 100px; margin-top: 12px; transition: transform .18s; }
+.wm-bind.big { width: 270px; max-width: 100%; height: 118px; margin: 18px auto 8px; font-size: 1.1em; }
+.wm-bk { position: absolute; left: 0; right: 0; top: 0; bottom: 0; border-radius: 4px 12px 10px 10px; background: linear-gradient(180deg, color-mix(in srgb, var(--bc) 62%, #fff), color-mix(in srgb, var(--bc) 78%, #fff)); border: 1.5px solid var(--bc); }
+.wm-tab { position: absolute; left: -1.5px; top: -14px; width: 48%; height: 15px; padding: 0 10px; box-sizing: border-box; background: var(--bc); clip-path: polygon(0 100%, 7% 0, 93% 0, 100% 100%); display: flex; align-items: center; justify-content: center; font-style: normal; }
+.wm-tab span { color: #fff; font-size: 9.5px; font-weight: 800; letter-spacing: .3px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; text-shadow: 0 1px 1px rgba(0, 0, 0, .25); }
+.wm-papers { position: absolute; inset: 0; }
+.wm-paper { position: absolute; width: 84%; height: 62px; display: flex; align-items: flex-start; gap: 6px; padding: 2px 8px 0 0; box-sizing: border-box; background: #fdfefe; border: 1px solid rgba(20, 60, 90, .22); border-radius: 4px 4px 0 0; box-shadow: 0 1px 3px rgba(10, 40, 70, .22); overflow: hidden; }
+.wm-paper i { flex: none; align-self: stretch; width: 6px; background: var(--pc); margin-right: 1px; }
+.wm-paper span { font-size: 9.5px; font-weight: 700; line-height: 11px; color: #123; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-style: normal; }
+.wm-paper.note span { font-weight: 500; }
+.wm-fr { position: absolute; left: 0; right: 0; top: 45px; bottom: 0; border-radius: 3px 3px 10px 10px; background: linear-gradient(180deg, rgba(255, 255, 255, .55), color-mix(in srgb, var(--bc) 26%, transparent) 55%, color-mix(in srgb, var(--bc) 40%, transparent)); border: 1.5px solid color-mix(in srgb, var(--bc) 78%, #fff); backdrop-filter: blur(.6px); -webkit-backdrop-filter: blur(.6px); box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, .95), inset 0 -3px 6px color-mix(in srgb, var(--bc) 30%, transparent), 0 3px 6px rgba(10, 40, 70, .14); overflow: hidden; }
+.wm-fr::after { content: ""; position: absolute; inset: 0; background: linear-gradient(112deg, transparent 38%, rgba(255, 255, 255, .55) 46%, rgba(255, 255, 255, .1) 54%, transparent 60%); }
+.wm-foot { position: absolute; left: 10px; right: 10px; bottom: 6px; display: flex; justify-content: space-between; }
+.wm-foot small { font-size: 10.5px; font-weight: 600; color: color-mix(in srgb, var(--bc) 55%, #0b2a44); text-shadow: 0 1px 0 rgba(255, 255, 255, .6); }
+body[data-theme="night"] .wm-foot small { color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .5); }
+.wm-bprev { padding: 4px 0 2px; }
+.wm-bcols { display: flex; flex-wrap: wrap; gap: 8px; }
+.wm-bcols button { width: 28px; height: 28px; border-radius: 50%; border: 2px solid #fff; background: var(--bc); box-shadow: 0 0 0 1px rgba(0, 0, 0, .25); cursor: pointer; padding: 0; }
+.wm-bcols button.on { box-shadow: 0 0 0 3px var(--bc); }
+.wm-bnbs { display: flex; flex-direction: column; gap: 2px; max-height: 170px; overflow: auto; }
+.wm-bnbs .wm-check { margin: 0; padding: 4px 2px; font-weight: 500; color: var(--ink); }
+.wm-bnbs .wm-check i { width: 12px; height: 12px; border-radius: 4px; flex: none; }
+.wm-bnbs .wm-check small { color: var(--mute); margin-left: auto; font-size: 11px; }
+.wm-bbar { display: flex; gap: 10px; margin-top: 12px; }
+.wm-bnbs .wm-check { justify-content: flex-start; }
+.wm-bnbs .wm-check input { width: 16px; height: 16px; margin: 0; flex: none; padding: 0; }
+.wm-bnbs .wm-check span { flex: 1; text-align: left; }

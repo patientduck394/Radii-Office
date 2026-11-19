@@ -285,6 +285,7 @@
         if (stream.kind === 'pinned') return n.pinned;
         if (stream.kind === 'nb') return n.nb === stream.id;
         if (stream.kind === 'tag') return (n.tags || []).includes(stream.name);
+        if (stream.kind === 'binder') return !!(WM() && WM().inBinder && WM().inBinder(n, stream.id));
         if (stream.kind === 'today') return ymd(new Date(n.created)) === ymd(new Date()) || ymd(new Date(n.updated)) === ymd(new Date());
         return true;
     }
@@ -299,6 +300,7 @@
         const tc = {}; l.forEach((n) => (n.tags || []).forEach((t) => { tc[t] = (tc[t] || 0) + 1; }));
         const tags = Object.keys(tc).sort((a, b) => tc[b] - tc[a] || a.localeCompare(b)).slice(0, 30);
         $('wf-tagcloud').innerHTML = tags.map((t) => '<button type="button" class="wf-tag' + (stream.kind === 'tag' && stream.name === t ? ' on' : '') + '" data-tag="' + esc(t) + '">#' + esc(t) + '</button>').join('') || '<span class="wf-none" style="padding:0 6px;font-size:12px">Tags you add show up here!</span>';
+        try { if (WM() && WM().rail) WM().rail(); } catch (e) {}
     }
     const inStreamToday = (n) => ymd(new Date(n.updated)) === ymd(new Date());
     $('wf-rail').addEventListener('click', (e) => {
@@ -316,11 +318,12 @@
     function listTitle() {
         if (stream.kind === 'nb') return nbName(stream.id) || 'Notebook';
         if (stream.kind === 'tag') return '#' + stream.name;
+        if (stream.kind === 'binder') return (WM() && WM().binderName && WM().binderName(stream.id)) || 'Binder';
         return { all: 'All notes', pinned: 'Pinned', today: 'Today', trash: 'Trash', scratch: 'Scratch' }[stream.kind];
     }
     function renderList() {
         $('wf-listtitle').textContent = listTitle();
-        $('wf-nbopts').hidden = stream.kind !== 'nb';
+        $('wf-nbopts').hidden = stream.kind !== 'nb' && stream.kind !== 'binder';
         const q = $('wf-q').value.trim().toLowerCase();
         let arr = stream.kind === 'scratch' ? [scratch] : notes.filter(inStream);
         if (q) arr = arr.filter((n) => (n.title + ' ' + n.text + ' ' + (n.tags || []).join(' ')).toLowerCase().includes(q));
@@ -330,7 +333,7 @@
         $('wf-cards').innerHTML = arr.map((n) => '<button type="button" class="wf-cardn' + (cur && cur.id === n.id ? ' on' : '') + '" data-id="' + esc(n.id) + '" role="listitem" style="--c:' + (n.color || (n.nb && (nbs.find((b) => b.id === n.nb) || {}).color) || 'transparent') + '"><b><span>' + esc(titleOf(n)) + '</span>' + (n.pinned ? ICON.pin : '') + '</b><p>' + esc(preview(n) || 'Empty note') + '</p><small>' + esc(when(n.updated)) + (n.nb ? '<i>' + esc(nbName(n.nb)) + '</i>' : '') + (n.tags || []).slice(0, 2).map((t) => '<i>#' + esc(t) + '</i>').join('') + '</small></button>').join('') || '<div class="wf-none">' + (q ? 'Nothing matches that search!' : stream.kind === 'trash' ? 'The trash is empty!' : 'No notes here yet. Press New note!') + '</div>';
     }
     $('wf-cards').addEventListener('click', (e) => { const c = e.target.closest('.wf-cardn'); if (c) { const n = c.dataset.id === 'scratch' ? scratch : notes.find((x) => x.id === c.dataset.id); if (n) openNote(n); } });
-    $('wf-nbopts').addEventListener('click', () => { if (stream.kind === 'nb') notebookDialog(stream.id); });
+    $('wf-nbopts').addEventListener('click', () => { if (stream.kind === 'nb') notebookDialog(stream.id); else if (stream.kind === 'binder' && WM() && WM().binderDialog) WM().binderDialog(stream.id); });
     $('wf-q').addEventListener('input', renderList);
     $('wf-sort').addEventListener('change', renderList);
     const renderAll = () => { renderRail(); renderList(); };
@@ -893,7 +896,7 @@
     }
     window.addEventListener('hashchange', () => { const m = /#n=([\w-]+)/.exec(location.hash); const n = m && notes.find((x) => x.id === m[1]); if (n && n !== cur) openNote(n); });
     window.Waterflow = {
-        notes: () => notes, open: (id) => openNote(notes.find((n) => n.id === id)), newNote: newNote, highlight: highlight,
+        stream: () => stream, notes: () => notes, open: (id) => openNote(notes.find((n) => n.id === id)), newNote: newNote, highlight: highlight,
         cur: () => cur, nbs: () => nbs, saveNbs: saveNbs, touch: touch, flush: flush, renderAll: renderAll, renderList: renderList, renderRail: renderRail, toast: toast, dialog: dialog, closeDialog: closeDialog, menu: menu,
         readMode: readMode, loadMode: loadMode, mode: () => mode, insertText: insertText, blank: blank, titleOf: titleOf, plain: plain, words: words, isPK: isPK, kdOf: kdOf, PK: () => PKX, uid: uid, ymd: ymd, esc: esc, when: when,
         openNote: (n) => openNote(n), setStream: (s) => { stream = s; renderAll(); }, settings: () => S, applySettings: applySettings, afterTextChange: afterTextChange, COLORS: COLORS, newLang: newLang, store: () => store
