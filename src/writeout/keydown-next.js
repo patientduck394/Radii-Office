@@ -1468,6 +1468,7 @@
 
     // Badges: little chips with an icon.  {badge Text | color | style | icon}  (everything after the text is optional and can come in any order)
     const BADGE_COLORS = { blue: ['#2563eb', '#fff'], sky: ['#0ea5e9', '#fff'], teal: ['#0d9488', '#fff'], green: ['#16a34a', '#fff'], lime: ['#84cc16', '#1a2e05'], yellow: ['#eab308', '#3b2f00'], orange: ['#f97316', '#fff'], red: ['#dc2626', '#fff'], pink: ['#ec4899', '#fff'], purple: ['#9333ea', '#fff'], indigo: ['#4f46e5', '#fff'], gray: ['#64748b', '#fff'] };
+    const BADGE_SIZES = ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'];
     const BADGE_STYLES = ['soft', 'solid', 'outline', 'dashed', 'pill', 'square', 'tag', 'glow', 'gradient', 'glass', 'dot'];
     // Icons from Vadivam (https://github.com/praveenjuge/vadivam), MIT License, Copyright (c) Praveen Juge
     const BADGE_ICONS = {
@@ -1658,7 +1659,7 @@
     }
     function parseBadge(arg) {
         const parts = arg.split('|').map((x) => x.trim());
-        const out = { text: parts[0], color: 'blue', style: 'soft', icon: '', radius: '' };
+        const out = { text: parts[0], color: 'blue', style: 'soft', icon: '', radius: '', size: '' };
         parts.slice(1).forEach((w) => {
             const l = w.toLowerCase();
             if (!l) return;
@@ -1666,6 +1667,7 @@
             if (BADGE_COLORS[l] || /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(l)) out.color = l;
             else if (BADGE_STYLES.indexOf(l) >= 0) out.style = l;
             else if (BADGE_ICONS[l]) out.icon = l;
+            else if (BADGE_SIZES.indexOf(l) >= 0) out.size = l;
             else if (l === 'sharp') out.radius = '0';
             else if (l === 'round') out.radius = '99px';
             else if ((m = /^(?:r|radius)\s*[=:]?\s*(\d+(?:\.\d+)?)(px|em|%)?$/.exec(l) || /^(\d+(?:\.\d+)?)(px|em|%)$/.exec(l))) out.radius = m[1] + (m[2] || 'px');
@@ -1679,7 +1681,7 @@
         const b = parseBadge(arg);
         const c = BADGE_COLORS[b.color] || [b.color, badgeInk(b.color)];
         const icon = BADGE_ICONS[b.icon] ? '<svg viewBox="0 0 24 24" aria-hidden="true">' + BADGE_ICONS[b.icon] + '</svg>' : b.icon ? '<i class="kdx-badge-ch">' + esc(b.icon) + '</i>' : '';
-        const el = inlineEl('span', 'kdx-badge kdx-badge-' + b.style + (b.text ? '' : ' kdx-badge-iconly'), src || '{badge ' + arg + '}', icon + (b.text ? '<span>' + esc(b.text) + '</span>' : ''));
+        const el = inlineEl('span', 'kdx-badge kdx-badge-' + b.style + (b.text ? '' : ' kdx-badge-iconly') + (b.size && b.size !== 'md' ? ' kdx-badge-' + b.size : ''), src || '{badge ' + arg + '}', icon + (b.text ? '<span>' + esc(b.text) + '</span>' : ''));
         el.style.setProperty('--b', c[0]); el.style.setProperty('--bi', c[1]);
         if (b.radius) el.style.borderRadius = b.radius;
         return el;
@@ -1842,7 +1844,7 @@
             // inline marks
             '.kdx-fnref a{color:#0369a1;text-decoration:none;font-weight:700;padding:0 1px;cursor:pointer}.kdx-fnref a:hover{text-decoration:underline}',
             '.kdx-keys kbd{display:inline-block;min-width:1.5em;padding:0 .45em;margin:0 .1em;text-align:center;font:600 .86em/1.5 ui-monospace,Menlo,Consolas,monospace;color:#1e293b;background:linear-gradient(#fff,#e2e8f0);border:1px solid #94a3b8;border-bottom-width:2.5px;border-radius:.35em;box-shadow:0 1px 0 rgba(15,23,42,.15);-webkit-print-color-adjust:exact;print-color-adjust:exact}.kdx-keys i{font-style:normal;color:#94a3b8;font-size:.8em}',
-            '.kdx-badge{--b:#2563eb;--bi:#fff;display:inline-flex;align-items:center;gap:.32em;padding:.05em .62em;border-radius:.5em;font:600 .82em/1.55 inherit;white-space:nowrap;vertical-align:.06em;color:color-mix(in srgb,var(--b) 72%,#000);background:color-mix(in srgb,var(--b) 14%,#fff);border:1px solid color-mix(in srgb,var(--b) 38%,#fff);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
+            '.kdx-badge{--b:#2563eb;--bi:#fff;display:inline-flex;align-items:center;gap:.32em;padding:.05em .62em;border-radius:.5em;font-weight:600;font-size:.82em;font-family:inherit;white-space:nowrap;vertical-align:middle;line-height:1.55;color:color-mix(in srgb,var(--b) 72%,#000);background:color-mix(in srgb,var(--b) 14%,#fff);border:1px solid color-mix(in srgb,var(--b) 38%,#fff);-webkit-print-color-adjust:exact;print-color-adjust:exact}',
             '.kdx-badge svg{width:1.05em;height:1.05em;flex:none;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.kdx-badge-ch{font-style:normal;line-height:1}',
             '.kdx-badge-solid{background:var(--b);color:var(--bi);border-color:var(--b)}',
             '.kdx-badge-outline{background:transparent;border:1.5px solid var(--b);color:color-mix(in srgb,var(--b) 80%,#000)}',
@@ -1854,7 +1856,8 @@
             '.kdx-badge-gradient{background:linear-gradient(135deg,color-mix(in srgb,var(--b) 62%,#fff),var(--b));color:var(--bi);border-color:var(--b);border-radius:99px}',
             '.kdx-badge-glass{background:linear-gradient(180deg,rgba(255,255,255,.55),color-mix(in srgb,var(--b) 22%,transparent));border:1px solid color-mix(in srgb,var(--b) 55%,#fff);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 1px 3px color-mix(in srgb,var(--b) 30%,transparent);border-radius:99px}',
             '.kdx-badge-dot{border-radius:99px;padding-left:.5em}.kdx-badge-dot::before{content:"";width:.5em;height:.5em;border-radius:50%;background:var(--b);flex:none;box-shadow:0 0 0 .14em color-mix(in srgb,var(--b) 25%,transparent)}',
-            '.kdx-badge-iconly{padding:.28em;aspect-ratio:1;justify-content:center;line-height:1}.kdx-badge-iconly.kdx-badge-dot{padding:.4em}.kdx-badge-iconly svg{width:1.1em;height:1.1em}',
+            '.kdx-badge-xs{font-size:.6em}.kdx-badge-sm{font-size:.72em}.kdx-badge-lg{font-size:1em}.kdx-badge-xl{font-size:1.3em}.kdx-badge-xxl{font-size:1.75em}',
+            '.kdx-badge-iconly{padding:.2em;aspect-ratio:1;justify-content:center;line-height:1}.kdx-badge-iconly.kdx-badge-dot{padding:.38em}.kdx-badge-iconly svg{width:1em;height:1em}',
             '.kdx-cite{color:#475569}.kdx-todo{background:#fef9c3;border:1px dashed #eab308;border-radius:6px;padding:0 6px;font-size:.92em}.kdx-todo b{color:#a16207;font-size:.78em;letter-spacing:.08em;margin-right:.3em}@media print{.kdx-todo{background:none;border:0}}',
             'abbr.kdx-abbr{text-decoration:underline dotted;text-underline-offset:2px;cursor:help}',
             '.kdx-fndef{display:none}',
@@ -1967,7 +1970,7 @@
         return n;
     }
 
-    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, chipSpan, retagChip, parseChip, CHIP_LOOKS, tipSpan, parseTip, tipOpen, TIP_STYLES, BADGE_COLORS, BADGE_STYLES, BADGE_ICONS, parseBadge, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, docs: DOC_BUILD, renderBody, version: '1.1.0', FUNCS: Object.keys(FUNCS) };
+    root.KeydownNext = { apply, restore, recalc, builtins: BUILTINS, useDef, chipSpan, retagChip, parseChip, CHIP_LOOKS, tipSpan, parseTip, tipOpen, TIP_STYLES, BADGE_COLORS, BADGE_STYLES, BADGE_SIZES, BADGE_ICONS, parseBadge, setBar, parseBar, barText, BAR_COLORS, BAR_STYLES, BAR_LOOKS, setMark, parseMark, markText, MARK_KINDS, MARK_LOOKS, MARK_SIZES, MARK_POS, evaluate: (s, vars) => evaluate(parseExpr(s), vars || {}), parseDef, docs: DOC_BUILD, renderBody, version: '1.1.0', FUNCS: Object.keys(FUNCS) };
 
     // Writeout, Bitbook and Amber: the new things are made after Enter, after Re-format and when a page opens,
     // and Un-format / saving as text give their Keydown back

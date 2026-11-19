@@ -324,7 +324,7 @@
     function badgePicker() {
         const KN = window.KeydownNext;
         if (!KN || !KN.BADGE_STYLES) { OS.toast('Badges need the newest Keydown, please reload!'); return; }
-        const cur = { text: 'New', color: 'blue', style: 'soft', icon: 'star', radius: '', notext: false };
+        const cur = { text: 'New', color: 'blue', style: 'soft', icon: 'star', radius: '', size: 'md', notext: false };
         const wrap = document.createElement('div');
         wrap.className = 'wo-badge-dlg';
         const swatches = Object.keys(KN.BADGE_COLORS).map(function (c) { return '<button type="button" class="wo-bd-sw" data-c="' + c + '" title="' + c + '" style="background:' + KN.BADGE_COLORS[c][0] + '"></button>'; }).join('');
@@ -335,6 +335,7 @@
             + '<label class="os-field wo-bd-nt"><span>Text</span><span class="wo-bd-chk"><input type="checkbox" class="wo-bd-notext"> No text, just the icon</span></label>'
             + '<div class="os-field"><span>Color</span><div class="wo-bd-row">' + swatches + '<input type="color" class="wo-bd-custom" value="#2563eb" title="Any color"></div></div>'
             + '<label class="os-field"><span>Style</span><select class="os-dlg-input wo-bd-style">' + styles + '</select></label>'
+            + '<label class="os-field"><span>Size</span><select class="os-dlg-input wo-bd-size"><option value="xs">Tiny</option><option value="sm">Small</option><option value="md" selected>Normal (fits the text)</option><option value="lg">Large</option><option value="xl">Extra large</option><option value="xxl">Huge</option></select></label>'
             + '<label class="os-field"><span>Corners</span><select class="os-dlg-input wo-bd-radius"><option value="">Default for the style</option><option value="sharp">Sharp</option><option value="3px">Slightly rounded</option><option value="6px">Rounded</option><option value="10px">Very rounded</option><option value="round">Pill or circle</option></select></label>'
             + '<div class="os-field"><span>Icon</span><div class="wo-bd-row wo-bd-icons">' + icons + '</div></div>';
         const st = document.createElement('style');
@@ -346,6 +347,7 @@
             const parts = [cur.notext && cur.icon ? '' : (cur.text || 'Badge'), cur.color, cur.style];
             if (cur.icon) parts.push(cur.icon);
             if (cur.radius) parts.push(cur.radius);
+            if (cur.size && cur.size !== 'md') parts.push(cur.size);
             return '{badge ' + parts.join(' | ') + '}';
         };
         const draw = function () {
@@ -362,6 +364,7 @@
             else if (e.target.classList.contains('wo-bd-style')) cur.style = e.target.value;
             else if (e.target.classList.contains('wo-bd-custom')) cur.color = e.target.value;
             else if (e.target.classList.contains('wo-bd-radius')) cur.radius = e.target.value;
+            else if (e.target.classList.contains('wo-bd-size')) cur.size = e.target.value;
             else if (e.target.classList.contains('wo-bd-notext')) { cur.notext = e.target.checked; wrap.querySelector('.wo-bd-text').disabled = cur.notext; }
             draw();
         });
