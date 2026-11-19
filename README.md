@@ -13,6 +13,9 @@ A free-and-open-source office suite designed to give an alternative to apps like
 ## Pricing
 Radii Office will be free forever, and we hope to improve your user experience by making more updates!
 
+## Lock-in level
+No corporate lock in, ever. You own your content (however it is strongly advised that you use the [CC0](https://creativecommons.org/publicdomain/zero/1.0/) license for your content).
+
 ## FAQ
 **Q**: Do you plan to replace proprietary (closed-source) apps?\
 **A**: Generally, no because even if those companies don't do anything, we'll still serve as a free alternative so users won't be locked in to a company's closed-source ecosystem!\
