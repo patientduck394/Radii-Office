@@ -8231,11 +8231,11 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
         const st = doc.createElement('style');
         st.id = 'kdx-base-css';
         st.textContent = [
-            // definitions (@style tags, footnote and abbreviation notes) never show as chips, reading or editing: they live in the text (Source view)
-            '.kdx-def{display:none}',
+            // definitions (@style tags, footnote and abbreviation notes, and {{x = 3}} settings) never show anything, reading or editing: they live in the text (Source view); a line with nothing but definitions is hidden too
+            '.kdx-def,.kdx-set,.kdx-line-hidden{display:none}',
             '.kdx-def-sample{font:inherit}',
             // a value is just its text: no chip, no underline, no bold
-            '.kdx-val,.kdx-set{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;font-variant-numeric:tabular-nums}',
+            '.kdx-val{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;font-variant-numeric:tabular-nums}',
             '.kdx-input{display:inline-flex;align-items:center;gap:4px;vertical-align:middle;font:600 13px system-ui,sans-serif;color:#075985}',
             '.kdx-input input[type=checkbox]{width:16px;height:16px;accent-color:#0284c7;margin:0}',
             '.kdx-input input[type=range]{width:110px;accent-color:#0284c7}',
@@ -8888,10 +8888,13 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
         rootEl.querySelectorAll('[data-kd-tpl]').forEach((el) => scan('{{' + el.getAttribute('data-kd-tpl') + '}}'));
         rootEl.querySelectorAll('.kdx-set[data-kd-src], .kdx-input[data-kd-src]').forEach((el) => scan(el.getAttribute('data-kd-src')));
         let n = 0;
-        rootEl.querySelectorAll('span.kd-tpl[data-kd-tpl], .tpl-unknown').forEach((el) => {
-            const inner = el.hasAttribute('data-kd-tpl') ? el.getAttribute('data-kd-tpl') : el.textContent.replace(/^\{\{|\}\}$/g, '');
+        // (a line that is only {{x = 3}} comes out of Keydown as an orange notice block with a flag: it becomes a plain line with the value instead)
+        rootEl.querySelectorAll('span.kd-tpl[data-kd-tpl], div.kd-tpl[data-kd-tpl], .tpl-unknown').forEach((el) => {
+            const inner = el.hasAttribute('data-kd-tpl') ? el.getAttribute('data-kd-tpl') : el.textContent.replace(/^[^{]*\{\{|\}\}$/g, '');
             if (!looksLive(inner, names)) return;
-            el.replaceWith(liveSpan(inner, editing)); n++;
+            const live = liveSpan(inner, editing);
+            if (el.tagName === 'DIV') { const line = doc.createElement('div'); line.appendChild(live); el.replaceWith(line); } else el.replaceWith(live);
+            n++;
         });
         const w = doc.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT);
         const hits = [];
@@ -8913,6 +8916,16 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
         });
         return n;
     }
+    // a line that is only {{x = 3}} settings shows nothing at all, not even an empty line
+    function hideSetLines(rootEl) {
+        rootEl.querySelectorAll('.kdx-line-hidden').forEach((l) => l.classList.remove('kdx-line-hidden'));
+        rootEl.querySelectorAll('.kdx-set').forEach((el) => {
+            const p = el.parentElement;
+            if (!p || p === rootEl || !/^(DIV|P|LI)$/.test(p.tagName) || p.classList.contains('kdx-line-hidden')) return;
+            const only = Array.from(p.childNodes).every((c) => c === el || (c.nodeType === 3 && !c.nodeValue.replace(/[\u200b\u00a0\s]/g, '')) || (c.nodeType === 1 && (c.classList.contains('kdx-set') || c.tagName === 'BR')));
+            if (only) p.classList.add('kdx-line-hidden');
+        });
+    }
     // work every value out again: settings in page order (a few passes, so order does not matter), then the displays
     function recalc(rootEl) {
         const vars = {};
@@ -8933,8 +8946,7 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
         }
         sets.forEach((s) => {
             const name = s.L ? s.L.name : '?';
-            // a setting shows its value, as plain text
-            s.el.textContent = s.done ? (s.L.expr.k === 'num' ? s.L.src : show(vars[name])) : s.el.getAttribute('data-kd-src');
+            s.el.textContent = s.done ? show(vars[name]) : s.el.getAttribute('data-kd-src'); // (hidden: it only holds the value for readers of the markup)
             s.el.title = s.err || '';
         });
         rootEl.querySelectorAll('.kdx-val[data-kd-src]').forEach((el) => {
@@ -9729,7 +9741,7 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
         const boxes = rootEl.querySelectorAll('.kdx-wc');
         if (!boxes.length) return;
         const clone = rootEl.cloneNode(true);
-        clone.querySelectorAll('.kdx-wc, .kdx-fndef, .kdx-def, script, style').forEach((x) => x.remove());
+        clone.querySelectorAll('.kdx-wc, .kdx-fndef, .kdx-def, .kdx-set, script, style').forEach((x) => x.remove());
         const text = clone.textContent.replace(/\u200b/g, ' '), words = (text.match(/[\p{L}\p{N}][\p{L}\p{N}'\u2019-]*/gu) || []).length;
         const mins = Math.max(1, Math.round(words / 230));
         boxes.forEach((b) => { const label = b.getAttribute('data-label'); b.textContent = (label ? label + ' ' : '') + words.toLocaleString() + ' words \u00b7 ' + mins + ' min read \u00b7 ' + text.replace(/\s/g, '').length.toLocaleString() + ' characters'; });
@@ -9878,7 +9890,7 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
         const tags = applyTags(rootEl, defs);
         const values = makeLive(rootEl, editing);
         wireInputs(rootEl, editing);
-        if (rootEl.querySelector('.kdx-val, .kdx-set')) recalc(rootEl);
+        if (rootEl.querySelector('.kdx-val, .kdx-set')) { recalc(rootEl); hideSetLines(rootEl); }
         return { tags, values, blocks };
     }
     // everything back to its Keydown text (for Un-format, saving and Source view); returns how many were turned back
@@ -9897,6 +9909,7 @@ window.PSL_DATA = {"cols":{"pool":"Poolside","pool2":"Poolside 2","pool3":"Pools
     }
     function restore(rootEl) {
         if (!rootEl || !rootEl.querySelectorAll) return 0;
+        rootEl.querySelectorAll('.kdx-line-hidden').forEach((l) => l.classList.remove('kdx-line-hidden'));
         let n = restoreTags(rootEl);
         rootEl.querySelectorAll('[data-kd-src].kdx').forEach((el) => {
             const src = el.getAttribute('data-kd-src');
