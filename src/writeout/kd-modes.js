@@ -20,7 +20,7 @@
     css.textContent = [
         // Code themes (Source mode and the Templates window): Poolside (default, the Waterflow look), Poolside Light and Monokai
         ':root{--kc-bg:#06323d;--kc-line:#0f6a7d;--kc-fg:#d6f4fa;--kc-caret:#ffa94d;--kc-sel:#0f7a90;--kc-gut:rgba(255,255,255,.05);--kc-fold:#4f93a3;--kc-h:#2ee6ff;--kc-k:#ff9b3d;--kc-s:#a8f1ff;--kc-n:#5aa9ff;--kc-c:#4f93a3;--kc-t:#6fe7ff;--kc-p:#7cc0ff;--kc-b:#ffb066;--kc-i:#ffb066;--kc-l:#6fe7ff;--kc-d:#4f93a3;--kc-f:#ff9b3d;--kc-fbg:rgba(255,155,61,.16)}',
-        'body[data-kd-code="poolside-light"]{--kc-chipmix:#000;--kc-bg:#f2fcff;--kc-line:#36cdee;--kc-fg:#0b2a44;--kc-caret:#f97316;--kc-sel:#b9ecf7;--kc-gut:rgba(14,165,233,.08);--kc-fold:#6b8fa0;--kc-h:#0a93b2;--kc-k:#c85f00;--kc-s:#0e7490;--kc-n:#1b6fe0;--kc-c:#6b8fa0;--kc-t:#0a93b2;--kc-p:#1b6fe0;--kc-b:#c85f00;--kc-i:#c85f00;--kc-l:#0a93b2;--kc-d:#6b8fa0;--kc-f:#c85f00;--kc-fbg:rgba(249,115,22,.14)}',
+        'body[data-kd-code="poolside-light"]{--kc-op:55%;--kc-oc:#fff;--kc-tp:82%;--kc-tc:#000;--kc-bg:#f2fcff;--kc-line:#36cdee;--kc-fg:#0b2a44;--kc-caret:#f97316;--kc-sel:#b9ecf7;--kc-gut:rgba(14,165,233,.08);--kc-fold:#6b8fa0;--kc-h:#0a93b2;--kc-k:#c85f00;--kc-s:#0e7490;--kc-n:#1b6fe0;--kc-c:#6b8fa0;--kc-t:#0a93b2;--kc-p:#1b6fe0;--kc-b:#c85f00;--kc-i:#c85f00;--kc-l:#0a93b2;--kc-d:#6b8fa0;--kc-f:#c85f00;--kc-fbg:rgba(249,115,22,.14)}',
         'body[data-kd-code="monokai"]{--kc-bg:#272822;--kc-line:#3e3d32;--kc-fg:#f8f8f2;--kc-caret:#f8f8f0;--kc-sel:#49483e;--kc-gut:rgba(255,255,255,.04);--kc-fold:#90908a;--kc-h:#a6e22e;--kc-k:#f92672;--kc-s:#e6db74;--kc-n:#ae81ff;--kc-c:#75715e;--kc-t:#66d9ef;--kc-p:#fd971f;--kc-b:#fd971f;--kc-i:#fd971f;--kc-l:#66d9ef;--kc-d:#75715e;--kc-f:#fd971f;--kc-fbg:rgba(253,151,31,.14)}',
         '.kd-modes{position:fixed;right:16px;bottom:46px;z-index:70;display:flex;gap:2px;padding:3px;border-radius:999px;background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(224,242,254,.94));border:1px solid rgba(2,132,199,.45);box-shadow:0 6px 18px rgba(3,105,161,.22);font:700 12px system-ui,sans-serif}',
         '.kd-modes button{font:inherit;border:0;background:none;color:#0369a1;padding:5px 12px;border-radius:999px;cursor:pointer}',
@@ -33,7 +33,7 @@
         '.kd-src::selection{background:var(--kc-sel);-webkit-text-fill-color:transparent}',
         '.kd-hl .m-h{color:var(--kc-h);font-weight:700}.kd-hl .m-k{color:var(--kc-k)}.kd-hl .m-s{color:var(--kc-s)}.kd-hl .m-n{color:var(--kc-n)}.kd-hl .m-c{color:var(--kc-c)}',
         '.kd-l{min-height:1.6em}',
-        '.kd-hlfg{color:transparent}.kd-hlfg mark{background:none;color:color-mix(in srgb,var(--chip,var(--kc-n)) 72%,var(--kc-chipmix,#fff));font-weight:inherit}',
+        '.kd-hlfg{color:transparent}.kd-hlfg mark{background:none;color:inherit}.kd-hlfg mark .o{color:color-mix(in srgb,var(--chip,var(--kc-n)) var(--kc-op,72%),var(--kc-oc,#fff))}.kd-hlfg mark .t{color:color-mix(in srgb,var(--chip,var(--kc-n)) var(--kc-tp,36%),var(--kc-tc,#fff))}',
         '.kd-hlbg{color:transparent}.kd-hlbg mark{color:transparent;background:color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent);border-radius:4px;box-shadow:0 0 0 2px color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent)}',
         '.kd-gutter{position:absolute;left:0;top:0;bottom:0;width:32px;z-index:2;pointer-events:none;background:linear-gradient(90deg,var(--kc-gut),rgba(255,255,255,0));border-right:1px solid var(--kc-line)}',
         '.kd-fold{position:absolute;left:6px;width:20px;height:22px;padding:0;border:0;background:none;color:var(--kc-fold);font:14px/22px system-ui,sans-serif;cursor:pointer;pointer-events:auto;border-radius:4px;opacity:.7;transition:opacity .15s,background .15s}',
@@ -154,6 +154,13 @@
         '\\{badge\\b[^{}\\n]*\\}'
     ].join('|'), 'g');
     const CHIP_HEX = { R: '#ef4444', O: '#f97316', Y: '#eab308', G: '#22c55e', L: '#84cc16', T: '#14b8a6', C: '#06b6d4', B: '#3b82f6', I: '#6366f1', P: '#a855f7', K: '#ec4899', M: '#d946ef', W: '#94a3b8', F: '#94a3b8', D: '#475569' };
+    const CHIP_OPEN = /^(?:!{1,2}[#^~=+%:;?\/-]?[A-Z]{1,2}#|\+\+[A-Z]{1,2}[!~%:^+?]?|#[A-Z]{1,2}#|=[A-Z]{1,2}=|\^\^[A-Z]{1,2}\^|%[A-Z]{1,2}%|\{badge\b ?)/;
+    const CHIP_CLOSE = /(?:\+\+|\^\^|[#=%}])$/;
+    // a chip is its opener (#C#), its text and its closer (#): the text gets its own span so it can be lighter than the marks around it
+    function chipHtml(c) {
+        const o = (CHIP_OPEN.exec(c) || [''])[0], rest = c.slice(o.length), cl = (CHIP_CLOSE.exec(rest) || [''])[0], mid = rest.slice(0, rest.length - cl.length);
+        return '<span class="o">' + escH(o) + '</span><span class="t">' + escH(mid) + '</span><span class="o">' + escH(cl) + '</span>';
+    }
     function chipLines(text) {
         let fence = false;
         return String(text).split('\n').map(function (line) {
@@ -163,7 +170,7 @@
             CHIP_BG.lastIndex = 0;
             while ((m = CHIP_BG.exec(line))) {
                 const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || '', hex = /^\{badge/.test(m[0]) ? '#f97316' : (CHIP_HEX[letter.charAt(0)] || '');   // a chip glows in its own color, a {badge} in orange
-                out += escH(line.slice(last, m.index)) + '<mark' + (hex ? ' style="--chip:' + hex + '"' : '') + '>' + escH(m[0]) + '</mark>';
+                out += escH(line.slice(last, m.index)) + '<mark' + (hex ? ' style="--chip:' + hex + '"' : '') + '>' + chipHtml(m[0]) + '</mark>';
                 last = m.index + m[0].length;
                 if (m[0].length === 0) CHIP_BG.lastIndex++;
             }
