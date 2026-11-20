@@ -33,6 +33,7 @@
         '.kd-src::selection{background:var(--kc-sel);-webkit-text-fill-color:transparent}',
         '.kd-hl .m-h{color:var(--kc-h);font-weight:700}.kd-hl .m-k{color:var(--kc-k)}.kd-hl .m-s{color:var(--kc-s)}.kd-hl .m-n{color:var(--kc-n)}.kd-hl .m-c{color:var(--kc-c)}',
         '.kd-l{min-height:1.6em}',
+        '.kd-hlbg{color:transparent}.kd-hlbg mark{color:transparent;background:color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent);border-radius:4px;box-shadow:0 0 0 2px color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent)}',
         '.kd-gutter{position:absolute;left:0;top:0;bottom:0;width:32px;z-index:2;pointer-events:none;background:linear-gradient(90deg,var(--kc-gut),rgba(255,255,255,0));border-right:1px solid var(--kc-line)}',
         '.kd-fold{position:absolute;left:6px;width:20px;height:22px;padding:0;border:0;background:none;color:var(--kc-fold);font:14px/22px system-ui,sans-serif;cursor:pointer;pointer-events:auto;border-radius:4px;opacity:.7;transition:opacity .15s,background .15s}',
         '.kd-fold:hover,.kd-srcwrap:hover .kd-fold{opacity:1}.kd-fold:hover{background:var(--kc-line);color:var(--kc-fg)}.kd-fold.on{opacity:1;color:var(--kc-k)}',
@@ -140,6 +141,33 @@
         }
         return out + escH(t.slice(last));
     }
+    // a slight colored glow behind every chip (#C#a chip#, !!#R#text#, ++R!text++ and friends): a second layer under the colored text, same text and same font,
+    // so nothing moves. (A glow, not padding: padding would push the words out of line with the real text box.)
+    const CHIP_BG = new RegExp([
+        '!{1,2}[#^~=+%:;?/\\-]?([A-Z]{1,2})#[^#\\n]+#',
+        '\\+\\+([A-Z]{1,2})[!~%:^+?]?[^+\\n]+?\\+\\+',
+        '#([A-Z]{1,2})#[^#\\n]+#',
+        '=([A-Z]{1,2})=[^=\\n]+=',
+        '\\^\\^([A-Z]{1,2})\\^[^^\\n]+\\^\\^',
+        '%([A-Z]{1,2})%[^%\\n]+%'
+    ].join('|'), 'g');
+    const CHIP_HEX = { R: '#ef4444', O: '#f97316', Y: '#eab308', G: '#22c55e', L: '#84cc16', T: '#14b8a6', C: '#06b6d4', B: '#3b82f6', I: '#6366f1', P: '#a855f7', K: '#ec4899', M: '#d946ef', W: '#94a3b8', F: '#94a3b8', D: '#475569' };
+    function chipLines(text) {
+        let fence = false;
+        return String(text).split('\n').map(function (line) {
+            if (/^\s*```/.test(line)) { fence = !fence; return escH(line); }
+            if (fence) return escH(line);
+            let out = '', last = 0, m;
+            CHIP_BG.lastIndex = 0;
+            while ((m = CHIP_BG.exec(line))) {
+                const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || '', hex = CHIP_HEX[letter.charAt(0)] || '';
+                out += escH(line.slice(last, m.index)) + '<mark' + (hex ? ' style="--chip:' + hex + '"' : '') + '>' + escH(m[0]) + '</mark>';
+                last = m.index + m[0].length;
+                if (m[0].length === 0) CHIP_BG.lastIndex++;
+            }
+            return out + escH(line.slice(last));
+        });
+    }
     const PH = /⟪…[^⟫\n]*⟫/;
     function hlLines(text) {
         let fence = false;
@@ -163,7 +191,7 @@
     }
     function highlight(text) { return hlLines(text).join('\n'); }
     // the colored copy sits under the box (whose own letters are see-through); the box grows with its text so both always line up
-    let hlPre = null, gutter = null, folds = {}, nextFold = 1;
+    let hlPre = null, bgPre = null, gutter = null, folds = {}, nextFold = 1;
     /* ---------- folding: images and skills with long data, and code or math blocks, fold up from a little arrow on their first line ---------- */
     // (a folded part is swapped for a short ⟪…note #n⟫ mark in the box; the real text is kept and put back whenever the page is read)
     const PH_G = /⟪…[^⟫\n]*#(\d+)⟫/g;
@@ -294,6 +322,7 @@
         if (!src || !hlPre) return;
         keepScroll(function () {
             hlPre.innerHTML = hlLines(src.value).map(function (l) { return '<div class="kd-l">' + (l || '​') + '</div>'; }).join('');
+            if (bgPre) bgPre.innerHTML = chipLines(src.value).map(function (l) { return '<div class="kd-l">' + (l || '​') + '</div>'; }).join('');
             src.style.height = 'auto';
             src.style.height = Math.max(src.scrollHeight, 1) + 'px';
             buildGutter();
@@ -316,6 +345,10 @@
         hlPre.setAttribute('aria-hidden', 'true');
         gutter = document.createElement('div');
         gutter.className = 'kd-gutter';
+        bgPre = document.createElement('pre');
+        bgPre.className = 'kd-hl kd-hlbg';
+        bgPre.setAttribute('aria-hidden', 'true');
+        wrap.appendChild(bgPre);
         wrap.appendChild(hlPre);
         wrap.appendChild(gutter);
         wrap.appendChild(src);
