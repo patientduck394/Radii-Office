@@ -2339,7 +2339,7 @@ fn guess(n):
         ['keyup', 'keypress'].forEach(function (ev) { ta.addEventListener(ev, function (e) { e.stopPropagation(); }); });
     }
 
-    const CODE_THEMES = [['monokai', 'Monokai'], ['poolside', 'Poolside'], ['poolside-light', 'Poolside Light']];
+    const CODE_THEMES = [['monokai', 'Monokai'], ['poolside', 'Poolside'], ['poolside-light', 'Poolside Light'], ['dracula', 'Dracula'], ['solarized', 'Solarized Dark'], ['nord', 'Nord']];
 
     // ✏️ Draw: a blank page the size of the note (where the program will play), with Annotate's inks; Done hands back
     // the drawing as an @@ink="strokes='...'" line (nothing is drawn: nothing comes back)
