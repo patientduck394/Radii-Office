@@ -9,6 +9,8 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+// Licence check first: it prints any stale MIT wording or missing licence file, so it is caught before every publish!
+import('node:child_process').then((cp) => { const r = cp.spawnSync(process.execPath, [path.join(ROOT, 'scripts/licenses.mjs'), '--quiet'], { encoding: 'utf8' }); if (r.stdout) console.log(r.stdout.trimEnd()); }).catch(() => {});
 // OpenDB's index is built from its entry files first, so the download always matches!
 await import('./build_opendb.mjs').then((m) => m.build());
 // ...every app's phone page (made from the app's own page)...

@@ -15,5 +15,6 @@
   "allowScripts": {
     "esbuild@0.28.2": true,
     "workerd@1.20261103.1": true
-  }
+  },
+  "license": "Unlicense OR CC0-1.0"
 }
