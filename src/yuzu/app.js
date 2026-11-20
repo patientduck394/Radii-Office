@@ -95,8 +95,8 @@
     };
     const nameOf = (addr) => String(addr || '').replace(/\s*<[^>]*>\s*$/, '').replace(/^"|"$/g, '').trim() || addr;
     const initials = (addr) => { const n = nameOf(addr); const parts = n.split(/\s+/).filter(Boolean); return (parts[0] ? parts[0][0] : '?').toUpperCase() + (parts[1] ? parts[1][0].toUpperCase() : ''); };
-    const plain = (kd) => { const d = document.createElement('div'); d.innerHTML = typeof window.kdRender === 'function' ? window.kdRender(kd) : esc(kd); return (d.textContent || '').trim(); };
-    const kdHtml = (kd) => (typeof window.kdRender === 'function' ? window.kdRender(kd) : '<p>' + esc(kd).replace(/\n/g, '<br>') + '</p>');
+    const plain = (kd) => { const d = document.createElement('div'); d.innerHTML = kdHtml(kd); return (d.textContent || '').trim(); };
+    const kdHtml = (kd) => (window.kdDoc && kdDoc.textToHtml ? (() => { try { return kdDoc.textToHtml(kd, { notes: {} }); } catch (e) { return "<p>" + esc(kd).replace(/\n/g, "<br>") + "</p>"; } })() : typeof window.kdRender === 'function' ? window.kdRender(kd) : '<p>' + esc(kd).replace(/\n/g, '<br>') + '</p>');
     // mail from other people is shown as plain text (links clickable), never run through Keydown
     const plainHtml = (t) => esc(t).replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)&])/g, '<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>');
     // the "> quoted" lines of a reply fold away (the earlier messages are right above it in the conversation)

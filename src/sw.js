@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '30635c0bc7ad';
+const VERSION = '0a18b3b01f9f';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","a5da2babc9"],
@@ -581,20 +581,20 @@ const CORE = [["/","a5da2babc9"],
   ["/writeout/writeout-pro.js?v=20261121","caccf13976"],
   ["/writeout/writeout-templates.js?v=20261223a","f47f167065"],
   ["/writeout/zonerider-scene.js?v=20261204a","55039a28c7"],
-  ["/yuzu/","7c9a76f574"],
-  ["/yuzu/app.js?v=20261230c","302e94e7ae"],
+  ["/yuzu/","fe2724085b"],
+  ["/yuzu/app.js?v=20261119j","52c372f9c4"],
   ["/yuzu/apple-touch-icon.png","f5fc3ad6b3"],
   ["/yuzu/auth.html","838b96a270"],
   ["/yuzu/config.js?v=20261205d","50e6f244fe"],
   ["/yuzu/docs-library.js?v=20261231a","d1fcec430f"],
   ["/yuzu/favicon-96.png","4dc6e73704"],
   ["/yuzu/favicon.svg","d950817834"],
-  ["/yuzu/index.html","7c9a76f574"],
+  ["/yuzu/index.html","fe2724085b"],
   ["/yuzu/kdnext-auto.js?v=20261207d","dddce102b2"],
   ["/yuzu/mail.js?v=20261219g","825088c9b2"],
   ["/yuzu/manifest.json","6a73d971b5"],
-  ["/yuzu/mobile/","20aca8b85b"],
-  ["/yuzu/mobile/index.html","20aca8b85b"],
+  ["/yuzu/mobile/","712f3ce265"],
+  ["/yuzu/mobile/index.html","712f3ce265"],
   ["/yuzu/nova-icons.js?v=20261224b","55e5225d57"],
   ["/yuzu/nova.css?v=20261118f","52dcef1d19"],
   ["/yuzu/nova.js?v=20261224b","d018514358"],
@@ -602,7 +602,7 @@ const CORE = [["/","a5da2babc9"],
   ["/yuzu/office-shell.js?v=20261117c","1e0067a02d"],
   ["/yuzu/office.js?v=20261224a","8140df14ed"],
   ["/yuzu/radii-file.js?v=20261231a","8580a05212"],
-  ["/yuzu/style.css?v=20261230d","7d13730dfd"],
+  ["/yuzu/style.css?v=20261119j","0077e3c11c"],
   ["/yuzu/yuzu-office.css?v=20261214a","7f6d3c9dae"],
   ["/zonerider/","5950a0a1e0"],
   ["/zonerider/app.js?v=20261230c","d3a24e386a"],
