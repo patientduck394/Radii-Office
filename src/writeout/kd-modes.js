@@ -33,6 +33,8 @@
         '.kd-src::selection{background:var(--kc-sel);-webkit-text-fill-color:transparent}',
         '.kd-hl .m-h{color:var(--kc-h);font-weight:700}.kd-hl .m-k{color:var(--kc-k)}.kd-hl .m-s{color:var(--kc-s)}.kd-hl .m-n{color:var(--kc-n)}.kd-hl .m-c{color:var(--kc-c)}',
         '.kd-l{min-height:1.6em}',
+        '.kd-hl mark{--chip:var(--kc-t,#6fe7ff)}.kd-hl mark[data-k="badge"]{--chip:#f97316}body[data-kd-chipcolor] .kd-hl mark{--chip:var(--chipc,var(--kc-t,#6fe7ff))}body[data-kd-chipcolor] .kd-hl mark[data-k="badge"]{--chip:var(--chipc,#f97316)}',
+        '.kd-hl .m-x{color:var(--kc-d);font-weight:400}.kd-hl .m-ink{--ink:var(--kc-t,#6fe7ff);color:color-mix(in srgb,var(--ink) 80%,var(--kc-tc,#fff));font-weight:700}body[data-kd-chipcolor] .kd-hl .m-ink{--ink:var(--chipc,var(--kc-t,#6fe7ff))}',
         '.kd-hlfg{color:transparent}.kd-hlfg mark{background:none;color:inherit}.kd-hlfg mark .o{color:color-mix(in srgb,var(--chip,var(--kc-n)) var(--kc-op,72%),var(--kc-oc,#fff))}.kd-hlfg mark .t{color:color-mix(in srgb,var(--chip,var(--kc-n)) var(--kc-tp,36%),var(--kc-tc,#fff))}',
         '.kd-hlbg{color:transparent}.kd-hlbg mark{color:transparent;background:color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent);border-radius:4px;box-shadow:0 0 0 2px color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent)}',
         '.kd-gutter{position:absolute;left:0;top:0;bottom:0;width:32px;z-index:2;pointer-events:none;background:linear-gradient(90deg,var(--kc-gut),rgba(255,255,255,0));border-right:1px solid var(--kc-line)}',
@@ -105,8 +107,8 @@
         while ((m = re.exec(t))) {
             if (m.index > last) out += escH(t.slice(last, m.index));
             let end = m.index + m[0].length;
-            if (m[4]) out += '<span class="m-b">**' + hlInline(m[0].slice(2, -2)) + '**</span>';
-            else if (m[8]) out += '<span class="m-i">*' + hlInline(m[0].slice(1, -1)) + '*</span>';
+            if (m[4]) out += '<span class="m-b"><span class="m-x">**</span>' + hlInline(m[0].slice(2, -2)) + '<span class="m-x">**</span></span>';
+            else if (m[8]) out += '<span class="m-i"><span class="m-x">*</span>' + hlInline(m[0].slice(1, -1)) + '<span class="m-x">*</span></span>';
             else if (m[6]) {
                 // a name( ... ): the closing ) is the one that matches, counting any ( ) inside
                 let depth = 1, i = end;
@@ -122,7 +124,12 @@
                         i++;
                     }
                 }
-                if (depth === 0) { out += sp('m-n', m[0]) + hlInline(t.slice(end, i - 1)) + sp('m-n', closer); end = i; re.lastIndex = i; }
+                if (depth === 0 && /^#[A-Z]{1,2}\($/.test(m[0])) {
+                    // #R(words): Color Ink. The words are bold and in the ink's color (the color follows the chip-colors setting), the #R( and ) are dimmed like the ** of bold
+                    const hex = CHIP_HEX[m[0].charAt(1)] || '';
+                    out += '<span class="m-ink"' + (hex ? ' style="--chipc:' + hex + '"' : '') + '><span class="m-x">' + escH(m[0]) + '</span>' + hlInline(t.slice(end, i - 1)) + '<span class="m-x">' + escH(closer) + '</span></span>'; end = i; re.lastIndex = i;
+                }
+                else if (depth === 0) { out += sp('m-n', m[0]) + hlInline(t.slice(end, i - 1)) + sp('m-n', closer); end = i; re.lastIndex = i; }
                 else out += sp('m-n', m[0]);
             } else out += sp(m[10] ? 'm-p' : m[9] ? 'm-f' : m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[5] ? 'm-p' : 'm-n', m[0]);
             last = end;
@@ -153,6 +160,7 @@
         '%([A-Z]{1,2})%[^%\\n]+%',
         '\\{badge\\b[^{}\\n]*\\}'
     ].join('|'), 'g');
+    const BADGE_HEX = { blue: '#2563eb', sky: '#0ea5e9', teal: '#0d9488', green: '#16a34a', lime: '#84cc16', yellow: '#eab308', orange: '#f97316', red: '#dc2626', pink: '#ec4899', purple: '#9333ea', indigo: '#4f46e5', gray: '#64748b' };
     const CHIP_HEX = { R: '#ef4444', O: '#f97316', Y: '#eab308', G: '#22c55e', L: '#84cc16', T: '#14b8a6', C: '#06b6d4', B: '#3b82f6', I: '#6366f1', P: '#a855f7', K: '#ec4899', M: '#d946ef', W: '#94a3b8', F: '#94a3b8', D: '#475569' };
     const CHIP_OPEN = /^(?:!{1,2}[#^~=+%:;?\/-]?[A-Z]{1,2}#|\+\+[A-Z]{1,2}[!~%:^+?]?|#[A-Z]{1,2}#|=[A-Z]{1,2}=|\^\^[A-Z]{1,2}\^|%[A-Z]{1,2}%|\{badge\b ?)/;
     const CHIP_CLOSE = /(?:\+\+|\^\^|[#=%}])$/;
@@ -169,8 +177,10 @@
             let out = '', last = 0, m;
             CHIP_BG.lastIndex = 0;
             while ((m = CHIP_BG.exec(line))) {
-                const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || '', hex = /^\{badge/.test(m[0]) ? '#f97316' : (CHIP_HEX[letter.charAt(0)] || '');   // a chip glows in its own color, a {badge} in orange
-                out += escH(line.slice(last, m.index)) + '<mark' + (hex ? ' style="--chip:' + hex + '"' : '') + '>' + chipHtml(m[0]) + '</mark>';
+                const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || '', isBadge = /^\{badge/.test(m[0]);
+                // (what color a chip or badge really gets is decided by CSS: one color for all, or its own when the chip-colors setting is on)
+                const hex = isBadge ? (BADGE_HEX[((m[0].match(/\|\s*([a-z]+|#[0-9a-f]{3,6})\s*(?=\||\})/i) || [])[1] || '').toLowerCase()] || (/^#/.test((m[0].match(/\|\s*(#[0-9a-f]{3,6})/i) || [])[1] || '') ? m[0].match(/\|\s*(#[0-9a-f]{3,6})/i)[1] : '')) : (CHIP_HEX[letter.charAt(0)] || '');
+                out += escH(line.slice(last, m.index)) + '<mark data-k="' + (isBadge ? 'badge' : 'chip') + '"' + (hex ? ' style="--chipc:' + hex + '"' : '') + '>' + chipHtml(m[0]) + '</mark>';
                 last = m.index + m[0].length;
                 if (m[0].length === 0) CHIP_BG.lastIndex++;
             }
@@ -595,8 +605,17 @@
         try { localStorage.setItem(THEME_KEY, t); } catch (e) {}
         try { if (OS) OS.sync(); } catch (e) {}
     }
+    // "Color chips by their own color": off = every chip is one color (cyan) and every badge orange; on = each follows its own color
+    const CHIPCOLOR_KEY = 'writeout_chip_colors';
+    function chipColors() { try { return localStorage.getItem(CHIPCOLOR_KEY) === '1'; } catch (e) { return false; } }
+    function setChipColors(on) {
+        if (on) document.body.setAttribute('data-kd-chipcolor', ''); else document.body.removeAttribute('data-kd-chipcolor');
+        try { localStorage.setItem(CHIPCOLOR_KEY, on ? '1' : '0'); } catch (e) {}
+        try { if (OS) OS.sync(); } catch (e) {}
+    }
+    if (chipColors()) document.body.setAttribute('data-kd-chipcolor', '');
     document.body.setAttribute('data-kd-code', codeTheme());
-    window.KdModes = { set: set, get: function () { return mode; }, sourceText: textNow, highlight: function (text) { return hlLines(text).map(function (l) { return '<div class="kd-l">' + (l || '\u200b') + '</div>'; }).join(''); }, themes: CODE_THEMES, codeTheme: codeTheme, setCodeTheme: setCodeTheme };
+    window.KdModes = { set: set, get: function () { return mode; }, sourceText: textNow, highlight: function (text) { return hlLines(text).map(function (l) { return '<div class="kd-l">' + (l || '\u200b') + '</div>'; }).join(''); }, themes: CODE_THEMES, codeTheme: codeTheme, setCodeTheme: setCodeTheme, chipColors: chipColors, setChipColors: setChipColors };
     paintBar();
     // the mode you used last comes back (once the page has loaded)
     setTimeout(function () {
