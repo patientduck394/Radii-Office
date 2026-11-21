@@ -14,3 +14,8 @@
 # the keys and fingerprints people check downloads against stay readable by everyone
 /signing/*
   Access-Control-Allow-Origin: *
+
+# the full Keydown engine: anyone's page may load it (Suave's web.ktext does), and browsers may keep it for a day
+/Keydown.js
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=86400

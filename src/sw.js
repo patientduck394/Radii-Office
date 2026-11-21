@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '4814fbb95339';
+const VERSION = 'a79f6e673739';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","a5da2babc9"],
@@ -473,8 +473,8 @@ const CORE = [["/","a5da2babc9"],
   ["/suave/","94d3e28d97"],
   ["/suave/index.html","94d3e28d97"],
   ["/suave/install.sh","9c8d442ad0"],
-  ["/suave/suave.tar.gz","26bdf3c038"],
-  ["/suave/suave.tar.gz.sha256","ba0cf0da48"],
+  ["/suave/suave.tar.gz","57f65aa880"],
+  ["/suave/suave.tar.gz.sha256","314ecca75a"],
   ["/svelte/products.js?v=20261201y","860b74f358"],
   ["/taskra/","86e2b9523b"],
   ["/taskra/app.js?v=20261230c","1819b455c2"],
