@@ -3517,6 +3517,7 @@ function exportKV() {
     const kvDoc = { inkpath_version: "2.5", shapes: objects };
     const animSettings = window.inkpathAnim && window.inkpathAnim.settings();
     if (animSettings) kvDoc.animation = animSettings;
+    if (window.inkpathPro) kvDoc.pro = window.inkpathPro.meta();   // guides, grid, artboards and canvas size
     const kvStr = jsyaml.dump(kvDoc);
     downloadFile(new Blob([kvStr], { type: 'text/yaml' }), 'drawing.kv');
 }
@@ -3526,7 +3527,7 @@ function importKV(evt) {
     const reader = new FileReader();
     reader.onload = (e) => {
         const doc = jsyaml.load(e.target.result);
-        if (doc && doc.shapes) { pushHistory(true); objects = doc.shapes; selectedIndices = []; if (window.inkpathAnim) window.inkpathAnim.load(doc.animation); playUISound('snap'); render(); }
+        if (doc && doc.shapes) { pushHistory(true); objects = doc.shapes; selectedIndices = []; if (window.inkpathAnim) window.inkpathAnim.load(doc.animation); if (window.inkpathPro) window.inkpathPro.loadMeta(doc.pro); playUISound('snap'); render(); }
     };
     reader.readAsText(file);
 }

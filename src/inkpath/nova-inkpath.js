@@ -252,6 +252,7 @@
         main.appendChild(dockButton('Tools', ic('wand'), 'Eyedropper, eraser, zoom', function (b) { openFly('tools', b); }, 'fly-tools'));
         main.appendChild(dockButton('Arrange', ic('layout'), 'Edit, boolean ops, clip and mask, stacking', function (b) { openFly('arrange', b); }, 'fly-arrange'));
         main.appendChild(dockButton('Effects', ic('effects'), 'Filters and animation', function (b) { openFly('effects', b); }, 'fly-effects'));
+        main.appendChild(dockButton('Pro', ic('ruler'), 'Rulers, guides, align, path tools, artboards and export (Alt+P)', function () { closeFly(); if (window.inkpathPro) window.inkpathPro.toggle(); }, 'fly-pro'));
         dock.appendChild(main);
         const end = el('div', 'ik-dock-end');
         end.appendChild(dockButton('File', ic('file'), 'Documents, import and export', function (b) { openFly('file', b); }, 'fly-file'));
