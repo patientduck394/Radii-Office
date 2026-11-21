@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Install Suave | Radii Office</title>
+    <meta name="description" content="Install the Suave programming language on a Mac or Linux with one line in the Terminal!">
+    <link rel="canonical" href="https://radii-office.com/suave/">
+    <meta name="theme-color" content="#0284c7">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        :root { --bg: #f4fbff; --ink: #0b2433; --mute: #4b6475; --line: #bfe6f7; --card: #ffffff; --cyan: #0891b2; --orange: #f97316; --code: #0b2433; --codeink: #d8f6ff; }
+        @media (prefers-color-scheme: dark) { :root { --bg: #08161e; --ink: #e6f6ff; --mute: #9bb8c8; --line: #17475c; --card: #0d2430; --code: #031017; } }
+        * { box-sizing: border-box }
+        body { margin: 0; background: var(--bg); color: var(--ink); font: 17px/1.6 system-ui, -apple-system, "Segoe UI", sans-serif }
+        main { max-width: 44rem; margin: 0 auto; padding: 3rem 16px 4rem }
+        h1 { font-size: 2.2rem; margin: 0 0 .3rem; color: var(--cyan) }
+        h2 { margin: 2rem 0 .4rem; font-size: 1.25rem }
+        p { margin: .4rem 0 }
+        .lead { color: var(--mute); font-size: 1.1rem }
+        .cmd { display: flex; gap: 10px; align-items: stretch; margin: 1rem 0; background: var(--code); border-radius: 14px; padding: 6px 6px 6px 16px; box-shadow: 0 0 0 2px var(--cyan), 0 6px 24px rgba(8, 145, 178, .25) }
+        .cmd code { flex: 1; color: var(--codeink); font: 15px/1.5 ui-monospace, "JetBrains Mono", Menlo, monospace; padding: 10px 0; overflow-x: auto; white-space: nowrap }
+        .cmd button { font: inherit; font-weight: 700; color: #fff; background: var(--orange); border: 0; border-radius: 10px; padding: 0 18px; cursor: pointer }
+        .cmd button:active { transform: translateY(1px) }
+        .card { background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 16px; margin: .6rem 0 }
+        code { font: .92em ui-monospace, "JetBrains Mono", Menlo, monospace; background: color-mix(in srgb, var(--cyan) 14%, transparent); padding: 1px 6px; border-radius: 6px }
+        a { color: var(--cyan) }
+        ol { padding-left: 1.2rem }
+        footer { margin-top: 2.5rem; color: var(--mute); font-size: .9rem }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Install Suave</h1>
+    <p class="lead">A smooth language for scripts, data and web apps. One line in the Terminal sets it all up!</p>
+
+    <div class="cmd">
+        <code id="cmd">curl -fsSL https://radii-office.com/suave/install.sh | sh</code>
+        <button type="button" id="copy">Copy</button>
+    </div>
+    <p>Works on a Mac or Linux. Open <b>Terminal</b>, paste the line, and press Enter. When it says <i>Done!</i>, open a <b>new</b> Terminal window and try <code>suave eval "1 + 2"</code>.</p>
+
+    <h2>What the line does</h2>
+    <ol>
+        <li>Downloads Suave and checks the download against its published checksum, so a broken or changed file is refused.</li>
+        <li>Installs <a href="https://deno.com">Deno</a> if you do not have it (Suave runs on Deno).</li>
+        <li>Keeps Suave in <code>~/.suave</code> and puts the commands <code>suave</code>, <code>lake</code> and <code>laker</code> in <code>~/.local/bin</code>.</li>
+        <li>Makes sure new Terminal windows can find them.</li>
+    </ol>
+
+    <h2>Update, remove, or read first</h2>
+    <div class="card"><b>Update:</b> run the same line again, or type <code>suave upgrade</code>.</div>
+    <div class="card"><b>Remove:</b> <code>~/.suave/install.sh --uninstall</code></div>
+    <div class="card"><b>Read before you run:</b> <a href="install.sh">install.sh</a> is a short, plain script. The download is <a href="suave.tar.gz">suave.tar.gz</a> and its checksum is <a href="suave.tar.gz.sha256">suave.tar.gz.sha256</a>.</div>
+
+    <h2>Then try</h2>
+    <div class="card"><code>suave new my-site --web</code> then <code>suave serve app.wsv</code> makes a website, and <code>laker init</code> turns an app into a desktop program.</div>
+
+    <footer>Suave is free software, CC0 and the Unlicense. Windows: install Deno, then run Suave from its folder with <code>deno task suave</code>. <a href="/">Back to Radii Office</a></footer>
+</main>
+<script>
+    document.getElementById('copy').addEventListener('click', function () {
+        var b = this, t = document.getElementById('cmd').textContent;
+        try { navigator.clipboard.writeText(t).then(function () { b.textContent = 'Copied!'; setTimeout(function () { b.textContent = 'Copy'; }, 1800); }); } catch (e) { b.textContent = 'Select and copy it'; }
+    });
+</script>
+</body>
+</html>
