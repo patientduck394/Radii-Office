@@ -1,0 +1,6 @@
+name: app
+version: "0.1.0"
+entry: main.sv
+deps {
+  sound: sound
+}
