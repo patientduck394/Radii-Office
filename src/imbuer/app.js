@@ -971,7 +971,7 @@ function cellRect(r, c) {
     const f = sh().freeze;
     const sc = scroller();
     if (sc) {
-        if (f.r && r <= f.r) y += sc.scrollTop;
+        if (f.r && r <= f.r) y += sc.scrollTop - curFreezeShift;
         if (f.c && c < f.c) x += sc.scrollLeft;
     }
     return { x, y, w, h };
@@ -991,7 +991,7 @@ function cellAtPoint(clientX, clientY) {
     const vx = clientX - box.left, vy = clientY - box.top;
     let x = vx + sc.scrollLeft, y = vy + sc.scrollTop;
     if (s.freeze.c && vx < layout.colX[s.freeze.c]) x = vx;
-    if (s.freeze.r && vy < layout.rowY[s.freeze.r + 1]) y = vy;
+    if (s.freeze.r && vy < layout.rowY[s.freeze.r + 1] - curFreezeShift) y = vy + curFreezeShift;
     const L = layout;
     let c = 0;
     while (c < s.cols - 1 && L.colX[c + 1] <= x) c++;
@@ -1004,6 +1004,38 @@ function cellAtPoint(clientX, clientY) {
 // ==========================================
 // GRID BUILD & RENDER
 // ==========================================
+// ----- Frozen rows that let go at the end of their table: with freeze.table on, the frozen rows stay while the table right under them
+// is on screen and scroll away with it once the table ends (the first blank row ends a table), like a table header should.
+let curFreezeShift = 0;
+function tableEndRow(s) {
+    const f = s.freeze.r;
+    const rows = new Set();
+    for (const k in s.data) { if (s.data[k] === '' || s.data[k] == null) continue; const m = /^[A-Z]+(\d+)$/.exec(k); if (m) rows.add(+m[1]); }
+    let r = f + 1;
+    if (!rows.has(r)) return f;
+    while (rows.has(r + 1)) r++;
+    return r;
+}
+function calcFreezeShift() {
+    const s = sh(), f = s.freeze, sc = scroller();
+    if (!sc || !f.r || !f.table || !layout) return 0;
+    const end = tableEndRow(s);
+    if (end <= f.r) return 0;
+    const blockH = layout.rowY[f.r + 1] - layout.rowY[1];
+    return Math.max(0, Math.min(sc.scrollTop + layout.rowY[f.r + 1] - layout.rowY[end + 1], blockH));
+}
+function applyFreezeShift() {
+    const next = calcFreezeShift();
+    if (next === curFreezeShift) return false;
+    curFreezeShift = next;
+    const f = sh().freeze, t = next ? `translateY(${-next}px)` : '';
+    for (let r = 1; r <= f.r; r++) {
+        if (rowHdrEls[r]) rowHdrEls[r].style.transform = t;
+        if (cellEls[r]) for (const td of cellEls[r]) if (td) td.style.transform = t;
+    }
+    return true;
+}
+
 function stickyStyle(r, c) {
     const f = sh().freeze;
     let css = '';
@@ -1012,6 +1044,7 @@ function stickyStyle(r, c) {
     if (fc) css += `${fr ? '' : 'position:sticky;'}left:${layout.colX[c]}px;${fr ? '' : 'z-index:3;'}`;
     // a frozen cell must cover what scrolls under it (a cell's own fill comes later and wins)
     if (fr || fc) css += 'background:var(--cell-bg);';
+    if (fr && curFreezeShift) css += `transform:translateY(${-curFreezeShift}px);`;
     return css;
 }
 
@@ -1020,6 +1053,7 @@ function initGrid() {
     computeLayout();
     computeFilterHidden();
     computeLayout();
+    curFreezeShift = calcFreezeShift();
     const L = layout;
     const table = document.getElementById('grid');
     const colgroup = document.getElementById('grid-cols');
@@ -1089,8 +1123,8 @@ function applyFreezeChrome() {
     }
     for (let r = 1; r < rowHdrEls.length; r++) {
         const th = rowHdrEls[r];
-        if (f.r && r <= f.r) { th.style.top = layout.rowY[r] + 'px'; th.style.zIndex = 8; th.classList.add('frz'); }
-        else { th.style.top = ''; th.style.zIndex = ''; th.classList.remove('frz'); }
+        if (f.r && r <= f.r) { th.style.top = layout.rowY[r] + 'px'; th.style.zIndex = 8; th.classList.add('frz'); th.style.transform = curFreezeShift ? `translateY(${-curFreezeShift}px)` : ''; }
+        else { th.style.top = ''; th.style.zIndex = ''; th.style.transform = ''; th.classList.remove('frz'); }
         th.classList.toggle('frz-edge', !!f.r && r === f.r);
     }
     document.getElementById('grid').classList.toggle('has-freeze', !!(f.r || f.c));
@@ -3070,6 +3104,7 @@ function wireCore() {
 
     sc.addEventListener('scroll', () => {
         const f = sh().freeze;
+        if (f.table) applyFreezeShift();
         if (f.r || f.c) { drawSel({ animate: false }); if (isEditing()) { placeEditor(); drawRefBoxes(); } }
         if (typeof onGridScroll === 'function') onGridScroll();
     });

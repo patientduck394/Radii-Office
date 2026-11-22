@@ -1172,8 +1172,8 @@ function wireNotes() {
 // ==========================================
 // FREEZE PANES
 // ==========================================
-function setFreeze(r, c) {
-    change(() => { sh().freeze = { r, c }; }, { rebuild: true });
+function setFreeze(r, c, table) {
+    change(() => { sh().freeze = table ? { r, c, table: true } : { r, c }; }, { rebuild: true });
     toast(r || c ? 'Panes frozen! Scroll to see them stay put!' : 'Panes unfrozen!');
 }
 
@@ -1422,7 +1422,7 @@ function tplSales() {
     s.rowH = { 1: 34 };
     s.cf.push({ id: uid(), r0: 5, r1: 9, c0: 1, c1: 6, type: 'scale', colors: CF_SCALES['Red - Yellow - Green'] });
     s.cf.push({ id: uid(), r0: 5, r1: 9, c0: 7, c1: 7, type: 'icons', set: 'Arrows' });
-    s.freeze = { r: 4, c: 1 };
+    s.freeze = { r: 4, c: 1, table: true };
     s.charts.push({ id: uid(), type: 'column', src: { r0: 4, r1: 9, c0: 0, c1: 6 }, x: 40, y: 360, w: 560, h: 300, title: 'Monthly sales by region' });
     return s;
 }
@@ -1587,6 +1587,7 @@ registerCommands({
     tour: { label: 'Sample Workbook', icon: 'sparkle', run: () => loadTemplate(0, true) },
     manageRules: { label: 'Manage Conditional Formatting Rules', icon: 'condFormat', run: cfManage },
     freezePanes: { label: 'Freeze Panes', icon: 'freeze', run: () => setFreeze(sel.act.r - 1, sel.act.c) },
+    freezeTable: { label: 'Freeze Table Header', icon: 'freeze', run: () => setFreeze(sel.act.r - 1, sel.act.c, true) },
     freezeTop: { label: 'Freeze Top Row', icon: 'freeze', run: () => setFreeze(1, 0) },
     freezeFirst: { label: 'Freeze First Column', icon: 'freeze', run: () => setFreeze(0, 1) },
     unfreeze: { label: 'Unfreeze Panes', icon: 'freeze', run: () => setFreeze(0, 0) },
@@ -1655,7 +1656,8 @@ registerMenus({
         const f = sh().freeze;
         return [
             { label: 'Freeze Panes', icon: 'freeze', title: 'Keep rows above and columns left of the active cell visible!', run: () => runCmd('freezePanes') },
-            { label: 'Freeze Top Row', icon: 'freeze', checked: f.r === 1 && !f.c, run: () => runCmd('freezeTop') },
+            { label: 'Freeze Table Header', icon: 'freeze', title: 'Keeps the rows above the active cell visible while its table is on screen, and lets them scroll away when the table ends!', checked: !!f.table, run: () => runCmd('freezeTable') },
+            { label: 'Freeze Top Row', icon: 'freeze', checked: f.r === 1 && !f.c && !f.table, run: () => runCmd('freezeTop') },
             { label: 'Freeze First Column', icon: 'freeze', checked: f.c === 1 && !f.r, run: () => runCmd('freezeFirst') },
             { sep: true },
             { label: 'Unfreeze Panes', icon: 'freeze', disabled: !f.r && !f.c, run: () => runCmd('unfreeze') },
