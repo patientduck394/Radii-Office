@@ -177,6 +177,16 @@ fn radii_stat(grants: State<'_, Grants>, path: String) -> Result<u64, String> {
 }
 
 fn main() {
+    // Linux: the web view (WebKitGTK) can paint grids and sticky headers in broken pieces on some graphics drivers (seen in the AppImage on
+    // Debian 13 / MX Linux, 2026-11-22: lines turned to dashes and the headers half-painted, while the same page was fine in a browser).
+    // These two switches make it draw the simple, safe way. Anyone who already set them keeps their own choice.
+    if cfg!(target_os = "linux") {
+        for (k, v) in [("WEBKIT_DISABLE_DMABUF_RENDERER", "1"), ("WEBKIT_DISABLE_COMPOSITING_MODE", "1")] {
+            if std::env::var_os(k).is_none() {
+                std::env::set_var(k, v);
+            }
+        }
+    }
     tauri::Builder::default()
         .plugin(tauri_plugin_dialog::init())
         .invoke_handler(tauri::generate_handler![radii_pick, radii_pick_dir, radii_list, radii_read, radii_write, radii_stat])
