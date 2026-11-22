@@ -100,8 +100,11 @@ const ICONS = {
     sigma: '<path d="M18 4H6l6 8-6 8h12"/>',
 };
 
+// the File screen and its buttons draw these from Vadivam (nova-icons.js has them); an icon Imbuer never drew (like "file") is no longer blank
+const VADIVAM_FOR = { home: 'home', newDoc: 'newDoc', file: 'file', folder: 'folder', save: 'save', export: 'export', gear: 'gear', help: 'help', trash: 'trash', table: 'table', clock: 'clock', copy: 'copy', pen: 'pen' };
 function ico(name, cls) {
-    return `<svg class="ico${cls ? ' ' + cls : ''}" data-n="${name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ''}</svg>`;
+    const v = window.NovaIcons && VADIVAM_FOR[name] && window.NovaIcons[VADIVAM_FOR[name]];
+    return `<svg class="ico${cls ? ' ' + cls : ''}" data-n="${name}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${v && v[0] === 'v' ? v[1] : (ICONS[name] || '')}</svg>`;
 }
 
 // ==========================================
@@ -2641,7 +2644,11 @@ function showBackstagePage(page) {
         html = `<h1>${page === 'home' ? greet + '!' : 'New'}</h1><div class="tpl-row">${blank}${tplCards}</div>`;
         if (page === 'home') {
             const s = book.sheets.reduce((n, x) => n + Object.keys(x.data).length, 0);
+            // every saved workbook lives right here (open, rename, copy, delete), like Writeout's Home
+            if (window.RadiiDocs) html += `<h2>Your documents</h2><div class="rd-embed" id="bs-docs"></div>`;
+            else {
             html += `<h2>This workbook</h2><div class="bs-card"><img src="favicon-96.png" alt=""><div><b>${escapeHtml(book.name)}</b><span>${book.sheets.length} sheet${book.sheets.length > 1 ? 's' : ''} · ${s} filled cell${s === 1 ? '' : 's'} · saves automatically in this browser!</span></div></div>`;
+            }
         }
     } else if (page === 'open') {
         html = `<h1>Open</h1><div class="bs-actions"><button class="bs-big" data-act="browse">${ico('folder')}<b>Browse…</b><span>Open an Imbuer .ks workbook (old and new), or a CSV/TSV file as a new sheet!</span></button></div><p class="bs-note">Tip: you can also drag a .ks or .csv file anywhere onto Imbuer!</p>`;
@@ -2677,6 +2684,9 @@ function showBackstagePage(page) {
         html = `<h1>About Imbuer</h1><div class="bs-about"><img src="favicon-96.png" alt=""><div><b>Imbuer</b><span>Radii Office's spreadsheet, now with ${FormulaEngine.functionList().length} functions, charts, sparklines, conditional formatting, filters, multiple sheets and Keydown styles!</span><span>Formulas run in a TypeScript engine (with a silent Lua cross-check)!</span></div></div>`;
     }
     body.innerHTML = html;
+    const docsBox = body.querySelector('#bs-docs');
+    if (docsBox && window.RadiiDocs) { window.RadiiDocs.setTitle(() => (book && book.name) || ''); window.RadiiDocs.mount(docsBox); }
+    if (window.RadiiDocs && window.RadiiDocs.onRename) window.RadiiDocs.onRename(n => { book.name = n; syncBookName(); persistSheets(); });
     restartAnim(body, 'panel-in');
     body.querySelectorAll('[data-pref]').forEach(cb => cb.addEventListener('change', () => togglePref(cb.dataset.pref)));
     body.querySelectorAll('[data-layout]').forEach(b => b.addEventListener('click', () => setLayout(b.dataset.layout)));

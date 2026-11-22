@@ -1344,8 +1344,9 @@
         editor: function () { return ed; },
         keepSelection: true,
         nova: true,
-        title: function () { const t = kdActiveTab(); return t ? t.name : 'Main'; },
-        rename: function (name) { const t = kdActiveTab(); if (t) { t.name = name.substring(0, 60); kdSaveTabs(); kdRenderTabs(); } },
+        // the document's title is the name it has in File > Home (rename it there or here), else the open tab's name
+        title: function () { const n = window.RadiiDocs && RadiiDocs.customName ? RadiiDocs.customName() : ''; if (n) return n; const t = kdActiveTab(); return t ? t.name : 'Main'; },
+        rename: function (name) { if (window.RadiiDocs && RadiiDocs.setName) { RadiiDocs.setName(name); return; } const t = kdActiveTab(); if (t) { t.name = name.substring(0, 60); kdSaveTabs(); kdRenderTabs(); } },
         qat: [
             { icon: 'save', title: 'Save a copy (.kd)', run: function () { download('kd'); OS.flashSaved('Saved!'); } },
             { icon: 'undo', title: 'Undo (⌘Z)', run: function () { try { if (window.kdBlockUndo) window.kdBlockUndo(); else document.execCommand('undo'); } catch (e) {} paginateSoon(); } },

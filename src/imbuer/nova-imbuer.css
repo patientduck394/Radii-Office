@@ -193,3 +193,33 @@ body.nvi-on .nvi-panel[hidden] { display: none; }
 .lay-nova .nt-grid { left: 20%; right: 6%; top: 42%; bottom: 8%; border-radius: 6px; background: repeating-linear-gradient(90deg, transparent 0 16px, #dfe8d2 16px 17px), repeating-linear-gradient(0deg, #fff 0 8px, #dfe8d2 8px 9px); border: 1.5px solid #cfe0b8; }
 
 @media (prefers-reduced-motion: reduce) { .nvi-t, .nvi-d, .nvi-panel, .nvi-capsule-in { animation: none !important; transition: none !important; } }
+
+/* ---------- the File screen in Nova: a soft desk, a slim card for the list, flat soft buttons (same look as Writeout's) ---------- */
+body.nvi-on #backstage { background: var(--nvi-desk); color: var(--nvi-ink); padding: 14px; gap: 14px; }
+body.nvi-on .bs-nav {
+    width: 236px; background: var(--nvi-card); color: var(--nvi-ink); border: 1.5px solid var(--nvi); border-radius: 18px; box-shadow: var(--nvi-shadow); padding: 12px 10px; gap: 2px;
+}
+body.nvi-on .bs-nav button {
+    color: color-mix(in srgb, var(--nvi) 80%, #000); background: transparent; border: 1.5px solid transparent; border-radius: 12px; padding: 10px 12px; font-weight: 600; box-shadow: none; text-shadow: none;
+}
+body.dark.nvi-on .bs-nav button { color: color-mix(in srgb, var(--nvi) 40%, #fff); }
+body.nvi-on .bs-nav button:hover { background: color-mix(in srgb, var(--nvi) 9%, var(--nvi-card)); border-color: color-mix(in srgb, var(--nvi) 40%, var(--nvi-line)); padding-left: 12px; box-shadow: none; }
+body.nvi-on .bs-nav button.on { background: color-mix(in srgb, var(--nvi) 16%, var(--nvi-card)); border-color: var(--nvi); box-shadow: none; font-weight: 600; }
+body.nvi-on .bs-nav .bs-back { border-color: var(--nvi-line); background: var(--nvi-desk); margin-bottom: 10px; opacity: 1; }
+body.nvi-on .bs-nav .ico { width: 18px; height: 18px; }
+body.nvi-on .bs-body { background: var(--nvi-card); border: 1.5px solid var(--nvi-line); border-radius: 18px; padding: 30px 40px; box-shadow: var(--nvi-shadow); }
+body.nvi-on .bs-body h1, body.nvi-on .bs-body h2 { color: var(--nvi-ink); }
+body.nvi-on .bs-body .tpl, body.nvi-on .bs-body .bs-big, body.nvi-on .bs-body .bs-card, body.nvi-on .bs-body .lay-card {
+    background: color-mix(in srgb, var(--nvi) 6%, var(--nvi-card)); border: 1.5px solid color-mix(in srgb, var(--nvi) 45%, var(--nvi-line)); border-radius: 16px; color: var(--nvi-ink); box-shadow: none;
+}
+body.nvi-on .bs-body .tpl:hover, body.nvi-on .bs-body .bs-big:hover, body.nvi-on .bs-body .lay-card:hover { border-color: var(--nvi); background: color-mix(in srgb, var(--nvi) 12%, var(--nvi-card)); box-shadow: var(--nvi-shadow); }
+body.nvi-on .bs-body .bs-big .ico, body.nvi-on .bs-body .bs-big svg { color: var(--nvi); }
+body.nvi-on .bs-opt { border: 1.5px solid var(--nvi-line); border-radius: 12px; background: var(--nvi-card); }
+body.nvi-on .bs-opt:hover { border-color: var(--nvi); background: color-mix(in srgb, var(--nvi) 9%, var(--nvi-card)); }
+body.nvi-on .rd-new, body.nvi-on .rd-act button, body.nvi-on .rd-open { border-radius: 11px; border: 1.5px solid var(--nvi); background: color-mix(in srgb, var(--nvi) 12%, var(--nvi-card)) !important; color: color-mix(in srgb, var(--nvi) 80%, #000) !important; box-shadow: none; text-shadow: none; }
+body.dark.nvi-on .rd-new, body.dark.nvi-on .rd-act button, body.dark.nvi-on .rd-open { color: color-mix(in srgb, var(--nvi) 40%, #fff) !important; }
+body.nvi-on .rd-new:hover, body.nvi-on .rd-act button:hover { background: color-mix(in srgb, var(--nvi) 22%, var(--nvi-card)) !important; }
+body.nvi-on .rd-del { border-color: #dc2626 !important; background: color-mix(in srgb, #dc2626 10%, var(--nvi-card)) !important; color: #b91c1c !important; }
+body.nvi-on .rd-row { border: 1.5px solid var(--nvi-line); border-radius: 14px; background: var(--nvi-card); }
+body.nvi-on .rd-row:hover { border-color: var(--nvi); box-shadow: none; }
+body.nvi-on .rd-cur { border-color: var(--nvi); background: color-mix(in srgb, var(--nvi) 10%, var(--nvi-card)); }

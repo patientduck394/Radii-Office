@@ -14,11 +14,17 @@
     const orig = shell ? OS.init : null;
     let cfgRef = shell ? null : { key: (location.pathname.split('/').filter(Boolean).slice(-2)[0] || 'app').replace(/\.html?$/, '') || 'app', title: null };
     if (!shell) {
+        // (Vadivam icons, like the File menus of the other apps)
         const svgs = {
-            file: '<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/>', newDoc: '<path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M12 11v6M9 14h6"/>',
-            export: '<path d="M12 16V4m0 0l-4 4m4-4l4 4M5 14v6h14v-6"/>', copy: '<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M4 16V6a2 2 0 0 1 2-2h10"/>',
-            clock: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', star: '<path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-2.9-5.4 2.9 1.1-6-4.5-4.2 6.1-.8z"/>', check: '<path d="M5 12l5 5 9-10"/>',
-            trash: '<path d="M3 6h18M8 6V4h8v2M6 6l1 15h10l1-15M10 11v6M14 11v6"/>'
+            file: '<path d="M20 12c0-4.2-5.8-10-10-10H8.8c-1.68 0-2.52 0-3.162.327a3 3 0 0 0-1.311 1.311C4 4.28 4 5.12 4 6.8v10.4c0 1.68 0 2.52.327 3.162a3 3 0 0 0 1.311 1.311C6.28 22 7.12 22 8.8 22h6.4c1.68 0 2.52 0 3.162-.327a3 3 0 0 0 1.311-1.311C20 19.72 20 18.88 20 17.2Zm0 0a3 3 0 0 0-3-3c-1.4 0-2.1 0-2.635-.273a2.5 2.5 0 0 1-1.092-1.092C13 7.1 13 6.4 13 5a3 3 0 0 0-3-3"/>',
+            newDoc: '<path d="M20 12c0-4.2-5.8-10-10-10H8.8c-1.68 0-2.52 0-3.162.327a3 3 0 0 0-1.311 1.311C4 4.28 4 5.12 4 6.8v10.4c0 1.68 0 2.52.327 3.162a3 3 0 0 0 1.311 1.311C6.28 22 7.12 22 8.8 22h6.4c1.68 0 2.52 0 3.162-.327a3 3 0 0 0 1.311-1.311C20 19.72 20 18.88 20 17.2Zm0 0a3 3 0 0 0-3-3c-1.4 0-2.1 0-2.635-.273a2.5 2.5 0 0 1-1.092-1.092C13 7.1 13 6.4 13 5a3 3 0 0 0-3-3M8 15.5h5M10.5 18v-5"/>',
+            export: '<path d="M3 17.005C3 19.203 4.58 22 7.375 22h9.25C19.422 22 21 19.2 21 17m-9 0V2m6.5 6.094a12.56 12.56 0 0 1-5.276-4.334L12 2l-1.224 1.76A12.56 12.56 0 0 1 5.5 8.094"/>',
+            copy: '<path d="m12.962 21.81.242-.076a12.98 12.98 0 0 0 8.606-8.777c.19-.46.19-1.043.19-2.207A3.747 3.747 0 0 0 18.255 7h-2.45c-3.08 0-4.619 0-5.795.6A5.5 5.5 0 0 0 7.608 10C7 11.176 7 12.716 7 15.794v2.455A3.75 3.75 0 0 0 10.757 22c1.163 0 1.746 0 2.205-.19a2.5 2.5 0 0 0 1.352-1.353c.19-.459.19-1.043.19-2.207s0-1.747.19-2.207a2.5 2.5 0 0 1 1.353-1.353c.458-.19 1.041-.19 2.205-.19s1.746 0 2.206-.19a2.5 2.5 0 0 0 1.352-1.353M7 17c-2.751 0-4.991-2.239-4.997-5q-.006-2.305.001-4.61C2.015 4.396 4.458 2 7.451 2h4.555a5 5 0 0 1 4.997 5"/>',
+            clock: '<path d="M12 6.75v6l4 2"/><path d="M2 12a10 10 0 0 1 20 0c0 2.626-1.072 5.214-2.929 7.071A10.1 10.1 0 0 1 12 22a10.1 10.1 0 0 1-7.071-2.929A10.1 10.1 0 0 1 2 12"/>',
+            trash: '<path d="M4 6h16M8.923 6c0-5.313 6.154-5.313 6.154 0M13.6 10.367a26.8 26.8 0 0 1 0 6.537m-3.2-6.536a26.8 26.8 0 0 0 0 6.536M5.6 8.706s-.252 6.219.445 9.227C6.73 20.89 7.8 22 10.741 22h2.518c2.941 0 4.012-1.11 4.697-4.067.697-3.008.444-9.227.444-9.227"/>',
+            pen: '<path d="M8.153 20.145a11.14 11.14 0 0 1-5.298-5.298L14.603 3.098a3.747 3.747 0 0 1 5.299 5.3L8.665 19.632c-.505.505-.757.757-1.052.938a3 3 0 0 1-.844.35c-.336.08-.693.08-1.407.08H2.01L2 16.91c0-.774.308-1.516.855-2.063M15 21h7"/>',
+            star: '<path d="M12 3l2.7 5.6 6.1.8-4.5 4.2 1.1 6-5.4-2.9-5.4 2.9 1.1-6-4.5-4.2 6.1-.8z"/>',
+            check: '<path d="M5 12l5 5 9-10"/>'
         };
         OS = {
             ico: function (n) { return '<svg class="os-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">' + (svgs[n] || svgs.file) + '</svg>'; },
@@ -79,6 +85,7 @@
         input.addEventListener('dblclick', function () { input.readOnly = false; input.focus(); input.select(); });
         input.addEventListener('blur', function () { input.readOnly = true; });
     };
+    let renameHook = null;   // an app that keeps its own title (Imbuer's workbook name) hears about a rename of the open document
     const go = function (id) { try { window.localStorage.setItem('radii_last_doc_' + (cfgRef ? cfgRef.key : 'app'), id); } catch (e) {} setTimeout(function () { location.href = RF.link(id); }, 220); };
 
     function newDocument(r) {
@@ -124,9 +131,10 @@
             const row = document.createElement('div');
             row.className = 'rd-row' + (cur ? ' rd-cur' : '');
             row.innerHTML = (b.classList.contains('rd-embed') ? '<img class="rd-fav" src="favicon-96.png" alt="">' : '<span class="rd-ico">' + OS.ico('file') + '</span>')
-                + '<div class="rd-main"><input class="rd-name" readonly title="Double-click to rename" spellcheck="false" aria-label="Document name" value="' + esc(nameOf(r, id)) + '"><span class="rd-meta">' + (cur ? '<b class="rd-badge">Open now</b> ' : '') + 'Edited ' + esc(when(d.modified)) + ' · ' + esc(kb(RF.size(id))) + '</span></div>'
+                + '<div class="rd-main"><input class="rd-name" readonly title="Click the pencil (or double-click) to rename" spellcheck="false" aria-label="Document name" value="' + esc(nameOf(r, id)) + '"><span class="rd-meta">' + (cur ? '<b class="rd-badge">Open now</b> ' : '') + 'Edited ' + esc(when(d.modified)) + ' · ' + esc(kb(RF.size(id))) + '</span></div>'
                 + '<div class="rd-act">'
                 + (cur ? '' : '<button type="button" class="rd-open">Open</button>')
+                + '<button type="button" class="rd-ren" title="Rename this document">' + OS.ico('pen') + '</button>'
                 + (cur && !histOff() ? '<button type="button" class="rd-hist" title="Version history">' + OS.ico('clock') + '</button>' : '')
                 + '<button type="button" class="rd-tab" title="Open in a new tab">' + OS.ico('export') + '</button>'
                 + '<button type="button" class="rd-copy" title="Make a copy">' + OS.ico('copy') + '</button>'
@@ -139,6 +147,8 @@
                 if (!rr.docs[id]) rr.docs[id] = { created: Date.now(), modified: Date.now() };
                 if (rr.docs[id].name !== v) { rr.docs[id].name = v; rr.docs[id].auto = false; save(rr); }
                 input.value = v;
+                try { if (id === RF.id && renameHook) renameHook(v); } catch (e) {}
+                try { if (id === RF.id && OS.sync) OS.sync(); } catch (e) {}
             };
             input.addEventListener('change', rename);
             renameOnDblClick(input);
@@ -147,6 +157,7 @@
             // clicking anywhere on a row (not its name box or buttons) switches to that document
             if (!cur) row.addEventListener('click', function (e) { if (!e.target.closest('button, input:not([readonly])')) go(id); });
             on('.rd-open', function () { go(id); });
+            on('.rd-ren', function () { input.readOnly = false; input.focus(); input.select(); });
             on('.rd-hist', openHistory);
             on('.rd-tab', function () { window.open(RF.link(id), '_blank', 'noopener'); });
             on('.rd-copy', function () { copyDocument(load(), id); render(b); });
@@ -447,6 +458,7 @@
             + '.rd-meta{font-size:12px;color:var(--os-dim,#666)}.rd-badge{color:var(--os-accent,#2563eb)}'
             + '.rd-act{display:flex;gap:6px;flex:none}.rd-act button{display:inline-flex;align-items:center;justify-content:center;min-width:32px;height:32px;padding:0 10px;border-radius:8px;border:1px solid var(--os-menu-line,#ddd);background:var(--os-field,#fff);color:var(--os-text,#222);font:600 12.5px var(--os-font,system-ui);cursor:pointer}'
             + '.rd-act button:hover{border-color:var(--os-accent,#2563eb);color:var(--os-accent,#2563eb)}.rd-act .os-ico{width:16px;height:16px}.rd-del:hover{border-color:#dc2626!important;color:#dc2626!important}'
+            + '.rd-embed>h1,.rd-embed>.rd-hint{display:none}.rd-embed .rd-fav{width:36px;height:36px;flex:none}'
             + '.rd-home{display:flex;flex-direction:column;gap:8px;max-width:720px}.rd-home-doc{width:100%;text-align:left;font:inherit;color:inherit;cursor:default;margin:0;background:var(--os-menu,#fff)}button.rd-home-doc{cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .15s}'
             + 'button.rd-home-doc:hover{border-color:var(--os-accent,#2563eb);box-shadow:0 2px 10px rgba(0,0,0,.1);transform:translateY(-1px)}.rd-home-cur{border-color:var(--os-accent,#2563eb)!important;background:var(--os-accent-l,var(--os-hover,#eef))}'
             + '.rd-home-bar{margin-top:12px;display:flex;align-items:center;gap:12px}.rd-badge{font-style:normal;font-weight:700}'
@@ -487,7 +499,7 @@
         startHistory();
     }
     if (!shell) {
-        window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, openHistory: openHistory, archive: archive, create: function () { newDocument(load()); }, setTitle: function (fn) { cfgRef.title = fn; sync(); } };
+        window.RadiiDocs = { onRename: function (fn) { renameHook = fn; }, customName: function () { const d = load().docs[RF.id]; return d && !d.auto && d.name ? d.name : ''; }, setName: function (v) { const r = sync(), d = r.docs[RF.id]; d.name = String(v || '').trim().slice(0, 60) || d.name; d.auto = false; save(r); }, sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, openHistory: openHistory, archive: archive, create: function () { newDocument(load()); }, setTitle: function (fn) { cfgRef.title = fn; sync(); } };
         if (document.readyState !== 'loading') standalone(); else document.addEventListener('DOMContentLoaded', standalone);
         return;
     }
@@ -538,5 +550,5 @@
         } catch (e) {}
         return orig.apply(this, arguments);
     };
-    window.RadiiDocs = { sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, openHistory: openHistory, archive: archive, create: function () { newDocument(load()); } };
+    window.RadiiDocs = { onRename: function (fn) { renameHook = fn; }, customName: function () { const d = load().docs[RF.id]; return d && !d.auto && d.name ? d.name : ''; }, setName: function (v) { const r = sync(), d = r.docs[RF.id]; d.name = String(v || '').trim().slice(0, 60) || d.name; d.auto = false; save(r); }, sync: sync, render: render, mount: function (el) { css(); render(el); }, openDialog: openDialog, openHistory: openHistory, archive: archive, create: function () { newDocument(load()); } };
 })();
