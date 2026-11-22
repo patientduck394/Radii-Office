@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '9515050b2d50';
+const VERSION = 'da4348d2b501';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","dff700e2bc"],
@@ -229,21 +229,21 @@ const CORE = [["/","dff700e2bc"],
   ["/hexa/radii-collab.js?v=20261230c","2fdda96509"],
   ["/hexa/radii-file.js?v=20261231a","8580a05212"],
   ["/hexa/style.css","fef40cab31"],
-  ["/imbuer/","9aa72cc9b8"],
+  ["/imbuer/","c22838ded2"],
   ["/imbuer/annotate-hl.css?v=20261230d","9371cf89cd"],
-  ["/imbuer/app.js?v=20261122g","e7ae770e2a"],
+  ["/imbuer/app.js?v=20261122h","0db3d786f2"],
   ["/imbuer/apple-touch-icon.png","cc4b6dd340"],
   ["/imbuer/collab-imbuer.js?v=20261019c","13a93d6b1d"],
   ["/imbuer/docs-library.js?v=20261122b","d9c47248b9"],
   ["/imbuer/favicon-96.png","ca7023afe2"],
   ["/imbuer/features.js?v=20261122f","b4ff41f7bf"],
   ["/imbuer/formula_engine.js?v=20261018c","b2e0e44d0e"],
-  ["/imbuer/index.html","9aa72cc9b8"],
+  ["/imbuer/index.html","c22838ded2"],
   ["/imbuer/keydown-more.js?v=20261230b","3f985e9121"],
   ["/imbuer/keydown-packs.css?v=20261224a","03c6535931"],
   ["/imbuer/keydown.css?v=20261230b","988921b271"],
-  ["/imbuer/mobile/","e7dab8c078"],
-  ["/imbuer/mobile/index.html","e7dab8c078"],
+  ["/imbuer/mobile/","29b6c2a8fc"],
+  ["/imbuer/mobile/index.html","29b6c2a8fc"],
   ["/imbuer/nova-icons.js?v=20261225a","cbf1800af3"],
   ["/imbuer/nova-imbuer.css?v=20261122a","a017aa4ddb"],
   ["/imbuer/nova-imbuer.js?v=20261117c","c9edf25727"],

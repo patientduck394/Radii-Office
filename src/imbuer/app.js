@@ -913,11 +913,21 @@ function limitedOn() { return !!prefs.limited; }
 function limExtent(s) {
     let mr = 0, mc = -1;
     const eat = (o) => { for (const k in o) { const m = /^([A-Z]+)(\d+)$/.exec(k); if (!m) continue; const c = FormulaEngine.colToIndex ? FormulaEngine.colToIndex(m[1]) : colIdx(m[1]), r = +m[2]; if (r > mr) mr = r; if (c > mc) mc = c; } };
-    eat(s.data); eat(s.styles); eat(s.notes);
+    eat(s.data); eat(s.notes);   // (colors alone do not widen the grid: coloring a whole row or column would otherwise bring every row or column back)
     return { r: Math.min(s.rows, Math.max(LIM_MIN_R, mr + 2, s.limR || 0)), c: Math.min(s.cols, Math.max(LIM_MIN_C, mc + 2, s.limC || 0)) };
 }
 function colIdx(name) { let i = 0; for (const ch of name) i = i * 26 + ch.charCodeAt(0) - 64; return i - 1; }
 function colHidden(c) { return !!(sh().hiddenCols[c] || (limCur && c >= limCur.c)); }
+// moving or clicking onto a cell past the edge shows it (the grid expands as you go)
+function limReveal(r, c) {
+    if (!limitedOn() || !limCur) return false;
+    const s = sh();
+    let grew = false;
+    if (r > limCur.r) { s.limR = Math.min(s.rows, r); grew = true; }
+    if (c >= limCur.c) { s.limC = Math.min(s.cols, c + 1); grew = true; }
+    if (grew) { initGrid(); persistSheets(); }
+    return grew;
+}
 function limGrow(kind) {
     const s = sh(), e = limExtent(s);
     if (kind === 'c') { if (e.c >= MAX_COLS) { toast('That is the last column!'); return; } s.limC = e.c + 1; if (s.limC > s.cols) s.cols = s.limC; }
@@ -1445,6 +1455,7 @@ function clampCell(p) {
 
 function selectCell(r, c, opts) {
     const p = clampCell({ r, c });
+    limReveal(p.r, p.c);
     sel = { anchor: { ...p }, focus: { ...p }, act: { ...p } };
     extras = [];
     drawSel(Object.assign({ scroll: true }, opts || {}));
@@ -1453,6 +1464,7 @@ function selectCell(r, c, opts) {
 function selectRange(R, opts) {
     const s = sh();
     const r0 = Math.max(1, R.r0), r1 = Math.min(s.rows, R.r1), c0 = Math.max(0, R.c0), c1 = Math.min(s.cols - 1, R.c1);
+    limReveal(r0, c0);
     sel = { anchor: { r: r0, c: c0 }, focus: { r: r1, c: c1 }, act: { r: r0, c: c0 } };
     extras = [];
     drawSel(Object.assign({ scroll: true }, opts || {}));
@@ -1668,7 +1680,9 @@ function updateFormulaBar() {
 function moveAct(dr, dc, extend) {
     if (extend) {
         let f = { r: sel.focus.r + dr, c: sel.focus.c + dc };
-        f = skipHidden(clampCell(f), dr, dc);
+        f = clampCell(f);
+        limReveal(f.r, f.c);
+        f = skipHidden(f, dr, dc);
         sel.focus = f;
         drawSel({});
         scrollIntoView(f.r, f.c);
@@ -1681,7 +1695,7 @@ function moveAct(dr, dc, extend) {
 function skipHidden(p, dr, dc) {
     const s = sh();
     let guard = 0;
-    while (dr && isRowHidden(p.r) && guard++ < s.rows) {
+    while (dr && (s.hiddenRows[p.r] || filterHidden[p.r]) && guard++ < s.rows) {   // (rows the limited grid has not shown yet are not hidden rows: moving onto one shows it)
         const n = p.r + Math.sign(dr);
         if (n < 1 || n > s.rows) break;
         p.r = n;
