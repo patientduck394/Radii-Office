@@ -157,7 +157,7 @@
     const CHIP_BG = new RegExp([
         '!{1,2}[#^~=+%:;?/\\-]?([A-Z]{1,2})#[^#\\n]+#',
         '\\+\\+([A-Z]{1,2})[!~%:^+?]?[^+\\n]+?\\+\\+',
-        '#([A-Z]{1,2})#[^#\\n]+#(?![#_~=\\]\\[>-])',
+        '#([A-Z]{1,2})#[^#\\n]+#[#_~=\\]\\[>-]?',
         '=([A-Z]{1,2})=[^=\\n]+=',
         '\\^\\^([A-Z]{1,2})\\^[^^\\n]+\\^\\^',
         '%([A-Z]{1,2})%[^%\\n]+%',
@@ -166,7 +166,7 @@
     const BADGE_HEX = { blue: '#2563eb', sky: '#0ea5e9', teal: '#0d9488', green: '#16a34a', lime: '#84cc16', yellow: '#eab308', orange: '#f97316', red: '#dc2626', pink: '#ec4899', purple: '#9333ea', indigo: '#4f46e5', gray: '#64748b' };
     const CHIP_HEX = { R: '#ef4444', O: '#f97316', Y: '#eab308', G: '#22c55e', L: '#84cc16', T: '#14b8a6', C: '#06b6d4', B: '#3b82f6', I: '#6366f1', P: '#a855f7', K: '#ec4899', M: '#d946ef', W: '#94a3b8', F: '#94a3b8', D: '#475569' };
     const CHIP_OPEN = /^(?:!{1,2}[#^~=+%:;?\/-]?[A-Z]{1,2}#|\+\+[A-Z]{1,2}[!~%:^+?]?|#[A-Z]{1,2}#|=[A-Z]{1,2}=|\^\^[A-Z]{1,2}\^|%[A-Z]{1,2}%|\{badge\b ?)/;
-    const CHIP_CLOSE = /(?:\+\+|\^\^|[#=%}])$/;
+    const CHIP_CLOSE = /(?:\+\+|\^\^|#[#_~=\]\[>-]|[#=%}])$/;
     // a chip is its opener (#C#), its text and its closer (#): the text gets its own span so it can be lighter than the marks around it
     function chipHtml(c) {
         const o = (CHIP_OPEN.exec(c) || [''])[0], rest = c.slice(o.length), cl = (CHIP_CLOSE.exec(rest) || [''])[0], mid = rest.slice(0, rest.length - cl.length);
