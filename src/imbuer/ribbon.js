@@ -755,7 +755,7 @@ function selectAllSmart() {
         sel = { anchor: { r: cur.r0, c: cur.c0 }, focus: { r: cur.r1, c: cur.c1 }, act: { ...sel.act } };
         extras = [];
         drawSel({ shine: true });
-    } else selectRange({ r0: 1, r1: sh().rows, c0: 0, c1: sh().cols - 1 }, { scroll: false, shine: true });
+    } else selectRange({ r0: 1, r1: lastRow(), c0: 0, c1: lastCol() }, { scroll: false, shine: true });
 }
 
 function fillDir(dir) {
@@ -2359,8 +2359,8 @@ function cellContextMenu(e) {
     const id = idOf(sel.act.r, sel.act.c);
     const hasNote = !!s.notes[id];
     const R = rng();
-    const fullRows = R.c0 === 0 && R.c1 === s.cols - 1;
-    const fullCols = R.r0 === 1 && R.r1 === s.rows;
+    const fullRows = R.c0 === 0 && R.c1 === lastCol();
+    const fullCols = R.r0 === 1 && R.r1 === lastRow();
     const items = [
         { label: 'Cut', icon: 'cut', kbd: '⌘X', run: () => doCopy(true) },
         { label: 'Copy', icon: 'copy', kbd: '⌘C', run: () => doCopy(false) },

@@ -910,6 +910,9 @@ const LIM_MIN_R = 12, LIM_MIN_C = 6;
 let limCur = null;      // { r, c }: how many rows and columns show right now (null when the grid is not limited)
 let limBusy = false;
 function limitedOn() { return !!prefs.limited; }
+// a whole row or column means every shown cell of it: with Limited Grid on that is the shown part, not the hidden rest
+function lastCol() { return limCur ? limCur.c - 1 : sh().cols - 1; }
+function lastRow() { return limCur ? limCur.r : sh().rows; }
 function limExtent(s) {
     let mr = 0, mc = -1;
     const eat = (o) => { for (const k in o) { const m = /^([A-Z]+)(\d+)$/.exec(k); if (!m) continue; const c = FormulaEngine.colToIndex ? FormulaEngine.colToIndex(m[1]) : colIdx(m[1]), r = +m[2]; if (r > mr) mr = r; if (c > mc) mc = c; } };
@@ -1633,8 +1636,8 @@ function updateHeaders() {
     const s = sh();
     const cols = new Set(), rows = new Set(), fullC = new Set(), fullR = new Set();
     for (const R of allRanges()) {
-        for (let c = R.c0; c <= R.c1; c++) { cols.add(c); if (R.r0 === 1 && R.r1 === s.rows) fullC.add(c); }
-        for (let r = R.r0; r <= R.r1; r++) { rows.add(r); if (R.c0 === 0 && R.c1 === s.cols - 1) fullR.add(r); }
+        for (let c = R.c0; c <= R.c1; c++) { cols.add(c); if (R.r0 === 1 && R.r1 === lastRow()) fullC.add(c); }
+        for (let r = R.r0; r <= R.r1; r++) { rows.add(r); if (R.c0 === 0 && R.c1 === lastCol()) fullR.add(r); }
     }
     for (const c of lastHdr.cols) if (!cols.has(c) && colHdrEls[c]) colHdrEls[c].classList.remove('on', 'full');
     for (const r of lastHdr.rows) if (!rows.has(r) && rowHdrEls[r]) rowHdrEls[r].classList.remove('on', 'full');
@@ -2275,8 +2278,8 @@ function onSinkKeyDown(e) {
             if (typeof closeFind === 'function') closeFind();
             e.preventDefault(); return;
         case ' ':
-            if (e.shiftKey && !mod) { selectRange({ r0: sel.act.r, r1: sel.act.r, c0: 0, c1: sh().cols - 1 }, { scroll: false }); e.preventDefault(); return; }
-            if (e.ctrlKey) { selectRange({ r0: 1, r1: sh().rows, c0: sel.act.c, c1: sel.act.c }, { scroll: false }); e.preventDefault(); return; }
+            if (e.shiftKey && !mod) { selectRange({ r0: sel.act.r, r1: sel.act.r, c0: 0, c1: lastCol() }, { scroll: false }); e.preventDefault(); return; }
+            if (e.ctrlKey) { selectRange({ r0: 1, r1: lastRow(), c0: sel.act.c, c1: sel.act.c }, { scroll: false }); e.preventDefault(); return; }
             if (sh().styles[idOf(sel.act.r, sel.act.c)] && sh().styles[idOf(sel.act.r, sel.act.c)].check) { toggleCheckbox(sel.act.r, sel.act.c); e.preventDefault(); return; }
             break;
     }
@@ -2394,14 +2397,14 @@ function onGridMouseDown(e) {
     if (t.closest('#fill-handle') && e.button === 0) { startFill(e); return; }
     if (t.closest('#sel-edges') && e.button === 0) { startMove(e); return; }
     const corner = t.closest('th.corner');
-    if (corner) { e.preventDefault(); if (isEditing()) commitEdit(0, 0); selectRange({ r0: 1, r1: sh().rows, c0: 0, c1: sh().cols - 1 }, { scroll: false, shine: true }); return; }
+    if (corner) { e.preventDefault(); if (isEditing()) commitEdit(0, 0); selectRange({ r0: 1, r1: lastRow(), c0: 0, c1: lastCol() }, { scroll: false, shine: true }); return; }
     const ch = t.closest('th.ch');
     const rh = t.closest('th.rh');
     if (ch || rh) {
         e.preventDefault();
         if (isEditing()) {
             if (canPoint()) {
-                const R = ch ? { r0: 1, r1: sh().rows, c0: +ch.dataset.c, c1: +ch.dataset.c } : { r0: +rh.dataset.r, r1: +rh.dataset.r, c0: 0, c1: sh().cols - 1 };
+                const R = ch ? { r0: 1, r1: lastRow(), c0: +ch.dataset.c, c1: +ch.dataset.c } : { r0: +rh.dataset.r, r1: +rh.dataset.r, c0: 0, c1: lastCol() };
                 insertPointRef(R, book.active);
                 return;
             }
@@ -2410,24 +2413,24 @@ function onGridMouseDown(e) {
         if (e.button === 2) {
             const idx = ch ? +ch.dataset.c : +rh.dataset.r;
             const R = rng();
-            const inside = ch ? (idx >= R.c0 && idx <= R.c1 && R.r0 === 1 && R.r1 === sh().rows) : (idx >= R.r0 && idx <= R.r1 && R.c0 === 0 && R.c1 === sh().cols - 1);
+            const inside = ch ? (idx >= R.c0 && idx <= R.c1 && R.r0 === 1 && R.r1 === lastRow()) : (idx >= R.r0 && idx <= R.r1 && R.c0 === 0 && R.c1 === lastCol());
             if (inside) return;
         }
         const s = sh();
         if (ch) {
             const c = +ch.dataset.c;
-            if (e.shiftKey) { sel.focus = { r: s.rows, c }; sel.anchor = { r: 1, c: sel.anchor.c }; }
+            if (e.shiftKey) { sel.focus = { r: lastRow(), c }; sel.anchor = { r: 1, c: sel.anchor.c }; }
             else {
                 if (modKey(e)) extras.push(rng()); else extras = [];
-                sel = { anchor: { r: 1, c }, focus: { r: s.rows, c }, act: { r: firstVisibleRow(), c } };
+                sel = { anchor: { r: 1, c }, focus: { r: lastRow(), c }, act: { r: firstVisibleRow(), c } };
             }
             drag = { kind: 'hsel', axis: 'c', start: sel.anchor.c };
         } else {
             const r = +rh.dataset.r;
-            if (e.shiftKey) { sel.focus = { r, c: s.cols - 1 }; sel.anchor = { r: sel.anchor.r, c: 0 }; }
+            if (e.shiftKey) { sel.focus = { r, c: lastCol() }; sel.anchor = { r: sel.anchor.r, c: 0 }; }
             else {
                 if (modKey(e)) extras.push(rng()); else extras = [];
-                sel = { anchor: { r, c: 0 }, focus: { r, c: s.cols - 1 }, act: { r, c: 0 } };
+                sel = { anchor: { r, c: 0 }, focus: { r, c: lastCol() }, act: { r, c: 0 } };
             }
             drag = { kind: 'hsel', axis: 'r', start: sel.anchor.r };
         }
@@ -2537,8 +2540,8 @@ function dragTo(x, y, e) {
             }
             break;
         case 'hsel':
-            if (drag.axis === 'c') { if (sel.focus.c !== p.c) { sel.focus = { r: s.rows, c: p.c }; drawSel({}); } }
-            else if (sel.focus.r !== p.r) { sel.focus = { r: p.r, c: s.cols - 1 }; drawSel({}); }
+            if (drag.axis === 'c') { if (sel.focus.c !== p.c) { sel.focus = { r: lastRow(), c: p.c }; drawSel({}); } }
+            else if (sel.focus.r !== p.r) { sel.focus = { r: p.r, c: lastCol() }; drawSel({}); }
             break;
         case 'point': {
             const a = drag.anchor;
@@ -2932,8 +2935,8 @@ function finishResize(d) {
     const R = rng();
     const s = sh();
     let targets = [d.idx];
-    if (d.isCol && R.r0 === 1 && R.r1 === s.rows && d.idx >= R.c0 && d.idx <= R.c1) targets = range(R.c0, R.c1);
-    if (!d.isCol && R.c0 === 0 && R.c1 === s.cols - 1 && d.idx >= R.r0 && d.idx <= R.r1) targets = range(R.r0, R.r1);
+    if (d.isCol && R.r0 === 1 && R.r1 === lastRow() && d.idx >= R.c0 && d.idx <= R.c1) targets = range(R.c0, R.c1);
+    if (!d.isCol && R.c0 === 0 && R.c1 === lastCol() && d.idx >= R.r0 && d.idx <= R.r1) targets = range(R.r0, R.r1);
     change(() => {
         for (const i of targets) {
             if (d.isCol) { if (d.cur === DEF_W) delete s.colW[i]; else s.colW[i] = d.cur; }
