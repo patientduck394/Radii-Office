@@ -628,7 +628,8 @@
             const c = Array.from(el.classList).find((k) => /^us-[a-z0-9]+-[1-5]$/.test(k));
             if (c) { const m = /^us-([a-z0-9]+)-([1-5])$/.exec(c); return '@' + m[1] + (m[2] === '1' ? '' : '-' + m[2]) + '@' + kids() + '@'; }
         }
-        const d = el.className ? BY_CLASS.get(classKey(el.className)) : null;
+        // (an applet that was clicked changed its classes: it saves as the chip it was made as)
+        const d = el.className ? BY_CLASS.get(classKey(el.getAttribute('data-kd-cls') || el.className)) : null;
         // duplex chips come back as ~DH-B~one|two|three~
         if (d && el.classList.contains('aero-duplex-input-chassis')) return d[0] + Array.from(el.children).map((b) => b.textContent.replace(/\u200B/g, '').trim()).join('|') + d[1];
         if (d && d[2] === 'span') {
