@@ -561,6 +561,7 @@ const CMD = {
     autoSum: { label: 'AutoSum', icon: 'sigma', run: () => autoSum('SUM') },
     insertFunction: { label: 'Insert Function', run: () => insertFunctionDialog(), edit: true },
     showFormulas: { label: 'Show Formulas', icon: 'showFormulas', run: () => togglePref('showFormulas') },
+    limited: { label: 'Limited Grid', icon: 'table', run: () => togglePref('limited') },
     calcNow: { label: 'Calculate Now', icon: 'calc', run: () => { evaluateFormulas(); toast('Recalculated!'); } },
     traceRefs: { label: 'Trace Precedents', icon: 'trace', run: tracePrecedents },
     newNote: { label: 'New Note', icon: 'note', run: () => editNote(sel.act.r, sel.act.c) },
@@ -656,13 +657,16 @@ function togglePref(key) {
     savePrefs();
     applyPrefs();
     syncPrefChecks();
-    if (key === 'headings' || key === 'showFormulas') initGrid();
+    if (key === 'headings' || key === 'showFormulas' || key === 'limited') initGrid();
+    if (key === 'limited') toast(prefs.limited ? 'Limited grid: only what you use shows, press + to add more!' : 'The full grid is back!');
     if (key === 'dark') renderAll(false);
     if (key === 'showFormulas') toast(prefs.showFormulas ? 'Showing formulas!' : 'Showing values!');
 }
 
 function syncPrefChecks() {
     document.querySelectorAll('[data-pref]').forEach(cb => { cb.checked = !!prefs[cb.dataset.pref]; });
+    const lg = document.querySelector('[data-cmd="limited"]');
+    if (lg) lg.classList.toggle('on', !!prefs.limited);
     const sf = document.querySelector('[data-cmd="showFormulas"]');
     if (sf) sf.classList.toggle('on', !!prefs.showFormulas);
 }
@@ -2678,6 +2682,7 @@ function showBackstagePage(page) {
             ${opt('gridlines', 'Gridlines', 'The light lines between cells!')}
             ${opt('headings', 'Headings', 'Column letters and row numbers!')}
             ${opt('formulaBar', 'Formula Bar', 'The name box and fx bar above the grid!')}
+            ${opt('limited', 'Limited Grid', 'Only the rows and columns you use show up, and + adds more (the sheet keeps all of them)!')}
             ${opt('showFormulas', 'Show Formulas', 'Cells show formulas instead of results!')}
         </div><h2>Danger zone</h2><button class="bs-danger" data-act="reset">${ico('trash')} Erase this workbook</button>`;
     } else if (page === 'about') {

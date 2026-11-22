@@ -666,7 +666,7 @@ const MAX_ROWS = 2000, MAX_COLS = 104;
 const REF_COLORS = ['#3b6fd8', '#d64545', '#8e44ad', '#1f9d55', '#e07b00', '#0e9fb8', '#d63384', '#6d5d00'];
 
 let book = null;
-let prefs = { gridlines: true, headings: true, formulaBar: true, dark: false, anim: true, sound: true, zoom: 1, showFormulas: false, layout: 'excel', sideCollapsed: false };
+let prefs = { limited: false, gridlines: true, headings: true, formulaBar: true, dark: false, anim: true, sound: true, zoom: 1, showFormulas: false, layout: 'excel', sideCollapsed: false };
 let calc = { values: [], hints: [] };
 
 function uid() {
@@ -904,18 +904,40 @@ function zf() {
     return prefs.zoom || 1;
 }
 
+// ----- Limited grid (a view over the full sheet): only the rows and columns that are used, plus one spare, show up; the "+" buttons add more.
+// The sheet itself keeps all its rows and columns (and exports the same), the rest are simply hidden like hidden rows and columns are.
+const LIM_MIN_R = 12, LIM_MIN_C = 6;
+let limCur = null;      // { r, c }: how many rows and columns show right now (null when the grid is not limited)
+let limBusy = false;
+function limitedOn() { return !!prefs.limited; }
+function limExtent(s) {
+    let mr = 0, mc = -1;
+    const eat = (o) => { for (const k in o) { const m = /^([A-Z]+)(\d+)$/.exec(k); if (!m) continue; const c = FormulaEngine.colToIndex ? FormulaEngine.colToIndex(m[1]) : colIdx(m[1]), r = +m[2]; if (r > mr) mr = r; if (c > mc) mc = c; } };
+    eat(s.data); eat(s.styles); eat(s.notes);
+    return { r: Math.min(s.rows, Math.max(LIM_MIN_R, mr + 2, s.limR || 0)), c: Math.min(s.cols, Math.max(LIM_MIN_C, mc + 2, s.limC || 0)) };
+}
+function colIdx(name) { let i = 0; for (const ch of name) i = i * 26 + ch.charCodeAt(0) - 64; return i - 1; }
+function colHidden(c) { return !!(sh().hiddenCols[c] || (limCur && c >= limCur.c)); }
+function limGrow(kind) {
+    const s = sh(), e = limExtent(s);
+    if (kind === 'c') { if (e.c >= MAX_COLS) { toast('That is the last column!'); return; } s.limC = e.c + 1; if (s.limC > s.cols) s.cols = s.limC; }
+    else { if (e.r >= MAX_ROWS) { toast('That is the last row!'); return; } s.limR = e.r + 1; if (s.limR > s.rows) s.rows = s.limR; }
+    initGrid();
+    persistSheets();
+}
+
 function colWidth(c) {
     const s = sh();
-    return s.hiddenCols[c] ? 0 : (s.colW[c] || DEF_W);
+    return s.hiddenCols[c] || (limCur && c >= limCur.c) ? 0 : (s.colW[c] || DEF_W);
 }
 
 function rowHeight(r) {
     const s = sh();
-    return s.hiddenRows[r] || filterHidden[r] ? 0 : (s.rowH[r] || DEF_H);
+    return s.hiddenRows[r] || filterHidden[r] || (limCur && r > limCur.r) ? 0 : (s.rowH[r] || DEF_H);
 }
 
 function isRowHidden(r) {
-    return !!(sh().hiddenRows[r] || filterHidden[r]);
+    return !!(sh().hiddenRows[r] || filterHidden[r] || (limCur && r > limCur.r));
 }
 
 function hdrW() {
@@ -928,6 +950,7 @@ function hdrH() {
 
 function computeLayout() {
     const s = sh();
+    limCur = limitedOn() ? limExtent(s) : null;
     const z = zf();
     const colX = [hdrW()];
     for (let c = 0; c < s.cols; c++) colX.push(colX[c] + Math.round(colWidth(c) * z));
@@ -1000,14 +1023,16 @@ function initGrid() {
     const colgroup = document.getElementById('grid-cols');
     let cols = `<col style="width:${hdrW()}px">`;
     for (let c = 0; c < s.cols; c++) cols += `<col style="width:${L.colX[c + 1] - L.colX[c]}px">`;
+    if (limCur && limCur.c < MAX_COLS) cols += '<col style="width:34px">';
     colgroup.innerHTML = cols;
-    table.style.width = L.colX[s.cols] + 'px';
+    table.style.width = (L.colX[s.cols] + (limCur && limCur.c < MAX_COLS ? 34 : 0)) + 'px';
     table.style.setProperty('--z', zf());
 
     let head = `<th class="corner" title="Select all"><span class="corner-tri"></span></th>`;
     for (let c = 0; c < s.cols; c++) {
-        head += `<th class="ch${s.hiddenCols[c] ? ' hc' : ''}" data-c="${c}"><span>${getColumnName(c)}</span><i class="rz rz-c" data-c="${c}"></i></th>`;
+        head += `<th class="ch${colHidden(c) ? ' hc' : ''}" data-c="${c}"><span>${getColumnName(c)}</span><i class="rz rz-c" data-c="${c}"></i></th>`;
     }
+    if (limCur && limCur.c < MAX_COLS) head += '<th class="addc" title="Add a column">+</th>';
     const headRow = document.getElementById('table-header-row');
     headRow.innerHTML = head;
     headRow.style.height = hdrH() + 'px';
@@ -1016,7 +1041,7 @@ function initGrid() {
     for (let r = 1; r <= s.rows; r++) {
         const h = L.rowY[r + 1] - L.rowY[r];
         body += `<tr data-r="${r}" style="height:${h}px;--rh:${h}px"${h === 0 ? ' class="hr"' : ''}><th class="rh" data-r="${r}">${r}<i class="rz rz-r" data-r="${r}"></i></th>`;
-        for (let c = 0; c < s.cols; c++) body += `<td data-r="${r}" data-c="${c}"${s.hiddenCols[c] ? ' class="hc"' : ''}></td>`;
+        for (let c = 0; c < s.cols; c++) body += `<td data-r="${r}" data-c="${c}"${colHidden(c) ? ' class="hc"' : ''}></td>`;
         body += '</tr>';
     }
     const tbody = document.getElementById('table-body');
@@ -1033,9 +1058,17 @@ function initGrid() {
         cellEls.push(row);
     }
     colHdrEls = Array.from(headRow.querySelectorAll('th.ch'));
+    const oldFoot = table.querySelector('tfoot'); if (oldFoot) oldFoot.remove();
+    if (limCur && limCur.r < MAX_ROWS) {
+        const foot = document.createElement('tfoot');
+        foot.innerHTML = '<tr class="addr-row"><th class="rh addr" title="Add a row">+</th></tr>';
+        table.appendChild(foot);
+        foot.querySelector('.addr').addEventListener('click', () => limGrow('r'));
+    }
+    const addc = headRow.querySelector('.addc'); if (addc) addc.addEventListener('click', () => limGrow('c'));
     applyFreezeChrome();
-    document.getElementById('grid-inner').style.width = L.colX[s.cols] + 'px';
-    document.getElementById('grid-inner').style.height = L.rowY[s.rows + 1] + 'px';
+    document.getElementById('grid-inner').style.width = (L.colX[s.cols] + (limCur && limCur.c < MAX_COLS ? 34 : 0)) + 'px';
+    document.getElementById('grid-inner').style.height = (L.rowY[s.rows + 1] + (limCur && limCur.r < MAX_ROWS ? 30 : 0)) + 'px';
     renderAll(false);
     if (typeof renderCharts === 'function') renderCharts(false);
     drawSel({ animate: false });
@@ -1123,7 +1156,7 @@ function cellView(r, c) {
     if (st.wrap) cls += ' wrap';
     if (isErrVal(v)) cls += ' is-err';
     if (s.notes[id]) cls += ' has-note';
-    if (s.hiddenCols[c]) cls += ' hc';
+    if (colHidden(c)) cls += ' hc';
     if (isFormula) cls += ' is-formula';
 
     let inner = '';
@@ -1195,6 +1228,10 @@ function renderCell(r, c) {
 // Re-renders every cell; formula cells whose value changed get a flash!
 function renderAll(flash, skipId) {
     const s = sh();
+    if (limitedOn() && !limBusy) {
+        const e = limExtent(s);
+        if (!limCur || e.r !== limCur.r || e.c !== limCur.c) { limBusy = true; try { initGrid(); } finally { limBusy = false; } return; }
+    }
     const changed = [];
     for (let r = 1; r <= s.rows; r++) {
         for (let c = 0; c < s.cols; c++) {

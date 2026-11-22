@@ -2134,3 +2134,8 @@ body.no-anim *, body.no-anim *::before, body.no-anim *::after {
 .aero-dropdown.active .kd-more-menu { display: flex !important; }
 .kd-more-pick { font: 600 12px var(--font, system-ui); padding: 6px 8px; border-radius: 8px; border: 1px solid #b6c2d1; background: #fff; color: #1e293b; }
 .kd-more-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+
+/* ---------- Limited grid: the "+" that adds a column (end of the header row) or a row (below the last row) ---------- */
+#grid thead th.addc, #grid tfoot th.addr { cursor: pointer; font: 600 16px var(--font-ui); color: var(--accent); background: var(--hdr-bg); border: 1px dashed var(--hdr-line); text-align: center; user-select: none; }
+#grid thead th.addc:hover, #grid tfoot th.addr:hover { background: var(--hover); }
+#grid tfoot th.addr { height: 26px; position: sticky; left: 0; }
