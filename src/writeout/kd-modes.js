@@ -44,7 +44,7 @@
         '.kd-fold{position:absolute;left:6px;width:20px;height:22px;padding:0;border:0;background:none;color:var(--kc-fold);font:14px/22px system-ui,sans-serif;cursor:pointer;pointer-events:auto;border-radius:4px;opacity:.7;transition:opacity .15s,background .15s}',
         '.kd-fold:hover,.kd-srcwrap:hover .kd-fold{opacity:1}.kd-fold:hover{background:var(--kc-line);color:var(--kc-fg)}.kd-fold.on{opacity:1;color:var(--kc-k)}',
         '.kd-hl .m-f{color:var(--kc-f);background:var(--kc-fbg);border-radius:4px;padding:0 4px;font-style:italic}',
-        '.kd-hl .m-t{color:var(--kc-t)}.kd-hl .m-p{color:var(--kc-p)}.kd-hl .m-b{color:var(--kc-b);font-weight:700}.kd-hl .m-i{color:var(--kc-i);font-style:italic}.kd-hl .m-l{color:var(--kc-l);text-decoration:underline}.kd-hl .m-d{color:var(--kc-d)}',
+        '.kd-hl .m-t{color:var(--kc-t)}.kd-hl .m-m{color:var(--kc-d)}.kd-hlfg mark .t .mm{color:var(--kc-d)}.kd-hl .m-p{color:var(--kc-p)}.kd-hl .m-b{color:var(--kc-b);font-weight:700}.kd-hl .m-i{color:var(--kc-i);font-style:italic}.kd-hl .m-l{color:var(--kc-l);text-decoration:underline}.kd-hl .m-d{color:var(--kc-d)}',
         'body.kd-mode-source #wysiwyg-canvas,body.kd-mode-source #wo-sheets,body.kd-mode-source #bb-sheets{display:none!important}',
         'body.kd-mode-view #wysiwyg-canvas,body.kd-mode-view #wysiwyg-canvas *{caret-color:transparent}',
         'body.kd-mode-view #wysiwyg-canvas [contenteditable="true"]{cursor:default}',
@@ -134,7 +134,7 @@
                 }
                 else if (depth === 0) { out += sp('m-n', m[0]) + hlInline(t.slice(end, i - 1)) + sp('m-n', closer); end = i; re.lastIndex = i; }
                 else out += sp('m-n', m[0]);
-            } else out += sp(m[10] ? 'm-p' : m[9] ? 'm-f' : m[1] ? 'm-s' : m[2] ? 'm-t' : m[3] ? 'm-l' : m[5] ? 'm-p' : 'm-n', m[0]);
+            } else out += sp(m[10] ? 'm-p' : m[9] ? 'm-f' : m[1] ? 'm-s' : m[2] ? 'm-m' : m[3] ? 'm-l' : m[5] ? 'm-p' : 'm-n', m[0]);
             last = end;
             if (m[0].length === 0) re.lastIndex++;
             else if (end !== m.index + m[0].length) re.lastIndex = end;
@@ -161,16 +161,17 @@
         '=([A-Z]{1,2})=[^=\\n]+=',
         '\\^\\^([A-Z]{1,2})\\^[^^\\n]+\\^\\^',
         '%([A-Z]{1,2})%[^%\\n]+%',
-        '\\{badge\\b[^{}\\n]*\\}'
+        '\\{badge\\b[^{}\\n]*\\}',
+        '#([%^+:;])([A-Z]{1,2})\\7(?:\\$[^$\\n]*\\$|(?!\\7)[^\\n])+\\7'
     ].join('|'), 'g');
     const BADGE_HEX = { blue: '#2563eb', sky: '#0ea5e9', teal: '#0d9488', green: '#16a34a', lime: '#84cc16', yellow: '#eab308', orange: '#f97316', red: '#dc2626', pink: '#ec4899', purple: '#9333ea', indigo: '#4f46e5', gray: '#64748b' };
     const CHIP_HEX = { R: '#ef4444', O: '#f97316', Y: '#eab308', G: '#22c55e', L: '#84cc16', T: '#14b8a6', C: '#06b6d4', B: '#3b82f6', I: '#6366f1', P: '#a855f7', K: '#ec4899', M: '#d946ef', W: '#94a3b8', F: '#94a3b8', D: '#475569' };
-    const CHIP_OPEN = /^(?:!{1,2}[#^~=+%:;?\/-]?[A-Z]{1,2}#|\+\+[A-Z]{1,2}[!~%:^+?]?|#[A-Z]{1,2}#|=[A-Z]{1,2}=|\^\^[A-Z]{1,2}\^|%[A-Z]{1,2}%|\{badge\b ?)/;
-    const CHIP_CLOSE = /(?:\+\+|\^\^|#[#_~=\]\[>-]|[#=%}])$/;
+    const CHIP_OPEN = /^(?:!{1,2}[#^~=+%:;?\/-]?[A-Z]{1,2}#|\+\+[A-Z]{1,2}[!~%:^+?]?|#[A-Z]{1,2}#|=[A-Z]{1,2}=|\^\^[A-Z]{1,2}\^|%[A-Z]{1,2}%|#[%^+:;][A-Z]{1,2}[%^+:;]|\{badge\b ?)/;
+    const CHIP_CLOSE = /(?:\+\+|\^\^|#[#_~=\]\[>-]|[#=%}:;+^])$/;
     // a chip is its opener (#C#), its text and its closer (#): the text gets its own span so it can be lighter than the marks around it
     function chipHtml(c) {
         const o = (CHIP_OPEN.exec(c) || [''])[0], rest = c.slice(o.length), cl = (CHIP_CLOSE.exec(rest) || [''])[0], mid = rest.slice(0, rest.length - cl.length);
-        return '<span class="o">' + escH(o) + '</span><span class="t">' + escH(mid) + '</span><span class="o">' + escH(cl) + '</span>';
+        return '<span class="o">' + escH(o) + '</span><span class="t">' + escH(mid).replace(/\$\$[^$\n]+\$\$|\$[^$\n]+\$/g, '<span class="mm">$&</span>') + '</span><span class="o">' + escH(cl) + '</span>';
     }
     function chipLines(text) {
         let fence = false;
@@ -180,7 +181,7 @@
             let out = '', last = 0, m;
             CHIP_BG.lastIndex = 0;
             while ((m = CHIP_BG.exec(line))) {
-                const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || '', isBadge = /^\{badge/.test(m[0]);
+                const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || m[8] || '', isBadge = /^\{badge/.test(m[0]);
                 // (what color a chip or badge really gets is decided by CSS: one color for all, or its own when the chip-colors setting is on)
                 const hex = isBadge ? (BADGE_HEX[((m[0].match(/\|\s*([a-z]+|#[0-9a-f]{3,6})\s*(?=\||\})/i) || [])[1] || '').toLowerCase()] || (/^#/.test((m[0].match(/\|\s*(#[0-9a-f]{3,6})/i) || [])[1] || '') ? m[0].match(/\|\s*(#[0-9a-f]{3,6})/i)[1] : '')) : (CHIP_HEX[letter.charAt(0)] || '');
                 out += escH(line.slice(last, m.index)) + '<mark data-k="' + (isBadge ? 'badge' : 'chip') + '"' + (hex ? ' style="--chipc:' + hex + '"' : '') + '>' + chipHtml(m[0]) + '</mark>';
