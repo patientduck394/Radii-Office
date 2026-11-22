@@ -971,7 +971,7 @@ function cellRect(r, c) {
     const f = sh().freeze;
     const sc = scroller();
     if (sc) {
-        if (f.r && r <= f.r) y += sc.scrollTop - curFreezeShift;
+        if (isStuckRow(r)) y = (f.table ? Math.max(y, sc.scrollTop + layout.rowY[1]) : y + sc.scrollTop) - curFreezeShift;
         if (f.c && c < f.c) x += sc.scrollLeft;
     }
     return { x, y, w, h };
@@ -991,7 +991,11 @@ function cellAtPoint(clientX, clientY) {
     const vx = clientX - box.left, vy = clientY - box.top;
     let x = vx + sc.scrollLeft, y = vy + sc.scrollTop;
     if (s.freeze.c && vx < layout.colX[s.freeze.c]) x = vx;
-    if (s.freeze.r && vy < layout.rowY[s.freeze.r + 1] - curFreezeShift) y = vy + curFreezeShift;
+    if (s.freeze.r && !s.freeze.table && vy < layout.rowY[s.freeze.r + 1] - curFreezeShift) y = vy + curFreezeShift;
+    else if (s.freeze.r && s.freeze.table) {
+        const top = Math.max(layout.rowY[s.freeze.r] - sc.scrollTop, layout.rowY[1]) - curFreezeShift, hh = layout.rowY[s.freeze.r + 1] - layout.rowY[s.freeze.r];
+        if (vy >= top && vy < top + hh) y = layout.rowY[s.freeze.r] + 1;
+    }
     const L = layout;
     let c = 0;
     while (c < s.cols - 1 && L.colX[c + 1] <= x) c++;
@@ -1007,6 +1011,9 @@ function cellAtPoint(clientX, clientY) {
 // ----- Frozen rows that let go at the end of their table: with freeze.table on, the frozen rows stay while the table right under them
 // is on screen and scroll away with it once the table ends (the first blank row ends a table), like a table header should.
 let curFreezeShift = 0;
+// In table mode only the table's header row (the last frozen row) sticks: the rows above it (a title, say) scroll away like normal rows.
+function isStuckRow(r) { const f = sh().freeze; return !!(f.r && (f.table ? r === f.r : r <= f.r)); }
+function stickTop(r) { return sh().freeze.table ? layout.rowY[1] : layout.rowY[r]; }
 function tableEndRow(s) {
     const f = s.freeze.r;
     const rows = new Set();
@@ -1021,8 +1028,9 @@ function calcFreezeShift() {
     if (!sc || !f.r || !f.table || !layout) return 0;
     const end = tableEndRow(s);
     if (end <= f.r) return 0;
-    const blockH = layout.rowY[f.r + 1] - layout.rowY[1];
-    return Math.max(0, Math.min(sc.scrollTop + layout.rowY[f.r + 1] - layout.rowY[end + 1], blockH));
+    const blockH = layout.rowY[f.r + 1] - layout.rowY[f.r];
+    const barBottom = Math.max(layout.rowY[f.r], sc.scrollTop + layout.rowY[1]) + blockH;   // where the header's bottom edge is (stuck, or in its own place)
+    return Math.max(0, Math.min(barBottom - layout.rowY[end + 1], blockH));
 }
 function applyFreezeShift() {
     const next = calcFreezeShift();
@@ -1030,6 +1038,7 @@ function applyFreezeShift() {
     curFreezeShift = next;
     const f = sh().freeze, t = next ? `translateY(${-next}px)` : '';
     for (let r = 1; r <= f.r; r++) {
+        if (!isStuckRow(r)) continue;
         if (rowHdrEls[r]) rowHdrEls[r].style.transform = t;
         if (cellEls[r]) for (const td of cellEls[r]) if (td) td.style.transform = t;
     }
@@ -1039,8 +1048,8 @@ function applyFreezeShift() {
 function stickyStyle(r, c) {
     const f = sh().freeze;
     let css = '';
-    const fr = f.r && r <= f.r, fc = f.c && c < f.c;
-    if (fr) css += `position:sticky;top:${layout.rowY[r]}px;z-index:${fc ? 4 : 3};`;
+    const fr = isStuckRow(r), fc = f.c && c < f.c;
+    if (fr) css += `position:sticky;top:${stickTop(r)}px;z-index:${fc ? 4 : 3};`;
     if (fc) css += `${fr ? '' : 'position:sticky;'}left:${layout.colX[c]}px;${fr ? '' : 'z-index:3;'}`;
     // a frozen cell must cover what scrolls under it (a cell's own fill comes later and wins)
     if (fr || fc) css += 'background:var(--cell-bg);';
@@ -1123,7 +1132,7 @@ function applyFreezeChrome() {
     }
     for (let r = 1; r < rowHdrEls.length; r++) {
         const th = rowHdrEls[r];
-        if (f.r && r <= f.r) { th.style.top = layout.rowY[r] + 'px'; th.style.zIndex = 8; th.classList.add('frz'); th.style.transform = curFreezeShift ? `translateY(${-curFreezeShift}px)` : ''; }
+        if (isStuckRow(r)) { th.style.top = stickTop(r) + 'px'; th.style.zIndex = 8; th.classList.add('frz'); th.style.transform = curFreezeShift ? `translateY(${-curFreezeShift}px)` : ''; }
         else { th.style.top = ''; th.style.zIndex = ''; th.style.transform = ''; th.classList.remove('frz'); }
         th.classList.toggle('frz-edge', !!f.r && r === f.r);
     }
@@ -1628,12 +1637,12 @@ function scrollIntoView(r, c) {
     const s = sh();
     const rect = { x: layout.colX[c], y: layout.rowY[r], w: layout.colX[c + 1] - layout.colX[c], h: layout.rowY[r + 1] - layout.rowY[r] };
     const left = layout.colX[s.freeze.c || 0];
-    const top = layout.rowY[(s.freeze.r || 0) + 1];
+    const top = s.freeze.table && s.freeze.r ? layout.rowY[1] + layout.rowY[s.freeze.r + 1] - layout.rowY[s.freeze.r] : layout.rowY[(s.freeze.r || 0) + 1];
     if (!(s.freeze.c && c < s.freeze.c)) {
         if (rect.x - left < sc.scrollLeft) sc.scrollLeft = rect.x - left;
         else if (rect.x + rect.w > sc.scrollLeft + sc.clientWidth) sc.scrollLeft = rect.x + rect.w - sc.clientWidth;
     }
-    if (!(s.freeze.r && r <= s.freeze.r)) {
+    if (!isStuckRow(r) && !(s.freeze.r && !s.freeze.table && r <= s.freeze.r)) {
         if (rect.y - top < sc.scrollTop) sc.scrollTop = rect.y - top;
         else if (rect.y + rect.h > sc.scrollTop + sc.clientHeight) sc.scrollTop = rect.y + rect.h - sc.clientHeight;
     }
