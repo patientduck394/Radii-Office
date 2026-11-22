@@ -1010,6 +1010,8 @@ function stickyStyle(r, c) {
     const fr = f.r && r <= f.r, fc = f.c && c < f.c;
     if (fr) css += `position:sticky;top:${layout.rowY[r]}px;z-index:${fc ? 4 : 3};`;
     if (fc) css += `${fr ? '' : 'position:sticky;'}left:${layout.colX[c]}px;${fr ? '' : 'z-index:3;'}`;
+    // a frozen cell must cover what scrolls under it (a cell's own fill comes later and wins)
+    if (fr || fc) css += 'background:var(--cell-bg);';
     return css;
 }
 
@@ -1092,6 +1094,7 @@ function applyFreezeChrome() {
         th.classList.toggle('frz-edge', !!f.r && r === f.r);
     }
     document.getElementById('grid').classList.toggle('has-freeze', !!(f.r || f.c));
+    const cl = document.getElementById('charts-layer'); if (cl) cl.classList.toggle('under-freeze', !!(f.r || f.c));   // charts scroll under the frozen rows and columns, like cells do
 }
 
 function borderShadow(st, edge) {

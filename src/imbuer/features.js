@@ -581,7 +581,9 @@ function renderCharts() {
         statsEl.hidden = !ch.stats;
         if (ch.stats) renderChartStats(ch, statsEl);
         const W = Math.max(60, ch.w - 16), H = Math.max(40, ch.h - 44 - (ch.stats ? 20 : 0));
-        const svg = chartSvg(ch, W, H);
+        // the drawing is made at the chart's own size, then shown at the sheet's zoom (so a chart grows and shrinks with its cells)
+        el.style.setProperty('--cz', z);
+        const svg = chartSvg(ch, W, H).replace(/^<svg /, `<svg style="width:${W * z}px;height:${H * z}px" `);
         if (body._svg !== svg || animate) { body.innerHTML = svg; body._svg = svg; }
         if (animate) { el.classList.remove('animate'); void el.offsetWidth; el.classList.add('animate'); }
     });

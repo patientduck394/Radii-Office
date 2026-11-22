@@ -2139,3 +2139,9 @@ body.no-anim *, body.no-anim *::before, body.no-anim *::after {
 #grid thead th.addc, #grid tfoot th.addr { cursor: pointer; font: 600 16px var(--font-ui); color: var(--accent); background: var(--hdr-bg); border: 1px dashed var(--hdr-line); text-align: center; user-select: none; }
 #grid thead th.addc:hover, #grid tfoot th.addr:hover { background: var(--hover); }
 #grid tfoot th.addr { height: 26px; position: sticky; left: 0; }
+
+/* ---------- charts follow the sheet's zoom: the title, the padding and the stats line scale with it (--cz is the zoom) ---------- */
+.chart-head { height: calc(32px * var(--cz, 1)); font-size: calc(14px * var(--cz, 1)); padding: 0 calc(12px * var(--cz, 1)); }
+.chart-body { padding: 0 calc(8px * var(--cz, 1)) calc(8px * var(--cz, 1)); }
+.chart-stats { height: calc(20px * var(--cz, 1)); font-size: calc(11px * var(--cz, 1)); }
+#charts-layer.under-freeze { z-index: 2; }
