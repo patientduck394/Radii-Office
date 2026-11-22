@@ -3068,7 +3068,8 @@ function applyPrefs() {
     document.body.classList.toggle('no-heads', !prefs.headings);
     document.body.classList.toggle('no-fbar', !prefs.formulaBar);
     document.body.classList.toggle('show-formulas', !!prefs.showFormulas);
-    document.body.classList.toggle('layout-classic', prefs.layout === 'classic');
+    // (Nova is the layout when it is on: an older saved "classic" must not paint its gel headers over it every time a setting changes)
+    document.body.classList.toggle('layout-classic', prefs.layout === 'classic' && !document.body.classList.contains('nvi-on'));
     document.body.classList.toggle('side-collapsed', !!prefs.sideCollapsed);
 }
 
