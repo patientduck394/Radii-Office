@@ -3,15 +3,15 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = 'f15554c8ebea';
+const VERSION = 'd98606ad2ed0';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","dff700e2bc"],
   ["/404.html","01a3fdf43d"],
   ["/about.html","43f801f5c5"],
-  ["/amber/","1b73b8cda2"],
+  ["/amber/","2a9f87bfdf"],
   ["/amber/amber-annotate.js?v=20261204a","f7f1c750e5"],
-  ["/amber/amber-keydown.js?v=20261230c","8645885d44"],
+  ["/amber/amber-keydown.js?v=20261231a","8645885d44"],
   ["/amber/amber-more.js?v=20261118f","f60f37a517"],
   ["/amber/amber-office.css?v=20261132r","2c2706cf53"],
   ["/amber/amber-office.js?v=20261118f","70d1ff20d8"],
@@ -22,10 +22,10 @@ const CORE = [["/","dff700e2bc"],
   ["/amber/docs-library.js?v=20261231a","d1fcec430f"],
   ["/amber/favicon-96.png","a29cf97772"],
   ["/amber/images-glue.js?v=20261131v","57d004f0bd"],
-  ["/amber/index.html","1b73b8cda2"],
+  ["/amber/index.html","2a9f87bfdf"],
   ["/amber/manifest.json","479b3fa031"],
-  ["/amber/mobile/","3061f39a47"],
-  ["/amber/mobile/index.html","3061f39a47"],
+  ["/amber/mobile/","9c1d6f1254"],
+  ["/amber/mobile/index.html","9c1d6f1254"],
   ["/amber/nova-icons.js?v=20261224b","55e5225d57"],
   ["/amber/nova.css?v=20261118f","52dcef1d19"],
   ["/amber/nova.js?v=20261224b","d018514358"],
