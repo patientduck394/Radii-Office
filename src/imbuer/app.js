@@ -1240,7 +1240,10 @@ function cellView(r, c) {
         spill = c + 1 < s.cols && (next === undefined || next === '');
     }
     const indent = st.indent ? `padding-left:${st.indent * 10 * zf() + 4}px;` : '';
-    let html = inner ? `<div class="cv a-${h} v-${va}${spill ? ' spill' : ''}" style="${indent}"><span class="ct">${inner}</span></div>` : '';
+    // a chip (Keydown style) is taller than the text, so it sits in the middle of its cell unless the cell says top or bottom itself
+    const hasChip = /<(span|mark)\b[^>]*\bclass=/.test(inner || '');
+    const vaUse = st.valign || (hasChip ? 'middle' : va);
+    let html = inner ? `<div class="cv a-${h} v-${vaUse}${spill ? ' spill' : ''}" style="${indent}"><span class="ct">${inner}</span></div>` : '';
     if (s.filter && r === s.filter.r0 && c >= s.filter.c0 && c <= s.filter.c1) {
         const on = s.filter.cols && s.filter.cols[c] && s.filter.cols[c].length;
         html += `<button class="flt-btn${on ? ' on' : ''}" data-flt="${c}" tabindex="-1" title="Filter"><svg viewBox="0 0 16 16">${on ? '<path d="M2.5 3h11l-4.2 5v4.5l-2.6 1V8z"/>' : '<path d="M4 6l4 4 4-4"/>'}</svg></button>`;
@@ -1281,7 +1284,28 @@ function renderCell(r, c) {
     td.className = v.cls;
     td.style.cssText = v.style;
     td.innerHTML = v.html;
+    if (v.html.indexOf('<span class="ct"><') > -1) queueFit();
     return had;
+}
+
+// Chips (Keydown styles) in cells are drawn at the sheet's zoom (their borders and padding scale too, see style.css) and shrink a little when
+// the row is shorter than the chip, so a chip never runs into the lines above and below it.
+let fitQueued = false;
+function queueFit() { if (fitQueued) return; fitQueued = true; requestAnimationFrame(() => { fitQueued = false; fitChips(); }); }
+function fitChips() {
+    const CH = '.ct > :is(span, mark)[class]';
+    const tds = [...new Set([...document.querySelectorAll('#grid td ' + CH)].map(e => e.closest('td')))];
+    if (!tds.length) return;
+    tds.forEach(td => { const cv = td.querySelector('.cv'); if (cv) cv.style.setProperty('--fit', '1'); });
+    const fits = tds.map(td => {
+        const cv = td.querySelector('.cv');
+        if (!cv) return 1;
+        let h = 0;
+        td.querySelectorAll(CH).forEach(e => { h = Math.max(h, e.getBoundingClientRect().height); });
+        const room = cv.getBoundingClientRect().height - 3 * zf();
+        return h > room && h > 0 ? Math.max(0.55, room / h) : 1;
+    });
+    tds.forEach((td, i) => { const cv = td.querySelector('.cv'); if (cv) cv.style.setProperty('--fit', String(Math.round(fits[i] * 100) / 100)); });
 }
 
 // Re-renders every cell; formula cells whose value changed get a flash!

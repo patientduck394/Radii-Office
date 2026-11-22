@@ -2145,3 +2145,6 @@ body.no-anim *, body.no-anim *::before, body.no-anim *::after {
 .chart-body { padding: 0 calc(8px * var(--cz, 1)) calc(8px * var(--cz, 1)); }
 .chart-stats { height: calc(20px * var(--cz, 1)); font-size: calc(11px * var(--cz, 1)); }
 #charts-layer.under-freeze { z-index: 2; }
+
+/* ---------- Keydown chips in cells scale with the sheet's zoom (borders, padding and shadows too) and fit the row (--fit is set by fitChips) ---------- */
+#grid td .ct > :is(span, mark)[class] { zoom: calc(var(--z, 1) * var(--fit, 1)); font-size: calc(1em / (var(--z, 1) * var(--fit, 1))); }
