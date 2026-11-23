@@ -785,9 +785,9 @@
     P.openTab = function (t) { st.tab = t; if (!win) buildWindow(); P.toggle(true); buildBody(); };
 
     /* ================= keyboard ================= */
-    const TOOL_KEYS = { v: 'select', a: 'node', p: 'bezier', t: 'text', r: 'rect', o: 'ellipse', c: 'circle', l: 'line', g: 'polygon', e: 'eraser', i: 'eyedropper', z: 'zoom' };
+    const TOOL_KEYS = { v: 'select', a: 'node', p: 'bezier', t: 'text', r: 'rect', o: 'ellipse', c: 'circle', l: 'line', y: 'polygon', g: 'gradient', e: 'eraser', i: 'eyedropper', z: 'zoom' };
     const SHORTCUTS = [
-        ['Tools', [['V', 'Select'], ['A', 'Edit nodes'], ['P', 'Pen'], ['T', 'Text'], ['R', 'Rectangle'], ['O', 'Ellipse'], ['C', 'Circle'], ['L', 'Line'], ['G', 'Polygon or star'], ['E', 'Eraser'], ['I', 'Eyedropper'], ['Z', 'Zoom']]],
+        ['Tools', [['V', 'Select'], ['A', 'Edit nodes'], ['P', 'Pen'], ['T', 'Text'], ['R', 'Rectangle'], ['O', 'Ellipse'], ['C', 'Circle'], ['L', 'Line'], ['Y', 'Polygon or star'], ['G', 'Gradient (drag its handles; Shift snaps)'], ['E', 'Eraser'], ['I', 'Eyedropper'], ['Z', 'Zoom']]],
         ['Edit', [['⌘ Z / ⇧⌘ Z', 'Undo and redo'], ['⌘ C / ⌘ X / ⌘ V', 'Copy, cut, paste'], ['⇧⌘ V', 'Paste in place'], ['⌘ D', 'Duplicate'], ['⌘ A', 'Select all'], ['Delete', 'Delete'], ['Arrows', 'Nudge 1 px (Shift: 10 px)'], ['Esc', 'Close menus']]],
         ['Arrange', [['⌘ ]  /  ⌘ [', 'Forward and backward'], ['⇧⌘ ]  /  ⇧⌘ [', 'To front and to back'], ['⇧⌘ H', 'Hide the selection'], ['⇧⌘ L', 'Lock the selection'], ['⌥⌘ H', 'Show everything']]],
         ['View', [['⌘ \'', 'Show or hide the grid'], ['⇧⌘ R', 'Show or hide the rulers'], ['⇧⌘ 9', 'Fit everything on screen'], ['⇧⌘ 1', 'Zoom to 100%'], ['Hold ⌘', 'Move without snapping']]],

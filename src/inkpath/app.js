@@ -1415,6 +1415,14 @@ function applyRadialShape(gradEl, r) {
     gradEl.setAttribute('cx', 0); gradEl.setAttribute('cy', 0); gradEl.setAttribute('r', 1);
     gradEl.setAttribute('gradientTransform', `translate(${n(r.cx, 0.5)} ${n(r.cy, 0.5)}) scale(${Math.max(0.0001, n(r.rx, 0.5))} ${Math.max(0.0001, n(r.ry, 0.5))})`);
 }
+// A linear fill gradient: the Gradient tool's own line (fillLine, fractions of the shape's box, past 0 or 1 is fine) or else the angle
+function applyFillGradient(gradEl, obj) {
+    const L = obj.fillLine;
+    if (L && [L.x1, L.y1, L.x2, L.y2].every(isFinite)) {
+        const r = (n) => Math.round(n * 10000) / 10000;
+        gradEl.setAttribute('x1', r(L.x1)); gradEl.setAttribute('y1', r(L.y1)); gradEl.setAttribute('x2', r(L.x2)); gradEl.setAttribute('y2', r(L.y2));
+    } else applyGradientAngle(gradEl, obj.fillAngle, obj.fillScale);
+}
 function applyGradientAngle(gradEl, angleDeg, scale) {
     const v = linearGradientVector(angleDeg, scale);
     gradEl.setAttribute('x1', v.x1); gradEl.setAttribute('y1', v.y1);
@@ -1430,7 +1438,7 @@ function leafPaintFor(obj, idp, mode) {
         const gradId = `grad-${idp}`;
         const grad = document.createElementNS('http://www.w3.org/2000/svg', obj.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
         grad.setAttribute('id', gradId);
-        if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle, obj.fillScale);
+        if (obj.fillType === 'linear') applyFillGradient(grad, obj);
         else if (obj.fillRadial) applyRadialShape(grad, obj.fillRadial);
         grad.innerHTML = getFillStops(obj).map(s => {
             const st = stopStyle(s.c, activePrimaryColor);
@@ -1784,7 +1792,7 @@ function renderOne(obj, idx) {
             const gradId = `grad-${idx}`;
             const grad = document.createElementNS('http://www.w3.org/2000/svg', obj.fillType === 'linear' ? 'linearGradient' : 'radialGradient');
             grad.setAttribute('id', gradId);
-            if (obj.fillType === 'linear') applyGradientAngle(grad, obj.fillAngle, obj.fillScale);
+            if (obj.fillType === 'linear') applyFillGradient(grad, obj);
         else if (obj.fillRadial) applyRadialShape(grad, obj.fillRadial);
             grad.innerHTML = getFillStops(obj).map(s => {
                 const st = stopStyle(s.c, activePrimaryColor);
@@ -2983,7 +2991,7 @@ function rotateGradientAngle(kind) {
         const o = paintTarget(objects[idx]); if (!o) return;
         const cur = kind === 'fill' ? (o.fillAngle || 0) : (o.strokeAngle || 0);
         const next = (Math.round(cur) + 90) % 360;
-        if (kind === 'fill') o.fillAngle = next; else o.strokeAngle = next;
+        if (kind === 'fill') { o.fillAngle = next; delete o.fillLine; } else o.strokeAngle = next;
     });
     playUISound('snap');
     render();
@@ -2997,7 +3005,7 @@ function updateGradientAngle(kind) {    if (selectedIndices.length === 0) return
     pushHistory(false);
     selectedIndices.forEach(idx => {
         const o = paintTarget(objects[idx]); if (!o) return;
-        if (kind === 'fill') o.fillAngle = ang; else o.strokeAngle = ang;
+        if (kind === 'fill') { o.fillAngle = ang; delete o.fillLine; } else o.strokeAngle = ang;
     });
     render();
 }

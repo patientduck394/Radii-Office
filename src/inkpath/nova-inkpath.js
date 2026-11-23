@@ -47,7 +47,7 @@
         const T = function (id, label) { return { id: 'tool-' + id, label: label, icon: toolIc(id), tool: id, run: tool(id) }; };
         return {
             shapes: { title: 'Shapes', icon: 'shapes', groups: [{ name: 'Draw a shape', items: [T('rect', 'Rectangle'), T('circle', 'Circle'), T('ellipse', 'Ellipse'), T('triangle', 'Triangle'), T('polygon', 'Star / Polygon'), T('line', 'Line')] }] },
-            tools: { title: 'More tools', icon: 'wand', groups: [{ name: 'Tools', items: [T('eyedropper', 'Eyedropper'), T('eraser', 'Eraser'), T('zoom', 'Zoom / Focus')] }] },
+            tools: { title: 'More tools', icon: 'wand', groups: [{ name: 'Tools', items: [T('gradient', 'Gradient'), T('eyedropper', 'Eyedropper'), T('eraser', 'Eraser'), T('zoom', 'Zoom / Focus')] }] },
             arrange: {
                 title: 'Shape tools', icon: 'layout', groups: [
                     { name: 'Edit', items: [
