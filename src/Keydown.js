@@ -4271,11 +4271,23 @@ fn guess(n):
         over.className = 'bl-view';
         over.setAttribute('contenteditable', 'false'); // (while a program plays, the page cannot be edited: only textbox() and counter() take typing)
         over.innerHTML = '<button type="button" class="bl-over-stop" title="Stop (Esc)">■ Stop</button><div class="bl-out" aria-live="polite"></div>';
+        // (A program that stops right away never takes the page over at all: the page is only set aside once the program is
+        // really staying, so a quick run cannot flash, scroll the page back to the top or lose the cursor!)
         const frag = document.createDocumentFragment();
-        while (cont.firstChild) frag.appendChild(cont.firstChild);
+        over.classList.add('bl-pre');
+        over.style.cssText = 'position:absolute;left:0;right:0;top:0;visibility:hidden;pointer-events:none';
         cont.appendChild(over);
         const prevEdit = cont.getAttribute('contenteditable');
-        if (prevEdit !== null) cont.setAttribute('contenteditable', 'false');
+        let swapped = false;
+        const swap = function () {
+            if (swapped || !over.isConnected) return;
+            swapped = true;
+            over.style.cssText = '';
+            over.classList.remove('bl-pre');
+            [].slice.call(cont.childNodes).forEach(function (n) { if (n !== over) frag.appendChild(n); });
+            if (prevEdit !== null) cont.setAttribute('contenteditable', 'false');
+            try { over.scrollIntoView({ block: 'nearest' }); } catch (e) {}
+        };
         // Anything that saves the page by reading its HTML gets the REAL content (never the program's view), so a reload can never save the view into the note
         const liveViews = BitLang.__views || (BitLang.__views = new WeakSet());
         liveViews.add(over);
@@ -4287,7 +4299,7 @@ fn guess(n):
                     configurable: true,
                     get: function () {
                         const d = document.createElement('div');
-                        [].forEach.call(frag.childNodes, function (n) { d.appendChild(n.cloneNode(true)); });
+                        [].forEach.call(swapped ? frag.childNodes : cont.childNodes, function (n) { if (n !== over) d.appendChild(n.cloneNode(true)); });
                         [].forEach.call(d.querySelectorAll('.bl-playing'), function (x) { x.classList.remove('bl-playing'); });
                         return d.innerHTML;
                     },
@@ -4302,7 +4314,6 @@ fn guess(n):
         let noSave = null;
         if (typeof window.autoSaveCanvasContent === 'function') { noSave = function () {}; window.savedAutoSave = window.autoSaveCanvasContent; window.autoSaveCanvasContent = noSave; } // (the playing view is never saved into the note)
         const out = over.querySelector('.bl-out');
-        try { over.scrollIntoView({ block: 'nearest' }); } catch (e) {}
         const st = { raf: 0, keys: {}, mouse: { x: 0, y: 0, down: false }, rt: null, off: [], t0: performance.now(), over: over, cont: cont, frag: frag, noSave: noSave, prevEdit: prevEdit, dead: false, patched: patched, onHide: onHide };
         // If the page gets reset behind the program's back (another note opens, the page redraws...), the program stops by itself, so nobody is ever trapped in it!
         const gone = function () { return !over.isConnected || over.parentNode !== cont || !cont.isConnected; };
@@ -4312,6 +4323,8 @@ fn guess(n):
         st.off.push(function () { clearInterval(watch); if (mo) mo.disconnect(); });
         live.set(prog, st);
         current = prog;
+        const swapTimer = setTimeout(function () { if (live.get(prog) === st && !st.dead) swap(); }, 90); // (programs that wait or run longer than a moment take the page over after 90 ms)
+        st.off.push(function () { clearTimeout(swapTimer); });
         prog.classList.add('bl-playing');
         const lines = {};
         const lineEl = function (n) {
@@ -4341,6 +4354,7 @@ fn guess(n):
         const showError = function (err) {
             const l = lineEl('error');
             l.className = 'bl-line bl-error';
+            swap(); // (an error has to be seen)
             l.textContent = (err instanceof BitError ? (err.line ? (err.line > BB_LINE ? 'BBML line ' + (err.line - BB_LINE) : 'Line ' + err.line) + ': ' : '') : 'Oops: ') + (err && err.message || err);
             halt();
         };
@@ -4543,6 +4557,7 @@ fn guess(n):
         const frames = function () {
             if (live.get(prog) !== st || st.dead) return;
             if (st.rt.stopped) { stop(prog); return; }
+            swap(); // (the program is staying: now it takes the page over)
             if (st.rt.has('onframe')) {
                 let last = performance.now();
                 const frame = function (now) {
