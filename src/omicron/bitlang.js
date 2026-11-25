@@ -1960,7 +1960,7 @@ fn guess(n):
 
     let current = null; // the program that has taken over the document
     function play(prog) {
-        if (current && current !== prog) stop(current, true);
+        if (current && current !== prog) stop(current, true, 'another program was started');
         stop(prog, true);
         const ta = prog.querySelector('.bl-code');
         const cont = prog.closest('#wysiwyg-canvas, #wysiwyg-page, .page-paper, [data-bl-host]') || document.body;
@@ -2002,12 +2002,12 @@ fn guess(n):
                         [].forEach.call(d.querySelectorAll('.bl-playing'), function (x) { x.classList.remove('bl-playing'); });
                         return d.innerHTML;
                     },
-                    set: function (v) { stop(prog, true); cont.innerHTML = v; } // (the page is being replaced: the program ends first)
+                    set: function (v) { stop(prog, true, 'the page replaced its own content'); cont.innerHTML = v; } // (the page is being replaced: the program ends first)
                 });
                 patched = true;
             } catch (e) {}
         }
-        const onHide = function () { stop(prog, true); };
+        const onHide = function () { stop(prog, true, 'the page was closing or reloading'); };
         window.addEventListener('pagehide', onHide);
         window.addEventListener('beforeunload', onHide);
         let noSave = null;
@@ -2016,9 +2016,10 @@ fn guess(n):
         const st = { raf: 0, keys: {}, mouse: { x: 0, y: 0, down: false }, rt: null, off: [], t0: performance.now(), over: over, cont: cont, frag: frag, noSave: noSave, prevEdit: prevEdit, dead: false, patched: patched, onHide: onHide };
         // If the page gets reset behind the program's back (another note opens, the page redraws...), the program stops by itself, so nobody is ever trapped in it!
         const gone = function () { return !over.isConnected || over.parentNode !== cont || !cont.isConnected; };
+        const goneWhy = function () { return !cont.isConnected ? 'the page area was removed' : !over.isConnected ? 'the program view was removed from the page' : 'the program view was moved out of the page area'; };
         let mo = null;
-        try { mo = new MutationObserver(function () { if (live.get(prog) === st && gone()) stop(prog, true); }); mo.observe(cont, { childList: true }); } catch (e) {}
-        const watch = setInterval(function () { if (live.get(prog) !== st) { clearInterval(watch); return; } if (gone()) stop(prog, true); }, 400);
+        try { mo = new MutationObserver(function () { if (live.get(prog) === st && gone()) stop(prog, true, goneWhy()); }); mo.observe(cont, { childList: true }); } catch (e) {}
+        const watch = setInterval(function () { if (live.get(prog) !== st) { clearInterval(watch); return; } if (gone()) stop(prog, true, goneWhy()); }, 400);
         st.off.push(function () { clearInterval(watch); if (mo) mo.disconnect(); });
         live.set(prog, st);
         current = prog;
@@ -2279,8 +2280,22 @@ fn guess(n):
             }).catch(function (e) { if (live.get(prog) === st) showError(new BitError(String(e && e.message || e) + '!', 0)); });
         } else begin();
     }
-    function stop(prog, quiet) {
+    // When a program is stopped by the page (not by you) soon after it starts, say so and why: the reason also goes to the console
+    function earlyNote(why, ms) {
+        try { console.warn('[BitLang] The program was stopped after ' + Math.round(ms) + ' ms because ' + why + '!', new Error().stack); } catch (e) {}
+        try {
+            const n = document.createElement('div');
+            n.className = 'bl-whynote';
+            n.setAttribute('role', 'status');
+            n.style.cssText = 'position:fixed;left:50%;bottom:70px;transform:translateX(-50%);z-index:99999;background:#1c1c28;color:#fff;border:1px solid #f87171;border-radius:12px;padding:8px 14px;font:13px system-ui,sans-serif;max-width:90vw;box-shadow:0 6px 24px rgba(0,0,0,.4)';
+            n.textContent = 'The program was stopped after ' + Math.round(ms) + ' ms because ' + why + '!';
+            document.body.appendChild(n);
+            setTimeout(function () { n.remove(); }, 9000);
+        } catch (e) {}
+    }
+    function stop(prog, quiet, why) {
         const st = live.get(prog);
+        if (why && st && performance.now() - st.t0 < 5000) earlyNote(why, performance.now() - st.t0);
         if (!st) { prog.classList.remove('bl-playing'); return; }
         live.delete(prog);
         if (current === prog) current = null;
