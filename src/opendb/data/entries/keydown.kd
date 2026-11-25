@@ -4313,6 +4313,426 @@ A cousin of the Aero Mark chip: sticker mark! Written `++COLOR7:text++`, in the 
 * `++SL7:text++` ++SL7:slate++
 * `++BK7:text++` ++BK7:black++
 
+## Cloud Wash chips
+
+A cousin of the Aero Mark chip: soft blurry color blobs behind the words, with no hard edges! Written `++COLOR+)text++`, in the same 16 colors as the Aero chips:
+
+* `++R+)text++` ++R+)red++
+* `++O+)text++` ++O+)orange++
+* `++GL+)text++` ++GL+)gold++
+* `++Y+)text++` ++Y+)yellow++
+* `++L+)text++` ++L+)lime++
+* `++G+)text++` ++G+)green++
+* `++TU+)text++` ++TU+)turquoise++
+* `++T+)text++` ++T+)teal++
+* `++C+)text++` ++C+)cyan++
+* `++B+)text++` ++B+)blue++
+* `++PR+)text++` ++PR+)purple++
+* `++PK+)text++` ++PK+)pink++
+* `++W+)text++` ++W+)white++
+* `++FG+)text++` ++FG+)fog++
+* `++SL+)text++` ++SL+)slate++
+* `++BK+)text++` ++BK+)black++
+
+## Scroll Ends chips
+
+A cousin of the Aero Mark chip: a parchment scroll with shaded, curled ends! Written `++COLOR$)text++`, in the same 16 colors as the Aero chips:
+
+* `++R$)text++` ++R$)red++
+* `++O$)text++` ++O$)orange++
+* `++GL$)text++` ++GL$)gold++
+* `++Y$)text++` ++Y$)yellow++
+* `++L$)text++` ++L$)lime++
+* `++G$)text++` ++G$)green++
+* `++TU$)text++` ++TU$)turquoise++
+* `++T$)text++` ++T$)teal++
+* `++C$)text++` ++C$)cyan++
+* `++B$)text++` ++B$)blue++
+* `++PR$)text++` ++PR$)purple++
+* `++PK$)text++` ++PK$)pink++
+* `++W$)text++` ++W$)white++
+* `++FG$)text++` ++FG$)fog++
+* `++SL$)text++` ++SL$)slate++
+* `++BK$)text++` ++BK$)black++
+
+## Cut Corners chips
+
+A cousin of the Aero Mark chip: a chip with its four corners cut off at an angle! Written `++COLOR@)text++`, in the same 16 colors as the Aero chips:
+
+* `++R@)text++` ++R@)red++
+* `++O@)text++` ++O@)orange++
+* `++GL@)text++` ++GL@)gold++
+* `++Y@)text++` ++Y@)yellow++
+* `++L@)text++` ++L@)lime++
+* `++G@)text++` ++G@)green++
+* `++TU@)text++` ++TU@)turquoise++
+* `++T@)text++` ++T@)teal++
+* `++C@)text++` ++C@)cyan++
+* `++B@)text++` ++B@)blue++
+* `++PR@)text++` ++PR@)purple++
+* `++PK@)text++` ++PK@)pink++
+* `++W@)text++` ++W@)white++
+* `++FG@)text++` ++FG@)fog++
+* `++SL@)text++` ++SL@)slate++
+* `++BK@)text++` ++BK@)black++
+
+## Brick Wall chips
+
+A cousin of the Aero Mark chip: a brick wall, with faint joints between the bricks! Written `++COLOR_)text++`, in the same 16 colors as the Aero chips:
+
+* `++R_)text++` ++R_)red++
+* `++O_)text++` ++O_)orange++
+* `++GL_)text++` ++GL_)gold++
+* `++Y_)text++` ++Y_)yellow++
+* `++L_)text++` ++L_)lime++
+* `++G_)text++` ++G_)green++
+* `++TU_)text++` ++TU_)turquoise++
+* `++T_)text++` ++T_)teal++
+* `++C_)text++` ++C_)cyan++
+* `++B_)text++` ++B_)blue++
+* `++PR_)text++` ++PR_)purple++
+* `++PK_)text++` ++PK_)pink++
+* `++W_)text++` ++W_)white++
+* `++FG_)text++` ++FG_)fog++
+* `++SL_)text++` ++SL_)slate++
+* `++BK_)text++` ++BK_)black++
+
+## Slant Slab chips
+
+A cousin of the Aero Mark chip: a slanted slab, like a highlighter stroke pulled sideways! Written `++COLOR1)text++`, in the same 16 colors as the Aero chips:
+
+* `++R1)text++` ++R1)red++
+* `++O1)text++` ++O1)orange++
+* `++GL1)text++` ++GL1)gold++
+* `++Y1)text++` ++Y1)yellow++
+* `++L1)text++` ++L1)lime++
+* `++G1)text++` ++G1)green++
+* `++TU1)text++` ++TU1)turquoise++
+* `++T1)text++` ++T1)teal++
+* `++C1)text++` ++C1)cyan++
+* `++B1)text++` ++B1)blue++
+* `++PR1)text++` ++PR1)purple++
+* `++PK1)text++` ++PK1)pink++
+* `++W1)text++` ++W1)white++
+* `++FG1)text++` ++FG1)fog++
+* `++SL1)text++` ++SL1)slate++
+* `++BK1)text++` ++BK1)black++
+
+## Band Under chips
+
+A cousin of the Aero Mark chip: a pale panel with a bold two-tone band along the bottom! Written `++COLOR2)text++`, in the same 16 colors as the Aero chips:
+
+* `++R2)text++` ++R2)red++
+* `++O2)text++` ++O2)orange++
+* `++GL2)text++` ++GL2)gold++
+* `++Y2)text++` ++Y2)yellow++
+* `++L2)text++` ++L2)lime++
+* `++G2)text++` ++G2)green++
+* `++TU2)text++` ++TU2)turquoise++
+* `++T2)text++` ++T2)teal++
+* `++C2)text++` ++C2)cyan++
+* `++B2)text++` ++B2)blue++
+* `++PR2)text++` ++PR2)purple++
+* `++PK2)text++` ++PK2)pink++
+* `++W2)text++` ++W2)white++
+* `++FG2)text++` ++FG2)fog++
+* `++SL2)text++` ++SL2)slate++
+* `++BK2)text++` ++BK2)black++
+
+## Glint Sweep chips
+
+A cousin of the Aero Mark chip: glossy glass with a bright shine sweeping across it! Written `++COLOR3)text++`, in the same 16 colors as the Aero chips:
+
+* `++R3)text++` ++R3)red++
+* `++O3)text++` ++O3)orange++
+* `++GL3)text++` ++GL3)gold++
+* `++Y3)text++` ++Y3)yellow++
+* `++L3)text++` ++L3)lime++
+* `++G3)text++` ++G3)green++
+* `++TU3)text++` ++TU3)turquoise++
+* `++T3)text++` ++T3)teal++
+* `++C3)text++` ++C3)cyan++
+* `++B3)text++` ++B3)blue++
+* `++PR3)text++` ++PR3)purple++
+* `++PK3)text++` ++PK3)pink++
+* `++W3)text++` ++W3)white++
+* `++FG3)text++` ++FG3)fog++
+* `++SL3)text++` ++SL3)slate++
+* `++BK3)text++` ++BK3)black++
+
+## Foam Ends chips
+
+A cousin of the Aero Mark chip: a bubbly pill with foam bubbles clustered at both ends! Written `++COLOR4)text++`, in the same 16 colors as the Aero chips:
+
+* `++R4)text++` ++R4)red++
+* `++O4)text++` ++O4)orange++
+* `++GL4)text++` ++GL4)gold++
+* `++Y4)text++` ++Y4)yellow++
+* `++L4)text++` ++L4)lime++
+* `++G4)text++` ++G4)green++
+* `++TU4)text++` ++TU4)turquoise++
+* `++T4)text++` ++T4)teal++
+* `++C4)text++` ++C4)cyan++
+* `++B4)text++` ++B4)blue++
+* `++PR4)text++` ++PR4)purple++
+* `++PK4)text++` ++PK4)pink++
+* `++W4)text++` ++W4)white++
+* `++FG4)text++` ++FG4)fog++
+* `++SL4)text++` ++SL4)slate++
+* `++BK4)text++` ++BK4)black++
+
+## Notebook Page chips
+
+A cousin of the Aero Mark chip: a notebook page with ruled lines and a red margin line! Written `++COLOR5)text++`, in the same 16 colors as the Aero chips:
+
+* `++R5)text++` ++R5)red++
+* `++O5)text++` ++O5)orange++
+* `++GL5)text++` ++GL5)gold++
+* `++Y5)text++` ++Y5)yellow++
+* `++L5)text++` ++L5)lime++
+* `++G5)text++` ++G5)green++
+* `++TU5)text++` ++TU5)turquoise++
+* `++T5)text++` ++T5)teal++
+* `++C5)text++` ++C5)cyan++
+* `++B5)text++` ++B5)blue++
+* `++PR5)text++` ++PR5)purple++
+* `++PK5)text++` ++PK5)pink++
+* `++W5)text++` ++W5)white++
+* `++FG5)text++` ++FG5)fog++
+* `++SL5)text++` ++SL5)slate++
+* `++BK5)text++` ++BK5)black++
+
+## Punch Card chips
+
+A cousin of the Aero Mark chip: a punch card with a round hole at each end! Written `++COLOR6)text++`, in the same 16 colors as the Aero chips:
+
+* `++R6)text++` ++R6)red++
+* `++O6)text++` ++O6)orange++
+* `++GL6)text++` ++GL6)gold++
+* `++Y6)text++` ++Y6)yellow++
+* `++L6)text++` ++L6)lime++
+* `++G6)text++` ++G6)green++
+* `++TU6)text++` ++TU6)turquoise++
+* `++T6)text++` ++T6)teal++
+* `++C6)text++` ++C6)cyan++
+* `++B6)text++` ++B6)blue++
+* `++PR6)text++` ++PR6)purple++
+* `++PK6)text++` ++PK6)pink++
+* `++W6)text++` ++W6)white++
+* `++FG6)text++` ++FG6)fog++
+* `++SL6)text++` ++SL6)slate++
+* `++BK6)text++` ++BK6)black++
+
+## Checker Base chips
+
+A cousin of the Aero Mark chip: a chip with a checkered flag strip along the bottom! Written `++COLOR7)text++`, in the same 16 colors as the Aero chips:
+
+* `++R7)text++` ++R7)red++
+* `++O7)text++` ++O7)orange++
+* `++GL7)text++` ++GL7)gold++
+* `++Y7)text++` ++Y7)yellow++
+* `++L7)text++` ++L7)lime++
+* `++G7)text++` ++G7)green++
+* `++TU7)text++` ++TU7)turquoise++
+* `++T7)text++` ++T7)teal++
+* `++C7)text++` ++C7)cyan++
+* `++B7)text++` ++B7)blue++
+* `++PR7)text++` ++PR7)purple++
+* `++PK7)text++` ++PK7)pink++
+* `++W7)text++` ++W7)white++
+* `++FG7)text++` ++FG7)fog++
+* `++SL7)text++` ++SL7)slate++
+* `++BK7)text++` ++BK7)black++
+
+## Scan Lines chips
+
+A cousin of the Aero Mark chip: fine scan lines running across the chip, with a soft glow! Written `++COLOR8)text++`, in the same 16 colors as the Aero chips:
+
+* `++R8)text++` ++R8)red++
+* `++O8)text++` ++O8)orange++
+* `++GL8)text++` ++GL8)gold++
+* `++Y8)text++` ++Y8)yellow++
+* `++L8)text++` ++L8)lime++
+* `++G8)text++` ++G8)green++
+* `++TU8)text++` ++TU8)turquoise++
+* `++T8)text++` ++T8)teal++
+* `++C8)text++` ++C8)cyan++
+* `++B8)text++` ++B8)blue++
+* `++PR8)text++` ++PR8)purple++
+* `++PK8)text++` ++PK8)pink++
+* `++W8)text++` ++W8)white++
+* `++FG8)text++` ++FG8)fog++
+* `++SL8)text++` ++SL8)slate++
+* `++BK8)text++` ++BK8)black++
+
+## Paint Roller chips
+
+A cousin of the Aero Mark chip: a paint roller stroke that ends in a rounded, shaded cap! Written `++COLOR9)text++`, in the same 16 colors as the Aero chips:
+
+* `++R9)text++` ++R9)red++
+* `++O9)text++` ++O9)orange++
+* `++GL9)text++` ++GL9)gold++
+* `++Y9)text++` ++Y9)yellow++
+* `++L9)text++` ++L9)lime++
+* `++G9)text++` ++G9)green++
+* `++TU9)text++` ++TU9)turquoise++
+* `++T9)text++` ++T9)teal++
+* `++C9)text++` ++C9)cyan++
+* `++B9)text++` ++B9)blue++
+* `++PR9)text++` ++PR9)purple++
+* `++PK9)text++` ++PK9)pink++
+* `++W9)text++` ++W9)white++
+* `++FG9)text++` ++FG9)fog++
+* `++SL9)text++` ++SL9)slate++
+* `++BK9)text++` ++BK9)black++
+
+## Tide Line chips
+
+A cousin of the Aero Mark chip: a pale chip sitting on a scalloped, wave-like underline! Written `++COLOR0)text++`, in the same 16 colors as the Aero chips:
+
+* `++R0)text++` ++R0)red++
+* `++O0)text++` ++O0)orange++
+* `++GL0)text++` ++GL0)gold++
+* `++Y0)text++` ++Y0)yellow++
+* `++L0)text++` ++L0)lime++
+* `++G0)text++` ++G0)green++
+* `++TU0)text++` ++TU0)turquoise++
+* `++T0)text++` ++T0)teal++
+* `++C0)text++` ++C0)cyan++
+* `++B0)text++` ++B0)blue++
+* `++PR0)text++` ++PR0)purple++
+* `++PK0)text++` ++PK0)pink++
+* `++W0)text++` ++W0)white++
+* `++FG0)text++` ++FG0)fog++
+* `++SL0)text++` ++SL0)slate++
+* `++BK0)text++` ++BK0)black++
+
+## Page Curl chips
+
+A cousin of the Aero Mark chip: a page with its bottom corner folded over! Written `++COLOR8}text++`, in the same 16 colors as the Aero chips:
+
+* `++R8}text++` ++R8}red++
+* `++O8}text++` ++O8}orange++
+* `++GL8}text++` ++GL8}gold++
+* `++Y8}text++` ++Y8}yellow++
+* `++L8}text++` ++L8}lime++
+* `++G8}text++` ++G8}green++
+* `++TU8}text++` ++TU8}turquoise++
+* `++T8}text++` ++T8}teal++
+* `++C8}text++` ++C8}cyan++
+* `++B8}text++` ++B8}blue++
+* `++PR8}text++` ++PR8}purple++
+* `++PK8}text++` ++PK8}pink++
+* `++W8}text++` ++W8}white++
+* `++FG8}text++` ++FG8}fog++
+* `++SL8}text++` ++SL8}slate++
+* `++BK8}text++` ++BK8}black++
+
+## Seal Stamp chips
+
+A cousin of the Aero Mark chip: a wax-seal pill with a double ring and a dashed inner line! Written `++COLOR9}text++`, in the same 16 colors as the Aero chips:
+
+* `++R9}text++` ++R9}red++
+* `++O9}text++` ++O9}orange++
+* `++GL9}text++` ++GL9}gold++
+* `++Y9}text++` ++Y9}yellow++
+* `++L9}text++` ++L9}lime++
+* `++G9}text++` ++G9}green++
+* `++TU9}text++` ++TU9}turquoise++
+* `++T9}text++` ++T9}teal++
+* `++C9}text++` ++C9}cyan++
+* `++B9}text++` ++B9}blue++
+* `++PR9}text++` ++PR9}purple++
+* `++PK9}text++` ++PK9}pink++
+* `++W9}text++` ++W9}white++
+* `++FG9}text++` ++FG9}fog++
+* `++SL9}text++` ++SL9}slate++
+* `++BK9}text++` ++BK9}black++
+
+## Halo Glow chips
+
+A cousin of the Aero Mark chip: a chip surrounded by a soft glowing halo! Written `++COLOR0}text++`, in the same 16 colors as the Aero chips:
+
+* `++R0}text++` ++R0}red++
+* `++O0}text++` ++O0}orange++
+* `++GL0}text++` ++GL0}gold++
+* `++Y0}text++` ++Y0}yellow++
+* `++L0}text++` ++L0}lime++
+* `++G0}text++` ++G0}green++
+* `++TU0}text++` ++TU0}turquoise++
+* `++T0}text++` ++T0}teal++
+* `++C0}text++` ++C0}cyan++
+* `++B0}text++` ++B0}blue++
+* `++PR0}text++` ++PR0}purple++
+* `++PK0}text++` ++PK0}pink++
+* `++W0}text++` ++W0}white++
+* `++FG0}text++` ++FG0}fog++
+* `++SL0}text++` ++SL0}slate++
+* `++BK0}text++` ++BK0}black++
+
+## Pebble chips
+
+A cousin of the Aero Mark chip: a smooth pebble with an uneven, rounded shape! Written `++COLOR8:text++`, in the same 16 colors as the Aero chips:
+
+* `++R8:text++` ++R8:red++
+* `++O8:text++` ++O8:orange++
+* `++GL8:text++` ++GL8:gold++
+* `++Y8:text++` ++Y8:yellow++
+* `++L8:text++` ++L8:lime++
+* `++G8:text++` ++G8:green++
+* `++TU8:text++` ++TU8:turquoise++
+* `++T8:text++` ++T8:teal++
+* `++C8:text++` ++C8:cyan++
+* `++B8:text++` ++B8:blue++
+* `++PR8:text++` ++PR8:purple++
+* `++PK8:text++` ++PK8:pink++
+* `++W8:text++` ++W8:white++
+* `++FG8:text++` ++FG8:fog++
+* `++SL8:text++` ++SL8:slate++
+* `++BK8:text++` ++BK8:black++
+
+## Laser Line chips
+
+A cousin of the Aero Mark chip: a faint wash over the words with a glowing laser line and bright dots underneath! Written `++COLOR9:text++`, in the same 16 colors as the Aero chips:
+
+* `++R9:text++` ++R9:red++
+* `++O9:text++` ++O9:orange++
+* `++GL9:text++` ++GL9:gold++
+* `++Y9:text++` ++Y9:yellow++
+* `++L9:text++` ++L9:lime++
+* `++G9:text++` ++G9:green++
+* `++TU9:text++` ++TU9:turquoise++
+* `++T9:text++` ++T9:teal++
+* `++C9:text++` ++C9:cyan++
+* `++B9:text++` ++B9:blue++
+* `++PR9:text++` ++PR9:purple++
+* `++PK9:text++` ++PK9:pink++
+* `++W9:text++` ++W9:white++
+* `++FG9:text++` ++FG9:fog++
+* `++SL9:text++` ++SL9:slate++
+* `++BK9:text++` ++BK9:black++
+
+## Dusk Fade chips
+
+A cousin of the Aero Mark chip: a chip that fades in from clear at the top, with a solid line underneath! Written `++COLOR0:text++`, in the same 16 colors as the Aero chips:
+
+* `++R0:text++` ++R0:red++
+* `++O0:text++` ++O0:orange++
+* `++GL0:text++` ++GL0:gold++
+* `++Y0:text++` ++Y0:yellow++
+* `++L0:text++` ++L0:lime++
+* `++G0:text++` ++G0:green++
+* `++TU0:text++` ++TU0:turquoise++
+* `++T0:text++` ++T0:teal++
+* `++C0:text++` ++C0:cyan++
+* `++B0:text++` ++B0:blue++
+* `++PR0:text++` ++PR0:purple++
+* `++PK0:text++` ++PK0:pink++
+* `++W0:text++` ++W0:white++
+* `++FG0:text++` ++FG0:fog++
+* `++SL0:text++` ++SL0:slate++
+* `++BK0:text++` ++BK0:black++
+
 ## Aero swipe chips
 
 A mark chip cousin cut like a real highlighter swipe: a slanted bright stroke of the color with a darker ink edge along the bottom! Written `++color/text++`, in the same 16 colors as the Aero chips:
