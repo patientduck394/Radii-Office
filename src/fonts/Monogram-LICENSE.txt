@@ -1,0 +1,10 @@
+Monogram (fonts/Monogram.ttf and fonts/Monogram-Italic.ttf)
+
+Designer: Vinicius Menezio (@vmenezio). https://menez.io/
+Original page: https://datagoblin.itch.io/monogram
+
+License: CC0 1.0 Universal (Public Domain Dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The author's credits file says: "Monogram is a free and Creative Commons Zero pixel font, made by Vinicius Menezio (@vmenezio)".
+The font files (the "extended" versions, 1.1.0) carry the same licence inside them: "Creative Commons Zero v1.0 Universal".

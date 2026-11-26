@@ -67,6 +67,13 @@ This project incorporates, modifies, or bundles font files derived from the foll
 
 ---
 
+### 10. Monogram
+* **License:** CC0 1.0 Universal (Public Domain Dedication), stated by the author in his credits file and inside the font files
+* **Copyright:** Vinícius Menézio, 2024 (no rights reserved under CC0)
+* **Source:** https://datagoblin.itch.io/monogram (files used: monogram-extended.ttf and monogram-extended-italic.ttf)
+
+---
+
 ### 8. Other Bundled Font Assets & Fallbacks
 * **Licenses:** Maintained under their respective open-source terms as distributed by their original upstream authors. 
 * **Note:** All intellectual property rights, original filenames, and vector structures for these specialized font sets remain the property of their respective creators.

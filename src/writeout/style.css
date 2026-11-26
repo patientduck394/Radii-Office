@@ -1417,6 +1417,18 @@ dialog.aero-dialog-box::backdrop {
     src: url('/fonts/OpenDyslexic-Regular.otf') format('opentype');
 }
 
+/* Monogram: a pixel font by Vinicius Menezio, CC0 (see fonts/Monogram-LICENSE.txt), with its own italic */
+@font-face {
+    font-family: 'Monogram';
+    src: url('/fonts/Monogram.ttf') format('truetype');
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Monogram';
+    src: url('/fonts/Monogram-Italic.ttf') format('truetype');
+    font-style: italic;
+}
+
 /* Kubasta: a pixel font by Kai Kubasta, CC0 (see fonts/Kubasta-LICENSE.txt) */
 @font-face {
     font-family: 'Kubasta';
