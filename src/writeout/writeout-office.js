@@ -59,7 +59,7 @@
     function fmt(cmd) { if (typeof applyTextFormatting === 'function') applyTextFormatting(cmd); }
 
     /* ---------- Home tab actions ---------- */
-    const FONTS = ['JetBrains Mono', 'Roboto', 'Space Grotesk', 'Comic Neue', 'Fairfax HD', 'Iosevka', 'Unifont', 'OpenDyslexic'];
+    const FONTS = ['JetBrains Mono', 'Roboto', 'Space Grotesk', 'Comic Neue', 'Fairfax HD', 'Iosevka', 'Unifont', 'OpenDyslexic', 'Kubasta'];
     function currentFont() {
         const cs = selComputed();
         if (!cs) return null;
