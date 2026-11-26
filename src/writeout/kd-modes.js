@@ -155,22 +155,32 @@
     // a slight colored glow behind every chip (#C#a chip#, !!#R#text#, ++R!text++ and friends): a second layer under the colored text, same text and same font,
     // so nothing moves. (A glow, not padding: padding would push the words out of line with the real text box.)
     const CHIP_BG = new RegExp([
-        '!{1,2}[#^~=+%:;?/\\-]?([A-Z]{1,2})#[^#\\n]+#',
+        '!{1,3}[^A-Z\\s]{0,2}([A-Z]{1,2})#[^#\\n]+#',
         '\\+\\+([A-Z]{1,2})[!~%:^+?]?[^+\\n]+?\\+\\+',
         '#([A-Z]{1,2})#[^#\\n]+#[#_~=\\]\\[>-]?',
-        '=([A-Z]{1,2})=[^=\\n]+=',
+        '=([A-Z]{1,2})=[^=\\n]+=(?:[A-Z]{1,2}=)?',
         '\\^\\^([A-Z]{1,2})\\^[^^\\n]+\\^\\^',
         '%([A-Z]{1,2})%[^%\\n]+%',
         '\\{badge\\b[^{}\\n]*\\}',
-        '#([%^+:;])([A-Z]{1,2})\\7(?:\\$[^$\\n]*\\$|(?!\\7)[^\\n])+\\7'
+        '#([%^+:;&@?])([A-Z]{1,2})\\7(?:\\$[^$\\n]*\\$|(?!\\7)[^\\n])+\\7',
+        // Jelly chips #/R-text-, the doubled-mark chips ==R^text==, ;;R;text;;, %%R%text%%, !!R!text!!, the ((R(text)) ones, Sx chips, Beacon chips and the ~XX~ tags
+        '#\\/([A-Z]{1,2})([\\/=~+^%!?#.\\-*@&$|<>_()\\[\\]{}"1-4])(?:(?!\\10)[^\\n])+\\10',
+        '(?<![\\w:/])(==|~~|\\/\\/|;;|!!|\\?\\?|,,|__|%%)([A-Z]{1,2})[^A-Za-z0-9\\s](?:(?!\\11)[^\\n])+\\11',
+        '\\(\\(([A-Z]{1,2})[^A-Za-z0-9\\s](?:(?!\\)\\))[^\\n])+\\)\\)',
+        '%\\d{1,2}%([A-Z]{1,2})%[^%\\n]+%##',
+        '=\\+([A-Z]{1,2})\\+=[^\\n]+?=\\+[A-Z]{1,2}\\+=',
+        '~[A-Z][A-Z0-9-]*~[^~\\n]+~(?:[A-Z][A-Z0-9-]*~)?'
     ].join('|'), 'g');
     const BADGE_HEX = { blue: '#2563eb', sky: '#0ea5e9', teal: '#0d9488', green: '#16a34a', lime: '#84cc16', yellow: '#eab308', orange: '#f97316', red: '#dc2626', pink: '#ec4899', purple: '#9333ea', indigo: '#4f46e5', gray: '#64748b' };
     const CHIP_HEX = { R: '#ef4444', O: '#f97316', Y: '#eab308', G: '#22c55e', L: '#84cc16', T: '#14b8a6', C: '#06b6d4', B: '#3b82f6', I: '#6366f1', P: '#a855f7', K: '#ec4899', M: '#d946ef', W: '#94a3b8', F: '#94a3b8', D: '#475569' };
     const CHIP_OPEN = /^(?:!{1,2}[#^~=+%:;?\/-]?[A-Z]{1,2}#|\+\+[A-Z]{1,2}[!~%:^+?]?|#[A-Z]{1,2}#|=[A-Z]{1,2}=|\^\^[A-Z]{1,2}\^|%[A-Z]{1,2}%|#[%^+:;][A-Z]{1,2}[%^+:;]|\{badge\b ?)/;
     const CHIP_CLOSE = /(?:\+\+|\^\^|#[#_~=\]\[>-]|[#=%}:;+^])$/;
     // a chip is its opener (#C#), its text and its closer (#): the text gets its own span so it can be lighter than the marks around it
+    // (chips that CHIP_OPEN and CHIP_CLOSE do not know by name still get their marks and their words apart: marks first, then the color letters, then the words)
+    const GEN_OPEN = /^(?:[^A-Za-z0-9\s]+(?:\d{1,2}[^A-Za-z0-9\s]+)?[A-Z]{1,2}[^A-Za-z0-9\s]?|~[A-Z][A-Z0-9-]*~)/;
+    const GEN_CLOSE = /(?:[^A-Za-z0-9\s]+(?:[A-Z]{1,2}[^A-Za-z0-9\s]*)?|~[A-Z][A-Z0-9-]*~)$/;
     function chipHtml(c) {
-        const o = (CHIP_OPEN.exec(c) || [''])[0], rest = c.slice(o.length), cl = (CHIP_CLOSE.exec(rest) || [''])[0], mid = rest.slice(0, rest.length - cl.length);
+        const o = (CHIP_OPEN.exec(c) || GEN_OPEN.exec(c) || [''])[0], rest = c.slice(o.length), cl = (CHIP_CLOSE.exec(rest) || GEN_CLOSE.exec(rest) || [''])[0], mid = rest.slice(0, rest.length - cl.length);
         return '<span class="o">' + escH(o) + '</span><span class="t">' + escH(mid).replace(/\$\$[^$\n]+\$\$|\$[^$\n]+\$/g, '<span class="mm">$&</span>') + '</span><span class="o">' + escH(cl) + '</span>';
     }
     function chipLines(text) {
@@ -181,7 +191,7 @@
             let out = '', last = 0, m;
             CHIP_BG.lastIndex = 0;
             while ((m = CHIP_BG.exec(line))) {
-                const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || m[8] || '', isBadge = /^\{badge/.test(m[0]);
+                const letter = m[1] || m[2] || m[3] || m[4] || m[5] || m[6] || m[8] || m[9] || m[12] || m[13] || m[14] || m[15] || ((/^[^A-Za-z]*([A-Z])/.exec(m[0]) || [])[1]) || '', isBadge = /^\{badge/.test(m[0]);
                 // (what color a chip or badge really gets is decided by CSS: one color for all, or its own when the chip-colors setting is on)
                 const hex = isBadge ? (BADGE_HEX[((m[0].match(/\|\s*([a-z]+|#[0-9a-f]{3,6})\s*(?=\||\})/i) || [])[1] || '').toLowerCase()] || (/^#/.test((m[0].match(/\|\s*(#[0-9a-f]{3,6})/i) || [])[1] || '') ? m[0].match(/\|\s*(#[0-9a-f]{3,6})/i)[1] : '')) : (CHIP_HEX[letter.charAt(0)] || '');
                 out += escH(line.slice(last, m.index)) + '<mark data-k="' + (isBadge ? 'badge' : 'chip') + '"' + (hex ? ' style="--chipc:' + hex + '"' : '') + '>' + chipHtml(m[0]) + '</mark>';
