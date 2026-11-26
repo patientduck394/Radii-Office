@@ -595,7 +595,9 @@
     // another page tab (or a file) opened while in Source or View: show that page the same way
     new MutationObserver(function () {
         if (applying) return;
-        if (mode === 'view') { clearTimeout(viewTimer); viewTimer = setTimeout(function () { if (mode === 'view' && !applying) build(textNow()); }, 120); }
+        // a BitLang program starting or stopping rearranges the page by itself: rebuilding it now would end the program 120 ms after it starts
+        if (window.BitLang && (performance.now() - (window.BitLang.lastChange || -1e9) < 600 || ed.querySelector(':scope > .bl-view'))) return;
+        if (mode === 'view') { clearTimeout(viewTimer); viewTimer = setTimeout(function () { if (mode === 'view' && !applying && !(window.BitLang && ed.querySelector(':scope > .bl-view'))) build(textNow()); }, 120); }
     }).observe(ed, { childList: true });
     new MutationObserver(function () { if (mode === 'source' && src && !applying) { clearTimeout(diffTimer); diffTimer = setTimeout(followPage, 40); } }).observe(ed, { childList: true, subtree: true, characterData: true });
 

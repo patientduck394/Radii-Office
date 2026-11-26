@@ -4261,6 +4261,7 @@ fn guess(n):
 
     let current = null; // the program that has taken over the document
     function play(prog) {
+        BitLang.lastChange = performance.now(); // (the page rearranges itself now: other parts of the page leave it alone for a moment)
         if (current && current !== prog) stop(current, true, 'another program was started');
         stop(prog, true);
         const ta = prog.querySelector('.bl-code');
@@ -4596,6 +4597,7 @@ fn guess(n):
     }
     function stop(prog, quiet, why) {
         const st = live.get(prog);
+        BitLang.lastChange = performance.now();
         if (why && st && performance.now() - st.t0 < 5000) earlyNote(why, performance.now() - st.t0);
         if (!st) { prog.classList.remove('bl-playing'); return; }
         live.delete(prog);
