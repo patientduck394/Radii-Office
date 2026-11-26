@@ -37,7 +37,7 @@
         '.kd-hl .m-h{color:var(--kc-h);font-weight:700}.kd-hl .m-k{color:var(--kc-k)}.kd-hl .m-s{color:var(--kc-s)}.kd-hl .m-n{color:var(--kc-n)}.kd-hl .m-c{color:var(--kc-c)}',
         '.kd-l{min-height:1.6em}',
         '.kd-hl mark{--chip:var(--kc-chip,#06b6d4)}.kd-hl mark[data-k="badge"]{--chip:var(--kc-badge,#f97316)}body[data-kd-chipcolor] .kd-hl mark{--chip:var(--chipc,var(--kc-chip,#06b6d4))}body[data-kd-chipcolor] .kd-hl mark[data-k="badge"]{--chip:var(--chipc,var(--kc-badge,#f97316))}',
-        '.kd-hl .m-x{color:var(--kc-d);font-weight:400}.kd-hl .m-ink{--ink:var(--kc-chip,#06b6d4);color:color-mix(in srgb,var(--ink) 80%,var(--kc-tc,#fff));font-weight:700}body[data-kd-chipcolor] .kd-hl .m-ink{--ink:var(--chipc,var(--kc-chip,#06b6d4))}',
+        '.kd-hl .m-dim{opacity:.72}.kd-hl .m-x{color:var(--kc-d);font-weight:400}.kd-hl .m-ink{--ink:var(--kc-chip,#06b6d4);color:color-mix(in srgb,var(--ink) 80%,var(--kc-tc,#fff));font-weight:700}body[data-kd-chipcolor] .kd-hl .m-ink{--ink:var(--chipc,var(--kc-chip,#06b6d4))}',
         '.kd-hlfg{color:transparent}.kd-hlfg mark{background:none;color:inherit}.kd-hlfg mark .o{color:color-mix(in srgb,var(--chip,var(--kc-n)) var(--kc-op,72%),var(--kc-oc,#fff))}.kd-hlfg mark .t{color:color-mix(in srgb,var(--chip,var(--kc-n)) var(--kc-tpo,14%),var(--kc-tc,#fff))}body[data-kd-chipcolor] .kd-hlfg mark .t{color:color-mix(in srgb,var(--chip,var(--kc-n)) var(--kc-tp,36%),var(--kc-tc,#fff))}',
         '.kd-hlbg{color:transparent}.kd-hlbg mark{color:transparent;background:color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent);border-radius:4px;box-shadow:0 0 0 2px color-mix(in srgb,var(--chip,var(--kc-n)) 22%,transparent)}',
         '.kd-gutter{position:absolute;left:0;top:0;bottom:0;width:32px;z-index:2;pointer-events:none;background:linear-gradient(90deg,var(--kc-gut),rgba(255,255,255,0));border-right:1px solid var(--kc-line)}',
@@ -215,6 +215,7 @@
             if (/^\s*([-*_=])\1{2,}\s*$/.test(line)) return sp('m-d', line);
             if ((m = /^(\s*)(#{1,6}|#=)(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-h', m[2] + m[3]) + '<span class="m-h">' + hlInline(m[4]) + '</span>';
             if ((m = /^(\s*)(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>|>)(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
+            if ((m = /^(\s*)(-#)(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + '<span class="m-dim">' + hlInline(m[4]) + '</span>';
             if ((m = /^(\s*)([*+\-.~=])(\s+)(.*)$/.exec(line))) return escH(m[1]) + sp('m-k', m[2]) + escH(m[3]) + hlInline(m[4]);
             if ((m = /^(::[a-z]+)(\{[^}]*\})?(.*)$/.exec(line))) return sp('m-k', m[1]) + (m[2] ? sp('m-p', m[2]) : '') + hlInline(m[3]);
             if ((m = /^(@@[a-z]+)(=")(.*)(")\s*$/.exec(line))) return sp('m-k', m[1]) + escH(m[2]) + sp('m-s', m[3]) + escH(m[4]);

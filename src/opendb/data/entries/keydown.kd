@@ -31,6 +31,11 @@ Start a line with one of these and a space:
 * `# Heading` makes a big heading, `## Heading` a smaller one and `### Heading` a third level. `#### Heading`, `##### Heading` and `###### Heading` make levels four, five and six.
 * `#= Heading` makes the extra large **mega header**.
 * `* item` makes a bullet point, and `> text` a quote.
+* `-# text` makes **subtext**: small, dim text for notes and fine print.
+
+-# This is subtext, a bit smaller and softer than the text around it!
+
+Subtext can hold other Keydown, like **bold** and `code`. In Writeout and Bitbook, type `-# ` at the start of a line and press Enter, and pressing Enter at the end of a subtext line starts a normal line again!
 
 ## Basics
 

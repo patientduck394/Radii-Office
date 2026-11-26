@@ -407,6 +407,8 @@
             // {align=center} at the start of a line (Writeout's align buttons, saved as Keydown)
             if ((m = /^\{align=(left|center|right|justify)\}\s*(.*)$/.exec(t))) { flush(); out.push('<p style="text-align: ' + m[1] + '">' + inline(m[2], notes) + '</p>'); continue; }
             // styled quotes: !> ?> >> %> *> +> -> => ~> $> #> ^> @> &>
+            const subs = /^-#\s+(\S.*)$/.exec(t);
+            if (subs) { flush(); out.push('<div class="kd-subtext">' + inline(subs[1], notes) + '</div>'); continue; }
             const bqs = /^(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(t);
             if (bqs) { flush(); out.push('<blockquote class="blockquote-list kd-bq kd-bq-' + ({ '!>': 'neon', '?>': 'glass', '>>': 'pull', '%>': 'gradient', '*>': 'marker', '+>': 'green', '->': 'red', '=>': 'dashed', '~>': 'whisper', '$>': 'paper', '#>': 'terminal', '^>': 'ribbon', '@>': 'bubble', '&>': 'card' }[bqs[1]]) + '">' + inline(bqs[2], notes) + '</blockquote>'); continue; }
             if (/^>/.test(t)) {

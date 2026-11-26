@@ -488,3 +488,6 @@ body.odb-embed .view { padding: 8px; max-width: none; }
 /* Quote lines typed one after another (each is its own box while you type) look like one quote; the Source and View modes join them for real */
 :is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq) + .blockquote-list:not(.kd-bq) { margin-top: 0; border-top-right-radius: 0; }
 :is(#wysiwyg-canvas, .kd-doc, .kd-content, body) .blockquote-list:not(.kd-bq):has(+ .blockquote-list:not(.kd-bq)) { margin-bottom: 0; border-bottom-right-radius: 0; }
+
+/* -# subtext: small, dim text */
+.kd-subtext { font-size: 0.8em; line-height: 1.45; color: #6b7688; color: color-mix(in srgb, currentColor 62%, transparent); margin: 2px 0; }

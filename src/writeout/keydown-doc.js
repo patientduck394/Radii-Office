@@ -507,6 +507,7 @@
                 return parts.map((x) => '<br>' + (x ? inline(x, opts) : '<br>')).join('').replace(/<br><br><br>/g, '<br><br>');
             };
             if ((m = /^(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(t))) { const first = inline(m[2], opts); out.push(ind('<blockquote class="blockquote-list kd-bq kd-bq-' + BQ_BY_SYM[m[1]] + '">' + first + quoteMore(m[1]) + '</blockquote>')); continue; }
+            if ((m = /^-#\s+(\S.*)$/.exec(t))) { out.push(ind('<div class="kd-subtext">' + inline(m[1], opts) + '</div>')); continue; }   // -# Text: small, dim subtext
             if ((m = /^>\s+(\S.*)$/.exec(t))) { const first = inline(m[1], opts); out.push(ind('<blockquote class="blockquote-list">' + first + quoteMore('>') + '</blockquote>')); continue; }
             if ((m = /^\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(t))) {
                 out.push('<div class="kd-footnote-def" id="fn-' + slug(m[1]) + '"><span class="kd-footnote-tag">' + esc(m[1]) + '</span> <span class="kd-footnote-text">' + inline(m[2], opts) + '</span></div>');
@@ -663,7 +664,7 @@
         return only && LINE_SPANS[String(only.className).trim()] ? only : null;
     }
     // a plain line that starts like a heading, bullet, quote, block, table, fence or footnote keeps that start as itself
-    const LINE_MARK = /^(\||(?:#{1,6}|#=)\s|[*+\-.~=]\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
+    const LINE_MARK = /^(\||(?:#{1,6}|#=)\s|[*+\-.~=]\s|-#\s|>\s|::[a-z]|\{align=|\{\{[^{}]+\}\}$|```|\[\^[^\]\s][^\]]*\]:|\|.*\|(\{[a-z]+\})?$|@@program)/;
     const plainLine = (l) => (LINE_MARK.test(l) ? '\\' + l : l);
     const indentOf = (el) => { const m = /^([\d.]+)r?em$/.exec((el.style && (el.style.textIndent || el.style.marginLeft)) || ''); return m ? Math.min(8, Math.round(parseFloat(m[1]) / 2.5)) : 0; };
     function htmlToText(html) {
@@ -706,6 +707,10 @@
                     const t = Array.from(li.childNodes).filter((c) => !(c.nodeType === 1 && /^(UL|OL)$/.test(c.tagName))).map(inlineText).join('').replace(/\n+/g, ' ').trim();
                     if (t) push((el.tagName === 'UL' ? BL_MARK(el) : '*') + ' ' + t);
                 });
+                return;
+            }
+            if ((tag === 'DIV' || tag === 'P') && el.classList.contains('kd-subtext')) {
+                push('|'.repeat(indentOf(el)) + alignOf(el) + '-# ' + kidsText(el).replace(/\n+/g, ' ').replace(/\u200b/g, '').trim());
                 return;
             }
             if (tag === 'BLOCKQUOTE') {
@@ -1193,7 +1198,7 @@
         // the line itself first: "# Title", "* item", "> quote", ::block{...}, $math$... becomes what it says
         let lineEl2 = null;
         const runText = nodes.map((n) => n.textContent).join('').replace(/\u200B/g, '');
-        if (/^\s*((?:#{1,6}|#=)\s+\S|[*+\-.~=]\s+\S|>\s+\S|(?:!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
+        if (/^\s*((?:#{1,6}|#=)\s+\S|[*+\-.~=]\s+\S|>\s+\S|(?:!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S|-#\s+\S|::[a-z]+|\$\$|\[\^[^\]]+\]:|\{\{|!\[)/.test(runText) && !isProtected(block, canvas)) {
             if (block === canvas) {
                 // text sitting right in the canvas gets a line of its own first
                 const d = document.createElement('div');
@@ -1579,6 +1584,7 @@
             return li;
         }
         if ((m = /^\s*(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+\S/.exec(text))) { const q = takeRest(make('blockquote', 'blockquote-list kd-bq kd-bq-' + BQ_BY_SYM[m[1]]), lead + 3); b.replaceWith(q); return q; }
+        if (/^\s*-#\s+\S/.test(text)) { const q = takeRest(make('div', 'kd-subtext'), lead + 3); b.replaceWith(q); return q; }
         if (/^\s*>\s+\S/.test(text)) { const q = takeRest(make('blockquote', 'blockquote-list'), lead + 2); b.replaceWith(q); return q; }
         if ((m = /^\s*\[\^([^\]\s][^\]]*)\]:\s*(.*)$/.exec(text)) && !b.children.length) {
             const d = document.createElement('div');
@@ -2046,6 +2052,37 @@
             '.kd-tpl-block{display:block;margin:6px 0;padding:8px 12px;border-radius:10px;border-left:6px solid #f28500;background:#fff9f2;color:#5b3a00;font-style:normal;font-size:.95em}' +
             '.kd-figure{margin:10px 0;text-align:center}.kd-figure img,.kd-figure video{max-width:100%;border-radius:10px}.kd-figure audio{width:min(480px,100%)}.kd-style-menu{max-height:min(70vh,560px);overflow:auto}.kd-style-pick .os-mlabel{line-height:2}::highlight(kd-problem){background-color:rgba(239,68,68,.25);text-decoration:wavy underline #dc2626}.kd-figure figcaption{font-size:.85em;opacity:.75;margin-top:4px}';
         document.head.appendChild(st);
+    }
+
+    // -# subtext: Enter at the end of a subtext line starts a normal line (the browser would copy the subtext look to the next line)
+    if (typeof document !== 'undefined' && !root.__kdSubtextEnter) {
+        root.__kdSubtextEnter = true; // kd-subtext-enter
+        document.addEventListener('beforeinput', function (e) {
+            if (e.inputType !== 'insertParagraph') return;
+            const sel = window.getSelection();
+            if (!sel || !sel.rangeCount) return;
+            const n = sel.anchorNode, el = n && (n.nodeType === 1 ? n : n.parentElement);
+            const sub = el && el.closest && el.closest('.kd-subtext');
+            if (!sub || !sub.isContentEditable) return;
+            e.preventDefault();
+            const range = sel.getRangeAt(0);
+            const rest = document.createRange();
+            rest.selectNodeContents(sub);
+            rest.setStart(range.endContainer, range.endOffset);
+            const frag = rest.extractContents();
+            const d = document.createElement('div');
+            if (sub.hasAttribute('contenteditable')) d.setAttribute('contenteditable', sub.getAttribute('contenteditable'));
+            d.appendChild(frag);
+            if (!d.textContent.replace(/\u200b/g, '')) { d.textContent = ''; d.appendChild(document.createElement('br')); }
+            if (!sub.textContent.replace(/\u200b/g, '')) sub.appendChild(document.createElement('br'));
+            sub.after(d);
+            const r = document.createRange();
+            r.setStart(d, 0);
+            r.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(r);
+            sub.dispatchEvent(new Event('input', { bubbles: true }));
+        }, true);
     }
 
     root.kdEmojiSvg = emojiSvg;

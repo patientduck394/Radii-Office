@@ -392,6 +392,9 @@ function kdRender(raw) {
     if (ip) return '<span class="kd-indent" style="display:inline-block;width:' + Math.min(8, ip[1].length) * 2.5 + 'rem"></span>' + kdRender(ip[2].replace(/^\s+/, ""));
     // !> ?> >> %> *> +> -> => ~> $> #> ^> @> &> at the start of a line make a styled quote
     const qm = /^(\s*)(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S[\s\S]*)$/.exec(text);
+    // -# Text at the start of a line is subtext: small and dim
+    const sm = /^(\s*)-#\s+(\S[\s\S]*)$/.exec(text);
+    if (sm) return sm[1] + '<span class="kd-subtext" style="display:block">' + kdRender(sm[2]) + '</span>';
     if (qm) return qm[1] + '<span class="blockquote-list kd-bq kd-bq-' + { '!>': 'neon', '?>': 'glass', '>>': 'pull', '%>': 'gradient', '*>': 'marker', '+>': 'green', '->': 'red', '=>': 'dashed', '~>': 'whisper', '$>': 'paper', '#>': 'terminal', '^>': 'ribbon', '@>': 'bubble', '&>': 'card' }[qm[2]] + '">' + kdRender(qm[3]) + "</span>";
     const bm = /^::([a-z]+)(?:\{([^}]*)\})?$/.exec(trimmed);
     if (bm && KD_BLOCKS.includes(bm[1])) return kdRenderBlock(bm[1], bm[2]);

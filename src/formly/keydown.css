@@ -8621,3 +8621,11 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
 .gel-mqpebble-chip{background:radial-gradient(ellipse at 30% 25%,var(--hx-w3),var(--ae-l) 70%);border-radius:42% 58% 55% 45%/65% 45% 55% 35%;padding:1px 14px;box-shadow:0 1px 0 var(--hx-c45)}
 .gel-mqlaser-chip{background:linear-gradient(180deg,transparent 30%,var(--hx-c36)) 0 0/100% 100% no-repeat,linear-gradient(var(--ae-c),var(--ae-c)) 0 100%/100% 2px no-repeat,radial-gradient(circle,var(--hx-w3) 0 2px,var(--ae-c) 2.5px,transparent 3.5px) 0 100%/7px 7px no-repeat,radial-gradient(circle,var(--hx-w3) 0 2px,var(--ae-c) 2.5px,transparent 3.5px) 100% 100%/7px 7px no-repeat;box-shadow:0 .12em .5em -.15em var(--ae-c);padding-bottom:4px}
 .gel-mqdusk-chip{background:linear-gradient(180deg,transparent,var(--ae-l) 80%) 0 0/100% 100% no-repeat,linear-gradient(var(--ae-c),var(--ae-c)) 0 100%/100% 2px no-repeat;border-radius:0 0 3px 3px}
+
+/* ========================================================
+   SUBTEXT: a line that starts with "-# " is small, dim text under or between other lines (like Discord's subtext)
+   ======================================================== */
+.kd-subtext, #wysiwyg-canvas .kd-subtext, .kd-doc .kd-subtext, .kd-content .kd-subtext {
+  font-size: 0.8em; line-height: 1.45; font-weight: 400; margin: 2px 0; color: #6b7688;
+  color: color-mix(in srgb, currentColor 62%, transparent);
+}

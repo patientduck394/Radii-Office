@@ -286,11 +286,13 @@
         if (b.tagName === 'LI' && isBlank(b)) { const d = exitList(b); caretToStart(d); fire(d, 'insertParagraph'); return d; }
         // Enter on an empty quote or code line leaves it (back to a plain line)!
         if (/^(BLOCKQUOTE|PRE)$/.test(b.tagName) && isBlank(b)) { const d = retag(b, 'div'); caretToStart(d); fire(d, 'insertParagraph'); return d; }
+        // (-# subtext: Enter on an empty subtext line leaves it, and Enter at the end of one starts a normal line)
+        if (b.classList && b.classList.contains('kd-subtext') && isBlank(b)) { const d = retag(b, 'div'); d.classList.remove('kd-subtext'); if (!d.className) d.removeAttribute('class'); caretToStart(d); fire(d, 'insertParagraph'); return d; }
         const tail = document.createRange();
         tail.setStart(range.startContainer, range.startOffset);
         tail.setEnd(b, b.childNodes.length);
         const frag = tail.extractContents();
-        const wasHeading = /^H[1-6]$/.test(b.tagName);
+        const wasHeading = /^H[1-6]$/.test(b.tagName) || !!(b.classList && b.classList.contains('kd-subtext'));
         const rest = !isBlank({ textContent: frag.textContent || '', querySelector: function () { return frag.querySelector('img, input, select, svg, [contenteditable="false"]'); } });
         const nb = (wasHeading && !rest) ? document.createElement('div') : b.cloneNode(false);
         nb.removeAttribute('data-rb');

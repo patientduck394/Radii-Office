@@ -281,6 +281,8 @@
             if (!fence && !/```/.test(ln)) {
                 const blk = kdBlockLine(ln);
                 if (blk) { flush(); out.push({ html: blk }); needCss = true; return; }
+                const sub = /^[ \t]*-#\s+(\S.*)$/.exec(ln);
+                if (sub) { flush(); out.push({ html: '<div class="kd-subtext">' + kdInline(sub[1]) + '</div>' }); needCss = true; return; }
                 const qm = /^[ \t]*(!>|\?>|>>|%>|\*>|\+>|->|=>|~>|\$>|#>|\^>|@>|&>)\s+(\S.*)$/.exec(ln);
                 if (qm) { flush(); out.push({ html: '<div class="blockquote-list kd-bq kd-bq-' + { '!>': 'neon', '?>': 'glass', '>>': 'pull', '%>': 'gradient', '*>': 'marker', '+>': 'green', '->': 'red', '=>': 'dashed', '~>': 'whisper', '$>': 'paper', '#>': 'terminal', '^>': 'ribbon', '@>': 'bubble', '&>': 'card' }[qm[1]] + '">' + kdInline(qm[2]) + '</div>' }); needCss = true; return; }
                 const ip = /^(\|+)\s*([\s\S]*)$/.exec(ln);
