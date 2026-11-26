@@ -60,6 +60,13 @@ This project incorporates, modifies, or bundles font files derived from the foll
 
 ---
 
+### 9. Kubasta
+* **License:** CC0 1.0 Universal (Public Domain Dedication), as stated by the author on his FontStruct page and on itch.io (the font file's own metadata says "Open Font License", which does not match the author's page; Radii Office follows the author's CC0 dedication)
+* **Copyright:** Kai Kubasta, 2018 (no rights reserved under CC0)
+* **Source:** https://fontstruct.com/fontstructions/show/1526716/kubasta (also https://zichy.itch.io/kubasta)
+
+---
+
 ### 8. Other Bundled Font Assets & Fallbacks
 * **Licenses:** Maintained under their respective open-source terms as distributed by their original upstream authors. 
 * **Note:** All intellectual property rights, original filenames, and vector structures for these specialized font sets remain the property of their respective creators.

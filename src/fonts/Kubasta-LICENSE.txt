@@ -1,0 +1,12 @@
+Kubasta (fonts/Kubasta.ttf)
+
+Designer: Kai Kubasta (FontStruct user KaiKubasta). Created 20 May 2018, last edited 18 September 2021 on FontStruct.
+Original page: https://fontstruct.com/fontstructions/show/1526716/kubasta
+Also listed at: https://zichy.itch.io/kubasta
+
+License: CC0 1.0 Universal (Public Domain Dedication)
+https://creativecommons.org/publicdomain/zero/1.0/
+
+The author's FontStruct page states: "This FontStruction is licensed under a Creative Commons CC0 Public Domain Dedication license".
+The itch.io page also lists it as CC0. The font file's own metadata says "Open Font License", which does not match the author's page and
+is treated as a leftover label: the author's CC0 dedication is what Radii Office follows.
