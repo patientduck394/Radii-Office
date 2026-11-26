@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Products: All Radii Office Apps | Radii Office</title>
+    <meta name="description" content="Browse every free Radii Office app: Writeout, Bitbook, Imbuer, Amber, Inkpath, Peeker, Zonerider and more. Launch in your browser or download!">
+    <!-- seo -->
+    <link rel="canonical" href="https://radii-office.com/products.html">
+    <meta property="og:site_name" content="Radii Office">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Products: All Radii Office Apps | Radii Office">
+    <meta property="og:description" content="Browse every free Radii Office app: Writeout, Bitbook, Imbuer, Amber, Inkpath, Peeker, Zonerider and more. Launch in your browser or download!">
+    <meta property="og:url" content="https://radii-office.com/products.html">
+    <meta property="og:image" content="https://radii-office.com/logo.png">
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Products: All Radii Office Apps | Radii Office">
+    <meta name="twitter:description" content="Browse every free Radii Office app: Writeout, Bitbook, Imbuer, Amber, Inkpath, Peeker, Zonerider and more. Launch in your browser or download!">
+    <meta name="twitter:image" content="https://radii-office.com/logo.png">
+    <meta name="theme-color" content="#0284c7">
+    <!-- /seo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            min-height: 100vh;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', 'JetBrains Mono', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: radial-gradient(circle at 50% 30%, #021f2b 0%, #000a12 100%);
+            color: #ffffff;
+            box-sizing: border-box;
+        }
+
+        /* Top Navigation Bar */
+        .top-navbar {
+            width: 100%;
+            height: 64px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(5, 147, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-sizing: border-box;
+            position: fixed;
+            top: 0;
+            z-index: 100;
+        }
+
+        .brand-logo {
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(5, 143, 255, 0.9);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .nav-links a {
+            color: #d1d5db;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            color: #0582ff;
+            text-shadow: 0 0 8px rgba(5, 168, 255, 0.6);
+        }
+
+        /* Main Products Section */
+        .products-container {
+            max-width: 1120px;
+            margin: 110px auto 60px auto;
+            padding: 0 20px;
+        }
+
+        .page-title {
+            font-size: 2.4rem;
+            font-weight: 900;
+            margin-bottom: 6px;
+            background: linear-gradient(135deg, #ffffff 0%, #9eddff 50%, #0582ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(5, 138, 255, 0.3);
+        }
+
+        .page-subtitle {
+            color: #b5d9fd;
+            font-size: 1rem;
+            margin-bottom: 30px;
+        }
+
+        /* Products Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* The Archives dropdown */
+        .archives {
+            margin-top: 34px;
+            border: 2px solid rgba(5, 118, 255, 0.35);
+            border-radius: 16px;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.015) 100%);
+            backdrop-filter: blur(16px);
+        }
+        .archives-summary {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px 12px;
+            padding: 16px 20px;
+            cursor: pointer;
+            list-style: none;
+            user-select: none;
+        }
+        .archives-summary::-webkit-details-marker { display: none; }
+        .archives-summary:focus-visible { outline: 3px solid rgba(14, 165, 233, 0.6); outline-offset: 2px; border-radius: 14px; }
+        .archives-icon { font-size: 1.4rem; }
+        .archives-title { font-size: 1.3rem; font-weight: 900; color: #e0f2fe; }
+        .archives-note { color: #94c5f0; font-size: 0.9rem; flex: 1 1 200px; }
+        .archives-chev { color: #7dd3fc; font-size: 1.2rem; transition: transform 0.25s ease; }
+        .archives[open] .archives-chev { transform: rotate(180deg); }
+        .archives-grid { padding: 0 20px 20px; }
+
+        /* Small Colored Product Card */
+        .product-card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 2px solid rgba(5, 118, 255, 0.35);
+            border-radius: 14px;
+            padding: 20px;
+            backdrop-filter: blur(16px);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+            transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            border-color: #0582ff;
+            box-shadow: 0 12px 30px rgba(5, 118, 255, 0.45);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            margin: 0;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-desc-box {
+            background: rgba(0, 10, 18, 0.5);
+            border: 1px solid rgba(5, 147, 255, 0.25);
+            border-radius: 10px;
+            padding: 12px;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .badge-tags-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        /* Cool Gel Badge Button Styling */
+        .badge-btn {
+            display: inline-flex;
+            align-items: center;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 800;
+            font-family: 'JetBrains Mono', monospace;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .badge-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Custom Badge Palette Framework */
+        .badge-frame-sky {
+            border: 3px solid #38bdf8;
+            background: #f0f9ff;
+            color: #0369a1;
+            box-shadow: 0 3px 6px rgba(2,132,199,0.15), inset 0 2px 4px rgba(56,189,248,0.2);
+        }
+
+        .badge-frame-lime {
+            border: 3px solid #a3e635;
+            background: #f7fee7;
+            color: #3f6212;
+            box-shadow: 0 3px 6px rgba(132,204,22,0.18), inset 0 2px 4px rgba(197,255,17,0.25);
+        }
+        .badge-frame-blue {
+            border: 3px solid #0065ff;
+            background: #eaf2ff;
+            color: #0048bf;
+            box-shadow: 0 3px 6px rgba(0,101,255,0.18), inset 0 2px 4px rgba(77,148,255,0.25);
+        }
+        .badge-frame-pink {
+            border: 3px solid #ee0058;
+            background: #ffe8f0;
+            color: #b0003f;
+            box-shadow: 0 3px 6px rgba(238,0,88,0.18), inset 0 2px 4px rgba(255,111,159,0.25);
+        }
+        .badge-frame-emerald {
+            border: 3px solid #34d399;
+            background: #f0fdf4;
+            color: #047857;
+            box-shadow: 0 3px 6px rgba(16,185,129,0.15), inset 0 2px 4px rgba(52,211,153,0.2);
+        }
+
+        .badge-frame-orange {
+            border: 3px solid #fb923c;
+            background: #fff7ed;
+            color: #c2410c;
+            box-shadow: 0 3px 6px rgba(234,88,12,0.15), inset 0 2px 4px rgba(251,146,60,0.2);
+        }
+
+        .badge-frame-crimson {
+            border: 3px solid #f87171;
+            background: #fef2f2;
+            color: #b91c1c;
+            box-shadow: 0 3px 6px rgba(239,68,68,0.15), inset 0 2px 4px rgba(248,113,113,0.2);
+        }
+
+        .badge-frame-amethyst {
+            border: 3px solid #c084fc;
+            background: #faf5ff;
+            color: #7e22ce;
+            box-shadow: 0 3px 6px rgba(168,85,247,0.15), inset 0 2px 4px rgba(192,132,252,0.2);
+        }
+
+        .badge-frame-gold {
+            border: 3px solid #fbbf24;
+            background: #fffbeb;
+            color: #b45309;
+            box-shadow: 0 3px 6px rgba(245,158,11,0.15), inset 0 2px 4px rgba(251,191,36,0.2);
+        }
+
+        .badge-frame-rose {
+            border: 3px solid #FF7FCB;
+            background: #faf5ff;
+            color: #9E3366;
+            box-shadow: 0 3px 6px rgba(255,99,223,0.15), inset 0 2px 4px rgba(255,147,216,0.2);
+        }
+
+        .launch-btn {
+            align-self: flex-start;
+            margin-top: 4px;
+            background: linear-gradient(180deg, #5e9cff 0%, #0582ff 100%);
+            border: 1px solid #9eddff;
+            border-radius: 8px;
+            color: #fff;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(5, 130, 255, 0.4);
+            transition: all 0.2s ease;
+        }
+
+        .launch-btn:hover {
+            box-shadow: 0 6px 18px rgba(5, 130, 255, 0.7);
+            transform: translateY(-2px);
+        }
+
+        /* Download buttons + the operating system picker! */
+        .card-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: stretch; margin-top: 4px; }
+        .card-actions .launch-btn { margin-top: 0; display: inline-flex; align-items: center; }
+        .card-actions .mobile-btn { line-height: 1.15; }
+        .mobile-btn {
+            display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: 8px; text-decoration: none;
+            font-weight: 800; font-size: 0.85rem; color: #fff; text-shadow: 0 1px 1px rgba(0,0,0,0.3); border: 1px solid #9333ea;
+            background: linear-gradient(180deg, #d8b4fe 0%, #a855f7 50%, #9333ea 51%, #c084fc 100%);
+            box-shadow: inset 0 1px 1px rgba(255,255,255,0.7), 0 3px 10px rgba(147,51,234,0.35); transition: transform .15s, box-shadow .15s;
+        }
+        .mobile-btn:hover { transform: translateY(-2px); box-shadow: inset 0 1px 1px rgba(255,255,255,0.7), 0 6px 18px rgba(147,51,234,0.5); }
+        .mobile-btn:focus-visible { outline: 2px solid #e9d5ff; outline-offset: 2px; }
+        .download-btn {
+            background: linear-gradient(180deg, #ffffff 0%, #dbeafe 100%);
+            border: 1px solid #9eddff;
+            border-radius: 8px;
+            color: #0369a1;
+            padding: 8px 16px;
+            font: inherit;
+            font-size: 0.85rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(5, 130, 255, 0.25);
+            transition: all 0.2s ease;
+        }
+        .download-btn:hover { box-shadow: 0 6px 18px rgba(5, 130, 255, 0.5); transform: translateY(-2px); }
+        .download-btn:focus-visible { outline: 2px solid #9eddff; outline-offset: 2px; }
+    </style>
+    <script src="/offline.js?v=20261132g" defer></script>
+    <link rel="stylesheet" href="/poolside-site.css?v=20261231b">
+</head>
+<body>
+
+    <!-- Top Navigation Bar -->
+    <header class="top-navbar">
+        <a href="/" class="brand-logo">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <img src="/logo.png" width="120" height="45">
+            <span style="white-space: pre-wrap; font-size: 1.5em;"> Office</span>
+          </div>
+        </a>
+        <nav class="nav-links">
+            <a href="/">Home</a>
+            <a href="/products" class="active">Products</a>
+            <a href="/about">About Studio</a>
+            <a href="/source">Source Code</a>
+            <a href="/docs">Documentation</a>
+            <a href="mailto:patientduck0394@gmail.com">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Main Products View -->
+    <main class="products-container">
+        <h1 class="page-title">Radii Suite Applications</h1>
+        <p class="page-subtitle">Interactive web software engineered with SVG vector engines, dynamic schemas, and synthesized audio.</p>
+
+        <div class="product-grid">
+
+            <!-- Inkpath -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="currentColor" d="m3.929 20.071l-.964-.268a1 1 0 0 0 1.232 1.232zm6.364-1.414l.12.993zm-4.95-4.95l.993.12zm14.143-4.95A1 1 0 1 0 20.9 7.343l-.707.707zm-2.829-5.656a1 1 0 1 0-1.414 1.414l.707-.707zM6.597 7.83l-.372-.928zm6.99-2.143l.708-.707zm4.946 5.803l.929.372zm-.221-1.078l.707-.708zm-2.144 6.99l-.928-.37zm-.801.621l-.126-.992zm.801-.62l.929.371l2.365-5.912l-.929-.372l-.928-.371l-2.365 5.912zm2.144-6.991l.707-.708l-4.724-4.724l-.707.707l-.707.707l4.724 4.725zm-5.803-4.946l-.371-.929l-5.913 2.365l.372.929l.37.928l5.914-2.365zM3.93 20.07l.268.964l.002-.001l.008-.002l.034-.01l.131-.035a79 79 0 0 1 2.128-.549c1.308-.319 2.848-.66 3.913-.788l-.12-.993l-.12-.993c-1.195.145-2.838.512-4.147.831a90 90 0 0 0-2.179.562l-.137.037l-.036.01l-.01.003h-.002zm6.364-1.414l.12.993c1.644-.2 3.999-.497 5.08-.634l-.127-.992l-.125-.992c-1.081.137-3.43.434-5.068.632zM5.976 8.634l-.992-.126c-.137 1.08-.434 3.435-.634 5.079l.993.12l.993.12c.198-1.637.495-3.987.632-5.068zm-.633 5.073l-.993-.12c-.129 1.065-.47 2.605-.788 3.913a89 89 0 0 1-.584 2.26l-.01.033l-.002.008v.002l1.926.536v-.001l.001-.003l.003-.01l.01-.035a49 49 0 0 0 .172-.64a90 90 0 0 0 .427-1.676c.32-1.31.686-2.951.83-4.146zm-.707 5.657l.707.707L11 14.414l-.707-.707L9.586 13l-5.657 5.657zm5.657-7.07L11 13l.707-.707l.707-.707a2 2 0 0 0-2.828 0zm1.414 0L11 13l.707.707l.707.707a2 2 0 0 0 0-2.828zm0 1.413L11 13l-.707.707l-.707.707a2 2 0 0 0 2.828 0zm-1.414 0L11 13l-.707-.707l-.707-.707a2 2 0 0 0 0 2.829zm9.9-5.657l.707-.707l-4.243-4.242l-.707.707l-.707.707l4.243 4.242zM6.597 7.832l-.372-.929c-.674.27-1.15.884-1.24 1.605l.991.126l.992.125v.001zm6.99-2.144l.708-.707a2 2 0 0 0-2.157-.443l.371.929l.371.928zm4.946 5.803l.929.372a2 2 0 0 0-.443-2.158l-.707.708l-.707.707zm-2.365 5.913l-.928-.372l.127.992l.125.992a2 2 0 0 0 1.605-1.241z"/></svg>
+                        Inkpath
+                    </h2>
+                    <span class="badge-btn badge-frame-rose">Vector Studio</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Vector graphics editor featuring drag multi-select box controls, real-time Bezier node dragging, and canvas pan/zoom.</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/inkpath" class="launch-btn">Launch Inkpath →</a>
+                    <a href="/inkpath/mobile/" class="mobile-btn" title="The phone version of Inkpath">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="inkpath">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Radii Base -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M21 11.722c0 5.186-18 5.186-18 0m0-6.389V18.85c0 4.2 18 4.2 18 0V5.333M12 2C7.03 2 3 3.433 3 5.2c0 4.622 18 4.622 18 0C21 3.433 16.97 2 12 2"/><path d="M15.037 11.801c.936-.128 1.824-.32 2.615-.572M15 18.573A15.7 15.7 0 0 0 17.615 18"/></g></svg>
+                        Mainkey
+                    </h2>
+                    <span class="badge-btn badge-frame-amethyst">Database</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Relational record database manager with custom field builders, search filters, interactive table grids, and gallery views.</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/mainkey" class="launch-btn">Launch Mainkey →</a>
+                    <a href="/mainkey/mobile/" class="mobile-btn" title="The phone version of Mainkey">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="mainkey">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Sheets -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"/><path d="M3 9h18M3 15h18M9 9v12m6-12v12"/></g></svg>
+                        Imbuer
+                    </h2>
+                    <span class="badge-btn badge-frame-emerald">Spreadsheet</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Data grid calculator tailored for mathematical analysis, custom cell formatting, and quick data layout grids.</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/imbuer" class="launch-btn">Launch Imbuer →</a>
+                    <a href="/imbuer/mobile/" class="mobile-btn" title="The phone version of Imbuer">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="imbuer">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Writer -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.476 2H7.5a3 3 0 0 0-3 3v14a3 3 0 0 0 3 3h9a3 3 0 0 0 3-3v-7M9.476 2C10.856 2 12 3.119 12 4.5V7a2.5 2.5 0 0 0 2.5 2.5H17a2.5 2.5 0 0 1 2.5 2.5M9.476 2C13.576 2 19.5 7.956 19.5 12M8.833 17.5H15.5M8.833 14h4.445"/></svg>
+                        Writeout
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Document</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Rich-text writing tool designed for focused document authoring, typography scaling, and clean exports.</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/writeout" class="launch-btn">Launch Writeout →</a>
+                    <a href="/writeout/mobile/new/" class="mobile-btn" title="The phone version of Writeout">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="writeout">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Slides -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 3h20m-2.111 0v11a2.003 2.003 0 0 1-2 2H6.11a2 2 0 0 1-1.847-1.233A2 2 0 0 1 4.111 14V3M7 21l5-5l5 5"/></svg>
+                        Amber
+                    </h2>
+                    <span class="badge-btn badge-frame-gold">Presentation</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Slide presentation studio featuring glossy 3D shapes, spring-animated context menus, and fullscreen presentation mode.</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/amber" class="launch-btn">Launch Amber →</a>
+                    <a href="/amber/mobile/" class="mobile-btn" title="The phone version of Amber">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="amber">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Publisher -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 22a10 10 0 0 0 9.428-6.667M12 22a10 10 0 0 1-9.428-6.667M12 22c2.307 0 3.62-3.244 4.13-6.667M12 22c-2.307 0-3.62-3.244-4.13-6.667m13.558 0a10 10 0 0 0 0-6.666m0 6.666H16.13m5.298 0h.016m-.016-6.666q-.088-.248-.19-.494A10 10 0 0 0 12 2m9.428 6.667H16.13m5.298 0h.016M12 2a10 10 0 0 0-9.428 6.667M12 2c2.307 0 3.62 3.244 4.13 6.667M12 2C9.693 2 8.38 5.244 7.87 8.667m-5.298 6.666a10 10 0 0 1 0-6.666m0 6.666h-.016m.016 0H7.87M2.572 8.667h-.016m.016 0H7.87m8.26 6.666c.168-1.128.249-2.276.249-3.333s-.08-2.205-.249-3.333m0 6.666H7.87m8.26-6.666H7.87m0 6.666A23 23 0 0 1 7.62 12c0-1.057.08-2.205.249-3.333"/></svg>
+                        Omicron
+                    </h2>
+                    <span class="badge-btn badge-frame-orange">Web Builder</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Visual layout suite for positioning web elements, crafting templates, and generating direct HTML output.</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/omicron" class="launch-btn">Launch Omicron →</a>
+                    <a href="/omicron/mobile/" class="mobile-btn" title="The phone version of Omicron">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="omicron">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Formly -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4H6.5A2.5 2.5 0 0 0 4 6.5v12A3.5 3.5 0 0 0 7.5 22h9a3.5 3.5 0 0 0 3.5-3.5v-12A2.5 2.5 0 0 0 17.5 4H16m-6-2h4c2.64 0 2.65 4 0 4h-4c-2.65 0-2.64-4 0-4m2.5 9h4m-4 5h4m-9-5h1m-1 5h1"/></svg>
+                        Formly
+                    </h2>
+                    <span class="badge-btn badge-frame-amethyst">Forms</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A form app for everyone!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/formly" class="launch-btn">Launch Formly →</a>
+                    <a href="/formly/mobile/" class="mobile-btn" title="The phone version of Formly">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="formly">Download ⬇</button>
+                </div>
+            </article>
+            
+            <!-- OpenDB -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 7c-2-1.6-5-2-8-1.6V18c3-.4 6 0 8 1.6M12 7c2-1.6 5-2 8-1.6V18c-3-.4-6 0-8 1.6M12 7v12.6"/></svg>
+                        OpenDB
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Knowledge</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A free database of articles, media and papers that anyone can reuse, all public domain (CC0)!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/opendb" class="launch-btn">Launch OpenDB →</a>
+                    <a href="/opendb/mobile/" class="mobile-btn" title="The phone version of Opendb">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="opendb">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Peeker -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h4m3-18v5h5m-5-5l5 5v3m-3.5 9a3.5 3.5 0 1 0 0-7a3.5 3.5 0 0 0 0 7m2.5-1l2.5 2.5"/></svg>
+                        Peeker
+                    </h2>
+                    <span class="badge-btn badge-frame-orange">PDF</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A PDF editor for marking up, signing, filling forms and rearranging pages, right in your browser!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/peeker" class="launch-btn">Launch Peeker →</a>
+                    <a href="/peeker/mobile/" class="mobile-btn" title="The phone version of Peeker">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="peeker">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Cabinet -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 16 16"><path d="M0 0h16v16H0z" fill="none"/><path fill="currentColor" fill-rule="evenodd" d="M2.5 8h11v3a1.5 1.5 0 0 1-1.5 1.5H4A1.5 1.5 0 0 1 2.5 11zm10.697-1.5l-1.851-2.777a.5.5 0 0 0-.416-.223H5.07a.5.5 0 0 0-.416.223L2.803 6.5zM15 7.408V11a3 3 0 0 1-3 3H4a3 3 0 0 1-3-3V7.408a3 3 0 0 1 .504-1.664l1.902-2.853A2 2 0 0 1 5.07 2h5.86a2 2 0 0 1 1.664.89l1.902 2.854A3 3 0 0 1 15 7.408M9.25 11a.75.75 0 0 0 0-1.5h-2.5a.75.75 0 0 0 0 1.5z" clip-rule="evenodd"/></svg>
+                        Cabinet
+                    </h2>
+                    <span class="badge-btn badge-frame-crimson">Drive</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A drive app that is easy to use, allows drive downloads, and does not lag!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/cabinet" class="launch-btn">Launch Cabinet →</a>
+                    <a href="/cabinet/mobile/" class="mobile-btn" title="The phone version of Cabinet">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="cabinet">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Phosphor -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21.998 11.92C22.1 6.54 17.524 2.03 12.003 2c-5.087-.027-10.13 4.442-10 9.92c.049 2.1.228 2.983 1.623 5.13c.467.867.158 1.95-.328 2.895c-.351.682-.437 1.294-.296 1.54c.571.998 2.893.318 3.5-.14c1.626-1.23 3.396.574 5.498.495c5.568-.208 9.906-5.004 9.998-9.92"/></svg>
+                        Phosphor
+                    </h2>
+                    <span class="badge-btn badge-frame-emerald">Messaging</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A messaging app designed for teams that is easy to use and has great features! (No sign-up required!)</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/phosphor" class="launch-btn">Launch Phosphor →</a>
+                    <a href="/phosphor/mobile/" class="mobile-btn" title="The phone version of Phosphor">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="phosphor">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Phosphor -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 21.167c0 .46.337.833.75.833h10.652C18.352 22 18 20.025 18 18.617m-13 2.55V5.556C5 3 5.7 2 8.2 2h9.2c1.236 0 1.6.486 1.6 1.778v13.11c0 1.106-.282 1.584-1 1.729m-13 2.55c0-1.252.925-2.5 2.25-2.5h10.152q.339 0 .598-.05"/></svg>
+                        Bitbook
+                    </h2>
+                    <span class="badge-btn badge-frame-amethyst">Notetaking</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A notetaking app that is easy to use and has great features!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/bitbook" class="launch-btn">Launch Bitbook →</a>
+                    <a href="/bitbook/mobile/new/" class="mobile-btn" title="The phone version of Bitbook">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="bitbook">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Hexa -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><path d="M16 2v4M8 2v4M3 10h18"/></g></svg>
+                        Hexa
+                    </h2>
+                    <span class="badge-btn badge-frame-emerald">Calendar</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Calendar app with month views, event agendas, and .ICS import and export!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/hexa" class="launch-btn">Launch Hexa →</a>
+                    <a href="/hexa/mobile/" class="mobile-btn" title="The phone version of Hexa">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="hexa">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Taskra -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></g></svg>
+                        Taskra
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Todo</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>To-do lists with priorities, due dates, filters, and .TK import and export!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/taskra" class="launch-btn">Launch Taskra →</a>
+                    <a href="/taskra/mobile/" class="mobile-btn" title="The phone version of Taskra">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="taskra">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Zonerider -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M10 14V3m0 0L7.5 5.5M10 3l2.5 2.5"/><path d="M10 14h11m0 0l-2.5-2.5M21 14l-2.5 2.5"/><path d="M10 14l-6.5 6.5m0 0V17m0 3.5H7"/></g></svg>
+                        Zonerider
+                    </h2>
+                    <span class="badge-btn badge-frame-lime">3D</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A 3D editor a little like Blender: model with shapes and vertices, light, animate with keyframes, render images and videos, and export glTF, OBJ and STL!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/zonerider" class="launch-btn">Launch Zonerider →</a>
+                    <a href="/zonerider/mobile/" class="mobile-btn" title="The phone version of Zonerider">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="zonerider">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Waterflow -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.221 17.084v-8.11a4.166 4.166 0 0 0-4.166-4.197h-8.11A4.166 4.166 0 0 0 3.78 8.944v8.11a4.166 4.166 0 0 0 4.166 4.196h8.11a4.166 4.166 0 0 0 4.166-4.166M16.055 6.805V2.75m-8.11 4.055V2.75m-.507 8.11h9.124m-9.124 5.068h9.124"/></svg>
+                        Waterflow
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Notes</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A clear, glassy notebook: streams, notebooks and tags, a quick switcher (Ctrl+K), View, Visual and Source modes, outline, trash and live Keydown formatting. It can bring your Waterflow Legacy notes over!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/waterflow" class="launch-btn">Launch Waterflow →</a>
+                <button type="button" class="download-btn" data-download-app="waterflow">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Yuzu -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3 7l9 6 9-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Yuzu
+                    </h2>
+                    <span class="badge-btn badge-frame-blue">Mail</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>An email app with an inbox, folders, search and compose, Keydown in every message, and two looks to use it in: a new Outlook-style ribbon, or the original Yuzu Classic!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/yuzu" class="launch-btn">Launch Yuzu →</a>
+                    <a href="/yuzu/mobile/" class="mobile-btn" title="The phone version of Yuzu">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="yuzu">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Delta -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M18 5H6l6 7-6 7h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        Delta
+                    </h2>
+                    <span class="badge-btn badge-frame-pink">Math</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A math workspace with a live graphing calculator (sliders, lists and polygons), a LaTeX renderer and a calculator, in the new ribbon look or the original Delta Classic!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/delta" class="launch-btn">Launch Delta →</a>
+                    <a href="/delta/mobile/" class="mobile-btn" title="The phone version of Delta">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="delta">Download ⬇</button>
+                </div>
+            </article>
+
+            <!-- Antimony -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-5.4A8 8 0 1 1 21 12z"/><path d="M8.5 11h7M8.5 14h4"/></svg>
+                        Antimony
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Message boards</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Fresh posts, live! A free message board app: make spaces, post and reply, and watch new messages appear as they arrive!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="/antimony" class="launch-btn">Launch Antimony →</a>
+                    <a href="/antimony/mobile/" class="mobile-btn" title="The phone version of Antimony">📱 Mobile</a>
+                </div>
+            </article>
+
+            <!-- Beta -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                        Beta
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Microblog</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>A friendly microblog: short posts with #topics, follows, likes, replies, polls, lists and your own Outlets for group talk. Sign up to join in!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="https://beta.radii-office.com" class="launch-btn">Open Beta →</a>
+                </div>
+            </article>
+
+            <!-- Mintcode -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 8l-5 4 5 4"/><path d="M16 8l5 4-5 4"/><path d="M14 5l-4 14"/></svg>
+                        Mintcode
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Code hosting</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Host your code with Mint, a simple saves-and-lines version tool: repositories, stars, forks, issues and a web editor. Sign up to share your projects!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="https://mintcode.radii-office.com" class="launch-btn">Open Mintcode →</a>
+                </div>
+            </article>
+
+            <!-- Overshare -->
+            <article class="product-card">
+                <div class="card-header">
+                    <h2 class="product-title">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></svg>
+                        Overshare
+                    </h2>
+                    <span class="badge-btn badge-frame-sky">Sharing</span>
+                </div>
+                <div class="product-desc-box">
+                    <span>Share and work on documents together: sign up, link a Writeout, Taskra or other Radii document, and everyone with the link edits it live!</span>
+                </div>
+                <div class="card-actions">
+                    <a href="https://overshare.radii-office.com" class="launch-btn">Open Overshare →</a>
+                </div>
+            </article>
+        </div>
+
+        <!-- The Archives: older apps that are still here to use, tucked away in a dropdown! -->
+        <details class="archives" id="archives">
+            <summary class="archives-summary">
+                <span class="archives-icon" aria-hidden="true">🗄️</span>
+                <span class="archives-title">The Archives</span>
+                <span class="archives-note">Older apps, kept around for you to use!</span>
+                <span class="archives-chev" aria-hidden="true">▾</span>
+            </summary>
+            <div class="product-grid archives-grid">
+                <!-- Waterflow Legacy -->
+                <article class="product-card">
+                    <div class="card-header">
+                        <h2 class="product-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.221 17.084v-8.11a4.166 4.166 0 0 0-4.166-4.197h-8.11A4.166 4.166 0 0 0 3.78 8.944v8.11a4.166 4.166 0 0 0 4.166 4.196h8.11a4.166 4.166 0 0 0 4.166-4.166M16.055 6.805V2.75m-8.11 4.055V2.75m-.507 8.11h9.124m-9.124 5.068h9.124"/></svg>
+                            Waterflow Legacy
+                        </h2>
+                        <span class="badge-btn badge-frame-sky">Notes</span>
+                    </div>
+                    <div class="product-desc-box">
+                        <span>The original Waterflow: pads, a one-time table and Keydown formatting, kept as it was. The new Waterflow can bring its notes over!</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="/waterflow-legacy" class="launch-btn">Launch Waterflow Legacy →</a>
+                        <a href="/waterflow-legacy/mobile/" class="mobile-btn" title="The phone version of Waterflow Legacy">📱 Mobile</a>
+                    <button type="button" class="download-btn" data-download-app="waterflow-legacy">Download ⬇</button>
+                    </div>
+                </article>
+
+                    <!-- Trigger -->
+                    <article class="product-card">
+                        <div class="card-header">
+                            <h2 class="product-title">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><path d="M0 0h24v24H0z" fill="none"/><path d="M13 2 4 14h7l-1 8 9-12h-7z" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/></svg>
+                                Trigger
+                            </h2>
+                            <span class="badge-btn">Automation</span>
+                        </div>
+                        <div class="product-desc-box">
+                            <span>An automation panel: type rules like #!trigger-[sync]-Writeout-&gt;notify!# and glowing pods react when your documents or a watched folder of .radii files change!</span>
+                        </div>
+                        <div class="card-actions">
+                            <a href="/trigger" class="launch-btn">Launch Trigger →</a>
+                            <button type="button" class="download-btn" data-download-app="trigger">Download ⬇</button>
+                        </div>
+                    </article>
+            </div>
+        </details>
+    </main>
+
+    <!-- The "Find an app" bar and the Download popup are Svelte components (sources in /svelte/src)! -->
+    <script src="/svelte/products.js?v=20261201y" defer></script>
+</body>
+</html>
