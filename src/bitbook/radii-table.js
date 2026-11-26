@@ -17,7 +17,10 @@
         { id: 'purple', name: 'Amethyst' },
         { id: 'amber', name: 'Amber Glow' },
         { id: 'plain', name: 'Plain' },
-        { id: 'dark', name: 'Night Glass' }
+        { id: 'dark', name: 'Night Glass' },
+        { id: 'flat', name: 'Flat' },
+        { id: 'lines', name: 'Lines' },
+        { id: 'grid', name: 'Grid' }
     ];
     const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 
@@ -34,6 +37,14 @@
 .rt-table.rt-plain{--rt-line:#d4d4d8;--rt-ink:inherit;--rt-head:transparent;--rt-head-ink:inherit;--rt-row:transparent;--rt-alt:transparent;border-radius:0;box-shadow:none}
 .rt-table.rt-plain th{text-shadow:none;border-bottom-width:2px}
 .rt-table.rt-dark{--rt-line:rgba(148,197,255,.35);--rt-ink:#e0f2fe;--rt-head:linear-gradient(180deg,rgba(125,211,252,.55),rgba(14,116,144,.75));--rt-row:rgba(15,23,42,.55);--rt-alt:rgba(30,41,59,.6);backdrop-filter:blur(8px)}
+.rt-table.rt-flat{--rt-line:#e2e8f0;--rt-ink:#0f172a;--rt-head:#0ea5e9;--rt-head-ink:#fff;--rt-row:#fff;--rt-alt:#f1f5f9;border-radius:6px;box-shadow:none}
+.rt-table.rt-flat th{text-shadow:none}
+.rt-table.rt-lines{--rt-line:#e5e7eb;--rt-ink:inherit;--rt-head:transparent;--rt-head-ink:#111827;--rt-row:transparent;--rt-alt:transparent;border-radius:0;box-shadow:none}
+.rt-table.rt-lines td,.rt-table.rt-lines th{border-right:0}
+.rt-table.rt-lines th{text-shadow:none;font-size:.82em;letter-spacing:.06em;text-transform:uppercase;border-bottom:2px solid #111827}
+.rt-table.rt-grid{--rt-line:#cbd5e1;--rt-ink:#1e293b;--rt-head:#f1f5f9;--rt-head-ink:#0f172a;--rt-row:#fff;--rt-alt:#fff;border-radius:0;box-shadow:0 0 0 1px #cbd5e1}
+.rt-table.rt-grid th{text-shadow:none}
+.rt-table.rt-grid tr>:last-child{border-right:0}
 .rt-bar{position:fixed;z-index:2147480000;display:flex;flex-wrap:wrap;gap:3px;padding:4px;border-radius:10px;border:1px solid rgba(14,116,144,.3);background:linear-gradient(180deg,#fff,#e0f2fe);box-shadow:0 6px 18px rgba(2,60,110,.25);font:600 12px system-ui,sans-serif;max-width:calc(100vw - 16px)}
 .rt-bar[hidden]{display:none}
 .rt-bar button{border:1px solid transparent;background:transparent;color:#0c4a6e;border-radius:7px;padding:4px 7px;cursor:pointer;font:inherit;white-space:nowrap}

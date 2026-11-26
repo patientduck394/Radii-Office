@@ -9065,7 +9065,7 @@ Pick Insert, then Cards & Blocks to add any of these in one click!
 
 Writeout and Bitbook have two ways to write a table.
 
-* **Pipe tables**: one row per line, like `| Name | Score |`, with a line of `| --- | --- |` under the header row. Add a style after it, like `| --- | --- |{green}`.
+* **Pipe tables**: one row per line, like `| Name | Score |`, with a line of `| --- | --- |` under the header row. Add a style after it, like `| --- | --- |{green}`. The styles are `blue` (the default), `green`, `purple`, `amber`, `plain` and `dark`, plus three flat ones with no gradients or shadows: `flat` (a solid header and soft stripes), `lines` (only thin horizontal rules) and `grid` (a plain full grid).
 * **Cell by cell**: `@@table=[a1h:'Name',b1:'Score',a2:'Ann',b2:'#O#9#']` names each cell like a spreadsheet (columns a to o, rows 1 and up) and gives its text in quotes. The text can use any Keydown, like chips and **bold**, and `\'` writes a quote. A style can follow the `]`, like `{green}`.
 
 In a cell-by-cell table, an **h** after the cell name makes a header. A row is a header row when its first cell is a header (`a1h`), and then its whole row is headers. An h cell on any other row moves up to the nearest header row above it. Another header row further down starts a new part of the table:
