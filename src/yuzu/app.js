@@ -457,6 +457,63 @@
                 '</button>';
         }).join('');
     }
+    /* ---------- real email content: a message that came with a formatted (HTML) version is shown as it was sent ---------- */
+    // (inside a sandboxed frame that cannot run anything, with its own rules for what it may load: pictures from the internet stay blocked until you press Load images)
+    const htmlPrefs = {}; // message id -> { plain, images }
+    const hasFormatted = (x) => !!(x.remote && (x.html || x.hasHtml));
+    const showsHtml = (x) => hasFormatted(x) && !(htmlPrefs[x.id] && htmlPrefs[x.id].plain);
+    function htmlCard(x) {
+        const pref = htmlPrefs[x.id] || {};
+        return '<div class="yz-html-wrap" data-hid="' + esc(x.id) + '"><div class="yz-html-bar"><span>' + (pref.images ? 'Showing the email as it was sent' : 'Pictures from the internet are blocked, so nobody can see that you opened this') + '</span>' +
+            (pref.images ? '' : '<button type="button" class="yz-link" data-images="' + esc(x.id) + '">Load pictures</button>') +
+            '<button type="button" class="yz-link" data-plain="' + esc(x.id) + '">Plain text</button></div>' +
+            (x.html ? '<iframe class="yz-html" title="Email content" sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox" referrerpolicy="no-referrer"></iframe>' : '<div class="yz-empty">Loading the message…</div>') + '</div>';
+    }
+    // the email's own HTML, cleaned once more here (the frame and its rules already stop anything from running)
+    function emailDoc(html, images) {
+        const doc = new DOMParser().parseFromString(String(html), 'text/html');
+        doc.querySelectorAll('script,iframe,frame,frameset,object,embed,applet,form,link,base,meta,noscript').forEach((n) => n.remove());
+        doc.querySelectorAll('*').forEach((n) => {
+            Array.from(n.attributes).forEach((a) => {
+                const nm = a.name.toLowerCase();
+                if (nm.indexOf('on') === 0) n.removeAttribute(a.name);
+                else if (/^(href|src|action|background|xlink:href|formaction)$/.test(nm) && /^\s*(javascript|vbscript|data:text\/html)/i.test(a.value)) n.removeAttribute(a.name);
+            });
+            if (n.tagName === 'A') { n.setAttribute('target', '_blank'); n.setAttribute('rel', 'noopener noreferrer nofollow'); }
+        });
+        const csp = "default-src 'none'; img-src data:" + (images ? ' https: http:' : '') + "; style-src 'unsafe-inline'; font-src data:; base-uri 'none'; form-action 'none'";
+        const styles = Array.from(doc.head.querySelectorAll('style')).map((n) => n.outerHTML).join('');
+        const bs = doc.body.getAttribute('style'), bg = doc.body.getAttribute('bgcolor');
+        return '<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="Content-Security-Policy" content="' + csp + '"><base target="_blank">' +
+            '<style>html{color-scheme:light}body{margin:0;padding:14px;background:#fff;color:#1f2937;font:14px/1.5 -apple-system,"Segoe UI",Roboto,sans-serif;overflow-wrap:anywhere}img{max-width:100%;height:auto}table{max-width:100%}</style>' + styles +
+            '</head><body><div' + (bs ? ' style="' + esc(bs) + '"' : '') + (bg ? ' bgcolor="' + esc(bg) + '"' : '') + '>' + doc.body.innerHTML + '</div></body></html>';
+    }
+    function fitFrame(fr) {
+        try {
+            const d = fr.contentDocument;
+            if (!d || !d.documentElement) return;
+            fr.style.height = Math.min(Math.max(d.documentElement.scrollHeight, d.body ? d.body.scrollHeight : 0, 80), 30000) + 'px';
+        } catch (e) { /* the frame is gone */ }
+    }
+    function mountHtml(el, x) {
+        const wrap = Array.from(el.querySelectorAll('.yz-html-wrap')).find((w) => w.dataset.hid === x.id);
+        if (!wrap) return;
+        if (!x.html) {
+            if (state.account && x.hasHtml) YuzuMail.loadHtml(state.account.provider, x).then(() => { if (byId(state.activeId)) renderReading(); }).catch(() => { (htmlPrefs[x.id] = htmlPrefs[x.id] || {}).plain = true; renderReading(); });
+            return;
+        }
+        const fr = wrap.querySelector('iframe');
+        if (!fr) return;
+        fr.addEventListener('load', () => {
+            fitFrame(fr);
+            try {
+                const d = fr.contentDocument;
+                Array.from(d.images).forEach((im) => { if (!im.complete) im.addEventListener('load', () => fitFrame(fr), { once: true }); });
+                if (window.ResizeObserver) new ResizeObserver(() => fitFrame(fr)).observe(d.documentElement);
+            } catch (e) { /* fine */ }
+        });
+        fr.srcdoc = emailDoc(x.html, !!(htmlPrefs[x.id] && htmlPrefs[x.id].images));
+    }
     function renderReading() {
         const el = $('yz-reading');
         if (!el) return;
@@ -478,7 +535,7 @@
                 '<div class="yz-read-meta"><span class="yz-avatar" style="background:' + avatarColor(who) + '">' + esc(initials(who)) + '</span>' +
                 '<div><b>' + esc(x.folder === 'sent' ? 'You' : nameOf(who) || '(no recipient)') + '</b><span class="yz-read-addr">' + (x.folder === 'sent' ? 'to ' + esc(x.to) : esc(who)) + '</span></div>' +
                 '<span class="yz-read-date">' + new Date(x.date).toLocaleString() + '</span></div>' +
-                (!isKd(x) ? '<div class="yz-read-body yz-plain">' + foldQuotes(x.body) + '</div>' : '<div class="yz-read-body keydown-doc">' + kdHtml(x.body) + '</div>') + '</article>';
+                (!isKd(x) ? (showsHtml(x) ? htmlCard(x) : (hasFormatted(x) ? '<div class="yz-html-bar"><span>Showing the plain text</span><button type="button" class="yz-link" data-formatted="' + esc(x.id) + '">Show formatted</button></div>' : '') + '<div class="yz-read-body yz-plain">' + foldQuotes(x.body) + '</div>') : '<div class="yz-read-body keydown-doc">' + kdHtml(x.body) + '</div>') + '</article>';
         };
         el.innerHTML =
             '<div class="yz-read-top">' +
@@ -495,6 +552,10 @@
         on('delete', () => deleteEmail(m.id)); on('restore', () => restoreEmail(m.id)); on('edit', () => editDraft(m.id));
         // clicking another message of the conversation makes it the one Reply, Star and Delete work on
         el.querySelectorAll('.yz-msg:not(.on)').forEach((c) => c.addEventListener('click', () => openEmail(c.dataset.msg)));
+        thread.forEach((x) => mountHtml(el, x));
+        el.querySelectorAll('[data-plain]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); (htmlPrefs[b.dataset.plain] = htmlPrefs[b.dataset.plain] || {}).plain = true; renderReading(); }));
+        el.querySelectorAll('[data-formatted]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); (htmlPrefs[b.dataset.formatted] = htmlPrefs[b.dataset.formatted] || {}).plain = false; renderReading(); }));
+        el.querySelectorAll('[data-images]').forEach((b) => b.addEventListener('click', (e) => { e.stopPropagation(); (htmlPrefs[b.dataset.images] = htmlPrefs[b.dataset.images] || {}).images = true; renderReading(); }));
         const here = el.querySelector('.yz-msg.on');
         if (here && thread.length > 1 && here !== el.querySelector('.yz-msg')) { try { here.scrollIntoView({ block: 'nearest' }); } catch (e) {} }
     }

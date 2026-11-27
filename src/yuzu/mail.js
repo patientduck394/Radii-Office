@@ -179,6 +179,17 @@
         })(payload);
         return (plain || htmlToText(html)).replace(/\r/g, '');
     }
+    // the formatted (HTML) version of a Gmail message, when it has one
+    function gHtml(payload) {
+        let html = '';
+        (function walk(p) {
+            if (!p || html) return;
+            const data = p.body && p.body.data;
+            if (data && /^text\/html/i.test(p.mimeType || '')) { html = fromB64url(data); return; }
+            (p.parts || []).forEach(walk);
+        })(payload);
+        return html;
+    }
     function gMessage(m, asFolder) {
         const h = {};
         ((m.payload && m.payload.headers) || []).forEach((x) => { h[x.name.toLowerCase()] = x.value; });
@@ -187,7 +198,7 @@
             id: m.id, remote: true, provider: 'google', threadId: m.threadId, msgId: h['message-id'] || '',
             folder: L.includes('TRASH') ? 'trash' : L.includes('SENT') ? 'sent' : L.includes('DRAFT') ? 'drafts' : asFolder === 'starred' ? 'inbox' : asFolder,
             from: h.from || '', to: h.to || '', subject: h.subject || '', date: iso(h.date, +m.internalDate), read: !L.includes('UNREAD'), starred: L.includes('STARRED'),
-            body: gBody(m.payload) || m.snippet || '',
+            body: gBody(m.payload) || m.snippet || '', html: gHtml(m.payload),
         };
     }
     const GLABEL = { inbox: 'INBOX', starred: 'STARRED', sent: 'SENT', trash: 'TRASH' };
@@ -257,6 +268,7 @@
             folder: folder === 'starred' ? 'inbox' : folder, from: mAddr(m.from), to: (m.toRecipients || []).map(mAddr).join(', '), subject: m.subject || '', date: iso(m.receivedDateTime || m.sentDateTime),
             read: m.isRead !== false, starred: !!(m.flag && m.flag.flagStatus === 'flagged'),
             body: (m.body && m.body.contentType === 'html' ? htmlToText(m.body.content) : (m.body && m.body.content) || m.bodyPreview || '').replace(/\r/g, ''),
+            html: m.body && m.body.contentType === 'html' ? m.body.content || '' : '',
         };
     }
     const MSELECT = '$select=id,subject,from,toRecipients,receivedDateTime,sentDateTime,isRead,flag,body,bodyPreview,conversationId,internetMessageId';
@@ -336,6 +348,8 @@
         list: (p, f) => need(p).list(f), setRead: (p, m, v) => need(p).setRead(m, v), setStar: (p, m, v) => need(p).setStar(m, v),
         trash: (p, m) => need(p).trash(m), untrash: (p, m) => need(p).untrash(m), remove: (p, m) => need(p).remove(m),
         send: (p, o) => need(p).send(o),
+        // the formatted version of a Yuzu-server message is fetched only when it is opened (lists stay small); Gmail and Microsoft bring it with the message
+        async loadHtml(p, m) { if (m.html || !m.hasHtml || p !== 'yuzu') return m.html || ''; const j = await yfetch('/api/messages/' + m.id + '/html'); m.html = (j && j.html) || ''; return m.html; },
         fromKeydown, parseAddr, addrList, Expired, htmlToText,
     };
 })();

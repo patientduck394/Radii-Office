@@ -7,11 +7,20 @@
 import PostalMime from 'postal-mime';
 
 const MAX_BODY = 200000;         // characters kept per message
+const MAX_HTML = 400000;         // characters of the formatted (HTML) version kept per message
 const MAX_RAW = 5 * 1024 * 1024; // bytes accepted per incoming message
 const DAILY_SENDS = 50;
 const TOKEN_DAYS = 7;
 const RESERVED = new Set(['admin', 'administrator', 'postmaster', 'abuse', 'hostmaster', 'webmaster', 'root', 'support', 'security', 'noreply', 'no-reply', 'mailer-daemon', 'info', 'contact', 'help', 'team', 'staff', 'yuzu', 'radii', 'office', 'billing', 'privacy', 'legal', 'www', 'ftp', 'mail', 'email']);
 const enc = new TextEncoder();
+
+/* ---------- the database grows by itself: the formatted (HTML) version of a message gets its own column ---------- */
+let schemaReady = false;
+async function ensureSchema(env) {
+    if (schemaReady) return;
+    try { await env.DB.prepare('ALTER TABLE messages ADD COLUMN html TEXT').run(); } catch (e) { /* the column is already there */ }
+    schemaReady = true;
+}
 
 /* ---------- small helpers ---------- */
 const b64 = (buf) => { let s = ''; new Uint8Array(buf).forEach((b) => (s += String.fromCharCode(b))); return btoa(s); };
@@ -108,9 +117,10 @@ async function login(env, body) {
 }
 
 /* ---------- messages ---------- */
-const view = (r) => ({ id: r.id, folder: r.folder, from: r.from_addr, to: r.to_addr, subject: r.subject, body: r.body, date: new Date(r.date).toISOString(), read: !!r.is_read, starred: !!r.starred, msgId: r.msgid || '' });
+const view = (r) => ({ id: r.id, folder: r.folder, from: r.from_addr, to: r.to_addr, subject: r.subject, body: r.body, hasHtml: !!r.has_html, date: new Date(r.date).toISOString(), read: !!r.is_read, starred: !!r.starred, msgId: r.msgid || '' });
 async function list(env, acct, folder) {
-    const sel = 'SELECT * FROM messages WHERE username = ? AND ';
+    // (the formatted version can be big, so lists only say whether there is one; it is fetched when a message is opened)
+    const sel = "SELECT id, username, folder, prev, from_addr, to_addr, subject, body, date, is_read, starred, msgid, (html IS NOT NULL AND html != '') AS has_html FROM messages WHERE username = ? AND ";
     const q = folder === 'starred' ? env.DB.prepare(sel + "starred = 1 AND folder != 'trash' ORDER BY date DESC LIMIT 100").bind(acct.username)
         : env.DB.prepare(sel + 'folder = ? ORDER BY date DESC LIMIT 100').bind(acct.username, ['inbox', 'sent', 'trash'].includes(folder) ? folder : 'inbox');
     return (await q.all()).results.map(view);
@@ -125,8 +135,8 @@ async function change(env, acct, id, body) {
     if (body.folder === 'restore' && row.folder === 'trash') { sets.push('folder = ?', 'prev = NULL'); vals.push(row.prev || 'inbox'); }
     if (sets.length) await env.DB.prepare('UPDATE messages SET ' + sets.join(', ') + ' WHERE id = ?').bind(...vals, id).run();
 }
-const store = (env, m) => env.DB.prepare('INSERT INTO messages (id, username, folder, from_addr, to_addr, subject, body, date, is_read, starred, msgid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?)')
-    .bind(newId(), m.username, m.folder, clean(m.from, 300), clean(m.to, 1000), clean(m.subject || '(No subject)', 300), clean(m.body, MAX_BODY), Date.now(), m.read ? 1 : 0, clean(m.msgid, 300) || null);
+const store = (env, m) => env.DB.prepare('INSERT INTO messages (id, username, folder, from_addr, to_addr, subject, body, date, is_read, starred, msgid, html) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0, ?, ?)')
+    .bind(newId(), m.username, m.folder, clean(m.from, 300), clean(m.to, 1000), clean(m.subject || '(No subject)', 300), clean(m.body, MAX_BODY), Date.now(), m.read ? 1 : 0, clean(m.msgid, 300) || null, m.html ? clean(m.html, MAX_HTML) : null);
 
 async function send(env, acct, body) {
     const list = (Array.isArray(body.to) ? body.to : []).map((a) => ({ email: String((a && a.email) || '').trim().toLowerCase(), name: clean(a && a.name, 80).replace(/[<>"\r\n]/g, '') }));
@@ -174,16 +184,34 @@ async function handle(req, env) {
     if (path === '/api/me' && method === 'GET') return { email: addressOf(env, acct.username), name: acct.name };
     if (path === '/api/messages' && method === 'GET') return { messages: await list(env, acct, url.searchParams.get('folder') || 'inbox') };
     if (path === '/api/send' && method === 'POST') return send(env, acct, body);
+    const mh = /^\/api\/messages\/([a-f0-9]{32})\/html$/.exec(path);
+    if (mh && method === 'GET') { const r = await env.DB.prepare('SELECT html FROM messages WHERE id = ? AND username = ?').bind(mh[1], acct.username).first(); if (!r) throw new Problem('That message is gone!', 404); return { html: r.html || '' }; }
     const m = /^\/api\/messages\/([a-f0-9]{32})$/.exec(path);
     if (m && method === 'PATCH') { await change(env, acct, m[1], body); return { ok: true }; }
     if (m && method === 'DELETE') { await env.DB.prepare('DELETE FROM messages WHERE id = ? AND username = ?').bind(m[1], acct.username).run(); return { ok: true }; }
     throw new Problem('Not found!', 404);
 }
 
+// small pictures that travel inside the message (cid:...) are put into the HTML as data: pictures so they still show
+function inlineImages(html, attachments) {
+    if (!html) return '';
+    let budget = 150000;
+    for (const a of attachments) {
+        const id = String(a.contentId || '').replace(/^<|>$/g, '');
+        if (!id || !/^image\/(png|jpe?g|gif|webp)$/i.test(a.mimeType || '') || !a.content) continue;
+        const bytes = a.content instanceof ArrayBuffer ? new Uint8Array(a.content) : new Uint8Array(a.content.buffer || a.content);
+        if (bytes.length > 40000 || bytes.length > budget) continue;
+        budget -= bytes.length;
+        html = html.split('cid:' + id).join('data:' + a.mimeType + ';base64,' + b64(bytes));
+    }
+    return html;
+}
+
 export default {
     async fetch(req, env) {
         const cors = corsHeaders(req, env);
         if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
+        await ensureSchema(env);
         try { return json(await handle(req, env), 200, cors); }
         catch (e) { return json({ error: e instanceof Problem ? e.message : 'Something went wrong on the mail server!' }, e instanceof Problem ? e.status : 500, cors); }
     },
@@ -197,8 +225,10 @@ export default {
         const row = await env.DB.prepare('SELECT 1 AS x FROM accounts WHERE username = ?').bind(user).first();
         if (!row) { message.setReject('There is no Yuzu address like that'); return; }
         if (message.rawSize > MAX_RAW) { message.setReject('That message is too big'); return; }
+        await ensureSchema(env);
         const parsed = await PostalMime.parse(await new Response(message.raw).arrayBuffer());
         const text = parsed.text || htmlToText(parsed.html) || '';
-        await store(env, { username: user, folder: 'inbox', from: addrOf(parsed.from) || message.from, to: (parsed.to || []).map(addrOf).join(', ') || to, subject: parsed.subject, body: text, msgid: parsed.messageId }).run();
+        const html = inlineImages(parsed.html || '', parsed.attachments || []);
+        await store(env, { username: user, folder: 'inbox', from: addrOf(parsed.from) || message.from, to: (parsed.to || []).map(addrOf).join(', ') || to, subject: parsed.subject, body: text, html, msgid: parsed.messageId }).run();
     },
 };

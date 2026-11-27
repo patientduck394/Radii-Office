@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS messages (
     date INTEGER NOT NULL,
     is_read INTEGER NOT NULL DEFAULT 0,
     starred INTEGER NOT NULL DEFAULT 0,
-    msgid TEXT
+    msgid TEXT,
+    html TEXT                      -- the formatted (HTML) version of a received message, when there is one
 );
 CREATE INDEX IF NOT EXISTS messages_by_user ON messages (username, folder, date DESC);
 CREATE TABLE IF NOT EXISTS signups (ip TEXT NOT NULL, ts INTEGER NOT NULL);
