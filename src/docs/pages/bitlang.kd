@@ -7,7 +7,3 @@ You add a program to a note with the **Programs** skill in Bitbook (Skills tab).
 ::note Programs and View mode
 A running program is part of the page. Typing in the page or switching modes rebuilds it, which stops the program. Let it run in View mode and keep your hands off the text while it plays!
 ::end
-
-## Built-in functions
-
-`atan2 pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print hover renderRT ink inkc renderPT annotate_ beepbox skill textbox counter btn effect_ effect_size effect_shadow effect_tint effect key mouse_x mouse_y mouse_down beep remvar ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list python sql sql_save sql_load lua stop wait`
