@@ -1,0 +1,454 @@
+# Suave on the web
+
+## In a page
+
+```html
+<div id="root"></div>
+<script src="suave.js"></script>
+<script type="text/suave">
+    use std.dom
+    dom.text(dom.query("#root"), "Hello from Suave!")
+</script>
+```
+
+`suave.js` is the whole language and standard library in one file (about 280 KB). Build it with `deno task bundle` (it lands in `dist/suave.js`), or let `suave build` do it.
+
+* **Opening a page from disk (file://)** works too: browsers will not let such a page read other files, so write a *twin* beside each Suave file it loads with `suave twin app.wsv components/counter.xsv` (it makes `app.wsv.js`, which a plain `<script>` can load). Suave finds the twins by itself, including the files a page brings in with `use "./counter.xsv"`. `suave build app.wsv` already puts everything inside `index.html`, so it needs no twins.
+* Several `<script type="text/suave">` tags share one scope, in order. `src="app.sv"` loads a file.
+* A tag with `data-module="util.sv"` is not run; it is a module for `use "./util.sv"`.
+* `print` writes to the browser console, and also into an element with `id="suave-output"` if the page has one.
+* A program error shows in a red box at the bottom of the page, with the line and source.
+* From JavaScript: `Suave.run(code)` and `Suave.eval(code)`.
+
+## The easy web (`std.web`): start here if websites are new to you
+
+You do not need to know HTML, callbacks or promises. `use std.web` gives plain words for the common jobs:
+
+```suave
+use std.web
+
+# 1. Start a website with one line (a page, a folder, or several addresses)
+web.serve(web.page("Hello", web.h1("Welcome!"), web.p("This is my first site.")))
+web.serve("public")                                  # share a folder
+web.serve({"/": "<h1>Home</h1>", "/time": || time.now(), "POST /save": |req| {got: req.json}})
+web.serve(|req| "Hello from " + req.path)            # answer every address
+```
+
+```suave
+# 2. Read things from the web (put `await` in front)
+let text = await web.get("https://example.com")
+let data = await web.json("https://api.example.com/items")
+let reply = await web.post("https://api.example.com/save", {name: "Sam"})
+if await web.is_up("https://example.com"): print("it works!")
+```
+
+```suave
+# 3. Build pages with words instead of tags (your text is made safe for you)
+web.page("Shop",
+    web.h1("Today's fruit"),
+    web.list(["apple", "pear"]),
+    web.table([["apple", 3], ["pear", 5]], ["Fruit", "Price"]),
+    web.p("See ", web.link("our map", "https://example.com/map")))
+```
+
+```suave
+# 4. In a browser page: put things on screen, one word each
+web.heading("Greeter")
+web.input("Your name", |name| web.say("Hello " + name + "!"))
+web.button("Click me", || web.say("Clicked!"))
+```
+
+* `web.get` `web.json` `web.post` `web.put` `web.delete` give back the answer, and a failure says what went wrong (`404 Not Found`). `web.is_up(url)` and `web.status(url)` never fail.
+* `web.page` `h1` `h2` `h3` `p` `bold` `italic` `code` `quote` `box` `link` `image` `list` `numbered` `table` `line` `br` build HTML for you. Text you give is always made safe, and the helpers can be nested. `web.safe("<b>x</b>")` lets in HTML you wrote yourself.
+* `web.serve` takes a folder name, a page, a map of addresses (`"/about"`, or `"POST /save"` for a form or data), or a function. Add `open: true` to open your browser. `web.open(url)` opens one.
+* `web.form_value(req, "name", "friend")` reads what a visitor sent. `web.query`, `web.link_to`, `web.parts`, `web.encode` and `web.decode` handle addresses.
+* **Keydown:** `web.ktext("# Hello\n**bold** and #C#a chip#")` (also `web.keydown`) puts formatted Keydown text in a page, with the **whole Keydown engine** (every chip, badge, block, applet and style). You do not download or include anything: a page made with `web.page` or `web.serve` that has Keydown text in it loads the engine from `https://radii-office.com/Keydown.js` by itself, and pages without Keydown text load nothing. Use your own copy (for offline work) with `web.engine("http://localhost:8000/Keydown.js")`, or `web.page(..., engine: "url")`; `engine: false` turns it off. `web.ktext(text, static: true)` gives plain HTML from a small built-in version instead (for files, emails and tests, where no engine can run). In a browser, `web.say_ktext(text)` puts it on the page, and `web.load_keydown()` loads the engine ahead of time.
+* Browser only: `say say_ktext heading button input picture add_link clear title add_css`. `web.after(2, f)` runs something later and `web.every(1, f)` repeats it.
+* Outside a browser, a page function tells you so and points you to `web.serve`.
+
+### Styling with CSS
+
+`web.page` comes with a clean built-in look (readable text, tidy tables, round buttons, a `.box` class). To change it you add CSS, and there are four ways, from easiest to most flexible:
+
+```suave
+use std.web
+
+# 1. Write the CSS as a map (no braces or semicolons to get wrong). Use _ for dashes: font_size is font-size.
+let look = web.css({
+    ".card": {border: "2px solid teal", padding: "1rem", border_radius: "12px"},
+    "h1": {color: "teal"}
+})
+
+# 2. Give things a class with web.div / web.span, then style the class
+let card = web.div("card", web.h2("Today"), web.p("Sunny!"))
+
+# 3. Or style one thing right where it is
+let note = web.styled("color: crimson; font-size: 1.4rem", "Careful!")
+
+# 4. Hand the sheet to the page (it comes after the built-in look, so yours wins)
+web.serve(web.page("My site", web.h1("Hello"), card, note, css: look))
+```
+
+* You can also write the sheet as plain text, `css: 'h1 { color: teal }'`, and `web.style(sheet)` makes a `<style>` you can put inside any part of a page.
+* **Use single quotes (or `r"..."`) around CSS text.** Inside normal double quotes Suave treats `{ }` as a value to fill in, so `"h1 { color: red }"` is an error. `web.css({...})` avoids the problem completely.
+* In a browser, `web.add_css(sheet)` adds a style sheet to the live page, and `web.div` / `web.styled` pieces can be placed on it with `web.say_ktext` or `dom.html`.
+* Class names are cleaned (letters, numbers, `-` and `_` only) and text inside `web.styled` is escaped, so nothing can break out of its tag.
+* In `.xsv` and `.wsv` files, CSS goes in the `style:` block and is scoped to that component, so you do not need `web.css` there.
+
+When you want more control, `std.http` (servers, routes, callbacks) and `std.dom` (the whole page) are still there!
+
+## Sound (`std.sound`)
+
+```suave
+use std.sound
+
+await sound.sine(440, 0.5)             # a 440 Hz note for half a second
+sound.square(220, 1, 0.3)              # pitch in Hz, seconds, volume 0 to 1 (leave off await to play in the background)
+await sound.triangle(523)
+await sound.mole(330)                  # |sin(x)|: a row of humps, a buzzy sound an octave up
+
+await sound.file("./click.wav")        # beside this program; ./  ../  and a plain name all work
+await sound.file("../sounds/ding.mp3", volume: 0.5)
+await sound.git("user/repo/sounds/ding.wav")          # from GitHub (add @branch: "user/repo@dev/sounds/ding.wav")
+await sound.mint("user/repo/sounds/ding.wav")         # from Mintcode (add @line to pick a line)
+sound.stop()                           # end everything that is playing
+```
+
+* Every play function starts at once and gives back a future that finishes when the sound ends.
+* In a web page the browser plays it, and browsers only allow sound after the visitor has clicked or typed, so start it from a button. In the terminal Suave uses the computer's own player (`afplay` on a Mac, `paplay`, `aplay`, `ffplay` or `mpg123` on Linux, PowerShell for .wav on Windows).
+* `sound.file` looks beside the Suave file that asked for it. In a page it looks beside the page (or the `.sv` file it loaded) and works from disk too.
+* `sound.git` takes `owner/repo/path` (or a github.com link) and reads it from raw.githubusercontent.com. `sound.mint` reads it from the Mintcode site (`sound.mint_server(url)` points it at your own).
+* `sound.wave(|p| ..., 440, 1)` plays a wave you describe: the function gets how far through one cycle it is (0 to 1) and gives back a level from -1 to 1.
+### More sounds: noise, chip noise, harmonics, FM and superchip
+
+```suave
+await sound.noise(1, 0.3)                          # white noise: seconds, volume (color: "pink" or "brown" for softer noise; seed=1 repeats the same noise)
+await sound.chipnoise(6000, 0.5, 0.3)              # chip noise: steps per second (higher = hissier), seconds, volume
+await sound.chipnoise(4000, 0.5, 0.3, type="buzz") # retro (default), buzz, white, bit, crackle
+await sound.harmonics(220, 1, 0.4, h=[1, 0.5, 0.33, 0.25])   # sines at 1x, 2x, 3x, 4x the pitch with these strengths (0 to 1)
+await sound.harmonics(220, 1, 0.4, h="organ")                # shapes: sine saw square triangle organ bell
+await sound.fm(220, 1, 0.4, algorithm=5, ratios=[1, 2, 3, 1], levels=[15, 9, 4, 0], feedback=3)
+await sound.superchip(440, 1, 0.4)                 # a bright chip lead
+```
+
+* **Noise:** `sound.noise` (also `sound.white`) has no pitch, so it starts with the length. `color` is `white`, `pink` or `brown`.
+* **Chip noise** is made the way old game consoles made it: a shift register that is stepped as many times a second as the first number says, so it sounds like a held, steppy hiss. `retro` is the long register (a hiss that only repeats after 32767 steps), `buzz` is the short one (a pitched, metallic buzz that repeats every 93 steps), `white` and `bit` are random levels, and `crackle` is rare clicks.
+* **Harmonics** adds sine waves at whole-number multiples of the pitch. Give a list of strengths (the first is the pitch itself, the second the octave above...) up to 64, or a shape name. Harmonics too high to hear are left out.
+* **FM** (frequency modulation) has four operators, each a sine wave that can bend the phase of another one. `algorithm` (1 to 15) picks the wiring (1 is operator 1 bent by operators 2, 3 and 4; 5 is a chain 1 ← 2 ← 3 ← 4; 13 is four plain sines added; the carriers, the ones you hear, are the first operators the wiring names). `ratios` are the pitch of each operator as a multiple of the note (`[1, 2, 1, 1]` by default), `levels` are 0 to 15 for each operator (a carrier's volume, or a modulator's bending strength; `[15, 8, 0, 0]` by default), and `feedback` (0 to 15) lets one operator bend itself (`feedback_op`, 1 by default).
+* **Superchip** is a chip-style lead: a "spiky" wave doubled with a tiny detune (the unison), a delayed vibrato, a low pass that closes after the start of each note (the "twang"), and chorus. Options: `wave` (`spiky`, `sine`, `square`, `triangle`, `saw`, `mole`), `voices` (1 to 8) and `spread` (semitones between the outer voices, 0.09 by default), `vibrato` (depth in semitones, 0.32), `vibrato_speed` (Hz), `vibrato_delay` (seconds), `cutoff` (Hz, 2828) and `twang` (how fast the filter closes, 2; 0 turns it off), `chorus` (0 to 1) and `fade_out`.
+* `chorus=0.5` also works as a general option on any sound, next to `lowpass`, `eq` and `adsr`.
+
+### Ready-made instruments
+
+Six instruments from the UltraBox song "Look at instruments", rebuilt from numbers. They take a pitch in Hz, seconds and a volume, like the waves, and the same named options (an option you give wins over the instrument's own):
+
+```suave
+await sound.high_superchip(440, 1)     # the superchip lead, with a thin 1/8 pulse wave
+await sound.flute(440, 1)              # a steady flute: the pitch plus weak odd harmonics, a late vibrato
+await sound.electric_piano(440, 1)     # FM electric piano (also sound.epiano)
+await sound.scoot(220, 0.4)            # a double saw through a ringing low pass that snaps shut: a quick "scoot"
+await sound.tweet(440, 1)              # a sine two octaves above the pitch, wobbling heavily and dying away
+await sound.high_scoot(220, 0.4)       # a scoot made from the spiky wave
+sound.instruments()                    # the list of their names
+```
+
+They also work by name everywhere: `sound.make("flute", 440, 1).eq(treble=-4).play()`, `sound.start("scoot", 220, 0.4)`.
+
+* **How they were made:** I rendered a note of each instrument with UltraBox itself and matched the length, the fade, and the strength of the harmonics (flute, tweet, scoot and high scoot match very closely; the electric piano is close but its 2nd and 4th harmonics are a little off). UltraBox's reverb and stereo panning are not copied.
+* **Tweet** plays four times the pitch you give (its only harmonic is the 4th), so the pitch can be at most 5000 Hz.
+* **Extra options:** superchip now takes `wave` = `spiky`, `1/8 pulse`, `1/4 pulse`, `double saw`, `saw`, `sine`, `square`, `triangle` or `mole`; `flare` (how fast the filter snaps shut), `q` (how much the filter rings), `fade_in` and `decay` (the sound dies away at this rate per second). `harmonics` and `fm` also take `vibrato`, `vibrato_speed`, `vibrato_delay`, `fade_in` and `decay`, and `fm` takes `op_decay=[0, 0, 0, 1.2]` to make an operator fade away.
+
+### Filters and envelopes are on by default, zero switches them off
+
+`superchip` and every ready-made instrument start with the filters, envelopes and effects of the original instrument. Each one has a name, and `0` switches it off:
+
+| Option | What it is | Which sounds have it on |
+| --- | --- | --- |
+| `cutoff=0` | the low pass filter (and with it `twang` and `flare`) | superchip, high_superchip (2828 Hz), scoot, high_scoot (707 Hz), electric_piano (13454 Hz) |
+| `twang=0` | the filter slowly closing | superchip, high_superchip, electric_piano |
+| `flare=0` | the filter snapping shut | scoot, high_scoot |
+| `chorus=0` | the chorus | superchip, high_superchip |
+| `vibrato=0` | the pitch wobble | superchip, high_superchip, flute, tweet |
+| `voices=1` | the doubled (unison) voice | superchip, high_superchip, scoot, high_scoot, tweet |
+| `decay=0` | the volume dying away | tweet |
+| `op_decay=0` | the operators fading away | electric_piano |
+| `fade_in=0`, `fade_out=0` | the soft start and end | all of them |
+
+```suave
+await sound.scoot(220, 1)                    # snaps shut within a fraction of a second
+await sound.scoot(220, 1, flare=0)           # the filter stays put, so it holds for the whole second
+await sound.superchip(440, 1, cutoff=0, chorus=0, vibrato=0, voices=1)   # just the bare wave
+await sound.tweet(440, 2, decay=0)           # no dying away
+```
+
+The general options follow the same rule: `adsr=0`, `lowpass=0`, `highpass=0`, `bandpass=0`, `eq=0`, `fade_in=0`, `fade_out=0`, `reverb=0` and `chorus=0` all mean "off" (so they are easy to switch from a variable). `harmonics` and `fm` also accept `cutoff`, `twang`, `flare` and `q` (off unless you give a `cutoff`).
+
+### More waves, instruments and effects
+
+**More waves:** `saw`, `ramp` (a saw the other way), `halfsine`, `stairs` (an 8-step saw), `parabola`, `warm` (a sine with its next two harmonics), `pulse(220, 1, duty=0.25)` and `pwm(220, 1, pwm_rate=2)` (a pulse whose width swings back and forth). `sound.waves()` lists them all!
+
+**More instruments** (pitch, seconds, volume, and any option wins over the instrument's own): `pluck` (a plucked string, `decay` 0.9 to 0.9999), `bell`, `bass`, `sub`, `brass`, `pad`, `strings`, `wobble`, `lead`, `organ`, `whistle`, `lofi`, `robot`. Drums: `kick`, `snare`, `hihat`, `clap`, `tom`, `cymbal`. `sound.instruments()` lists them all, and `make_melody(..., instrument="pluck")` takes any of them!
+
+```
+sound.play("pluck", 220, 2)
+sound.play("kick", 55, 0.4)
+sound.sine(440, 1, echo=0.4, echo_time=0.25, tremolo=0.5)
+sound.make("saw", 110, 1).lowpass(900).distortion(0.4).pan(-0.5).play()
+```
+
+**More effects** work as named options on any sound and as Sound methods. Each is off with `0`, `false` or `none`:
+
+| Effect | Option (and extras) | Method |
+|---|---|---|
+| speed (and pitch) | `speed=2` | `.speed(2)` |
+| play backwards | `reverse=true` | `.reverse()` |
+| distortion | `distortion=0.5` (0 to 1) | `.distortion(0.5)` |
+| bit crusher | `bitcrush=6` (bits), `crush_rate=8000` | `.bitcrush(6, 8000)` |
+| tremolo | `tremolo=0.5`, `tremolo_rate=6` | `.tremolo(0.5, 6)` |
+| warble (vibrato) | `warble=0.3` (semitones), `warble_rate=5.5` | `.warble(0.3, 5.5)` |
+| echo | `echo=0.35`, `echo_time=0.28`, `echo_feedback=0.4` | `.echo(0.35, 0.28, 0.4)` |
+| flanger | `flanger=0.5`, `flanger_rate=0.3` | `.flanger(0.5)` |
+| phaser | `phaser=0.6`, `phaser_rate=0.5` | `.phaser(0.6)` |
+| ring modulation | `ringmod=300` (Hz), `ring_mix=0.5` | `.ringmod(300, 0.5)` |
+| compressor | `compress=-18` (dB), `compress_ratio=4` | `.compress(-18, 4)` |
+| pan (mono becomes stereo) | `pan=-1` to `1` | `.pan(0.5)` |
+| normalize | `normalize=0.95` | `.normalize(0.95)` |
+
+The order is speed, filters and EQ, chorus, flanger, phaser, warble, ringmod, distortion, bitcrush, envelope and fades, tremolo, compress, echo, reverb, volume, then pan, normalize and reverse. Echo and reverb leave a tail, just like reverb always did!
+
+### Starting a sound without waiting
+
+Every play function already starts at once; `await` is what waits for the end. `sound.start` starts a sound and gives you a **Playing** straight away:
+
+```suave
+let p = sound.start("superchip", 440, 5)      # the same kinds and options as sound.make
+print(p.playing())                            # true
+sound.start(sound.make("noise", 1, 0.2).lowpass(800))   # or start a Sound you built
+p.stop()                                      # end it now
+await p.wait()                                # or wait for it
+```
+
+In a web page `sound.start` and the play functions play straight from memory with the browser's audio engine, so they begin with no delay.
+
+**On a Mac, in the terminal,** a tiny helper program (`suave-audio-mac`, which comes with Suave) is started when you write `use std.sound`. It keeps the sound card open, so every sound begins within a few thousandths of a second, and sounds that play one after another no longer wait for a new player each time (the Mac's own `afplay` needs over a second to start, every time). The first sound of a program waits for the helper to wake up (about half a second to one second), so a short script with many sounds is much quicker than before. If the helper cannot start, Suave plays with `afplay` as before. To always use the old way, set the environment variable `SUAVE_SLOW_SOUND=1`. To rebuild the helper, run `sh tools/build-audio-mac.sh` (it needs the Swift compiler).
+
+The same helper plays **sound files** (`sound.file`, `sound.git`, `sound.mint`) on a Mac, in any kind of file the Mac can open (wav, mp3, m4a, aac, flac, aiff), and a file you play again from GitHub or Mintcode is kept for the rest of the program, so it starts at once. In a web page a sound file is read into memory the first time and played from there, so it starts with no delay too (and also stays for the rest of the page).
+
+**Windows** keeps one PowerShell running for sounds that play one after another (starting a new one takes a good half second); a sound that begins while another is still playing uses a PowerShell of its own, as before. **Linux** players start in a few thousandths of a second already, so nothing changed there, but all sounds now share one temporary folder and the volume option works. (The Windows and Linux ways were written without a Windows or Linux computer to try them on, so tell us if they misbehave, and set `SUAVE_SLOW_SOUND=1` to go back to the old way.)
+
+### Melodies
+
+`sound.melody` plays a whole tune from a string of notes, with no gaps and one `await`:
+
+```suave
+await sound.melody("D F A C+")                                    # D, F and A in octave 4, then C one octave up
+await sound.melody("D F A C+", octave=3, bpm=90, instrument="superchip")
+await sound.melody("C:2 E G | C/E/G:2", reverb=0.3)               # lengths, bar lines and a chord
+let tune = sound.make_melody("D F A C+", octave=4)                # the same tune as a Sound you can change
+await tune.lowpass(1200).play()
+print(sound.note("A4"))                                           # 440 (the pitch of a note, in Hz)
+```
+
+* **Notes** are the letters C D E F G A B (either case). Add `#` for sharp or `b` for flat (`F#`, `Bb`). A number after the letter picks the octave for that note (`A5`); without one the note uses the `octave=` option (default 4, where A is 440 Hz). `+` goes one octave up and `-` one down (`C+`, `G-`, `C++`).
+* **Lengths** come after a colon in beats (`C:2` is two beats, `E:0.5` half a beat). Every note lasts one beat if you give no length. A rest is `r` (or `_`) and takes the same `:length`.
+* **Chords** join notes with a slash: `C/E/G`. **Bar lines** (`|`) are just spaces, and you can give a list of notes instead of one string.
+* **Options:** `octave` (default 4), `bpm` (beats a minute, default 120), `instrument` (any sound kind: `sine`, `square`, `superchip`, `flute`, `scoot`... default `sine`), `volume` (default 0.5), and every note option (`adsr`, `lowpass`, `a`, `r`, `fade_out`...) which goes to each note. `reverb`, `room` and `damp` go over the whole tune once.
+* `sound.make_melody(...)` gives a **Sound** (play it, change it, save it) and `sound.start(sound.make_melody(...))` plays it in the background.
+
+### Reverb
+
+`reverb=0.3` puts a sound in a room (0 is off, 1 is a very wet room). `room=` is the size of the room (0 to 1, default 0.5, a bigger room rings for longer) and `damp=` how soft its walls are (0 to 1, default 0.5, a higher number takes the shine off the echoes):
+
+```suave
+await sound.sine(440, 0.1, reverb=0.5)            # a short blip in a room
+await sound.sine(440, 0.1, reverb=0.5, room=1)    # in a cathedral
+await sound.make("square", 220, 0.5).reverb(0.4).play()
+for n in [220, 330, 440, 660] { await sound.sine(n, 0.1, reverb=0.5) }
+```
+
+A reverb adds a quiet tail after the sound (up to four seconds in the biggest room). `await` finishes when the sound itself is over, so the next note starts at once and the tail of the first goes on sounding under it, like in a real room. The program still waits for the very last tail before it ends. `reverb=0` (or `false`) switches it off.
+
+### Changing a sound (ADSR, volume, filters, EQ)
+
+Add named options to any play function (`sine square triangle mole wave file git mint melody`):
+
+```suave
+await sound.sine(220, 0.5, a=0.05, v=0.4)                       # attack 0.05 s, volume 0.4
+await sound.square(220, 1, a=0.02, d=0.1, s=0.6, r=0.3)         # a full ADSR envelope
+await sound.sine(440, 1, adsr=[0.02, 0.1, 0.6, 0.3])            # the same, as a list (or a map {attack: ..., release: ...})
+await sound.square(220, 1, lowpass=800)                         # lowpass / highpass / bandpass in Hz (also lp hp bp), q= sets the sharpness
+await sound.triangle(330, 1, eq={bass: 6, mid: 0, treble: -4})  # boost or cut in dB
+await sound.sine(330, 1, eq=[[1000, 8], [4000, -6]])            # your own bands: [pitch, dB] or [pitch, dB, width]
+await sound.file("./click.wav", highpass=300, fade_out=0.2, v=0.5)
+```
+
+* **ADSR** shapes how loud a note is over time: **a**ttack (seconds to rise to full volume), **d**ecay (seconds to fall to the sustain level), **s**ustain (the level it holds, 0 to 1) and **r**elease (seconds to fade to silence at the end of the sound). Any of `a d s r` can be left out (they default to 0, 0, 1 and 0). The release happens inside the length you give, so `sound.sine(440, 1, r=0.3)` fades during its last 0.3 seconds.
+* **Volume** is `v` (or `volume`), 0 to 1.
+* **Filters** keep or remove pitches: `lowpass` lets low sounds through, `highpass` lets high ones through, `bandpass` keeps a narrow band around the pitch.
+* **EQ** (`eq`) turns bass (below about 250 Hz), mid (around 1000 Hz) and treble (above about 4000 Hz) up or down in decibels (-24 to 24).
+* `fade_in` and `fade_out` are seconds. The order is: filters and EQ, then ADSR and fades, then volume.
+* **Build first, play later:** `sound.make("square", 220, 1)` gives a Sound you can change step by step with `.adsr(a, d, s, r)`, `.volume(v)`, `.lowpass(hz)`, `.highpass(hz)`, `.bandpass(hz)`, `.eq(bass=4)`, `.fade_in(s)`, `.fade_out(s)`, and then `.play()`, `.save("note.wav")`, `.wav()`, `.samples()` or `.seconds()`. Sound files can be loaded the same way: `await sound.load("./click.wav")` (also `load_git` and `load_mint`).
+* Changing a file works on `.wav` files everywhere, and on other kinds (mp3, ogg...) in a web page, where the browser can read them. In the terminal, save them as `.wav` first. Options on a file take a moment longer because the sound is read and rebuilt before it plays.
+
+* To see or save a wave instead of hearing it: `sound.samples("sine", 440, 0.01)` gives the numbers and `sound.wav("square", 220, 1)` gives the bytes of a `.wav` file.
+
+## File types: .sv, .xsv and .wsv
+
+| File | What it is | How you use it |
+| --- | --- | --- |
+| `.sv` | a Suave program or module | `suave run app.sv`, or `use "./util.sv"` |
+| `.xsv` | a **web component**: props, script, template and style in one file | `use "./counter.xsv"` makes `Counter`, then `<Counter/>` in a template |
+| `.wsv` | a **web page or app**: the same parts plus a `<head>` | `suave serve app.wsv`, `suave build app.wsv -o dist` |
+
+Suave is also a small web framework, and it is made so that someone new to websites can use it. The **easy style** has no tags to close: plain Suave at the left edge, and indented blocks named `page:`, `style:`, `props:` and `head:`.
+
+```
+# counter.xsv
+props:
+    start = 0
+
+count = start
+
+def inc():
+    count += 1
+
+page:
+    div.counter:
+        h2: Clicks: {count}
+        button @click=inc: Click me
+        if count > 5:
+            p: That is a lot of clicking!
+
+style:
+    .counter { padding: 1rem }
+```
+
+* A markup line is `tag.class#id attribute=value ...: text`. Leave out the tag and you get a `div`. Indented lines are its children.
+* `"quoted text"` (or `| text`) is a plain text line. `{name}` puts a value in.
+* `if cond:`, `elif cond:`, `else:` and `for item in items:` hold the lines under them.
+* `@click=handler` runs a function, `@click="count += 1"` runs a bit of code, `bind:value={name}` links a box to a variable, and `class:done={cond}` switches a class.
+* A capital letter makes a component: `Counter start=5`. `slot` shows what was written between a component's tags.
+* `title "My site"` at the top sets the browser tab title, and a `.wsv` is a whole page (`suave build`, `suave serve`).
+
+If you already know HTML you can write the same thing with tags (below), and the two styles can even mix: the `page:` block of an easy file takes the same lines, and a `<template>` that has no `<` in it is read as easy markup.
+
+### The HTML style
+
+```xml
+<props>
+  start = 0                     <!-- values a parent can pass in, with defaults -->
+</props>
+
+<script>
+count = start                   # ordinary Suave, in the component's own scope
+def inc():
+    count += 1
+</script>
+
+<template>
+  <button class="big" on:click={inc}>Clicked {count} times</button>
+</template>
+
+<style>
+  .big { padding: 8px 14px }    /* scoped to this component */
+</style>
+```
+
+**Template syntax** (HTML plus `{expressions}`):
+
+* `{expr}` in text, and `value={expr}` or `class="btn {kind}"` in attributes.
+* Events: `on:click={handler}` or `@click={handler}` (a function; it gets the event if it has a parameter), or `@click="count += 1"` for a bit of code. The page redraws after every handler, and when you call `update()`.
+* Two-way binding: `bind:value={name}` and `bind:checked={item.done}`.
+* `class:done={item.done}` turns a class on and off.
+* `if="count > 3"`, `else-if="..."`, `else`, and `for="item in items"` or `for="i, item in items"` on any element. `<block>` groups without adding an element.
+* Child components: `<Counter start={5} on_change={handler}/>`, with `<slot/>` in the child for what is written between the tags. Names starting with a capital letter are components.
+* A function called `on_mount()` in the script runs after the first draw, and `on_unmount()` when the component goes away.
+* Styles are scoped to the component (they only touch its own elements). Write `:global(body)` to reach outside.
+* A `.wsv` page also takes a `<head>` (title, meta, links) and mounts into `#app`.
+
+```sh
+suave new my-app --web        # a project with app.wsv and a counter component
+suave serve app.wsv           # build it and serve it at http://localhost:8000
+suave build app.wsv -o dist   # dist/index.html (the page and every component it uses are inside) + dist/suave.js
+suave check app.wsv           # look for mistakes in the script, the expressions and the handlers
+```
+
+By hand, in any page: `<script type="text/suave" src="app.wsv"></script>` mounts a page into `#app`, and `<script type="text/suave" src="counter.xsv" data-mount="#box"></script>` mounts one component. From Suave code: `dom.mount(Counter, "#box", {start: 5})`. `dom.render_html(Counter, {start: 5})` gives a component's HTML as text, with no browser needed (handy in tests).
+
+Limits: no `await` inside a template (do the waiting in the script and call `update()`), no named slots, and a component redraws as a whole tree (fine for ordinary pages, not for thousands of rows).
+
+## The app framework (`std.dom`)
+
+An app is three things: a **state**, a **view** that draws it, and an **update** that changes it.
+
+```suave
+use std.dom
+
+fn view(state, dispatch) {
+    dom.h("div", {}, [
+        dom.h("h1", {}, ["Count: {state}"]),
+        dom.h("button", {on_click: |e| dispatch("up")}, ["+1"]),
+    ])
+}
+fn update(state, msg) = match msg { "up" => state + 1, _ => state }
+
+dom.app("#root", 0, view, update)
+```
+
+* `dom.h(tag, props, children)` makes a virtual node. Props: `class`, `style` (a map like `{fontFamily: "serif"}`), `value`, `checked`, `text`, any attribute, and `on_click`, `on_input`, `on_change`, `on_submit`... for events. An event is a map with `value`, `checked`, `key`, `x`, `y`, `target` and the functions `prevent()` and `stop()`.
+* After every `dispatch(msg)` the page is patched, not rebuilt, so inputs keep focus.
+* `dom.query`, `dom.query_all`, `dom.create`, `dom.on`, `dom.text`, `dom.attr`, `dom.add_class`, `dom.value`, `dom.delegate`, `dom.download` and more work on real elements if you prefer.
+
+## Using JavaScript libraries (`std.js`)
+
+`use std.js` lets Suave call any JavaScript on the page: `js.global("Math")`, `js.get(obj, "a.b")`, `js.set(obj, "x", 5)`, `js.call(obj, "method", args...)`, `js.new("Uint8Array", data)`, `js.import(url)` (a module from a URL) and `js.load_script(url)`. Objects stay opaque (you hold them and pass them back), maps and lists become plain JavaScript on the way in, functions become JavaScript functions, and promises are futures, so `await` works. `examples/pdf-annotator/` uses it to drive pdf.js and pdf-lib.
+
+## Drawing (`std.canvas`)
+
+```suave
+use std.canvas
+let c = canvas.new(400, 300)
+c.fill_style("tomato").fill_circle(200, 150, 60)
+c.loop(|dt| c.clear("#111").fill_style("white").text("{(1 / dt).round()} fps", 10, 20))
+```
+
+## Talking to servers (`std.http`)
+
+Requests use callbacks that receive a `Result`:
+
+```suave
+use std.http
+http.get_json("https://example.com/api/items", |result| {
+    match result {
+        Ok(items) => print(items.len()),
+        Err(message) => print("failed: {message}")
+    }
+})
+```
+
+## Saving data (`std.storage`)
+
+`storage.set("key", value)` and `storage.get("key", default)` keep any value in the browser's localStorage (in the terminal they use a `.suave-storage.json` file).
+
+## Servers
+
+```suave
+use std.http
+let app = http.app()
+app.get("/hi/:name", |req| "Hello, {req.params.name}!")
+app.get("/api/items", |req| [1, 2, 3])               // data becomes JSON
+app.post("/api/echo", |req| {got: req.json})
+app.static("/files", "./public")
+app.listen(8080)
+```
+
+A handler gives back text (HTML if it starts with `<`), data (sent as JSON), or `http.json(x, 201)`, `http.redirect("/")`, `http.file("a.png")`, `http.status(404, "no")`.
+
+## Building and serving a project
+
+```sh
+suave new todo --web          # index.html + app.sv + suave.suvl
+cd todo
+suave build app.sv -o dist
+suave serve dist              # http://localhost:8000
+```

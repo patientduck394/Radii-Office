@@ -1,0 +1,27 @@
+# Privacy and security
+
+## What stays on your computer
+
+Documents, notes, sheets and drawings are kept in your browser or in files you choose. The apps do not upload them, and there are no accounts to make for ordinary use!
+
+## What goes online, and only when you ask
+
+* **Share & Chat, Overshare, Phosphor, Antimony, Beta, Mintcode and Yuzu mail** send what you put in them to their own servers, because that is how they work!
+* **Pictures from OpenDB** are fetched from this site when you insert them!
+* **Math** is drawn by KaTeX, which is bundled with the site!
+
+## How the site protects itself
+
+* **Security headers** on every page: no other site can frame Radii Office, and scripts and styles come from known places!
+* **Signed downloads** with published keys and fingerprints in `/signing/`!
+* **Integrity hashes** on loaded scripts, so a changed file is refused!
+* **Safe Keydown.** Text drawn by Keydown in shared places (messages, posts, mail) is cleaned again after it is drawn, so scripts and frames in it are removed!
+* **Mail content.** Real email in Yuzu is shown inside a sandboxed frame with a strict policy, and pictures from the internet are blocked until you press **Load pictures**!
+
+## Reporting a problem
+
+If you find a security problem, please tell the team using the contact link on the [home page](/) before posting it publicly. The code of conduct is [here](/code-of-conduct)!
+
+## Licenses
+
+The suite is free software. OpenDB content is CC0 (public domain), and fonts and icons keep their own free licenses, listed in `ATTRIBUTIONS.md` and `ATTRIBUTIONS-FONTS.md` in the source!

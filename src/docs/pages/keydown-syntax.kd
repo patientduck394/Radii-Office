@@ -1,0 +1,62 @@
+# Syntax cheat sheet
+
+The tags you will use most. Every example here is drawn live by Keydown!
+
+## Lines
+
+Start a line with one of these and a space:
+
+| Write | You get |
+| --- | --- |
+| `# Heading` ... `###### Heading` | Heading levels 1 to 6 |
+| `#= Heading` | The extra large **mega header** |
+| `* item` | A bullet point |
+| `> text` | A quote |
+| `-# text` | **Subtext**: small, dim text for notes |
+| `::pagebreak` | A new page |
+
+-# This line is subtext, drawn by `-# text`!
+
+## Inline
+
+| Write | You get |
+| --- | --- |
+| `**bold**` | **bold** |
+| `*italic*` | *italic* |
+| Backticks around a word | `code` |
+| `[link](https://radii-office.com)` | [link](https://radii-office.com) |
+| `{key Ctrl+K}` | {key Ctrl+K} |
+
+## Chips
+
+* `++R+glossy++` gives ++R+glossy++ (a glossy Aero chip)!
+* `#G#a green chip#` gives #G#a green chip#!
+* `=B=orb=B=` gives =B=orb=B=, a gel orb!
+* `{badge New}` gives {badge New}, a small badge (add a color after a bar, like `{badge New` then a bar then `green}`)!
+* `{chip teal ticket}ADMIT ONE{/chip}` gives {chip teal ticket}ADMIT ONE{/chip}!
+
+The letters pick the color. R is red, G is green, B is blue, and many more exist (see the reference)!
+
+## Writing a symbol as itself
+
+If you want to show a tag instead of using it, put a backslash before the symbols, like `\#R\#not a chip\#`. Words that only look like Keydown, such as AT&T and R&D, stay as typed!
+
+## Math
+
+`$E = mc^2$` gives $E = mc^2$, and a line with `$$ ... $$` gives a larger centered equation!
+
+## Callouts
+
+```
+::note Your own title
+Text inside the box.
+::end
+```
+
+::note Your own title
+Text inside the box. There are also tip, info, warning, danger, success and important!
+::end
+
+## Where to go next
+
+The [document blocks](#/keydown-blocks) page lists every `::` block, and the [reference](#/keydown-reference) has every chip family and style!

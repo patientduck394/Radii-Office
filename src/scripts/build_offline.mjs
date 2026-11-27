@@ -64,6 +64,8 @@ export function build() {
   for (const f of files) {
     if (/^opendb\/(data|icons)\//.test(f)) add(f);
   }
+  // the documentation reads its page list, pages, search index and BitLang guide with fetch
+  for (const f of files) if (/^docs\/(nav\.json|search\.json|pages\/|generated\/)/.test(f)) add(f);
   add('writeout/unique-styles.css');
   add('manifest.json');
   const list = [...urls].filter((u) => u === '/' || u.endsWith('/') || exists(decodeURIComponent(u.slice(1).split('?')[0]))).sort();

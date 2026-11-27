@@ -1,0 +1,78 @@
+# SUVL: Suave Values
+
+SUVL is Suave's own data format. It is meant for config files and data you edit by hand: friendly like YAML, exact like JSON, and typed like TOML. Files end in `.suvl`.
+
+```suvl
+# a SUVL file
+name: "Ada Lovelace"
+tags: [math, poetry, 3.5]          # bare words are text; numbers, true, false, none are typed
+
+server {                           # a block: key { ... } means key: { ... }
+  host: localhost
+  port: 8080
+  timeout: 90s                     # durations become seconds
+  cache: 64mb                      # sizes become bytes
+  ratio: 50%                       # percentages become fractions (0.5)
+}
+
+born: 1815-12-10                   # dates and date-times become dates
+accent: #ff8800                    # hex colors stay text
+point: {x: 1, y: 2}
+
+bio: """
+  Several lines,
+  dedented to the least indented one.
+"""
+```
+
+## Rules
+
+**Entries.** `key: value` (or `key = value`) or a block `key { ... }`. Entries end at a new line or a comma, so `a: 1, b: 2` on one line is fine. A key is a bare word (`name`, `max-size`, `a.b`) or a quoted string. A key may appear only once in a map.
+
+**Comments.** `#` and `//` run to the end of the line. A `#` followed by 3, 4, 6 or 8 hex digits is a color, not a comment.
+
+**Values.**
+
+| You write | You get |
+| --- | --- |
+| `"text"` with escapes `\n \t \" \\ \u{1F600}` | text |
+| `'text'` | text, no escapes |
+| `"""..."""` | multi-line text, dedented |
+| `hello` `/usr/bin` `a-b` | text (a bare word runs to a space, comma, bracket or quote) |
+| `42` `-3.5` `1e3` `1_000` `0xFF` `0b101` `0o17` | numbers (huge whole numbers become big integers) |
+| `inf` `-inf` `nan` | special numbers |
+| `true` `false` | booleans |
+| `none` (or `null`) | none |
+| `[a, b, c]` | list (commas or new lines between items; a trailing comma is fine) |
+| `{a: 1, b: 2}` | map |
+| `2026-11-17` `2026-11-17T10:30:00Z` | a date |
+| `90s` `5m` `2h` `1d` `1w` `250ms` | seconds as a number (`250ms` is `0.25`) |
+| `512b` `4kb` `10mb` `1gb` `2tb` | bytes as a number (1024 based) |
+| `50%` | a fraction (`0.5`) |
+| `#ff8800` | text `"#ff8800"` |
+
+Use `suvl.parse_raw(text)` to keep durations, sizes and percentages as text.
+
+**The top level** is normally a map. A whole file can also be a single list (`[1, 2, 3]`), a brace map, or a single value (`42`). An empty file is an empty map.
+
+## Writing it back
+
+`suvl.stringify(value)` gives a canonical file: one entry per line, nested maps as blocks, short lists on one line, text bare when that is safe and quoted otherwise, dates as `YYYY-MM-DD` (or full date-times). Reading what you wrote gives the same value.
+
+## Using it from Suave
+
+```suave
+use std.suvl
+let cfg = suvl.parse(fs.read("app.suvl"))
+print(cfg.server.timeout)                  // 90
+fs.write("out.suvl", suvl.stringify({name: "x", tags: ["a", "b"]}))
+```
+
+`std.data` can change a file between JSON, YAML, TOML, SUVL and CSV: `suave convert app.yaml suvl`.
+
+## Why a new format?
+
+* **Durations and sizes are first-class.** `timeout: 90s` reads better than `timeout_seconds: 90`, and a wrong unit is a parse error.
+* **Bare words need no quotes**, but everything is still unambiguous: only the listed words (`true`, `false`, `none`, numbers, dates, units) change type, and the writer quotes any text that would be misread.
+* **Errors say where**: line, column and the source line with a caret.
+* It is small enough to hold in your head: one page.

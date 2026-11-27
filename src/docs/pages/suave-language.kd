@@ -1,0 +1,350 @@
+# The Suave language
+
+A guide to every part of the language. Code blocks run as shown with `suave run`.
+
+## Python-style layout
+
+Suave reads like Python, with a few things made easier. A line that ends with a colon opens a block of the lines indented below it:
+
+```suave
+# a comment
+def grade(score):
+    if score >= 90:
+        return "A"
+    elif score >= 80:
+        return "B"
+    else:
+        return "keep going"
+
+total = 0
+for i in range(1, 4):
+    total += i
+print(grade(85), total)
+```
+
+What is the same as Python: `def`, `if / elif / else`, `for x in items:`, `while`, `lambda x: x * 2`, `value if condition else other`, `True / False / None`, `and / or / not / in`, `pass`, `try / except / finally`, `raise`, `import math`, `from math import sqrt, pi`, `a, b = b, a`, `first, *rest = items`, `for key, value in pairs:`, `f"..."`, `sum(x for x in xs)` and `f(size=3)`.
+
+What is easier:
+
+* **No `__init__`.** A `class` lists its fields and `def` methods: `class Dog:` then `name: str`, `age: num = 1`, `def speak(self): ...`. Make one with `Dog("Rex")` or `Dog(name="Rex")`.
+* **Plain `x = 5` makes a changeable variable** (and `x = 6` later changes it, even from inside a function). Write `let x = 5` when it should be locked.
+* **`match` takes `case` lines:** `case 1 | 2:`, `case n if n > 100:`, `case _:`.
+* Only `false` and `none` are false, so `0`, `""` and `[]` do not surprise you, and `//` stays a comment (floor division is `div(a, b)`).
+* Both styles work and can be mixed: `fn f(x) { x + 1 }` is the same as `def f(x): return x + 1`.
+
+The rest of this page shows the original brace style next to it; every example works either way.
+
+## Comments and layout
+
+```suave
+# a Python-style comment
+
+```suave
+// a line comment (still works)
+/* a block comment, /* which can nest */ */
+```
+
+A statement ends at the end of the line (or at `;`). A line carries on when it ends inside `( )` or `[ ]`, or when the next line starts with `.method`, `|>`, `??`, `and` or `or`:
+
+```suave
+let total = [1, 2, 3]
+    .map(|x| x * 2)
+    .sum()
+```
+
+## Values
+
+| Kind | Examples | Notes |
+| --- | --- | --- |
+| number | `42` `3.14` `1_000` `0xFF` `0b101` `0o17` `1e3` | one kind of number (a JavaScript double); integers print without `.0` |
+| big integer | `123n` `2n ** 100n` | exact, only mixes with other big integers |
+| complex | `3 + 4i` `2.5i` `complex(1, -1)` | imaginary numbers; see [QUANTUM.md](QUANTUM.md) |
+| pool | `pool [1, 2, 3]` | a value that is decided when it is first used; see [POOLS.md](POOLS.md) |
+| future | `slow()` (an async call) | the result of an async function; `await` it |
+| text | `"hi {name}"` `'plain'` `r"raw\n"` `"""multi"""` | see below |
+| bool | `true` `false` | |
+| none | `none` | "no value" |
+| symbol | `:ok` `:name` | cheap names, compare by identity |
+| list | `[1, "two", [3]]` | changeable |
+| tuple | `(1, "two")` `(1,)` | fixed length |
+| map | `{a: 1, "b c": 2, [key]: 3}` | any value can be a key; insertion order is kept |
+| set | `#{1, 2, 3}` | |
+| range | `1..5` `1..=5` `0..` | `(0..10).step(2)`; `0..` never ends |
+| function | `fn f(x) = x` `\|x\| x + 1` | |
+| bytes | `"hi".bytes()` | |
+
+**Truthiness:** only `false` and `none` are false. `0`, `""`, `[]` are true.
+
+### Text
+
+```suave
+let name = "Ada"
+print("Hello, {name}! {1 + 2} {[1, 2].len()}")     // {expression} inside "..." is interpolated
+print('no {interpolation} in single quotes')       // '...' is plain (escapes still work)
+print(r"C:\path\no escapes")                       // r"..." is raw
+print("""
+    several lines,
+    dedented to the least indented line
+    """)
+print("a \{ brace \} and a tab:\t.")
+print("{3.14159:.2f}  {255:x}  {42:>8}  {"hi":^8}  {1234567:,}  {0.256:.1%}")   // format specs after a colon
+```
+
+> **Regular expressions and braces:** `\d{4}` inside `"..."` looks like an interpolation. Write patterns as `r"\d{4}"` or `'\d{4}'`.
+
+Format spec: `[fill][align<>^=][sign][#][0][width][,][.precision][type]` with types `d f e x X o b %`.
+
+Text is indexed by character: `s[0]`, `s[-1]`, `s[1..3]`, `s[..2]`, `s[3..]`.
+
+## Names
+
+```suave
+let x = 1          // cannot be reassigned
+var y = 2          // can: y = 3, y += 1
+const LIMIT = 10
+let [first, ..rest] = [1, 2, 3]
+let {name, age: years} = {name: "Ada", age: 36}
+var (a, b) = (1, 2)
+(a, b) = (b, a)    // swap
+```
+
+Compound assignment: `+= -= *= /= %= **= ??=`.
+
+## Operators
+
+From loosest to tightest: `|>`, `??`, `or`, `and`, `not`/`!`, comparisons (`== != < <= > >= in not in is is not`), range `..` `..=`, `+ -`, `* / %`, unary `-`, `**` (right to left), then `.member` `?.member` `[i]` `(call)` `?`.
+
+- `/` always divides exactly (`7 / 2` is `3.5`); use `div(7, 2)` for whole-number division. Dividing by zero is an error.
+- `%` takes the sign of the right side (`-7 % 3` is `2`).
+- `+` joins text, lists, tuples, maps (right side wins) and sets (union); `*` repeats text and lists; `-` on sets is a difference.
+- `==` compares by value (lists, maps, structs, enums).
+- `a ?? b` is `b` only when `a` is `none`.
+- `x |> f(y)` is `f(x, y)`; `x |> f` is `f(x)`.
+- `x?.name` gives `none` if `x` is none, and the rest of the chain is skipped too.
+- `x is int`, `x is none`, `x is Point` test types; `x in coll` tests membership.
+
+## Functions
+
+```suave
+fn add(a, b = 10) = a + b                    // = body for one expression
+fn many(first, *rest) { [first, rest.len()] }
+fn area(w: num, h: num) -> num { w * h }     // checked when called
+
+add(1)                  // 11
+add(b: 5, a: 1)         // named arguments, any order
+many(1, 2, 3)           // [1, 2]
+many(*[7, 8, 9])        // spread a list into arguments
+
+let twice = |f| |x| f(f(x))                  // lambdas and closures
+fn counter() { var n = 0; || { n += 1; n } }
+```
+
+- The last expression is the result; `return` leaves early.
+- Functions can be used before they are written in the same file.
+- Too few or too many arguments is an error (lambdas ignore extras).
+
+### Partial functions
+
+Fill in some values now and give the rest later! Put `_` where a value is still missing, or use `partial`:
+
+```suave
+fn sub(a, b) = a - b
+fn greet(hello, name, punct = ".") = hello + ", " + name + punct
+
+let from10 = sub(10, _)            // a new function waiting for b
+from10(3)                          // 7
+let minus1 = sub(_, 1)             // waiting for a
+[5, 6].map(sub(_, 1))              // [4, 5]
+5 |> sub(100, _)                   // 95   (the piped value lands in the _)
+
+let add1 = partial(add, 1)         // the first value is fixed
+partial_right(sub, 1)(10)          // 9    (fixed values go on the end)
+let hi = partial(greet, "Hello", punct = "!")    // named values work too
+hi("Sam")                          // "Hello, Sam!"
+add.partial(7)(1)                  // functions have .partial and .partial_right too
+is_partial(hi)                     // true
+```
+
+- Several `_` are filled left to right, and extra values go on the end.
+- Giving fewer values than there are `_` is an `ArgError` that says how many are still missing.
+- Values and named arguments are worked out once, when the partial function is made.
+
+## Control flow
+
+Everything is an expression:
+
+```suave
+let size = if n > 100 { "big" } else if n > 10 { "mid" } else { "small" }
+for i in 0..10 { if i % 2 == 0 { continue }; if i > 7 { break } }
+for (i, ch) in "abc".chars().enumerate() { print(i, ch) }
+for (key, value) in {a: 1, b: 2} { print(key, value) }
+var n = 0
+while n < 3 { n += 1 }
+let found = loop { n += 1; if n > 10 { break n } }     // break can carry a value
+```
+
+## Pattern matching
+
+```suave
+match value {
+    0 => "zero",
+    1 | 2 | 3 => "small",
+    4..10 => "medium",                         // 4 up to but not including 10
+    n if n > 100 => "huge {n}",                // a guard
+    "hi" => "greeting",
+    [] => "empty",
+    [x] => "one {x}",
+    [first, ..rest] => "{first} then {rest.len()} more",
+    {kind: "circle", r} => "circle {r}",       // maps and structs
+    {name, ..others} => "{name} and {others.len()} more keys",
+    (a, b) => "pair",                          // tuples; [..] fits only lists in a match
+    Circle(r) => "circle",                     // enum variants and structs, by name
+    none => "nothing",
+    _ => "anything else"
+}
+```
+
+A `match` that fits nothing is an error. The same patterns work after `let`, in `for`, and in function parameters.
+
+## Collections
+
+Lists, maps, sets, text and numbers have many methods:
+
+- **List:** `len push pop shift unshift insert remove get first last map filter reduce fold each find find_index any all count sum product min max min_by max_by sort sort_by sort_desc sort_with reverse slice take drop take_while drop_while zip enumerate flatten flat_map chunk window unique group_by count_by partition rotate concat extend copy scan cumsum transpose shuffle sample to_set to_map join contains index_of iter`.
+- **Map:** `len get get_in set set_in has delete keys values items merge deep_merge map_values map_keys filter each pick omit invert sort_keys min_by max_by copy`. `m.name` reads the key `"name"` (none if missing).
+- **Set:** `add remove has union intersect diff sym_diff is_subset is_superset is_disjoint map filter`.
+- **Text:** `len upper lower trim split lines words chars replace starts_with ends_with contains find pad_left pad_right center repeat reverse to_int to_float title capitalize snake camel kebab matches match find_all replace_re split_re`.
+- **Number:** `abs floor ceil round(places) sqrt pow min max clamp sign div mod is_even is_odd to_hex to_bin digits times`.
+
+Methods that change a list (`push`, `pop`, `sort_mut`, `reverse_mut`) say so; `sort()` and `reverse()` give a new list.
+
+### Lazy sequences
+
+```suave
+(1..).iter().map(|x| x * x).filter(|x| x % 2 == 1).take(5).collect()   // [1, 9, 25, 49, 81]
+```
+
+`iter()` makes a lazy iterator: `map filter take skip take_while skip_while enumerate zip chain flat_map chunk window scan unique cycle collect next nth` and so on. `std.iter` adds `count`, `iterate`, `unfold`, `permutations`, `combinations`.
+
+### Comprehensions
+
+```suave
+[x * x for x in 1..10 if x % 2 == 1]
+{name: name.len() for name in names}
+#{x % 3 for x in 0..10}
+[(a, b) for a in 1..3 for b in "xy".chars()]
+```
+
+## Structs, enums and traits
+
+```suave
+struct Point { x, y = 0 }                       // positional or named: Point(1, 2), Point(x: 1)
+impl Point {
+    fn len(self) = (self.x ** 2 + self.y ** 2) ** 0.5
+    fn new(x, y) = Point(x, y)                  // no self: Point.new(1, 2)
+    const ORIGIN = Point(0, 0)
+}
+let p = Point(3, 4)
+p.x = 10;  p.with(y: 7)                         // with makes a changed copy
+
+enum Shape { Circle(r), Rect(w, h), Dot }       // Shape.Circle(2), Shape.Dot
+enum Color { Red = 1, Green = 2 }               // Color.Green.value, .name
+
+trait Speak {
+    fn name(self)                               // required
+    fn greet(self) = "I am {self.name()}"       // provided
+}
+impl Speak for Dog { fn name(self) = self.n }
+
+impl str { fn shout(self) = self.upper() + "!" }    // add methods to built-in types
+```
+
+Methods with special meaning: `to_str` (how it prints), `eq` (`==`), `cmp` (`<`, sorting), `add sub mul div rem pow neg` (operators; `radd rsub rmul` when the object is on the right), `get set` (`x[i]`), `contains` (`in`), `len`, `next`/`iter` (loops).
+
+## Complex and imaginary numbers
+
+`3i` is an imaginary number, so `3 + 4i` is a complex one. They work with `+ - * / **`, with ordinary numbers, and with `sqrt`, `abs` and the `std.math` functions:
+
+```suave
+let z = 3 + 4i
+print(z * z, abs(z), z.conj(), z.re, z.im)     // -7 + 24i  5  3 - 4i  3  4
+print(sqrt(-4), 1i ** 2)                        // 2i  -1 + 0i
+```
+
+## Pools
+
+A pool is a value that is decided when it is first used, then stays decided:
+
+```suave
+let coin = pool ["heads", "tails"]
+let plans = [coin, coin]       // not decided yet
+print("It is {coin}")          // decided now; every use after this agrees
+```
+
+`pool 1..=6`, `pool {"a": 3, "b": 1}` (weights), `pool || sampler()`. See [POOLS.md](POOLS.md).
+
+## async and await
+
+```suave
+use std.async
+
+async fn price(item) {
+    await async.delay(0.1)          // wait without blocking anything
+    {item, cost: 5}
+}
+
+let a = await price("apple")                              // one at a time
+let all = await async.all([price("pear"), price("plum")]) // at the same time
+print(a, all)
+```
+
+- `async fn` and `async |x| ...` make functions that give back a **future**; `await` waits for one. `async { ... }` is an async block that runs right away and gives a future.
+- Calling an async function starts it at once (like JavaScript). `await` can be used inside an async function and at the top of a program (or a `test` block), and not inside a normal function.
+- `await` works inside `if`, `match`, `for`, `while`, `loop`, `try/catch/finally`, strings (`"{await f()}"`), lists, maps and calls. Awaiting a plain value gives it back.
+- A future that fails throws when awaited, so `try { await f() } catch e { ... }` works. A failure nobody awaited is reported at the end.
+- `std.async` has `all race any settle timeout retry map_limit deferred channel lock semaphore spawn delay`; `http.fetch(url)`, `time.delay(s)` and `process.exec(cmd, args)` give futures. Futures have `.then(f)`, `.catch(f)` and `.finally(f)`.
+- Only code that really contains an `await` is slowed down; everything else runs as before.
+
+## Errors
+
+```suave
+try { risky() } catch e { print("failed: {e.message}") } finally { cleanup() }
+throw "any value can be thrown"
+try { throw {code: 7} } catch {code} { print(code) }
+
+// Result: Ok(value) or Err(reason), and ? passes an Err (or none) up
+fn read(path) { let text = fs.read(path); Ok(text) }
+parse(s).map(|n| n * 2).unwrap_or(0)
+match parse(s) { Ok(n) => n, Err(e) => 0 }
+```
+
+A caught runtime error is a map with `kind`, `message` and `line`. `assert`, `assert_eq`, `assert_ne`, `assert_throws`, `panic`.
+
+## Modules
+
+```suave
+use std.json                       // json.parse(...)
+use std.math as m
+use std.math.{sin, cos as cosine}
+use std.math.*
+use "./helpers.sv"                 // your own file: names that do not start with _
+use "./helpers.sv" as h
+```
+
+`suave modules` lists the standard library; `suave doc std.fs` shows one.
+
+## Tests
+
+```suave
+test "addition" { assert_eq(1 + 1, 2) }
+```
+
+Put tests in files named `*_test.sv` and run `suave test`.
+
+## Types
+
+Annotations are optional and checked when the line runs (a pool is decided to check its type): `let x: int = 5`, `fn f(a: str, b: [int]?) -> bool`, `list<int>`, `map<str, int>`, `T?` (or none), `int | str`, struct and trait names. Names: `any int float num str bool none list tuple map set fn sym range Result`.
+
+## The prelude (always available)
+
+`print println write eprint input dbg len str repr fmt type int float num bool big sym range list tuple set dict iter repeat count_from abs min max sum round floor ceil sqrt pow div sorted reversed enumerate zip map filter reduce flat_map any all chr ord hex bin oct ok err Ok Err is_none identity callable clone keys values items error panic assert assert_eq assert_ne assert_throws exit args eval regex compose curry partial partial_right is_partial memoize now complex re im conj arg is_complex pool inspect is_pool entangle decide`.

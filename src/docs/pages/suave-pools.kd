@@ -1,0 +1,81 @@
+# Pools: values that are decided when they are used
+
+A **pool** is a value that has not made up its mind yet. It holds several possible values (equally likely, or with weights), and it picks one **the first time you use it**. After that it stays decided.
+
+```suave
+let weather = pool ["rain", "sun", "snow"]
+print(inspect(weather))          // pool ["rain", "sun", "snow"] (undecided)
+
+let plans = [weather, weather]   // storing it does not decide it
+print("Today: {weather}")        // using it does: now it is, say, "sun"
+print(weather, weather)          // sun sun  (it stays decided)
+```
+
+Think of a coin in a closed hand, or a quantum state before you measure it.
+
+## Making a pool
+
+```suave
+pool [1, 2, 3]                     // equally likely
+pool 1..=6                         // a die
+pool {"heads": 9, "tails": 1}      // weights: heads is nine times as likely
+pool || random.rand()              // a function: a fresh value every time it is decided
+pool(["a", "b"], weights: [3, 1])  // the function form
+pool [1, 2, 3].where(|n| n > 1)    // ask the pool itself: this is (pool [1, 2, 3]).where(...)
+```
+
+`pool` takes just the next value, so `pool [1, 2] + 1` means `(pool [1, 2]) + 1`.
+
+## What counts as "using" a pool
+
+These decide it: arithmetic and comparison (`p + 1`, `p < 3`), `if p`, `match p`, printing it or putting it in a string, calling a method on it that is not a pool method (`p.upper()`), indexing (`p[0]`), looping over it, calling it, passing it to a built-in function (`print`, `len`, `str`, `sqrt` ...), and `p ?? x`.
+
+These do **not** decide it: assigning it, putting it in a list or map, returning it, passing it to your own functions (the function decides when it uses it), and the pool methods below. A pool you share is the same pool everywhere, so when one place decides it, every place sees the same answer.
+
+## Pool methods
+
+They never decide the pool.
+
+| Method | Gives |
+| --- | --- |
+| `is_decided()` | true once it has been used |
+| `peek()` | the decided value, or `none` if it is still open |
+| `decide()` | decides it now and gives the value |
+| `forget()` | makes it undecided again, so it can be decided afresh |
+| `options()` / `size()` | the possible values / how many |
+| `chances()` | a map from each value to its probability |
+| `odds_of(x)` / `most_likely()` | the probability of x / the likeliest value |
+| `where(f)` | a new pool that only keeps options for which `f` is true |
+| `map(f)` | a new pool with `f` applied to every option |
+| `with_weights(list)` | a new pool with new weights |
+| `roll()` / `rolls(n)` | fresh draws that leave the pool undecided |
+| `simulate(n)` | how often each value comes up in n fresh draws |
+| `entangle(other, ...)` | links pools (below) |
+| `copy()` | an independent copy (undecided) |
+
+`inspect(p)` shows a pool without deciding it. `type(p)` is `"pool"`, `is_pool(p)` tests.
+
+## Entangled pools
+
+Pools that are entangled decide together: whichever is used first picks a position, and the others pick the same position.
+
+```suave
+let shirt = pool ["red", "green", "blue"]
+let shoes = pool ["white", "black", "grey"]
+entangle(shirt, shoes)
+print("{shirt} with {shoes}")      // red with white, green with black, or blue with grey
+```
+
+They need the same number of options. `forget()` on one forgets them all.
+
+## Repeatable
+
+Pools use the shared random generator, so `random.seed(42)` makes a whole program (pools, `std.random` and quantum measurements) give the same answers every run.
+
+## std.pool
+
+Ready-made pools: `pool.die(6)`, `pool.dice("2d6+1")`, `pool.coin()`, `pool.weighted({...})`, `pool.uniform(a, b)`, `pool.normal(mu, sigma)`, `pool.exponential(rate)`, `pool.poisson(l)`, `pool.shuffle(list)` (a pool of orderings), `pool.deal(list, k)` (a hand of cards), `pool.decide_all(list)`. Import it as `use std.pool as pools` if you also want to write `pool [...]` in the same file.
+
+## Pools and quantum
+
+A quantum register can give you a pool that measures only when you look: `reg.measure_later(0)` (the measurement really happens, and collapses the state, when the pool is first used) and `reg.pool()` (a weighted pool over all the possible outcomes that does not touch the register). See [QUANTUM.md](#/suave-quantum).

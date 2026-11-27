@@ -1,0 +1,19 @@
+# Zonerider
+
+{badge 3D | indigo | soft} **Zonerider** is a 3D editor a little like Blender. Model with shapes and vertices, add light, animate with keyframes, render images and videos, and export glTF, OBJ and STL!
+
+[Open Zonerider](/zonerider) · [Phone version](/zonerider/mobile/)
+
+## What you can do
+
+* **Model**: start from shapes and edit their vertices!
+* **Light and shade**: add lights, and write your own shaders!
+* **Animate**: set keyframes and play them back!
+* **Render** still images and videos!
+* **Export** glTF, OBJ and STL, for other 3D tools or 3D printing!
+
+The **Help** menu explains 3D scenes, shaders and animation!
+
+## 3D scenes in documents
+
+Writeout and Bitbook can embed a Zonerider scene, so a document can hold a 3D model people can turn around. In Bitbook it is under **Insert > 3D Scene**. Zonerider runs in a small *embed* mode for this!

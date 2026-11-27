@@ -1,0 +1,252 @@
+# Suave
+
+**Suave** is a smooth, readable programming language for scripts, data and web apps. It runs in the terminal on [Deno](https://deno.com) and in the browser, and it comes with a big standard library: **59 modules and about 1,050 functions**, including parsers and writers for **JSON, YAML, TOML, CSV, XML, INI and SUVL**, Suave's own data format. It also has **complex and imaginary numbers**, **quantum computing and quantum mechanics**, **pools** (values that are decided when they are used), **async/await**, and a built-in **package manager**.
+
+```suave
+# Suave looks like Python: colons, indentation, def, elif, lambda, class
+use std.json
+use std.table
+
+class Dog:
+    name: str
+    age: num = 1
+
+    def speak(self):
+        return f"{self.name} is {self.age} and says woof!"
+
+def describe(n):
+    if n % 15 == 0:
+        return "FizzBuzz"
+    elif n % 3 == 0:
+        return "Fizz"
+    else:
+        return str(n)
+
+print(Dog("Rex").speak())
+print([describe(n) for n in range(1, 8)])
+
+people = json.parse('[{"name": "Ada", "age": 36}, {"name": "Bob", "age": 25}]')
+table.from(people).sort_by("age", desc=True).print()
+```
+
+Suave also has **Lake** (a task runner: a `Lakefile` with tasks, like Make or Rake) and **Laker** (desktop apps from a Suave web app, like Tauri), see [docs/LAKE.md](#/suave-lake) and [docs/LAKER.md](#/suave-laker).
+
+Examples to read: `examples/pdf-annotator/` (a PDF annotator) and `examples/keydown-editor/` (a Keydown editor), both one Suave file plus a plain `index.html`.
+
+Suave files come in three kinds: **`.sv`** (programs and modules), **`.xsv`** (web components: props, script, template and style in one file) and **`.wsv`** (a web page or app), so Suave is also a small web framework. See [docs/WEB.md](#/suave-web).
+
+It also has Rust-style enums, `match`, `Result` with `?`, traits and `{ braces }` for blocks, and you can mix the two styles.
+
+
+## Why Suave
+
+Suave aims at the everyday jobs people reach for Python, R, Julia, Clojure or Rust for, in one small language:
+
+| You might use | for | In Suave |
+| --- | --- | --- |
+| Python | scripts, glue, quick tools | `suave run`, a REPL, `std.fs`, `std.process`, `std.cli`, readable code |
+| R / pandas | tables and statistics | `std.table`, `std.stats`, `std.plot` (terminal charts and SVG) |
+| Julia / NumPy | numbers and matrices | `std.math`, `std.linalg`, `std.bigint`, `std.rational`, `std.complex` |
+| Clojure | data pipelines, lazy sequences | `\|>` pipes, `std.iter`, `std.func` (compose, curry, memoize, trampoline) |
+| Rust | enums, pattern matching, `Result` and `?`, traits | all of those, plus type annotations that are checked as the program runs |
+| Qiskit / QuTiP | quantum circuits and quantum mechanics | `std.quantum` (a state-vector simulator with Grover, Shor, teleportation) and `std.qm` (Schrodinger solver, hydrogen, spin) |
+| npm / pip / cargo | packages | `suave add`, `suave install`, a lock file with checksums, registries that are just folders |
+| JavaScript | web apps | runs in the browser; `std.dom` has a small state / view / update framework |
+
+It is a young project (version 0.1), written in JavaScript so it runs anywhere Deno or a browser does. See [Where Suave is today](#where-suave-is-today) for the honest limits.
+
+## Install (Mac, Linux)
+
+The quickest way: paste this one line into Terminal. It downloads Suave, checks the download, installs [Deno](https://deno.com) if you need it, and sets everything up:
+
+```sh
+curl -fsSL https://radii-office.com/suave/install.sh | sh
+```
+
+Run the same line again, or type `suave upgrade`, to get the newest version. To remove it: `~/.suave/install.sh --uninstall`.
+
+Already have this folder? Open Terminal in it and run:
+
+```sh
+./install.sh
+```
+
+(Or double-click **Install Suave.command** in Finder.) It installs [Deno](https://deno.com) if you do not have it, puts the commands `suave`, `lake` and `laker` in `~/.local/bin`, and makes sure new terminal windows can find them. Open a new terminal window afterwards and try `suave eval "1 + 2"`. If macOS says a file "cannot be opened because it is from an unidentified developer", the installer already clears that for this folder; if it still stops you, right-click the file and choose Open once. To remove everything again: `./install.sh --uninstall`.
+
+Without installing: `deno run -A bin/suave.js run hello.sv`, or `deno task suave run hello.sv`. Windows: install Deno, then use `deno task install`.
+
+## The command line
+
+```
+suave run <file.sv> [args]     run a program        (suave file.sv works too)
+suave repl                     an interactive prompt (plain "suave" starts it)
+suave eval "<code>"            run a bit of code
+suave test [paths]             run test blocks in *_test.sv files
+suave check <files>            syntax check
+suave add <package>            install a package (suave init, install, remove, list, update, pack, publish)
+suave new <name> [--web]       start a project
+suave serve [dir] [port]       serve a folder
+suave build <file.sv> -o dist  package a web app (index.html + suave.js)
+suave modules                  list the standard library
+suave doc std.json             what a module offers
+suave convert data.yaml json   change a data file's format
+```
+
+Errors show the exact place, the source line and the call chain:
+
+```
+IndexError: Index 10 is out of range (size 3)
+  --> app.sv:2
+      2 | print(xs[10])
+```
+
+## A quick tour
+
+```suave
+// values
+let n = 42                      // let: cannot change     var: can change
+var total = 0
+let text = "n is {n * 2}"       // "..." interpolates {expressions}; '...' does not
+let nums = [1, 2, 3]; let person = {name: "Ada", "any key": 1}; let ids = #{1, 2}
+let pair = (1, "two")           // tuples
+
+// functions: defaults, named arguments, lambdas
+fn greet(name, greeting = "Hello") = "{greeting}, {name}!"
+print(greet("Ada"), greet(greeting: "Hi", name: "Bob"))
+let double = |x| x * 2
+print([1, 2, 3] |> map(double) |> sum())
+
+// loops, ranges, comprehensions
+for i in 1..=3 { total += i }
+print([x * x for x in 1..6 if x % 2 == 1])
+
+// errors are values (Result) and can be thrown
+fn parse_age(s) {
+    let n = s.to_int()
+    if n == none { return Err("not a number: {s}") }
+    Ok(n)
+}
+fn describe(s) { let age = parse_age(s)?; Ok("age {age}") }     // ? passes an Err upward
+print(describe("36"), describe("x"))
+
+// structs, enums, traits
+struct Point { x, y = 0 }
+impl Point { fn len(self) = (self.x ** 2 + self.y ** 2) ** 0.5 }
+print(Point(3, 4).len())
+
+// tests live next to the code
+test "double works" { assert_eq(double(4), 8) }
+```
+
+More: [docs/LANGUAGE.md](#/suave-language) (the whole language), [docs/STDLIB.md](#/suave-stdlib) (every module), [docs/SUVL.md](#/suave-suvl) (the data format), [docs/WEB.md](#/suave-web) (web apps), `examples/`.
+
+## Data formats
+
+All the parsers are written for Suave (no outside libraries) and give errors with line and column. Every format round-trips through Suave values:
+
+```suave
+use std.data
+print(data.convert("name: Ada\nlangs: [en, fr]", "yaml", "toml"))
+data.save("config.suvl", {server: {host: "localhost", timeout: 90}})     // format from the file name
+let cfg = data.load("config.toml")
+```
+
+| Module | Reads and writes |
+| --- | --- |
+| `std.json` | JSON (plus lenient mode, JSON Lines, big integers) |
+| `std.yaml` | YAML 1.2: anchors, merge keys, block text, many documents |
+| `std.toml` | TOML 1.0: tables, arrays of tables, dates |
+| `std.suvl` | **SUVL**, Suave's own format (durations like `90s`, sizes like `64mb`, dates, blocks) |
+| `std.csv` | CSV and TSV |
+| `std.xml`, `std.ini` | XML trees and INI files |
+
+## Web apps
+
+```suave
+use std.dom
+
+fn view(count, dispatch) {
+    dom.h("div", {}, [
+        dom.h("h1", {}, ["Clicked {count} times"]),
+        dom.h("button", {on_click: |e| dispatch("click")}, ["Click me"]),
+    ])
+}
+fn update(count, msg) = if msg == "click" { count + 1 } else { count }
+
+dom.app("#root", 0, view, update)
+```
+
+`suave build app.sv -o dist` writes `dist/index.html` and a single `suave.js` (about 280 KB, the whole language). Or put it in any page:
+
+```html
+<script src="suave.js"></script>
+<script type="text/suave" src="app.sv"></script>
+```
+
+Open `playground/index.html` through a web server to try examples live. New to websites? `use std.web` has plain one-word helpers (`web.serve(...)`, `await web.get(url)`, `web.page(...)`, `web.say`, `web.button`), see docs/WEB.md! There is also a server side: `std.http` has a router (`app.get("/hi/:name", |req| ...)`) and `suave serve`.
+
+## New in 0.2: imaginary numbers, quantum, pools, async and packages
+
+```suave
+use std.quantum as q
+use std.async
+
+// complex numbers are part of the language
+print((3 + 4i) * (1 - 2i), sqrt(-4))               // 11 - 2i  2i
+
+// a quantum computer
+let bell = q.register(2).h(0).cx(0, 1)
+print(bell, bell.sample(100))                       // 0.7071|00> + 0.7071|11>  {"00": 52, "11": 48}
+print(q.shor(21).factors)                           // [3, 7]
+
+// a pool is decided when it is first used
+let weather = pool ["rain", "sun"]
+let plans = [weather, weather]                      // still undecided
+print("It will be {weather}")                       // decided now, and it stays
+
+// async and await
+async fn slow(x) { await async.delay(0.1); x * 2 }
+print(await async.all([slow(1), slow(2), slow(3)]))   // [2, 4, 6] in 0.1 s, not 0.3
+```
+
+```sh
+suave add mathx             # install a package (and what it needs), with a lock file
+suave publish --to ./reg    # publish your own to a registry folder
+```
+
+Guides: [docs/QUANTUM.md](#/suave-quantum), [docs/POOLS.md](#/suave-pools), [docs/PM.md](#/suave-pm).
+
+## Where Suave is today
+
+Honest notes for version 0.1:
+
+* **It is an interpreter** written in JavaScript. On this Mac, `fib(30)` takes about 0.26 s (CPython 3.13: about 0.1 s) and a 3-million-step loop about 0.25 s (CPython: 0.3 s). Fine for scripts, data work, small servers and web apps; not for heavy number crunching.
+* **async/await** is built in, and the older callback style still works (`http.get(url, |res| ...)`, `time.after(1, f)`). Tasks take turns on one thread (like JavaScript); there are no threads.
+* **Quantum** is a simulator on a normal computer: up to 22 qubits, no noise.
+* **Types are checked while the program runs**, not before. Annotations like `fn f(x: int) -> str` are enforced at the call.
+* **Packages:** the package manager works with folders, tarballs, GitHub and registry folders, but there is no official public registry yet.
+* **`//` starts a comment**, so whole-number division is `div(7, 2)` (or `7.div(2)`).
+* Deep recursion works to about 90,000 calls with the `bin/suave` launcher (about 8,000 with plain `deno run`).
+* Tested on macOS with Deno 2.9 and Chrome. Firefox, Safari and Windows have not been tried yet.
+
+## Tests
+
+```sh
+suave test                     # 70 tests: the language, the formats, the standard library, complex numbers, pools, async, quantum and the package manager
+```
+
+## License
+
+Public domain (CC0 1.0), like the rest of Radii Office. Do what you like with it.
+
+
+## More guides
+
+* [Language reference](#/suave-language)
+* [Standard library](#/suave-stdlib)
+* [Web apps](#/suave-web)
+* [SUVL data format](#/suave-suvl)
+* [Quantum and complex numbers](#/suave-quantum)
+* [Pools](#/suave-pools)
+* [Packages](#/suave-pm)
+* [Lake](#/suave-lake) and [Laker](#/suave-laker)

@@ -1,0 +1,32 @@
+# Laker: desktop apps for Suave
+
+Laker is to Suave what Tauri is to Rust: it turns a Suave web app (a `.wsv` page or your own `index.html`) into a desktop app with its own window, and lets the page call a **backend** written in Suave.
+
+```sh
+laker init "My App"     # laker.suvl, app.wsv, backend.sv
+laker dev               # build, serve and open the window
+laker build             # My App.app (a Mac app), or a folder with the program on Windows and Linux
+laker build --dmg       # on a Mac, also make a .dmg
+laker run               # open the built app
+```
+
+`laker.suvl` holds the settings (name, id, version, entry, backend, icon, window size). `backend.sv` holds functions; every function whose name does not start with `_` can be called from the page:
+
+```
+# backend.sv
+def greet(name):
+    return "Hello, {name}!"
+```
+
+```
+# app.wsv
+use std.laker
+async def ask():
+    greeting = await laker.invoke("greet", {name: "Ada"})
+```
+
+`std.laker` also has `info()`, `quit()`, `open_url(url)`, `pick_file()` and `pick_save(name)` (the operating system's file dialogs), `read_file(path)`, `write_file(path, text)` and `is_desktop()`. The backend can use `data_dir()` (a per-app folder), `app_dir()`, `os_name()`, plus all of Suave.
+
+How it works: the built app contains the Suave runtime (made with `deno compile`) and your web files. When it opens it starts a small local server on a free port and shows the page in an app window, which is the Chrome, Edge, Brave or Chromium you already have, with no tabs or address bar (if none is installed, your normal browser opens instead). The app needs nothing installed to run. Unlike Tauri it is not a native webview, so the program is about 70 MB (the Suave runtime), and it needs a Chromium-based browser on the computer.
+
+Not done yet: code signing and notarizing for the Mac App Store, auto-updates, system tray, and menus. Chrome-tested on a Mac only.

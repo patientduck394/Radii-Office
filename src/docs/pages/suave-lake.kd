@@ -1,0 +1,36 @@
+# Lake: tasks for your project
+
+A **Lakefile** (a plain Suave file named `Lakefile`) lists the tasks of a project, like a Makefile, a Rakefile or the scripts of a Cargo project. Run them with `lake` (or `suave lake`).
+
+```
+# Lakefile
+default_task("build")
+
+task("build", desc="Build the website"):
+    suave("build", "app.wsv", "-o", "dist")
+
+task("test", needs=["build"], desc="Run the tests"):
+    suave("test")
+
+task("clean"):
+    rm("dist")
+
+file("dist/site.zip", needs=["dist/index.html"]):
+    sh("zip -r dist/site.zip dist")
+```
+
+```sh
+lake init          # make a starter Lakefile
+lake -l            # list the tasks, with their descriptions
+lake               # run the default task
+lake test          # run one task (what it needs runs first, each only once)
+lake build test    # several tasks
+lake -n all        # a dry run: show what would run
+lake mode=fast -- one two    # vars (mode) and args (one, two) are available inside the Lakefile
+```
+
+A task is a call with a colon block: `task("name", needs=[...], desc="...")` followed by the indented lines. You can also write `task("test", ["build"], "Run the tests")`. `file("path", needs=[...])` is a task that is skipped when the file is newer than everything it needs. Lake looks for the Lakefile in the current folder and then the folders above it, and runs the tasks from the Lakefile's own folder.
+
+Things a Lakefile can call: `sh("command")` (add `quiet=true` or `check=false`), `suave("build", ...)` (this same Suave), `laker("build")`, `echo`, `rm`, `mkdir`, `cp`, `read`, `write`, `exists`, `glob("src/**/*.sv")`, `env("NAME", default)`, `os()`, `cd(path)`, `newer(a, b)`, `invoke("other-task")`, plus the lists `args` and the map `vars`. It is ordinary Suave, so loops, functions and `use std.json` all work.
+
+Any call followed by a colon block passes the block as a function named `run` (`name(args):` then indented lines), so you can build your own tools in the same style.

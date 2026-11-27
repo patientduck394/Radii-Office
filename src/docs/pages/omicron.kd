@@ -1,0 +1,15 @@
+# Omicron
+
+{badge Web Builder | indigo | soft} **Omicron** is a visual builder for laying out web pages, making templates and producing HTML. Its ribbon works like Microsoft Sway, with cards, styles, tags and skills!
+
+[Open Omicron](/omicron) · [Phone version](/omicron/mobile/)
+
+## What you can do
+
+* **Position elements** visually, and use templates to start quickly!
+* **Export** a page as a website ZIP, or as a single HTML file with every style built in!
+* **Insert Bitbook notes** into a page!
+
+## BitLang in pages
+
+Omicron includes the same BitLang engine as Bitbook, so small programs can run inside pages you build. See [BitLang](#/bitlang)!

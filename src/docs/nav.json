@@ -1,0 +1,220 @@
+[
+ {
+  "group": "Getting started",
+  "pages": [
+   {
+    "id": "start",
+    "title": "Welcome"
+   },
+   {
+    "id": "layouts",
+    "title": "Layouts and themes"
+   },
+   {
+    "id": "files",
+    "title": "Files, saving and versions"
+   },
+   {
+    "id": "sharing",
+    "title": "Sharing and live editing"
+   },
+   {
+    "id": "offline-desktop",
+    "title": "Offline and desktop apps"
+   },
+   {
+    "id": "security",
+    "title": "Privacy and security"
+   }
+  ]
+ },
+ {
+  "group": "Apps",
+  "pages": [
+   {
+    "id": "writeout",
+    "title": "Writeout"
+   },
+   {
+    "id": "bitbook",
+    "title": "Bitbook"
+   },
+   {
+    "id": "amber",
+    "title": "Amber"
+   },
+   {
+    "id": "imbuer",
+    "title": "Imbuer"
+   },
+   {
+    "id": "inkpath",
+    "title": "Inkpath"
+   },
+   {
+    "id": "peeker",
+    "title": "Peeker"
+   },
+   {
+    "id": "omicron",
+    "title": "Omicron"
+   },
+   {
+    "id": "data-apps",
+    "title": "Data and planning apps"
+   },
+   {
+    "id": "zonerider",
+    "title": "Zonerider"
+   },
+   {
+    "id": "delta",
+    "title": "Delta"
+   },
+   {
+    "id": "notes-mail",
+    "title": "Notes and mail"
+   },
+   {
+    "id": "community",
+    "title": "Community apps"
+   },
+   {
+    "id": "trigger",
+    "title": "Trigger"
+   },
+   {
+    "id": "opendb",
+    "title": "OpenDB"
+   }
+  ]
+ },
+ {
+  "group": "Keydown",
+  "pages": [
+   {
+    "id": "keydown-start",
+    "title": "Keydown guide"
+   },
+   {
+    "id": "keydown-syntax",
+    "title": "Syntax cheat sheet"
+   },
+   {
+    "id": "keydown-blocks",
+    "title": "Document blocks",
+    "kind": "sections",
+    "sections": [
+     "blocks-for-documents",
+     "tables",
+     "code-block-styles",
+     "page-breaks-and-dividers",
+     "blank-space-for-practice",
+     "page-number-formats"
+    ]
+   },
+   {
+    "id": "keydown-next",
+    "title": "Keydown Next",
+    "kind": "sections",
+    "sections": [
+     "keydown-next"
+    ]
+   },
+   {
+    "id": "keydown-looks",
+    "title": "Effects and looks",
+    "kind": "sections",
+    "sections": [
+     "text-effects",
+     "applets",
+     "effects",
+     "underlines-and-strikethrough",
+     "spoilers",
+     "multi-line-quotes",
+     "blockquote-looks",
+     "bullet-styles",
+     "custom-emoji-and-symbols"
+    ]
+   },
+   {
+    "id": "keydown-files",
+    "title": "Saved files",
+    "kind": "sections",
+    "sections": [
+     "files-saved-as-keydown",
+     "extras-in-writeout-bitbook-and-opendb"
+    ]
+   },
+   {
+    "id": "keydown-reference",
+    "title": "Full reference",
+    "kind": "catalog"
+   }
+  ]
+ },
+ {
+  "group": "Languages",
+  "pages": [
+   {
+    "id": "bitlang",
+    "title": "BitLang",
+    "kind": "guide",
+    "guide": "bitlang-guide.html"
+   },
+   {
+    "id": "plume",
+    "title": "Plume"
+   },
+   {
+    "id": "suave",
+    "title": "Suave"
+   },
+   {
+    "id": "suave-language",
+    "title": "Suave language"
+   },
+   {
+    "id": "suave-stdlib",
+    "title": "Suave standard library"
+   },
+   {
+    "id": "suave-web",
+    "title": "Suave web apps"
+   },
+   {
+    "id": "suave-suvl",
+    "title": "SUVL data format"
+   },
+   {
+    "id": "suave-quantum",
+    "title": "Quantum and complex numbers"
+   },
+   {
+    "id": "suave-pools",
+    "title": "Pools"
+   },
+   {
+    "id": "suave-pm",
+    "title": "Packages"
+   },
+   {
+    "id": "suave-lake",
+    "title": "Lake tasks"
+   },
+   {
+    "id": "suave-laker",
+    "title": "Laker desktop apps"
+   }
+  ]
+ },
+ {
+  "group": "Reference",
+  "pages": [
+   {
+    "id": "faq",
+    "title": "FAQ and shortcuts"
+   }
+  ]
+ }
+]

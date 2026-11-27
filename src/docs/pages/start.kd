@@ -1,0 +1,44 @@
+# Welcome to Radii Office
+
+Radii Office is a free, open-source suite of apps that runs in your browser, works offline and also comes as desktop apps. There is nothing to sign up for to write, draw, plan or calculate, and your files stay on your computer unless you choose to share them!
+
+::tip New here?
+Open [Writeout](#/writeout), type `# Hello` and press Enter. You just used Keydown, the formatting language every app shares. The [Keydown guide](#/keydown-start) explains the rest!
+::end
+
+## What is in the suite
+
+| Need | App | Page |
+| --- | --- | --- |
+| Write documents | Writeout | [Writeout](#/writeout) |
+| Take notes, run small programs | Bitbook | [Bitbook](#/bitbook) |
+| Slides | Amber | [Amber](#/amber) |
+| Spreadsheets and charts | Imbuer | [Imbuer](#/imbuer) |
+| Vector drawing | Inkpath | [Inkpath](#/inkpath) |
+| PDFs | Peeker | [Peeker](#/peeker) |
+| Websites | Omicron | [Omicron](#/omicron) |
+| Records, forms, calendars, tasks, files | Mainkey, Formly, Hexa, Taskra, Cabinet | [Data and planning apps](#/data-apps) |
+| 3D scenes | Zonerider | [Zonerider](#/zonerider) |
+| Math | Delta | [Delta](#/delta) |
+| Notes and mail | Waterflow, Yuzu | [Notes and mail](#/notes-mail) |
+| Talking and sharing | Phosphor, Antimony, Beta, Mintcode, Overshare | [Community apps](#/community) |
+| Automation | Trigger | [Trigger](#/trigger) |
+| A free knowledge base | OpenDB | [OpenDB](#/opendb) |
+
+## How the documentation is organized
+
+* **Getting started** covers things every app shares: looks, files, sharing, offline use and privacy!
+* **Apps** has one guide per app, written from the real buttons and tabs!
+* **Keydown** is the full formatting language, including a reference of every tag, style and block!
+* **Languages** covers BitLang, Plume and the Suave programming language!
+* **Reference** has the FAQ and troubleshooting!
+
+Press {key Ctrl+K} (or {key /}) anywhere on this page to search all of it!
+
+## Three ideas to remember
+
+1. **Everything is Keydown.** Documents, notes, slides, messages and wiki articles are all Keydown text, so a tag you learn in one app works in all of them!
+2. **Files are yours.** Apps save plain files you can open in other Radii apps, and every app can export what you made!
+3. **Looks are a switch.** Every app has the same three layouts, so you can pick the one you like best, and your documents never change!
+
+-# This site is itself written in Keydown and drawn with Dark Keydown, the version that fades to white instead of transparent so every style looks right on a dark page!

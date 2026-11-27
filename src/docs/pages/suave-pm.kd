@@ -1,0 +1,105 @@
+# The Suave package manager
+
+`suave` has a package manager built in. A **package** is a folder with a `suave.suvl` file (in SUVL, Suave's data format). Installed packages go in `suave_modules/` and you use them with plain names:
+
+```suave
+use mathx                 // the package's main file
+use mathx.extra as ex     // mathx/extra.sv
+print(mathx.double(21))
+```
+
+Everything at the top of a package file whose name does not start with `_` is public.
+
+## Commands
+
+```
+suave init [name]             start a package (writes suave.suvl)
+suave add <package...>        install and remember it  (--dev for development-only ones)
+suave install                 install everything listed in suave.suvl
+suave install --frozen        install exactly what suave.lock.suvl says, or fail
+suave update [name]           get the newest versions that still fit
+suave remove <name>           uninstall (and anything only it needed)
+suave list                    what is installed
+suave pack                    make dist/<name>-<version>.tar.gz
+suave publish --to <folder>   add this package to a registry folder
+suave search <text>           look in the registry
+suave info <name>             versions of a package
+suave registry set <folder-or-url>   where to look for packages
+```
+
+## Where a package can come from
+
+| You write | Meaning |
+| --- | --- |
+| `suave add mathx` | the newest version in your registry (recorded as `mathx@^1.2.0`) |
+| `suave add mathx@^1.0` | a version range: `^1.2.3` `~1.2` `>=1.0.0 <2.0.0` `1.x` `\|\|` |
+| `suave add path:../mathx` | a folder on this computer (copied in) |
+| `suave add https://host/mathx-1.0.0.tar.gz` | a tarball on the web |
+| `suave add github:user/repo` or `github:user/repo@v1.2` | GitHub's source tarball for a branch, tag or commit |
+
+## suave.suvl
+
+```suvl
+name: myapp
+version: 0.1.0
+description: "What it does"
+entry: main.sv                 # the file that "use myapp" and "suave run" start
+license: CC0-1.0
+deps {
+  mathx: "mathx@^1.2.0"
+  helper: "path:../helper"
+}
+dev_deps { }
+registry: "https://example.com/suave-registry"   # optional: where "suave add name" looks
+```
+
+Names are lowercase letters, digits, `-` and `_`, starting with a letter. Versions are `1.2.3` (semantic versions).
+
+## The lock file
+
+`suave.lock.suvl` records exactly what was installed: the version, where it came from, and a **SHA-256 checksum** of every download. `suave install` reuses it, and a download that does not match its checksum is **refused**:
+
+```
+IntegrityError: The download for "mathx" 1.2.0 does not match its checksum ... I will not install it
+```
+
+Keep the lock file with your project. Packages with a link inside them, or a file path that climbs out of the package (`../`), are never unpacked. A package is limited to 20 MB.
+
+## Dependencies of dependencies
+
+Installing a package also installs what it needs (its own `deps`), into the same flat `suave_modules/` folder. If two packages ask for versions that cannot both be true, the first one wins and you get a warning that says who wanted what.
+
+## Registries
+
+A **registry** is just a folder (or a web address) holding an `index.suvl` file and the packages. There is no central server to depend on: host the folder anywhere that serves static files.
+
+```sh
+# publish
+cd mathx
+suave publish --to ../my-registry         # packs it, adds it to my-registry/index.suvl
+
+# use it (from a folder, or from a web address where you put that folder)
+suave registry set ../my-registry
+suave registry set https://example.com/suave-registry
+suave add mathx
+```
+
+A published version can never be changed: publishing the same version again is an error, so bump `version` first. The index looks like this:
+
+```suvl
+name: "my registry"
+packages {
+  mathx {
+    description: "Extra maths helpers"
+    versions {
+      "1.2.0" { url: packages/mathx-1.2.0.tar.gz, sha256: "15faab..." }
+    }
+  }
+}
+```
+
+The registry location is looked up in this order: `registry` in `suave.suvl`, the `SUAVE_REGISTRY` environment variable, then `~/.suave/config.suvl` (what `suave registry set` writes).
+
+## What is not there yet
+
+No official public registry yet (host your own, or use `path:`, tarball and `github:` sources), no package signing beyond the checksums, and no way to remove a published version.

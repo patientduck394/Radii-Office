@@ -1,0 +1,92 @@
+# Quantum computing and quantum mechanics in Suave
+
+Two modules and two language features work together:
+
+* **Complex and imaginary numbers** are part of the language: `3 + 4i`, `2.5i`, `abs(z)`, `sqrt(-4)`.
+* **`std.quantum`** is a quantum computer you can run: registers of qubits, gates, entanglement, measurement, circuit diagrams, and the famous algorithms.
+* **`std.qm`** is quantum mechanics: hydrogen, particles in boxes, oscillators, tunneling, a Schrodinger equation solver, wave packets that move through time, spin and complex matrices.
+* **Pools** ([POOLS.md](#/suave-pools)) are the language's own "undecided until observed" values.
+
+## Complex numbers
+
+```suave
+let z = 3 + 4i
+print(z * z, z.conj(), abs(z), z.arg())     // -7 + 24i  3 - 4i  5  0.9273
+print(sqrt(-4), 1i ** 2)                    // 2i  -1 + 0i
+print(z.re, z.im)                           // 3 4
+print(complex("1+2i"), complex(3, -1))
+```
+
+`+ - * / **` work between complex numbers and ordinary numbers; `==` compares both parts; complex numbers cannot be put in order (`<` is an error: compare `abs(z)`). Methods: `re im abs arg conj norm sqrt exp ln pow sin cos tan sinh cosh tanh polar inv roots round is_real`. `std.math` functions (`sqrt exp ln sin cos pow abs`) accept them. `std.complex` adds `roots_of_unity`, `quadratic`, `polyroots`, `fft`, `ifft`, `mandelbrot`. Format specs apply to both parts: `"{z:.2f}"`.
+
+## std.quantum
+
+```suave
+use std.quantum as q
+
+let bell = q.register(2)
+bell.h(0).cx(0, 1)                 // gates are chainable
+print(bell)                        // 0.7071|00> + 0.7071|11>
+print(bell.draw())                 // a text circuit diagram
+print(bell.sample(1000))           // {"00": 497, "11": 503}
+```
+
+**Qubit order.** Qubit 0 is the *leftmost* bit: `|011>` means qubit 0 is 0 and qubits 1 and 2 are 1. A register holds up to 22 qubits (the memory doubles with each one).
+
+**Starting states:** `register(n)`, `basis("101")`, `plus(n)`, `bell(kind)`, `ghz(n)`, `w(n)`, `from_amplitudes([1, 1i])`.
+
+**Gates** (each returns the register so you can chain): `h x y z s t sdg tdg sx id` (and `h_all`, `x_all`...), `rx ry rz p u` (with angles), `cx cy cz ch cp crx cry crz`, `ccx ccz mcx mcz`, `swap cswap`, `qft iqft`, `gate(matrix, qubit)` for your own 2x2 unitary. `phase_oracle(f)` flips the sign of every state where `f(index)` is true; `permute(f)` reorders states with a reversible function; `diffusion()`.
+
+**Looking at a state:** `probs()` (map), `probabilities()` (list), `prob(q)`, `prob_of("101")`, `amplitudes()`, `amplitude("01")`, `text()`, `bloch(q)`, `entanglement(q)` (0 to 1 bit), `is_entangled()`, `expect("ZZ")`, `fidelity(other)`, `inner(other)`, `norm()`, `draw()`, `ops()`, `copy()`, `reset()`.
+
+**Measuring:** `measure(q)` gives 0 or 1 and collapses the state; `measure()` measures every qubit (a list of bits); `measure_int()`, `measure_text()`. `sample(shots)` measures copies and leaves the register alone. `measure_later(q)` gives a pool that measures only when first used. `pool()` gives a weighted pool over the outcomes.
+
+**Repeatable:** measurements use the shared generator, so `random.seed(n)` repeats a whole run.
+
+### Algorithms
+
+| Call | What it does |
+| --- | --- |
+| `q.grover(n, [11])` or `q.grover(n, \|x\| x == 11)` | search 2^n items in about sqrt of that many steps; gives `found`, `probability`, `iterations`, `register` |
+| `q.deutsch_jozsa(n, f)` | tells whether `f` is constant or balanced with ONE question |
+| `q.bernstein_vazirani("10110")` | finds a hidden bit string with one question |
+| `q.teleport(a, b)` | sends the qubit a\|0> + b\|1> using entanglement and two classical bits; gives the `fidelity` |
+| `q.shor(15)` | factors a number with quantum period finding (needs 3 qubits per bit of the number, so up to 127) |
+| `q.random_bits(8)`, `q.random_int(10)`, `q.coin()` | true quantum randomness (as true as the simulator's generator) |
+
+This is a **simulator**: it computes all the amplitudes on a normal computer, so it shows exactly what an ideal quantum computer would do, with no noise.
+
+## std.qm
+
+SI units unless a name ends in `_ev` or `_nm`. Wave functions are lists of numbers or complex numbers.
+
+```suave
+use std.qm
+print(qm.hydrogen_energy(1))                         // -13.6057 (eV)
+print(qm.hydrogen_transition(3, 2))                  // the Balmer H-alpha line: 656.11 nm
+print(qm.box_energy_ev(1, 1e-9))                     // 0.376 eV: an electron in a 1 nm box
+print(qm.tunneling(1, 2, 1, 1, 1))                   // the chance of tunneling through a barrier
+
+// solve the Schrodinger equation for any potential (m = hbar = 1)
+let sol = qm.solve_1d(|x| 0.5 * x * x, -8, 8, 500, k: 4)
+print(sol.energies)                                  // [0.5, 1.4998, 2.4996, ...]
+
+// a wave packet moving through empty space
+let xs = (0..256).map(|i| -20 + i * 40 / 256)
+let psi = qm.gaussian_packet(xs, -5, 1, 2)           // centre -5, width 1, momentum 2
+let later = qm.evolve(psi, 0, xs, dt: 0.05, steps: 100)
+print(qm.expect_x(later, xs))                        // about 5
+```
+
+* **Constants:** `h hbar c e m_e m_p m_n eps0 mu0 k_B N_A a0 alpha R_inf eV amu mu_B G`.
+* **Light and matter:** `photon_energy_ev photon_wavelength_nm photon_frequency de_broglie electron_wavelength compton_wavelength min_momentum_spread`.
+* **Atoms:** `hydrogen_energy hydrogen_radius hydrogen_transition hydrogen_radial hydrogen_density orbital_name quantum_numbers electron_configuration rydberg_wavelength_nm`.
+* **Simple systems:** `box_energy box_psi box_probability oscillator_energy oscillator_psi tunneling hermite laguerre`.
+* **Wave functions:** `solve_1d gaussian_packet evolve norm probability expect_x expect expect_p spread_x probability_density`.
+* **Spin and matrices:** `pauli spin_up spin_down spin_state spin_expect spin_measure matmul dagger kron commutator anticommutator apply inner outer expect_op born normalize eigh time_evolve density purity von_neumann is_hermitian is_unitary`.
+
+`eigh(H)` finds the eigenvalues and eigenvectors of a Hermitian matrix; `time_evolve(H, psi, t)` is the state after time t.
+
+## Examples
+
+`examples/quantum.sv`, `examples/pools.sv`, `examples/complex.sv`, and the Quantum example in the playground.

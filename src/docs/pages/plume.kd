@@ -1,0 +1,9 @@
+# Plume
+
+**Plume** turns small component files into working interface pieces, a bit like Svelte. A component is plain HTML, then CSS, then a script in a BitLang-like language, separated by lines of `---`. Other languages, such as Rust compiled to WebAssembly, come after them in the order you list them!
+
+Components are compiled by the Plume command line tool, `plume.mjs`. Read its comments and the sample components in the source download for the exact syntax!
+
+## Svelte components for Keydown
+
+The suite also ships Svelte components for the apps' own pieces: a Keydown box, composer, editor, text, guide, doc, annotator, sandbox, program runner and style picker, plus the 26 PoolsideUI components. They are in the source download!

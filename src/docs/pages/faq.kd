@@ -1,0 +1,49 @@
+# FAQ and troubleshooting
+
+## General
+
+::accordion
+@item Is Radii Office really free?
+Yes. The apps are free to use, have no ads, and the code is open source. Anything you make is yours!
+@item Do I need an account?
+Not for the editing apps. You only need one for the server apps (Phosphor, Beta, Mintcode, Overshare and Yuzu mail), because they keep your data on a server!
+@item Where are my documents?
+In your browser's storage on this computer, or in a file if you chose **Keep a file on this computer**. Nothing is uploaded unless you share it!
+@item Can I use it offline?
+Yes. After the first visit the apps work without a connection. See [Offline and desktop](#/offline-desktop)!
+::end
+
+## Keydown
+
+::accordion
+@item My tag stayed as plain text.
+Tags format when you press Space after them, or Enter at the end of the line. Check the symbols and the letters for a typo, then use **Re-format**, which underlines any tag that could not be formatted!
+@item I want to show a tag without using it.
+Put a backslash before its symbols, like `\#R\#text\#`, or put the tag in backticks!
+@item Which tag makes this look?
+Open the [reference](#/keydown-reference) and use the filter. Every section has live examples!
+::end
+
+## Problems
+
+::accordion
+@item A page is blank or old after an update.
+Do a hard refresh (Ctrl+Shift+R, or Cmd+Shift+R on a Mac). Apps are cached for offline use, and the new version loads on the next visit!
+@item My BitLang program ends instantly.
+Make sure you are in View mode, do not type in the page while it runs, and check the program for a `stop()` call. The error note shows how long it ran and why it ended!
+@item Real email in Yuzu shows as plain text.
+Only mail that arrived after the mail server's update has a formatted version, and you may have pressed **Plain text** on that message!
+@item Printing looks different from the screen.
+Use **Print Preview** in Writeout or Bitbook first. Some gradients print as low-resolution pictures in Chrome, and Firefox prints them well. Try printing from Firefox if you see this!
+::end
+
+## Shortcuts
+
+| Where | Keys | Does |
+| --- | --- | --- |
+| This page | {key Ctrl+K} or {key /} | Search the docs |
+| Writeout | {key Ctrl+Enter} | New page |
+| Writeout Source mode | {key Tab} | Indent the line |
+| Waterflow, Phosphor | {key Ctrl+K} | Quick switcher |
+| Inkpath | {key G} | Gradient tool |
+| Peeker | {key E} | Edit tool |

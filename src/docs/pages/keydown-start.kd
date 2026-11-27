@@ -1,0 +1,44 @@
+# Keydown guide
+
+**Keydown** is the formatting language of Radii Office. You type short **tags** around your words, and the words turn into formatting: headings, bold text, glossy chips, highlights, speech bubbles, tables, math, callouts, dividers and small interactive widgets. The same tags work in every app, so what you learn in Writeout works in Bitbook, Amber, Phosphor, OpenDB and this documentation page!
+
+::tip Try it now
+Open [Writeout](/writeout), type `# Hello` and press Enter, then type `++R+A red chip++` and press Space. Two tags, two kinds of formatting!
+::end
+
+## How it works
+
+* In **Writeout and Bitbook**, a tag turns into its formatting when you press **Space** after it. Pressing **Enter** at the end of a line formats every tag left on that line!
+* In **OpenDB, Phosphor, Beta and other apps**, tags are drawn whenever the text is shown!
+* Most tags wrap your words with an opening and a closing tag, like `#R#` and `#`. Typing `\\` at the end of a formatted piece steps back out of it!
+* **Un-format** turns a whole page back into tags, and **Re-format** formats it again, underlining any tag that could not be formatted!
+
+## Where Keydown works
+
+Writeout, Bitbook, Amber, Waterflow, Imbuer, Formly, Yuzu mail, Phosphor, Antimony, Beta, Mintcode and OpenDB. There is also a standalone **Keydown.js** engine you can load in your own page, and Svelte components that draw Keydown!
+
+## The families of tags
+
+| Family | Example | You get |
+| --- | --- | --- |
+| Basics | `**bold**` and `*italic*`, plus backticks for code | Plain formatting |
+| Aero chips | `++R+text++` | Glossy chips (more kinds: glass, orb, ring and toast) |
+| Rim chips | `!!#C#text#` | Chips with a rim, in many families |
+| Unique Styles | `@family-3@text@` | One of thousands of designs; the number picks the colorway |
+| Quote looks | `!> text` `?> text` `>> text` | Quotes with different looks |
+| Dividers | `::divider{wavy}` | A decorated line (add a title and color after more bars); `::pagebreak` starts a new page |
+| Math | `$x^2$` and `$$...$$` | Drawn by KaTeX |
+| Spoilers | `*sp(text)` | Hidden until clicked |
+| Blocks | `::note`, `::toc`, `::columns` | Callouts, contents lists, columns and more |
+| Annotator pens | `#R#text#_` and friends | Marker, wavy underline and other pen marks |
+
+Each family has many looks. The [full reference](#/keydown-reference) lists every one with a live example!
+
+## Learning path
+
+1. [Syntax cheat sheet](#/keydown-syntax): the tags you will use every day!
+2. [Document blocks](#/keydown-blocks): tables, callouts, contents, covers and code blocks!
+3. [Keydown Next](#/keydown-next): chip tags, emphasis tags and live values!
+4. [Effects and looks](#/keydown-looks): text effects, underlines, quotes and bullet styles!
+5. [Saved files](#/keydown-files): how Keydown is stored in `.kd` and `.kn` files!
+6. [Reference](#/keydown-reference): every section of the full article, with a filter!

@@ -1,0 +1,13 @@
+# BitLang
+
+**BitLang** is the small language behind Bitbook programs. A program can show text with `renderRT`, add buttons with `btn`, react to keys and the mouse, play beeps, draw with ink, and change how things look with `effect_size`, `effect_tint` and friends. It also runs inside Omicron pages!
+
+You add a program to a note with the **Programs** skill in Bitbook (Skills tab). Press the pencil on the chip to edit it, and click the chip to run it. The guide below is the same one that opens from Bitbook's **BitLang Guide** button, so it always matches the real language!
+
+::note Programs and View mode
+A running program is part of the page. Typing in the page or switching modes rebuilds it, which stops the program. Let it run in View mode and keep your hands off the text while it plays!
+::end
+
+## Built-in functions
+
+`atan2 pow min max random randint clamp str num len range push pop remove join split upper lower contains keys time print hover renderRT ink inkc renderPT annotate_ beepbox skill textbox counter btn effect_ effect_size effect_shadow effect_tint effect key mouse_x mouse_y mouse_down beep remvar ls_set ls_get ls_remove ls_keys ls_clear to_json from_json export_file import_file regex_test regex_match regex_all regex_replace regex_split vec mat dot cross norm normalize det transpose inverse identity zeros trace rows cols to_list python sql sql_save sql_load lua stop wait`

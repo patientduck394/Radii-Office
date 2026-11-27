@@ -1,0 +1,525 @@
+# The Suave standard library
+
+This page is written by `tools/gen-docs.js` from the real modules. Run `suave doc std.json` for any module, and use one with `use std.json`.
+**61 modules, 1174 functions.**
+
+
+## Data formats
+
+### std.json
+
+Read and write JSON, with exact line and column errors, a lenient mode (comments, trailing commas), JSON Lines and big integers.
+
+`use std.json`  (11 things)
+
+Functions: `compact`, `minify`, `parse`, `parse_lines`, `pretty`, `read`, `stringify`, `stringify_lines`, `try_parse`, `valid`, `write`
+
+### std.yaml
+
+YAML 1.2: block and flow collections, quoted, plain and block text, anchors, merge keys and several documents.
+
+`use std.yaml`  (8 things)
+
+Functions: `parse`, `parse_all`, `pretty`, `read`, `stringify`, `try_parse`, `valid`, `write`
+
+### std.toml
+
+TOML 1.0: tables, arrays of tables, dotted keys, inline tables, every string kind and dates.
+
+`use std.toml`  (7 things)
+
+Functions: `parse`, `pretty`, `read`, `stringify`, `try_parse`, `valid`, `write`
+
+### std.suvl
+
+Suave's own data format: friendly like YAML, exact like JSON, typed like TOML (durations, sizes, dates). See docs/SUVL.md.
+
+`use std.suvl`  (8 things)
+
+Functions: `parse`, `parse_raw`, `pretty`, `read`, `stringify`, `try_parse`, `valid`, `write`
+
+### std.csv
+
+CSV and TSV with quoted fields, headers into maps and optional type guessing.
+
+`use std.csv`  (9 things)
+
+Values: `tsv`
+
+Functions: `parse`, `parse_rows`, `pretty`, `read`, `stringify`, `try_parse`, `valid`, `write`
+
+### std.data
+
+Change between formats (json, yaml, toml, suvl, csv), load and save files by their extension, guess a format.
+
+`use std.data`  (7 things)
+
+Functions: `convert`, `detect`, `formats`, `load`, `parse`, `save`, `stringify`
+
+### std.xml
+
+Parse and write XML, find tags, follow paths, turn a tree into a map.
+
+`use std.xml`  (12 things)
+
+Functions: `attr`, `element`, `escape`, `find`, `find_all`, `parse`, `read`, `select`, `stringify`, `text_of`, `to_map`, `unescape`
+
+### std.ini
+
+INI and config files.
+
+`use std.ini`  (3 things)
+
+Functions: `parse`, `read`, `stringify`
+
+### std.table
+
+Data frames: filter, sort, group, join, summarize and print tables of rows. Reads CSV.
+
+`use std.table`  (6 things)
+
+Functions: `from`, `from_columns`, `from_csv`, `new`, `read_csv`, `write_csv`
+
+## Numbers and science
+
+### std.math
+
+Functions and constants, primes, factors, combinatorics, root finding, integration. Works with complex numbers too (sqrt(-4) is 2i).
+
+`use std.math`  (77 things)
+
+Values: `E`, `I`, `INF`, `LN10`, `LN2`, `NAN`, `PHI`, `PI`, `SQRT2`, `TAU`, `e`, `inf`, `nan`, `pi`, `tau`
+
+Functions: `abs`, `acos`, `acosh`, `approx`, `asin`, `asinh`, `atan`, `atan2`, `atanh`, `cbrt`, `ceil`, `choose`, `clamp`, `collatz`, `cos`, `cosh`, `deg`, `derivative`, `digits_sum`, `divisors`, `exp`, `factorial`, `fib`, `floor`, `gcd`, `hypot`, `integrate`, `is_finite`, `is_int`, `is_nan`, `is_perfect_square`, `is_prime`, `isqrt`, `lcm`, `lerp`, `ln`, `log`, `log10`, `log2`, `max`, `mean`, `min`, `mod_pow`, `next_prime`, `permutations`, `pow`, `prime_factors`, `primes`, `product`, `quadratic`, `rad`, `remap`, `round`, `sign`, `sin`, `sinh`, `solve`, `sqrt`, `sum`, `tan`, `tanh`, `trunc`
+
+### std.stats
+
+Mean, median, spread, correlation, regression, percentiles, histograms.
+
+`use std.stats`  (33 things)
+
+Functions: `corr`, `cov`, `cumprod`, `cumsum`, `describe`, `entropy`, `geomean`, `harmean`, `histogram`, `iqr`, `kurtosis`, `linreg`, `max`, `mean`, `median`, `min`, `mode`, `modes`, `moving_avg`, `normalize`, `outliers`, `percentile`, `quantile`, `range`, `rank`, `sample_stddev`, `sample_variance`, `skew`, `stddev`, `sum`, `variance`, `weighted_mean`, `zscore`
+
+### std.linalg
+
+Matrices and vectors: multiply, invert, solve, determinant, rank.
+
+`use std.linalg`  (24 things)
+
+Functions: `add`, `cross`, `det`, `diag`, `dot`, `eye`, `identity`, `inverse`, `matmul`, `norm`, `normalize`, `ones`, `outer`, `power`, `rank`, `rotation`, `scale`, `shape`, `solve`, `sub`, `to_text`, `trace`, `transpose`, `zeros`
+
+### std.random
+
+Seedable random numbers, choices, shuffles, distributions, dice.
+
+`use std.random`  (18 things)
+
+Functions: `below`, `bool`, `choice`, `dice`, `exponential`, `float`, `gauss`, `generator`, `normal`, `poisson`, `rand`, `randint`, `sample`, `seed`, `shuffle`, `string`, `uniform`, `weighted_choice`
+
+### std.bits
+
+Bit operations and conversions.
+
+`use std.bits`  (23 things)
+
+Functions: `and`, `bit`, `bit_length`, `clear_bit`, `from_bin`, `from_bytes`, `from_hex`, `is_power_of_two`, `lowest_set_bit`, `next_power_of_two`, `not`, `or`, `popcount`, `rotl32`, `rotr32`, `set_bit`, `shl`, `shr`, `to_bin`, `to_bytes`, `to_hex`, `toggle_bit`, `xor`
+
+### std.bigint
+
+Huge whole numbers: factorials, powers, primes, modular maths.
+
+`use std.bigint`  (18 things)
+
+Functions: `abs`, `bit_length`, `digits`, `factorial`, `fib`, `from`, `gcd`, `is_big`, `is_prime`, `lcm`, `mod_inverse`, `mod_pow`, `parse`, `pow`, `sign`, `sqrt`, `to_float`, `to_str`
+
+### std.complex
+
+More for complex and imaginary numbers (3 + 4i is part of the language): roots, polynomial roots, the Fourier transform, the Mandelbrot test.
+
+`use std.complex`  (30 things)
+
+Values: `I`
+
+Functions: `abs`, `arg`, `conj`, `cos`, `exp`, `fft`, `from_polar`, `ifft`, `im`, `is_complex`, `ln`, `magnitudes`, `mandelbrot`, `new`, `norm`, `parse`, `phases`, `polar`, `polyroots`, `pow`, `product`, `quadratic`, `re`, `roots`, `roots_of_unity`, `sin`, `sqrt`, `sum`, `to_polar`
+
+### std.rational
+
+Exact fractions with + - * /.
+
+`use std.rational`  (3 things)
+
+Functions: `from_float`, `new`, `parse`
+
+### std.unit
+
+Convert between length, mass, time, data, volume, area, speed, energy, pressure, angle and temperature.
+
+`use std.unit`  (11 things)
+
+Functions: `c_to_f`, `c_to_k`, `convert`, `f_to_c`, `k_to_c`, `kg_to_lb`, `kinds`, `km_to_mi`, `lb_to_kg`, `mi_to_km`, `units`
+
+### std.geometry
+
+Distances, polygons, convex hulls, intersections, map distances.
+
+`use std.geometry`  (21 things)
+
+Functions: `angle`, `bounding_box`, `centroid`, `circle_area`, `circle_circumference`, `closest_pair`, `convex_hull`, `distance`, `distance3`, `haversine`, `line_intersection`, `manhattan`, `midpoint`, `point_in_polygon`, `polygon_area`, `polygon_perimeter`, `rect_overlap`, `rotate`, `segments_intersect`, `sphere_volume`, `triangle_area`
+
+## Quantum
+
+### std.quantum
+
+A quantum computer you can run: qubit registers, gates, entanglement, measurement, circuit diagrams, Grover, Deutsch-Jozsa, Bernstein-Vazirani, teleportation and Shor (docs/QUANTUM.md).
+
+`use std.quantum`  (18 things)
+
+Values: `gates`, `max_qubits`
+
+Functions: `basis`, `bell`, `bernstein_vazirani`, `coin`, `deutsch_jozsa`, `from_amplitudes`, `ghz`, `grover`, `plus`, `qubits`, `random_bits`, `random_int`, `register`, `shor`, `teleport`, `w`
+
+### std.qm
+
+Quantum mechanics: hydrogen, particles in boxes, oscillators, tunneling, the Schrodinger equation, wave packets, spin, complex matrices and Hermitian eigenvalues.
+
+`use std.qm`  (89 things)
+
+Values: `G`, `N_A`, `R_inf`, `a0`, `alpha`, `amu`, `c`, `constants`, `e`, `eV`, `eps0`, `h`, `hbar`, `k_B`, `m_e`, `m_n`, `m_p`, `mu0`, `mu_B`
+
+Functions: `add`, `anticommutator`, `apply`, `born`, `box_energy`, `box_energy_ev`, `box_probability`, `box_psi`, `commutator`, `compton_wavelength`, `dagger`, `de_broglie`, `density`, `eigh`, `electron_configuration`, `electron_wavelength`, `ev_to_joule`, `evolve`, `expect`, `expect_op`, `expect_p`, `expect_x`, `gaussian_packet`, `hermite`, `hydrogen_degeneracy`, `hydrogen_density`, `hydrogen_energy`, `hydrogen_radial`, `hydrogen_radius`, `hydrogen_transition`, `inner`, `is_hermitian`, `is_unitary`, `joule_to_ev`, `ket_text`, `kron`, `laguerre`, `matmul`, `min_energy_spread`, `min_momentum_spread`, `nm_to_m`, `norm`, `normalize`, `orbital_name`, `oscillator_energy`, `oscillator_psi`, `outer`, `pauli`, `photon_energy_ev`, `photon_frequency`, `photon_momentum`, `photon_wavelength_nm`, `probability`, `probability_density`, `purity`, `quantum_numbers`, `rydberg_wavelength_nm`, `scale`, `solve_1d`, `spin_down`, `spin_expect`, `spin_measure`, `spin_state`, `spin_up`, `spread_x`, `sub`, `time_evolve`, `trace`, `tunneling`, `von_neumann`
+
+## Pools and futures
+
+### std.pool
+
+Ready-made pools: dice, coins, weighted choices, random numbers, shuffles, deals. A pool is decided when it is first used (docs/POOLS.md).
+
+`use std.pool`  (21 things)
+
+Functions: `bool`, `choice`, `coin`, `deal`, `decide_all`, `dice`, `die`, `entangle`, `exponential`, `from_fn`, `int`, `is_decided`, `is_pool`, `many`, `new`, `normal`, `poisson`, `seed`, `shuffle`, `uniform`, `weighted`
+
+### std.async
+
+Futures: wait for many (all, race, settle), time out, retry, limit how many run at once, channels and locks.
+
+`use std.async`  (23 things)
+
+Functions: `all`, `any`, `channel`, `deferred`, `delay`, `each`, `gather`, `is_future`, `lock`, `map`, `map_limit`, `next_tick`, `now`, `race`, `rejected`, `resolved`, `retry`, `semaphore`, `settle`, `sleep`, `spawn`, `then`, `timeout`
+
+## Text
+
+### std.text
+
+Wrap, slug, case changes, edit distance, word counts, human-friendly numbers and sizes.
+
+`use std.text`  (34 things)
+
+Functions: `between`, `caesar`, `camel`, `char_count`, `closest`, `columns`, `count_words`, `dedent`, `human_bytes`, `human_duration`, `human_number`, `indent`, `initials`, `is_anagram`, `is_palindrome`, `jaro`, `kebab`, `levenshtein`, `lorem`, `ordinal`, `pascal`, `pluralize`, `remove_accents`, `reverse_words`, `rot13`, `similarity`, `slug`, `snake`, `soundex`, `squeeze`, `title`, `truncate`, `word_freq`, `wrap`
+
+### std.fmt
+
+printf-style formatting, money, Roman numerals, number words, text tables and boxes.
+
+`use std.fmt`  (19 things)
+
+Functions: `bar`, `bool`, `box`, `center`, `fixed`, `from_roman`, `list`, `money`, `ordinal`, `pad_left`, `pad_right`, `percent`, `roman`, `sci`, `spec`, `sprintf`, `table`, `thousands`, `words`
+
+### std.regex
+
+Regular expressions with named groups, global replace and split.
+
+`use std.regex`  (15 things)
+
+Values: `EMAIL`, `FLOAT`, `HEX_COLOR`, `INT`, `IPV4`, `URL`
+
+Functions: `escape`, `find_all`, `is_valid`, `match`, `matches`, `replace`, `replace_first`, `split`, `test`
+
+### std.markdown
+
+Turn Markdown into HTML; headings, links and table of contents.
+
+`use std.markdown`  (6 things)
+
+Functions: `escape`, `headings`, `links`, `strip`, `to_html`, `toc`
+
+### std.template
+
+Mustache-style templates: {{name}}, {{#each}}, {{#if}}, {{else}}.
+
+`use std.template`  (4 things)
+
+Functions: `compile`, `fill`, `render`, `render_text`
+
+### std.diff
+
+Line, word and character differences and unified patches.
+
+`use std.diff`  (7 things)
+
+Functions: `apply`, `chars`, `lines`, `similar`, `stats`, `unified`, `words`
+
+### std.encoding
+
+Base64, hex, URL and HTML escaping, UTF-8 bytes, Base32, Morse.
+
+`use std.encoding`  (16 things)
+
+Functions: `base32`, `base64`, `base64_bytes`, `base64_decode`, `base64url`, `base64url_decode`, `hex`, `hex_decode`, `html_escape`, `html_unescape`, `morse`, `rot`, `url_decode`, `url_encode`, `utf8`, `utf8_decode`
+
+### std.url
+
+Parse, build and join URLs and query strings.
+
+`use std.url`  (9 things)
+
+Functions: `build`, `decode`, `domain`, `encode`, `is_valid`, `join`, `parse`, `query_build`, `query_parse`
+
+### std.color
+
+Parse and mix colors, lighten, contrast, gradients, palettes.
+
+`use std.color`  (21 things)
+
+Functions: `ansi`, `complement`, `contrast`, `css_hsl`, `css_rgb`, `darken`, `gradient`, `grayscale`, `hsl`, `invert`, `lighten`, `luminance`, `mix`, `names`, `palette`, `parse`, `readable_on`, `rgb`, `to_hex`, `to_hsl`, `to_rgb`
+
+### std.semver
+
+Parse, compare, bump and match semantic versions.
+
+`use std.semver`  (7 things)
+
+Functions: `bump`, `compare`, `is_valid`, `max`, `parse`, `satisfies`, `sort`
+
+## Codes and keys
+
+### std.hash
+
+SHA-256, SHA-1, MD5, HMAC, CRC32 and friends (pure JavaScript, also in browsers).
+
+`use std.hash`  (11 things)
+
+Functions: `adler32`, `crc32`, `djb2`, `fnv1a`, `hmac_sha256`, `md5`, `sha1`, `sha256`, `sha256_bytes`, `short`, `verify`
+
+### std.crypto
+
+Random bytes, tokens, passwords, key stretching.
+
+`use std.crypto`  (9 things)
+
+Functions: `constant_time_eq`, `password`, `pbkdf`, `random_bytes`, `random_hex`, `random_int`, `sha256`, `token`, `uuid`
+
+### std.uuid
+
+UUID v4 and v7.
+
+`use std.uuid`  (6 things)
+
+Functions: `is_valid`, `new`, `nil`, `short`, `v4`, `v7`
+
+## Collections and flow
+
+### std.ds
+
+Stacks, queues, deques, heaps, LRU caches, counters, tries, union-find, ring buffers, sorted lists.
+
+`use std.ds`  (14 things)
+
+Functions: `counter`, `default_map`, `deque`, `heap`, `heap_of`, `lru`, `max_heap`, `min_heap`, `queue`, `ring`, `sorted_list`, `stack`, `trie`, `union_find`
+
+### std.graph
+
+Graphs: search, shortest paths, topological order, cycles, spanning trees.
+
+`use std.graph`  (5 things)
+
+Functions: `directed`, `from_edges`, `grid`, `new`, `undirected`
+
+### std.iter
+
+Lazy and combinatorial sequences: count, cycle, permutations, combinations, product, run lengths.
+
+`use std.iter`  (31 things)
+
+Functions: `accumulate`, `cartesian_power`, `chain`, `chunks`, `combinations`, `combinations_with_replacement`, `count`, `cumulative`, `cycle`, `flatten`, `group_adjacent`, `interleave`, `islice`, `iterate`, `lazy`, `linspace`, `pairwise`, `partition`, `permutations`, `powerset`, `product`, `range_step`, `repeat`, `run_lengths`, `take`, `transpose`, `unfold`, `unique`, `windows`, `zip_longest`, `zip_with`
+
+### std.func
+
+compose, curry, partial, memoize, juxt, trampoline and more.
+
+`use std.func`  (23 things)
+
+Functions: `apply`, `arity`, `complement`, `compose`, `constantly`, `converge`, `curry`, `fix`, `flip`, `identity`, `juxt`, `memoize`, `negate`, `once`, `partial`, `partial_right`, `pipe`, `pipeline`, `tap`, `thunk`, `times`, `trampoline`, `when`
+
+### std.algo
+
+Classic algorithms: LIS, LCS, knapsack, n-queens, search, intervals, Luhn.
+
+`use std.algo`  (26 things)
+
+Functions: `bisect_left`, `bisect_right`, `coin_change`, `count_ways`, `flood_fill`, `gray_code`, `hanoi`, `insort`, `is_sorted`, `kmp_search`, `knapsack`, `lcs`, `lis`, `luhn`, `majority`, `max_subarray`, `merge_intervals`, `merge_sort`, `n_queens`, `pascal`, `quick_select`, `rotate_matrix`, `spiral`, `subset_sum`, `top_k`, `two_sum`
+
+### std.events
+
+Event emitters.
+
+`use std.events`  (2 things)
+
+Functions: `emitter`, `new`
+
+### std.plot
+
+Charts in the terminal (bars, lines, histograms, sparklines) and SVG output.
+
+`use std.plot`  (12 things)
+
+Functions: `bar`, `column`, `heatmap`, `histogram`, `line`, `pie`, `scatter`, `sparkline`, `svg_bar`, `svg_line`, `svg_pie`, `svg_scatter`
+
+## The machine
+
+### std.fs
+
+Files and folders: read, write, list, walk, glob, copy, remove, temp folders.
+
+`use std.fs`  (31 things)
+
+Functions: `append`, `chdir`, `copy`, `copy_dir`, `cwd`, `du`, `each_line`, `exists`, `glob`, `home`, `is_dir`, `is_file`, `list`, `list_full`, `mkdir`, `modified`, `move`, `read`, `read_bytes`, `read_lines`, `real_path`, `remove`, `rename`, `size`, `stat`, `temp_dir`, `touch`, `walk`, `write`, `write_bytes`, `write_lines`
+
+### std.path
+
+Work with file paths as text.
+
+`use std.path`  (14 things)
+
+Values: `sep`
+
+Functions: `basename`, `dirname`, `ext`, `is_absolute`, `join`, `matches`, `normalize`, `parts`, `relative`, `resolve`, `split`, `stem`, `with_ext`
+
+### std.os
+
+Which system you are on.
+
+`use std.os`  (13 things)
+
+Functions: `arch`, `cpus`, `eol`, `home`, `hostname`, `is_browser`, `is_linux`, `is_mac`, `is_windows`, `name`, `pid`, `runtime`, `temp_dir`
+
+### std.env
+
+Environment variables and .env files.
+
+`use std.env`  (9 things)
+
+Functions: `all`, `bool`, `get`, `has`, `int`, `load`, `parse`, `require`, `set`
+
+### std.process
+
+Run other programs, read arguments, exit.
+
+`use std.process`  (12 things)
+
+Functions: `args`, `cwd`, `exec`, `exit`, `is_tty`, `output`, `pid`, `run`, `shell`, `spawn`, `stdin`, `which`
+
+### std.io
+
+Ask the user questions, read standard input.
+
+`use std.io`  (10 things)
+
+Functions: `ask`, `confirm`, `eprint`, `number`, `print`, `read_all`, `read_line`, `read_lines`, `select`, `write`
+
+### std.term
+
+Colors, cursor control, progress bars, terminal size.
+
+`use std.term`  (56 things)
+
+Functions: `bell`, `bg_black`, `bg_blue`, `bg_cyan`, `bg_green`, `bg_magenta`, `bg_red`, `bg_rgb`, `bg_white`, `bg_yellow`, `black`, `blink`, `blue`, `bold`, `bright_blue`, `bright_cyan`, `bright_green`, `bright_magenta`, `bright_red`, `bright_white`, `bright_yellow`, `clear`, `clear_line`, `color256`, `cyan`, `dim`, `down`, `gray`, `green`, `height`, `hidden`, `hide_cursor`, `hr`, `inverse`, `is_tty`, `italic`, `link`, `magenta`, `move_to`, `progress`, `red`, `reset`, `rgb`, `show_cursor`, `spinner_frames`, `status`, `strike`, `strip`, `style`, `title`, `underline`, `up`, `visible_len`, `white`, `width`, `yellow`
+
+### std.time
+
+Clock, sleep, timers (after, every), stopwatch, benchmarks, retry, durations.
+
+`use std.time`  (16 things)
+
+Functions: `after`, `bench`, `cancel`, `clock`, `delay`, `every`, `format_duration`, `measure`, `now`, `now_ms`, `parse_duration`, `retry`, `sleep`, `sleep_ms`, `stopwatch`, `wait_for`
+
+### std.date
+
+Dates and times: parse, format, add, difference, calendars, "3 days ago".
+
+`use std.date`  (31 things)
+
+Functions: `add`, `age`, `calendar`, `components`, `date_text`, `day_of_year`, `days`, `days_in_month`, `diff`, `end_of`, `format`, `from_ms`, `from_timestamp`, `is_leap`, `is_weekend`, `iso`, `make`, `month_name`, `months`, `now`, `parse`, `quarter`, `range`, `relative`, `start_of`, `sub`, `to_timestamp`, `today`, `week`, `weekday`, `weekday_name`
+
+### std.log
+
+Leveled logging with fields, colors, files and JSON lines.
+
+`use std.log`  (9 things)
+
+Functions: `color`, `debug`, `error`, `info`, `json`, `logger`, `set_level`, `to_file`, `warn`
+
+### std.cli
+
+Command-line option parsing with help text.
+
+`use std.cli`  (3 things)
+
+Functions: `args`, `parse`, `usage`
+
+### std.test
+
+Extra assertions for test blocks.
+
+`use std.test`  (9 things)
+
+Functions: `approx`, `assert_approx`, `assert_contains`, `assert_err`, `assert_len`, `assert_ok`, `assert_type`, `catch`, `fail`
+
+### std.storage
+
+A tiny key-value store (a file in the terminal, localStorage in a browser).
+
+`use std.storage`  (6 things)
+
+Functions: `clear`, `get`, `has`, `keys`, `remove`, `set`
+
+### std.sound
+
+Play sounds and change them (ADSR, volume, filters, EQ, reverb and more) and play melodies written as notes ("D F A C+"): sine, square, triangle, mole, saw, ramp, pulse, pwm and more waves, noise, chip noise, harmonics, FM and superchip sounds from numbers, ready-made instruments (flute, electric piano, pluck, bell, bass, pad...) and drums, and effects (echo, distortion, bitcrush, tremolo, flanger, phaser, ringmod, compress, pan, speed, reverse...), start() without waiting, and sound files from GitHub (sound.git), Mintcode (sound.mint) or your own folders (sound.file, relative to the program). await waits until the sound ends.
+
+`use std.sound`  (64 things)
+
+Functions: `bass`, `bell`, `brass`, `chipnoise`, `clap`, `cymbal`, `electric_piano`, `epiano`, `file`, `file_path`, `flute`, `fm`, `git`, `git_url`, `halfsine`, `harmonics`, `high_scoot`, `high_superchip`, `hihat`, `instruments`, `kick`, `lead`, `load`, `load_git`, `load_mint`, `lofi`, `make`, `make_melody`, `melody`, `mint`, `mint_server`, `mole`, `noise`, `note`, `organ`, `pad`, `parabola`, `pluck`, `pulse`, `pwm`, `ramp`, `robot`, `samples`, `saw`, `scoot`, `sine`, `snare`, `square`, `stairs`, `start`, `stop`, `strings`, `sub`, `superchip`, `tom`, `triangle`, `tweet`, `warm`, `wav`, `wave`, `waves`, `whistle`, `white`, `wobble`
+
+## The web
+
+### std.web
+
+The web made simple for beginners: fetch with await web.get(url), build pages with no tags (web.page, web.h1, web.list), start a site with web.serve(...), and web.say / web.button / web.input in a browser.
+
+`use std.web`  (57 things)
+
+Functions: `add_css`, `add_link`, `after`, `bold`, `box`, `br`, `button`, `clear`, `code`, `css`, `decode`, `delete`, `div`, `encode`, `engine`, `escape`, `every`, `form_value`, `get`, `h1`, `h2`, `h3`, `heading`, `image`, `input`, `is_up`, `italic`, `json`, `keydown`, `ktext`, `line`, `link`, `link_to`, `list`, `load_keydown`, `numbered`, `open`, `p`, `page`, `parts`, `picture`, `post`, `put`, `query`, `quote`, `safe`, `say`, `say_ktext`, `serve`, `serve_here`, `span`, `status`, `style`, `styled`, `table`, `text`, `title`
+
+### std.http
+
+Web requests and a web server with routes (callbacks for requests; a router for servers).
+
+`use std.http`  (23 things)
+
+Functions: `app`, `delete`, `fetch`, `fetch_json`, `fetch_text`, `file`, `get`, `get_json`, `head`, `html`, `json`, `mime`, `patch`, `post`, `post_json`, `put`, `redirect`, `request`, `serve`, `serve_dir`, `status`, `status_text`, `text`
+
+### std.dom
+
+Web pages: find elements, events, and a small app framework (state, view, update).
+
+`use std.dom`  (95 things)
+
+Functions: `add_class`, `add_style`, `alert`, `app`, `append`, `attr`, `body`, `by_id`, `checked`, `children`, `clear`, `closest`, `confirm`, `copy_text`, `create`, `delegate`, `document`, `download`, `focus`, `h`, `h_a`, `h_br`, `h_button`, `h_canvas`, `h_code`, `h_div`, `h_em`, `h_footer`, `h_form`, `h_h1`, `h_h2`, `h_h3`, `h_h4`, `h_header`, `h_hr`, `h_img`, `h_input`, `h_label`, `h_li`, `h_main`, `h_nav`, `h_ol`, `h_option`, `h_p`, `h_pre`, `h_section`, `h_select`, `h_span`, `h_strong`, `h_svg`, `h_table`, `h_tbody`, `h_td`, `h_textarea`, `h_th`, `h_thead`, `h_tr`, `h_ul`, `has_attr`, `has_class`, `head`, `hide`, `html`, `insert_after`, `insert_before`, `load_script`, `location`, `matches`, `mount`, `navigate`, `next`, `on`, `on_hash`, `parent`, `prepend`, `prev`, `prompt`, `query`, `query_all`, `ready`, `rect`, `remove`, `remove_class`, `render`, `render_html`, `replace`, `scroll_to`, `set_hash`, `show`, `style`, `tag`, `text`, `title`, `toggle_class`, `value`
+
+### std.canvas
+
+Drawing on a canvas, animation loops.
+
+`use std.canvas`  (4 things)
+
+Functions: `from`, `hsl`, `new`, `rgb`

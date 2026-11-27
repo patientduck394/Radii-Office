@@ -1,0 +1,459 @@
+
+<p>BitLang is a tiny language for making little programs and games inside Bitbook notes (and Omicron pages). Add a <b>Programs</b> skill to a note and it becomes a chip, just like a BeepBox song: press <b>✎</b> on the chip to edit the code, and click the chip to play! While a program plays it <b>takes over the whole document</b> (text, buttons and songs), and the <b>■ Stop</b> button at the top-right (or Esc) brings your document back. Bitbook is the editor; the same chip also plays in Omicron.</p>
+
+<h2>Your first program</h2>
+<pre>fn onstart():
+    renderRT("=Y=Hello=Y= from **BitLang**!", line="1")</pre>
+<p><code>fn onstart():</code> runs once when the program starts. Indentation (4 spaces) shows what belongs to a function, an <code>if</code> or a loop, like in Python.</p>
+
+<h2>Variables</h2>
+<pre>var best = 0              # saved between plays (great for high scores!)
+var temp score = 0        # temporary: starts fresh every play
+score = score + 1
+score += 1
+var name = "Ava"
+var pos = {x: 10, y: 20} # a map
+var items = [1, 2, 3]    # a list</pre>
+<ul><li><code>var</code> keeps its value after you stop, and comes back next time you play.</li><li><code>var temp</code> is reset on every play.</li><li>Values: numbers, <code>"text"</code>, <code>true</code>/<code>false</code>, <code>null</code>, lists <code>[ ]</code>, maps <code>{ }</code>.</li><li>A bare link is text: <code>var song = https://example.com/#abc</code></li><li>Comments start with <code>#</code>.</li></ul>
+
+<h2>Functions and events</h2>
+<pre>fn add(a, b=1):
+    return a + b
+
+fn onstart():     # once, when the program starts
+fn onframe(dt):   # about 60 times a second while it plays; dt = seconds since the last frame
+fn onkey(k):      # a key goes down ("a", "arrowleft", "space"...)
+fn onkeyup(k):    # a key goes up
+fn onend():       # when the program stops</pre>
+<p>In the code editor, <b>Tab</b> indents to the next step of 4 spaces, <b>Shift+Tab</b> takes one step away, and inside the indentation <b>Backspace</b>, <b>Delete</b> and the <b>arrow keys</b> treat each 4 spaces as one tab.</p>
+<p>Call a function with <code>add(2, 3)</code> or by name: <code>add(2, b=5)</code>.</p>
+
+<p><code>onframe</code> only changes the document (<code>renderRT</code>, <code>print</code>, buttons...). Rewriting the same text is free, so a clock or a counter can update every frame:</p>
+<pre>var temp t = 0
+
+fn onframe(dt):
+    t += dt
+    renderRT("Seconds: **" + floor(t) + "**", line="1")</pre>
+
+<h2>Choices and loops</h2>
+<pre>if score > 10:
+    print("Great!")
+elif score > 5:
+    print("Nice")
+else:
+    print("Keep going")
+
+while lives > 0:
+    lives -= 1
+
+for i in range(5):        # 0, 1, 2, 3, 4
+    print(i)
+for item in items:
+    print(item)
+# break  continue  pass  return</pre>
+<p>Operators: <code>+ - * / % **</code>, comparisons <code>== != &lt; &gt; &lt;= &gt;=</code>, <code>and or not</code>, and <code>in</code> (<code>3 in items</code>). Text + anything joins: <code>"Score " + score</code>.</p>
+
+<h2>Input and sound</h2>
+<table>
+<tr><td><code>key("ArrowLeft")</code></td><td><code>true</code> while that key is held (<code>key("a")</code>, <code>key("space")</code>)</td></tr>
+<tr><td><code>beep(freq, ms)</code></td><td>A little square-wave beep</td></tr>
+<tr><td><code>remvar(name)</code></td><td>Removes a <code>var temp</code> variable (give its name, like <code>remvar(score)</code>). Using it afterwards is an error until you create it again with <code>var temp</code>. Saved <code>var</code> variables can't be removed!</td></tr>
+<tr><td><code>stop()</code></td><td>End the program</td></tr>
+<tr><td><code>time()</code></td><td>Seconds since you pressed Play</td></tr>
+</table>
+
+<h2>Text output</h2>
+<table>
+<tr><td><code>print(a, b, ...)</code></td><td>Adds a line of plain text</td></tr>
+<tr><td><code>renderRT(html, line="1")</code></td><td>Shows <b>rich text</b> on a numbered line. <code>line="2"</code> <b>takes over</b> line 2, replacing whatever was written there before (by <code>renderRT</code>, a quick command, or <code>print</code>). Leave <code>line</code> out and it adds the next free line instead (the same statement keeps its own line, so a loop or <code>onframe</code> updates it in place). It understands HTML and Keydown: <code>=Y=gel=Y=</code>, <code>**bold**</code>, <code>#C#chip#</code>… Where Poolside Keydown is loaded (Bitbook, Waterflow, Writeout, OpenDB), a part of the text can be written in it with <code>;;pk{ ... }</code>, like <code>renderRT("Score: ;;pk{ &lt;tip Nice!&gt; }")</code> (use single quotes for any quotes inside).</td></tr>
+<tr><td><code>ink("gel:red:9:M10 10L80 40")</code></td><td>Draws on the program's page with Bitbook's Annotate inks, over everything else. The easy way: press <b>✏️ Draw</b> in the editor, draw, and press <b>Done</b>: the drawing goes into your code as an <code>@@ink="strokes='...'"</code> line, which runs just like <code>ink(...)</code>!</td></tr>
+<tr><td><code>wait(2)</code></td><td><b>Pauses</b> the program for that many seconds (<code>wait(0.5)</code> is half a second), then carries on with the next line! It works on a line of its own: at the top level, in <code>onstart</code>, buttons, keys, and functions of your own called on their own line. A <code>while true:</code> loop with a <code>wait</code> inside never runs out of time, and <b>Stop</b> ends the waiting.</td></tr>
+<tr><td><code>inkc()</code></td><td><b>Clears the ink</b>: every drawing made with <code>ink(...)</code> (or an <code>@@ink</code> line) leaves the page. Draw again any time with <code>ink(...)</code>!</td></tr>
+<tr><td><code>renderPT(text, line="1")</code></td><td>Like <code>renderRT</code>, but <b>plain text</b>: no Keydown, no HTML, shown exactly as written (<code>**stars**</code> stay as stars). Same line rules: <code>line=N</code> takes over line N, no <code>line</code> adds the next free line, and inside another call or a <code>&amp;</code> row it just hands back its text.</td></tr>
+<tr><td><code>btn(function, contents)</code></td><td>A clickable button! The <b>function</b> runs when it is clicked; the <b>contents</b> can be anything <code>renderRT</code> understands. A button has <b>no style of its own</b>, so whatever you put inside becomes the button: a Keydown chip (<code>#C#Play#</code>), an Annotate highlight, an image, plain text… Show it with <code>renderRT(btn(restart, "↻ Again") + "", line="2")</code>. You can mix buttons, text and skills in one line.</td></tr>
+</table>
+
+<h2>BBML: set up the page without renderRT</h2>
+<p>BBML is a little markup (it looks like HTML) for a program's <b>starting page</b>. In the ✎ editor, switch the <b>BitLang | BBML</b> button to write it. When the program plays, the BBML lines appear first (right after your top-level code), then <code>onstart</code> runs and keeps adding lines after them.</p>
+<pre class="bbml">&lt;!-- comments look like this --&gt;
+&lt;line&gt;Welcome, **{name}**! Next year you are {age + 1}.&lt;/line&gt;
+A loose line of text becomes its own line too.
+&lt;row&gt;
+    &lt;btn do="start"&gt;#G#Start#&lt;/btn&gt;
+    &lt;btn do="stop"&gt;#R#Exit#&lt;/btn&gt;
+&lt;/row&gt;
+&lt;line&gt;Name: &lt;textbox var="name"&gt;Your name&lt;/textbox&gt; Age: &lt;counter var="age" min="0" max="120"/&gt;&lt;/line&gt;
+&lt;line n="9"&gt;&lt;annotate type="bubble" color="pink"&gt;Line 9, in a bubble&lt;/annotate&gt;&lt;/line&gt;
+&lt;pt&gt;Plain text: **these stars stay**&lt;/pt&gt;</pre>
+<table>
+<tr><td><code>&lt;line&gt;…&lt;/line&gt;</code> <code>&lt;row&gt;</code></td><td>One line of rich text (Keydown works). <code>n="9"</code> puts it on line 9. Everything inside, buttons included, sits on that one line.</td></tr>
+<tr><td><code>{expression}</code></td><td>Any BitLang expression, worked out when the page is set up: <code>{name}</code>, <code>{age + 1}</code>, <code>{upper(name)}</code>. Write <code>{</code> for a real brace and <code>&lt;</code> for a real &lt;.</td></tr>
+<tr><td><code>&lt;btn do="fn"&gt;…&lt;/btn&gt;</code></td><td>A button that runs a function (or <code>stop</code>, or <code>do="lam(...)"</code>). Its contents are what it looks like.</td></tr>
+<tr><td><code>&lt;textbox var="x"&gt;hint&lt;/textbox&gt;</code></td><td>A textbox tied to a variable (<code>value="..."</code> to start with text).</td></tr>
+<tr><td><code>&lt;counter var="x" min="0" max="9"/&gt;</code></td><td>A number box tied to a variable.</td></tr>
+<tr><td><code>&lt;effect saturation="0" blur="1"&gt;…&lt;/effect&gt;</code></td><td>An effect around everything inside (saturation, brightness, contrast, grayscale, sepia, invert, hue, blur, opacity, tint="red" with tintamount="0.5", or filter="a CSS filter").</td></tr>
+<tr><td><code>&lt;annotate type="box" color="3"&gt;…&lt;/annotate&gt;</code></td><td>An Annotate highlight (any type, color by number or name).</td></tr>
+<tr><td><code>&lt;beepbox src="link" label="Song"/&gt;</code></td><td>A BeepBox song chip.</td></tr>
+<tr><td><code>&lt;pt&gt;…&lt;/pt&gt;</code></td><td>Plain text (no Keydown).</td></tr>
+<tr><td><code>&lt;b&gt;</code> <code>&lt;i&gt;</code> <code>&lt;br&gt;</code>…</td><td>Any other tag is passed through as HTML.</td></tr>
+</table>
+<p>Variables and functions come from your BitLang code, so declare them there (<code>var name = ""</code>, <code>fn start():</code>). Mistakes show as <b>BBML line N</b>. In the editor, BBML tag names are bright green, attribute names blue, values and text in quotes green, and <code>{expressions}</code> are colored like BitLang.</p>
+
+<h2>Lines: writing and overwriting</h2>
+<pre>fn onstart():
+    renderRT("first")                  # no line: takes the next free line (1)
+    renderRT("second")                 # line 2
+    renderRT("OVERRIDDEN", line=1)     # line 1 now says OVERRIDDEN
+    annotate_bubble("quick commands count as lines too")   # line 3
+    print("so does print")                                  # line 4</pre>
+<p>Every piece of output sits on a numbered line, in order. <code>renderRT("text", line=N)</code> always <b>replaces</b> line N, even when it has been written on already, so you can redraw one line (a score, a status) without touching the rest. Without <code>line</code>, a new line is added at the end.</p>
+
+<h2>Rows: several things on one line</h2>
+<p>End a line with <code>&amp;</code> and the next line joins it, so quick commands and buttons sit side by side. They can be stacked as long as you like:</p>
+<pre>fn onstart():
+    btn(submit, renderRT("#C#Submit#")) &amp;
+    btn(stop, renderRT("#R#Exit#")) &amp;
+    btn(go, renderRT("#G#Go#"))
+
+fn submit():
+    renderRT("Submitted!", line=9)
+
+fn go():
+    renderRT("Going!", line=9)</pre>
+<p>The three buttons appear in one row (one output line). <code>&amp;</code> also works inside <code>renderRT(...)</code> to join text pieces, and the next component can be indented however you like. The last line of a row has no <code>&amp;</code>.</p>
+
+<h2>onhover: change what shows when the mouse is over it</h2>
+<p>Give <code>btn</code>, <code>renderRT</code> or <code>renderPT</code> an <b>onhover</b> and its contents are swapped for the new ones while the mouse is over it (it keeps the room for both, so nothing jumps around). The hover contents are <b>Keydown</b> too, like <code>renderRT("**Hi**", onhover="=Y=Bye=Y=")</code>, and can be a <code>renderRT(...)</code> result as well. Inside <code>renderPT</code> they stay plain text, no Keydown. The swap fades (add <code>transition=0</code> to make it instant), and the hover contents can hold <b>effects</b>, like <code>onhover=effect_size("Play", 1.3)</code> to grow while the mouse is over it:</p>
+<pre>fn onstart():
+    renderRT(btn(go, "#C#Play#", onhover="#G#Let's go!#"), line="1")
+    renderRT("Move the mouse here", onhover="**Hello!** =Y=Nice to meet you=Y=", line="2")
+    renderPT("Plain text", onhover="**stars** stay stars", line="3")
+    renderRT(hover(btn(go, "Open"), "Opens the door"), line="4")   # hover(contents, onhover) works on anything
+
+fn go():
+    print("clicked")</pre>
+<p>In BBML, write <code>onhover="..."</code> on <code>&lt;btn&gt;</code>, <code>&lt;pt&gt;</code>, <code>&lt;line&gt;</code>, <code>&lt;row&gt;</code> or <code>&lt;span&gt;</code>, like <code>&lt;btn do="go" onhover="#G#Go!#"&gt;#C#Play#&lt;/btn&gt;</code>.</p>
+
+<h2>Effects: saturation, brightness, blur and more</h2>
+<p>An effect wraps text with Keydown formatting, or an element like a button or a text box, and changes how it looks. Everything outside it stays as it is:</p>
+<pre>fn onstart():
+    renderRT(effect_saturation("++R+Text++ ", 0) + "Normal text")     # the red chip turns gray
+    renderRT(effect_blur("**soft** words", 1.5) + " and sharp ones")
+    renderRT(effect_grayscale(btn(go, "#G#Go#"), 1) &amp; btn(go, "#G#Go#"))   # an element: the first button turns gray
+    renderRT(effect_brightness(effect_hue("++B+Hue turned++", 120), 1.4))   # effects can sit inside each other
+
+fn go():
+    print("clicked")</pre>
+<table>
+<tr><td><code>effect_saturation(x, n)</code></td><td>0 is gray, 1 is normal, 2 is extra vivid.</td></tr>
+<tr><td><code>effect_brightness(x, n)</code></td><td>0 is black, 1 is normal, 2 is twice as bright.</td></tr>
+<tr><td><code>effect_contrast(x, n)</code></td><td>0 is flat gray, 1 is normal, 2 is punchy.</td></tr>
+<tr><td><code>effect_grayscale(x, n)</code> <code>effect_sepia(x, n)</code> <code>effect_invert(x, n)</code></td><td>0 is normal, 1 is fully gray, brown or flipped.</td></tr>
+<tr><td><code>effect_hue(x, degrees)</code></td><td>Turns every color around the color wheel.</td></tr>
+<tr><td><code>effect_blur(x, pixels)</code></td><td>Makes it soft.</td></tr>
+<tr><td><code>effect_opacity(x, n)</code></td><td>0 is invisible, 1 is normal.</td></tr>
+<tr><td><code>effect_tint(x, color, n)</code></td><td>Colors it, like a colored glass over it: the light and dark parts stay. The color is a name (<code>"red"</code>, <code>"slate"</code>), a number 1 to 13 (like annotate), <code>"#336699"</code> or <code>"rgb(51, 102, 153)"</code>. <code>n</code> is how strong, from 0 (the original) to 1 (all the way, the default).</td></tr>
+<tr><td><code>effect_size(x, n, seconds)</code></td><td>Makes it bigger or smaller: 1 is normal, 1.5 is half as big again, 0.5 is half the size. It grows smoothly and does not push the words around it. Made for <code>onhover</code>, like <code>btn(go, "Play", onhover=effect_size("Play", 1.3))</code>.</td></tr>
+<tr><td><code>effect_shadow(x, dx, dy, blur, color)</code></td><td>A soft shadow that follows the shape, like <code>effect_shadow("Hi", 2, 2, 4, "red")</code>.</td></tr>
+<tr><td><code>effect(x, "saturate(0.5) blur(1px)")</code></td><td>Several at once, written as a CSS filter (blur, brightness, contrast, grayscale, hue-rotate, invert, opacity, saturate, sepia, drop-shadow).</td></tr>
+</table>
+<p><b>Turning transitions off:</b> add <code>transition=0</code> (or <code>transition=false</code>, <code>transition="off"</code>) to the button, text or effect that you do not want to animate, like <code>btn(go, "Play", onhover=effect_size("Play", 1.3, transition=0), transition=0)</code>: the first <code>transition=0</code> stops the growing, the second stops the fade between the two. Leave it out for the smooth default.</p>
+<p><b>Transitions:</b> every effect eases in over a quarter of a second when it changes (like when the mouse arrives). Add <code>transition=0</code> (or <code>transition=false</code>) to make it instant, or <code>transition=1</code> for a slow second: <code>effect_size("Hi", 2, transition=0)</code>. <code>effect_size</code> also takes the seconds as its third number. The swap of <code>onhover</code> fades the same way and takes <code>transition=</code> too. Hover contents can hold effects, so a button can grow while the mouse is over it.</p>
+<p>The thing inside can be a text, a button (<code>btn</code>), a text box, a skill and so on: write the amount after it. In BBML, <code>&lt;effect saturation="0" blur="1"&gt;…&lt;/effect&gt;</code> does the same around everything inside it. Numbers outside the sensible range are kept inside it. If a Keydown tag starts before an effect and ends after it, it cannot be drawn: put the whole tag inside the effect.</p>
+
+<h2>Lambdas: lam(...)</h2>
+<p>A lambda is a little function written in one place. Put statements inside <code>lam(...)</code>, separated by <code>;</code>, and keep it in a variable (or hand it straight to a button):</p>
+<pre>var done = lam(renderRT("Good job! You did it", line=1); btn(stop, renderRT("#R#Exit#")) &amp;; btn(submit, renderRT("#G#Submit#")))
+
+fn onstart():
+    done()                  # runs every statement, in order
+
+fn later():
+    btn(lam(renderPT("clicked", line=5); beep(660, 80)), "#C#Click me#")   # a lambda as a button's function</pre>
+<ul>
+<li>Each <code>;</code> starts the next statement, exactly like a new line.</li>
+<li>A <code>&amp;</code> right before a <code>;</code> keeps the next statement on the same line of output (the <code>&amp;</code> row rule), so the Exit and Submit buttons sit side by side.</li>
+<li>A lambda takes no values. It sees your variables, and <code>return</code> works inside it.</li>
+</ul>
+
+<h2>Saving data (browser storage)</h2>
+<table>
+<tr><td><code>ls_set(key, value)</code></td><td>Saves a number, text, true/false, list or map under a name. It is still there next time (even after closing the page).</td></tr>
+<tr><td><code>ls_get(key, default)</code></td><td>Reads it back (or <code>default</code>, or <code>null</code>, when nothing is saved).</td></tr>
+<tr><td><code>ls_remove(key)</code></td><td>Forgets one key.</td></tr>
+<tr><td><code>ls_keys()</code></td><td>A list of every key this program saved.</td></tr>
+<tr><td><code>ls_clear()</code></td><td>Forgets all of this program's keys.</td></tr>
+<tr><td><code>to_json(x)</code> <code>from_json(text, default)</code></td><td>Turn a list/map into text and back (handy with files).</td></tr>
+</table>
+<pre>var temp visits = ls_get("visits", 0)
+fn onstart():
+    ls_set("visits", visits + 1)
+    renderPT("You have been here " + (visits + 1) + " times", line=1)</pre>
+<p>Every program has its own private shelf. Add <code>shared=true</code> (like <code>ls_get("name", "", shared=true)</code>) to use a shelf all programs share. (<code>var</code> variables are also saved for you, but <code>ls_</code> gives you named keys, lists and maps.)</p>
+
+<h2>Files: export_file and import_file</h2>
+<table>
+<tr><td><code>export_file(name, text)</code></td><td>Saves a text file to the person's computer (their browser downloads it).</td></tr>
+<tr><td><code>import_file(fn)</code></td><td>Opens the file picker. When a file is chosen, <code>fn(name, text)</code> runs with its name and text. Add <code>accept=".csv,.json"</code> to limit the types. Files up to 1 MB.</td></tr>
+</table>
+<pre>fn onstart():
+    btn(pick, "#C#Open a file#") &amp;
+    btn(save, "#G#Save a file#")
+
+fn pick():
+    import_file(got)
+
+fn got(name, text):
+    renderPT(name + " has " + len(text) + " letters", line=3)
+
+fn save():
+    export_file("hello.txt", "Hello from BitLang!")</pre>
+<p>The browser only opens the picker (or a download) after a click, so call these from a button's function. Programs can only read a file the person picks, and only save through a normal download.</p>
+
+<h2>Regex (patterns for text)</h2>
+<table>
+<tr><td><code>regex_test(pattern, text)</code></td><td><code>true</code> if the pattern is found anywhere in the text.</td></tr>
+<tr><td><code>regex_match(pattern, text)</code></td><td>The first match as a map (<code>m.text</code>, <code>m.index</code>, <code>m.groups</code> = the (...) parts, <code>m.named</code> for (?&lt;name&gt;...) parts) or <code>null</code>.</td></tr>
+<tr><td><code>regex_all(pattern, text)</code></td><td>A list of every match (add <code>full=true</code> for maps like regex_match).</td></tr>
+<tr><td><code>regex_replace(pattern, text, with)</code></td><td>Replaces every match. <code>$1</code> in <code>with</code> is the first (...) part.</td></tr>
+<tr><td><code>regex_split(pattern, text)</code></td><td>Cuts the text at each match into a list.</td></tr>
+</table>
+<pre>regex_test("^[A-Z]", "Hello")                       # true
+regex_all("\d+", "a1 b22 c333")                      # ["1", "22", "333"]
+regex_replace("(\w+)@(\w+)", "me@site", "$2/$1")    # "site/me"
+regex_match("(?&lt;y&gt;\d{4})-(\d\d)", "on 2026-10").named.y   # "2026"</pre>
+<p>Patterns work like JavaScript's. Write a backslash twice inside quotes (<code>"\d"</code> for a digit). Add <code>flags="i"</code> to ignore case (also <code>m</code>, <code>s</code>). Patterns up to 500 letters and texts up to 200,000 letters; a bad pattern shows a plain error.</p>
+
+<h2>Buttons (step by step)</h2>
+<p>A button runs one of your functions when someone clicks it. You need two things: <b>a function</b> that says what happens, and a <code>btn(...)</code> that puts a clickable thing on the page.</p>
+
+<h3>1. The smallest button</h3>
+<pre>fn onstart():
+    btn(hello, "Click me")
+
+fn hello():
+    renderRT("You clicked it! =Y=Hooray=Y=", line="2")</pre>
+<ul>
+<li><code>btn(hello, "Click me")</code> has <b>two parts</b>: first the function's name, then what the button looks like.</li>
+<li>Write the function name <b>without brackets</b>: <code>hello</code>, not <code>hello()</code>. With brackets you would run it right now instead of giving it to the button.</li>
+<li>On a line of its own, <code>btn(...)</code> shows itself. Inside other text, use <code>renderRT</code> (see 3).</li>
+</ul>
+
+<h3>2. A button that changes something (a counter)</h3>
+<pre>var temp clicks = 0
+
+fn onstart():
+    draw()
+
+fn draw():
+    renderRT("Clicks: **" + clicks + "** " + btn(add, "#C#+1#"), line="1")
+
+fn add():
+    clicks += 1
+    draw()</pre>
+<ul>
+<li>A button's function takes <b>no values</b>, so keep what you need in a <code>var</code> or <code>var temp</code> (here <code>clicks</code>).</li>
+<li>Pressing the button changes <code>clicks</code>, then <code>draw()</code> writes the same line again with the new number. Writing a line again <b>replaces</b> it, so the button stays in place.</li>
+</ul>
+
+<h3>3. Buttons inside text, and several at once</h3>
+<pre>fn onstart():
+    renderRT("Pick one: " + btn(red, "Red") + " " + btn(blue, "Blue"), line="1")
+
+fn red():
+    renderRT("You picked **red**!", line="2")
+
+fn blue():
+    renderRT("You picked **blue**!", line="2")</pre>
+<p>Join buttons with <code>+</code> and text, like any other text. Each <code>btn</code> needs its own function.</p>
+
+<h3>4. Make the button look like anything</h3>
+<p>A button has <b>no style of its own</b>: whatever you put inside becomes the button. Try a Keydown chip, an Annotate highlight (the quick commands are perfect), or an image:</p>
+<pre>fn onstart():
+    renderRT(btn(go, "#C#Go!#") + " " + btn(go, annotate_bubble("Or this", color=6)) + " " + btn(go, annotate_accent("Or this", 10)), line="1")
+
+fn go():
+    renderRT("Went!", line="2")</pre>
+
+<h3>5. A button that stops the program</h3>
+<pre>fn onstart():
+    btn(stop, "Quit")</pre>
+<p>Built-in commands like <code>stop</code> work as the function too. (The ■ Stop button, or Esc, always works as well.)</p>
+
+<h3>If your button does nothing</h3>
+<ul>
+<li>Did you write <code>btn(hello, ...)</code> and not <code>btn(hello(), ...)</code>?</li>
+<li>Is there a <code>fn hello():</code> in your code with the same spelling?</li>
+<li>Is it on a line of its own, or inside <code>renderRT(...)</code>? A button saved in a variable is not shown until you give it to <code>renderRT</code>.</li>
+<li>Did the program stop before you clicked? A program with only <code>onstart</code> keeps running until you press ■ Stop, but an error stops everything: read the red message!</li>
+<li>Buttons cannot hand values to the function (<code>btn(add(5), ...)</code> will not work). Put the value in a <code>var</code> first.</li>
+</ul>
+
+<h2>Typing: textbox() and counter()</h2>
+<p>While a program plays, the page can't be edited, so nobody can change your text by accident. The exceptions are boxes you add yourself:</p>
+<pre>var name = ""
+var temp age = 0
+
+fn onstart():
+    renderRT("Name: " + textbox("Type your name", variable=name), line="1")
+    renderRT("Age: " + counter(variable=age, min=0, max=120), line="2")
+    renderRT(btn(hello, "#C#Say hi#"), line="3")
+
+fn hello():
+    renderRT("Hi **" + name + "**, you are " + age + "!", line="4")</pre>
+<table>
+<tr><td><code>textbox(placeholder, variable=x)</code></td><td>A box to type in. <code>variable=x</code> (no quotes) updates the variable <b>while the person types</b>. The short form <code>textbox("Text here", x)</code> does the same. The placeholder is the dimmed hint; it understands <b>Keydown and skills</b> (<code>textbox(annotate_box("Name"))</code>, even songs). <code>value="..."</code> sets what it starts with.</td></tr>
+<tr><td><code>counter(variable=x, min=0, max=10)</code></td><td>(Short form: <code>counter(x)</code>.) A smaller box for <b>numbers only</b> (digits, one dot, a leading minus). The variable gets a real number. Empty counts as 0. <code>min</code> and <code>max</code> are applied when the person leaves the box. It takes a placeholder too, but no Keydown typing.</td></tr>
+</table>
+<ul>
+<li>People <b>can type Keydown</b> into a textbox (<code>**bold**</code>, <code>=Y=gel=Y=</code>), but the variable gets its <b>plain text</b> ("bold", "gel"). They <b>cannot</b> add skills: anything typed is only text.</li>
+<li>A variable only changes when the text really changed, so typing stays smooth.</li>
+<li>If your program changes the variable (<code>name = ""</code>), the box shows the new value. Create the variable with <code>var</code> or <code>var temp</code> before using it in <code>variable=...</code>.</li>
+<li>Like buttons, boxes need <code>renderRT</code> (or a line of their own) to appear. Keys typed inside a box don't trigger <code>onkey</code>.</li>
+</ul>
+
+<h2>Skills inside programs</h2>
+<pre>var temp song = https://ultraabox.github.io/#u5N0btuff...
+
+fn onstart():
+    renderRT(skill(skill="beepbox", get=song, content=inherit) + "", line="1")</pre>
+<p><code>skill(skill="beepbox", get=link, content=inherit)</code> builds a BeepBox song player. <code>content=inherit</code> means the song data is taken from the link itself (<b>inherit only works with the BeepBox skill</b>). Add <code>label="My song"</code> to name the chip. In Bitbook the chip plays the song; in Omicron it opens the link.</p>
+
+<h2>Annotate: highlights in your text</h2>
+<pre>renderRT("Look: " + skill(skill="annotate", type="bubble", color="pink", content=renderRT("Some **totally random** text here")), line="1")</pre>
+<p><code>skill(skill="annotate", type=..., color=..., content=...)</code> wraps text in one of Bitbook's Annotate highlights. <code>content</code> can be <code>renderRT("...")</code>: used inside another call, <code>renderRT</code> just hands back its rich text instead of showing it. <b>type</b> is <code>highlight</code>, <code>underline</code>, <code>strikethrough</code>, <code>box</code>, <code>halo</code>, <code>brackets</code>, <code>spotlight</code>, <code>accent</code>, <code>bubble</code> or one of the colorful ones: <code>dusk</code> <code>prism</code> <code>complement</code> <code>ticket</code> <code>neon</code> <code>stamp</code> <code>tape</code> <code>checker</code> <code>halftone</code> <code>aurora</code> <code>mild</code> (pale versions of every color) <code>wrap</code> <code>belt</code> <code>bucket</code> <code>torpedo</code> <code>bottle</code> <code>packet</code> <code>select</code> <code>capsule</code> <code>frost</code> <code>pixel</code> <code>flag</code> <code>gem</code>. <b>color</b> (default <code>yellow</code>) is red, orange, gold, yellow, lime, green, turquoise, teal, cyan, blue, purple, pink or slate. Annotate highlights make great <code>btn</code> contents!</p>
+
+<h2>Quick commands</h2>
+<p>The long <code>skill(...)</code> forms have short versions:</p>
+<table>
+<tr><td><code>annotate_bubble("Some **totally cool** text here", color=1)</code></td><td>The same as <code>skill(skill="annotate", type="bubble", color=..., content=...)</code>. There is one for every type: <code>annotate_highlight</code> <code>annotate_underline</code> <code>annotate_strikethrough</code> <code>annotate_box</code> <code>annotate_halo</code> <code>annotate_brackets</code> <code>annotate_spotlight</code> <code>annotate_accent</code> <code>annotate_bubble</code> and <code>annotate_dusk</code> <code>annotate_prism</code> <code>annotate_complement</code> <code>annotate_ticket</code> <code>annotate_neon</code> <code>annotate_stamp</code> <code>annotate_tape</code> <code>annotate_checker</code> <code>annotate_halftone</code> <code>annotate_aurora</code> <code>annotate_mild</code> <code>annotate_wrap</code> <code>annotate_belt</code> <code>annotate_bucket</code> <code>annotate_torpedo</code> <code>annotate_bottle</code> <code>annotate_packet</code> <code>annotate_select</code> <code>annotate_capsule</code> <code>annotate_frost</code> <code>annotate_pixel</code> <code>annotate_flag</code> <code>annotate_gem</code></td></tr>
+<tr><td><code>color=1</code> … <code>color=13</code></td><td>Colors by number: 1 red, 2 orange, 3 gold, 4 yellow, 5 lime, 6 green, 7 turquoise, 8 teal, 9 cyan, 10 blue, 11 purple, 12 pink, 13 slate. Names work too: <code>color="pink"</code>, or put it second: <code>annotate_box("text", "blue")</code></td></tr>
+<tr><td><code>beepbox(link, label="My song")</code></td><td>The same as <code>skill(skill="beepbox", get=link, content=inherit)</code></td></tr>
+</table>
+<p>On a line of their own they show themselves right away. Inside <code>renderRT(...)</code> you can mix them with other text:</p>
+<pre>annotate_bubble("Some **totally cool** text here", color=1)
+renderRT("Hi " + annotate_box("there", "blue") + " " + beepbox(song), line="9")</pre>
+
+<h2>Lists, maps and text</h2>
+<table>
+<tr><td><code>len(x)</code></td><td>How many items / letters</td></tr>
+<tr><td><code>push(list, x)</code> <code>pop(list)</code> <code>remove(list, x)</code></td><td>Change a list</td></tr>
+<tr><td><code>list[0]</code> <code>list[-1]</code> <code>map.key</code> <code>map["key"]</code></td><td>Read (or set) a slot; a missing one is <code>null</code></td></tr>
+<tr><td><code>range(n)</code> <code>range(a, b)</code> <code>range(a, b, step)</code></td><td>Lists of numbers</td></tr>
+<tr><td><code>str(x)</code> <code>num(x)</code> <code>join(list, sep)</code> <code>split(text, sep)</code> <code>upper</code> <code>lower</code> <code>contains</code> <code>keys</code></td><td>Handy tools</td></tr>
+</table>
+
+<h2>Matchers: find and swap</h2>
+<pre>var who = "Text"
+
+mat Censor: (
+    "badword"        ~> "*******"
+    "just some text" ~> 1
+)
+
+mat Swap: (
+    "matchme"    ~> "replaceme"
+    "a_variable" ~> who          # a value can be a variable
+    who          ~> "a_variable" # and so can what you look for
+)
+
+fn onstart():
+    renderRT(mat_match("a_variable", Swap), line=1)          # Text
+    renderRT(mat_match("no badword here", Censor), line=2)   # no ******* here
+    renderPT(mat_match("just some text", Censor), line=3)    # 1</pre>
+<ul>
+<li><code>mat Name: ( ... )</code> makes a matcher: one <code>"what to find" ~&gt; what it becomes</code> per line (commas are fine too, and <code>#</code> comments work inside).</li>
+<li><code>mat_match(x, Name)</code>: if <code>x</code> <b>is exactly</b> one of the keys, you get its value (any kind: text, a number, a list...). Otherwise, if <code>x</code> is text, every key found <b>inside</b> it is swapped (longest first).</li>
+<li>Swapping happens <b>once</b>: a replacement is never matched again, so <code>"a_variable"</code> becomes <code>"Text"</code> and stays <code>"Text"</code> even though <code>"Text"</code> is also a key.</li>
+<li>Keys and values are read when you match, so they always use the variables' current values.</li>
+<li><code>mat_match(list, Name)</code> matches every item. <code>mat_has(x, Name)</code> is <code>true</code> when anything matched, and <code>mat_keys(Name)</code> lists the keys.</li>
+<li><b>Change a pair</b> with <code>matc</code> and the mouse operator <code>"&gt;</code>: <code>matc Censor ["badword" ~&gt; "*******"] "&gt; ["badword" ~&gt; "(oops)"]</code>. The first <code>[...]</code> is the pair as it is now (key and value), the second is what it becomes. The new key and value are read right then.</li>
+<li>Not to be confused with <code>mat(...)</code>, which makes a matrix: a matcher is <code>mat</code>, a name, then a colon.</li>
+</ul>
+
+<h2>Vectors and matrices</h2>
+<pre>var v = &lt;| 1, 2, 3 |&gt;        # a vector: &lt;| numbers, separated by commas |&gt;
+var m = [1 2; 3 4]            # a matrix: numbers with spaces, ; starts a new row
+var id = identity(2)          # [1 0; 0 1]</pre>
+<ul>
+<li><b>Vector</b> <code>&lt;| 1, 2, 3 |&gt;</code> (or <code>vec(1, 2, 3)</code>). Read parts with <code>v[0]</code> or <code>v.x</code> <code>v.y</code> <code>v.z</code> <code>v.w</code>, count with <code>v.length</code> or <code>len(v)</code>, change with <code>v[1] = 9</code> or <code>v[1] += 5</code>, and loop with <code>for x in v:</code>.</li>
+<li><b>Matrix</b> <code>[1 2; 3 4]</code> (or <code>mat([[1, 2], [3, 4]])</code>). Spaces separate the numbers, so use brackets for sums: <code>[(1 + 2) 4]</code>, and <code>[1 -2]</code> is two numbers. <code>m[1]</code> is a row (a live vector), <code>m[1][0]</code> one number, <code>m.rows</code> <code>m.cols</code> and <code>m.T</code> (the transpose) work. <code>[1, 2; 3, 4]</code> with commas is fine too, and then each part can be a full sum.</li>
+<li>Plain <code>[1, 2, 3]</code> with commas and no <code>;</code> is still a normal list.</li>
+</ul>
+<table>
+<tr><td><code>v + w</code> <code>v - w</code></td><td>Add or subtract vectors (or matrices) of the same size.</td></tr>
+<tr><td><code>v * 2</code> <code>2 * v</code> <code>v / 2</code></td><td>Scale. A number with <code>+</code> or <code>-</code> goes into every slot.</td></tr>
+<tr><td><code>v * w</code></td><td>Vectors multiply slot by slot. For the dot product use <code>dot(v, w)</code>.</td></tr>
+<tr><td><code>m * n</code> <code>m * v</code> <code>m ** 3</code></td><td>Matrix times matrix, matrix times vector (the vector stands up as a column), and matrix power.</td></tr>
+<tr><td><code>dot(v, w)</code> <code>cross(v, w)</code> <code>norm(v)</code> <code>normalize(v)</code></td><td>Dot product, cross product (3 numbers each), length, and the same direction with length 1.</td></tr>
+<tr><td><code>det(m)</code> <code>inverse(m)</code> <code>transpose(m)</code> <code>trace(m)</code></td><td>Determinant, inverse, transpose, and the sum of the diagonal.</td></tr>
+<tr><td><code>identity(n)</code> <code>zeros(n)</code> <code>zeros(r, c)</code></td><td>The identity matrix, a vector of zeros, and a matrix of zeros.</td></tr>
+<tr><td><code>rows(m)</code> <code>cols(m)</code> <code>to_list(x)</code></td><td>Sizes, and turn a vector or matrix into plain lists.</td></tr>
+<tr><td><code>v == w</code></td><td>Are they the same numbers? (Vectors and matrices cannot be compared with &lt; or &gt;.)</td></tr>
+</table>
+<pre>var temp m = [2 0; 0 2]
+fn onstart():
+    renderPT("m * &lt;| 1, 3 |&gt; = " + str(m * &lt;| 1, 3 |&gt;), line=1)     # &lt;| 2, 6 |&gt;</pre>
+<p>They show up as <code>&lt;| 1, 2, 3 |&gt;</code> and <code>[1 2; 3 4]</code> in text. Saved <code>var</code>s and <code>ls_set</code> keep them. A <b>matrix</b> only holds numbers. A <b>vector</b> can hold numbers, text, true/false and variables, like a list that also does vector math: <code>&lt;| name, "hi", 3, ok |&gt;</code> (the variables <code>name</code> and <code>ok</code> are read when the vector is made). <code>+</code> <code>*</code> still work slot by slot on text (<code>+</code> joins, <code>* 3</code> repeats); the number-only tools (<code>dot</code>, <code>cross</code>, <code>norm</code>, <code>normalize</code>, matrix products) ask for numbers.</p>
+
+<h2>Libraries: use python, use sqlite, use lua</h2>
+<p>Put <code>use</code> lines at the very top of your program to load a library. They load before the program starts (you will see a loading message the first time).</p>
+<pre>use sqlite
+use python
+use python numpy, pandas      # extra Python packages from Pyodide's list
+use lua</pre>
+
+<h3>python(code)  (Pyodide)</h3>
+<pre>use python
+
+fn onstart():
+    var temp total = python("sum(range(10)) * k", k=2)     # 90
+    renderPT("total = " + total, line=1)
+    python("import math\nroots = [math.sqrt(x) for x in range(4)]")
+    renderPT(to_json(python("roots")), line=2)             # variables stay for the next python() call
+    python("print('hello from Python')")                   # prints show up as lines</pre>
+<ul>
+<li><code>python("code")</code> runs the code and gives back the value of its <b>last expression</b> (numbers, text, true/false, <code>None</code> = <code>null</code>, lists, and dicts become maps). Extra <code>name=value</code> pieces become Python variables first (<code>k=2</code> above).</li>
+<li>Python keeps its variables between calls while the program runs. Errors show the Python message and the line of your BitLang program.</li>
+<li>The first run downloads Pyodide (about 10 MB) from the internet; after that it is cached by the browser.</li>
+<li><b>Python is more powerful than BitLang</b>, so the first time you play a program that uses it you are asked to <b>Allow</b> it (you can tick "Always allow this exact program"). BitLang blocks Python's <code>js</code> module (the way into the page), but treat this as a safety net, not a wall: only allow programs you trust.</li>
+</ul>
+
+<h3>sql(query, params)  (SQLite)</h3>
+<pre>use sqlite
+
+fn onstart():
+    sql("create table scores (name text, points integer)")
+    sql("insert into scores values (?, ?)", ["Ann", 12])
+    sql("insert into scores values ('Bob', 7)")
+    var temp rows = sql("select * from scores order by points desc")
+    renderPT(rows[0].name + " leads with " + rows[0].points, line=1)
+    sql_save()          # keeps the database in this browser; sql_load() brings it back later</pre>
+<ul>
+<li><code>sql(query)</code> gives a <b>list of maps</b> for a SELECT (one map per row, columns as names) and the number of changed rows for anything else. Put <code>?</code> in the query and a list as the second value to fill them safely.</li>
+<li>The database starts empty each time the program plays (it lives in memory). <code>sql_save()</code> stores it (up to 3 MB) and <code>sql_load()</code> returns <code>true</code> when it found a saved one. Use <code>name="other"</code> for more than one.</li>
+<li>SQLite runs in a sealed box (sql.js), so it needs no permission.</li>
+</ul>
+
+<h3>lua(code)  (Fengari)</h3>
+<pre>use lua
+
+fn onstart():
+    renderPT("sum = " + lua("local t = 0 for i = 1, n do t = t + i end return t", n=5), line=1)   # 15
+    renderPT(lua("string.upper('hi')"), line=2)        # a single expression gives its value back
+    lua("print('Hello from Lua!')")                     # prints show up as lines</pre>
+<ul>
+<li><code>lua("code")</code> runs Lua 5.3 (Fengari, a Lua written in JavaScript). Use <code>return</code> to give a value back, or pass just an expression. Tables like <code>{1, 2, 3}</code> become lists and <code>{name = "Ann"}</code> becomes a map; <code>nil</code> is <code>null</code>.</li>
+<li><code>name=value</code> pieces become Lua variables first, and Lua's own variables stay between calls while the program runs.</li>
+<li>Lua runs in a <b>sealed box</b>: no files, no <code>require</code>, and no way into the page or JavaScript, so it needs no permission. An endless loop is stopped for you.</li>
+<li>Strings in Lua can use single quotes, which is handy inside BitLang's double quotes: <code>lua("print('hi')")</code>.</li>
+</ul>
+
+<h2>Math</h2>
+<p><code>floor ceil round abs sqrt sin cos tan atan2 pow min max clamp(v, lo, hi)</code>, <code>PI</code>, <code>random()</code> (0 to 1), <code>random(a, b)</code>, <code>randint(a, b)</code>.</p>
+
+<h2>A bigger example</h2>
+<p>The Programs skill starts you with <b>Guess the number</b>: <code>onkey</code> reads the number keys, <code>renderRT</code> shows the hints, <code>btn</code> makes the New game button, and a <code>var</code> remembers your best score.</p>
+
+<h2>If something goes wrong</h2>
+<p>BitLang shows the line number and a plain-English message in the document. An endless loop is stopped for you after a moment. Programs can't touch the rest of your note or your files: they only change the document you are playing in.</p>
