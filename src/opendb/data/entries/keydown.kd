@@ -4109,6 +4109,217 @@ A cousin of the Aero Mark chip, drawn from an Aqua scene: slanted shafts of sunl
 * `++SL_(text++` ++SL_(slate++
 * `++BK_(text++` ++BK_(black++
 
+
+## Wave Crest chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: a double row of little waves rolling along the bottom! Written `++COLOR=(text++`, in the same 16 colors as the Aero chips:
+
+* `++R=(text++` ++R=(red++
+* `++O=(text++` ++O=(orange++
+* `++GL=(text++` ++GL=(gold++
+* `++Y=(text++` ++Y=(yellow++
+* `++L=(text++` ++L=(lime++
+* `++G=(text++` ++G=(green++
+* `++TU=(text++` ++TU=(turquoise++
+* `++T=(text++` ++T=(teal++
+* `++C=(text++` ++C=(cyan++
+* `++B=(text++` ++B=(blue++
+* `++PR=(text++` ++PR=(purple++
+* `++PK=(text++` ++PK=(pink++
+* `++W=(text++` ++W=(white++
+* `++FG=(text++` ++FG=(fog++
+* `++SL=(text++` ++SL=(slate++
+* `++BK=(text++` ++BK=(black++
+
+## Clownfish chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: two white bands like a clownfish's stripes (orange gives the real thing)! Written `++COLOR~(text++`, in the same 16 colors as the Aero chips:
+
+* `++R~(text++` ++R~(red++
+* `++O~(text++` ++O~(orange++
+* `++GL~(text++` ++GL~(gold++
+* `++Y~(text++` ++Y~(yellow++
+* `++L~(text++` ++L~(lime++
+* `++G~(text++` ++G~(green++
+* `++TU~(text++` ++TU~(turquoise++
+* `++T~(text++` ++T~(teal++
+* `++C~(text++` ++C~(cyan++
+* `++B~(text++` ++B~(blue++
+* `++PR~(text++` ++PR~(purple++
+* `++PK~(text++` ++PK~(pink++
+* `++W~(text++` ++W~(white++
+* `++FG~(text++` ++FG~(fog++
+* `++SL~(text++` ++SL~(slate++
+* `++BK~(text++` ++BK~(black++
+
+## Grass Road chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: a strip of green grass along the bottom with a dashed road line above it! Written `++COLOR^(text++`, in the same 16 colors as the Aero chips:
+
+* `++R^(text++` ++R^(red++
+* `++O^(text++` ++O^(orange++
+* `++GL^(text++` ++GL^(gold++
+* `++Y^(text++` ++Y^(yellow++
+* `++L^(text++` ++L^(lime++
+* `++G^(text++` ++G^(green++
+* `++TU^(text++` ++TU^(turquoise++
+* `++T^(text++` ++T^(teal++
+* `++C^(text++` ++C^(cyan++
+* `++B^(text++` ++B^(blue++
+* `++PR^(text++` ++PR^(purple++
+* `++PK^(text++` ++PK^(pink++
+* `++W^(text++` ++W^(white++
+* `++FG^(text++` ++FG^(fog++
+* `++SL^(text++` ++SL^(slate++
+* `++BK^(text++` ++BK^(black++
+
+## Title Bar chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: a window title bar with three small buttons at the right! Written `++COLOR!(text++`, in the same 16 colors as the Aero chips:
+
+* `++R!(text++` ++R!(red++
+* `++O!(text++` ++O!(orange++
+* `++GL!(text++` ++GL!(gold++
+* `++Y!(text++` ++Y!(yellow++
+* `++L!(text++` ++L!(lime++
+* `++G!(text++` ++G!(green++
+* `++TU!(text++` ++TU!(turquoise++
+* `++T!(text++` ++T!(teal++
+* `++C!(text++` ++C!(cyan++
+* `++B!(text++` ++B!(blue++
+* `++PR!(text++` ++PR!(purple++
+* `++PK!(text++` ++PK!(pink++
+* `++W!(text++` ++W!(white++
+* `++FG!(text++` ++FG!(fog++
+* `++SL!(text++` ++SL!(slate++
+* `++BK!(text++` ++BK!(black++
+
+## Droplets chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: clear water droplets scattered at both ends! Written `++COLOR%(text++`, in the same 16 colors as the Aero chips:
+
+* `++R%(text++` ++R%(red++
+* `++O%(text++` ++O%(orange++
+* `++GL%(text++` ++GL%(gold++
+* `++Y%(text++` ++Y%(yellow++
+* `++L%(text++` ++L%(lime++
+* `++G%(text++` ++G%(green++
+* `++TU%(text++` ++TU%(turquoise++
+* `++T%(text++` ++T%(teal++
+* `++C%(text++` ++C%(cyan++
+* `++B%(text++` ++B%(blue++
+* `++PR%(text++` ++PR%(purple++
+* `++PK%(text++` ++PK%(pink++
+* `++W%(text++` ++W%(white++
+* `++FG%(text++` ++FG%(fog++
+* `++SL%(text++` ++SL%(slate++
+* `++BK%(text++` ++BK%(black++
+
+## Seashell chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: a ridged seashell fan at the left! Written `++COLOR?(text++`, in the same 16 colors as the Aero chips:
+
+* `++R?(text++` ++R?(red++
+* `++O?(text++` ++O?(orange++
+* `++GL?(text++` ++GL?(gold++
+* `++Y?(text++` ++Y?(yellow++
+* `++L?(text++` ++L?(lime++
+* `++G?(text++` ++G?(green++
+* `++TU?(text++` ++TU?(turquoise++
+* `++T?(text++` ++T?(teal++
+* `++C?(text++` ++C?(cyan++
+* `++B?(text++` ++B?(blue++
+* `++PR?(text++` ++PR?(purple++
+* `++PK?(text++` ++PK?(pink++
+* `++W?(text++` ++W?(white++
+* `++FG?(text++` ++FG?(fog++
+* `++SL?(text++` ++SL?(slate++
+* `++BK?(text++` ++BK?(black++
+
+## Coral Reef chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: pink and orange coral branches growing up at both ends! Written `++COLOR*(text++`, in the same 16 colors as the Aero chips:
+
+* `++R*(text++` ++R*(red++
+* `++O*(text++` ++O*(orange++
+* `++GL*(text++` ++GL*(gold++
+* `++Y*(text++` ++Y*(yellow++
+* `++L*(text++` ++L*(lime++
+* `++G*(text++` ++G*(green++
+* `++TU*(text++` ++TU*(turquoise++
+* `++T*(text++` ++T*(teal++
+* `++C*(text++` ++C*(cyan++
+* `++B*(text++` ++B*(blue++
+* `++PR*(text++` ++PR*(purple++
+* `++PK*(text++` ++PK*(pink++
+* `++W*(text++` ++W*(white++
+* `++FG*(text++` ++FG*(fog++
+* `++SL*(text++` ++SL*(slate++
+* `++BK*(text++` ++BK*(black++
+
+## Lily Pad chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: floating lily pads at both ends, one with a pink blossom! Written `++COLOR#(text++`, in the same 16 colors as the Aero chips:
+
+* `++R#(text++` ++R#(red++
+* `++O#(text++` ++O#(orange++
+* `++GL#(text++` ++GL#(gold++
+* `++Y#(text++` ++Y#(yellow++
+* `++L#(text++` ++L#(lime++
+* `++G#(text++` ++G#(green++
+* `++TU#(text++` ++TU#(turquoise++
+* `++T#(text++` ++T#(teal++
+* `++C#(text++` ++C#(cyan++
+* `++B#(text++` ++B#(blue++
+* `++PR#(text++` ++PR#(purple++
+* `++PK#(text++` ++PK#(pink++
+* `++W#(text++` ++W#(white++
+* `++FG#(text++` ++FG#(fog++
+* `++SL#(text++` ++SL#(slate++
+* `++BK#(text++` ++BK#(black++
+
+## Sun Glint chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: the sun glinting off the water at the top right! Written `++COLOR-(text++`, in the same 16 colors as the Aero chips:
+
+* `++R-(text++` ++R-(red++
+* `++O-(text++` ++O-(orange++
+* `++GL-(text++` ++GL-(gold++
+* `++Y-(text++` ++Y-(yellow++
+* `++L-(text++` ++L-(lime++
+* `++G-(text++` ++G-(green++
+* `++TU-(text++` ++TU-(turquoise++
+* `++T-(text++` ++T-(teal++
+* `++C-(text++` ++C-(cyan++
+* `++B-(text++` ++B-(blue++
+* `++PR-(text++` ++PR-(purple++
+* `++PK-(text++` ++PK-(pink++
+* `++W-(text++` ++W-(white++
+* `++FG-(text++` ++FG-(fog++
+* `++SL-(text++` ++SL-(slate++
+* `++BK-(text++` ++BK-(black++
+
+## Pebble Shore chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: smooth pebbles lined up along a shore! Written `++COLOR/(text++`, in the same 16 colors as the Aero chips:
+
+* `++R/(text++` ++R/(red++
+* `++O/(text++` ++O/(orange++
+* `++GL/(text++` ++GL/(gold++
+* `++Y/(text++` ++Y/(yellow++
+* `++L/(text++` ++L/(lime++
+* `++G/(text++` ++G/(green++
+* `++TU/(text++` ++TU/(turquoise++
+* `++T/(text++` ++T/(teal++
+* `++C/(text++` ++C/(cyan++
+* `++B/(text++` ++B/(blue++
+* `++PR/(text++` ++PR/(purple++
+* `++PK/(text++` ++PK/(pink++
+* `++W/(text++` ++W/(white++
+* `++FG/(text++` ++FG/(fog++
+* `++SL/(text++` ++SL/(slate++
+* `++BK/(text++` ++BK/(black++
+
 ## Ribbon Notch chips
 
 A cousin of the Aero Mark chip: ribbon notch! Written `++COLOR?:text++`, in the same 16 colors as the Aero chips:
