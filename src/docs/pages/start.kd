@@ -1,10 +1,12 @@
 # Welcome to Radii Office
 
-Radii Office is a free, open-source suite of apps that runs in your browser, works offline and also comes as desktop apps. There is nothing to sign up for to write, draw, plan or calculate, and your files stay on your computer unless you choose to share them!
+Radii Office is a #G#free#, #B#open-source# suite of apps that runs in your browser, works offline and also comes as desktop apps. There is nothing to sign up for to write, draw, plan or calculate, and your files stay on your computer unless you choose to share them!
 
 ::tip New here?
 Open [Writeout](#/writeout), type `# Hello` and press Enter. You just used Keydown, the formatting language every app shares. The [Keydown guide](#/keydown-start) explains the rest!
 ::end
+
+::divider{aqua}
 
 ## What is in the suite
 
@@ -33,7 +35,9 @@ Open [Writeout](#/writeout), type `# Hello` and press Enter. You just used Keydo
 * **Languages** covers BitLang, Plume and the Suave programming language!
 * **Reference** has the FAQ and troubleshooting!
 
-Press {key Ctrl+K} (or {key /}) anywhere on this page to search all of it!
+Press `Ctrl+K`{key} (or `/`{key}) anywhere on this page to search all of it!
+
+::divider{wavy|Three ideas to remember|blue}
 
 ## Three ideas to remember
 

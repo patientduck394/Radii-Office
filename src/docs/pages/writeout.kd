@@ -1,9 +1,11 @@
 # Writeout
 
-{badge Documents | blue | soft} **Writeout** is the word processor of the suite. It has real pages, a Navigation pane, a status bar and a ribbon that works like Microsoft Word, and everything you write is Keydown text!
+!!#B#Documents# **Writeout** is the word processor of the suite. It has real pages, a Navigation pane, a status bar and a ribbon that works like Microsoft Word, and everything you write is Keydown text!
 
 [Open Writeout](/writeout) · [Phone version](/writeout/mobile/new/)
 
+
+::divider{wavy|Writeout|blue}
 ## The ribbon
 
 | Tab | What you will find |
@@ -56,7 +58,7 @@ Documents are saved as `.kd` files. **File > Home** lists every saved document s
 ## Inserts worth knowing
 
 * **Cards & Blocks** adds document blocks like a table of contents, a cover page, callouts, columns, tabs, checklists and footnotes lists. See [Document blocks](#/keydown-blocks)!
-* **Badge** opens a picker for `{badge}` chips!
+* **Badge** opens a picker for small labeled chips!
 * **Equation** inserts math in LaTeX, drawn by KaTeX!
 * **Templates** starts from a ready-made layout!
 * **3D scenes** and Inkpath drawings can be embedded, and fonts like Kubasta and Monogram are bundled!

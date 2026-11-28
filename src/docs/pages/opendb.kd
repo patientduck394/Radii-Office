@@ -1,9 +1,11 @@
 # OpenDB
 
-{badge Knowledge | blue | soft} **OpenDB** is a free database of articles, media and papers that anyone can reuse. Everything in it is **CC0**, which means public domain!
+!!#B#Knowledge# **OpenDB** is a free database of articles, media and papers that anyone can reuse. Everything in it is **CC0**, which means public domain!
 
 [Open OpenDB](/opendb) · [Phone version](/opendb/mobile/)
 
+
+::divider{wavy|OpenDB|red}
 ## Entries
 
 An entry is a `.kd` file: a header with an id, type, title and tags, and then Keydown text. Types include **article**, **image**, **paper** and **lite**!

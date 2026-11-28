@@ -1,9 +1,11 @@
 # Peeker
 
-{badge PDF | orange | soft} **Peeker** is a PDF editor that runs entirely in your browser, so your files are never uploaded. It uses the open-source pdf.js and pdf-lib libraries!
+!!#O#PDF# **Peeker** is a PDF editor that runs entirely in your browser, so your files are never uploaded. It uses the open-source pdf.js and pdf-lib libraries!
 
 [Open Peeker](/peeker) · [Phone version](/peeker/mobile/)
 
+
+::divider{wavy|Peeker|purple}
 ## What you can do
 
 * **Mark up**: add text, highlights, drawings, boxes, whiteout, pictures and signatures!

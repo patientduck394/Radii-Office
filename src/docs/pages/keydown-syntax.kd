@@ -2,6 +2,8 @@
 
 The tags you will use most. Every example here is drawn live by Keydown!
 
+
+::divider{poolside|Syntax cheat sheet|cyan}
 ## Lines
 
 Start a line with one of these and a space:
@@ -25,17 +27,24 @@ Start a line with one of these and a space:
 | `*italic*` | *italic* |
 | Backticks around a word | `code` |
 | `[link](https://radii-office.com)` | [link](https://radii-office.com) |
-| `{key Ctrl+K}` | {key Ctrl+K} |
+| Code with a style word after it | `Ctrl+K`{key} and `ls -la`{terminal} |
 
-## Chips
+## Chips and highlights
 
-* `++R+glossy++` gives ++R+glossy++ (a glossy Aero chip)!
-* `#G#a green chip#` gives #G#a green chip#!
-* `=B=orb=B=` gives =B=orb=B=, a gel orb!
-* `{badge New}` gives {badge New}, a small badge (add a color after a bar, like `{badge New` then a bar then `green}`)!
-* `{chip teal ticket}ADMIT ONE{/chip}` gives {chip teal ticket}ADMIT ONE{/chip}!
+Keydown's signature looks are made by wrapping words in a color code between symbols. The letters pick the color: R red, O orange, GL gold, Y yellow, L lime, G green, TU turquoise, T teal, C cyan, B blue, PR purple, PK pink.
 
-The letters pick the color. R is red, G is green, B is blue, and many more exist (see the reference)!
+| Write | You get |
+| --- | --- |
+| `++R+Aero chip++` | ++R+Aero chip++ |
+| `#G#gel chip#` | #G#gel chip# |
+| `!!#C#rim chip#` | !!#C#rim chip# |
+| `%B%gloss pill%` | %B%gloss pill% |
+| `=B=orb=B=` | =B=orb=B= |
+| `#Y#highlight##` | #Y#highlight## |
+| `^^B^speech bubble^^` | ^^B^speech bubble^^ |
+| `@neontube-2@unique style@` | @neontube-2@unique style@ |
+
+Each of these has dozens or hundreds of cousins. See [Chips and styles](#/keydown-reference) for every one!
 
 ## Writing a symbol as itself
 

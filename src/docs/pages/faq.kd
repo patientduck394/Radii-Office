@@ -1,5 +1,7 @@
 # FAQ and troubleshooting
 
+
+::divider{dual}
 ## General
 
 ::accordion
@@ -41,9 +43,9 @@ Use **Print Preview** in Writeout or Bitbook first. Some gradients print as low-
 
 | Where | Keys | Does |
 | --- | --- | --- |
-| This page | {key Ctrl+K} or {key /} | Search the docs |
-| Writeout | {key Ctrl+Enter} | New page |
-| Writeout Source mode | {key Tab} | Indent the line |
-| Waterflow, Phosphor | {key Ctrl+K} | Quick switcher |
-| Inkpath | {key G} | Gradient tool |
-| Peeker | {key E} | Edit tool |
+| This page | `Ctrl+K`{key} or `/`{key} | Search the docs |
+| Writeout | `Ctrl+Enter`{key} | New page |
+| Writeout Source mode | `Tab`{key} | Indent the line |
+| Waterflow, Phosphor | `Ctrl+K`{key} | Quick switcher |
+| Inkpath | `G`{key} | Gradient tool |
+| Peeker | `E`{key} | Edit tool |

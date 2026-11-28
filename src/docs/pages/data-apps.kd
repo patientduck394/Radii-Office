@@ -2,9 +2,11 @@
 
 Five small apps handle records, forms, dates, tasks and files. They all have a **Share** tab with **Share & Chat**, and they all use the same three [layouts](#/layouts)!
 
+
+::divider{wavy|Data and planning apps|cyan}
 ## Mainkey: records
 
-{badge Database | purple | soft} [Open Mainkey](/mainkey)
+!!#PR#Database# [Open Mainkey](/mainkey)
 
 Build your own fields, then keep records in them. Search, filter and sort in a **Table**, or browse a **Gallery** with live statistics!
 
@@ -14,7 +16,7 @@ Build your own fields, then keep records in them. Search, filter and sort in a *
 
 ## Formly: forms
 
-{badge Forms | green | soft} [Open Formly](/formly)
+!!#G#Forms# [Open Formly](/formly)
 
 Build a form with **New Form** and **Add Field**, flip between **Builder** and **Preview**, and share it as a file:
 
@@ -26,7 +28,7 @@ Question text accepts Keydown, so chips and highlights work in forms. Share & Ch
 
 ## Hexa: calendar and boards
 
-{badge Calendar | blue | soft} [Open Hexa](/hexa)
+!!#B#Calendar# [Open Hexa](/hexa)
 
 * **Calendar** shows months and an agenda for events. **Today** and **Year** jump around!
 * **Boards** are columns of cards: **New Board**, **New Column** and **New Card**!
@@ -34,12 +36,12 @@ Question text accepts Keydown, so chips and highlights work in forms. Share & Ch
 
 ## Taskra: to-do lists
 
-{badge Todo | orange | soft} [Open Taskra](/taskra)
+!!#O#Todo# [Open Taskra](/taskra)
 
 Tasks have priorities and due dates. Filter with **All Tasks**, **Active**, **Done** and **Overdue**, and use **Clear Completed** to tidy up. Lists import and export as `.tk` files!
 
 ## Cabinet: drive
 
-{badge Drive | red | soft} [Open Cabinet](/cabinet)
+!!#R#Drive# [Open Cabinet](/cabinet)
 
 Keep files in **drawers**, like a file explorer. **New Drawer**, **New Folder** and **Upload Files** are on the Home tab, and **Cards** or **List** views are in View. A whole drive downloads at once as a ZIP, and the Share tab can save a drawer as a `.kc` or `.zip` file!

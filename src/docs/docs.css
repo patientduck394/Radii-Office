@@ -165,3 +165,5 @@ html:not([data-theme="light"]) .doc .kd-out details.kdx-acc { background: var(--
 html:not([data-theme="light"]) .doc .kd-out details.kdx-acc summary { color: var(--head) !important; }
 .dh .brand { white-space: nowrap; }
 @media (max-width: 520px) { .dh .brand small { display: none; } .dh { gap: 10px; padding: 0 14px; } }
+/* gel highlights are pale, so their words stay dark (the fill-less underline, strike and brackets marks keep light text above) */
+html:not([data-theme="light"]) .doc .kd-out mark.an-hl { color: #0f172a; }

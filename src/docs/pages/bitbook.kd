@@ -1,9 +1,11 @@
 # Bitbook
 
-{badge Notes | green | soft} **Bitbook** is a notebook with real pages. It uses the same Keydown engine as Writeout, plus a set of small **skills** (gadgets) and a programming language called [BitLang](#/bitlang) for little programs inside your notes!
+!!#G#Notes# **Bitbook** is a notebook with real pages. It uses the same Keydown engine as Writeout, plus a set of small **skills** (gadgets) and a programming language called [BitLang](#/bitlang) for little programs inside your notes!
 
 [Open Bitbook](/bitbook) · [Phone version](/bitbook/mobile/new/)
 
+
+::divider{wavy|Bitbook|green}
 ## The ribbon
 
 | Tab | What you will find |

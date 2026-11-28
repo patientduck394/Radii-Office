@@ -19,18 +19,22 @@ Writeout, Bitbook, Amber, Waterflow, Imbuer, Formly, Yuzu mail, Phosphor, Antimo
 
 ## The families of tags
 
-| Family | Example | You get |
+| Family | Write | You get |
 | --- | --- | --- |
-| Basics | `**bold**` and `*italic*`, plus backticks for code | Plain formatting |
-| Aero chips | `++R+text++` | Glossy chips (more kinds: glass, orb, ring and toast) |
-| Rim chips | `!!#C#text#` | Chips with a rim, in many families |
-| Unique Styles | `@family-3@text@` | One of thousands of designs; the number picks the colorway |
-| Quote looks | `!> text` `?> text` `>> text` | Quotes with different looks |
-| Dividers | `::divider{wavy}` | A decorated line (add a title and color after more bars); `::pagebreak` starts a new page |
-| Math | `$x^2$` and `$$...$$` | Drawn by KaTeX |
+| Basics | `**bold**` and `*italic*` | **bold** and *italic* |
+| Aero chips | `++R+text++` | ++R+Aero chip++ |
+| Gel chips | `#G#text#` | #G#gel chip# |
+| Rim chips | `!!#C#text#` | !!#C#rim chip# |
+| Gloss pills | `%B%text%` | %B%gloss pill% |
+| Gel orbs | `=B=text=B=` | =B=orb=B= |
+| Highlights | `#Y#text##` | #Y#gel highlight## |
+| Speech bubbles | `^^B^text^^` | ^^B^speech bubble^^ |
+| Unique Styles | `@neontube-2@text@` | @neontube-2@unique style@ |
+| Quote looks | `!> text` | A quote with a different look (14 looks) |
+| Dividers | `::divider{wavy}` | A decorated line; `::pagebreak` starts a new page |
+| Math | `$x^2$` | $x^2$, drawn by KaTeX |
 | Spoilers | `*sp(text)` | Hidden until clicked |
 | Blocks | `::note`, `::toc`, `::columns` | Callouts, contents lists, columns and more |
-| Annotator pens | `#R#text#_` and friends | Marker, wavy underline and other pen marks |
 
 Each family has many looks. The [full reference](#/keydown-reference) lists every one with a live example!
 

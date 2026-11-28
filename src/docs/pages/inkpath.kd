@@ -1,9 +1,11 @@
 # Inkpath
 
-{badge Vector | pink | soft} **Inkpath** is a vector graphics editor with box selection, live Bézier point dragging, and panning and zooming around the canvas. Drawings are saved as `.kv` files and export as SVG or PNG!
+!!#PK#Vector# **Inkpath** is a vector graphics editor with box selection, live Bézier point dragging, and panning and zooming around the canvas. Drawings are saved as `.kv` files and export as SVG or PNG!
 
 [Open Inkpath](/inkpath) · [Phone version](/inkpath/mobile/)
 
+
+::divider{wavy|Inkpath|red}
 ## Drawing tools
 
 * **Selection** with a drag box for several shapes at once!

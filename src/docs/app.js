@@ -57,9 +57,13 @@
       run[0].replaceWith(ol); run.slice(1).forEach((r) => r.remove());
     }
     // the contrast fixer is for chips and highlights: headings, tables and code take the page's own colors
-    root.querySelectorAll('h1,h2,h3,h4,h5,h6,table *,pre,pre *').forEach((e) => { if (e.hasAttribute('data-kd-fix')) { e.style.removeProperty('color'); e.removeAttribute('data-kd-fix'); } });
+    root.querySelectorAll('h1,h2,h3,h4,h5,h6,th,td,pre,pre *').forEach((e) => { if (e.hasAttribute('data-kd-fix')) { e.style.removeProperty('color'); e.removeAttribute('data-kd-fix'); } });
     // links to other pages and to this site open in the same tab
-    root.querySelectorAll('a[href]').forEach((a) => { const h = a.getAttribute('href'); if (h[0] === '#' || (h[0] === '/' && h[1] !== '/')) { a.removeAttribute('target'); a.setAttribute('rel', 'noopener'); } });
+    root.querySelectorAll('a[href]').forEach((a) => {
+      let h = a.getAttribute('href');
+      if (h.startsWith(SITE)) { h = h.slice(SITE.length) || '/'; a.setAttribute('href', h); }
+      if (h[0] === '#' || (h[0] === '/' && h[1] !== '/')) { a.removeAttribute('target'); a.setAttribute('rel', 'noopener'); }
+    });
     return heads.filter((h) => h.localName !== 'h1');
   }
   // Keydown Next blocks (callouts, accordions, cards, tabs...) have light backgrounds of their own. On the dark page their text would inherit light text, so wherever a light
@@ -116,7 +120,7 @@
       else if (page.kind === 'guide') out = await guidePage(page);
       else {
         const text = await getText('/docs/pages/' + page.id + '.kd');
-        out = await KdLite.render(text);
+        out = await KdLite.render(siteLinks(text));
       }
     } catch (e) {
       if (my === seq) doc.innerHTML = '<p class="err">This page could not be loaded: ' + esc(e.message) + '. Check your connection and try again!</p>';
@@ -150,7 +154,7 @@
   async function sectionsPage(page) {
     const secs = await loadSections();
     const intro = await optionalText('/docs/pages/' + page.id + '.kd');
-    const out = await KdLite.render(intro || '# ' + page.title);
+    const out = await KdLite.render(siteLinks(intro || '# ' + page.title));
     for (const sid of page.sections) {
       const s = secs.find((x) => x.id === sid);
       if (!s) continue;
@@ -162,7 +166,7 @@
   // a page made of an intro plus a ready-made HTML guide (built from the app's own help by scripts/build_docs.mjs)
   async function guidePage(page) {
     const intro = await optionalText('/docs/pages/' + page.id + '.kd');
-    const out = await KdLite.render(intro || '# ' + page.title);
+    const out = await KdLite.render(siteLinks(intro || '# ' + page.title));
     const html = await getText('/docs/generated/' + page.guide);
     const doc = new DOMParser().parseFromString('<!doctype html><body>' + html, 'text/html');
     KdLite.clean(doc.body);
@@ -172,6 +176,10 @@
     out.append(box);
     return out;
   }
+  // Keydown only makes links from https:, mailto: and # addresses, so links to this site's own pages ("/writeout") are written with a stand-in address first
+  // and turned back into same-tab links by decorate()
+  const SITE = 'https://radii-office.invalid';
+  const siteLinks = (t) => t.replace(/\]\((\/[^)\s]*)\)/g, '](' + SITE + '$1)');
   async function catalog(page) {
     const secs = await loadSections();
     const intro = await getText('/docs/pages/' + page.id + '.kd');

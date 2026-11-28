@@ -1,5 +1,7 @@
 # Offline and desktop apps
 
+
+::divider{aqua}
 ## Working offline
 
 Radii Office saves itself for offline use the first time you visit. After that, the apps open without a connection, and your documents are already on your computer. When you are back online, nothing needs to be synced because nothing left your computer!

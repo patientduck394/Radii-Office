@@ -1,9 +1,11 @@
 # Amber
 
-{badge Slides | orange | soft} **Amber** is a slide studio with glossy 3D shapes, spring-animated menus and a full-screen presentation mode. Its ribbon works like PowerPoint, and slides are Keydown text. Presentations are saved as `.ka` files!
+!!#O#Slides# **Amber** is a slide studio with glossy 3D shapes, spring-animated menus and a full-screen presentation mode. Its ribbon works like PowerPoint, and slides are Keydown text. Presentations are saved as `.ka` files!
 
 [Open Amber](/amber) · [Phone version](/amber/mobile/)
 
+
+::divider{wavy|Amber|orange}
 ## The ribbon
 
 | Tab | What you will find |

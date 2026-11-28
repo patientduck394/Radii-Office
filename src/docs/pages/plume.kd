@@ -4,6 +4,8 @@
 
 Components are compiled by the Plume command line tool, `plume.mjs`. Read its comments and the sample components in the source download for the exact syntax!
 
+
+::divider{notched|Plume|purple}
 ## Svelte components for Keydown
 
 The suite also ships Svelte components for the apps' own pieces: a Keydown box, composer, editor, text, guide, doc, annotator, sandbox, program runner and style picker, plus the 26 PoolsideUI components. They are in the source download!

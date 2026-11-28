@@ -2,11 +2,13 @@
 
 Every Radii Office app can wear three different looks. They change how the app is arranged, not what it does, and your documents are identical in all of them.
 
+
+::divider{aqua}
 ## The three layouts
 
-* {badge Nova | blue | glow} **Nova** is the default. It is flat and soft, with Vadivam icons, rounded corners and a File screen in the same style!
-* {badge New | green | soft} **New** is a ribbon like Microsoft Office, with tabs along the top and groups of commands under them!
-* {badge Classic | purple | soft} **Classic** is the original look: a glass sidebar with gel buttons, and the page in a bright frame!
+* !!#B#Nova# **Nova** is the default. It is flat and soft, with Vadivam icons, rounded corners and a File screen in the same style!
+* !!#G#New# **New** is a ribbon like Microsoft Office, with tabs along the top and groups of commands under them!
+* !!#PR#Classic# **Classic** is the original look: a glass sidebar with gel buttons, and the page in a bright frame!
 
 ## Changing the layout
 

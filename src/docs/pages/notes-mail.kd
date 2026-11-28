@@ -1,8 +1,10 @@
 # Notes and mail
 
+
+::divider{wavy|Notes and mail|green}
 ## Waterflow
 
-{badge Notes | cyan | soft} [Open Waterflow](/waterflow)
+!!#C#Notes# [Open Waterflow](/waterflow)
 
 A clear, glassy notebook. Notes live in **streams**, **notebooks** and **tags**, and are written in Poolside Keydown!
 
@@ -14,7 +16,7 @@ A clear, glassy notebook. Notes live in **streams**, **notebooks** and **tags**,
 
 ## Yuzu
 
-{badge Mail | red | soft} [Open Yuzu](/yuzu) · [Phone version](/yuzu/mobile/)
+!!#R#Mail# [Open Yuzu](/yuzu) · [Phone version](/yuzu/mobile/)
 
 An email app with an inbox, folders, search and compose. It has two looks: a new Outlook-style ribbon, and the original **Yuzu Classic**!
 
