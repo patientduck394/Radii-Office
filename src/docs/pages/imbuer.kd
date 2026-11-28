@@ -8,12 +8,12 @@
 ::divider{wavy|Imbuer|teal}
 ## What it does
 
-* #B#A grid## with selection, editing, copy and paste, find and replace, and sheet tabs along the bottom!
-* #PR#Formulas## with autocomplete, so typing `=SU` suggests the functions that start that way!
-* #PK#Charts## built from a selected range!
-* #R#Conditional formatting, sorting and filtering, and templates##!
-* #O#Cell formatting## for numbers, colors, borders and fonts, with Keydown in cells for chips and highlights!
-* #GL#CSV## import and export from the File screen!
+* #B.aurora(A grid) with selection, editing, copy and paste, find and replace, and sheet tabs along the bottom!
+* #PR.aurora(Formulas) with autocomplete, so typing `=SU` suggests the functions that start that way!
+* #PK.aurora(Charts) built from a selected range!
+* #R.aurora(Conditional formatting, sorting and filtering, and templates)!
+* #O.aurora(Cell formatting) for numbers, colors, borders and fonts, with Keydown in cells for chips and highlights!
+* #GL.aurora(CSV) import and export from the File screen!
 
 ## Working with formulas
 

@@ -6,10 +6,10 @@
 
 | Tab | Use it for |
 | --- | --- |
-| #O.flag(Graph) | Plot equations as you type. Add #B.prism(sliders) for values you want to change, use #B.prism(lists), and draw #B.prism(polygons) |
-| #GL.flag(LaTeX) | Write LaTeX and see it drawn, ready to copy into a document |
-| #Y.flag(Calculator) | Everyday and scientific calculations |
-| #L.flag(Share) | Share & Chat, for working on a graph together |
+| #O.torpedo(Graph) | Plot equations as you type. Add #B.bucket(sliders) for values you want to change, use #B.bucket(lists), and draw #B.bucket(polygons) |
+| #GL.torpedo(LaTeX) | Write LaTeX and see it drawn, ready to copy into a document |
+| #Y.torpedo(Calculator) | Everyday and scientific calculations |
+| #L.torpedo(Share) | Share & Chat, for working on a graph together |
 
 ::tip Math in documents
 Writeout, Bitbook and OpenDB draw math from `$x^2$` and `$$ ... $$`, using KaTeX. Delta's LaTeX tab is a good place to try an equation before pasting it!

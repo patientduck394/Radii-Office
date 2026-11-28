@@ -6,16 +6,16 @@ Every Radii Office app can wear three different looks. They change how the app i
 ::divider{aqua}
 ## The three layouts
 
-* !!#B#Nova# is the default. It is flat and soft, with Vadivam icons, rounded corners and a File screen in the same style!
-* !!#G#New# is a ribbon like Microsoft Office, with tabs along the top and groups of commands under them!
-* !!#PR#Classic# is the original look: a glass sidebar with gel buttons, and the page in a bright frame!
+* #B#Nova#= is the default. It is flat and soft, with Vadivam icons, rounded corners and a File screen in the same style!
+* #G#New#= is a ribbon like Microsoft Office, with tabs along the top and groups of commands under them!
+* #PR#Classic#= is the original look: a glass sidebar with gel buttons, and the page in a bright frame!
 
 ## Changing the layout
 
-1. Open the #T.prism(View) tab (or the #T.prism(Help) tab in apps without one) and look for #T.prism(Layout), or press #T.prism(Layout) in the ribbon!
+1. Open the #T.packet(View) tab (or the #T.packet(Help) tab in apps without one) and look for #T.packet(Layout), or press #T.packet(Layout) in the ribbon!
 2. Pick one of the cards. The app switches right away, and the choice is remembered on this computer!
 
-Some apps have a #T.prism(Themes) or #T.prism(Look) button in the sidebar that opens the same cards!
+Some apps have a #T.packet(Themes) or #T.packet(Look) button in the sidebar that opens the same cards!
 
 ::note Your files do not change
 Switching layouts only moves buttons around. Open a document in Classic, switch to Nova, and it is exactly the same file!
@@ -27,7 +27,7 @@ The File button (top left in New and Nova, in the sidebar in Classic) opens a fu
 
 ## Poolside layout
 
-Writeout and Bitbook also have a fourth layout, #G.prism(Poolside), a glassy look in cyan, blue and orange. It exists only in those two apps!
+Writeout and Bitbook also have a fourth layout, #G.packet(Poolside), a glassy look in cyan, blue and orange. It exists only in those two apps!
 
 ## Dark and light
 

@@ -8,10 +8,10 @@
 ::divider{wavy|Peeker|purple}
 ## What you can do
 
-* #T.bottle(Mark up): add text, highlights, drawings, boxes, whiteout, pictures and signatures!
-* #C.bottle(Pages): rotate, reorder, duplicate and delete pages, and merge PDFs!
-* #B.bottle(Forms): fill in form fields!
-* #PR.bottle(Search) the text of a PDF!
+* #T.halo(Mark up): add text, highlights, drawings, boxes, whiteout, pictures and signatures!
+* #C.halo(Pages): rotate, reorder, duplicate and delete pages, and merge PDFs!
+* #B.halo(Forms): fill in form fields!
+* #PR.halo(Search) the text of a PDF!
 * **Edit (E)**: the Edit tool turns the text and pictures already in a PDF into marks you can move, change or replace!
 
 ## Privacy

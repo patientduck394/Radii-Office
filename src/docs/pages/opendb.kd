@@ -8,7 +8,7 @@
 ::divider{wavy|OpenDB|red}
 ## Entries
 
-An entry is a `.kd` file: a header with an id, type, title and tags, and then Keydown text. Types include #T.accent(article), #T.accent(image), #T.accent(paper) and #T.accent(lite)!
+An entry is a `.kd` file: a header with an id, type, title and tags, and then Keydown text. Types include #T.bubble(article), #T.bubble(image), #T.bubble(paper) and #T.bubble(lite)!
 
 ```
 ---
@@ -29,7 +29,7 @@ license: CC0-1.0
 
 ## Lites
 
-A #G.accent(lite) is a small, runnable project stored as one entry (like a Gist). Each file sits in a `~~~ file:` fence. You can #G.accent(fork), #G.accent(embed) and #G.accent(zip) a lite!
+A #G.bubble(lite) is a small, runnable project stored as one entry (like a Gist). Each file sits in a `~~~ file:` fence. You can #G.bubble(fork), #G.bubble(embed) and #G.bubble(zip) a lite!
 
 ## Every example is live
 

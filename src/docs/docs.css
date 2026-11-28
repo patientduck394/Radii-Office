@@ -179,3 +179,6 @@ html:not([data-theme="light"]) .doc .kd-out mark.an-hl { color: #0f172a; }
 .df .cc0 { display: inline-block; margin-right: .4em; padding: 1px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--head); font: 800 .78rem var(--mono); letter-spacing: .03em; }
 .df .cc0:hover { border-color: var(--accent); text-decoration: none; }
 @media print { .df { border: 0; } }
+
+/* Rim chips fade to white at the bottom, so the contrast fixer's light text vanished on them: they keep their own ink color */
+.doc .kd-out [class*="gel-rim"] { color: var(--rc-ink, #0f172a) !important; text-shadow: none; }

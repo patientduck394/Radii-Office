@@ -1,6 +1,6 @@
 # Sharing and live editing
 
-There are two ways to work with other people: send a #C.accent(file), or work together on a #C.accent(live link).
+There are two ways to work with other people: send a #C#file#=, or work together on a #C#live link#=.
 
 
 ::divider{aqua}
@@ -10,17 +10,17 @@ Every app can save its work as a file (see [Files](#/files)). Email it, put it i
 
 ## Share & Chat
 
-Apps with a #TU.accent(Share) tab (Cabinet, Mainkey, Formly, Hexa, Taskra, Delta and others) have a **Share & Chat** button. It starts a live session. Everyone who opens the link sees changes as they happen, and a chat panel lets you talk while you work. No account is needed!
+Apps with a #TU#Share#= tab (Cabinet, Mainkey, Formly, Hexa, Taskra, Delta and others) have a **Share & Chat** button. It starts a live session. Everyone who opens the link sees changes as they happen, and a chat panel lets you talk while you work. No account is needed!
 
 ## Overshare
 
-[Overshare](https://overshare.radii-office.com) is a hosted place to share documents. Sign up, link a Writeout, Taskra or other Radii document, and everyone with the link edits it live. It also has #PK.accent(Groups), like a team site, and keeps a history of changes. Overshare has three themes, New, Nova and Classic!
+[Overshare](https://overshare.radii-office.com) is a hosted place to share documents. Sign up, link a Writeout, Taskra or other Radii document, and everyone with the link edits it live. It also has #PK#Groups#=, like a team site, and keeps a history of changes. Overshare has three themes, New, Nova and Classic!
 
 ## Messaging
 
-* #R.bucket(Phosphor) is a server-based chat app with servers, channels, roles, direct messages, voice and custom emojis!
-* #O.bucket(Antimony) is a message board with spaces, posts and replies!
-* #GL.bucket(Beta) is a microblog, and #L.accent(Mintcode) hosts code. See [Community apps](#/community)!
+* #R.belt(Phosphor) is a server-based chat app with servers, channels, roles, direct messages, voice and custom emojis!
+* #O.belt(Antimony) is a message board with spaces, posts and replies!
+* #GL.belt(Beta) is a microblog, and #L#Mintcode#= hosts code. See [Community apps](#/community)!
 
 ## What other people can do
 

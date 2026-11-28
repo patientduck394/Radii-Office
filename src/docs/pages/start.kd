@@ -1,6 +1,6 @@
 # Welcome to Radii Office
 
-Radii Office is a #TU#free##, #TU#open-source## suite of apps that runs in your browser, works offline and also comes as desktop apps. There is nothing to sign up for to write, draw, plan or calculate, and your files stay on your computer unless you choose to share them!
+Radii Office is a #TU.dusk(free), #TU.dusk(open-source) suite of apps that runs in your browser, works offline and also comes as desktop apps. There is nothing to sign up for to write, draw, plan or calculate, and your files stay on your computer unless you choose to share them!
 
 ::tip New here?
 Open [Writeout](#/writeout), type `# Hello` and press Enter. You just used Keydown, the formatting language every app shares. The [Keydown guide](#/keydown-start) explains the rest!
@@ -12,28 +12,28 @@ Open [Writeout](#/writeout), type `# Hello` and press Enter. You just used Keydo
 
 | Need | App | Page |
 | --- | --- | --- |
-| Write documents | #C.belt(Writeout) | [Writeout](#/writeout) |
-| Take notes, run small programs | #PR.belt(Bitbook) | [Bitbook](#/bitbook) |
-| Slides | #GL.belt(Amber) | [Amber](#/amber) |
-| Spreadsheets and charts | #G.belt(Imbuer) | [Imbuer](#/imbuer) |
-| Vector drawing | #PK.belt(Inkpath) | [Inkpath](#/inkpath) |
-| PDFs | #O.belt(Peeker) | [Peeker](#/peeker) |
-| Websites | #O.belt(Omicron) | [Omicron](#/omicron) |
-| Records, forms, calendars, tasks, files | #PR.belt(Mainkey), #PR.belt(Formly), #G.belt(Hexa), #C.belt(Taskra), #R.belt(Cabinet) | [Data and planning apps](#/data-apps) |
-| 3D scenes | #L.belt(Zonerider) | [Zonerider](#/zonerider) |
-| Math | #PK.belt(Delta) | [Delta](#/delta) |
-| Notes and mail | #C.belt(Waterflow), #B.belt(Yuzu) | [Notes and mail](#/notes-mail) |
-| Talking and sharing | #G.belt(Phosphor), #C.belt(Antimony), #L.belt(Beta), #TU.belt(Mintcode), #PR.belt(Overshare) | [Community apps](#/community) |
-| Automation | #O.belt(Trigger) | [Trigger](#/trigger) |
-| A free knowledge base | #C.belt(OpenDB) | [OpenDB](#/opendb) |
+| Write documents | #C.marker(Writeout) | [Writeout](#/writeout) |
+| Take notes, run small programs | #PR.marker(Bitbook) | [Bitbook](#/bitbook) |
+| Slides | #GL.marker(Amber) | [Amber](#/amber) |
+| Spreadsheets and charts | #G.marker(Imbuer) | [Imbuer](#/imbuer) |
+| Vector drawing | #PK.marker(Inkpath) | [Inkpath](#/inkpath) |
+| PDFs | #O.marker(Peeker) | [Peeker](#/peeker) |
+| Websites | #O.marker(Omicron) | [Omicron](#/omicron) |
+| Records, forms, calendars, tasks, files | #PR.marker(Mainkey), #PR.marker(Formly), #G.marker(Hexa), #C.marker(Taskra), #R.marker(Cabinet) | [Data and planning apps](#/data-apps) |
+| 3D scenes | #L.marker(Zonerider) | [Zonerider](#/zonerider) |
+| Math | #PK.marker(Delta) | [Delta](#/delta) |
+| Notes and mail | #C.marker(Waterflow), #B.marker(Yuzu) | [Notes and mail](#/notes-mail) |
+| Talking and sharing | #G.marker(Phosphor), #C.marker(Antimony), #L.marker(Beta), #TU.marker(Mintcode), #PR.marker(Overshare) | [Community apps](#/community) |
+| Automation | #O.marker(Trigger) | [Trigger](#/trigger) |
+| A free knowledge base | #C.marker(OpenDB) | [OpenDB](#/opendb) |
 
 ## How the documentation is organized
 
-* #L.halo(Getting started) covers things every app shares: looks, files, sharing, offline use and privacy!
-* #G.halo(Apps) has one guide per app, written from the real buttons and tabs!
-* #TU.halo(Keydown) is the full formatting language, including a reference of every tag, style and block!
-* #T.halo(Languages) covers BitLang, Plume and the Suave programming language!
-* #C.halo(Reference) has the FAQ and troubleshooting!
+* #L.packet(Getting started) covers things every app shares: looks, files, sharing, offline use and privacy!
+* #G.packet(Apps) has one guide per app, written from the real buttons and tabs!
+* #TU.packet(Keydown) is the full formatting language, including a reference of every tag, style and block!
+* #T.packet(Languages) covers BitLang, Plume and the Suave programming language!
+* #C.packet(Reference) has the FAQ and troubleshooting!
 
 Press `Ctrl+K`{key} (or `/`{key}) anywhere on this page to search all of it!
 
@@ -41,8 +41,8 @@ Press `Ctrl+K`{key} (or `/`{key}) anywhere on this page to search all of it!
 
 ## Three ideas to remember
 
-1. #T.aurora(Everything is Keydown.) Documents, notes, slides, messages and wiki articles are all Keydown text, so a tag you learn in one app works in all of them!
-2. #C.aurora(Files are yours.) Apps save plain files you can open in other Radii apps, and every app can export what you made!
-3. #B.aurora(Looks are a switch.) Every app has the same three layouts, so you can pick the one you like best, and your documents never change!
+1. #T#Everything is Keydown.#= Documents, notes, slides, messages and wiki articles are all Keydown text, so a tag you learn in one app works in all of them!
+2. #C#Files are yours.#= Apps save plain files you can open in other Radii apps, and every app can export what you made!
+3. #B#Looks are a switch.#= Every app has the same three layouts, so you can pick the one you like best, and your documents never change!
 
 -# This site is itself written in Keydown and drawn with Dark Keydown, the version that fades to white instead of transparent so every style looks right on a dark page!

@@ -13,7 +13,7 @@ import os, re, glob
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BAD = re.compile(r'[&()#<>|$`\\{}\[\]@]')
 # pens that stay readable on the dark page (checked on a contact sheet); each one is a highlight-like look
-PENS = ['highlight', 'box', 'marker', 'halo', 'gem', 'spotlight', 'accent', 'bubble', 'dusk', 'prism', 'aurora', 'belt', 'bucket', 'torpedo', 'bottle', 'pixel', 'flag', 'packet']
+PENS = ['highlight', 'box', 'marker', 'halo', 'gem', 'spotlight', 'accent', 'bubble', 'dusk', 'aurora', 'belt', 'bucket', 'torpedo', 'bottle', 'pixel', 'flag', 'packet']
 COLORS = ['R', 'O', 'GL', 'Y', 'L', 'G', 'TU', 'T', 'C', 'B', 'PR', 'PK']
 
 # each app's own color: the frames on the Products page, and the colors of the newer apps (Phosphor emerald, Beta lime, Mintcode mint, Overshare purple)
@@ -41,7 +41,9 @@ def style_page(text, seed):
     page_pen = pick_pen(h, used); base = h // 3
     section = [0]
     def term(w): return pen(page_pen, COLORS[(base + section[0] * 5) % len(COLORS)], w)
-    lines = text.split('\n'); out, fence, i = [], False, 0
+    # the label chip at the start of a line or list item (a Rim chip like !!#B#Nova#) becomes a gel box in the same color
+    lines = [re.sub(r'^((?:\* |\d+\. )?)!!#([A-Z]+)#([^#]+)#', lambda m: f"{m.group(1)}#{m.group(2)}#{m.group(3)}#=", l) for l in text.split('\n')]
+    out, fence, i = [], False, 0
     def inline(line):
         """Short bold words outside `code` become the page's pen, in the current section's color."""
         segs = re.split(r'(`[^`]*`)', line)
@@ -55,8 +57,6 @@ def style_page(text, seed):
         if fence: out.append(line); i += 1; continue
         if line.startswith('## '): section[0] += 1
         # the label chip at the start of an app page: a gel box in the same color
-        m = re.match(r'^!!#([A-Z]+)#([^#]+)#(.*)$', line)
-        if m: line = f"#{m.group(1)}#{m.group(2)}#={m.group(3)}"
         is_item = re.match(r'^(\* |\d+\. )', line)
         is_row = line.startswith('| ') and not line.startswith('| ---')
         if is_item or is_row:

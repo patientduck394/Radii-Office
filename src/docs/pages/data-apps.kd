@@ -1,6 +1,6 @@
 # Data and planning apps
 
-Five small apps handle records, forms, dates, tasks and files. They all have a #G.flag(Share) tab with **Share & Chat**, and they all use the same three [layouts](#/layouts)!
+Five small apps handle records, forms, dates, tasks and files. They all have a #G.bottle(Share) tab with **Share & Chat**, and they all use the same three [layouts](#/layouts)!
 
 
 ::divider{wavy|Data and planning apps|cyan}
@@ -8,21 +8,21 @@ Five small apps handle records, forms, dates, tasks and files. They all have a #
 
 #PR#Database#= [Open Mainkey](/mainkey)
 
-Build your own fields, then keep records in them. Search, filter and sort in a #PR.flag(Table), or browse a #PR.flag(Gallery) with live statistics!
+Build your own fields, then keep records in them. Search, filter and sort in a #PR.bottle(Table), or browse a #PR.bottle(Gallery) with live statistics!
 
-* #R.spotlight(Home) has New Record, Add Field, the Table and Gallery views, and Sort By!
-* #O.spotlight(Data) imports and exports `.kb` files and exports `.csv`, and has Demo Data and Clear All!
-* #GL.spotlight(Share) has a #PR.flag(Website Kit) and #PR.flag(Host), which can serve the database straight from your browser tab so others can open it!
+* #R.flag(Home) has New Record, Add Field, the Table and Gallery views, and Sort By!
+* #O.flag(Data) imports and exports `.kb` files and exports `.csv`, and has Demo Data and Clear All!
+* #GL.flag(Share) has a #PR.bottle(Website Kit) and #PR.bottle(Host), which can serve the database straight from your browser tab so others can open it!
 
 ## Formly: forms
 
 #PR#Forms#= [Open Formly](/formly)
 
-Build a form with #Y.flag(New Form) and #Y.flag(Add Field), flip between #Y.flag(Builder) and #Y.flag(Preview), and share it as a file:
+Build a form with #Y.bottle(New Form) and #Y.bottle(Add Field), flip between #Y.bottle(Builder) and #Y.bottle(Preview), and share it as a file:
 
-* `.kfe` is an #Y.flag(editable) form, so the other person can change it!
-* `.kfv` is a #Y.flag(viewable) form that people fill in!
-* `.kfa` holds the #Y.flag(answers)!
+* `.kfe` is an #Y.bottle(editable) form, so the other person can change it!
+* `.kfv` is a #Y.bottle(viewable) form that people fill in!
+* `.kfa` holds the #Y.bottle(answers)!
 
 Question text accepts Keydown, so chips and highlights work in forms. Share & Chat lets a group edit a form together!
 
@@ -30,18 +30,18 @@ Question text accepts Keydown, so chips and highlights work in forms. Share & Ch
 
 #G#Calendar#= [Open Hexa](/hexa)
 
-* #TU.gem(Calendar) shows months and an agenda for events. #C.flag(Today) and #C.flag(Year) jump around!
-* #T.gem(Boards) are columns of cards: #C.flag(New Board), #C.flag(New Column) and #C.flag(New Card)!
-* #C.gem(Import and export) standard `.ics` files (so you can swap with other calendars) and Hexa's own `.kh` files!
+* #TU.bubble(Calendar) shows months and an agenda for events. #C.bottle(Today) and #C.bottle(Year) jump around!
+* #T.bubble(Boards) are columns of cards: #C.bottle(New Board), #C.bottle(New Column) and #C.bottle(New Card)!
+* #C.bubble(Import and export) standard `.ics` files (so you can swap with other calendars) and Hexa's own `.kh` files!
 
 ## Taskra: to-do lists
 
 #C#Todo#= [Open Taskra](/taskra)
 
-Tasks have priorities and due dates. Filter with #O.flag(All Tasks), #O.flag(Active), #O.flag(Done) and #O.flag(Overdue), and use #O.flag(Clear Completed) to tidy up. Lists import and export as `.tk` files!
+Tasks have priorities and due dates. Filter with #O.bottle(All Tasks), #O.bottle(Active), #O.bottle(Done) and #O.bottle(Overdue), and use #O.bottle(Clear Completed) to tidy up. Lists import and export as `.tk` files!
 
 ## Cabinet: drive
 
 #R#Drive#= [Open Cabinet](/cabinet)
 
-Keep files in #TU.flag(drawers), like a file explorer. #TU.flag(New Drawer), #TU.flag(New Folder) and #TU.flag(Upload Files) are on the Home tab, and #TU.flag(Cards) or #TU.flag(List) views are in View. A whole drive downloads at once as a ZIP, and the Share tab can save a drawer as a `.kc` or `.zip` file!
+Keep files in #TU.bottle(drawers), like a file explorer. #TU.bottle(New Drawer), #TU.bottle(New Folder) and #TU.bottle(Upload Files) are on the Home tab, and #TU.bottle(Cards) or #TU.bottle(List) views are in View. A whole drive downloads at once as a ZIP, and the Share tab can save a drawer as a `.kc` or `.zip` file!

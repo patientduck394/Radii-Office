@@ -10,25 +10,25 @@
 
 | Tab | What you will find |
 | --- | --- |
-| #TU.belt(Home) | New Slide, Font, Paragraph, Spacing, Shapes, Arrange and Rotate & Flip |
-| #T.belt(Insert) | Table, Chart, Icons, Diagram, Footer & Numbers, OpenDB Images, Shapes, Aero Chip, Text Box and Annotate (Draw) |
-| #C.belt(Keydown) | Re-format Slide, Un-format Slide, Keydown Text Box and Keydown Styles |
-| #B.belt(Design) | Themes, Format Background and Apply to All Slides |
-| #PR.belt(Transitions) | Preview, Effect Options and Timing |
-| #PK.belt(Animations) | Preview, Add Animation, Animation Pane and Timing |
-| #R.belt(Slide Show) | From Beginning, From Current Slide, Presenter View and Hide Slide |
-| #O.belt(View) | Normal, Slide Sorter and Notes views, Zoom and Layout |
+| #TU.flag(Home) | New Slide, Font, Paragraph, Spacing, Shapes, Arrange and Rotate & Flip |
+| #T.flag(Insert) | Table, Chart, Icons, Diagram, Footer & Numbers, OpenDB Images, Shapes, Aero Chip, Text Box and Annotate (Draw) |
+| #C.flag(Keydown) | Re-format Slide, Un-format Slide, Keydown Text Box and Keydown Styles |
+| #B.flag(Design) | Themes, Format Background and Apply to All Slides |
+| #PR.flag(Transitions) | Preview, Effect Options and Timing |
+| #PK.flag(Animations) | Preview, Add Animation, Animation Pane and Timing |
+| #R.flag(Slide Show) | From Beginning, From Current Slide, Presenter View and Hide Slide |
+| #O.flag(View) | Normal, Slide Sorter and Notes views, Zoom and Layout |
 
 ## Building a deck
 
-1. Press #B.packet(New Slide) and pick a layout!
+1. Press #B.marker(New Slide) and pick a layout!
 2. Type into a text box. Keydown tags work there: use **Insert > Aero Chip** or the Keydown tab for chips and styles!
 3. Add shapes, tables, charts and diagrams from the Insert tab!
-4. Pick a theme in #B.packet(Design), and add transitions and animations!
-5. Press #B.packet(From Beginning) to present full screen. #B.packet(Presenter View) is under Slide Show!
+4. Pick a theme in #B.marker(Design), and add transitions and animations!
+5. Press #B.marker(From Beginning) to present full screen. #B.marker(Presenter View) is under Slide Show!
 
 ## Tips
 
 * Shapes can be rotated, flipped and given opacity and shadows (Home > Rotate & Flip)!
-* The #GL.packet(Slide Sorter) view shows every slide at once!
+* The #GL.marker(Slide Sorter) view shows every slide at once!
 * **Annotate (Draw)** on the Insert tab lets you draw on a slide!

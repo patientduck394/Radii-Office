@@ -8,13 +8,13 @@
 ::divider{wavy|Zonerider|lime}
 ## What you can do
 
-* #Y#Model##: start from shapes and edit their vertices!
-* #L#Light and shade##: add lights, and write your own shaders!
-* #G#Animate##: set keyframes and play them back!
-* #TU#Render## still images and videos!
-* #T#Export## glTF, OBJ and STL, for other 3D tools or 3D printing!
+* #Y.pixel(Model): start from shapes and edit their vertices!
+* #L.pixel(Light and shade): add lights, and write your own shaders!
+* #G.pixel(Animate): set keyframes and play them back!
+* #TU.pixel(Render) still images and videos!
+* #T.pixel(Export) glTF, OBJ and STL, for other 3D tools or 3D printing!
 
-The #O.accent(Help) menu explains 3D scenes, shaders and animation!
+The #O#Help#= menu explains 3D scenes, shaders and animation!
 
 ## 3D scenes in documents
 
