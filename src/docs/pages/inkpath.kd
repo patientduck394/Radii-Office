@@ -1,6 +1,6 @@
 # Inkpath
 
-!!#PK#Vector# ++GL~Inkpath++ is a vector graphics editor with box selection, live Bézier point dragging, and panning and zooming around the canvas. Drawings are saved as `.kv` files and export as SVG or PNG!
+#PK#Vector#= **Inkpath** is a vector graphics editor with box selection, live Bézier point dragging, and panning and zooming around the canvas. Drawings are saved as `.kv` files and export as SVG or PNG!
 
 [Open Inkpath](/inkpath) · [Phone version](/inkpath/mobile/)
 
@@ -8,18 +8,18 @@
 ::divider{wavy|Inkpath|red}
 ## Drawing tools
 
-* !!(R#Selection# with a drag box for several shapes at once!
-* !!(R#Path tools# with real-time Bézier node dragging, and a ++GL~knife++ for cutting!
-* !!(R#Gradient tool# (press ++GL~G++) with fill-line handles. Hold Shift to snap!
-* !!(R#Rulers, guides and snapping#, plus ++GL~align++, ++GL~layers++ and ++GL~artboards++!
+* #R.torpedo(Selection) with a drag box for several shapes at once!
+* #O.torpedo(Path tools) with real-time Bézier node dragging, and a #PR.halo(knife) for cutting!
+* #GL.torpedo(Gradient tool) (press #PR.halo(G)) with fill-line handles. Hold Shift to snap!
+* #Y.torpedo(Rulers, guides and snapping), plus #PR.halo(align), #PR.halo(layers) and #PR.halo(artboards)!
 
 ## Blur Behind
 
-++GL~Blur Behind++ turns a shape into frosted glass by blurring everything behind it. The effect survives export!
+#Y.halo(Blur Behind) turns a shape into frosted glass by blurring everything behind it. The effect survives export!
 
 ## Animation
 
-The ++GL~Animate++ panel adds keyframes:
+The #C.halo(Animate) panel adds keyframes:
 
 1. Set a keyframe!
 2. Move a shape!

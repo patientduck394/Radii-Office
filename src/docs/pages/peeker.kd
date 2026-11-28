@@ -1,6 +1,6 @@
 # Peeker
 
-!!#O#PDF# ++R=Peeker++ is a PDF editor that runs entirely in your browser, so your files are never uploaded. It uses the open-source pdf.js and pdf-lib libraries!
+#O#PDF#= **Peeker** is a PDF editor that runs entirely in your browser, so your files are never uploaded. It uses the open-source pdf.js and pdf-lib libraries!
 
 [Open Peeker](/peeker) · [Phone version](/peeker/mobile/)
 
@@ -8,10 +8,10 @@
 ::divider{wavy|Peeker|purple}
 ## What you can do
 
-* @galaxy-3@Mark up@: add text, highlights, drawings, boxes, whiteout, pictures and signatures!
-* @galaxy-3@Pages@: rotate, reorder, duplicate and delete pages, and merge PDFs!
-* @galaxy-3@Forms@: fill in form fields!
-* @galaxy-3@Search@ the text of a PDF!
+* #T.gem(Mark up): add text, highlights, drawings, boxes, whiteout, pictures and signatures!
+* #C.gem(Pages): rotate, reorder, duplicate and delete pages, and merge PDFs!
+* #B.gem(Forms): fill in form fields!
+* #PR.gem(Search) the text of a PDF!
 * **Edit (E)**: the Edit tool turns the text and pictures already in a PDF into marks you can move, change or replace!
 
 ## Privacy

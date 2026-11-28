@@ -134,8 +134,6 @@ console.log('Search index:', index.length, 'entries,', Math.round(JSON.stringify
       out += `| ${f.name.replace(/ chips?$/i, '')} | \`${tag}\` | ${withText(tag, 'Sample')} |\n`;
     });
   }
-  out += '\n## Unique Styles\n\nThe Unique Styles are written `@family-N@text@`, where N is the colorway from 1 to 5. Here is a sample of each family!\n\n| Family | Write | You get |\n| --- | --- | --- |\n';
-  unique.slice(0, 120).forEach((u, j) => { const n = (j % 5) + 1; out += `| ${u.name} | \`@${u.id}-${n}@text@\` | @${u.id}-${n}@Sample@ |\n`; });
   write(path.join(ROOT, 'docs/pages/keydown-gallery.kd'), out);
   console.log('Style pool:', pool.length, 'families,', unique.length, 'Unique Styles families; gallery page written');
 }

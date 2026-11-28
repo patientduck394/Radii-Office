@@ -42,7 +42,6 @@ Keydown's signature looks are made by wrapping words in a color code between sym
 | `=B=orb=B=` | =B=orb=B= |
 | `#Y#highlight##` | #Y#highlight## |
 | `^^B^speech bubble^^` | ^^B^speech bubble^^ |
-| `@neontube-2@unique style@` | @neontube-2@unique style@ |
 
 Each of these has dozens or hundreds of cousins. See [Chips and styles](#/keydown-reference) for every one!
 

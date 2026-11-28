@@ -1,6 +1,6 @@
 # Trigger
 
-!!#O#Automation# !!#R#Trigger# is an automation panel. You write rules as text, and glowing !!#R#pods# react when your documents or a watched folder of `.radii` files change!
+#O#Automation#= **Trigger** is an automation panel. You write rules as text, and glowing **pods** react when your documents or a watched folder of `.radii` files change!
 
 [Open Trigger](/trigger)
 

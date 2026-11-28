@@ -29,7 +29,6 @@ Writeout, Bitbook, Amber, Waterflow, Imbuer, Formly, Yuzu mail, Phosphor, Antimo
 | Gel orbs | `=B=text=B=` | =B=orb=B= |
 | Highlights | `#Y#text##` | #Y#gel highlight## |
 | Speech bubbles | `^^B^text^^` | ^^B^speech bubble^^ |
-| Unique Styles | `@neontube-2@text@` | @neontube-2@unique style@ |
 | Quote looks | `!> text` | A quote with a different look (14 looks) |
 | Dividers | `::divider{wavy}` | A decorated line; `::pagebreak` starts a new page |
 | Math | `$x^2$` | $x^2$, drawn by KaTeX |

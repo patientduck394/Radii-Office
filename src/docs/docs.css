@@ -167,3 +167,6 @@ html:not([data-theme="light"]) .doc .kd-out details.kdx-acc summary { color: var
 @media (max-width: 520px) { .dh .brand small { display: none; } .dh { gap: 10px; padding: 0 14px; } }
 /* gel highlights are pale, so their words stay dark (the fill-less underline, strike and brackets marks keep light text above) */
 html:not([data-theme="light"]) .doc .kd-out mark.an-hl { color: #0f172a; }
+/* highlight pens sit inside sentences, so they get a little room on both sides */
+.doc .kd-out mark.an-hl { margin: 0 .22em; padding-top: .05em; padding-bottom: .05em; }
+.doc .kd-out td mark.an-hl:first-child, .doc .kd-out li > mark.an-hl:first-child { margin-left: 0; }

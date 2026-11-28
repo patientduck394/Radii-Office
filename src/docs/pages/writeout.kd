@@ -1,6 +1,6 @@
 # Writeout
 
-!!#B#Documents# %G%Writeout% is the word processor of the suite. It has real pages, a Navigation pane, a status bar and a ribbon that works like Microsoft Word, and everything you write is Keydown text!
+#B#Documents#= **Writeout** is the word processor of the suite. It has real pages, a Navigation pane, a status bar and a ribbon that works like Microsoft Word, and everything you write is Keydown text!
 
 [Open Writeout](/writeout) · [Phone version](/writeout/mobile/new/)
 
@@ -10,25 +10,25 @@
 
 | Tab | What you will find |
 | --- | --- |
-| !!_T#Home# | Clipboard, Font, Paragraph, Styles (including Keydown Styles), Editing and Margin Marks |
-| !!_T#Insert# | New Page, Table, Picture, Link, Header & Footer, Symbols, Captions, Cards & Blocks, Badges, Templates, Equation, and Bulleted and Numbered Lists |
-| !!_T#Layout# | Margins, Orientation, Size, Pages View, Print Preview, Color Preview, Page Number Format, Watermark, Page Border and Line Spacing |
-| !!_T#References# | Table of Contents, Footnotes, Cross-references, Citations, Sources, Bibliography and Mail Merge |
-| !!_T#Review# | Word Count, Find & Replace, Comments, Track Changes, Read Aloud, Un-format and Re-format, the Annotator, Ink Drawing, Readability, Word Goal, Version History and Protect Document |
-| !!_T#View# | View, Visual and Source modes, Pages, Continuous and Focus views, Zoom, and the Layout switch |
-| !!_T#Help# | Help Deck, Keydown Guide and Shortcuts |
+| #PK.bottle(Home) | Clipboard, Font, Paragraph, Styles (including Keydown Styles), Editing and Margin Marks |
+| #R.bottle(Insert) | New Page, Table, Picture, Link, Header & Footer, Symbols, Captions, Cards & Blocks, Badges, Templates, Equation, and Bulleted and Numbered Lists |
+| #O.bottle(Layout) | Margins, Orientation, Size, Pages View, Print Preview, Color Preview, Page Number Format, Watermark, Page Border and Line Spacing |
+| #GL.bottle(References) | Table of Contents, Footnotes, Cross-references, Citations, Sources, Bibliography and Mail Merge |
+| #Y.bottle(Review) | Word Count, Find & Replace, Comments, Track Changes, Read Aloud, Un-format and Re-format, the Annotator, Ink Drawing, Readability, Word Goal, Version History and Protect Document |
+| #L.bottle(View) | View, Visual and Source modes, Pages, Continuous and Focus views, Zoom, and the Layout switch |
+| #G.bottle(Help) | Help Deck, Keydown Guide and Shortcuts |
 
 ## Three ways to edit
 
-The %G%View% tab has three modes, and you can switch any time without losing anything:
+The #GL.gem(View) tab has three modes, and you can switch any time without losing anything:
 
-* ++PR1:View++ shows the finished page. Click to edit, and Keydown tags turn into formatting as you type them!
-* ++PR1:Visual++ is the same page with the formatting controls visible, like a classic word processor!
-* ++PR1:Source++ shows the raw Keydown text, with colors for tags, headings, chips and code. Press %G%Tab% to insert an indent (a leading `|`)!
+* #GL.frost(View) shows the finished page. Click to edit, and Keydown tags turn into formatting as you type them!
+* #Y.frost(Visual) is the same page with the formatting controls visible, like a classic word processor!
+* #L.frost(Source) shows the raw Keydown text, with colors for tags, headings, chips and code. Press #GL.gem(Tab) to insert an indent (a leading `|`)!
 
 ## Writing with Keydown
 
-Type a tag and press %G%Space%, and it becomes formatting. Press %G%Enter% at the end of a line to format every tag still on that line. For example:
+Type a tag and press #T.gem(Space), and it becomes formatting. Press #T.gem(Enter) at the end of a line to format every tag still on that line. For example:
 
 ```
 # A heading
@@ -37,13 +37,13 @@ This is **bold**, this is *italic*, and this is `code`.
 ::note Remember this
 ```
 
-Use %G%Un-format% to turn a whole page back into tags, and %G%Re-format% to format everything again. Tags that could not be formatted are underlined so mistakes are easy to find. The full language is in the [Keydown guide](#/keydown-start)!
+Use #T.gem(Un-format) to turn a whole page back into tags, and #T.gem(Re-format) to format everything again. Tags that could not be formatted are underlined so mistakes are easy to find. The full language is in the [Keydown guide](#/keydown-start)!
 
 ## Pages
 
-* ++B;}New Page++ (Insert tab, or Ctrl/Cmd+Enter) adds a real page break, written as `::pagebreak`. The %G%Pages% list in the side pane shows every page!
-* ++B;}Print Preview++ shows the true page size and margins, and %G%Color Preview% shows grayscale or color-blind views!
-* ++B;}Margins, Orientation and Size++ are in Layout, and are saved in the file's header!
+* #C.torpedo(New Page) (Insert tab, or Ctrl/Cmd+Enter) adds a real page break, written as `::pagebreak`. The #R.gem(Pages) list in the side pane shows every page!
+* #B.torpedo(Print Preview) shows the true page size and margins, and #R.gem(Color Preview) shows grayscale or color-blind views!
+* #PR.torpedo(Margins, Orientation and Size) are in Layout, and are saved in the file's header!
 
 ## Saving and exporting
 
@@ -51,14 +51,14 @@ Documents are saved as `.kd` files. **File > Home** lists every saved document s
 
 ## Collaboration and history
 
-* **Review > Comments** and %G%Track Changes% work like other word processors!
-* ++Y!]Version History++ (and %G%Save Version%) lets you look at and restore earlier copies!
+* **Review > Comments** and #PR.gem(Track Changes) work like other word processors!
+* #GL.halo(Version History) (and #PR.gem(Save Version)) lets you look at and restore earlier copies!
 * **Share & Chat** edits the same document live with other people. See [Sharing](#/sharing)!
 
 ## Inserts worth knowing
 
 * **Cards & Blocks** adds document blocks like a table of contents, a cover page, callouts, columns, tabs, checklists and footnotes lists. See [Document blocks](#/keydown-blocks)!
-* ++GL/}Badge++ opens a picker for small labeled chips!
-* ++GL/}Equation++ inserts math in LaTeX, drawn by KaTeX!
-* ++GL/}Templates++ starts from a ready-made layout!
-* ++GL/}3D scenes++ and Inkpath drawings can be embedded, and fonts like Kubasta and Monogram are bundled!
+* #G#Badge#= opens a picker for small labeled chips!
+* #TU#Equation#= inserts math in LaTeX, drawn by KaTeX!
+* #T#Templates#= starts from a ready-made layout!
+* #C#3D scenes#= and Inkpath drawings can be embedded, and fonts like Kubasta and Monogram are bundled!

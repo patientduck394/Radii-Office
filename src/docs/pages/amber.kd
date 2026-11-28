@@ -1,6 +1,6 @@
 # Amber
 
-!!#O#Slides# ++TU!)Amber++ is a slide studio with glossy 3D shapes, spring-animated menus and a full-screen presentation mode. Its ribbon works like PowerPoint, and slides are Keydown text. Presentations are saved as `.ka` files!
+#O#Slides#= **Amber** is a slide studio with glossy 3D shapes, spring-animated menus and a full-screen presentation mode. Its ribbon works like PowerPoint, and slides are Keydown text. Presentations are saved as `.ka` files!
 
 [Open Amber](/amber) · [Phone version](/amber/mobile/)
 
@@ -10,25 +10,25 @@
 
 | Tab | What you will find |
 | --- | --- |
-| ++GL;)Home++ | New Slide, Font, Paragraph, Spacing, Shapes, Arrange and Rotate & Flip |
-| ++GL;)Insert++ | Table, Chart, Icons, Diagram, Footer & Numbers, OpenDB Images, Shapes, Aero Chip, Text Box and Annotate (Draw) |
-| ++GL;)Keydown++ | Re-format Slide, Un-format Slide, Keydown Text Box and Keydown Styles |
-| ++GL;)Design++ | Themes, Format Background and Apply to All Slides |
-| ++GL;)Transitions++ | Preview, Effect Options and Timing |
-| ++GL;)Animations++ | Preview, Add Animation, Animation Pane and Timing |
-| ++GL;)Slide Show++ | From Beginning, From Current Slide, Presenter View and Hide Slide |
-| ++GL;)View++ | Normal, Slide Sorter and Notes views, Zoom and Layout |
+| #TU.torpedo(Home) | New Slide, Font, Paragraph, Spacing, Shapes, Arrange and Rotate & Flip |
+| #T.torpedo(Insert) | Table, Chart, Icons, Diagram, Footer & Numbers, OpenDB Images, Shapes, Aero Chip, Text Box and Annotate (Draw) |
+| #C.torpedo(Keydown) | Re-format Slide, Un-format Slide, Keydown Text Box and Keydown Styles |
+| #B.torpedo(Design) | Themes, Format Background and Apply to All Slides |
+| #PR.torpedo(Transitions) | Preview, Effect Options and Timing |
+| #PK.torpedo(Animations) | Preview, Add Animation, Animation Pane and Timing |
+| #R.torpedo(Slide Show) | From Beginning, From Current Slide, Presenter View and Hide Slide |
+| #O.torpedo(View) | Normal, Slide Sorter and Notes views, Zoom and Layout |
 
 ## Building a deck
 
-1. Press ++TU!)New Slide++ and pick a layout!
+1. Press #B.halo(New Slide) and pick a layout!
 2. Type into a text box. Keydown tags work there: use **Insert > Aero Chip** or the Keydown tab for chips and styles!
 3. Add shapes, tables, charts and diagrams from the Insert tab!
-4. Pick a theme in ++TU!)Design++, and add transitions and animations!
-5. Press ++TU!)From Beginning++ to present full screen. ++TU!)Presenter View++ is under Slide Show!
+4. Pick a theme in #B.halo(Design), and add transitions and animations!
+5. Press #B.halo(From Beginning) to present full screen. #B.halo(Presenter View) is under Slide Show!
 
 ## Tips
 
 * Shapes can be rotated, flipped and given opacity and shadows (Home > Rotate & Flip)!
-* The ++TU!)Slide Sorter++ view shows every slide at once!
+* The #GL.halo(Slide Sorter) view shows every slide at once!
 * **Annotate (Draw)** on the Insert tab lets you draw on a slide!
