@@ -8,23 +8,23 @@ Radii Office apps save ordinary files that you own. This page explains the file 
 
 | Extension | Made by | What it is |
 | --- | --- | --- |
-| #G.packet(.kd) | Writeout, OpenDB | A Keydown document: a short header and then readable text |
-| #TU.packet(.kn) | Bitbook | A Keydown note |
-| #T.packet(.ka) | Amber | A presentation |
-| #C.packet(.kv) | Inkpath | A vector drawing |
-| #B.packet(.kb) | Mainkey | A record database |
-| #PR.packet(.kfe) #PR.packet(.kfv) #PR.packet(.kfa) | Formly | An editable form, a viewable form, and the answers |
-| #PK.packet(.ics) #PK.packet(.kh) | Hexa | Calendar events (standard iCalendar) and Hexa's own format |
-| #R.packet(.tk) | Taskra | A to-do list |
-| #O.packet(.kc) | Cabinet | A drawer shared as a file |
+| #G#.kd#= | Writeout, OpenDB | A Keydown document: a short header and then readable text |
+| #TU#.kn#= | Bitbook | A Keydown note |
+| #T#.ka#= | Amber | A presentation |
+| #C#.kv#= | Inkpath | A vector drawing |
+| #B#.kb#= | Mainkey | A record database |
+| #PR#.kfe#= #PR#.kfv#= #PR#.kfa#= | Formly | An editable form, a viewable form, and the answers |
+| #PK#.ics#= #PK#.kh#= | Hexa | Calendar events (standard iCalendar) and Hexa's own format |
+| #R#.tk#= | Taskra | A to-do list |
+| #O#.kc#= | Cabinet | A drawer shared as a file |
 
 Because the Keydown files are plain text, you can open them in any text editor, and Writeout and Bitbook can open each other's files!
 
 ## Where your work lives
 
-* #C.bubble(In the browser.) Apps keep your documents on this computer, in the browser's own storage, so they are there when you come back. Nothing is uploaded!
-* #B.bubble(In a file on your computer.) Use **Share > Keep a file on this computer** (Chrome, Edge and Opera) to link a document to a real file. The app then saves to it automatically!
-* #PR.bubble(On a shared link.) Sharing is separate and always your choice. See [Sharing and live editing](#/sharing)!
+* #C.marker(In the browser.) Apps keep your documents on this computer, in the browser's own storage, so they are there when you come back. Nothing is uploaded!
+* #B.marker(In a file on your computer.) Use **Share > Keep a file on this computer** (Chrome, Edge and Opera) to link a document to a real file. The app then saves to it automatically!
+* #PR.marker(On a shared link.) Sharing is separate and always your choice. See [Sharing and live editing](#/sharing)!
 
 ::warning Clearing site data deletes browser copies
 If you clear your browser's site data, documents kept only in the browser are removed. Export or keep a file on your computer for anything important!
@@ -36,12 +36,12 @@ Writeout, Bitbook and other apps share a documents library. Each document has it
 
 ## Version history
 
-Choose **File > Version history** (or **Review > Version History** in Writeout) to see earlier copies of a document. Apps take a snapshot as you work, and #TU.capsule(Save Version) takes one on purpose. Pick one to preview it and restore it!
+Choose **File > Version history** (or **Review > Version History** in Writeout) to see earlier copies of a document. Apps take a snapshot as you work, and #TU.torpedo(Save Version) takes one on purpose. Pick one to preview it and restore it!
 
 ## Getting your work out
 
-* #G#Save a Copy#= and #PK.capsule(Export) (on the File screen) write a file to your computer!
-* Writeout exports PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB, and both Writeout and Bitbook can #PK.capsule(Print)!
+* #G.prism(Save a Copy) and #PK.torpedo(Export) (on the File screen) write a file to your computer!
+* Writeout exports PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB, and both Writeout and Bitbook can #PK.torpedo(Print)!
 * Inkpath exports SVG and PNG, and Imbuer and Mainkey import and export CSV!
 * Hexa exports `.ics`, and Zonerider exports glTF, OBJ and STL!
 * Every app's data is yours: there is no lock-in, and the source is public!

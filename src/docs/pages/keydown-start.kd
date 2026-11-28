@@ -1,6 +1,6 @@
 # Keydown guide
 
-#PK.prism(Keydown) is the formatting language of Radii Office. You type short #PK.prism(tags) around your words, and the words turn into formatting: headings, bold text, glossy chips, highlights, speech bubbles, tables, math, callouts, dividers and small interactive widgets. The same tags work in every app, so what you learn in Writeout works in Bitbook, Amber, Phosphor, OpenDB and this documentation page!
+#PK.pixel(Keydown) is the formatting language of Radii Office. You type short #PK.pixel(tags) around your words, and the words turn into formatting: headings, bold text, glossy chips, highlights, speech bubbles, tables, math, callouts, dividers and small interactive widgets. The same tags work in every app, so what you learn in Writeout works in Bitbook, Amber, Phosphor, OpenDB and this documentation page!
 
 ::tip Try it now
 Open [Writeout](/writeout), type `# Hello` and press Enter, then type `++R+A red chip++` and press Space. Two tags, two kinds of formatting!
@@ -8,20 +8,20 @@ Open [Writeout](/writeout), type `# Hello` and press Enter, then type `++R+A red
 
 ## How it works
 
-* In #L.prism(Writeout and Bitbook), a tag turns into its formatting when you press #L.prism(Space) after it. Pressing #L.prism(Enter) at the end of a line formats every tag left on that line!
+* In #L.pixel(Writeout and Bitbook), a tag turns into its formatting when you press #L.pixel(Space) after it. Pressing #L.pixel(Enter) at the end of a line formats every tag left on that line!
 * In **OpenDB, Phosphor, Beta and other apps**, tags are drawn whenever the text is shown!
 * Most tags wrap your words with an opening and a closing tag, like `#R#` and `#`. Typing `\\` at the end of a formatted piece steps back out of it!
-* #TU.packet(Un-format) turns a whole page back into tags, and #L.prism(Re-format) formats it again, underlining any tag that could not be formatted!
+* #TU.prism(Un-format) turns a whole page back into tags, and #L.pixel(Re-format) formats it again, underlining any tag that could not be formatted!
 
 ## Where Keydown works
 
-Writeout, Bitbook, Amber, Waterflow, Imbuer, Formly, Yuzu mail, Phosphor, Antimony, Beta, Mintcode and OpenDB. There is also a standalone #B.prism(Keydown.js) engine you can load in your own page, and Svelte components that draw Keydown!
+Writeout, Bitbook, Amber, Waterflow, Imbuer, Formly, Yuzu mail, Phosphor, Antimony, Beta, Mintcode and OpenDB. There is also a standalone #B.pixel(Keydown.js) engine you can load in your own page, and Svelte components that draw Keydown!
 
 ## The families of tags
 
 | Family | Write | You get |
 | --- | --- | --- |
-| Basics | `**bold**` and `*italic*` | #GL.prism(bold) and *italic* |
+| Basics | `**bold**` and `*italic*` | #GL.pixel(bold) and *italic* |
 | Aero chips | `++R+text++` | ++R+Aero chip++ |
 | Gel chips | `#G#text#` | #G#gel chip# |
 | Rim chips | `!!#C#text#` | !!#C#rim chip# |

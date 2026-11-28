@@ -10,18 +10,18 @@ These apps run on servers, so they need an internet connection. Each is its own 
 
 A Discord-style chat. Make an account and you can:
 
-* Create #TU#servers#= with #TU#channels#=, #TU#roles#= and permissions!
-* Send #TU#direct messages#= and make #TU#group chats#=, and add #TU#friends#=!
-* Use #TU#custom emojis#=, reactions, pins, threads and polls!
-* Join #TU#voice channels#= (up to 8 people)!
-* Add #TU#webhooks#=, and use slash commands like `/me`, `/shrug`, `/poll` and `/nick`!
-* Jump anywhere with the #TU#quick switcher#= (Ctrl+K)!
+* Create #TU.spotlight(servers) with #TU.spotlight(channels), #TU.spotlight(roles) and permissions!
+* Send #TU.spotlight(direct messages) and make #TU.spotlight(group chats), and add #TU.spotlight(friends)!
+* Use #TU.spotlight(custom emojis), reactions, pins, threads and polls!
+* Join #TU.spotlight(voice channels) (up to 8 people)!
+* Add #TU.spotlight(webhooks), and use slash commands like `/me`, `/shrug`, `/poll` and `/nick`!
+* Jump anywhere with the #TU.spotlight(quick switcher) (Ctrl+K)!
 
 Messages are written in Keydown!
 
 ## Antimony
 
-#PK#Boards#= [Open Antimony](/antimony)
+#C#Boards#= [Open Antimony](/antimony)
 
 A free message board. Make spaces, post and reply, and watch new messages appear as they arrive!
 
@@ -29,13 +29,13 @@ A free message board. Make spaces, post and reply, and watch new messages appear
 
 #L#Microblog#= [beta.radii-office.com](https://beta.radii-office.com)
 
-Short posts with `#topics`. You can follow people, like, reply, run polls, make lists, keep drafts and collections, set reminders and ask questions. #L#Outlets#= are rooms for group talk, and there is a #L#Friends#= feature. Each Beta instance picks its own usernames!
+Short posts with `#topics`. You can follow people, like, reply, run polls, make lists, keep drafts and collections, set reminders and ask questions. #L.spotlight(Outlets) are rooms for group talk, and there is a #L.spotlight(Friends) feature. Each Beta instance picks its own usernames!
 
 ## Mintcode
 
-#T#Code hosting#= [mintcode.radii-office.com](https://mintcode.radii-office.com)
+#TU#Code hosting#= [mintcode.radii-office.com](https://mintcode.radii-office.com)
 
-Host code with #B#Mint#=, a simple saves-and-lines version tool. It has repositories, stars, forks, issues and a web editor!
+Host code with #B.spotlight(Mint), a simple saves-and-lines version tool. It has repositories, stars, forks, issues and a web editor!
 
 ## Overshare
 

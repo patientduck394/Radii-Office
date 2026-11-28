@@ -16,7 +16,7 @@ Build your own fields, then keep records in them. Search, filter and sort in a *
 
 ## Formly: forms
 
-!!#G#Forms# [Open Formly](/formly)
+!!#PR#Forms# [Open Formly](/formly)
 
 Build a form with **New Form** and **Add Field**, flip between **Builder** and **Preview**, and share it as a file:
 
@@ -28,7 +28,7 @@ Question text accepts Keydown, so chips and highlights work in forms. Share & Ch
 
 ## Hexa: calendar and boards
 
-!!#B#Calendar# [Open Hexa](/hexa)
+!!#G#Calendar# [Open Hexa](/hexa)
 
 * **Calendar** shows months and an agenda for events. **Today** and **Year** jump around!
 * **Boards** are columns of cards: **New Board**, **New Column** and **New Card**!
@@ -36,7 +36,7 @@ Question text accepts Keydown, so chips and highlights work in forms. Share & Ch
 
 ## Taskra: to-do lists
 
-!!#O#Todo# [Open Taskra](/taskra)
+!!#C#Todo# [Open Taskra](/taskra)
 
 Tasks have priorities and due dates. Filter with **All Tasks**, **Active**, **Done** and **Overdue**, and use **Clear Completed** to tidy up. Lists import and export as `.tk` files!
 

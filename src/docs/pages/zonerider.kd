@@ -1,6 +1,6 @@
 # Zonerider
 
-#PR#3D#= **Zonerider** is a 3D editor a little like Blender. Model with shapes and vertices, add light, animate with keyframes, render images and videos, and export glTF, OBJ and STL!
+#L#3D#= **Zonerider** is a 3D editor a little like Blender. Model with shapes and vertices, add light, animate with keyframes, render images and videos, and export glTF, OBJ and STL!
 
 [Open Zonerider](/zonerider) · [Phone version](/zonerider/mobile/)
 
@@ -8,13 +8,13 @@
 ::divider{wavy|Zonerider|lime}
 ## What you can do
 
-* #Y.marker(Model): start from shapes and edit their vertices!
-* #L.marker(Light and shade): add lights, and write your own shaders!
-* #G.marker(Animate): set keyframes and play them back!
-* #TU.marker(Render) still images and videos!
-* #T.marker(Export) glTF, OBJ and STL, for other 3D tools or 3D printing!
+* #Y#Model##: start from shapes and edit their vertices!
+* #L#Light and shade##: add lights, and write your own shaders!
+* #G#Animate##: set keyframes and play them back!
+* #TU#Render## still images and videos!
+* #T#Export## glTF, OBJ and STL, for other 3D tools or 3D printing!
 
-The #O.bucket(Help) menu explains 3D scenes, shaders and animation!
+The #O.accent(Help) menu explains 3D scenes, shaders and animation!
 
 ## 3D scenes in documents
 

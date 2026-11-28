@@ -8,10 +8,10 @@
 ::divider{wavy|Peeker|purple}
 ## What you can do
 
-* #T.gem(Mark up): add text, highlights, drawings, boxes, whiteout, pictures and signatures!
-* #C.gem(Pages): rotate, reorder, duplicate and delete pages, and merge PDFs!
-* #B.gem(Forms): fill in form fields!
-* #PR.gem(Search) the text of a PDF!
+* #T.bottle(Mark up): add text, highlights, drawings, boxes, whiteout, pictures and signatures!
+* #C.bottle(Pages): rotate, reorder, duplicate and delete pages, and merge PDFs!
+* #B.bottle(Forms): fill in form fields!
+* #PR.bottle(Search) the text of a PDF!
 * **Edit (E)**: the Edit tool turns the text and pictures already in a PDF into marks you can move, change or replace!
 
 ## Privacy

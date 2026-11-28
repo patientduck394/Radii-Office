@@ -1,6 +1,6 @@
 # Omicron
 
-#PR#Web Builder#= **Omicron** is a visual builder for laying out web pages, making templates and producing HTML. Its ribbon works like Microsoft Sway, with cards, styles, tags and skills!
+#O#Web Builder#= **Omicron** is a visual builder for laying out web pages, making templates and producing HTML. Its ribbon works like Microsoft Sway, with cards, styles, tags and skills!
 
 [Open Omicron](/omicron) · [Phone version](/omicron/mobile/)
 
@@ -8,9 +8,9 @@
 ::divider{wavy|Omicron|pink}
 ## What you can do
 
-* #GL.frost(Position elements) visually, and use templates to start quickly!
-* #Y.frost(Export) a page as a website ZIP, or as a single HTML file with every style built in!
-* #L.frost(Insert Bitbook notes) into a page!
+* #GL.flag(Position elements) visually, and use templates to start quickly!
+* #Y.flag(Export) a page as a website ZIP, or as a single HTML file with every style built in!
+* #L.flag(Insert Bitbook notes) into a page!
 
 ## BitLang in pages
 

@@ -6,24 +6,24 @@
 
 #C#Notes#= [Open Waterflow](/waterflow)
 
-A clear, glassy notebook. Notes live in #R.torpedo(streams), #R.torpedo(notebooks) and #R.torpedo(tags), and are written in Poolside Keydown!
+A clear, glassy notebook. Notes live in #R.halo(streams), #R.halo(notebooks) and #R.halo(tags), and are written in Poolside Keydown!
 
-* #GL.halo(Quick switcher): press Ctrl+K to jump to any note!
-* #Y.halo(Three modes): View, Visual and Source, like Writeout!
-* #L.halo(Outline) of the headings, and a #R.torpedo(trash) you can restore from!
-* #G.halo(More): wiki links between notes, templates, tasks, a calendar, history, a writing goal, statistics, quick capture and a typewriter mode!
-* #TU.halo(Waterflow Legacy) keeps the original app, and the new Waterflow can bring its notes over!
+* #GL.pixel(Quick switcher): press Ctrl+K to jump to any note!
+* #Y.pixel(Three modes): View, Visual and Source, like Writeout!
+* #L.pixel(Outline) of the headings, and a #R.halo(trash) you can restore from!
+* #G.pixel(More): wiki links between notes, templates, tasks, a calendar, history, a writing goal, statistics, quick capture and a typewriter mode!
+* #TU.pixel(Waterflow Legacy) keeps the original app, and the new Waterflow can bring its notes over!
 
 ## Yuzu
 
-#R#Mail#= [Open Yuzu](/yuzu) · [Phone version](/yuzu/mobile/)
+#B#Mail#= [Open Yuzu](/yuzu) · [Phone version](/yuzu/mobile/)
 
-An email app with an inbox, folders, search and compose. It has two looks: a new Outlook-style ribbon, and the original #G.torpedo(Yuzu Classic)!
+An email app with an inbox, folders, search and compose. It has two looks: a new Outlook-style ribbon, and the original #G.halo(Yuzu Classic)!
 
 ### Accounts
 
-* #G.spotlight(A Yuzu address) (`name@radii-office.com`) that you make inside the app!
-* #TU.spotlight(Google or Microsoft accounts), which use the provider's own sign-in. The sign-in needs the app's client ID to be set up in the app's settings!
+* #G.aurora(A Yuzu address) (`name@radii-office.com`) that you make inside the app!
+* #TU.aurora(Google or Microsoft accounts), which use the provider's own sign-in. The sign-in needs the app's client ID to be set up in the app's settings!
 
 ### Keydown in messages
 
@@ -31,11 +31,11 @@ Messages you write are Keydown, so headings, chips and styles work. When you sen
 
 ### Mail from the outside world
 
-Mail from other services often has its own formatting. Yuzu shows the #G.torpedo(formatted version) in a sandboxed frame:
+Mail from other services often has its own formatting. Yuzu shows the #G.halo(formatted version) in a sandboxed frame:
 
 * Scripts never run, and links open in a new tab!
-* Pictures from the internet are #G.torpedo(blocked) until you press #G.torpedo(Load pictures)!
-* #G.flag(Plain text) is one click away on every message!
+* Pictures from the internet are #G.halo(blocked) until you press #G.halo(Load pictures)!
+* #G#Plain text## is one click away on every message!
 
 Mail is kept in memory for Google and Microsoft accounts and is not stored by the app. Mail sent to a Yuzu address is stored on the Yuzu mail server until you delete it!
 

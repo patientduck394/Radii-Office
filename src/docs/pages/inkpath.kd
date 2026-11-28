@@ -8,18 +8,18 @@
 ::divider{wavy|Inkpath|red}
 ## Drawing tools
 
-* #R.torpedo(Selection) with a drag box for several shapes at once!
-* #O.torpedo(Path tools) with real-time Bézier node dragging, and a #PR.halo(knife) for cutting!
-* #GL.torpedo(Gradient tool) (press #PR.halo(G)) with fill-line handles. Hold Shift to snap!
-* #Y.torpedo(Rulers, guides and snapping), plus #PR.halo(align), #PR.halo(layers) and #PR.halo(artboards)!
+* #R.prism(Selection) with a drag box for several shapes at once!
+* #O.prism(Path tools) with real-time Bézier node dragging, and a #PR.pixel(knife) for cutting!
+* #GL.prism(Gradient tool) (press #PR.pixel(G)) with fill-line handles. Hold Shift to snap!
+* #Y.prism(Rulers, guides and snapping), plus #PR.pixel(align), #PR.pixel(layers) and #PR.pixel(artboards)!
 
 ## Blur Behind
 
-#Y.halo(Blur Behind) turns a shape into frosted glass by blurring everything behind it. The effect survives export!
+#Y.pixel(Blur Behind) turns a shape into frosted glass by blurring everything behind it. The effect survives export!
 
 ## Animation
 
-The #C.halo(Animate) panel adds keyframes:
+The #C.pixel(Animate) panel adds keyframes:
 
 1. Set a keyframe!
 2. Move a shape!

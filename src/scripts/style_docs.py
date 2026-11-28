@@ -13,8 +13,13 @@ import os, re, glob
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 BAD = re.compile(r'[&()#<>|$`\\{}\[\]@]')
 # pens that stay readable on the dark page (checked on a contact sheet); each one is a highlight-like look
-PENS = ['highlight', 'box', 'marker', 'halo', 'gem', 'spotlight', 'accent', 'bubble', 'dusk', 'prism', 'aurora', 'belt', 'bucket', 'torpedo', 'bottle', 'capsule', 'frost', 'pixel', 'flag', 'packet']
+PENS = ['highlight', 'box', 'marker', 'halo', 'gem', 'spotlight', 'accent', 'bubble', 'dusk', 'prism', 'aurora', 'belt', 'bucket', 'torpedo', 'bottle', 'pixel', 'flag', 'packet']
 COLORS = ['R', 'O', 'GL', 'Y', 'L', 'G', 'TU', 'T', 'C', 'B', 'PR', 'PK']
+
+# each app's own color: the frames on the Products page, and the colors of the newer apps (Phosphor emerald, Beta lime, Mintcode mint, Overshare purple)
+APP_COLORS = {'Writeout': 'C', 'Bitbook': 'PR', 'Amber': 'GL', 'Imbuer': 'G', 'Inkpath': 'PK', 'Peeker': 'O', 'Omicron': 'O', 'Mainkey': 'PR', 'Formly': 'PR',
+              'Hexa': 'G', 'Taskra': 'C', 'Cabinet': 'R', 'Zonerider': 'L', 'Delta': 'PK', 'Waterflow': 'C', 'Yuzu': 'B', 'Phosphor': 'G', 'Antimony': 'C',
+              'Beta': 'L', 'Mintcode': 'TU', 'Overshare': 'PR', 'Trigger': 'O', 'OpenDB': 'C'}
 
 def pen(name, color, word):
     if name == 'highlight': return f"#{color}#{word}##"
@@ -91,7 +96,7 @@ def style_start_apps(text, seed):
         cells = l.split('|')
         if intab and l.startswith('| ') and len(cells) >= 5 and not l.startswith('| Need') and not l.startswith('| ---'):
             names = [x.strip() for x in cells[2].split(',')]
-            cells[2] = ' ' + ', '.join(pen(p, COLORS[(n + k) % len(COLORS)], w) for k, w in enumerate(names)) + ' '; n += 1
+            cells[2] = ' ' + ', '.join(pen(p, APP_COLORS.get(w, 'Y'), w) for w in names) + ' '; n += 1
             l = '|'.join(cells)
         out.append(l)
     return '\n'.join(out)
