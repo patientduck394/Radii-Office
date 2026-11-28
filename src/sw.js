@@ -3,7 +3,7 @@
    Pages and OpenDB's data try the network first (so they stay fresh) and fall back to the saved copy;
    versioned files (?v=) come straight from the saved copy; other files show the saved copy and refresh it
    in the background. Libraries and fonts from the CDNs are saved the first time they load. */
-const VERSION = '90b133b98ed1';
+const VERSION = 'f3a98054327d';
 const CACHE = 'radii-offline-' + VERSION;
 const RUNTIME = 'radii-offline-runtime';
 const CORE = [["/","dff700e2bc"],
@@ -177,12 +177,12 @@ const CORE = [["/","dff700e2bc"],
   ["/delta/vendor/mathquill/font/Symbola.woff2","96a358477e"],
   ["/delta/vendor/mathquill/mathquill.css","7ee8806e90"],
   ["/delta/vendor/mathquill/mathquill.min.js","4ca53140e4"],
-  ["/docs.html","95f0f1bfbf"],
-  ["/docs/app.js?v=20261328a","139395913d"],
-  ["/docs/docs.css?v=20261328a","30ac6e9657"],
+  ["/docs.html","ab8cec129d"],
+  ["/docs/app.js?v=20261328b","139395913d"],
+  ["/docs/docs.css?v=20261328b","2411dc3738"],
   ["/docs/generated/bitlang-guide.html","623897e057"],
   ["/docs/generated/style-pool.json","373c24f6c2"],
-  ["/docs/kd-dark.js?v=20261328a","7a007f19a6"],
+  ["/docs/kd-dark.js?v=20261328b","7a007f19a6"],
   ["/docs/nav.json","acbd0ad86d"],
   ["/docs/pages/amber.kd","1736ba4c6e"],
   ["/docs/pages/bitbook.kd","dd5b6b2cc3"],

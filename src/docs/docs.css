@@ -170,3 +170,12 @@ html:not([data-theme="light"]) .doc .kd-out mark.an-hl { color: #0f172a; }
 /* highlight pens sit inside sentences, so they get a little room on both sides */
 .doc .kd-out mark.an-hl { margin: 0 .22em; padding-top: .05em; padding-bottom: .05em; }
 .doc .kd-out td mark.an-hl:first-child, .doc .kd-out li > mark.an-hl:first-child { margin-left: 0; }
+
+/* ---- footer: the license ---- */
+.df { border-top: 1px solid var(--line); background: var(--bg2); padding: 26px 22px 34px; text-align: center; color: var(--muted); font-size: .9rem; }
+.df p { max-width: 760px; margin: 0 auto 8px; }
+.df .fine { font-size: .82rem; }
+.df a { color: var(--accent); }
+.df .cc0 { display: inline-block; margin-right: .4em; padding: 1px 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel); color: var(--head); font: 800 .78rem var(--mono); letter-spacing: .03em; }
+.df .cc0:hover { border-color: var(--accent); text-decoration: none; }
+@media print { .df { border: 0; } }
