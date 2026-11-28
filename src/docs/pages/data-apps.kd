@@ -1,47 +1,47 @@
 # Data and planning apps
 
-Five small apps handle records, forms, dates, tasks and files. They all have a ++PK?(Share++ tab with **Share & Chat**, and they all use the same three [layouts](#/layouts)!
+Five small apps handle records, forms, dates, tasks and files. They all have a #O#Share# tab with **Share & Chat**, and they all use the same three [layouts](#/layouts)!
 
 
 ::divider{wavy|Data and planning apps|cyan}
 ## Mainkey: records
 
-@shimmer-3@Database@ [Open Mainkey](/mainkey)
+!!#PR#Database# [Open Mainkey](/mainkey)
 
-Build your own fields, then keep records in them. Search, filter and sort in a **Table**, or browse a ++L5(Gallery++ with live statistics!
+Build your own fields, then keep records in them. Search, filter and sort in a #O#Table#, or browse a #O#Gallery# with live statistics!
 
-* #/O&Home& has New Record, Add Field, the Table and Gallery views, and Sort By!
-* ++L5(Data++ imports and exports `.kb` files and exports `.csv`, and has Demo Data and Clear All!
-* ;;PK;Share;; has a ++L}}Website Kit++ and ++Y~}Host++, which can serve the database straight from your browser tab so others can open it!
+* @clay-4@Home@ has New Record, Add Field, the Table and Gallery views, and Sort By!
+* @clay-4@Data@ imports and exports `.kb` files and exports `.csv`, and has Demo Data and Clear All!
+* @clay-4@Share@ has a #O#Website Kit# and #O#Host#, which can serve the database straight from your browser tab so others can open it!
 
 ## Formly: forms
 
-@gingham-4@Forms@ [Open Formly](/formly)
+!!#G#Forms# [Open Formly](/formly)
 
-Build a form with ++B*}New Form++ and ++TU/)Add Field++, flip between ==C.Builder== and @foil-5@Preview@, and share it as a file:
+Build a form with #O#New Form# and #O#Add Field#, flip between #O#Builder# and #O#Preview#, and share it as a file:
 
-* `.kfe` is an ++G(]editable++ form, so the other person can change it!
-* `.kfv` is a **viewable** form that people fill in!
-* `.kfa` holds the **answers**!
+* `.kfe` is an #O#editable# form, so the other person can change it!
+* `.kfv` is a #O#viewable# form that people fill in!
+* `.kfa` holds the #O#answers#!
 
 Question text accepts Keydown, so chips and highlights work in forms. Share & Chat lets a group edit a form together!
 
 ## Hexa: calendar and boards
 
-++L!!Calendar++ [Open Hexa](/hexa)
+!!#B#Calendar# [Open Hexa](/hexa)
 
-* @gingham-5@Calendar@ shows months and an agenda for events. **Today** and ++B?Year++ jump around!
-* ++TU/)Boards++ are columns of cards: **New Board**, **New Column** and @cloud-4@New Card@!
-* ==C.Import and export== standard `.ics` files (so you can swap with other calendars) and Hexa's own `.kh` files!
+* ++L5(Calendar++ shows months and an agenda for events. #O#Today# and #O#Year# jump around!
+* ++L5(Boards++ are columns of cards: #O#New Board#, #O#New Column# and #O#New Card#!
+* ++L5(Import and export++ standard `.ics` files (so you can swap with other calendars) and Hexa's own `.kh` files!
 
 ## Taskra: to-do lists
 
-++PK$Todo++ [Open Taskra](/taskra)
+!!#O#Todo# [Open Taskra](/taskra)
 
-Tasks have priorities and due dates. Filter with ++R4}All Tasks++, ++TU$}Active++, **Done** and ++Y^)Overdue++, and use //GL~Clear Completed// to tidy up. Lists import and export as `.tk` files!
+Tasks have priorities and due dates. Filter with #O#All Tasks#, #O#Active#, #O#Done# and #O#Overdue#, and use #O#Clear Completed# to tidy up. Lists import and export as `.tk` files!
 
 ## Cabinet: drive
 
-++C%%Drive++ [Open Cabinet](/cabinet)
+!!#R#Drive# [Open Cabinet](/cabinet)
 
-Keep files in ++GL?)drawers++, like a file explorer. **New Drawer**, **New Folder** and ==GL~Upload Files== are on the Home tab, and @sprinkles-3@Cards@ or ++B/:List++ views are in View. A whole drive downloads at once as a ZIP, and the Share tab can save a drawer as a `.kc` or `.zip` file!
+Keep files in #O#drawers#, like a file explorer. #O#New Drawer#, #O#New Folder# and #O#Upload Files# are on the Home tab, and #O#Cards# or #O#List# views are in View. A whole drive downloads at once as a ZIP, and the Share tab can save a drawer as a `.kc` or `.zip` file!

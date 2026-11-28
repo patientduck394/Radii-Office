@@ -1,0 +1,27 @@
+# Imbuer
+
+!!#T#Spreadsheet# **Imbuer** is a spreadsheet with an Excel-style ribbon, formulas, charts and number formats. Its cells understand Keydown text styles, and sheets import and export as CSV!
+
+[Open Imbuer](/imbuer) · [Phone version](/imbuer/mobile/)
+
+
+::divider{wavy|Imbuer|teal}
+## What it does
+
+* **A grid** with selection, editing, copy and paste, find and replace, and sheet tabs along the bottom!
+* **Formulas** with autocomplete, so typing `=SU` suggests the functions that start that way!
+* **Charts** built from a selected range!
+* **Conditional formatting, sorting and filtering, and templates**!
+* **Cell formatting** for numbers, colors, borders and fonts, with Keydown in cells for chips and highlights!
+* **CSV** import and export from the File screen!
+
+## Working with formulas
+
+Start a cell with `=`. References like `A1` and ranges like `A1:B10` work as usual, and functions take arguments in parentheses. A formula bar shows what is in the selected cell!
+
+```
+=SUM(A1:A10)
+=AVERAGE(B2:B20)
+=IF(C2>100, "high", "low")
+```
+

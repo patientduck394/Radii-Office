@@ -1,0 +1,23 @@
+# Offline and desktop apps
+
+
+::divider{aqua}
+## Working offline
+
+Radii Office saves itself for offline use the first time you visit. After that, the apps open without a connection, and your documents are already on your computer. When you are back online, nothing needs to be synced because nothing left your computer!
+
+Things that need the internet by nature, like Phosphor chat, Beta, Mintcode, Overshare and getting real email in Yuzu, only work online. Everything that edits your own files works offline!
+
+## Installing
+
+* **As an app from the browser.** In Chrome or Edge, use the install button in the address bar to add an app to your dock or desktop!
+* **Desktop apps.** Open [Products](/products) and press **Download** on any app for a Mac, Windows or Linux build. Desktop apps open and save files directly on your computer, and they are rebuilt whenever the site changes!
+* **Phones.** Most apps have a **Mobile** button that opens a layout designed for small screens!
+
+## Checking downloads
+
+Downloads are signed so you can check that nobody changed them. The public keys and fingerprints are in `/signing/` on this site, and the pages have integrity hashes on their scripts. The details are in [Privacy and security](#/security)!
+
+## Open files from your computer
+
+In any app, use **File > Open** to pick a file from your computer. Desktop apps can open and save files directly on disk!

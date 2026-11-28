@@ -1,0 +1,19 @@
+# Trigger
+
+!!#O#Automation# **Trigger** is an automation panel. You write rules as text, and glowing **pods** react when your documents or a watched folder of `.radii` files change!
+
+[Open Trigger](/trigger)
+
+
+::divider{wavy|Trigger|teal}
+## A rule
+
+```
+#!trigger-[sync]-Writeout->notify!#
+```
+
+Type rules like this into the panel and a pod appears for each one. The pods glow when the documents or files they watch change!
+
+## Where it fits
+
+Trigger is for small chores that you would otherwise remember by hand, like noticing when a document changes. It runs in the app, on your computer!

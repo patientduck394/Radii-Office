@@ -1,0 +1,40 @@
+# OpenDB
+
+!!#B#Knowledge# **OpenDB** is a free database of articles, media and papers that anyone can reuse. Everything in it is **CC0**, which means public domain!
+
+[Open OpenDB](/opendb) · [Phone version](/opendb/mobile/)
+
+
+::divider{wavy|OpenDB|red}
+## Entries
+
+An entry is a `.kd` file: a header with an id, type, title and tags, and then Keydown text. Types include **article**, **image**, **paper** and **lite**!
+
+```
+---
+format: keydown-text
+id: my-article
+type: article
+title: My article
+summary: One sentence about it.
+tags: [example]
+license: CC0-1.0
+---
+**My article** is about something. Link to another entry like [[keydown|Keydown]]!
+```
+
+## Wiki links
+
+`[[id|words]]` links to another entry. The Keydown guide and the Radii Office article are entries too!
+
+## Lites
+
+A **lite** is a small, runnable project stored as one entry (like a Gist). Each file sits in a `~~~ file:` fence. You can **fork**, **embed** and **zip** a lite!
+
+## Every example is live
+
+OpenDB draws its pages with the real Keydown engine, so every example in an article is the real thing, not a picture!
+
+## Reuse
+
+Because it is CC0, you can copy anything from OpenDB into your own project without asking. It is also where the full [Keydown article](#/keydown-reference) lives, and the docs here read it directly!

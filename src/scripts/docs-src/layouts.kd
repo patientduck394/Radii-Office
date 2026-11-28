@@ -1,0 +1,34 @@
+# Layouts and themes
+
+Every Radii Office app can wear three different looks. They change how the app is arranged, not what it does, and your documents are identical in all of them.
+
+
+::divider{aqua}
+## The three layouts
+
+* !!#B#Nova# **Nova** is the default. It is flat and soft, with Vadivam icons, rounded corners and a File screen in the same style!
+* !!#G#New# **New** is a ribbon like Microsoft Office, with tabs along the top and groups of commands under them!
+* !!#PR#Classic# **Classic** is the original look: a glass sidebar with gel buttons, and the page in a bright frame!
+
+## Changing the layout
+
+1. Open the **View** tab (or the **Help** tab in apps without one) and look for **Layout**, or press **Layout** in the ribbon!
+2. Pick one of the cards. The app switches right away, and the choice is remembered on this computer!
+
+Some apps have a **Themes** or **Look** button in the sidebar that opens the same cards!
+
+::note Your files do not change
+Switching layouts only moves buttons around. Open a document in Classic, switch to Nova, and it is exactly the same file!
+::end
+
+## The File screen
+
+The File button (top left in New and Nova, in the sidebar in Classic) opens a full-page screen with the commands that are about the whole file: New, Open, Save a Copy, Export, Print and Info. Which commands appear depends on the app. Cabinet, for example, has Drawers, and Mainkey has Open and Export!
+
+## Poolside layout
+
+Writeout and Bitbook also have a fourth layout, **Poolside**, a glassy look in cyan, blue and orange. It exists only in those two apps!
+
+## Dark and light
+
+Apps follow their layout's colors. This documentation page has its own switch: the moon button at the top right changes between dark and light, and remembers your choice!

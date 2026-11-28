@@ -1,0 +1,47 @@
+# Files, saving and versions
+
+Radii Office apps save ordinary files that you own. This page explains the file types, where your work is kept, and how to get it out.
+
+
+::divider{aqua}
+## File types
+
+| Extension | Made by | What it is |
+| --- | --- | --- |
+| `.kd` | Writeout, OpenDB | A Keydown document: a short header and then readable text |
+| `.kn` | Bitbook | A Keydown note |
+| `.ka` | Amber | A presentation |
+| `.kv` | Inkpath | A vector drawing |
+| `.kb` | Mainkey | A record database |
+| `.kfe` `.kfv` `.kfa` | Formly | An editable form, a viewable form, and the answers |
+| `.ics` `.kh` | Hexa | Calendar events (standard iCalendar) and Hexa's own format |
+| `.tk` | Taskra | A to-do list |
+| `.kc` | Cabinet | A drawer shared as a file |
+
+Because the Keydown files are plain text, you can open them in any text editor, and Writeout and Bitbook can open each other's files!
+
+## Where your work lives
+
+* **In the browser.** Apps keep your documents on this computer, in the browser's own storage, so they are there when you come back. Nothing is uploaded!
+* **In a file on your computer.** Use **Share > Keep a file on this computer** (Chrome, Edge and Opera) to link a document to a real file. The app then saves to it automatically!
+* **On a shared link.** Sharing is separate and always your choice. See [Sharing and live editing](#/sharing)!
+
+::warning Clearing site data deletes browser copies
+If you clear your browser's site data, documents kept only in the browser are removed. Export or keep a file on your computer for anything important!
+::end
+
+## The documents library
+
+Writeout, Bitbook and other apps share a documents library. Each document has its own address ending in `?file=` and an id, so the address always reopens that document. Opening an app without an address reopens the document you used last!
+
+## Version history
+
+Choose **File > Version history** (or **Review > Version History** in Writeout) to see earlier copies of a document. Apps take a snapshot as you work, and **Save Version** takes one on purpose. Pick one to preview it and restore it!
+
+## Getting your work out
+
+* **Save a Copy** and **Export** (on the File screen) write a file to your computer!
+* Writeout exports PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB, and both Writeout and Bitbook can **Print**!
+* Inkpath exports SVG and PNG, and Imbuer and Mainkey import and export CSV!
+* Hexa exports `.ics`, and Zonerider exports glTF, OBJ and STL!
+* Every app's data is yours: there is no lock-in, and the source is public!

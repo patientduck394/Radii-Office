@@ -8,17 +8,17 @@ Documents, notes, sheets and drawings are kept in your browser or in files you c
 
 ## What goes online, and only when you ask
 
-* Share & Chat, Overshare, Phosphor, Antimony, Beta, Mintcode and Yuzu mail send what you put in them to their own servers, because that is how they work!
+* **Share & Chat, Overshare, Phosphor, Antimony, Beta, Mintcode and Yuzu mail** send what you put in them to their own servers, because that is how they work!
 * ++T~Pictures from OpenDB++ are fetched from this site when you insert them!
-* ++B@]Math++ is drawn by KaTeX, which is bundled with the site!
+* ++T~Math++ is drawn by KaTeX, which is bundled with the site!
 
 ## How the site protects itself
 
-* ++B*:Security headers++ on every page: no other site can frame Radii Office, and scripts and styles come from known places!
-* ++B@}Signed downloads++ with published keys and fingerprints in `/signing/`!
-* #/B#Integrity hashes# on loaded scripts, so a changed file is refused!
-* ++GL=:Safe Keydown.++ Text drawn by Keydown in shared places (messages, posts, mail) is cleaned again after it is drawn, so scripts and frames in it are removed!
-* ++GL#:Mail content.++ Real email in Yuzu is shown inside a sandboxed frame with a strict policy, and pictures from the internet are blocked until you press @softinset-4@Load pictures@!
+* ++B@]Security headers++ on every page: no other site can frame Radii Office, and scripts and styles come from known places!
+* ++B@]Signed downloads++ with published keys and fingerprints in `/signing/`!
+* ++B@]Integrity hashes++ on loaded scripts, so a changed file is refused!
+* ++B@]Safe Keydown.++ Text drawn by Keydown in shared places (messages, posts, mail) is cleaned again after it is drawn, so scripts and frames in it are removed!
+* ++B@]Mail content.++ Real email in Yuzu is shown inside a sandboxed frame with a strict policy, and pictures from the internet are blocked until you press !!#PR#Load pictures#!
 
 ## Reporting a problem
 

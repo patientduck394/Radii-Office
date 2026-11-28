@@ -1,0 +1,16 @@
+# Delta
+
+!!#T#Math# **Delta** is a math workspace in the ribbon style, or in its original Delta Classic look. It has a live graphing calculator, a LaTeX renderer and a calculator!
+
+[Open Delta](/delta) · [Phone version](/delta/mobile/)
+
+| Tab | Use it for |
+| --- | --- |
+| **Graph** | Plot equations as you type. Add **sliders** for values you want to change, use **lists**, and draw **polygons** |
+| **LaTeX** | Write LaTeX and see it drawn, ready to copy into a document |
+| **Calculator** | Everyday and scientific calculations |
+| **Share** | Share & Chat, for working on a graph together |
+
+::tip Math in documents
+Writeout, Bitbook and OpenDB draw math from `$x^2$` and `$$ ... $$`, using KaTeX. Delta's LaTeX tab is a good place to try an equation before pasting it!
+::end

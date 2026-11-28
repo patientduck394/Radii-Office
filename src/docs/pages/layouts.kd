@@ -6,16 +6,16 @@ Every Radii Office app can wear three different looks. They change how the app i
 ::divider{aqua}
 ## The three layouts
 
-* !!#B#Nova# **Nova** is the default. It is flat and soft, with Vadivam icons, rounded corners and a File screen in the same style!
-* !!#G#New# ++O(]New++ is a ribbon like Microsoft Office, with tabs along the top and groups of commands under them!
-* !!#PR#Classic# #/L$Classic$ is the original look: a glass sidebar with gel buttons, and the page in a bright frame!
+* !!#B#Nova# ++B~Nova++ is the default. It is flat and soft, with Vadivam icons, rounded corners and a File screen in the same style!
+* !!#G#New# ++B~New++ is a ribbon like Microsoft Office, with tabs along the top and groups of commands under them!
+* !!#PR#Classic# ++B~Classic++ is the original look: a glass sidebar with gel buttons, and the page in a bright frame!
 
 ## Changing the layout
 
-1. Open the ~CPG~View~CPG~ tab (or the **Help** tab in apps without one) and look for **Layout**, or press ++L;]Layout++ in the ribbon!
+1. Open the ++B~View++ tab (or the ++B~Help++ tab in apps without one) and look for ++B~Layout++, or press ++B~Layout++ in the ribbon!
 2. Pick one of the cards. The app switches right away, and the choice is remembered on this computer!
 
-Some apps have a ++PR'Themes++ or ++PR*)Look++ button in the sidebar that opens the same cards!
+Some apps have a ++B~Themes++ or ++B~Look++ button in the sidebar that opens the same cards!
 
 ::note Your files do not change
 Switching layouts only moves buttons around. Open a document in Classic, switch to Nova, and it is exactly the same file!
@@ -27,7 +27,7 @@ The File button (top left in New and Nova, in the sidebar in Classic) opens a fu
 
 ## Poolside layout
 
-Writeout and Bitbook also have a fourth layout, !!7Y#Poolside#, a glassy look in cyan, blue and orange. It exists only in those two apps!
+Writeout and Bitbook also have a fourth layout, ++B~Poolside++, a glassy look in cyan, blue and orange. It exists only in those two apps!
 
 ## Dark and light
 

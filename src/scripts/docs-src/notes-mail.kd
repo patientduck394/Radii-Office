@@ -1,0 +1,44 @@
+# Notes and mail
+
+
+::divider{wavy|Notes and mail|green}
+## Waterflow
+
+!!#C#Notes# [Open Waterflow](/waterflow)
+
+A clear, glassy notebook. Notes live in **streams**, **notebooks** and **tags**, and are written in Poolside Keydown!
+
+* **Quick switcher**: press Ctrl+K to jump to any note!
+* **Three modes**: View, Visual and Source, like Writeout!
+* **Outline** of the headings, and a **trash** you can restore from!
+* **More**: wiki links between notes, templates, tasks, a calendar, history, a writing goal, statistics, quick capture and a typewriter mode!
+* **Waterflow Legacy** keeps the original app, and the new Waterflow can bring its notes over!
+
+## Yuzu
+
+!!#R#Mail# [Open Yuzu](/yuzu) · [Phone version](/yuzu/mobile/)
+
+An email app with an inbox, folders, search and compose. It has two looks: a new Outlook-style ribbon, and the original **Yuzu Classic**!
+
+### Accounts
+
+* **A Yuzu address** (`name@radii-office.com`) that you make inside the app!
+* **Google or Microsoft accounts**, which use the provider's own sign-in. The sign-in needs the app's client ID to be set up in the app's settings!
+
+### Keydown in messages
+
+Messages you write are Keydown, so headings, chips and styles work. When you send to another Yuzu address, the message arrives with its Keydown and is drawn in full!
+
+### Mail from the outside world
+
+Mail from other services often has its own formatting. Yuzu shows the **formatted version** in a sandboxed frame:
+
+* Scripts never run, and links open in a new tab!
+* Pictures from the internet are **blocked** until you press **Load pictures**!
+* **Plain text** is one click away on every message!
+
+Mail is kept in memory for Google and Microsoft accounts and is not stored by the app. Mail sent to a Yuzu address is stored on the Yuzu mail server until you delete it!
+
+## Trigger
+
+See [Trigger](#/trigger) for rules that react when your documents change!

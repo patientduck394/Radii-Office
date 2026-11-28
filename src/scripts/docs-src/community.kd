@@ -1,0 +1,48 @@
+# Community apps
+
+These apps run on servers, so they need an internet connection. Each is its own site on a `radii-office.com` address!
+
+
+::divider{wavy|Community apps|orange}
+## Phosphor
+
+!!#G#Messaging# [phosphor.radii-office.com](https://phosphor.radii-office.com)
+
+A Discord-style chat. Make an account and you can:
+
+* Create **servers** with **channels**, **roles** and permissions!
+* Send **direct messages** and make **group chats**, and add **friends**!
+* Use **custom emojis**, reactions, pins, threads and polls!
+* Join **voice channels** (up to 8 people)!
+* Add **webhooks**, and use slash commands like `/me`, `/shrug`, `/poll` and `/nick`!
+* Jump anywhere with the **quick switcher** (Ctrl+K)!
+
+Messages are written in Keydown!
+
+## Antimony
+
+!!#PK#Boards# [Open Antimony](/antimony)
+
+A free message board. Make spaces, post and reply, and watch new messages appear as they arrive!
+
+## Beta
+
+!!#L#Microblog# [beta.radii-office.com](https://beta.radii-office.com)
+
+Short posts with `#topics`. You can follow people, like, reply, run polls, make lists, keep drafts and collections, set reminders and ask questions. **Outlets** are rooms for group talk, and there is a **Friends** feature. Each Beta instance picks its own usernames!
+
+## Mintcode
+
+!!#T#Code hosting# [mintcode.radii-office.com](https://mintcode.radii-office.com)
+
+Host code with **Mint**, a simple saves-and-lines version tool. It has repositories, stars, forks, issues and a web editor!
+
+## Overshare
+
+!!#PR#Sharing# [overshare.radii-office.com](https://overshare.radii-office.com)
+
+Share documents and work on them together. Read more in [Sharing](#/sharing)!
+
+## Keydown in the community apps
+
+Phosphor, Beta, Mintcode and Antimony all draw Keydown in messages and posts. Their copy of Keydown is cleaned a second time after it is drawn, so scripts and frames can't get through!

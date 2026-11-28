@@ -1,0 +1,19 @@
+# Peeker
+
+!!#O#PDF# **Peeker** is a PDF editor that runs entirely in your browser, so your files are never uploaded. It uses the open-source pdf.js and pdf-lib libraries!
+
+[Open Peeker](/peeker) · [Phone version](/peeker/mobile/)
+
+
+::divider{wavy|Peeker|purple}
+## What you can do
+
+* **Mark up**: add text, highlights, drawings, boxes, whiteout, pictures and signatures!
+* **Pages**: rotate, reorder, duplicate and delete pages, and merge PDFs!
+* **Forms**: fill in form fields!
+* **Search** the text of a PDF!
+* **Edit (E)**: the Edit tool turns the text and pictures already in a PDF into marks you can move, change or replace!
+
+## Privacy
+
+Peeker reads and edits the PDF inside your browser. Nothing is sent to a server, so it is safe for private paperwork!

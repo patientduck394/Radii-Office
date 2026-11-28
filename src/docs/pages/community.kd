@@ -6,40 +6,40 @@ These apps run on servers, so they need an internet connection. Each is its own 
 ::divider{wavy|Community apps|orange}
 ## Phosphor
 
-++C~~Messaging++ [phosphor.radii-office.com](https://phosphor.radii-office.com)
+!!#G#Messaging# [phosphor.radii-office.com](https://phosphor.radii-office.com)
 
 A Discord-style chat. Make an account and you can:
 
-* Create ~~O.servers~~ with #/G%channels%, ~~GL=roles~~ and permissions!
-* Send **direct messages** and make **group chats**, and add !!8PK#friends#!
-* Use ++PR-]custom emojis++, reactions, pins, threads and polls!
-* Join @gingham-4@voice channels@ (up to 8 people)!
-* Add **webhooks**, and use slash commands like `/me`, `/shrug`, `/poll` and `/nick`!
-* Jump anywhere with the ++L<quick switcher++ (Ctrl+K)!
+* Create ++PK+servers++ with ++PK+channels++, ++PK+roles++ and permissions!
+* Send ++PK+direct messages++ and make ++PK+group chats++, and add ++PK+friends++!
+* Use ++PK+custom emojis++, reactions, pins, threads and polls!
+* Join ++PK+voice channels++ (up to 8 people)!
+* Add ++PK+webhooks++, and use slash commands like `/me`, `/shrug`, `/poll` and `/nick`!
+* Jump anywhere with the ++PK+quick switcher++ (Ctrl+K)!
 
 Messages are written in Keydown!
 
 ## Antimony
 
-@banner-1@Boards@ [Open Antimony](/antimony)
+!!#PK#Boards# [Open Antimony](/antimony)
 
 A free message board. Make spaces, post and reply, and watch new messages appear as they arrive!
 
 ## Beta
 
-++C5)Microblog++ [beta.radii-office.com](https://beta.radii-office.com)
+!!#L#Microblog# [beta.radii-office.com](https://beta.radii-office.com)
 
-Short posts with `#topics`. You can follow people, like, reply, run polls, make lists, keep drafts and collections, set reminders and ask questions. @webtwo-5@Outlets@ are rooms for group talk, and there is a @window-4@Friends@ feature. Each Beta instance picks its own usernames!
+Short posts with `#topics`. You can follow people, like, reply, run polls, make lists, keep drafts and collections, set reminders and ask questions. ++PK+Outlets++ are rooms for group talk, and there is a ++PK+Friends++ feature. Each Beta instance picks its own usernames!
 
 ## Mintcode
 
-@sprinkles-3@Code hosting@ [mintcode.radii-office.com](https://mintcode.radii-office.com)
+!!#T#Code hosting# [mintcode.radii-office.com](https://mintcode.radii-office.com)
 
-Host code with @enamel-5@Mint@, a simple saves-and-lines version tool. It has repositories, stars, forks, issues and a web editor!
+Host code with ++PK+Mint++, a simple saves-and-lines version tool. It has repositories, stars, forks, issues and a web editor!
 
 ## Overshare
 
-++C%}Sharing++ [overshare.radii-office.com](https://overshare.radii-office.com)
+!!#PR#Sharing# [overshare.radii-office.com](https://overshare.radii-office.com)
 
 Share documents and work on them together. Read more in [Sharing](#/sharing)!
 

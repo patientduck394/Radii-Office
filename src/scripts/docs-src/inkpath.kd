@@ -1,0 +1,32 @@
+# Inkpath
+
+!!#PK#Vector# **Inkpath** is a vector graphics editor with box selection, live Bézier point dragging, and panning and zooming around the canvas. Drawings are saved as `.kv` files and export as SVG or PNG!
+
+[Open Inkpath](/inkpath) · [Phone version](/inkpath/mobile/)
+
+
+::divider{wavy|Inkpath|red}
+## Drawing tools
+
+* **Selection** with a drag box for several shapes at once!
+* **Path tools** with real-time Bézier node dragging, and a **knife** for cutting!
+* **Gradient tool** (press **G**) with fill-line handles. Hold Shift to snap!
+* **Rulers, guides and snapping**, plus **align**, **layers** and **artboards**!
+
+## Blur Behind
+
+**Blur Behind** turns a shape into frosted glass by blurring everything behind it. The effect survives export!
+
+## Animation
+
+The **Animate** panel adds keyframes:
+
+1. Set a keyframe!
+2. Move a shape!
+3. Move the playhead and set another keyframe!
+
+You can also use presets like Fade in, Spin or Bounce. Export an SVG that plays by itself in any browser!
+
+## Saving and exporting
+
+Choose **File > Export** for SVG or PNG. Extra SVG features such as caps, dashes, markers, patterns, blend modes, groups and images are supported!
