@@ -22,9 +22,9 @@ Because the Keydown files are plain text, you can open them in any text editor, 
 
 ## Where your work lives
 
-* **In the browser.** Apps keep your documents on this computer, in the browser's own storage, so they are there when you come back. Nothing is uploaded!
-* **In a file on your computer.** Use **Share > Keep a file on this computer** (Chrome, Edge and Opera) to link a document to a real file. The app then saves to it automatically!
-* **On a shared link.** Sharing is separate and always your choice. See [Sharing and live editing](#/sharing)!
+* ++TU$}In the browser.++ Apps keep your documents on this computer, in the browser's own storage, so they are there when you come back. Nothing is uploaded!
+* ++GL<In a file on your computer.++ Use **Share > Keep a file on this computer** (Chrome, Edge and Opera) to link a document to a real file. The app then saves to it automatically!
+* ++GL_}On a shared link.++ Sharing is separate and always your choice. See [Sharing and live editing](#/sharing)!
 
 ::warning Clearing site data deletes browser copies
 If you clear your browser's site data, documents kept only in the browser are removed. Export or keep a file on your computer for anything important!
@@ -36,12 +36,12 @@ Writeout, Bitbook and other apps share a documents library. Each document has it
 
 ## Version history
 
-Choose **File > Version history** (or **Review > Version History** in Writeout) to see earlier copies of a document. Apps take a snapshot as you work, and **Save Version** takes one on purpose. Pick one to preview it and restore it!
+Choose **File > Version history** (or **Review > Version History** in Writeout) to see earlier copies of a document. Apps take a snapshot as you work, and ++L6)Save Version++ takes one on purpose. Pick one to preview it and restore it!
 
 ## Getting your work out
 
-* **Save a Copy** and **Export** (on the File screen) write a file to your computer!
-* Writeout exports PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB, and both Writeout and Bitbook can **Print**!
+* #C#Save a Copy# and @aurora-3@Export@ (on the File screen) write a file to your computer!
+* Writeout exports PDF, Word (`.docx`), OpenDocument (`.odt`), plain text and EPUB, and both Writeout and Bitbook can ++TU,]Print++!
 * Inkpath exports SVG and PNG, and Imbuer and Mainkey import and export CSV!
 * Hexa exports `.ics`, and Zonerider exports glTF, OBJ and STL!
 * Every app's data is yours: there is no lock-in, and the source is public!

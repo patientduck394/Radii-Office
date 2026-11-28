@@ -1,6 +1,6 @@
 # Imbuer
 
-!!#T#Spreadsheet# **Imbuer** is a spreadsheet with an Excel-style ribbon, formulas, charts and number formats. Its cells understand Keydown text styles, and sheets import and export as CSV!
+@galaxy-3@Spreadsheet@ ++B;}Imbuer++ is a spreadsheet with an Excel-style ribbon, formulas, charts and number formats. Its cells understand Keydown text styles, and sheets import and export as CSV!
 
 [Open Imbuer](/imbuer) · [Phone version](/imbuer/mobile/)
 
@@ -8,12 +8,12 @@
 ::divider{wavy|Imbuer|teal}
 ## What it does
 
-* **A grid** with selection, editing, copy and paste, find and replace, and sheet tabs along the bottom!
-* **Formulas** with autocomplete, so typing `=SU` suggests the functions that start that way!
-* **Charts** built from a selected range!
-* **Conditional formatting, sorting and filtering, and templates**!
-* **Cell formatting** for numbers, colors, borders and fonts, with Keydown in cells for chips and highlights!
-* **CSV** import and export from the File screen!
+* #O#A grid# with selection, editing, copy and paste, find and replace, and sheet tabs along the bottom!
+* ++G@(Formulas++ with autocomplete, so typing `=SU` suggests the functions that start that way!
+* ++G;)Charts++ built from a selected range!
+* Conditional formatting, sorting and filtering, and templates!
+* @led-3@Cell formatting@ for numbers, colors, borders and fonts, with Keydown in cells for chips and highlights!
+* #/R%CSV% import and export from the File screen!
 
 ## Working with formulas
 

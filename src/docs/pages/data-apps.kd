@@ -1,26 +1,26 @@
 # Data and planning apps
 
-Five small apps handle records, forms, dates, tasks and files. They all have a **Share** tab with **Share & Chat**, and they all use the same three [layouts](#/layouts)!
+Five small apps handle records, forms, dates, tasks and files. They all have a ++PK?(Share++ tab with **Share & Chat**, and they all use the same three [layouts](#/layouts)!
 
 
 ::divider{wavy|Data and planning apps|cyan}
 ## Mainkey: records
 
-!!#PR#Database# [Open Mainkey](/mainkey)
+@shimmer-3@Database@ [Open Mainkey](/mainkey)
 
-Build your own fields, then keep records in them. Search, filter and sort in a **Table**, or browse a **Gallery** with live statistics!
+Build your own fields, then keep records in them. Search, filter and sort in a **Table**, or browse a ++L5(Gallery++ with live statistics!
 
-* **Home** has New Record, Add Field, the Table and Gallery views, and Sort By!
-* **Data** imports and exports `.kb` files and exports `.csv`, and has Demo Data and Clear All!
-* **Share** has a **Website Kit** and **Host**, which can serve the database straight from your browser tab so others can open it!
+* #/O&Home& has New Record, Add Field, the Table and Gallery views, and Sort By!
+* ++L5(Data++ imports and exports `.kb` files and exports `.csv`, and has Demo Data and Clear All!
+* ;;PK;Share;; has a ++L}}Website Kit++ and ++Y~}Host++, which can serve the database straight from your browser tab so others can open it!
 
 ## Formly: forms
 
-!!#G#Forms# [Open Formly](/formly)
+@gingham-4@Forms@ [Open Formly](/formly)
 
-Build a form with **New Form** and **Add Field**, flip between **Builder** and **Preview**, and share it as a file:
+Build a form with ++B*}New Form++ and ++TU/)Add Field++, flip between ==C.Builder== and @foil-5@Preview@, and share it as a file:
 
-* `.kfe` is an **editable** form, so the other person can change it!
+* `.kfe` is an ++G(]editable++ form, so the other person can change it!
 * `.kfv` is a **viewable** form that people fill in!
 * `.kfa` holds the **answers**!
 
@@ -28,20 +28,20 @@ Question text accepts Keydown, so chips and highlights work in forms. Share & Ch
 
 ## Hexa: calendar and boards
 
-!!#B#Calendar# [Open Hexa](/hexa)
+++L!!Calendar++ [Open Hexa](/hexa)
 
-* **Calendar** shows months and an agenda for events. **Today** and **Year** jump around!
-* **Boards** are columns of cards: **New Board**, **New Column** and **New Card**!
-* **Import and export** standard `.ics` files (so you can swap with other calendars) and Hexa's own `.kh` files!
+* @gingham-5@Calendar@ shows months and an agenda for events. **Today** and ++B?Year++ jump around!
+* ++TU/)Boards++ are columns of cards: **New Board**, **New Column** and @cloud-4@New Card@!
+* ==C.Import and export== standard `.ics` files (so you can swap with other calendars) and Hexa's own `.kh` files!
 
 ## Taskra: to-do lists
 
-!!#O#Todo# [Open Taskra](/taskra)
+++PK$Todo++ [Open Taskra](/taskra)
 
-Tasks have priorities and due dates. Filter with **All Tasks**, **Active**, **Done** and **Overdue**, and use **Clear Completed** to tidy up. Lists import and export as `.tk` files!
+Tasks have priorities and due dates. Filter with ++R4}All Tasks++, ++TU$}Active++, **Done** and ++Y^)Overdue++, and use //GL~Clear Completed// to tidy up. Lists import and export as `.tk` files!
 
 ## Cabinet: drive
 
-!!#R#Drive# [Open Cabinet](/cabinet)
+++C%%Drive++ [Open Cabinet](/cabinet)
 
-Keep files in **drawers**, like a file explorer. **New Drawer**, **New Folder** and **Upload Files** are on the Home tab, and **Cards** or **List** views are in View. A whole drive downloads at once as a ZIP, and the Share tab can save a drawer as a `.kc` or `.zip` file!
+Keep files in ++GL?)drawers++, like a file explorer. **New Drawer**, **New Folder** and ==GL~Upload Files== are on the Home tab, and @sprinkles-3@Cards@ or ++B/:List++ views are in View. A whole drive downloads at once as a ZIP, and the Share tab can save a drawer as a `.kc` or `.zip` file!

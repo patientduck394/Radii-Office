@@ -57,7 +57,7 @@
       run[0].replaceWith(ol); run.slice(1).forEach((r) => r.remove());
     }
     // the contrast fixer is for chips and highlights: headings, tables and code take the page's own colors
-    root.querySelectorAll('h1,h2,h3,h4,h5,h6,th,td,pre,pre *').forEach((e) => { if (e.hasAttribute('data-kd-fix')) { e.style.removeProperty('color'); e.removeAttribute('data-kd-fix'); } });
+    root.querySelectorAll('h1,h2,h3,h4,h5,h6,th,td,table a,table code,table strong,table em,pre,pre *').forEach((e) => { if (e.hasAttribute('data-kd-fix')) { e.style.removeProperty('color'); e.removeAttribute('data-kd-fix'); } });
     // links to other pages and to this site open in the same tab
     root.querySelectorAll('a[href]').forEach((a) => {
       let h = a.getAttribute('href');

@@ -102,3 +102,40 @@ for (const g of nav) {
 }
 write(path.join(ROOT, 'docs/search.json'), JSON.stringify(index));
 console.log('Search index:', index.length, 'entries,', Math.round(JSON.stringify(index).length / 1024), 'KB');
+
+// ---------- style pool and the Style gallery page ----------
+// Every Keydown family in the article that has one example per color (text placeholder "text"), plus the Unique Styles families.
+// docs/generated/style-pool.json feeds the one-off styling pass (scripts/style_docs.py); the gallery page shows one live sample of each family.
+{
+  const COLORS = ['R', 'O', 'GL', 'Y', 'L', 'G', 'TU', 'T', 'C', 'B', 'PR', 'PK', 'W', 'FG', 'SL', 'BK'];
+  const pool = [];
+  const gallery = [];
+  const uniq = new Map();
+  for (const s of sections) {
+    if (s.id === 'intro') continue;
+    if (s.id === 'unique-styles') {
+      for (const m of s.text.matchAll(/^\* `@([a-z0-9]+)-N@text@` ([^:\n]+):/gm)) uniq.set(m[1], m[2].trim());
+      continue;
+    }
+    const ex = [...s.text.matchAll(/^\* `([^`\n]*\btext\b[^`\n]*)` /gm)].map((m) => m[1]).filter((e) => !/::|\{|\||^-#|\\|color|COLOR/.test(e));
+    if (ex.length >= 12) { pool.push({ name: s.title, tags: ex.slice(0, 16) }); }
+  }
+  const unique = [...uniq.entries()].map(([id, name]) => ({ id, name }));
+  write(path.join(ROOT, 'docs/generated/style-pool.json'), JSON.stringify({ colors: COLORS, pool, unique }));
+  // gallery: one row per family, the color rotating down the page so many colors show
+  const withText = (tag, w) => { const i = tag.lastIndexOf('text'); return tag.slice(0, i) + w + tag.slice(i + 4); };
+  let out = '# Style gallery\n\nOne live sample of every Keydown chip and mark family, drawn by the real engine, in a different color down the page. Write the tag in the middle column, with your own words where it says `text`. Every family comes in sixteen colors, and the [full reference](#/keydown-reference) lists them all!\n\n::tip Colors\nThe letters inside the tag pick the color, like R for red, B for blue and PK for pink. Swap them to recolor any sample!\n::end\n';
+  const per = 40;
+  for (let i = 0; i < pool.length; i += per) {
+    const chunk = pool.slice(i, i + per);
+    out += `\n## Families ${i + 1} to ${i + chunk.length}\n\n| Family | Write | You get |\n| --- | --- | --- |\n`;
+    chunk.forEach((f, j) => {
+      const tag = f.tags[(i + j) % Math.min(12, f.tags.length)];
+      out += `| ${f.name.replace(/ chips?$/i, '')} | \`${tag}\` | ${withText(tag, 'Sample')} |\n`;
+    });
+  }
+  out += '\n## Unique Styles\n\nThe Unique Styles are written `@family-N@text@`, where N is the colorway from 1 to 5. Here is a sample of each family!\n\n| Family | Write | You get |\n| --- | --- | --- |\n';
+  unique.slice(0, 120).forEach((u, j) => { const n = (j % 5) + 1; out += `| ${u.name} | \`@${u.id}-${n}@text@\` | @${u.id}-${n}@Sample@ |\n`; });
+  write(path.join(ROOT, 'docs/pages/keydown-gallery.kd'), out);
+  console.log('Style pool:', pool.length, 'families,', unique.length, 'Unique Styles families; gallery page written');
+}

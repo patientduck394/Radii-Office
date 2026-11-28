@@ -1,6 +1,6 @@
 # OpenDB
 
-!!#B#Knowledge# **OpenDB** is a free database of articles, media and papers that anyone can reuse. Everything in it is **CC0**, which means public domain!
+@comic-3@Knowledge@ ++L?(OpenDB++ is a free database of articles, media and papers that anyone can reuse. Everything in it is @scroll-1@CC0@, which means public domain!
 
 [Open OpenDB](/opendb) · [Phone version](/opendb/mobile/)
 
@@ -8,7 +8,7 @@
 ::divider{wavy|OpenDB|red}
 ## Entries
 
-An entry is a `.kd` file: a header with an id, type, title and tags, and then Keydown text. Types include **article**, **image**, **paper** and **lite**!
+An entry is a `.kd` file: a header with an id, type, title and tags, and then Keydown text. Types include ++GL^(article++, ++B!(image++, ~FOAM~paper~FOAM~ and #%T%lite%!
 
 ```
 ---
@@ -29,7 +29,7 @@ license: CC0-1.0
 
 ## Lites
 
-A **lite** is a small, runnable project stored as one entry (like a Gist). Each file sits in a `~~~ file:` fence. You can **fork**, **embed** and **zip** a lite!
+A ++B''lite++ is a small, runnable project stored as one entry (like a Gist). Each file sits in a `~~~ file:` fence. You can ++C%(fork++, ++TU&&embed++ and **zip** a lite!
 
 ## Every example is live
 

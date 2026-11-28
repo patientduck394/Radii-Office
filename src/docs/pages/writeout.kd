@@ -1,6 +1,6 @@
 # Writeout
 
-!!#B#Documents# **Writeout** is the word processor of the suite. It has real pages, a Navigation pane, a status bar and a ribbon that works like Microsoft Word, and everything you write is Keydown text!
+!!_T#Documents# ++PR1:Writeout++ is the word processor of the suite. It has real pages, a Navigation pane, a status bar and a ribbon that works like Microsoft Word, and everything you write is Keydown text!
 
 [Open Writeout](/writeout) · [Phone version](/writeout/mobile/new/)
 
@@ -10,25 +10,25 @@
 
 | Tab | What you will find |
 | --- | --- |
-| **Home** | Clipboard, Font, Paragraph, Styles (including Keydown Styles), Editing and Margin Marks |
-| **Insert** | New Page, Table, Picture, Link, Header & Footer, Symbols, Captions, Cards & Blocks, Badges, Templates, Equation, and Bulleted and Numbered Lists |
-| **Layout** | Margins, Orientation, Size, Pages View, Print Preview, Color Preview, Page Number Format, Watermark, Page Border and Line Spacing |
-| **References** | Table of Contents, Footnotes, Cross-references, Citations, Sources, Bibliography and Mail Merge |
-| **Review** | Word Count, Find & Replace, Comments, Track Changes, Read Aloud, Un-format and Re-format, the Annotator, Ink Drawing, Readability, Word Goal, Version History and Protect Document |
-| **View** | View, Visual and Source modes, Pages, Continuous and Focus views, Zoom, and the Layout switch |
-| **Help** | Help Deck, Keydown Guide and Shortcuts |
+| ++B;}Home++ | Clipboard, Font, Paragraph, Styles (including Keydown Styles), Editing and Margin Marks |
+| @dymo-2@Insert@ | New Page, Table, Picture, Link, Header & Footer, Symbols, Captions, Cards & Blocks, Badges, Templates, Equation, and Bulleted and Numbered Lists |
+| ++GL/}Layout++ | Margins, Orientation, Size, Pages View, Print Preview, Color Preview, Page Number Format, Watermark, Page Border and Line Spacing |
+| !!=GL#References# | Table of Contents, Footnotes, Cross-references, Citations, Sources, Bibliography and Mail Merge |
+| ++B1:Review++ | Word Count, Find & Replace, Comments, Track Changes, Read Aloud, Un-format and Re-format, the Annotator, Ink Drawing, Readability, Word Goal, Version History and Protect Document |
+| ++PR.:View++ | View, Visual and Source modes, Pages, Continuous and Focus views, Zoom, and the Layout switch |
+| ++TU4)Help++ | Help Deck, Keydown Guide and Shortcuts |
 
 ## Three ways to edit
 
-The **View** tab has three modes, and you can switch any time without losing anything:
+The ++G@)View++ tab has three modes, and you can switch any time without losing anything:
 
-* **View** shows the finished page. Click to edit, and Keydown tags turn into formatting as you type them!
-* **Visual** is the same page with the formatting controls visible, like a classic word processor!
-* **Source** shows the raw Keydown text, with colors for tags, headings, chips and code. Press **Tab** to insert an indent (a leading `|`)!
+* @softinset-5@View@ shows the finished page. Click to edit, and Keydown tags turn into formatting as you type them!
+* ++PR^]Visual++ is the same page with the formatting controls visible, like a classic word processor!
+* =C=Source=C= shows the raw Keydown text, with colors for tags, headings, chips and code. Press ++O[]Tab++ to insert an indent (a leading `|`)!
 
 ## Writing with Keydown
 
-Type a tag and press **Space**, and it becomes formatting. Press **Enter** at the end of a line to format every tag still on that line. For example:
+Type a tag and press ++GL/}Space++, and it becomes formatting. Press ++TU""Enter++ at the end of a line to format every tag still on that line. For example:
 
 ```
 # A heading
@@ -37,13 +37,13 @@ This is **bold**, this is *italic*, and this is `code`.
 ::note Remember this
 ```
 
-Use **Un-format** to turn a whole page back into tags, and **Re-format** to format everything again. Tags that could not be formatted are underlined so mistakes are easy to find. The full language is in the [Keydown guide](#/keydown-start)!
+Use **Un-format** to turn a whole page back into tags, and ++G+)Re-format++ to format everything again. Tags that could not be formatted are underlined so mistakes are easy to find. The full language is in the [Keydown guide](#/keydown-start)!
 
 ## Pages
 
-* **New Page** (Insert tab, or Ctrl/Cmd+Enter) adds a real page break, written as `::pagebreak`. The **Pages** list in the side pane shows every page!
-* **Print Preview** shows the true page size and margins, and **Color Preview** shows grayscale or color-blind views!
-* **Margins, Orientation and Size** are in Layout, and are saved in the file's header!
+* ++G=New Page++ (Insert tab, or Ctrl/Cmd+Enter) adds a real page break, written as `::pagebreak`. The ++TU4)Pages++ list in the side pane shows every page!
+* ++L&&Print Preview++ shows the true page size and margins, and !!0GL#Color Preview# shows grayscale or color-blind views!
+* ++TU3]Margins, Orientation and Size++ are in Layout, and are saved in the file's header!
 
 ## Saving and exporting
 
@@ -51,14 +51,14 @@ Documents are saved as `.kd` files. **File > Home** lists every saved document s
 
 ## Collaboration and history
 
-* **Review > Comments** and **Track Changes** work like other word processors!
-* **Version History** (and **Save Version**) lets you look at and restore earlier copies!
-* **Share & Chat** edits the same document live with other people. See [Sharing](#/sharing)!
+* Review > Comments and @receipt-4@Track Changes@ work like other word processors!
+* @longshadow-3@Version History@ (and **Save Version**) lets you look at and restore earlier copies!
+* Share & Chat edits the same document live with other people. See [Sharing](#/sharing)!
 
 ## Inserts worth knowing
 
-* **Cards & Blocks** adds document blocks like a table of contents, a cover page, callouts, columns, tabs, checklists and footnotes lists. See [Document blocks](#/keydown-blocks)!
-* **Badge** opens a picker for small labeled chips!
-* **Equation** inserts math in LaTeX, drawn by KaTeX!
-* **Templates** starts from a ready-made layout!
-* **3D scenes** and Inkpath drawings can be embedded, and fonts like Kubasta and Monogram are bundled!
+* Cards & Blocks adds document blocks like a table of contents, a cover page, callouts, columns, tabs, checklists and footnotes lists. See [Document blocks](#/keydown-blocks)!
+* @origami-5@Badge@ opens a picker for small labeled chips!
+* ++T0:Equation++ inserts math in LaTeX, drawn by KaTeX!
+* ++C!!Templates++ starts from a ready-made layout!
+* ++PR3(3D scenes++ and Inkpath drawings can be embedded, and fonts like Kubasta and Monogram are bundled!

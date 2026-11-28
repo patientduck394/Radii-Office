@@ -11,10 +11,10 @@ Start a line with one of these and a space:
 | Write | You get |
 | --- | --- |
 | `# Heading` ... `###### Heading` | Heading levels 1 to 6 |
-| `#= Heading` | The extra large **mega header** |
+| `#= Heading` | The extra large #/C)mega header) |
 | `* item` | A bullet point |
 | `> text` | A quote |
-| `-# text` | **Subtext**: small, dim text for notes |
+| `-# text` | ++C2}Subtext++: small, dim text for notes |
 | `::pagebreak` | A new page |
 
 -# This line is subtext, drawn by `-# text`!
@@ -23,7 +23,7 @@ Start a line with one of these and a space:
 
 | Write | You get |
 | --- | --- |
-| `**bold**` | **bold** |
+| `**bold**` | ++R%]bold++ |
 | `*italic*` | *italic* |
 | Backticks around a word | `code` |
 | `[link](https://radii-office.com)` | [link](https://radii-office.com) |

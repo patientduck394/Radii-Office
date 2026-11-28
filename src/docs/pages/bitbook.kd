@@ -1,6 +1,6 @@
 # Bitbook
 
-!!#G#Notes# **Bitbook** is a notebook with real pages. It uses the same Keydown engine as Writeout, plus a set of small **skills** (gadgets) and a programming language called [BitLang](#/bitlang) for little programs inside your notes!
+++PR]Notes++ ++GL-Bitbook++ is a notebook with real pages. It uses the same Keydown engine as Writeout, plus a set of small ++PR]skills++ (gadgets) and a programming language called [BitLang](#/bitlang) for little programs inside your notes!
 
 [Open Bitbook](/bitbook) · [Phone version](/bitbook/mobile/new/)
 
@@ -10,11 +10,11 @@
 
 | Tab | What you will find |
 | --- | --- |
-| **Home** | Clipboard, Basic Text, Paragraph, Styles, Keydown Styles and Find |
-| **Insert** | New Page, New Note, Table, File Attachment, Pictures, OpenDB Images, Inkpath drawings, 3D Scene, Image on Top, Link, Equation, Time Stamp, Symbol, To Do Tag and Bullets |
-| **Skills** | Chips (Uni-Chip, Custom Chip, Unique Styles, Custom CSS) and Gadgets (Jumper, BeepBox Song, Pixel Sprite, Custom Emoji, Time Capsule, Flashcard, Focus Timer, Dice Roller, Programs, Highlight, Annotate) |
-| **View** | View, Visual and Source modes, Pages View, Print Preview, Page Color, Rule Lines, Zoom and Layout |
-| **Help** | Help Deck and the BitLang Guide |
+| ++PK7}Home++ | Clipboard, Basic Text, Paragraph, Styles, Keydown Styles and Find |
+| !#Y#Insert# | New Page, New Note, Table, File Attachment, Pictures, OpenDB Images, Inkpath drawings, 3D Scene, Image on Top, Link, Equation, Time Stamp, Symbol, To Do Tag and Bullets |
+| @window-1@Skills@ | Chips (Uni-Chip, Custom Chip, Unique Styles, Custom CSS) and Gadgets (Jumper, BeepBox Song, Pixel Sprite, Custom Emoji, Time Capsule, Flashcard, Focus Timer, Dice Roller, Programs, Highlight, Annotate) |
+| #/PR]View] | View, Visual and Source modes, Pages View, Print Preview, Page Color, Rule Lines, Zoom and Layout |
+| @hazard-2@Help@ | Help Deck and the BitLang Guide |
 
 ## Notes and pages
 
@@ -24,9 +24,9 @@ Notes are saved as `.kn` files. Like Writeout, a note can have several real page
 
 Skills turn a tag into a small working thing inside your text:
 
-The **Skills** tab lists them under *Gadgets*: Jumper, BeepBox Song, Pixel Sprite, Custom Emoji, Time Capsule, Flashcard, Focus Timer, Dice Roller, Programs, Highlight and Annotate. Click one to insert it at the caret, and its tag appears in the text so you can edit it later in Source mode. **Chips** has the Uni-Chip, Custom Chip, Unique Styles and Custom CSS tools!
+The ++B#]Skills++ tab lists them under *Gadgets*: Jumper, BeepBox Song, Pixel Sprite, Custom Emoji, Time Capsule, Flashcard, Focus Timer, Dice Roller, Programs, Highlight and Annotate. Click one to insert it at the caret, and its tag appears in the text so you can edit it later in Source mode. ++B*(Chips++ has the Uni-Chip, Custom Chip, Unique Styles and Custom CSS tools!
 
-**Annotate** and **Highlight** mark up text with pens, which are written as Keydown tags. See [Annotator pens](#/keydown-start)!
+++R!)Annotate++ and @enamel-2@Highlight@ mark up text with pens, which are written as Keydown tags. See [Annotator pens](#/keydown-start)!
 
 ## Programs
 

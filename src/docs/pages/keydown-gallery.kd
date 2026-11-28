@@ -1,0 +1,469 @@
+# Style gallery
+
+One live sample of every Keydown chip and mark family, drawn by the real engine, in a different color down the page. Write the tag in the middle column, with your own words where it says `text`. Every family comes in sixteen colors, and the [full reference](#/keydown-reference) lists them all!
+
+::tip Colors
+The letters inside the tag pick the color, like R for red, B for blue and PK for pink. Swap them to recolor any sample!
+::end
+
+## Families 1 to 40
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Bubble | `#R#text#` | #R#Sample# |
+| Gloss pills | `%O%text%` | %O%Sample% |
+| Gel flags | `#%GL%text%` | #%GL%Sample% |
+| Gel tabs | `#^Y^text^` | #^Y^Sample^ |
+| Gel drops | `#+L+text+` | #+L+Sample+ |
+| Gel splits | `#:G:text:` | #:G:Sample: |
+| Gel lenses | `#;TU;text;` | #;TU;Sample; |
+| Jelly | `#/T/text/` | #/T/Sample/ |
+| Jelly Bean | `#/C=text=` | #/C=Sample= |
+| Gummy | `#/B~text~` | #/B~Sample~ |
+| Layered Jelly | `#/PR+text+` | #/PR+Sample+ |
+| Jelly Cube | `#/PK^text^` | #/PK^Sample^ |
+| Fruit Jelly | `#/R%text%` | #/R%Sample% |
+| Jelly Drop | `#/O!text!` | #/O!Sample! |
+| Swirl Jelly | `#/GL?text?` | #/GL?Sample? |
+| Jelly Tart | `#/Y#text#` | #/Y#Sample# |
+| Wobble Ring | `#/L-text-` | #/L-Sample- |
+| Glitter Jelly | `#/G.text.` | #/G.Sample. |
+| Star Jelly | `#/TU*text*` | #/TU*Sample* |
+| Jelly Egg | `#/T@text@` | #/T@Sample@ |
+| Jelly Worm | `#/C&text&` | #/C&Sample& |
+| Citrus Jelly | `#/B$text$` | #/B$Sample$ |
+| Heart Jelly | `#/PR<text<` | #/PR<Sample< |
+| Jelly Capsule | `#/PK>text>` | #/PK>Sample> |
+| Molded Jelly | `#/R[text[` | #/R[Sample[ |
+| Jelly Splat | `#/O]text]` | #/O]Sample] |
+| Ice Jelly | `#/GL}text}` | #/GL}Sample} |
+| Glow Jelly | `#/Y(text(` | #/Y(Sample( |
+| Marbled Jelly | `#/L)text)` | #/L)Sample) |
+| Dusk Jelly | `#/G"text"` | #/G"Sample" |
+| Gel label | `#&TU&text&` | #&TU&Sample& |
+| Gel aqua | `#@T@text@` | #@T@Sample@ |
+| Gel glaze | `#?C?text?` | #?C?Sample? |
+| Gel speech | `^^B^text^^` | ^^B^Sample^^ |
+| Aero | `++PR+text++` | ++PR+Sample++ |
+| Aero glass | `++PK=text++` | ++PK=Sample++ |
+| Aero orb | `++R*text++` | ++R*Sample++ |
+| Aero glow | `++O^text++` | ++O^Sample++ |
+| Aero ring | `++GL:text++` | ++GL:Sample++ |
+| Aero bubble | `++Y!text++` | ++Y!Sample++ |
+
+## Families 41 to 80
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Aero toast | `++L~text++` | ++L~Sample++ |
+| Aero notice | `++G%text++` | ++G%Sample++ |
+| Aero mark | `++TU?text++` | ++TU?Sample++ |
+| Check Mark | `++T$text++` | ++T$Sample++ |
+| Pushpin Mark | `++C'text++` | ++C'Sample++ |
+| Price Tag Mark | `++B<text++` | ++B<Sample++ |
+| Arrow Mark | `++PR>text++` | ++PR>Sample++ |
+| Bookmark Mark | `++PK(text++` | ++PK(Sample++ |
+| Dog-ear Mark | `++R)text++` | ++R)Sample++ |
+| Bracket Mark | `++O[text++` | ++O[Sample++ |
+| Crop Mark | `++GL]text++` | ++GL]Sample++ |
+| Squiggle Mark | `++Y}text++` | ++Y}Sample++ |
+| Quote Mark | `++L"text++` | ++L"Sample++ |
+| Selection Bar | `++G==text++` | ++G==Sample++ |
+| Strike Marker | `++TU~~text++` | ++TU~~Sample++ |
+| Halftone Dots | `++T^^text++` | ++T^^Sample++ |
+| Fade Swipe | `++C!!text++` | ++C!!Sample++ |
+| Chalk Smudge | `++B%%text++` | ++B%%Sample++ |
+| Scribble Fill | `++PR??text++` | ++PR??Sample++ |
+| Double Marker | `++PK##text++` | ++PK##Sample++ |
+| Ink Bleed | `++R..text++` | ++R..Sample++ |
+| Dot Pill | `++O--text++` | ++O--Sample++ |
+| Corner Frame | `++GL,,text++` | ++GL,,Sample++ |
+| Ribbon Banner | `++Y<<text++` | ++Y<<Sample++ |
+| Hand Box | `++L>>text++` | ++L>>Sample++ |
+| Dotted Pen | `++G((text++` | ++G((Sample++ |
+| Sunrise Wash | `++TU))text++` | ++TU))Sample++ |
+| Magnifier | `++T""text++` | ++T""Sample++ |
+| Crayon | `++C''text++` | ++C''Sample++ |
+| Felt Dashes | `++B]]text++` | ++B]]Sample++ |
+| Blueprint Grid | `++PR}}text++` | ++PR}}Sample++ |
+| Pixel Blocks | `++PK//text++` | ++PK//Sample++ |
+| Sticky Tint | `++R;;text++` | ++R;;Sample++ |
+| Spray Glow | `++O**text++` | ++O**Sample++ |
+| Foil Bar | `++GL&&text++` | ++GL&&Sample++ |
+| Neon Tube Underline | `++Y@@text++` | ++Y@@Sample++ |
+| Watercolor | `++L=]text++` | ++L=]Sample++ |
+| Pointer Marker | `++G~]text++` | ++G~]Sample++ |
+| Fluorescent Tape | `++TU^]text++` | ++TU^]Sample++ |
+| Lasso Loop | `++T!]text++` | ++T!]Sample++ |
+
+## Families 81 to 120
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Glitter | `++C%]text++` | ++C%]Sample++ |
+| Stained Glass | `++B?]text++` | ++B?]Sample++ |
+| Frosted Label | `++PR*]text++` | ++PR*]Sample++ |
+| Ruled Line | `++PK#]text++` | ++PK#]Sample++ |
+| Ink Splatter | `++R-]text++` | ++R-]Sample++ |
+| Rubber Stamp | `++O/]text++` | ++O/]Sample++ |
+| Gradient Marker | `++GL:]text++` | ++GL:]Sample++ |
+| Paper Cut-out | `++Y.]text++` | ++Y.]Sample++ |
+| Letterpress | `++L,]text++` | ++L,]Sample++ |
+| Scanner Beam | `++G;]text++` | ++G;]Sample++ |
+| Bubble Highlight | `++TU<]text++` | ++TU<]Sample++ |
+| Two-Tone Split | `++T>]text++` | ++T>]Sample++ |
+| Cloud | `++C_]text++` | ++C_]Sample++ |
+| Caution Stripes | `++B+]text++` | ++B+]Sample++ |
+| Droplets | `++PR$]text++` | ++PR$]Sample++ |
+| Offset Shadow Bar | `++PK)]text++` | ++PK)]Sample++ |
+| Chevron Wipe | `++R}]text++` | ++R}]Sample++ |
+| Stitched Patch | `++O@]text++` | ++O@]Sample++ |
+| Aurora Mesh | `++GL(]text++` | ++GL(]Sample++ |
+| Shine Wash | `++Y&]text++` | ++Y&]Sample++ |
+| Lower Wash | `++L"]text++` | ++L"]Sample++ |
+| Rim Light | `++G']text++` | ++G']Sample++ |
+| Split Capsule | `++TU1]text++` | ++TU1]Sample++ |
+| Specular Bead | `++T2]text++` | ++T2]Sample++ |
+| Light Sweep | `++C3]text++` | ++C3]Sample++ |
+| Mirror Floor | `++B4]text++` | ++B4]Sample++ |
+| Pearl | `++PR5]text++` | ++PR5]Sample++ |
+| Aqua Pinstripe | `++PK6]text++` | ++PK6]Sample++ |
+| Round Cap | `++R7]text++` | ++R7]Sample++ |
+| Water Level | `++O8]text++` | ++O8]Sample++ |
+| Frost Glow | `++GL9]text++` | ++GL9]Sample++ |
+| Spotlight | `++Y0]text++` | ++Y0]Sample++ |
+| Ribbed Gloss | `++L[]text++` | ++L[]Sample++ |
+| Split Gel Bar | `++G=)text++` | ++G=)Sample++ |
+| Dome Shine | `++TU~)text++` | ++TU~)Sample++ |
+| Inner Ring | `++T^)text++` | ++T^)Sample++ |
+| Corner Glints | `++C!)text++` | ++C!)Sample++ |
+| Bevel Button | `++B%)text++` | ++B%)Sample++ |
+| Glossy Underline | `++PR?)text++` | ++PR?)Sample++ |
+| Halo | `++PK*)text++` | ++PK*)Sample++ |
+
+## Families 121 to 160
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Speech Pill | `++R#)text++` | ++R#)Sample++ |
+| Swallowtail Flag | `++O-)text++` | ++O-)Sample++ |
+| Gloss Card | `++GL/)text++` | ++GL/)Sample++ |
+| Dotted Gloss | `++Y:)text++` | ++Y:)Sample++ |
+| Fading Gloss | `++L.)text++` | ++L.)Sample++ |
+| Sparkle Pill | `++G,)text++` | ++G,)Sample++ |
+| Lens | `++TU;)text++` | ++TU;)Sample++ |
+| Cut Gem | `++T&)text++` | ++T&)Sample++ |
+| Double Stroke | `++C=}text++` | ++C=}Sample++ |
+| Chisel Tip | `++B~}text++` | ++B~}Sample++ |
+| Brush Ends | `++PR^}text++` | ++PR^}Sample++ |
+| Torn Ends | `++PK!}text++` | ++PK!}Sample++ |
+| Pencil Underline | `++R%}text++` | ++R%}Sample++ |
+| Dashed Marker | `++O?}text++` | ++O?}Sample++ |
+| Neon Marker | `++GL*}text++` | ++GL*}Sample++ |
+| Soft Wash | `++Y#}text++` | ++Y#}Sample++ |
+| Crossed Out | `++L-}text++` | ++L-}Sample++ |
+| Dog Ear | `++G/}text++` | ++G/}Sample++ |
+| Pinned | `++TU.}text++` | ++TU.}Sample++ |
+| Stamp Mark | `++T,}text++` | ++T,}Sample++ |
+| Triple Underline | `++C;}text++` | ++C;}Sample++ |
+| Bracket Edges | `++B&}text++` | ++B&}Sample++ |
+| Ink Blot | `++PR+}text++` | ++PR+}Sample++ |
+| Sweep Out | `++PK$}text++` | ++PK$}Sample++ |
+| Sweep In | `++R@}text++` | ++R@}Sample++ |
+| Candy Stripe | `++O_}text++` | ++O_}Sample++ |
+| Ruled Paper | `++GL1}text++` | ++GL1}Sample++ |
+| Graph Paper | `++Y2}text++` | ++Y2}Sample++ |
+| Dot Marker | `++L3}text++` | ++L3}Sample++ |
+| Zigzag Under | `++G4}text++` | ++G4}Sample++ |
+| Wavy Under | `++TU5}text++` | ++TU5}Sample++ |
+| Wavy Over | `++T6}text++` | ++T6}Sample++ |
+| Measure Ticks | `++C7}text++` | ++C7}Sample++ |
+| Arrow Right | `++B=:text++` | ++B=:Sample++ |
+| Arrow Left | `++PR~:text++` | ++PR~:Sample++ |
+| Hexagon Ends | `++PK^:text++` | ++PK^:Sample++ |
+| Round Tab | `++R!:text++` | ++R!:Sample++ |
+| Folder Tab | `++O%:text++` | ++O%:Sample++ |
+| Sparkle Water | `++GL5(text++` | ++GL5(Sample++ |
+| City Skyline | `++Y6(text++` | ++Y6(Sample++ |
+
+## Families 161 to 200
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Ripple Pool | `++L7(text++` | ++L7(Sample++ |
+| Glass Arch | `++G8(text++` | ++G8(Sample++ |
+| Seaweed | `++TU9(text++` | ++TU9(Sample++ |
+| Goldfish | `++T0(text++` | ++T0(Sample++ |
+| Menu Arrow | `++C+(text++` | ++C+(Sample++ |
+| Film Road | `++B$(text++` | ++B$(Sample++ |
+| Cloud Sky | `++PR@(text++` | ++PR@(Sample++ |
+| Sunbeam | `++PK_(text++` | ++PK_(Sample++ |
+| Wave Crest | `++R=(text++` | ++R=(Sample++ |
+| Clownfish | `++O~(text++` | ++O~(Sample++ |
+| Grass Road | `++GL^(text++` | ++GL^(Sample++ |
+| Title Bar | `++Y!(text++` | ++Y!(Sample++ |
+| Droplets | `++L%(text++` | ++L%(Sample++ |
+| Seashell | `++G?(text++` | ++G?(Sample++ |
+| Coral Reef | `++TU*(text++` | ++TU*(Sample++ |
+| Lily Pad | `++T#(text++` | ++T#(Sample++ |
+| Sun Glint | `++C-(text++` | ++C-(Sample++ |
+| Pebble Shore | `++B/(text++` | ++B/(Sample++ |
+| Ribbon Notch | `++PR?:text++` | ++PR?:Sample++ |
+| Ticket Ends | `++PK*:text++` | ++PK*:Sample++ |
+| Pill Outline | `++R#:text++` | ++R#:Sample++ |
+| Offset Shadow | `++O-:text++` | ++O-:Sample++ |
+| Misprint | `++GL/:text++` | ++GL/:Sample++ |
+| Inset Frame | `++Y.:text++` | ++Y.:Sample++ |
+| Glow Underline | `++L,:text++` | ++L,:Sample++ |
+| Heavy Base | `++G;:text++` | ++G;:Sample++ |
+| Top Half | `++TU&:text++` | ++TU&:Sample++ |
+| Spot Corner | `++T+:text++` | ++T+:Sample++ |
+| Glass Marker | `++C$:text++` | ++C$:Sample++ |
+| Pen Dot | `++B@:text++` | ++B@:Sample++ |
+| Quote Bar | `++PR_:text++` | ++PR_:Sample++ |
+| Star Glint | `++PK1:text++` | ++PK1:Sample++ |
+| Rough Hand | `++R2:text++` | ++R2:Sample++ |
+| Hatch Band | `++O3:text++` | ++O3:Sample++ |
+| Faded Ends | `++GL4:text++` | ++GL4:Sample++ |
+| Capsule Bar | `++Y5:text++` | ++Y5:Sample++ |
+| Ribbon Bar | `++L6:text++` | ++L6:Sample++ |
+| Sticker Mark | `++G7:text++` | ++G7:Sample++ |
+| Cloud Wash | `++TU+)text++` | ++TU+)Sample++ |
+| Scroll Ends | `++T$)text++` | ++T$)Sample++ |
+
+## Families 201 to 240
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Cut Corners | `++C@)text++` | ++C@)Sample++ |
+| Brick Wall | `++B_)text++` | ++B_)Sample++ |
+| Slant Slab | `++PR1)text++` | ++PR1)Sample++ |
+| Band Under | `++PK2)text++` | ++PK2)Sample++ |
+| Glint Sweep | `++R3)text++` | ++R3)Sample++ |
+| Foam Ends | `++O4)text++` | ++O4)Sample++ |
+| Notebook Page | `++GL5)text++` | ++GL5)Sample++ |
+| Punch Card | `++Y6)text++` | ++Y6)Sample++ |
+| Checker Base | `++L7)text++` | ++L7)Sample++ |
+| Scan Lines | `++G8)text++` | ++G8)Sample++ |
+| Paint Roller | `++TU9)text++` | ++TU9)Sample++ |
+| Tide Line | `++T0)text++` | ++T0)Sample++ |
+| Page Curl | `++C8}text++` | ++C8}Sample++ |
+| Seal Stamp | `++B9}text++` | ++B9}Sample++ |
+| Halo Glow | `++PR0}text++` | ++PR0}Sample++ |
+| Pebble | `++PK8:text++` | ++PK8:Sample++ |
+| Laser Line | `++R9:text++` | ++R9:Sample++ |
+| Dusk Fade | `++O0:text++` | ++O0:Sample++ |
+| Terrarium | `++GL1(text++` | ++GL1(Sample++ |
+| Bubble Water | `++Y2(text++` | ++Y2(Sample++ |
+| Gel Pad | `++L3(text++` | ++L3(Sample++ |
+| Folder Tab | `++G4(text++` | ++G4(Sample++ |
+| Aero swipe | `++TU/text++` | ++TU/Sample++ |
+| Aero tape | `++T-text++` | ++T-Sample++ |
+| Aero tail | `++C@text++` | ++C@Sample++ |
+| Aero stack | `++B;text++` | ++B;Sample++ |
+| Aero pane | `++PR#text++` | ++PR#Sample++ |
+| Aero window | `++PK&text++` | ++PK&Sample++ |
+| Aero tab | `++R.text++` | ++R.Sample++ |
+| Aero meter | `++O,text++` | ++O,Sample++ |
+| Gloss | `%%GL%text%%` | %%GL%Sample%% |
+| Gloss tube | `%%Y+text%%` | %%Y+Sample%% |
+| Gloss dew | `%%L=text%%` | %%L=Sample%% |
+| Dark Gel | `~CPG~text~CPG~` | ~CPG~Sample~CPG~ |
+| Rim | `!!#TU#text#` | !!#TU#Sample# |
+| Rim liquid | `!!^T#text#` | !!^T#Sample# |
+| Rim stripe | `!!~C#text#` | !!~C#Sample# |
+| Accent Rim | `!!=B#text#` | !!=B#Sample# |
+| Rim neon | `!!+PR#text#` | !!+PR#Sample# |
+| Rim frost | `!!%PK#text#` | !!%PK#Sample# |
+
+## Families 241 to 280
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Rim double | `!!:R#text#` | !!:R#Sample# |
+| Rim dots | `!!;O#text#` | !!;O#Sample# |
+| Rim pearl | `!!-GL#text#` | !!-GL#Sample# |
+| Rim steel | `!!?Y#text#` | !!?Y#Sample# |
+| Rim aurora | `!!/L#text#` | !!/L#Sample# |
+| Rim jelly | `!!*G#text#` | !!*G#Sample# |
+| Rim hail | `!!@TU#text#` | !!@TU#Sample# |
+| Rim Marker Wash | `!!&T#text#` | !!&T#Sample# |
+| Rim Neon Tube | `!!<C#text#` | !!<C#Sample# |
+| Rim Pencil Shade | `!!>B#text#` | !!>B#Sample# |
+| Rim Brush Stroke | `!!(PR#text#` | !!(PR#Sample# |
+| Rim Torn Tape | `!!)PK#text#` | !!)PK#Sample# |
+| Rim Double Bars | `!![R#text#` | !![R#Sample# |
+| Rim Dotted Pen | `!!]O#text#` | !!]O#Sample# |
+| Rim Spotlight | `!!}GL#text#` | !!}GL#Sample# |
+| Rim Crayon | `!!_Y#text#` | !!_Y#Sample# |
+| Rim Glitter Marker | `!!,L#text#` | !!,L#Sample# |
+| Rim Watercolor | `!!.G#text#` | !!.G#Sample# |
+| Rim Scribble | `!!"TU#text#` | !!"TU#Sample# |
+| Rim Sticky Tint | `!!'T#text#` | !!'T#Sample# |
+| Rim Fluorescent | `!!1C#text#` | !!1C#Sample# |
+| Rim Sunrise | `!!2B#text#` | !!2B#Sample# |
+| Rim Ink Bleed | `!!3PR#text#` | !!3PR#Sample# |
+| Rim Paper Cut-out | `!!4PK#text#` | !!4PK#Sample# |
+| Rim Scanner Beam | `!!5R#text#` | !!5R#Sample# |
+| Rim Arrow Tip | `!!6O#text#` | !!6O#Sample# |
+| Rim Graph Paper | `!!7GL#text#` | !!7GL#Sample# |
+| Rim Halftone | `!!8Y#text#` | !!8Y#Sample# |
+| Rim Wavy Pen | `!!9L#text#` | !!9L#Sample# |
+| Rim Corner Brackets | `!!0G#text#` | !!0G#Sample# |
+| Rim Ribbon | `!!<]TU#text#` | !!<]TU#Sample# |
+| Rim Comic Burst | `!!>]T#text#` | !!>]T#Sample# |
+| Rim Stamp Ink | `!!_]C#text#` | !!_]C#Sample# |
+| Rim Lens | `!!,]B#text#` | !!,]B#Sample# |
+| Rim badge | `!!!PR#text#` | !!!PR#Sample# |
+| Wax Seal | `~~PK~text~~` | ~~PK~Sample~~ |
+| Pixel | `~~R=text~~` | ~~R=Sample~~ |
+| Candy Cane | `~~O.text~~` | ~~O.Sample~~ |
+| Neon Tube | `==GL=text==` | ==GL=Sample== |
+| Marquee | `==Y~text==` | ==Y~Sample== |
+
+## Families 281 to 295
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Crystal | `==L.text==` | ==L.Sample== |
+| Washi Tape | `//G/text//` | //G/Sample// |
+| Sticker | `//TU~text//` | //TU~Sample// |
+| Holo Foil | `//T.text//` | //T.Sample// |
+| Blueprint | `((C(text))` | ((C(Sample)) |
+| Pebble | `((B=text))` | ((B=Sample)) |
+| Ticket Stub | `((PR.text))` | ((PR.Sample)) |
+| Tape | `==PK^text==` | ==PK^Sample== |
+| Logo | `;;R;text;;` | ;;R;Sample;; |
+| Logo glass | `;;O:text;;` | ;;O:Sample;; |
+| Logo ribbon | `;;GL~text;;` | ;;GL~Sample;; |
+| Gel orbs | `=C=text=C=` | =C=Sample=C= |
+| Tag | `!#L#text#` | !#L#Sample# |
+| Effects | `~MM~text~MM~` | ~MM~Sample~MM~ |
+| Style packs | `~SUN~text~SUN~` | ~SUN~Sample~SUN~ |
+
+## Unique Styles
+
+The Unique Styles are written `@family-N@text@`, where N is the colorway from 1 to 5. Here is a sample of each family!
+
+| Family | Write | You get |
+| --- | --- | --- |
+| Neon Tube | `@neontube-1@text@` | @neontube-1@Sample@ |
+| Lava Lamp | `@lava-2@text@` | @lava-2@Sample@ |
+| Holo Foil | `@holo-3@text@` | @holo-3@Sample@ |
+| Retro Sun | `@retrosun-4@text@` | @retrosun-4@Sample@ |
+| Vaporwave | `@vapor-5@text@` | @vapor-5@Sample@ |
+| Sprinkles | `@sprinkles-1@text@` | @sprinkles-1@Sample@ |
+| Jelly | `@jelly-2@text@` | @jelly-2@Sample@ |
+| Puffy | `@puffy-3@text@` | @puffy-3@Sample@ |
+| Comic Pop | `@comic-4@text@` | @comic-4@Sample@ |
+| Graffiti | `@graffiti-5@text@` | @graffiti-5@Sample@ |
+| Circuit Board | `@circuit-1@text@` | @circuit-1@Sample@ |
+| Blueprint | `@blueprint-2@text@` | @blueprint-2@Sample@ |
+| LED Matrix | `@led-3@text@` | @led-3@Sample@ |
+| CRT Screen | `@crt-4@text@` | @crt-4@Sample@ |
+| 8-Bit Button | `@pixel-5@text@` | @pixel-5@Sample@ |
+| Aurora | `@aurora-1@text@` | @aurora-1@Sample@ |
+| Galaxy | `@galaxy-2@text@` | @galaxy-2@Sample@ |
+| Gemstone | `@gem-3@text@` | @gem-3@Sample@ |
+| Luxe Foil | `@foil-4@text@` | @foil-4@Sample@ |
+| Marble | `@marble-5@text@` | @marble-5@Sample@ |
+| Wood Plank | `@wood-1@text@` | @wood-1@Sample@ |
+| Washi Tape | `@washi-2@text@` | @washi-2@Sample@ |
+| Sticky Note | `@postit-3@text@` | @postit-3@Sample@ |
+| Label Maker | `@dymo-4@text@` | @dymo-4@Sample@ |
+| Enamel Pin | `@enamel-5@text@` | @enamel-5@Sample@ |
+| Soft UI | `@neumorph-1@text@` | @neumorph-1@Sample@ |
+| Glass Blob | `@glassblob-2@text@` | @glassblob-2@Sample@ |
+| Spectrum Ring | `@ring-3@text@` | @ring-3@Sample@ |
+| Elemental Text | `@element-4@text@` | @element-4@Sample@ |
+| Origami | `@origami-5@text@` | @origami-5@Sample@ |
+| Bubble Wrap | `@bubblewrap-1@text@` | @bubblewrap-1@Sample@ |
+| Denim | `@denim-2@text@` | @denim-2@Sample@ |
+| Leather | `@leather-3@text@` | @leather-3@Sample@ |
+| Chrome | `@chrome-4@text@` | @chrome-4@Sample@ |
+| App Window | `@window-5@text@` | @window-5@Sample@ |
+| Receipt | `@receipt-1@text@` | @receipt-1@Sample@ |
+| Toy Brick | `@brick-2@text@` | @brick-2@Sample@ |
+| Mermaid Scales | `@scales-3@text@` | @scales-3@Sample@ |
+| Plaid | `@plaid-4@text@` | @plaid-4@Sample@ |
+| Gingham | `@gingham-5@text@` | @gingham-5@Sample@ |
+| Chevron | `@chevron-1@text@` | @chevron-1@Sample@ |
+| Cyber Panel | `@cyber-2@text@` | @cyber-2@Sample@ |
+| Camo | `@camo-3@text@` | @camo-3@Sample@ |
+| Barber Pole | `@barber-4@text@` | @barber-4@Sample@ |
+| Sunburst | `@sunburst-5@text@` | @sunburst-5@Sample@ |
+| Topo Map | `@topo-1@text@` | @topo-1@Sample@ |
+| Glitch | `@glitch-2@text@` | @glitch-2@Sample@ |
+| Sci-Fi HUD | `@hud-3@text@` | @hud-3@Sample@ |
+| Hazard Tape | `@hazard-4@text@` | @hazard-4@Sample@ |
+| Typewriter | `@typewriter-5@text@` | @typewriter-5@Sample@ |
+| Crayon | `@crayon-1@text@` | @crayon-1@Sample@ |
+| Neon on Brick | `@brickneon-2@text@` | @brickneon-2@Sample@ |
+| Marquee | `@marquee-3@text@` | @marquee-3@Sample@ |
+| Polaroid | `@polaroid-4@text@` | @polaroid-4@Sample@ |
+| Film Strip | `@film-5@text@` | @film-5@Sample@ |
+| Brush Stroke | `@brush-1@text@` | @brush-1@Sample@ |
+| Watercolor | `@watercolor-2@text@` | @watercolor-2@Sample@ |
+| Stained Glass | `@stained-3@text@` | @stained-3@Sample@ |
+| Tie-Dye | `@tiedye-4@text@` | @tiedye-4@Sample@ |
+| Pop Art | `@popart-5@text@` | @popart-5@Sample@ |
+| Risograph | `@riso-1@text@` | @riso-1@Sample@ |
+| Parchment Scroll | `@scroll-2@text@` | @scroll-2@Sample@ |
+| Wax Seal | `@wax-3@text@` | @wax-3@Sample@ |
+| Ribbon Banner | `@banner-4@text@` | @banner-4@Sample@ |
+| Notebook | `@notebook-5@text@` | @notebook-5@Sample@ |
+| Medicine Capsule | `@capsule-1@text@` | @capsule-1@Sample@ |
+| Battery | `@battery-2@text@` | @battery-2@Sample@ |
+| Loading Bar | `@loading-3@text@` | @loading-3@Sample@ |
+| Fluffy Cloud | `@cloud-4@text@` | @cloud-4@Sample@ |
+| Glow Text | `@glowtext-5@text@` | @glowtext-5@Sample@ |
+| Embroidered Patch | `@patch-1@text@` | @patch-1@Sample@ |
+| Soft Inset | `@softinset-2@text@` | @softinset-2@Sample@ |
+| Clay | `@clay-3@text@` | @clay-3@Sample@ |
+| Paper Layers | `@layers-4@text@` | @layers-4@Sample@ |
+| Long Shadow | `@longshadow-5@text@` | @longshadow-5@Sample@ |
+| Engraved Plate | `@engraved-1@text@` | @engraved-1@Sample@ |
+| Web 2.0 | `@webtwo-2@text@` | @webtwo-2@Sample@ |
+| Retro Desktop | `@retrodesk-3@text@` | @retrodesk-3@Sample@ |
+| Code Rain | `@coderain-4@text@` | @coderain-4@Sample@ |
+| Bokeh | `@bokeh-5@text@` | @bokeh-5@Sample@ |
+| Ombre | `@ombre-1@text@` | @ombre-1@Sample@ |
+| Mesh Gradient | `@mesh-2@text@` | @mesh-2@Sample@ |
+| Swoosh | `@swoosh-3@text@` | @swoosh-3@Sample@ |
+| Circled | `@circled-4@text@` | @circled-4@Sample@ |
+| Spoiler | `@spoiler-5@text@` | @spoiler-5@Sample@ |
+| Gradient Text | `@gradtext-1@text@` | @gradtext-1@Sample@ |
+| Shimmer | `@shimmer-2@text@` | @shimmer-2@Sample@ |
+| Extruded | `@extruded-3@text@` | @extruded-3@Sample@ |
+| Die-Cut Text | `@diecut-4@text@` | @diecut-4@Sample@ |
+| Letterpress | `@letterpress-5@text@` | @letterpress-5@Sample@ |
+| Aqua Gel | `@faaqua-1@text@` | @faaqua-1@Sample@ |
+| Soap Bubble | `@fabubble-2@text@` | @fabubble-2@Sample@ |
+| Aero Glass | `@faglass-3@text@` | @faglass-3@Sample@ |
+| Bliss Hill | `@fameadow-4@text@` | @fameadow-4@Sample@ |
+| Water Surface | `@fawater-5@text@` | @fawater-5@Sample@ |
+| Glossy Leaf | `@faleaf-1@text@` | @faleaf-1@Sample@ |
+| Lens Flare | `@faflare-2@text@` | @faflare-2@Sample@ |
+| Vista Swoosh | `@faswoosh-3@text@` | @faswoosh-3@Sample@ |
+| Crystal | `@facrystal-4@text@` | @facrystal-4@Sample@ |
+| Bubble Stream | `@faunderwater-5@text@` | @faunderwater-5@Sample@ |
+| Glossy Orb | `@faorb-1@text@` | @faorb-1@Sample@ |
+| Frosted Pane | `@fafrost-2@text@` | @fafrost-2@Sample@ |
+| Dewdrop | `@fadew-3@text@` | @fadew-3@Sample@ |
+| Eco Tech | `@faeco-4@text@` | @faeco-4@Sample@ |
+| Sunrise Glow | `@fasunrise-5@text@` | @fasunrise-5@Sample@ |
+| Aqua Pinstripe | `@fapinstripe-1@text@` | @fapinstripe-1@Sample@ |
+| Cloud Sky | `@faclouds-2@text@` | @faclouds-2@Sample@ |
+| Glass Taskbar | `@fataskbar-3@text@` | @fataskbar-3@Sample@ |
+| Aquarium | `@faaquarium-4@text@` | @faaquarium-4@Sample@ |
+| Gloss Ribbon | `@faribbon-5@text@` | @faribbon-5@Sample@ |
+| Luna Button | `@faluna-1@text@` | @faluna-1@Sample@ |
+| Luna Taskbar | `@fataskband-2@text@` | @fataskband-2@Sample@ |
+| Sidebar Gadget | `@fagadget-3@text@` | @fagadget-3@Sample@ |
+| Console Channel | `@fachannel-4@text@` | @fachannel-4@Sample@ |
+| Media Wave | `@famediawave-5@text@` | @famediawave-5@Sample@ |
+| Dashboard Blade | `@fablade-1@text@` | @fablade-1@Sample@ |
+| Pocket Player | `@fapocket-2@text@` | @fapocket-2@Sample@ |
+| Black Glass Button | `@fablackglass-3@text@` | @fablackglass-3@Sample@ |
+| Toolbar Gel | `@fatoolbar-4@text@` | @fatoolbar-4@Sample@ |
+| Progress Gel | `@faprogress-5@text@` | @faprogress-5@Sample@ |
