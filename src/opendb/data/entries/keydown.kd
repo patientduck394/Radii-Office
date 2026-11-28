@@ -4738,6 +4738,91 @@ A cousin of the Aero Mark chip: a chip that fades in from clear at the top, with
 * `++SL0:text++` ++SL0:slate++
 * `++BK0:text++` ++BK0:black++
 
+
+## Terrarium chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: a glass bubble with a little green hill of grass inside, like a tiny terrarium, with a bright glint at the top! Written `++COLOR1(text++`, in the same 16 colors as the Aero chips:
+
+* `++R1(text++` ++R1(red++
+* `++O1(text++` ++O1(orange++
+* `++GL1(text++` ++GL1(gold++
+* `++Y1(text++` ++Y1(yellow++
+* `++L1(text++` ++L1(lime++
+* `++G1(text++` ++G1(green++
+* `++TU1(text++` ++TU1(turquoise++
+* `++T1(text++` ++T1(teal++
+* `++C1(text++` ++C1(cyan++
+* `++B1(text++` ++B1(blue++
+* `++PR1(text++` ++PR1(purple++
+* `++PK1(text++` ++PK1(pink++
+* `++W1(text++` ++W1(white++
+* `++FG1(text++` ++FG1(fog++
+* `++SL1(text++` ++SL1(slate++
+* `++BK1(text++` ++BK1(black++
+
+## Bubble Water chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: clear water with small bubbles rising at both ends! Written `++COLOR2(text++`, in the same 16 colors as the Aero chips:
+
+* `++R2(text++` ++R2(red++
+* `++O2(text++` ++O2(orange++
+* `++GL2(text++` ++GL2(gold++
+* `++Y2(text++` ++Y2(yellow++
+* `++L2(text++` ++L2(lime++
+* `++G2(text++` ++G2(green++
+* `++TU2(text++` ++TU2(turquoise++
+* `++T2(text++` ++T2(teal++
+* `++C2(text++` ++C2(cyan++
+* `++B2(text++` ++B2(blue++
+* `++PR2(text++` ++PR2(purple++
+* `++PK2(text++` ++PK2(pink++
+* `++W2(text++` ++W2(white++
+* `++FG2(text++` ++FG2(fog++
+* `++SL2(text++` ++SL2(slate++
+* `++BK2(text++` ++BK2(black++
+
+## Gel Pad chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: a glossy gel pad with a beaded button at each end, like a little device from an Aqua desktop! Written `++COLOR3(text++`, in the same 16 colors as the Aero chips:
+
+* `++R3(text++` ++R3(red++
+* `++O3(text++` ++O3(orange++
+* `++GL3(text++` ++GL3(gold++
+* `++Y3(text++` ++Y3(yellow++
+* `++L3(text++` ++L3(lime++
+* `++G3(text++` ++G3(green++
+* `++TU3(text++` ++TU3(turquoise++
+* `++T3(text++` ++T3(teal++
+* `++C3(text++` ++C3(cyan++
+* `++B3(text++` ++B3(blue++
+* `++PR3(text++` ++PR3(purple++
+* `++PK3(text++` ++PK3(pink++
+* `++W3(text++` ++W3(white++
+* `++FG3(text++` ++FG3(fog++
+* `++SL3(text++` ++SL3(slate++
+* `++BK3(text++` ++BK3(black++
+
+## Folder Tab chips
+
+A cousin of the Aero Mark chip, drawn from an Aqua scene: a folder with a tab at the top left, in whatever color you pick (yellow gives the classic file folder)! Written `++COLOR4(text++`, in the same 16 colors as the Aero chips:
+
+* `++R4(text++` ++R4(red++
+* `++O4(text++` ++O4(orange++
+* `++GL4(text++` ++GL4(gold++
+* `++Y4(text++` ++Y4(yellow++
+* `++L4(text++` ++L4(lime++
+* `++G4(text++` ++G4(green++
+* `++TU4(text++` ++TU4(turquoise++
+* `++T4(text++` ++T4(teal++
+* `++C4(text++` ++C4(cyan++
+* `++B4(text++` ++B4(blue++
+* `++PR4(text++` ++PR4(purple++
+* `++PK4(text++` ++PK4(pink++
+* `++W4(text++` ++W4(white++
+* `++FG4(text++` ++FG4(fog++
+* `++SL4(text++` ++SL4(slate++
+* `++BK4(text++` ++BK4(black++
+
 ## Aero swipe chips
 
 A mark chip cousin cut like a real highlighter swipe: a slanted bright stroke of the color with a darker ink edge along the bottom! Written `++color/text++`, in the same 16 colors as the Aero chips:

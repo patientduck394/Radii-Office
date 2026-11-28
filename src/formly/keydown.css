@@ -8629,3 +8629,24 @@ u.kd-wavy { text-decoration-line: underline; text-decoration-style: wavy; text-d
   font-size: 0.8em; line-height: 1.45; font-weight: 400; margin: 2px 0; color: #6b7688;
   color: color-mix(in srgb, currentColor 62%, transparent);
 }
+
+/* ========================================================
+   FOUR WATER SCENE AERO MARK CHIP COUSINS (wt), written ++COLOR<mark>text++: Terrarium ++R1(text++, Bubble Water ++R2(text++, Gel Pad ++R3(text++, Folder Tab ++R4(text++.
+   Terrarium, Bubble Water, Gel Pad and Folder Tab, from an Aqua scene; each in the Aero chips' 16 colors (the .gel-aero-<color> classes).
+   ======================================================== */
+.gel-wtterra-chip, .gel-wtbubble-chip, .gel-wtpad-chip, .gel-wtfolder-chip {
+  --mk-ink: color-mix(in srgb, var(--ae-e1) 75%, #000);
+  --hx-w1: color-mix(in srgb, var(--ae-l) 22%, #fff); --hx-w2: color-mix(in srgb, var(--ae-l) 48%, #fff); --hx-w3: color-mix(in srgb, var(--ae-l) 66%, #fff);
+  --hx-c36: color-mix(in srgb, var(--ae-c) 36%, transparent); --hx-c40: color-mix(in srgb, var(--ae-c) 40%, transparent); --hx-c45: color-mix(in srgb, var(--ae-c) 45%, transparent);
+  --hx-c50: color-mix(in srgb, var(--ae-c) 50%, transparent); --hx-c60: color-mix(in srgb, var(--ae-c) 60%, transparent);
+  position: relative; isolation: isolate; box-sizing: border-box; display: inline-flex !important; align-items: center; justify-content: center;
+  padding: 1px 9px; margin: 0 3px; border: 0; color: var(--mk-ink); font-weight: 700; line-height: 1.3; white-space: nowrap; vertical-align: middle; text-shadow: none;
+  -webkit-print-color-adjust: exact; print-color-adjust: exact;
+}
+.gel-wtterra-chip.gel-aero-white, .gel-wtbubble-chip.gel-aero-white, .gel-wtpad-chip.gel-aero-white, .gel-wtfolder-chip.gel-aero-white { --ae-l: #ededed; --ae-c: #c9c9c9; }
+.gel-wtterra-chip.gel-aero-fog, .gel-wtbubble-chip.gel-aero-fog, .gel-wtpad-chip.gel-aero-fog, .gel-wtfolder-chip.gel-aero-fog { --ae-l: #d3d3d3; --ae-c: #a9a9a9; }
+.gel-wtterra-chip.gel-aero-black, .gel-wtbubble-chip.gel-aero-black, .gel-wtpad-chip.gel-aero-black, .gel-wtfolder-chip.gel-aero-black { --ae-l: #b8b8b8; --ae-c: #7a7a7a; color: #111111; }
+.gel-wtterra-chip{background:radial-gradient(ellipse 20px 6px at 19px 6px,rgba(255,255,255,.98) 0 50%,transparent 75%),radial-gradient(ellipse 80% 58% at 50% 112%,#2f9f2c 0 62%,#86e069 66% 72%,transparent 77%),radial-gradient(ellipse 95% 80% at 62% 125%,var(--hx-c36),transparent 70%),linear-gradient(180deg,var(--hx-w1),var(--ae-l));border-radius:999px;box-shadow:inset 0 0 0 1.5px var(--ae-c),inset 0 -.3em .5em -.15em var(--hx-c45),0 1px 3px var(--hx-c40);padding:1px 16px}
+.gel-wtbubble-chip{background:radial-gradient(circle at 10px 64%,rgba(255,255,255,.85) 0 2.2px,var(--ae-c) 2.6px 3.5px,transparent 3.9px),radial-gradient(circle at 19px 30%,rgba(255,255,255,.85) 0 1.2px,var(--ae-c) 1.6px 2.5px,transparent 2.9px),radial-gradient(circle at calc(100% - 11px) 36%,rgba(255,255,255,.85) 0 1.9px,var(--ae-c) 2.3px 3.2px,transparent 3.6px),radial-gradient(circle at calc(100% - 21px) 70%,rgba(255,255,255,.85) 0 1px,var(--ae-c) 1.4px 2.3px,transparent 2.7px),radial-gradient(ellipse at 70% 130%,var(--hx-c36),transparent 60%),linear-gradient(180deg,var(--hx-w1),var(--ae-l));border-radius:12px;box-shadow:inset 0 0 0 1px var(--hx-c45),inset 0 .35em .5em -.2em rgba(255,255,255,.85);padding:1px 25px}
+.gel-wtpad-chip{background:radial-gradient(circle at 9px 50%,var(--hx-w3) 0 1.4px,var(--ae-c) 1.9px 3.3px,var(--hx-w2) 3.7px 5px,transparent 5.4px),radial-gradient(circle at calc(100% - 9px) 50%,var(--hx-w3) 0 1.4px,var(--ae-c) 1.9px 3.3px,var(--hx-w2) 3.7px 5px,transparent 5.4px),linear-gradient(180deg,rgba(255,255,255,.7) 0 46%,transparent 50%),linear-gradient(180deg,var(--hx-w1),var(--ae-l) 58%,var(--ae-c));border-radius:13px 13px 18px 18px/11px 11px 16px 16px;box-shadow:inset 0 0 0 2px var(--hx-w2),inset 0 0 0 3px var(--ae-c),0 2px 3px var(--hx-c45);padding:2px 24px}
+.gel-wtfolder-chip{background:linear-gradient(var(--hx-w3),var(--hx-w3)) 0 6px/100% 1px no-repeat,linear-gradient(var(--ae-c),var(--ae-c)) 0 0/100% 5px no-repeat,linear-gradient(180deg,var(--hx-w1),var(--ae-l)) 0 5px/100% calc(100% - 5px) no-repeat;clip-path:polygon(0 3px,3px 0,44% 0,calc(44% + 5px) 5px,100% 5px,100% 100%,0 100%);padding:7px 13px 2px;margin:0 3px}
